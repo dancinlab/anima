@@ -61,6 +61,7 @@ import sys as _anima_entry_guard
 if __name__ == "__main__":
     _anima_entry_guard.exit("⛔ clm_serialize_v2.py 직접 실행 금지 — cli/ 단일진입(anima train/serialize, canonical=hexa) 경유. #2603")
 
+import re
 import struct
 from typing import Dict, Any
 
@@ -72,6 +73,7 @@ except Exception:  # pragma: no cover - numpy is effectively always present
 MAGIC = bytes([67, 76, 77, 1])      # "CLM\x01"
 CLMX = bytes([67, 76, 77, 88])      # "CLMX"
 CLMB = bytes([67, 76, 77, 66])      # "CLMB" — bind-readout (Hadamard) extension
+CLMF = bytes([67, 76, 77, 70])      # "CLMF" — H_9643 faction lane (K + cross-faction bridge)
 INT4_SYM_MAX = 7
 
 # readout-type flag (CLMB byte[4]). 0 = additive Conv1d(d->V) (default, NO CLMB
@@ -191,6 +193,32 @@ def _to_np(x) -> "np.ndarray":
     return np.asarray(x, dtype=np.float32)
 
 
+# H_9643: the trunk/embed convs are grouped iff the model was built with --n-factions K.
+# Set by the packer from the state dict's own faction section; read by _conv_w_to_2d. A module
+# global (not a shape guess) because ONLY the model knows which convs it grouped.
+_FACTION_GROUPS = {"n": 0}
+# Which conv slots core/model.py builds with groups=K when the faction lane is ON:
+# the embed conv ("ecW") and every trunk layer ("tc0W", "tc1W", … — see _general_block_order).
+# The expert convs ("e0W"…), router ("rW") and readout ("roW") are NEVER grouped: MoE+readout
+# are the CONSENSUS stage and stay full-mixing on purpose.
+_GROUPED_SLOT_RE = re.compile(r"^(ecW|tc\d+W)$")
+
+
+def _conv_groups_for(name: str) -> int:
+    """groups for a conv slot: K for the faction-grouped slots, 1 for everything else.
+
+    Matched by an EXACT slot pattern, never a prefix. An earlier cut used a startswith("tcW")
+    test against the real slot names tc0W/tc1W and matched NOTHING — the trunk went out grouped
+    (48,64) while the decoder expected dense (192,64) and the matmul blew up. A near-miss on a
+    name is silent; the regex is anchored so a miss is a miss.
+    """
+    n = int(_FACTION_GROUPS.get("n", 0) or 0)
+    if n <= 1:
+        return 1
+    base = name.split(".")[0] if "." in name else name
+    return n if _GROUPED_SLOT_RE.match(base) else 1
+
+
 def _conv_w_to_2d(w: "np.ndarray", name: str) -> "np.ndarray":
     """Map a weight tensor to the (cout, rest=Cin*K) 2-D layout the decoder expects.
 
@@ -203,7 +231,34 @@ def _conv_w_to_2d(w: "np.ndarray", name: str) -> "np.ndarray":
     """
     w = np.asarray(w, dtype=np.float32)
     if w.ndim == 3:
-        cout = w.shape[0]
+        cout, cin_per_g, ks = w.shape
+        # H_9643 grouped (faction) conv: nn.Conv1d(d, d, ks, groups=K) stores weight as
+        # (d, d/K, ks) — only each output channel's OWN faction's inputs. The decoder's byte
+        # grammar is dense: it reads rest = Cin*K with Cin = d and walks j = ci*ks + k over ALL
+        # d input channels. Writing the (d, d/K, ks) reshape would silently mean "rest = d/K*ks"
+        # and the decoder would read the wrong columns. So materialize the block-diagonal into a
+        # dense (d, d, ks) with structural zeros off the faction block — same math, decoder-shaped
+        # bytes (the TLoRA/bind sections set the precedent: the .clm stays one grammar).
+        #
+        # `groups` is passed in by the CALLER, never inferred. An earlier cut guessed "grouped iff
+        # cout % cin_per_g == 0 and cin_per_g != cout" and that guess ate the READOUT: readout is
+        # an honest dense Conv1d(64 -> 256, k=1) whose weight is (256, 64, 1), which satisfies the
+        # guess and got expanded to (256, 256, 1) — the decoder then read a (256,256) roWt and the
+        # matmul blew up. A shape cannot tell you the author's intent; the model must say.
+        groups = int(_conv_groups_for(name) or 1)
+        if groups > 1:
+            if cout % groups or cin_per_g * groups != cout:
+                raise ValueError(
+                    f"{name}: groups={groups} inconsistent with weight {w.shape} "
+                    f"(expected (cout, cout/groups, ks))")
+            dense = np.zeros((cout, cout, ks), dtype=np.float32)
+            per_out = cout // groups
+            for g in range(groups):
+                o0, o1 = g * per_out, (g + 1) * per_out
+                i0, i1 = g * cin_per_g, (g + 1) * cin_per_g
+                dense[o0:o1, i0:i1, :] = w[o0:o1, :, :]
+            w = dense
+            cout = w.shape[0]
         return w.reshape(cout, -1)
     if w.ndim == 2:
         return w
@@ -368,6 +423,25 @@ def _pack_main_blob(sd: Dict[str, Any], L: int, E: int) -> bytearray:
     nblk = len(border)            # = L + E + 3
     n_ext = len(eorder)           # = 2L + E + 6
 
+    # H_9643: tell _conv_w_to_2d which convs are grouped. Derived from the state dict itself
+    # (the bridge exists iff the faction lane is on) — never guessed from a shape.
+    K_fac = 0
+    for k in sd:
+        if k.endswith("faction_bridge.gate"):
+            g = np.asarray(sd[k]).reshape(-1)
+            wb = None
+            for k2 in sd:
+                if k2.endswith("faction_bridge.proj.weight"):
+                    wb = np.asarray(sd[k2])
+            if wb is not None:
+                d_model = int(g.shape[0])
+                for k3 in sd:
+                    if k3.endswith("trunk.0.conv.conv.weight"):
+                        w3 = np.asarray(sd[k3])
+                        K_fac = int(d_model // w3.shape[1]) if w3.ndim == 3 and w3.shape[1] else 0
+            break
+    _FACTION_GROUPS["n"] = K_fac
+
     blob = bytearray()
     blob += MAGIC
     blob += struct.pack("<B", nblk)
@@ -379,6 +453,37 @@ def _pack_main_blob(sd: Dict[str, Any], L: int, E: int) -> bytearray:
     blob += struct.pack("<B", n_ext)
     for slot in eorder:
         blob += _pack_ext(_get(sd, slot, ekm))
+    return blob
+
+
+def pack_faction_section(sd: Dict[str, Any], n_factions: int) -> bytearray:
+    """H_9643 CLMF — the faction lane's trailer. Absent => K=0 (OFF) and the decoder's
+    golden path is untouched, exactly like a .clm with no CLMB.
+
+    LAYOUT (appended AFTER the CLMX ext arrays, same self-describing style):
+      "CLMF"        (67,76,77,70)
+      n_factions    u32 LE
+      lam           float32 LE     — the bridge scale. `evaluate` overrides this to run the
+                                     debate ON/OFF ablation WITHOUT touching a weight.
+      gate          u32 count + count float32 LE   — per-channel pre-sigmoid gate (d)
+      W_b           u32 count + count float32 LE   — 1x1 bridge conv (d*d, row-major cout,cin)
+      b_b           u32 count + count float32 LE   — bridge bias (d)
+
+    W_b is written UNMASKED; the mask is structural (M_cross zeroes the within-faction block)
+    and is re-derived from n_factions at load. Writing the masked matrix would make the zeros
+    indistinguishable from learned zeros — the reader must know WHY they are zero.
+    """
+    blob = bytearray()
+    if not n_factions or n_factions <= 0:
+        return blob
+    blob += CLMF
+    blob += struct.pack("<I", int(n_factions))
+    lam = _bget(sd, ["faction_bridge.lam", "base.faction_bridge.lam"])
+    blob += struct.pack("<f", float(np.asarray(lam).reshape(-1)[0]))
+    for names in (["faction_bridge.gate", "base.faction_bridge.gate"],
+                  ["faction_bridge.proj.weight", "base.faction_bridge.proj.weight"],
+                  ["faction_bridge.proj.bias", "base.faction_bridge.proj.bias"]):
+        blob += _pack_ext(_bget(sd, names))
     return blob
 
 

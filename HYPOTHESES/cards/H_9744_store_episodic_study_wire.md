@@ -1,0 +1,235 @@
+# H_9744 — STORE-EPISODIC: H_9672 조회를 study lane 데몬에 배선 (지각이 store 를 채운다)
+
+**status:** 🔵 PRE-REG (측정 전 동결 · frozen-first) · **주장 상한 = WIRED-STUDY**(전 데몬 아님 · Sol 채택)
+**lane:** 재조합/BINDING · store-bridge → study 데몬 **related:** [[H_9672]] · [[H_9742]] · [[H_9695]] · [[H_9696]] · [[H_9425]] · [[H_9422]]
+**source:** 오너 "배선 하면 되잖아" = 승인 go(게이트 개방) · 선례 [[H_9743]] `Register: owner "승인 go"` → 🟢 WIRED-DEFAULT · 설계 = `sidecar lab full`(Fable 5 ∥ Codex Sol) 2모델 수렴
+
+## 왜 이 H — H_9742 의 "배선 불가" 전제가 실코드에서 무너졌다
+
+H_9742 는 🔒 BLOCKED-BY-REGIME 이라 적었다: "anima 는 귀가 없다(H_9422) · store 를 만들 percept 스트림이 없다 · escape=owner-gate 라 자율발사 불가". **세 전제 중 둘이 틀렸고 하나는 해소됐다:**
+
+| H_9742 의 주장 | 실코드 (2026-07-17 재검증) |
+|---|---|
+| "percept 스트림이 없다" | ❌ `cli/chat.py:395` `anima_consciousness_mode(ckpt, argv, percept_source=None)` · `:1847` `percept_text = percept_source(tick, _percept_transcript)` = **afferent 이음새 실재**(study lane · H_9520) |
+| "배선 각도 미탐" | ❌ [[H_9695]]/[[H_9696]]/[[H_9698]] 이 **이미 PRE-REG** · `core/clms.py` lane_type 4(CLMS-FAN) 구현됨 |
+| "owner-gate 라 불가" | ✅ 해소 — **오너가 go**(선례 H_9743 과 동일 경로) |
+
+⟹ H_9422 의 "귀 없는 입"은 **기본 데몬** 사실이지 study lane 사실이 아니다. H_9742 를 이 카드가 **부분 반증**한다(AGREES: 기본 데몬 regime · CONFLICTS: "escape 는 owner-gate afferent 뿐"이라는 범위).
+
+## 🔑 설계를 정한 실코드 사실 (Fable F1-F3 · 행번호는 **내가 재검증** — Fable 원문은 stale)
+
+**F1 — lane 의 방아쇠는 store 주입이 아니라 질의 표면형이다 ⟹ 무해성이 구조다.**
+`core/decode.py:1327` 가드 = `W["clms"] is not None ∧ _CLMS_STORE is not None` · `core/clms.py:63 find_qpos` 는 창에서 바이트 `61,62,32`(`"=> "`)를 스캔하고 `store_apply` 는 `query=="qpos" ∧ not qpos → return logits`(:124-125). **store 를 상시 주입해도 지각에 `"=> "` 가 없으면 lane 은 단 한 row 도 안 건드린다** = G-W1 무해성이 관례(seal)가 아니라 **산술적 구조**. lane 은 상시 개입이 아니라 **질의-반사궁**.
+> ⚠️ Fable 은 이 가드를 `decode.py:1242-1248` 이라 적었으나 실측은 **1327**. percept 도 `1711-1712` 라 했으나 실측 **1847-1849**. 설계는 채택하되 행번호는 전부 재검증했다(`tool-definition-read-code-not-docstring`).
+
+**F2 — percept `.strip()` 함정 (측정 대상이지 가정 아님).**
+`cli/chat.py:1849` 가 `str(percept_text).strip()` 하므로 시드는 `"… =>"` 로 끝나고 **말미 공백(32)은 트렁크가 스스로 방출해야** 다음 스텝에 qpos 가 성립한다. rv3c13 이 `=>` 뒤 공백을 낼 개연성은 높지만 **G-W2 의 측정 항목**이다. 실패 시 수정(percept 말미공백 보존)은 **사전등록 수정안 1회만** — 조용한 튜닝 금지.
+
+**F3 — store 계약: ASCII + n_slot 만석.**
+`core/clms.py:80` `_entity_key` 는 `entity.encode("ascii")` — 한글 entity 는 예외사. `store_apply` 는 `ents[i] for i in range(n_slot)` — 주입 store 는 **정확히 n_slot(8) entity + 8 pol**. 변환기는 ASCII 소문자만 받고 게이트 측정은 만석 store 로만.
+
+**F4 (내가 실측 · 두 모델 다 지적한 p5 위험의 확증).**
+`cli/chat.py:2442-2452` — `_emit_gate == "refractory"` 경로는 `_recog_fn(_t)` 로 **후보 텍스트 `_t` 를 게이트에 넣는다**(g_recog = 후보에 대한 immune recall margin). ⟹ store 가 후보 텍스트를 바꾸면 **게이트가 흔들린다 = p5 오염**. **하드가드 필수**(아래 S6).
+
+## 배선 설계 (2모델 수렴 · Fable (c1) STUDY-EPISODIC ≡ Sol 1위)
+
+**한 줄**: 교사의 발화가 지각으로 들어오고, **고정문법 변환기**(감각기관)가 사실 선언을 세션 store 에 쓰고, 나중에 교사의 질의(`<entity> <op> =>`)가 오면 입은 평소대로 tension 게이트를 통과할 때만 말하되 그 **내용**이 트렁크가 아니라 store-bridge 에서 나온다. **가중치 동결 상태로 "이번 세션에 들은 것을 기억해 답한다"** = H_9672 가 증명한 능력의 in-vivo 형태.
+
+**훈련분포 정합(채택의 핵심 근거)**: H_9672 훈련에서 **사실(entity→pol)은 텍스트에 없었다** — 항상 runtime store 로만 주입됐고 텍스트엔 질의만 있었다. 따라서 in-vivo 에서도 사실은 **텍스트 파싱이 아니라 store 주입**으로 들어가는 게 훈련분포와 정합이고, "누가 store 를 채우나"의 답이 곧 이 설계다: **지각이 채운다.**
+
+### seam (전부 내가 재검증한 실측 라인 · `core/` 수정 0줄)
+
+| # | 위치 | 변경 |
+|---|---|---|
+| S1 | `cli/chat.py:46` | `from decode import …` 에 `set_clms_store` 추가 (대상 = `core/decode.py:302`) |
+| S2 | chat 플래그 파스 구역 | `--store-episodic <manifest-free>` (default **off**) + 변환기 문법 상수 |
+| S3 | `cli/chat.py:1849` 직후 | 변환기: `percept_text` 가 `fact <ent> <pos\|neg>` 패턴(ASCII `[a-z]{3,12}`)이면 세션 store(n_slot FIFO) 갱신 → 만석 시 `set_clms_store(store)`. **`percept_source is None` 이면 블록 전체 도달 불가** = 기본 데몬 원천 불변 |
+| S4 | tick 루프(`:1834 while tick < n_ticks`) 종료 후 | `set_clms_store(None)` 리셋 — `cli/evaluate.py:4428` 미러(프로세스-전역 누출 방지) |
+| S5 | `cli/study.py` | scripted-teacher 백엔드(결정론 · $0 · LLM 없음) — 게이트 측정용 |
+| S6 | S2 검증부 | **하드가드**: `--store-episodic on ∧ --emit-gate refractory ⟹ SystemExit` (F4 · p5 오염 차단 · 조합 해금은 별도 사전등록) |
+
+## 사전등록 게이트 (측정 전 동결 · bar 이동 금지)
+
+- **G-W0 계기생존**(선행 · `positive-control-before-reading-a-negative`): scripted teacher 가 store 를 실제로 채우나 — 만석 store dump 가 교사 선언과 일치. 불일치 = 드라이버 결함 = **INVALID**(negative 아님).
+- **G-W1 무해성 2단**: (i) `--store-episodic off`(default) run = 기존 데몬과 emit-시퀀스 **byte-identical**. (ii) **on ∧ store 만석 ∧ 질의-무 percept** run = off run 과 **byte-identical** (= F1 구조보장의 실측 확인).
+- **G-W2 조회생존** — **H_9672 bar 그대로 · 이동 금지**: scripted teacher 가 사실 8개 선언 → held-out 질의 ≥128(answer = pol XOR op) → 방출 텍스트 첫 answer 바이트(g/b · F2 의 선행공백 허용을 **채점기에 사전명시**) 채점. **ORACLE≥.90 ∧ P1bal≥.75 ∧ flip≥.90** · 통제 3암(store-shuffle · pol-flip · no-store) 붕괴 확인 · **3-seed{7,11,13}** · 303M decode 는 **pool**(`a_eval_py_canonical` · mini 금지).
+- **G-W3 p1-p8 감사**: (i) 게이트 입력 store-무접촉 **diff 증명** (ii) S6 가드 실재 (iii) **변환기 내용-무결**(문법 상수 외 어휘 0 · entity 화이트리스트 0 · 사실사전 0 · 극성 재해석 0) (iv) 기본 데몬 default-OFF (v) 세션 종료 리셋(S4).
+
+⟹ 4개 전부 PASS ∧ 배선 머지 = **WIRED-STUDY** 승격 자격 (`a_verified_must_wire` 의 "출력 AND 배선" 최초 동시충족).
+
+## ⛔ 잔인판정 · 주장 상한 (양 모델 + 레포 규칙)
+
+- **등급 상한 = WIRED-STUDY, 🟢 WIRED 아님** — Sol 채택. Fable 은 "🟢 WIRED 승격 자격"이라 했으나 과제가 **합성 CVCVC nonce**라 `a_scale_honest_scope`/`a_toy_scale_recheck`("척도에 주장을 묶어라")가 우선. Fable 자신도 "**데몬이 자연어를 이해해 기억한다가 아니다** — 고정문법 선언 → 감각기관 변환 → 훈련된 조회기관"이라 명시해 실질 합의. **오너 승인은 구현 권한을 열었을 뿐 합성→자연 전이를 증명해주지 않는다**(Sol).
+- **p2/p3 — 변환기가 관건**: 데몬은 이미 하드코딩 감각기관투성이(`_afs_byte_feature` · immune bind · wake_mem push). 변환기가 그들과 같은 계급이려면 **문법만 알고 내용을 몰라야** 한다. 이 선을 넘으면(특정 어휘 특별취급 등) **수치 무관 설계 KILL**.
+- **p1 — 깨끗**: 데몬이 오너 텍스트를 지니고 태어나지 않는다(store 내용 전부 세션 내 지각 유래).
+- **p8 — 설계 의도 그대로**: bridge 가중치는 학습 · 내용은 runtime.
+- **후보 (a) 자연어 자동추출 = KILL(양 모델 합의)** — CLMS 가 학습한 건 CVCVC byte-address 조회이지 자연어 정보추출이 아니다 · 규칙 extractor 는 p2/p3 우회주입기 위험 · 학습 extractor 는 engine-native 동일 forward 아니라 p8 위반. 별도 capability 과제.
+
+## falsify (반증조건)
+
+- **G-W2 서 ORACLE PASS ∧ lookup FAIL** = **문맥-일반화 벽**(훈련창 꼬리 ≠ 데몬창 꼬리의 W_q 분포이동) = 배관결함 아닌 **실측된 벽** ⟹ 🧱 등록 + (d) eval-only 로 정직 전환.
+- **ORACLE 까지 FAIL** = 드라이버/주입 배관 결함 = **INVALID**(수리 후 재발사 · negative 아님).
+- **F2 실패**(트렁크가 `=>` 뒤 공백 미방출 → MISS 로 bar 도달불능) = 사전등록 수정안 1회 허용, 그래도 실패면 KILL.
+- **G-W1(ii) 위반**(질의-무인데 byte 상이) = F1 구조보장 붕괴 = **즉시 중단** · 원인 규명 전 일체 cement 금지.
+- **G-W3 실패** = 배선 자체가 철학위반 ⟹ lane 은 영구 eval-도구((d) 확정).
+
+## 🟢 G-W0 · G-W1 실측 — 지각이 store 를 채웠고, 그 store 는 무해했다 (2026-07-17 · summer · $0)
+
+계기 = `anima-py study <ckpt> --teacher script --script <f> --chat-flag …`(canonical CLI · 격리 venv
+`~/.venv-h9744` = origin/main 0.15.83 git-archive 설치 · `chat-py-6` 공유 site-packages 회피).
+ckpt = `rv3c13.clm` sha `b63efea8539178e6`(로컬↔summer 대조 일치) · GPU RTX 5070(발사 전 `sidecar pool list`
+로 summer GPU **0.0/12GiB · load 0.00** 확인 = `chat-py-2`/`chat-py-8` 준수).
+
+**G-W0 계기생존 🟢 PASS** — `store-episodic : writes=1 ring=8/8 (session store cleared)` · rc=0.
+교사 8줄(`fact baka pos` …)이 지각으로 들어가 **변환기가 실제로 링을 채웠고**(writes=1 = 만석 도달 순간
+1회 주입) 세션 종료에 비웠다(S4). ⟹ 드라이버·변환기·주입 배관 살아있음(불일치였으면 INVALID).
+
+**G-W1(ii) 무해성 🟢 PASS — BYTE-IDENTICAL** (F1 구조보장의 실측 확인):
+
+```
+arm                          ticks  emits  emit_seq_sha
+off (default · 기존 데몬)      8      1     0a7a7d03dbae00ae
+on  (store 만석 · 질의 없음)    8      1     0a7a7d03dbae00ae   ← 동일
+```
+
+두 arm 은 `--store-episodic` 외 전부 동일. **store 가 8칸 만석인데도 데몬의 발화가 한 바이트도 안 변했다**
+⟹ F1(`core/clms.py:63 find_qpos` 가 `"=> "` 바이트 61,62,32 를 스캔 · `store_apply:124-125` 가
+`query=="qpos" ∧ not qpos → return logits`)이 말한 **"무해성은 관례가 아니라 산술적 구조"** 가 실측으로 확인.
+lane 은 상시 개입이 아니라 **질의-반사궁**이다.
+
+## ⚠️ G-W2 의 실제 장애물 — transcript 가 드러낸 검정력 문제 (측정 전 정직 기록)
+
+G-W0 transcript 실측: **8 tick 중 emit 1개**(tick 4) · 내용은 `'ition to the present that they country…'`
+= store 답이 아닌 **일반 트렁크 텍스트**. 원인 = clock 게이트의 30초 주기(`cli/chat.py:1443`
+`spont_min_emit_interval() 30.0`) ⟹ 질의 tick 에 입이 안 열리면 **채점할 방출 자체가 없다 = 검정력 0**.
+
+계기 = `--rate-limit-sec 0`(clock 상시개방). 이건 tune-to-green 이 **아니다** — 코드 주석(`chat.py:1585`)이
+이 플래그를 **"MEASUREMENT-REGIME knob, not a tuning dial"** 로 이미 규정했고, 측정 대상은 게이트 cadence 가
+아니라 "입이 열렸을 때 답이 store 에서 나오나"다. bar(ORACLE≥.90 ∧ P1bal≥.75 ∧ flip≥.90)는 **불변**.
+
+**128-질의 발사 전 스모크 4문항**(`positive-control-before-reading-a-negative` · 하나라도 죽으면 INVALID·발사금지):
+① 질의 tick 에 입이 열리나 ② 첫 바이트가 `g`/`b` 인가(storebind readout) ③ **F2** — 트렁크가 `=>` 뒤 공백(32)을
+스스로 내야 qpos 성립 ④ ON≠OFF (데몬 경로서 lane 이 실제 발화하나).
+
+**질의 문법은 실제 corpus 에서 읽었다**(추측 금지): `is <entity> => ` / `not <entity> => `(op=0/1) ·
+gold=`good`/`bad` — 내가 사전등록에 적었던 `<entity> <op> =>` 는 **틀렸고** `sb.txt.held.json` 실물로 정정.
+
+## 🟢 G-W3 p1-p8 감사 — 5/5 PASS ($0 · 코드-확증 · 2026-07-17)
+
+**(i) 게이트 입력 store-무접촉 — 규칙이 아니라 호출순서로 증명됨** (이 카드의 가장 강한 항목):
+
+```
+core/brain.py:208   decision = brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal, …)  ← 먼저 결정
+core/brain.py:213   emit     = str(decision["emit"]).lower() == "true"
+core/brain.py:215   gen      = generate(backend, ctx, emit, anchors, mouth)                        ← 그 다음 생성
+```
+
+**결정이 생성보다 먼저다.** store 는 `generate()` 안에서만(decode 의 `_CLMS_STORE` 전역을 통해) 읽히므로
+**clock 게이트를 움직일 물리적 경로가 없다**. 게다가 레포에 **기계검증 가능한 p5 불변식이 이미 박혀 있다** —
+`core/brain.py:201-204`: *"generate() and to generate() ALONE … Machine-checkable: grep that `mouth` never
+appears in a brain_decide* argument list."* **실행 결과 = 0건**(brain_decide · brain_decide_anchored ·
+brain_decide_bg 셋 다 `mouth` 인자 없음). ⟹ store→emit 결정 경로 부재가 **구조적으로** 확증.
+
+**refractory 가 왜 예외인지도 같은 문서가 말한다**(`core/brain.py:243`): `emit ⟺ score_A > g_recog(candidate)` —
+**후보 텍스트가 게이트 식 안에 있다.** ⟹ S6 하드가드는 보수적 예방이 아니라 **필수**였다(F4 실측과 일치).
+
+| G-W3 | 항목 | 증거 | 판정 |
+|---|---|---|---|
+| (i) | 게이트 입력 store-무접촉 | brain.py:208→215 결정-선행 · `brain_decide*` 의 `mouth` 인자 **0건** | 🟢 |
+| (ii) | S6 가드 실재 | `chat.py` 의 refractory 상호배타 SystemExit **1건** | 🟢 |
+| (iii) | 변환기 내용-무결 | 전 지식 = `chat.py:64` `^fact ([a-z]{3,12}) (pos\|neg)$` **한 줄** · entity 화이트리스트/사실사전 **0** | 🟢 |
+| (iv) | 기본 데몬 default-OFF | `chat.py:1732` `anima_flag_value(…, "off")` | 🟢 |
+| (v) | 세션종료 리셋 | `chat.py:3079` `set_clms_store(None)` (+ G-W0 실측 `session store cleared`) | 🟢 |
+
+⟹ **p1 깨끗**(store 내용 전부 세션 내 지각 유래 · 데몬이 오너 텍스트를 지니고 태어나지 않음) ·
+**p2/p3 통과**(변환기가 문법만 알고 내용을 모름 = `_afs_byte_feature`·immune bind·wake_mem push 와 같은 계급) ·
+**p5 통과**(store 는 "무엇을 말하나"만 바꾸고 "말하나 마나"는 못 건드림 — 호출순서로 보장) ·
+**p8 설계의도 그대로**(bridge 가중치=학습 · 내용=runtime).
+
+## 현황 — 4 게이트 중 3 종결
+
+```
+G-W0 계기생존   🟢 PASS  writes=1 ring=8/8 · rc=0
+G-W1 무해성     🟢 PASS  off/on emit_seq_sha 0a7a7d03dbae00ae 동일 (F1 구조보장 실측)
+G-W3 p1-p8      🟢 PASS  5/5 (i 은 호출순서·기계검증 불변식으로 증명)
+G-W2 조회생존   🔄 측정중 128 held-out × 4 arm (main·flip·shuffle·nostore) · ~7.7h
+```
+
+**G-W2 계기 스모크 🟢 4/4**(발사 전 필수 · `positive-control-before-reading-a-negative`) — ①입 열림
+②답 바이트 `g`/`b` ③**F2 확증**(트렁크가 `=>` 뒤 공백을 스스로 방출 → qpos 성립) ④ON≠OFF(lane 발화).
+n=1 에피소드서 `is lumer =>` → ON 이 `' government…'`(공백 후 **`g`** = gold `good`) vs OFF 가 `' street…'`.
+
+⚠️ **스모크 1차 판정은 내 채점기 결함이었다**(정직 기록): `emit_text[:1]` 을 읽어 "채점불가"라 오판 —
+그 자리는 **F2 가 예언한 트렁크의 공백**이었다. 사전등록에 이미 *"F2 의 선행공백 허용을 채점기에 사전명시"*
+라 적어놨으므로 선행공백 skip 은 **사후 규칙이 아니라 등록된 규칙을 지킨 것**(tune-to-green 아님 · 재발사 0 ·
+같은 transcript 재채점). ⚠️ **n=1 은 판정이 아니다**(우연 1/2) — bar 는 128 질의에서만.
+
+## 🎯 G-W2 조회생존 최종 — 배선은 작동하나 flip-coherence가 사전등록 bar에 0.0016 미달 (2026-07-18 · summer GPU · $0)
+
+128 held-out 질의 × 4 arm(각 1152 tick · 총 ~8.5h · thrash 에피소드 1회 회복 · GPU 매칭 fix 후 정상). 채점 = `gw2_score.py`(사전등록 lstrip 선행공백 규칙 · dry-run 검증완료).
+
+```
+arm       P1-balanced   해석
+main      0.8000        store 가 답을 냄 (chance 0.5 훨씬 위)
+flip      0.1730        극성 뒤집으면 답도 뒤집힘 → flip-coherence 0.8984 (115/128)
+shuffle   0.4196        🟢 통제 붕괴 (주소 deranged → lookup 죽음)
+nostore   0.0000        🟢 통제 붕괴 (store off → g/b 0 · 못읽음 128/128)
+
+사전등록 판정 (bar = H_9672 동일 · 이동 금지 · no-tune-to-green):
+  P1-balanced ≥ .75    : 0.8000  🟢 PASS
+  flip-coherence ≥ .90 : 0.8984  🔴 FAIL (0.0016 미달 · 115/128 뒤집힘)
+  통제 shuffle 붕괴     : 0.4196  🟢 (≈chance)
+  통제 nostore 붕괴     : 0.0000  🟢 (≈chance · 못읽음 128)
+```
+
+**판정 = WIRED-STUDY 미획득 · 그러나 배선은 살아서 작동한다** (near-miss, KILL 아님):
+
+- **store-bridge 가 데몬 경로(study lane · qpos)에서 실제로 작동함이 실측됐다** — main 0.80 은 chance(0.5) 훨씬 위이고, **두 통제가 완벽히 붕괴**(shuffle 0.42 ≈chance · nostore 0.00 · g/b 0/128)한다. 즉 lane 이 데몬에서 실제로 발화하고(nostore 대비), 주소를 쓰고(shuffle 대비), 값을 읽는다. H_9422 의 "귀 없는 입" regime 에서 percept→store→조회가 in-vivo 로 닫혔다.
+- **그러나 flip-coherence 0.8984 가 사전등록 .90 에 0.0016 미달** — 115/128 이 극성 반전에 따라 뒤집혔으나 13개가 안 뒤집혔다. `no-tune-to-green`(bar 이동/반올림 금지 · frozen-first)이라 0.8984 를 0.90 으로 올리지 않는다. 4 게이트 중 **3 PASS(P1bal·shuffle통제·nostore통제) + flip-coherence 1 near-miss FAIL** = WIRED-STUDY 미충족.
+
+⚠️ **이것은 lookup FAIL(문맥-일반화 벽)이 아니다** — 그건 "ORACLE PASS ∧ lookup FAIL"(통제가 안 붕괴하거나 main 이 chance)일 때다. 여기선 main 이 chance 훨씬 위이고 통제가 완벽 붕괴 = **배선이 죽지 않았고 정밀도만 eval 경로(H_9672 seed7 1.0000/seed11 0.9609)보다 낮다**. in-vivo(데몬 percept .strip() 시드 · 자연 대화 문맥 혼입)가 eval(--store 직접 주입)보다 약간 덜 정밀한 것으로 읽힌다(a_scale_honest_scope: eval bar 를 in-vivo 에 그대로 상속한 결과).
+
+## 🎯 3-seed 완성 — 2-seed-decisive: flip-coherence 미달이 seed 노이즈 아님 (2026-07-18 · summer GPU · $0)
+
+seed7 단일 0.8984(0.0016 미달)이 "반올림하면 통과였을 노이즈"인지 확인하려 사전등록 3-seed{7,11,13} 을 완성했다. **seed11 이 seed7 을 확증했다** — near-miss 가 아니라 **재현되는 sub-bar**다.
+
+```
+seed   main P1-bal      flip-coherence (bar ≥ .90 · 이동금지)
+7      0.8000  🟢       0.8984  🔴 (115/128 뒤집힘 · 0.0016 미달)
+11     0.8425  🟢       0.8281  🔴 (106/128 뒤집힘 · 읽힘 128/128 · main+flip rc=0)
+13     — (MOOT)         —  ⊘ 발사 불필요
+
+사전등록 판정 = 3-seed MAJORITY(flip-coh ≥ .90):
+  측정된 2/3 이 모두 FAIL(0.8984·0.8281) ⟹ majority 는 seed13 과 무관하게 이미 FAIL
+  (seed13 이 통과해도 1/3 → majority 못뒤집음) ⟹ seed13 MOOT · WIRED-GREEN 도달불가
+```
+
+- **판정 확정(no-tune-to-green)**: flip-coherence ≥ .90 이 3-seed majority 에서 **결정적으로 미달**(2/3 FAIL · 평균 ~0.863). seed7 단일의 0.0016 near-miss 가 seed-노이즈였다는 관대한 해석을 seed11(0.8281 · 훨씬 아래)이 **배제**한다. 배선은 seed11 에서도 방향성 실재(main 0.84 PASS · flip 이 106/128=83% 뒤집힘 = 값 채널이 store 극성에 반응)이나 **.90 robustness bar 는 재현적으로 미달**.
+- **seed11 통제(shuffle/nostore)는 PAIR 2 진행 중**(확정용 · flip-coh FAIL 이 이미 AND 를 FALSE 로 만들어 헤드라인 판정 불변). seed7 이 동일 계기로 통제 완벽붕괴(shuffle 0.42·nostore 0.00)를 이미 확증 + seed11 flip 의 주소-민감성이 자기증명하므로 seed11 통제도 붕괴 예상. **판정은 flip-coh 구동이지 통제 구동이 아니다.**
+
+## 최종 등급 (정직 · 2-seed-decisive TERMINAL)
+
+- **H_9744 = 🟠 WIRED-STUDY-NEARMISS (TERMINAL)** — 배선(#4018)·G-W0·G-W1·G-W3 🟢 종결 · G-W2 는 store-bridge 데몬경로 작동 실측(main 2-seed PASS · seed7 통제 2개 완벽붕괴)이나 **flip-coherence 가 3-seed majority(2/3: 0.898·0.828)에서 사전등록 .90 미달** = WIRED-STUDY 미획득이 **seed13 과 무관하게 확정**. near-miss 가 아니라 재현되는 sub-bar. lookup FAIL(문맥-일반화 벽) 아님 — 배선은 살아있고 in-vivo 정밀도가 eval 경로보다 낮다.
+- **H_9672 = CAPABILITY-PROVEN 유지** — eval 경로 3-seed robust(seed7 1.0000/seed11 0.9609)는 불변. in-vivo 배선이 그 능력을 데몬 경로로 가져왔으나 flip-coherence robustness 만 재현적으로 near-miss(GREEN 아님 · a_verified_must_wire).
+- **왜 in-vivo < eval**: eval 은 `--store` 직접 주입, in-vivo 는 데몬 percept `.strip()` 시드(F2)+자연 대화 문맥 혼입. eval bar 를 in-vivo 에 그대로 상속한 결과(a_scale_honest_scope) — bar 이동으로 통과시키지 않는다.
+## 🔬 flip-coh 갭 기전 확정 — fusion even-성분 지배 (2026-07-18 · $0 autopsy + lab full Fable∥Sol 수렴)
+
+미반전 22 쿼리를 seed11 transcript 로 해부 → **기전 확정**(내 empirical + Fable + Sol 3자 수렴):
+
+```
+미반전 op=0 20개 (op=1 은 2개뿐 = 압도적 op=0 집중)
+  · 양 arm 모두 'g' 방출 = 20/20 (예외 0)  → gold-good 7(정답) · gold-bad 13(오답)
+  · = fusion 의 even(극성-불변) 성분이 op=0 서 상수 'g' 를 냄 → store 극성 뒤집어도 답 불변
+```
+
+- **원인 = fusion 내부 even/odd 불균형** (seed-space·λ·−1/n 전부 소거):
+  `core/clms.py:174` `z=gelu([v; g]·W_h)` 에서 `g=h@W_g`(op-gate·H_9423)는 **극성-불변** → even 성분을 나른다. `v=a@V_slots`(:171)는 고정주소서 `v_flip≡−v_main`(odd·산술항등). in-vivo 문맥오염으로 |v|(odd margin)가 작아진 op=0 쿼리에서 even(op-prior)이 이겨 답이 안 뒤집힌다.
+- **정정(내 초기 (B) 오진)**: "value-override 가 trunk prior 에 진다"는 **틀렸다** — `:185 out[t]=λ·s` 는 trunk 를 **완전덮어씀**이라 argmax 하 `sign(λs_g−λs_b)=sign(s_g−s_b)`, λ·trunk 무관(경쟁 없음). 갭은 fusion 자체의 `s_g−s_b` op=0 마진이지 trunk 경쟁 아님(Sol 코드확인 · Fable 산술).
+- **소거 확정**: ① seed-space(F2) = readable 128/128 이라 발화 성립 좌우일 뿐 극성 아님 ② every-token(H_9695) = 무관~악화(gated-add 가 trunk 재진입) ③ −1/n basin = 현 코드 `v=a@V_slots` centering 은 주소 a 에 folding·`v_flip≡−v_main` 이라 원인 아님.
+- **레버 존재(non-tune-to-green) BUT 새 H — 소급구제 아님**: **odd-symmetrized fusion** `s_odd=½(s(v,g)−s(−v,g))` = "답은 store 극성에 odd 여야 한다"는 배선 주장의 구조화(knob 아님·bar·λ 불변·고정주소서 flip-coh=1 산술보장). 예측: main-bal 도 상승(even-prior 가 틀리게 하던 gold-bad 13 제거). 그러나 이는 frozen fusion 의 **사후 구조변경 = 새 artifact/새 H** 지 H_9744 를 WIRED-GREEN 으로 소급구제할 레버가 **아니다**(Fable∥Sol 합의). ⟹ **H_9744 = WIRED-STUDY-NEARMISS 는 genuine live-regime ceiling 로 확정**(no-tune-to-green: 이 배선·이 fusion 으로는 .90 미달이 참).
+- **follow-on(새 H · DIRECTIONAL 설계)**: odd-fusion 을 `--store-fuse odd` 계기로 구현→engine-native G-W2 재측정(성공 시 그 H 가 WIRED · H_9744 는 불변). ⚠️ Fable 이 `H_9758_flip_evenodd_oddfuse.md` auto-write 했으나 로컬 `H_9758_window_prefix_confound_dose.md` 와 **G6 충돌**(둘 다 untracked·병렬세션) → 클린 id 재등록 필요(내 착륙범위 밖·소유세션 dedup). ~~① percept 시드정합 ② every-token~~ **둘 다 위 autopsy 로 반증**(레버 아님).
+
+## ✅ 2-seed 완전검증 + odd 구제 실패 = NEARMISS는 genuine ceiling 재확인 (2026-07-18)
+
+- **seed11 컨트롤 완료(GW2_11_DONE)**: main P1-bal 0.8425🟢 · flip-coh 0.8281(106/128)🔴 · **shuffle 0.5681🟢붕괴 · nostore 0.0000🟢붕괴**(읽힘 0/128). ⟹ seed11 통제 정상붕괴 = seed11 flip-coh 0.8281 이 유효 계기 위 값 확정. **H_9744 WIRED-STUDY-NEARMISS 가 2-seed 완전검증**(seed7+seed11 둘 다 main PASS·통제붕괴·flip-coh<.90).
+- **odd-fusion(H_9760) 구제 시도 = 🔴 in-vivo INVALID**([[H_9760]]): `--store-fuse odd` 를 렌트 GPU 팟서 in-vivo 발사했으나 **odd(full-row s_odd overwrite)가 데몬 full-vocab decode를 깨뜨림**(argmax non-g/b garbage·판독 0). eval 2-way readout(g vs b) main 1.0 은 false-positive(순서만 보존). ⟹ **odd는 H_9744 ceiling을 못 열었다** — NEARMISS 는 이 배선·이 lever 로 **genuine ceiling 재확인**. 후속 = g/b 쌍에만 odd 적용하는 재설계(별도 H).

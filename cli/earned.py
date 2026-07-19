@@ -70,17 +70,38 @@ CI_DEFAULT = 95.0
 
 
 def _stems(text, script):
-    """Content-word stems. No lexicon and no polarity list -- alpha_A is FITTED, not looked up."""
+    """Content-word stems. No lexicon and no polarity list -- alpha_A is FITTED, not looked up.
+
+    Adding a script is a REGEX SWAP, and certification is inherited: G-ALIVE/G-PEDESTAL are synthetic
+    arms built from integer symbol ids, so they never touch this function (H_9318 added Arabic this
+    way). What a new script must NOT do is smuggle in a different notion of "stem" -- each branch
+    truncates to a fixed prefix and keeps a mid-length band, so alpha_A stays a fitted coefficient
+    over surface forms rather than a lexicon lookup."""
     if script == "arabic":
         return [w[:5] if len(w) > 5 else w
                 for w in re.findall(r"[؀-ۿ]+", text) if 3 <= len(w) <= 12]
+    if script == "latin":
+        # Prefix-4 over alphabetic runs. The length band drops function words (a/of/is) and the
+        # very long forms, mirroring the hangul branch's 2-6 char content-word window.
+        return [w[:4] if len(w) > 4 else w
+                for w in re.findall(r"[A-Za-z]+", text.lower()) if 3 <= len(w) <= 12]
     return [w[:3] if len(w) > 3 else w
             for w in re.findall(r"[가-힣]+", text) if 2 <= len(w) <= 6]
 
 
 def _detect_script(rows):
-    ar = sum(1 for t, _, _ in rows[:500] if re.search(r"[؀-ۿ]", t))
-    return "arabic" if ar > len(rows[:500]) // 2 else "hangul"
+    """Pick the extractor by majority script. A corpus in a script with NO extractor used to fall
+    through to hangul and silently read 0 stems -- which the G-POWER guard now reports as
+    INVALID (DATA-SPARSE) rather than crashing (H_9677)."""
+    head = rows[:500]
+    ar = sum(1 for t, _, _ in head if re.search(r"[؀-ۿ]", t))
+    if ar > len(head) // 2:
+        return "arabic"
+    ko = sum(1 for t, _, _ in head if re.search(r"[가-힣]", t))
+    if ko > len(head) // 2:
+        return "hangul"
+    la = sum(1 for t, _, _ in head if re.search(r"[A-Za-z]", t))
+    return "latin" if la > len(head) // 2 else "hangul"
 
 
 def load_corpus(path):
@@ -109,6 +130,13 @@ def build_cells(rows, min_occ, script):
         for s in set(_stems(text, script)):
             if s in keep:
                 items.append((sid[s], b, t))
+    # Shape the empty case explicitly. A corpus the stem extractor cannot read at all (wrong script,
+    # or every stem below min_occ) yields NO rows, and `np.asarray([])` is 1-D -- which used to make
+    # the DATA-SPARSE guard below unreachable: make_heldout crashed on items[:, 0] first. A crash is
+    # not a verdict, and "the instrument threw" reads as an infra hiccup rather than what it is --
+    # the corpus cannot pose the question (H_9677).
+    if not items:
+        return np.zeros((0, 3), dtype=np.int64), sid
     return np.asarray(items, dtype=np.int64), sid
 
 
@@ -425,6 +453,16 @@ def earned_run(argv):
     # ---- G-POWER (census + null sd, measured BEFORE the effect is read) -------------------
     items, sid = build_cells(rows, min_occ, script)
     res["stems"] = len(sid)
+    if len(sid) == 0:
+        print("G-POWER     stems = 0  →  INVALID (DATA-SPARSE) — NOT a KILL")
+        print("            The stem extractor read NOTHING from this corpus (script=%s, min-occ=%d)."
+              % (script, min_occ))
+        print("            There is no A axis, so the operator question cannot be POSED here —")
+        print("            this is instrument/corpus misfit, not evidence of an additive corpus.")
+        res["verdict"] = ("INVALID (DATA-SPARSE) — stem extractor read 0 stems (script=%s); "
+                          "the operator question cannot be posed on this corpus" % script)
+        _emit(res, out)
+        return 0
     ho0, _ = make_heldout(items, np.random.default_rng(seeds[0]))
     if int(ho0.sum()) == 0:
         print("G-POWER     held-out cells = 0  →  INVALID (DATA-SPARSE) — NOT a KILL")

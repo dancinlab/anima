@@ -122,6 +122,23 @@ let mut G_RTC_CONTEXT  = ptr_null()
 // Must NOT be garbage-collected while cuModuleLoadData is using it.
 let mut G_RTC_CACHED_PTX = ""
 
+// Defence-in-depth for the ONE build config where a hexa string can be
+// arena-backed: `#ifdef HEXA_ZEROC_RT_CORE_STRBUF` (runtime_core.c:839) makes
+// hexa_strbuf_alloc arena-allocate. That macro is zeroc-experiment only
+// (tool/zeroc_*.sh) and is NOT defined by the mainline build, so by DEFAULT
+// every user-visible hexa string is malloc-owned: rt_read_file
+// (runtime_core.c:8898) returns hexa_str_own(buf) → hexa_strbuf_dup_n →
+// hexa_strbuf_alloc → malloc. Under the default build the global store below
+// is therefore NOT an arena escape and this helper is a no-op (val_heapify's
+// TAG_STR branch only strdups a string the arena actually owns).
+// Under the zeroc config it IS an escape, and routing through a fn-return
+// boundary forces __hexa_fn_arena_return → val_heapify TAG_STR → strdup
+// before scope_pop. A `"" + s` concat cannot substitute — empty-string
+// elision returns the original.
+fn _rtc_heap_keep(s) {
+    return s
+}
+
 // ── Initialization ───────────────────────────────────────────
 
 fn rtc_init() {
@@ -255,7 +272,15 @@ fn rtc_compile_ptx(src, name) {
             println("[cuda_rtc] cache HIT '" + name + "' → " + cache_file + " (" + str(len(cached)) + " bytes)")
             // Keep the string alive in a global so the cstring pointer
             // survives until the caller's rtc_load_module consumes it.
-            G_RTC_CACHED_PTX = cached
+            // NOTE the global store keeps it reachable, not "alive" — arena
+            // reclaim is SCOPE-based, not liveness-based, so a global alias
+            // saves nothing on its own. `cached` is malloc-owned in the default
+            // build (read_file → hexa_str_own → strbuf malloc), so no rewind can
+            // reach it and this store is safe as written. _rtc_heap_keep only
+            // matters under the zeroc strbuf config, where the string WOULD be
+            // arena-backed and a bare `global = local` would leave it
+            // unheapified (lang-model.md §1.4). See the helper's comment.
+            G_RTC_CACHED_PTX = _rtc_heap_keep(cached)
             return cstring(G_RTC_CACHED_PTX)
         }
     }

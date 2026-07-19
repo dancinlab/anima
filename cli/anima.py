@@ -86,6 +86,14 @@ def anima_usage():
     print("  anima-py sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
     print("                                                  ([train] extra) multi-GPU lever-sweep (arms×objectives)")
     print("  anima-py chat <ckpt> [...] [--byte]             consciousness daemon (default) / byte-continuation chat (pure-py A⇄G loop)")
+    print("        default emit-gate = refractory (Ψ≈½ dual-ledger · H_9712) · `--emit-gate clock` = the legacy 30s-clock daemon")
+    print("        [--store-episodic on|off]                 STORE-EPISODIC (H_9744 · default off = byte-identical): perception fills")
+    print("                                                  the co-trained CLMS store — a teacher percept `fact <entity> <pos|neg>` writes")
+    print("                                                  an n_slot FIFO ring, and once full the mouth answers a later `<entity> <op> =>`")
+    print("                                                  query FROM the store instead of the trunk (weights frozen · session-local ·")
+    print("                                                  cleared at exit). Needs an anima-study percept source and a CLMS-trailer ckpt;")
+    print("                                                  MUTUALLY EXCLUSIVE with --emit-gate refractory (that gate reads the candidate")
+    print("                                                  text, so a store shaping the candidate would shape the emit decision · p5).")
     print("        [--emit-temp T] [--emit-topk K] [--sample-seed S]   DO-MOUTH (H_9328 · default OFF = argmax, byte-identical):")
     print("                                                  T>0 draws the emitted bytes from the substrate's OWN posterior instead of")
     print("                                                  rounding it to argmax (T=1.0 IS the posterior — the one non-arbitrary value).")
@@ -96,6 +104,11 @@ def anima_usage():
     print("                                                  does drive the 3 feedback roots (afield · immune · kosmos). THE control that makes")
     print("                                                  a positive falsifiable: EXP lives ∧ SWAP dies ⇒ the substrate's OWN words carry the")
     print("                                                  information; both live ⇒ CARRIER (any text of that shape pushes the roots) ⇒ not a pass.")
+    print("        [--percept-file <table.jsonl>]            STATE-QUOTIENT afferent (H_9767 · default OFF = byte-identical): feed a per-tick")
+    print("                                                  exogenous percept stream (JSONL {\"tick\":int,\"text\":str}) through the PERCEPTION")
+    print("                                                  route (never the emit gate → p5 by structure, same channel as `anima study`). Two")
+    print("                                                  runs with different PREFIX histories + a COMMON suffix future test whether remote-")
+    print("                                                  history divergence WASHES OUT (no interior) or PERSISTS (history-sensitive state).")
     print("")
     print("install: `pip install anima-python` (numpy base: evaluate·corpus·chat) · `pip install \"anima-python[train]\"` (+torch: train·sweep·serialize)")
     print("")
@@ -230,6 +243,29 @@ def anima_serialize_bind_mode(argv):
 # bare `anima-py <ckpt.clm>` (via main's fall-through) both enter here. This is a py-channel
 # MIRROR (a_engine_native_learning) ⇒ behavioral/byte-parity target, DIRECTIONAL — not a
 # consciousness verdict.
+def _build_percept_source_from_file(path):
+    # H_9767 · Design-B afferent for the STATE-QUOTIENT convergence test. Reads a JSONL
+    # percept table {"tick": int, "text": str} and returns a percept_source(tick,
+    # transcript) closure (the chat.py hook contract, cli/chat.py:406). The returned text
+    # enters the daemon through the PERCEPTION route (live_anchors, a grounding fact the
+    # mouth may read), NEVER the emit gate — p5 (no reactive self-seed) holds by STRUCTURE,
+    # identically to `anima study`: it is the OTHER's words fed in, not the daemon's own
+    # output looped back. Keyed by tick exactly like --yoke-mask / --wm-dual-swap. A tick
+    # with no row ⇒ None ⇒ that tick is percept-silent (byte-identical to no afferent).
+    import json as _json
+    table = {}
+    with open(path, "r", encoding="utf-8", errors="surrogateescape") as _fh:
+        for _ln in _fh:
+            _ln = _ln.strip()
+            if not _ln:
+                continue
+            _row = _json.loads(_ln)
+            table[int(_row["tick"])] = str(_row["text"])
+    def _src(tick, _transcript):
+        return table.get(int(tick))
+    return _src
+
+
 def anima_chat_mode(argv):
     # argv = ["chat", <ckpt>, ...] OR ["<ckpt.clm>", ...] (bare path). Resolve the ckpt.
     if argv and argv[0] == "chat":
@@ -245,7 +281,22 @@ def anima_chat_mode(argv):
     if "--byte" in rest:
         _chat.anima_byte_mode(ckpt, rest)
         return 0
-    _chat.anima_consciousness_mode(ckpt, rest)
+    # H_9767 · --percept-file <path> — a per-tick exogenous percept stream for the
+    # STATE-QUOTIENT convergence test (Design B): run two daemons with DIFFERENT prefix
+    # histories H_A / H_B that share a COMMON suffix future, then diff the decision traces
+    # to see if the remote-history divergence WASHES OUT (no interior) or PERSISTS (a
+    # history-sensitive private-state candidate). Injects a percept_source; the flag is
+    # stripped before dispatch so chat.py need not re-parse it. Absent ⇒ None ⇒ the daemon
+    # is byte-identical to production (a_experiment_engine_native: a manipulation is a flag).
+    _psrc = None
+    if "--percept-file" in rest:
+        _i = rest.index("--percept-file")
+        if _i + 1 >= len(rest):
+            print("anima-py chat: --percept-file requires a path argument (JSONL {\"tick\":int,\"text\":str})")
+            return 2
+        _psrc = _build_percept_source_from_file(rest[_i + 1])
+        rest = rest[:_i] + rest[_i + 2:]
+    _chat.anima_consciousness_mode(ckpt, rest, percept_source=_psrc)
     return 0
 
 

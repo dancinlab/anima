@@ -98,6 +98,34 @@ class CLMConfig:
     # (store_only gate → the trunk logit gets no answer-position grad = ② shortcut-cut, structural).
     # The store content is runtime data (block store manifest at train, --store manifest at eval),
     # never in the .clm; only {W_q, val, W_h, W_out, λ} + a frozen key_emb table live in the trailer.
+    # H_9643 faction lane — the lateral split the archived engine claimed but never learned.
+    # n_factions=0 is OFF and byte-identical: every conv keeps groups=1 and every GroupNorm keeps
+    # G=1, so an OFF model builds the exact tensors it builds today. K>0 splits the d axis into K
+    # contiguous blocks that only talk through the bridge (and through MoE+readout, which stay
+    # full-mixing on purpose — that is the CONSENSUS stage: trunk=factions, bridge=debate,
+    # MoE/readout=consensus).
+    # ⚠ The loss NEVER sees a faction statistic (no sync, no correlation, no modularity, no
+    # orthogonality penalty). H_9673 showed the archived engine's Phi was circular precisely
+    # because intra-faction sync wrote the metric's own negative term every step; an aux
+    # decorrelation loss would repeat that failure class against H_9674's modularity DV. So the
+    # only training signal here is CE: specialization either emerges under the structural
+    # constraint or it does not — and THAT is H_9643's question.
+    n_factions: int = 0            # K contiguous faction blocks on the d axis (0 = OFF)
+    faction_bridge_lam0: float = 0.1   # initial cross-faction bridge scale (K>0 only)
+    # H_9643 ORACLE arm — the INSTRUMENT's positive control, not a hypothesis test.
+    # During TRAINING, force faction f to be active only on domain pi(f): the lesion metric must
+    # recover a specialization we KNOWINGLY put there, or it has no standing to report its
+    # absence (positive-control-before-reading-a-negative). Three properties are deliberate:
+    #   · pi is NON-IDENTITY, has ONE domain shared by two factions, and ONE orphan domain —
+    #     the real toy's failure mode (owner=[ccc, aaa, aaa, ddd]); a synthetic that assumes
+    #     f -> domain f hands the metric an alignment training never gives it (that assumption
+    #     is what killed the trace-based S: it read 1 of 4 planted cells).
+    #   · It is a STRUCTURAL gate, not a loss term — H_9673 died because intra-faction sync wrote
+    #     the metric's own negative term every step. Nothing here touches the loss.
+    #   · faction_oracle_lam is a DOSE (0..1 = fraction of steps the routing is enforced), so the
+    #     certification bar can be "S rises monotonically with the dose" — one point proves less.
+    faction_oracle: tuple = ()     # pi: domain index per faction, e.g. (2, 0, 0, 3). () = OFF
+    faction_oracle_lam: float = 0.0    # dose in [0,1]: fraction of steps the routing is forced
     clms: bool = False             # allocate the CLMS store-bridge module (co-train)
     clms_n_slot: int = 8           # store slots (must match the corpus storebind --store-slots)
     clms_d_k: int = 64             # content-address key dim
@@ -105,6 +133,20 @@ class CLMConfig:
     clms_r: int = 128              # GELU-MLP fusion bottleneck (supplies the XOR nonlinearity)
     clms_key_seed: int = 9423      # frozen per-byte key_emb table seed (provenance; table is stored)
     clms_lam0: float = 1.0         # CLMS lam init (store_only overwrite scale)
+    clms_d_g: int = 64             # H_9423 fusion bottleneck: yn_q→d_g gate so store value v not diluted
+    clms_val_center: bool = False  # H_9710 RV-3 majority-null centering (lane_type 3)
+    clms_fangate: bool = False     # H_9696 CLMS-FAN (lane_type 4): value-from-key + learned query gate
+    clms_fresh_k: int = 0          # H_9720-ⓐ EN-disjoint fresh query lane width (0=off, lane_type 5)
+    clms_fresh_L: int = 3          # H_9720-ⓐ trunk-layer tap depth for the fresh address query
+
+    # H_9698 MBND mouth-binder lane (co-trained): a causal bank of past trunk hiddens is addressed by
+    # content+relative-distance, and the attended context multiplies the current hidden (Hadamard) into
+    # an additive logit perturbation. Unlike CLMS there is no runtime store — the bank IS the frame's
+    # own hiddens — so the whole lane lives inside this forward. Everything rides the MBND trailer.
+    mbnd: bool = False             # allocate the MBND mouth-binder module (co-train)
+    mbnd_rank: int = 64            # binder rank (q/k/v/u width; --bind-rank)
+    mbnd_linear: bool = False      # INTERNAL CONTROL: uniform address + additive combine = kill#7 DOA
+    mbnd_lam0: float = 1.0         # MBND lam init (additive perturbation scale)
 
     def router_config(self) -> "RouterConfig":
         v = self.variant.upper()
@@ -141,12 +183,15 @@ class CausalDilatedConv1d(nn.Module):
     overhang.
     """
 
-    def __init__(self, channels: int, kernel_size: int, dilation: int):
+    def __init__(self, channels: int, kernel_size: int, dilation: int, groups: int = 1):
         super().__init__()
         self.kernel_size = kernel_size
         self.dilation = dilation
         self.pad = (kernel_size - 1) * dilation
-        self.conv = nn.Conv1d(channels, channels, kernel_size, dilation=dilation)
+        # groups=1 is the default and the OFF path — byte-identical to the pre-H_9643 model.
+        # groups=K (n_factions) confines each output channel to its own faction's inputs.
+        self.groups = groups
+        self.conv = nn.Conv1d(channels, channels, kernel_size, dilation=dilation, groups=groups)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # x: (B, C, T)
@@ -159,14 +204,19 @@ class TrunkLayer(nn.Module):
 
     def __init__(self, cfg: CLMConfig, dilation: int):
         super().__init__()
-        self.conv = CausalDilatedConv1d(cfg.d_model, cfg.kernel_size, dilation)
+        g = cfg.n_factions if cfg.n_factions > 0 else 1
+        self.conv = CausalDilatedConv1d(cfg.d_model, cfg.kernel_size, dilation, groups=g)
         # GroupNorm(1, C) on a (B, C, T) input reduces over (C, T) — channels AND time,
         # i.e. SEQUENCE-GLOBAL statistics, NOT a per-position layernorm. The old comment
         # here said "layernorm over channels" and was wrong about its own line; it is the
         # likely origin of the per-position `_gen_gnorm*` in generator.hexa (H_9626).
         # The faithful twins are gn_lib.hexa::nn_groupnorm_fwd and decode.py::nn_groupnorm_fwd
         # (both m = cg*T). Do not re-describe this as position-local.
-        self.norm = nn.GroupNorm(1, cfg.d_model)
+        # GN groups follow the faction split. With G=1 the mean/var are pooled over ALL d
+        # channels, which is a HIDDEN cross-faction channel: faction A's activity would move
+        # faction B's normalizer even though the conv is grouped. GN(K, d) closes that leak so
+        # "faction" means what it says. G=1 when OFF ⟹ byte-identical.
+        self.norm = nn.GroupNorm(g, cfg.d_model)
         self.act = nn.GELU()
         self.drop = nn.Dropout(cfg.dropout)
 
@@ -181,6 +231,41 @@ class TrunkLayer(nn.Module):
 # --------------------------------------------------------------------------- #
 # MoE conv layer
 # --------------------------------------------------------------------------- #
+class FactionBridge(nn.Module):
+    """H_9643 cross-faction debate — the ONLY path between factions inside the trunk.
+
+    x <- x + lam * (g * (M_cross . W_b) x), where W_b is a 1x1 conv over d, M_cross zeroes every
+    WITHIN-faction entry (so only faction->faction terms survive), g is a per-channel learned
+    gate, and lam is a scalar carried in the .clm trailer so `evaluate` can override it — that
+    override IS the debate ON/OFF ablation (lam=0 kills the bridge without touching any weight).
+
+    The bridge is trained by CE alone. If cross-faction traffic helps, CE grows g; if it does
+    not, g decays. Earned, not tuned — no auxiliary term rewards the bridge for existing.
+
+    Position: ONE module at the trunk exit, before MoE. Pre-registered and fixed — sweeping the
+    bridge's depth and reporting the best layer would be tune-to-green.
+    """
+
+    def __init__(self, d_model: int, n_factions: int, lam0: float):
+        super().__init__()
+        assert n_factions > 0 and d_model % n_factions == 0, (
+            f"FactionBridge: d_model {d_model} must be divisible by n_factions {n_factions}")
+        self.n_factions = n_factions
+        self.proj = nn.Conv1d(d_model, d_model, kernel_size=1)
+        self.gate = nn.Parameter(torch.zeros(d_model))          # sigmoid(0)=0.5 at init
+        self.lam = nn.Parameter(torch.tensor(float(lam0)))
+        # M_cross: [d_out, d_in] 1 iff the two channels sit in DIFFERENT factions. Registered as a
+        # buffer so it serializes with the module and never receives a gradient.
+        blk = torch.arange(d_model) // (d_model // n_factions)
+        self.register_buffer("m_cross", (blk[:, None] != blk[None, :]).float(), persistent=False)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (B, C, T). Mask the 1x1 kernel so only cross-faction weights act.
+        w = self.proj.weight * self.m_cross[:, :, None]
+        h = F.conv1d(x, w, self.proj.bias)
+        return x + self.lam * torch.sigmoid(self.gate)[None, :, None] * h
+
+
 class ConvExpert(nn.Module):
     """A small causal conv expert = one mitosis cell (P0 Q2)."""
 
@@ -290,7 +375,8 @@ class CLMConvMoE(nn.Module):
         self.cfg = cfg
         self.embed = nn.Embedding(cfg.vocab_size, cfg.d_model)
         # dilated conv embed (P0 §0: "dilated conv embed")
-        self.embed_conv = CausalDilatedConv1d(cfg.d_model, cfg.kernel_size, dilation=1)
+        _g = cfg.n_factions if cfg.n_factions > 0 else 1
+        self.embed_conv = CausalDilatedConv1d(cfg.d_model, cfg.kernel_size, dilation=1, groups=_g)
 
         # CAP dilation at cfg.max_dilation (WaveNet/TCN-style saturation). An
         # uncapped base**i at deep L explodes the causal pad (L=30 -> 2**29 ~5e8
@@ -299,7 +385,11 @@ class CLMConvMoE(nn.Module):
         dils = [min(cfg.dilation_base ** i, cfg.max_dilation) for i in range(cfg.n_trunk_layers)]
         self.trunk = nn.ModuleList(TrunkLayer(cfg, d) for d in dils)
         self.moe = MoEConvLayer(cfg)
-        self.norm_out = nn.GroupNorm(1, cfg.d_model)
+        # H_9643: one bridge at the trunk exit (before MoE) when the faction lane is ON.
+        self.faction_bridge = (
+            FactionBridge(cfg.d_model, cfg.n_factions, cfg.faction_bridge_lam0)
+            if cfg.n_factions > 0 else None)
+        self.norm_out = nn.GroupNorm(_g, cfg.d_model)
         self.readout = nn.Conv1d(cfg.d_model, cfg.vocab_size, kernel_size=1)
         # H_9200 E1 — optional gated-write forward-slot. None => byte-identical
         # additive-readout CLMConvMoE (existing golden path untouched). The SLW
@@ -318,10 +408,42 @@ class CLMConvMoE(nn.Module):
         if getattr(cfg, "clms", False):
             from clms import CLMSModule          # core/clms.py (on sys.path via cli/train.py)
             self.clms = CLMSModule(cfg.d_model, cfg.vocab_size, cfg.clms_n_slot, cfg.clms_d_k,
-                                   cfg.clms_d_s, cfg.clms_r, cfg.clms_key_seed, lam0=cfg.clms_lam0)
+                                   cfg.clms_d_s, cfg.clms_r, cfg.clms_key_seed, lam0=cfg.clms_lam0,
+                                   d_g=cfg.clms_d_g, val_center=cfg.clms_val_center, fangate=cfg.clms_fangate,
+                                   fresh_k=int(getattr(cfg, "clms_fresh_k", 0)),
+                                   fresh_L=int(getattr(cfg, "clms_fresh_L", 3)))
+        # H_9698 MBND mouth-binder lane (co-trained). None => byte-identical (no lane). CORE-owned
+        # (core/mbnd.py); lazily imported. Unlike CLMS this one IS applied in this forward — it needs
+        # no runtime data, only the frame's own causal bank of hiddens.
+        self.mbnd = None
+        if getattr(cfg, "mbnd", False):
+            from mbnd import MouthBinder         # core/mbnd.py (on sys.path via cli/train.py)
+            self.mbnd = MouthBinder(cfg.d_model, cfg.vocab_size, rank=cfg.mbnd_rank,
+                                    linear=cfg.mbnd_linear, lam0=cfg.mbnd_lam0)
+
+    def faction_oracle_mask(self, domain_ids: torch.Tensor) -> Optional[torch.Tensor]:
+        """H_9643 ORACLE routing mask [B, d] — 1 where faction f is allowed for that row's domain.
+
+        Row b belongs to domain domain_ids[b]; faction f owns domain pi[f]. A channel is open iff
+        its faction owns that row's domain. Factions whose domain never appears are simply never
+        opened (that IS the orphan/shared structure we want to certify against).
+
+        Returns None when the oracle is off, so the golden path is untouched.
+        """
+        cfg = self.cfg
+        pi = getattr(cfg, "faction_oracle", ()) or ()
+        K = int(getattr(cfg, "n_factions", 0) or 0)
+        if not pi or K <= 0:
+            return None
+        per = cfg.d_model // K
+        blk = torch.arange(cfg.d_model, device=domain_ids.device) // per      # [d] -> faction id
+        owner = torch.tensor(list(pi), device=domain_ids.device)              # [K] -> domain id
+        chan_dom = owner[blk]                                                 # [d] -> its domain
+        return (chan_dom[None, :] == domain_ids[:, None]).float()             # [B, d]
 
     def forward(
-        self, tokens: torch.Tensor, targets: Optional[torch.Tensor] = None
+        self, tokens: torch.Tensor, targets: Optional[torch.Tensor] = None,
+        domain_ids: Optional[torch.Tensor] = None
     ) -> dict:
         # tokens: (B, T) long
         x = self.embed(tokens)                  # (B, T, C)
@@ -335,23 +457,60 @@ class CLMConvMoE(nn.Module):
         # for ~L-fold less activation memory. use_reentrant=False = the modern
         # non-reentrant autograd path (handles no-input-grad embeds cleanly).
         ckpt = getattr(self.cfg, "grad_checkpoint", False) and self.training and x.requires_grad
-        for layer in self.trunk:
+        # H_9720-ⓐ fresh query lane tap: capture the trunk-layer-fresh_L output (BEFORE bridge/MoE/norm),
+        # aligned with core/decode._fwd_trunk taps[fresh_L] for train↔decode parity. None for every other
+        # lane ⇒ byte-identical golden path. TrainShell detaches this before the store address query.
+        _need_fresh = (self.clms is not None and int(getattr(self.clms, "fresh_k", 0)) > 0)
+        _fresh_L = int(getattr(self.clms, "fresh_L", 3)) if _need_fresh else -1
+        pen_fresh = None
+        for _i, layer in enumerate(self.trunk):
             if ckpt:
                 x = _grad_checkpoint(layer, x, use_reentrant=False)
             else:
                 x = layer(x)
+            if _need_fresh and (_i + 1) == _fresh_L:
+                pen_fresh = x                          # (B, d, T) early-layer tap (matches decode taps[fresh_L])
+        # H_9643 ORACLE routing (instrument certification arm only) — gate each row's channels to
+        # the faction that owns its domain, for a `faction_oracle_lam` fraction of steps. Applied
+        # at the trunk exit, before the bridge, so the bridge still sees a faction-structured x.
+        # Training-time only and OFF by default; a verdict arm never sets it.
+        if (domain_ids is not None and self.training
+                and float(getattr(self.cfg, "faction_oracle_lam", 0.0)) > 0.0):
+            m = self.faction_oracle_mask(domain_ids)
+            if m is not None:
+                lam = float(self.cfg.faction_oracle_lam)
+                if torch.rand(()).item() < lam:          # dose = fraction of steps enforced
+                    x = x * m[:, :, None]
+        # H_9643 cross-faction debate — the ONLY inter-faction path inside the trunk, placed at
+        # the trunk exit before MoE (pre-registered position; sweeping it would be tune-to-green).
+        # None when the faction lane is OFF => byte-identical golden path.
+        if self.faction_bridge is not None:
+            x = self.faction_bridge(x)
         x, stats = self.moe(x)
         x = self.norm_out(x)
         # H_9423 CLMS query tap — the PRE-slot penultimate (before SLW modifies it), the same tap
         # core/decode.py store_apply reads (yn_trunk). Kept as (B, d, T) by reference (no copy) so
         # TrainShell can gather the query-position column and drive the store-bridge co-training.
         # clms off => the dict key is absent => the byte-identical golden path is unchanged.
-        pen_trunk = x if self.clms is not None else None   # (B, d, T) pre-slot tap
+        pen_trunk = x if (self.clms is not None or self.mbnd is not None) else None  # (B, d, T) pre-slot tap
+        # H_9720 C1 param-matched-penult control (fresh:K@penult ⇒ fresh_L==0): the fresh head reads the
+        # SAME penult (pen_trunk) legacy's W_q reads — only the tap LOCATION differs from fresh:K@3. This
+        # isolates added-head CAPACITY from tap-DEPTH (Fable/Sol audit C1). Parity: decode feeds yn_trunk
+        # (≡ pen_trunk) as fresh_yn for fresh_L==0. In-loop tap never fires for fresh_L==0 (i+1 >= 1).
+        if _need_fresh and _fresh_L == 0 and pen_trunk is not None:
+            pen_fresh = pen_trunk
+        mb_tap = x if self.mbnd is not None else None      # H_9698: MBND reads the SAME pre-slot tap
         # H_9200 E1 — gated-write forward-slot on the post-norm penultimate
         # (before readout). None => additive golden path (byte-identical).
         if self.slw is not None:
             x = self.slw(x)
         logits = self.readout(x)                # (B, V, T)
+        # H_9698 MOUTH-BINDER — additive, post-readout, mirroring core/decode.py's order
+        # (SLW → readout → … → MBND). The bank tap is the PRE-slot penultimate (mb_tap), the same
+        # yn_trunk core/decode.py feeds mbnd_apply — reading post-SLW x here would silently break
+        # the train/decode parity that makes the verdict readable at all.
+        if self.mbnd is not None:
+            logits = logits + self.mbnd(mb_tap.transpose(1, 2)).transpose(1, 2)   # (B,T,d)->(B,T,V)
 
         out = {
             "logits": logits,
@@ -361,6 +520,8 @@ class CLMConvMoE(nn.Module):
         }
         if pen_trunk is not None:
             out["pen_trunk"] = pen_trunk
+        if pen_fresh is not None:
+            out["pen_fresh"] = pen_fresh               # H_9720-ⓐ fresh address-query tap (B, d, T)
         if targets is not None:
             ce = F.cross_entropy(
                 logits.transpose(1, 2).reshape(-1, self.cfg.vocab_size),

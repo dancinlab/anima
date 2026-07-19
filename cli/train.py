@@ -110,7 +110,7 @@ USAGE (installed `anima` PATH command after `hx install anima`):
       --gauges-out ckpt/bg_ctrl_cnce.json
 """
 from __future__ import annotations
-import argparse, json, math, os, sys, time
+import argparse, json, math, os, re, sys, time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -1132,7 +1132,7 @@ class TrainShell(nn.Module):
         hm = m.norm_out(hm)
         return hm                                   # (B, d, T) — pre-readout dictionary site
 
-    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0):
+    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0, sb_oracle=False, sb_addr_w=0.0, sb_oracle_aux=0.0, sb_tap_grad="detached"):
         # ── VERBATIM relocation of the per-step loss-composition block (bf16 + fp32). The
         #    autocast context stays wrapping ONLY the forward/compose (backward is at the
         #    callsite, outside autocast — DDP hooks fire there). Returns (loss, detached CE,
@@ -1182,19 +1182,56 @@ class TrainShell(nn.Module):
         # not detach — the trunk logit is never in the answer-CE graph). The non-answer rows keep the
         # ordinary trunk LM CE (the trunk learns the prompt spelling + query formation via yn_q).
         if sb is not None:
-            x_s, y_s, K, pols = sb
+            x_s, y_s, K, pols, tgt = sb
             out_s = model(x_s)                                  # (targets None → CE assembled here, fp32)
             logits_s = out_s["logits"].float()                 # (Bs, V, T)
             pen_s = out_s["pen_trunk"].float()                 # (Bs, d, T) pre-slot trunk penultimate
             Bs, _, Ts = logits_s.shape
             yn_q = pen_s[:, :, Ts - 1]                         # (Bs, d) query row (qpos = T-1, cell-asserted)
-            store_logits = model.clms(yn_q, K, pols)          # (Bs, V) = λ·s (op order == store_apply)
+            # H_9423 Stage1.5 --store-oracle-train: hand the address for free at TRAIN time (oracle_slot=
+            # target_slot) so ∂L/∂v is not gated on the softmax lookup bootstrapping first. Separates the
+            # value-read layer (a) from the address-learning layer (c): if val differentiates under free
+            # address (ORACLE≥.90) the residual 303M wall is pure W_q address-learning; if not, deeper.
+            osl = tgt if sb_oracle else None
+            # H_9720-ⓐ EN-disjoint fresh query: the address reads the DETACHED early-layer tap (store-CE
+            # never pushes the trunk through this path ⇒ no EN-occupancy competition). None ⇒ W_q(yn_q).
+            # H_9720 C2 detach-ablation: 'detached' (default) = store-CE never reaches the trunk through
+            # this tap (disjoint · the CRACK arm) · 'shared' = drop .detach() so store-CE DOES flow into
+            # layers ≤ fresh_L (tests whether gradient-disjointness is load-bearing · Fable/Sol audit C2).
+            _pf = out_s.get("pen_fresh")
+            if _pf is None:
+                yn_fresh = None
+            else:
+                _fy = _pf.float()[:, :, Ts - 1]
+                yn_fresh = _fy.detach() if sb_tap_grad != "shared" else _fy
+            store_logits, att = model.clms(yn_q, K, pols, oracle_slot=osl, need_att=True,
+                                           yn_fresh=yn_fresh)   # (Bs,V),(Bs,n_slot)
             ce_ans = F.cross_entropy(store_logits, y_s[:, Ts - 1])
             # non-answer trunk CE (prompt spelling): every row but qpos, standard next-byte LM.
             ce_tok = F.cross_entropy(logits_s[:, :, :Ts - 1].transpose(1, 2).reshape(-1, V),
                                      y_s[:, :Ts - 1].reshape(-1))
             loss = loss + ce_tok + sb_w * ce_ans + out_s["aux_loss"]
             aux["sb_ans_ce"] = float(ce_ans.detach()); aux["sb_tok_ce"] = float(ce_tok.detach())
+            # H_9672 addr-loss: direct supervision of the softmax address (att) → cut the (2) bootstrap
+            # deadlock W_q could not escape at 303M (Stage1.5 proof). OBJECTIVE (loss term, sb_addr_acc is
+            # the monitor). tgt = the 5-tuple target_slot. sb_addr_w=0 (default) → byte-identical.
+            if sb_addr_w > 0.0:
+                ce_addr = F.cross_entropy(att, tgt)
+                loss = loss + sb_addr_w * ce_addr
+                aux["sb_addr_ce"] = float(ce_addr.detach())
+            # H_9691 RV-1 oracle-aux dual-path: ALSO train the value/MLP path on the ORACLE (correct one-hot)
+            # address every step. The softmax branch (above) trains W_q; this branch replays Stage1.5's proven
+            # signal (correct v → MLP learns the XOR function). Runs simultaneously so the race that left val
+            # seed-fragile under addr-loss alone (seed-7 won, seed-11 lost to the op-only basin — RV-0: val WAS
+            # differentiated, so it is a FUNCTIONAL failure of the fusion) is dissolved. Skipped when already
+            # oracle (osl==tgt → identical). 0 → byte-identical.
+            if sb_oracle_aux > 0.0 and not sb_oracle:
+                store_logits_orc = model.clms(yn_q, K, pols, oracle_slot=tgt)
+                ce_orc = F.cross_entropy(store_logits_orc, y_s[:, Ts - 1])
+                loss = loss + sb_oracle_aux * ce_orc
+                aux["sb_orc_ce"] = float(ce_orc.detach())
+            with torch.no_grad():
+                aux["sb_addr_acc"] = float((att.argmax(-1) == tgt).float().mean())   # monitor-only
             with torch.no_grad():                              # monitor-only (a_train_inline_gauge)
                 g_id, b_id = 103, 98                           # ord('g'), ord('b') — eval store_run binary
                 gold_g = (y_s[:, Ts - 1] == g_id)
@@ -1240,10 +1277,37 @@ class StoreBindCell:
                 sys.exit("[store-bridge] qpos scanner parity broken (window geometry != eval store_run)")
             K = np.stack([key_emb_np[np.frombuffer(e.encode("ascii"), np.uint8)].mean(0)
                           for e in ents]).astype(np.float32)          # (n_slot, d_k) = clms._entity_key
-            self.ex.append((x, y, torch.from_numpy(K), torch.tensor(pols, dtype=torch.long)))
+            tgt = int(r["target_slot"])                              # H_9423 Stage1.5: query-entity slot (oracle-train)
+            self.ex.append((x, y, torch.from_numpy(K), torch.tensor(pols, dtype=torch.long),
+                            torch.tensor(tgt, dtype=torch.long)))
         n_blocks = len(self.ex) // n_slot
         vb = max(1, int(n_blocks * val_frac))
         self.train_n = max(n_slot, (n_blocks - vb) * n_slot)          # [0,train_n) train · rest val
+
+
+def _to_device_or_die(model, device):
+    """model.to(device) but turn a CUDA OOM at model-move into a CLEAR, actionable message
+    instead of a raw torch AcceleratorError traceback (which reads like a code/arch bug — it
+    cost a session's debugging: the crash was another job holding the GPU, NOT the model).
+    We do NOT silently fall back to CPU (train-py-6: a silent device=cpu fallback burned a day
+    training at 0% GPU) — 303M CPU training is impractical, so we tell the operator what to do."""
+    try:
+        return model.to(device)
+    except Exception as e:                                    # re-raised below unless it is a CUDA OOM
+        msg = str(e).lower()
+        if str(device).startswith("cuda") and ("out of memory" in msg or "cuda error" in msg
+                                               or "cudaerrormemoryallocation" in msg):
+            try:
+                import torch as _t
+                free_b, tot_b = _t.cuda.mem_get_info(_t.device(device))
+                meminfo = " (GPU free %.2f/%.2f GiB)" % (free_b / 2**30, tot_b / 2**30)
+            except Exception:
+                meminfo = ""
+            sys.exit("[train] CUDA out-of-memory moving the model to %s%s — the GPU is HELD by "
+                     "another job (this is NOT a torch-build/arch problem; check `nvidia-smi`). "
+                     "Fix: wait for / pick a FREE pool host, or force CPU with "
+                     "CUDA_VISIBLE_DEVICES='' (slow — toy scale only)." % (device, meminfo))
+        raise
 
 
 def main():
@@ -1263,6 +1327,11 @@ def main():
     ap.add_argument("--tlora-no-base", action="store_true", help="drop the dense base")
     ap.add_argument("--dict-lambda", type=float, default=DICT_LAMBDA)
     ap.add_argument("--jamo-lambda", type=float, default=JAMO_LAMBDA)
+    # H_9643: enable the N8 jamo(자모) teach-aux INDEPENDENTLY of --arm, so a faction run
+    # (--arm ctrl --n-factions 8) can borrow the ko-coherence signal without the TLoRA that
+    # tlora_jamo bundles (which would confound the faction measurement). Default off = unchanged.
+    ap.add_argument("--jamo-aux", action="store_true",
+                    help="H_9643: turn on the jamo teach-aux head regardless of --arm (no tlora)")
     # H_9200 E1 — gated-write forward-slot (SLW). --slw engages the CORE-owned
     # (core/slw.py) module on the CLMConvMoE penultimate; weights serialize into the
     # "SLW\x01" .clm trailer. Plain CE alone induces the slots (rung-3 de-risk 0.976
@@ -1287,11 +1356,65 @@ def main():
     ap.add_argument("--clms-n-slot", type=int, default=8, help="CLMS store slots (match corpus)")
     ap.add_argument("--clms-d-k", type=int, default=64, help="CLMS content-address key dim")
     ap.add_argument("--clms-d-s", type=int, default=64, help="CLMS polarity value dim")
+    ap.add_argument("--clms-d-g", type=int, default=64, help="CLMS fusion-bottleneck (yn_q op-gate dim; H_9423 value-read fix)")
+    ap.add_argument("--store-fangate", action="store_true",
+                    help="H_9696 (R4) CLMS-FAN lane (lane_type 4): the value is projected from the slot's "
+                         "OWN key (free ideation has no polarity to index) + a learned query gate replaces "
+                         "the '=> ' literal. Default off = the H_9423 storebind lane, byte-identical.")
+    ap.add_argument("--store-val-center", action="store_true",
+                    help="H_9710 RV-3: majority-null centering v=Σ(aᵢ−1/n)·valᵢ (lane_type 3). At uniform address "
+                         "v≡0 so the op⊕majority shortcut basin cannot exist. train+eval consistent (codec bit).")
+    ap.add_argument("--store-addr-weight", type=float, default=0.0,
+                    help="H_9672: address direct-supervision loss weight L_addr=CE(att,target_slot) (0=off·byte-identical). Cuts the (2) bootstrap deadlock W_q could not escape at 303M.")
+    ap.add_argument("--store-query-src", type=str, default="penult",
+                    help="H_9720-ⓐ EN-disjoint fresh query lane: 'penult' (default·lane_type≤4·byte-identical) OR "
+                         "'fresh:K[@L]' (lane_type 5) — the ADDRESS query reads a detached trunk-layer-L tap "
+                         "through W_fresh→W_q_fresh (store-CE only, EN-CE never touches it), K=lane width, "
+                         "L=tap depth (default 3, RF≥entity-span). '@penult' (fresh_L=0) = H_9720 C1 "
+                         "param-matched-penult control: same head, tap at the penult (capacity vs depth). "
+                         "Emergent-address WITHOUT addr-loss (admissible).")
+    ap.add_argument("--store-query-tap-grad", type=str, default="detached", choices=["detached", "shared"],
+                    help="H_9720 C2 detach-ablation for --store-query-src fresh: 'detached' (default·the CRACK "
+                         "arm·store-CE never reaches the trunk through the tap) OR 'shared' (drop .detach() so "
+                         "store-CE DOES flow into layers ≤ fresh_L) — tests if gradient-disjointness is load-bearing.")
+    ap.add_argument("--store-ans-delay", type=int, default=0,
+                    help="H_9692 RV-2: hold the answer-CE (sb_w=0) for the first N steps so only the address "
+                         "(addr-loss) trains; the blurry-v window can\'t commit the MLP to op-only before the "
+                         "address is sharp. Then ans-CE turns on. 0=off·byte-identical.")
+    ap.add_argument("--store-oracle-aux", type=float, default=0.0,
+                    help="H_9691 RV-1: weight of an extra CE on the ORACLE(correct one-hot) address every step "
+                         "(dual-path with softmax+--store-addr-weight) → trains the value/MLP on correct v so it "
+                         "learns the XOR function robustly (fixes val-read seed-fragility). 0=off·byte-identical.")
+    ap.add_argument("--store-oracle-train", action="store_true",
+                    help="H_9423 Stage1.5: hand the address for free during TRAINING (oracle_slot=target_slot) "
+                         "→ separates value-read (a) from address-learning (c). DIAGNOSTIC, not a production lever.")
+    ap.add_argument("--store-oracle-warmup", type=int, default=0,
+                    help="H_9672: for the first N steps hand the address free (oracle_slot) so val differentiates "
+                         "cleanly, THEN switch to softmax address (+ --store-addr-weight learns W_q on the "
+                         "differentiated val). Fixes the val-read seed-fragility addr-loss alone left. 0=off.")
     ap.add_argument("--clms-r", type=int, default=128, help="CLMS GELU-MLP fusion bottleneck")
     ap.add_argument("--clms-key-seed", type=int, default=9423, help="CLMS frozen key_emb table seed")
     ap.add_argument("--clms-lam0", type=float, default=1.0, help="CLMS lam init (store_only scale)")
+    # H_9698 MBND mouth-binder lane (R6). --mouth-binder engages it; the linear arm is the INTERNAL
+    # NEGATIVE CONTROL that must reproduce kill#7's fixed-role linear collapse (uniform address +
+    # additive combine), so a nonlinear number is only readable next to it.
+    ap.add_argument("--mouth-binder", choices=["bilinear", "linear"], default="",
+                    help="H_9698: co-train the MBND mouth-binder lane. bilinear = Hadamard binder; "
+                         "linear = the kill#7 DOA control (uniform address + additive combine)")
+    ap.add_argument("--mouth-memory", choices=["causal-bank"], default="causal-bank",
+                    help="H_9698: what the binder addresses (causal-bank = the frame's own hiddens)")
+    ap.add_argument("--bind-rank", type=int, default=64, help="H_9698: MBND binder rank (q/k/v/u width)")
+    ap.add_argument("--bind-lam0", type=float, default=1.0, help="H_9698: MBND lam init (additive scale)")
     ap.add_argument("--freeze-trunk", action="store_true",
                     help="BOLT control arm: trunk requires_grad=False, only clms.* trains")
+    # H_9643 faction lane: split the d channels into K contiguous groups (grouped conv + GN(K) +
+    # cross-faction bridge). 0 = OFF, byte-identical to a standard trunk. The real arm trains K=8 vs
+    # K=1 FREELY (no forced routing — the ORACLE dose was only the toy's instrument positive control)
+    # then reads specialization with `anima-py evaluate --faction-lesion`. d % K must be 0.
+    ap.add_argument("--n-factions", type=int, default=0,
+                    help="H_9643: K contiguous faction blocks on the d axis (0 = OFF, byte-identical)")
+    ap.add_argument("--faction-bridge-lam0", type=float, default=0.1,
+                    help="H_9643: initial cross-faction bridge scale (K>0 only)")
     ap.add_argument("--seed", type=int, default=7)
     # a `<corpus>.meta.json` written by `anima-py corpus` carries the budget floor that corpus
     # earned; _budget_preflight refuses to start below it (H_9324) — see cli/corpus.py BUDGET_FLOORS.
@@ -1408,6 +1531,7 @@ def main():
 
     is_bytegpt = (a.arch == "bytegpt")
     tlora_on, dict_on, jamo_on = ARMS[a.arm]
+    jamo_on = jamo_on or bool(getattr(a, "jamo_aux", False))  # H_9643: --jamo-aux forces it on
     savant_on = not a.no_savant
     mitosis_on = not a.no_mitosis
     # ── ByteGPT: the CLM-specific levers (savant/mitosis/tlora/dict/jamo) are gated OFF.
@@ -1473,6 +1597,26 @@ def main():
     if str(device).startswith("cuda"):
         cap = torch.cuda.get_device_capability(local_rank)
         p0(f"  cuda: {torch.cuda.get_device_name(local_rank)} cap={cap[0]}.{cap[1]} torch={torch.__version__}", flush=True)
+        # PREFLIGHT (pod-bootstrap-gpu-2): a torch wheel with no kernels for THIS GPU's SM crashes
+        # LATER, mid-training, with a cryptic async "CUDA error: no kernel image is available for
+        # execution on the device" — the same failure-that-looks-like-success class the pod bootstrap
+        # ledger fights. Fail fast HERE with the actionable fix. Blackwell (sm_120 / RTX 50xx) needs a
+        # cu128 wheel; the default-index torch tops out at sm_90, so it JITs nothing and dies.
+        sm = cap[0] * 10 + cap[1]
+        arch_nums = []
+        for at in torch.cuda.get_arch_list():          # e.g. ['sm_80', 'sm_90', 'sm_90a', 'sm_120']
+            m = re.match(r"sm_(\d+)", at)
+            if m:
+                arch_nums.append(int(m.group(1)))
+        if arch_nums and sm > max(arch_nums):
+            newest = max(arch_nums)
+            raise SystemExit(
+                f"FATAL: installed torch {torch.__version__} has NO compiled kernels for this GPU "
+                f"(sm_{sm}); it was built for up to sm_{newest}. Training would crash later with "
+                f"'CUDA error: no kernel image is available for execution on the device'. "
+                f"Install an sm_{sm}-capable build — for Blackwell (sm_120) use the cu128 index:\n"
+                f"  pip install --upgrade torch --index-url https://download.pytorch.org/whl/cu128"
+            )
 
     torch.manual_seed(a.seed)
 
@@ -1481,19 +1625,34 @@ def main():
         # non-canon toy stays small. n_head must divide d (validated by the config).
         bg_block = seq_len
         bg_cfg = ByteGPTConfig(vocab=V, d=d, n_layer=L, n_head=bg_n_head, block=bg_block)
-        model = ByteGPT(bg_cfg).to(device)
+        model = _to_device_or_die(ByteGPT(bg_cfg), device)
         cfg = None
         jamo_head = None
         mito = None                                 # no MoE experts to grow
     else:
+        # H_9720-ⓐ --store-query-src 'fresh:K[@L]' → fresh_k/fresh_L (default 'penult' ⇒ 0 ⇒ byte-identical)
+        # H_9720 C1: '@penult' ⇒ fresh_L=0 = the fresh head reads the SAME penult (pen_trunk) legacy's W_q
+        # reads (only tap LOCATION differs from @3) — param-matched-penult control (capacity vs depth).
+        _fresh_k, _fresh_L = 0, 3
+        _sqs = str(getattr(a, "store_query_src", "penult") or "penult")
+        if _sqs.startswith("fresh:"):
+            _spec = _sqs[len("fresh:"):]
+            _kpart, _, _lpart = _spec.partition("@")
+            _fresh_k = int(_kpart)
+            if _lpart:
+                _fresh_L = 0 if _lpart.strip().lower() == "penult" else int(_lpart)
         cfg = CLMConfig(n_experts=emax, n_trunk_layers=L, d_model=d, kernel_size=K,
                         variant="AB", dilation_base=2, max_dilation=512,
                         slw=a.slw, slw_n_slot=a.slw_n_slot, slw_k=a.slw_k,
                         clms=bool(a.store_bridge or a.freeze_trunk),
                         clms_n_slot=a.clms_n_slot, clms_d_k=a.clms_d_k,
-                        clms_d_s=a.clms_d_s, clms_r=a.clms_r,
-                        clms_key_seed=a.clms_key_seed, clms_lam0=a.clms_lam0)
-        model = CLMConvMoE(cfg).to(device)          # production additive readout (all arms)
+                        clms_d_s=a.clms_d_s, clms_r=a.clms_r, clms_d_g=a.clms_d_g, clms_val_center=a.store_val_center, clms_fangate=a.store_fangate,
+                        clms_fresh_k=_fresh_k, clms_fresh_L=_fresh_L,
+                        clms_key_seed=a.clms_key_seed, clms_lam0=a.clms_lam0,
+                        mbnd=bool(a.mouth_binder), mbnd_rank=a.bind_rank,
+                        mbnd_linear=(a.mouth_binder == "linear"), mbnd_lam0=a.bind_lam0,
+                        n_factions=a.n_factions, faction_bridge_lam0=a.faction_bridge_lam0)
+        model = _to_device_or_die(CLMConvMoE(cfg), device)   # production additive readout (all arms)
         if tlora_on:
             install_tlora_experts(model, a.tlora_rank, base=not a.tlora_no_base)
             model.to(device)
@@ -1630,9 +1789,10 @@ def main():
     def get_store_batch():
         idx = torch.randint(0, sb_cell.train_n, (Bs_global,), generator=sb_gen)   # all ranks identical
         sl = idx[rank * Bs_local:(rank + 1) * Bs_local].tolist()
-        xs, ys, Ks, Ps = zip(*[sb_cell.ex[i] for i in sl])
+        xs, ys, Ks, Ps, Ts_ = zip(*[sb_cell.ex[i] for i in sl])
         return (torch.stack(xs).to(device), torch.stack(ys).to(device),
-                torch.stack(Ks).to(device), torch.stack(Ps).to(device))
+                torch.stack(Ks).to(device), torch.stack(Ps).to(device),
+                torch.stack(Ts_).to(device))                          # H_9423 Stage1.5 target_slot
 
     def get_batch(step):
         if cells:
@@ -1731,7 +1891,8 @@ def main():
                     sd_active[k] = vv
             else:
                 sd_active[k] = vv
-        S.serialize_v3(sd_active, n_trunk_layers=L, n_experts=e_ser, out_path=out_path)
+        S.serialize_v3(sd_active, n_trunk_layers=L, n_experts=e_ser, out_path=out_path,
+                       n_factions=a.n_factions)
         # H_9200 E1 — append the "SLW\x01" gated-write forward-slot trailer if engaged
         # (core/serialize.append_slw_trailer). Additive models skip it (byte-identical).
         if getattr(model, "slw", None) is not None:
@@ -1744,6 +1905,12 @@ def main():
             nb = S.append_clms_trailer(out_path, model.clms)
             print(f"  CLMS trailer appended {nb} bytes (n_slot={model.clms.n_slot} "
                   f"d_k={model.clms.d_k} d_s={model.clms.d_s} r={model.clms.r})", flush=True)
+        # H_9698 — append the "MBND" mouth-binder trailer if the lane is engaged (AFTER CLMS so the
+        # chain end stays MBND, the order core/decode.py reads).
+        if getattr(model, "mbnd", None) is not None:
+            nb = S.append_mbnd_trailer(out_path, model.mbnd)
+            print(f"  MBND trailer appended {nb} bytes (rank={model.mbnd.rank} "
+                  f"linear={model.mbnd.linear})", flush=True)
         print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
         print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
 
@@ -1827,8 +1994,20 @@ def main():
         # allreduce every param's grad (aux heads included — §10.1). clip_grad_norm_ runs AFTER
         # on the already-averaged grads, so every rank's clip scale = the 1-GPU global-grad norm.
         _sb = get_store_batch() if sb_cell is not None else None
+        # H_9672 oracle-warmup 2-phase (val 분화 seed-robustness): the first --store-oracle-warmup steps
+        # hand the address for free (oracle_slot) so val differentiates cleanly (Stage1.5 proved oracle-train
+        # → ORACLE 1.00), THEN switch to the softmax address (+ --store-addr-weight L_addr learns W_q on the
+        # now-differentiated val). Cuts the ∂L/∂v bootstrap deadlock that left val seed-fragile under addr-loss
+        # alone (seed-7 lucky, seed-11 collapsed to op-only). warmup=0 → byte-identical to the prior behaviour.
+        sb_oracle_now = a.store_oracle_train or (a.store_oracle_warmup > 0 and step <= a.store_oracle_warmup)
+        # H_9692 RV-2 ans-delay: for the first --store-ans-delay steps train ONLY the address (addr-loss,
+        # sb_w=0 → no ans-CE), so the blurry-v window can't corrupt the MLP before the address is sharp;
+        # then add ans-CE (val learns on the now-sharp address). 0 → byte-identical.
+        sb_w_now = 0.0 if (a.store_ans_delay > 0 and step <= a.store_ans_delay) else a.store_ans_weight
         loss, ce_local, aux = train_module(x, y, obj_gen, a.dict_lambda, a.jamo_lambda,
-                                           sb=_sb, sb_w=a.store_ans_weight)
+                                           sb=_sb, sb_w=sb_w_now, sb_oracle=sb_oracle_now,
+                                           sb_addr_w=a.store_addr_weight, sb_oracle_aux=a.store_oracle_aux,
+                                           sb_tap_grad=str(getattr(a, "store_query_tap_grad", "detached")))
         loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0)
         opt.step()

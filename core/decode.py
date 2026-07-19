@@ -98,6 +98,23 @@ def _wload_key(path):
 # raw bytes. numpy-only hosts (no cupy installed, or no CUDA device) get an
 # unconditional, unchanged numpy fallback — this module never hard-imports
 # cupy at the top level failure path.
+# Runtime CUDA-lib self-config BEFORE `import cupy` (H_9767 pod-bootstrap-into-main-code):
+# make libcublas/libnvrtc loadable without a manual LD_LIBRARY_PATH (see core/cuda_paths.py).
+# MUST precede the cupy import (glibc F2: an absolute-path RTLD_GLOBAL preload satisfies
+# cupy's later SONAME load). __file__-relative import so it works however decode.py was
+# loaded (flat sys.path OR importlib.spec_from_file_location, e.g. pod_bootstrap ⑥). No-op
+# on darwin / GPU-less / cupy-less hosts → CPU path byte-identical.
+_CUDA_LIB_CFG = {"configured": False, "loaded": [], "dirs": [], "reason": None}
+try:
+    _here = os.path.dirname(os.path.abspath(__file__))
+    if _here not in sys.path:
+        sys.path.insert(0, _here)
+    from cuda_paths import ensure_cuda_libs as _ensure_cuda_libs
+    _CUDA_LIB_CFG = _ensure_cuda_libs()
+except Exception as _cfg_err:             # self-config must never break the import
+    _CUDA_LIB_CFG = {"configured": False, "loaded": [], "dirs": [],
+                     "reason": "cuda_paths unavailable: %r" % _cfg_err}
+
 try:
     import cupy as _cupy
     _CUPY_IMPORT_ERR = None
@@ -113,6 +130,25 @@ _GPU_LOG_DONE = False        # print the [GPU-FIRED]/[GPU-FALLBACK] QA line once
 _CUPY_OOM = _cupy.cuda.memory.OutOfMemoryError if _cupy is not None else ()
 
 
+def _nvidia_gpu_present():
+    """True iff an NVIDIA GPU + driver is physically present, probed WITHOUT importing
+    cupy or torch (both optional). A CUDA device exposes /dev/nvidia0 once the kernel
+    driver is loaded; nvidia-smi on PATH is the fallback signal. This exists ONLY to tell
+    apart the two device-path=CPU cases that _log_gpu_status_once must NOT conflate: a
+    genuinely GPU-less host (CPU is expected, no warning) vs a GPU host whose cupy path is
+    dead (a paid GPU silently running eval on CPU — the defect this distinguishes)."""
+    try:
+        for i in range(8):
+            if os.path.exists("/dev/nvidia%d" % i):
+                return True
+        if os.path.exists("/proc/driver/nvidia/gpus"):
+            return True
+        from shutil import which
+        return which("nvidia-smi") is not None
+    except Exception:
+        return False
+
+
 def cuda_available():
     """True iff cupy is importable, a CUDA device is present, AND cupy can actually
     COMPILE AND RUN a kernel on it. This is the SOLE gate for the device path anywhere
@@ -125,7 +161,9 @@ def cuda_available():
     item 1 of a 174-item eval. Probing only the device count promotes that host to the
     device path and the whole run dies, instead of taking the numpy fallback this module
     already guarantees for GPU-less hosts. So probe what decode actually uses: an
-    elementwise op AND a CUB reduction, once."""
+    elementwise op, a CUB reduction, AND a cuBLAS matmul (decode's forward is
+    matmul-dominated and cuBLAS is a separate runtime lib — a missing libcublas passes
+    the first two and dies at the first forward otherwise), once."""
     global _CUDA_AVAILABLE, _CUDA_PROBE_ERR
     if _CUDA_AVAILABLE is None:
         ok = False
@@ -136,6 +174,16 @@ def cuda_available():
                 if _cupy.cuda.runtime.getDeviceCount() > 0:
                     probe = _cupy.arange(4, dtype=_cupy.float64)
                     ok = bool((probe * 2.0 > 1.0).any())   # elementwise -> CUB reduce
+                    # matmul -> cuBLAS: decode's forward is DOMINATED by matmuls, and cuBLAS
+                    # (libcublas.so.<major>) is a SEPARATE runtime lib from the JIT/CUB path
+                    # above — a cupy whose cuBLAS is absent/mismatched passes the elementwise
+                    # probe, reports GPU, then dies at the FIRST forward `__matmul__` on
+                    # `libcublas.so.N: cannot open shared object file` (measured 2026-07-18 on a
+                    # rented pod: cupy-cuda13x over a CUDA-12.4 toolkit). Probe the lib class
+                    # decode ACTUALLY uses so a missing cuBLAS takes the numpy fallback this
+                    # module guarantees, instead of crashing mid-decode on a paid GPU.
+                    _mm = _cupy.ones((2, 2), dtype=_cupy.float64) @ _cupy.ones((2, 2), dtype=_cupy.float64)
+                    ok = ok and bool(_mm.sum() == 8.0)
                 else:
                     _CUDA_PROBE_ERR = RuntimeError("no CUDA device")
             except Exception as e:                # broken JIT/toolchain, driver fault …
@@ -151,7 +199,10 @@ def gpu_status():
     core/CLAUDE.md gotcha: 'decode GPU path 확인 먼저')."""
     if not cuda_available():
         reason = str(_CUDA_PROBE_ERR) if _CUDA_PROBE_ERR is not None else "no CUDA device"
-        return {"cuda": False, "device_name": None, "cupy": None, "reason": reason}
+        # gpu_present distinguishes "no GPU at all → CPU is expected" from "GPU present but
+        # the cupy device path is dead → a paid GPU is silently running on CPU" (the defect).
+        return {"cuda": False, "device_name": None, "cupy": None, "reason": reason,
+                "gpu_present": _nvidia_gpu_present(), "lib_config": _CUDA_LIB_CFG}
     try:
         name = _cupy.cuda.runtime.getDeviceProperties(0)["name"]
         if isinstance(name, bytes):
@@ -167,7 +218,8 @@ def gpu_status():
         cupy_ver = _cupy.__version__
     except Exception:
         cupy_ver = "unknown"
-    return {"cuda": True, "device_name": name, "cupy": cupy_ver, "reason": None}
+    return {"cuda": True, "device_name": name, "cupy": cupy_ver, "reason": None,
+            "gpu_present": True, "lib_config": _CUDA_LIB_CFG}
 
 
 def _log_gpu_status_once():
@@ -179,6 +231,15 @@ def _log_gpu_status_once():
     if st["cuda"]:
         print(f"[GPU-FIRED] decode device path=CUDA ({st['device_name']} · cupy "
               f"{st.get('cupy', '?')})", file=sys.stderr)
+    elif st.get("gpu_present"):
+        # A GPU IS present but the cupy device path is dead → eval/decode is silently running
+        # on CPU-numpy, which on a 303M model is ~10-100x slower (a paid GPU pod burns hours).
+        # This is a DEFECT, not the benign GPU-less fallback below — say so loudly with the fix.
+        print("[GPU-WASTED] decode device path=CPU-numpy but an NVIDIA GPU IS PRESENT — the "
+              "cupy path is dead (%s). eval/decode is running on CPU (SLOW). "
+              "Install the GPU extra:  pip install 'anima-python[gpu]'  "
+              "(CUDA 13 host: also  pip install 'cupy-cuda13x>=13.0,<14')." % st["reason"],
+              file=sys.stderr)
     else:
         print(f"[GPU-FALLBACK] decode device path=CPU-numpy ({st['reason']})", file=sys.stderr)
 
@@ -283,15 +344,35 @@ def set_slw_controls(gamma_override=None, shuffle_seed=None):
 _CLMS_STORE = None            # dict {"entities","pols","target_slot"} · None => passthrough
 _CLMS_ORACLE = False          # --store-oracle (bypass the softmax lookup with the true slot)
 _CLMS_LAM_OVERRIDE = None     # --store-lambda (None => file λ)
+_CLMS_AUDIT = None            # H_9672 --store-addr-audit: a list store_apply appends addr diagnostics to (None => off)
+_MBND_ON = False              # H_9698 --mouth-binder: the lane is opt-in even when the trailer exists
+_MBND_ORDER_SCRAMBLE = False  # H_9698 control: derange the causal bank (same multiset, order gone)
+_CLMS_QUERY = "qpos"          # H_9695 --store-query: "qpos" (H_9423 literal) | "every-token" (marker-free)
+_CLMS_FUSE = "overwrite"      # H_9695 --store-fuse: "overwrite" (store_only) | "gated-add" (perturbation)
 
 
-def set_clms_store(store=None, oracle=False, lam_override=None):
+def set_mouth_binder(on=False, order_scramble=False):
+    """H_9698 mouth-binder eval-time switch. Trailer present + on=False ⇒ passthrough (the same
+    'trailer有 lane無 = byte-identical' seal CLMS uses), so a binder-carrying .clm still reproduces
+    its pre-binder numbers exactly."""
+    global _MBND_ON, _MBND_ORDER_SCRAMBLE
+    _MBND_ON = bool(on)
+    _MBND_ORDER_SCRAMBLE = bool(order_scramble)
+
+
+def set_clms_store(store=None, oracle=False, lam_override=None, audit=None,
+                   query="qpos", fuse="overwrite"):
     """Set the CLMS store-bridge eval-time injection (cli/evaluate.py --store). store=None => the lane
-    is passthrough regardless of a present trailer (the trailer有 store無 byte-identical seal)."""
-    global _CLMS_STORE, _CLMS_ORACLE, _CLMS_LAM_OVERRIDE
+    is passthrough regardless of a present trailer (the trailer有 store無 byte-identical seal). audit =
+    a list (H_9672 addr-audit) that store_apply appends {argmax,a_target,target} per qpos to; None => off
+    (byte-identical forward)."""
+    global _CLMS_STORE, _CLMS_ORACLE, _CLMS_LAM_OVERRIDE, _CLMS_AUDIT, _CLMS_QUERY, _CLMS_FUSE
     _CLMS_STORE = store
     _CLMS_ORACLE = oracle
     _CLMS_LAM_OVERRIDE = lam_override
+    _CLMS_AUDIT = audit
+    _CLMS_QUERY = query
+    _CLMS_FUSE = fuse
 
 
 # ── H_9407 consult-decode eval-time window override (process-global; set by cli/evaluate.py
@@ -812,9 +893,22 @@ def clm_load_weights(path):
     noG, off = _load_ext(rb, off)                # [d]
     noB, off = _load_ext(rb, off)                # [d]
 
+    # ── H_9643 CLMF (optional) — the faction lane. Absent on every pre-H_9643 .clm, in which
+    # case n_factions stays 0, GroupNorm keeps G=1 and the bridge is skipped => byte-identical.
+    n_factions, fbLam, fbG, fbW, fbB = 0, 0.0, None, None, None
+    if off + 4 <= len(rb) and bytes(rb[off:off + 4]) == b"CLMF":
+        off = off + 4
+        n_factions = int(struct.unpack_from("<I", rb, off)[0]); off = off + 4
+        fbLam = float(struct.unpack_from("<f", rb, off)[0]); off = off + 4
+        fbG, off = _load_ext(rb, off)            # [d]   pre-sigmoid channel gate
+        fbW, off = _load_ext(rb, off)            # [d*d] 1x1 bridge conv (unmasked — the mask is
+        fbB, off = _load_ext(rb, off)            # [d]   re-derived from n_factions at forward)
+
     # pre-transpose conv weights -> Wt[Kdim, Cout] (= w_2d.T)
     W = {
         "ok": True, "d": d, "E": E, "V": V, "K": K, "L": L,
+        "n_factions": n_factions, "fbLam": fbLam, "faction_lam": None,
+        "fbG": fbG, "fbW": fbW, "fbB": fbB,
         "ecWt": ecW.T.copy(), "ecB": ecB,
         "tcWt": [w.T.copy() for w in tcW], "tcB": tcB,
         "eWt": [w.T.copy() for w in eW], "eB": eB,
@@ -872,6 +966,8 @@ def clm_load_weights(path):
     # RUNTIME data, never in the .clm) => trailer有 store無 = byte-identical. CORE codec core/clms.py.
     from clms import read_clms
     W["clms"], off = read_clms(rb, off, W["d"], W["V"])
+    from mbnd import read_mbnd                                   # H_9698 mouth-binder (absent ⇒ None)
+    W["mbnd"], off = read_mbnd(rb, off, W["d"], W["V"])
 
     # ── GPU device residency (a_gpu_default_no_optin: DEFAULT-ON, no opt-in flag) ──
     # Upload the GEMM/elementwise weight tensors to the device ONCE here (a full
@@ -936,6 +1032,8 @@ def _apply_edits(xt, edits, li, T, d, xp):
     An edit is a dict {layer, t0, t1, mode, ...} over the byte span [t0, t1):
       patch  donor:[t1-t0, d]  — overwrite the span with a donor's hidden (Stage A swap)
       steer  vec:[d], delta    — h += delta * v̂            (fixed-size push)
+      mask   chans:[m]         — zero those channels over the span (H_9643 faction lesion:
+             kill faction f, read the per-domain ΔCE dissociation)
       proj   vec:[d], target   — h += (target - h·v̂) * v̂   (Stage B projection-MATCH: move
              the span's projection ONTO v̂ to an exact value, so arms are matched on the
              MEDIATING covariate rather than on a nominal norm — control-must-match-
@@ -949,6 +1047,14 @@ def _apply_edits(xt, edits, li, T, d, xp):
         if t0 < 0 or t1 > T or t1 <= t0:
             raise ValueError("bind-locus edit span [%d,%d) outside window T=%d" % (t0, t1, T))
         mode = e["mode"]
+        if mode == "mask":
+            # H_9643 faction lesion — zero a channel set for the span, INSIDE the canonical
+            # forward, so the ablated residual flows through the same ops to the readout
+            # (a_experiment_engine_native: the manipulation is the engine's, not a harness's).
+            chans = xp.asarray(e["chans"], dtype=xp.int64)
+            xt = xt.copy()
+            xt[t0:t1, chans] = 0.0
+            continue
         if mode == "patch":
             donor = xp.asarray(e["donor"], dtype=xt.dtype).reshape(t1 - t0, d)
             xt[t0:t1] = donor
@@ -965,7 +1071,7 @@ def _apply_edits(xt, edits, li, T, d, xp):
     return xt
 
 
-def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None):
+def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None, tap_depth=None, tap_out=None):
     """Trunk forward through the FINAL groupnorm — returns yn:[T, d], the pre-readout,
     PRE-E1-slot penultimate hidden (post-MoE, post final-GN). This is the pure-trunk
     concept representation (E1-slot independent, matching the H_1822 β 303M-trunk-penult
@@ -989,6 +1095,8 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None):
     xt = _conv1d(xe, W["ecWt"], W["ecB"], T, d, d, K, 1, xp)
     if taps is not None:
         taps[0] = to_host(xt).copy()
+    if tap_out is not None and tap_depth == 0:                     # H_9720-ⓐ single-activation fresh tap
+        tap_out["x"] = to_host(xt).copy()
     if edits is not None:
         xt = _apply_edits(xt, edits, 0, T, d, xp)
     # L trunk layers: xt = xt + gelu(groupnorm(conv(xt)))
@@ -997,15 +1105,27 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None):
     for li in range(L):
         dil_eff = dil if dil <= DIL_CAP else DIL_CAP
         h = _conv1d(xt, W["tcWt"][li], W["tcB"][li], T, d, d, K, dil_eff, xp)
-        hn = nn_groupnorm_fwd(h, W["tgG"][li], W["tgB"][li], T, d, 1, xp,
+        # H_9643: GroupNorm groups follow the faction split. G=1 pools mean/var over ALL d
+        # channels, which is a cross-faction path even when the conv is grouped — the trained
+        # model used GN(K), so decoding it with G=1 would silently produce different activations.
+        # W["n_factions"] is 0 (absent CLMF) for every pre-H_9643 ckpt => G=1 => byte-identical.
+        _gf = W.get("n_factions", 0) or 1
+        hn = nn_groupnorm_fwd(h, W["tgG"][li], W["tgB"][li], T, d, _gf, xp,
                               gn_key=("trunk", li))
         hg = nn_gelu_fwd(hn, xp)
         xt = xt + hg.reshape(T, d)
         if taps is not None:
             taps[li + 1] = to_host(xt).copy()
+        if tap_out is not None and (li + 1) == tap_depth:         # H_9720-ⓐ single-activation fresh tap
+            tap_out["x"] = to_host(xt).copy()
         if edits is not None:
             xt = _apply_edits(xt, edits, li + 1, T, d, xp)
         dil = dil * 2
+    # H_9643 cross-faction bridge — the trunk-exit debate module, applied BEFORE the MoE
+    # (the same position core/model.py's forward uses). Absent CLMF => faction_lam is None =>
+    # the golden path is untouched. faction_lam is an explicit override slot: evaluate sets it to
+    # 0.0 to run the debate-OFF ablation without editing a single weight.
+    xt = _faction_bridge_apply(W, xt, T, d, xp)
     # router conv (K=1, Cout=E)
     logits_r = _conv1d(xt, W["rWt"], W["rB"], T, d, E, 1, 1, xp)   # [T, E]
     if routes is not None:
@@ -1023,9 +1143,39 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None):
         ex_out[ej] = nn_gelu_fwd(eo, xp).reshape(T, d)
     # MoE router mix
     y = nn_moe_router_fwd(logits_r, ex_out, T, E, d, xp)          # [T, d]
-    # final groupnorm
-    yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, 1, xp, gn_key=("out",))
+    # final groupnorm — H_9643: G follows the faction split (absent CLMF => 0 => G=1 => unchanged)
+    _gf = W.get("n_factions", 0) or 1
+    yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, _gf, xp, gn_key=("out",))
     return yn
+
+
+def _faction_bridge_apply(W, xt, T, d, xp=None):
+    """H_9643 cross-faction bridge (core/model.py FactionBridge twin).
+
+    x <- x + lam * sigmoid(gate) * ((M_cross * W_b) x), M_cross zeroing every WITHIN-faction
+    entry so only faction->faction terms survive. The mask is RE-DERIVED here from n_factions —
+    the serializer deliberately stores W_b unmasked so a reader can tell a structural zero from
+    a learned one.
+
+    Returns xt unchanged when the ckpt carries no CLMF section (n_factions absent/0), so every
+    pre-H_9643 .clm decodes byte-identically. W["faction_lam"] overrides the trailer's lam when
+    present — that is the debate ON/OFF ablation (lam=0.0 is an exact identity).
+    """
+    K = int(W.get("n_factions", 0) or 0)
+    if K <= 0 or "fbW" not in W:
+        return xt
+    xp = xp if xp is not None else np
+    lam = W["faction_lam"] if W.get("faction_lam", None) is not None else W["fbLam"]
+    lam = float(lam)
+    if lam == 0.0:
+        return xt                                  # exact identity — the OFF arm
+    per = d // K
+    idx = xp.arange(d) // per
+    m_cross = (idx[:, None] != idx[None, :]).astype(xt.dtype)     # [d_out, d_in]
+    Wb = xp.asarray(W["fbW"], dtype=xt.dtype).reshape(d, d) * m_cross
+    gate = 1.0 / (1.0 + xp.exp(-xp.asarray(W["fbG"], dtype=xt.dtype)))   # sigmoid, [d]
+    h = xt @ Wb.T + xp.asarray(W["fbB"], dtype=xt.dtype)[None, :]        # [T, d]
+    return xt + lam * gate[None, :] * h
 
 
 def clm_forward_hidden(W, tok, T):
@@ -1183,7 +1333,7 @@ def _seed_to_tok(seed, T):
     return tok
 
 
-def _fwd_logits(W, tok, T, edits=None):
+def _fwd_logits(W, tok, T, edits=None, mbnd_last=False):
     """_clmd_fwd_logits_sc (host path) — full CLMConvMoE forward. tok:[T] ids.
     Returns logits:[T, V] as host numpy (to_host at the exit) — the SOLE
     device->host sync for a full-forward call when GPU-resident (see
@@ -1196,7 +1346,23 @@ def _fwd_logits(W, tok, T, edits=None):
     the SAME MoE / final-GN / slot / readout ops, so what we measure is what production
     would decode (`a_experiment_engine_native`)."""
     d = W["d"]; V = W["V"]
-    yn = _fwd_trunk(W, tok, T, edits=edits)       # [T, d] pre-readout, pre-slot penultimate (device-resident if GPU)
+    # H_9720-ⓐ fresh query lane: when the CLMS trailer is lane_type 5 and a store is live, capture the
+    # early-layer (fresh_L) activation in ONE pass (single host-copy, not all L layers) to feed the
+    # disjoint address query. tap_depth=None for every other lane ⇒ _fwd_trunk byte-identical.
+    _fresh_tap = None
+    _fresh_penult = False       # H_9720 C1: fresh_L==0 ⇒ the fresh head reads the penult (yn_trunk), not an
+                                # early tap — matches model.py (pen_fresh=pen_trunk when fresh_L==0). NB fresh_L==0
+                                # is NOT the embedding tap (_fwd_trunk's tap_depth==0 would capture the embed);
+                                # for penult we skip the tap entirely and hand yn_trunk to store_apply below.
+    _clms_w = W.get("clms")
+    if _clms_w is not None and int(_clms_w.get("lane_type", 0)) == 5 and _CLMS_STORE is not None:
+        if int(_clms_w["fresh_L"]) > 0:
+            _fresh_tap = {}
+        else:
+            _fresh_penult = True
+    yn = _fwd_trunk(W, tok, T, edits=edits,       # [T, d] pre-readout, pre-slot penultimate (device-resident if GPU)
+                    tap_depth=(int(_clms_w["fresh_L"]) if _fresh_tap is not None else None),
+                    tap_out=_fresh_tap)
     yn_trunk = yn                                 # keep pre-slot trunk penultimate for the CLML read-side lane
     xp = get_xp(yn)
     # H_9200 E1 — gated-write forward-slot on the post-norm penultimate (before
@@ -1242,10 +1408,23 @@ def _fwd_logits(W, tok, T, edits=None):
     if W.get("clms") is not None and _CLMS_STORE is not None:
         from clms import store_apply, find_qpos
         qpos = find_qpos(tok)
-        if qpos:
+        # H_9695: the qpos guard is correct for query="qpos" (no marker ⇒ nothing to overwrite),
+        # but it would ALSO silence query="every-token" — free ideation never contains "=> ", so
+        # find_qpos is empty there BY CONSTRUCTION and the marker-free lane would never fire.
+        if qpos or _CLMS_QUERY == "every-token":
             out_logits = store_apply(to_host(out_logits), to_host(yn_trunk), W["clms"],
                                      _CLMS_STORE, qpos, oracle=_CLMS_ORACLE,
-                                     lam_override=_CLMS_LAM_OVERRIDE)
+                                     lam_override=_CLMS_LAM_OVERRIDE, audit=_CLMS_AUDIT,
+                                     query=_CLMS_QUERY, fuse=_CLMS_FUSE,
+                                     fresh_yn=(_fresh_tap["x"] if _fresh_tap is not None
+                                               else (to_host(yn_trunk) if _fresh_penult else None)))
+    # H_9698 MOUTH-BINDER — additive, AFTER CLMS so the documented post-readout order stays
+    # SLW → readout → CLML(additive) → CLMS → MBND(additive). Opt-in: trailer present + switch off
+    # ⇒ byte-identical (a_substrate_disjoint: the two lanes never read each other).
+    if W.get("mbnd") is not None and _MBND_ON:
+        from mbnd import mbnd_apply
+        out_logits = mbnd_apply(to_host(out_logits), to_host(yn_trunk), W["mbnd"],
+                                order_scramble=_MBND_ORDER_SCRAMBLE, last_only=mbnd_last)
     return to_host(out_logits)
 
 
@@ -1303,7 +1482,7 @@ def clm_decode_argmax(path, seed, gen):
         tok[p] = float(seed_b[si]) if si >= 0 else 32.0
     out = bytearray()
     for _ in range(gen):
-        logits = _fwd_logits(W, tok, T)
+        logits = _fwd_logits(W, tok, T, mbnd_last=True)   # H_9698 perf: gen reads only last row
         row = logits[T - 1]
         besti = 0
         bestv = row[0]
@@ -1336,7 +1515,7 @@ def clm_decode_topk_sampled_W(W, seed, gen, top_k, temp, seed_rng):
     out = bytearray()
     rng = _mix32(seed_rng)
     for _ in range(gen):
-        logits = _fwd_logits(W, tok, T)
+        logits = _fwd_logits(W, tok, T, mbnd_last=True)   # H_9698 perf: gen reads only last row
         nb, rng = _topk_sample(logits[T - 1], V, top_k, temp, rng)
         out.append(nb)
         tok[:T - 1] = tok[1:]
@@ -1941,7 +2120,7 @@ def decode_auto_argmax(path, seed, gen):
             tok[p] = float(seed_b[si]) if si >= 0 else 32.0
         out = bytearray()
         for _ in range(gen):
-            logits = _fwd_logits(W, tok, T)
+            logits = _fwd_logits(W, tok, T, mbnd_last=True)   # H_9698 perf: gen reads only last row
             row = logits[T - 1]
             besti = 0; bestv = row[0]
             for k in range(1, V):
@@ -2087,7 +2266,7 @@ def clm_decode_grounded(path, seed, gen, anchor_texts, l_min, mouth=None):
             for p in range(T):
                 si = cl - T + p
                 tok[p] = float(ctx[si]) if si >= 0 else 32.0
-            logits = _fwd_logits(W, tok, T)
+            logits = _fwd_logits(W, tok, T, mbnd_last=True)   # H_9698 perf: gen reads only last row
             row = logits[T - 1]
             # H_9575 · PC2 → mouth (Fable design · owner-approved grounded rewire): the
             # emit-ORTHOGONAL tension axis PC2 as a CONTEXT-PRESENCE logit bias in log-prob

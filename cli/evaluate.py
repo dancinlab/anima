@@ -43,6 +43,7 @@ from rho_fan import (
     _rho_fan_concepts, _rho_fan_words, _rho_fan_dict_load, _rho_fan_known_word_ratio,
     _rho_fan_is_falsifiable, _rho_fan_jaccard, rho_fan_build_frames, rho_fan_frame_guard,
     rho_fan_detector_calibration,
+    _rho_fan_stopwords, _rho_fan_derangement,          # H_9693 --fan-bind (frozen gate reuse)
     # H_9212 ③ per-cell dispatch: 4 register cells + ko codepoint-aware tokenizer + kwr_ko gate
     _rho_fan_cells, _rho_fan_cell_lang, _rho_fan_words_uni, _rho_fan_ko_known_word_ratio,
     KWR_KO_GATE,
@@ -751,10 +752,40 @@ def evaluate_usage():
     print("")
     print("usage:")
     print("  anima evaluate <ckpt> [--corpus <path>...] [--gen N] [--slot-off] [--slot-shuffle N] [--rho-axon]")
+    print("  anima evaluate --pc2-direction <traces_dir> [--perm N] [--seed N]   — H_9576 PC2→mouth 방향 판정(트레이스 판독·디코드 없음)")
+    print("  anima evaluate --pc2-direction <traces_dir> --cascade-null          — H_9629 ΔD 참값-0 대좌·SNR(방향 음성이 읽히는 양인가)")
+    print("  anima evaluate --pc2-direction <traces_dir> --z-census   — H_9712 z 용량/노출 census(트레이스 판독·디코드 없음)")
+    print("  anima evaluate --pc2-direction <traces_dir> --atom-census --pilot   — H_9756 atom-census readout 검정력 사전점검(base-rate·MDE · ζ-fire 트레이스 · 판정 아님)")
+    print("  anima evaluate --pc2-direction <traces_dir> --subspace-stability [--dims 2] [--block 16,32] [--boot 1000]  — H_9752 라이브 평면 안정성(주각·eigengap·rank-swap)")
+    print("  anima evaluate --pc2-direction <traces_dir> --state-census [--kmax K] [--boot N]   — H_9753 이산 상태(k=2~4) 혼합 검정(dip·GMM-BIC·dwell 3중·plant 양성통제)")
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
+    print("  anima evaluate <ckpt> --faction-phi-proxy <prompts.json> [--n-factions-sweep 1,2,4,8,12,16,24,32,64]")
+    print("      [--win 24] [--trials 200] [--seed 12345] [--out faction_phi.json]")
+    print("      (the ARCHIVED faction Phi proxy — (global_var - mean_faction_var)*log2(n_active),")
+    print("      core/phi/quantum_consciousness.hexa:252 — recomputed on live trunk activations")
+    print("      against a zero-truth PEDESTAL. That expression IS the between-group term of")
+    print("      Var = E[Var|g] + Var(E[X|g]), so it rises with K by construction: at K=N the")
+    print("      within term is 0 and it saturates at global_var. Arms: real | pedestal (truth")
+    print("      Phi=0) | scramble. Read the SHAPE + real/pedestal separation, never a raw value")
+    print("      (p7). Indicts the archived Laws 22/43/44 (cards H_9660/H_9654/H_9655); it is NOT")
+    print("      a Phi tool — real Phi is faithful IIT4 only (a_phi_iit4_tool). DIRECTIONAL.)")
+    print("  anima evaluate <ckpt> --faction-lesion <domains.json> [--perm 200] [--win 24] [--seed N]")
+    print("      [--faction-split N] [--faction-lam F] [--faction-oracle-pi \"2,0,0,3\"] [--out lesion.json]")
+    print("      (H_9643 · is the TRAINED faction split FUNCTIONAL or the same as random post-hoc channel")
+    print("       slicing? Zeroes each faction's channels, reads per-domain teacher-forced ΔCE; S=||R||_F^2")
+    print("       over the double-centred log-ratio damage matrix vs a measured --perm reassignment null95.")
+    print("       --faction-split N imposes an N-way split on an n_factions=0 ckpt (fit-matched K=1 negative);")
+    print("       --faction-oracle-pi runs the double-centred cosine π-recovery. perm<200 => PENDING. DIRECTIONAL.)")
     print("  anima evaluate <ckpt> --dump-hidden <prompts.json> --out <file.npz> [--win 24] [--with-logits]")
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
     print("       --with-logits also dumps base last-pos logits per prompt for CLML lane training)")
+    print("  anima evaluate <ckpt> --store-addr-census <dump.npz> [--census-seeds 12]")
+    print("      (H_9719 emergent-address $0 PRE-SCREEN · argmax-collision of random W_q over the")
+    print("       CLMS entity-keys vs a structureless-H pedestal · DIRECTIONAL screener: KILLs")
+    print("       sharp-init before spend when the geometry has no injective code · admissible:")
+    print("       reads NO target_slot · verdict on the GRAND-MEAN-CENTERED excess (removes the shared")
+    print("       prompt-template component that dominates raw penultimate) · raw shown for transparency ·")
+    print("       --store-census-selftest = planted injective/collapsed controls)")
     print("  anima evaluate <ckpt> --route-audit <manifest.json> [--vs <ckpt2>] --out <f.json> [--perm 10000]")
     print("      (H_9355 LOCUS-CAUSAL · ConvMoE router audit — do the declarative lane and the operator")
     print("       lane run on DIFFERENT experts? Read-only; --vs runs a 2nd ckpt in the SAME process on")
@@ -890,6 +921,26 @@ def evaluate_usage():
     print("      THERE, and ask if the answer follows. Separates P-place / P-kind / S; V1/V2/V3 gates")
     print("      make a confound an INVALID, never a false verdict.")
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
+    print("  anima evaluate <ckpt> --fan-bind [--fan-smp 16] [--gen 40]")
+    print("  anima evaluate <ckpt> --fan-bind --mouth-binder [--mouth-binder-order-scramble]   # H_9698 R6")
+    print("  anima evaluate <ckpt> --fan-bind --fan-dump emis.jsonl   # H_9746 emission census (판정 불변)")
+    print("      H_9745: --fan-bind now ALSO reports a PAIRED verdict — exact McNemar + Tango TOST on")
+    print("      bind_delta (composition-isolating), the statistic's OWN pedestal. The legacy line")
+    print("      (composed J > marginal null) tests EMISSION and is kept for byte-compat; read the")
+    print("      ★ PAIRED verdict for a lever's bind claim. m<5 (fan-smp too low) ⇒ ⛔ UNDECIDABLE,")
+    print("      not a kill — δ=0.05 equivalence needs N≥288 (fan-smp≈48).")
+    print("      H_9693 (R1) G6/ρ·fan BIND-Δ INSTRUMENT — the G6 wall's content is not fals=0, it is")
+    print("      that the BIND signal sits OUTSIDE the measurement surface: the frozen detector is")
+    print("      FORM-only, so targeted warm-FT can pass FALS with topic-bind destroyed (convergence")
+    print("      g6-ideation-hexa-1: TARGETED [6,6,6] == SHUF [6,6,6]). Reuses the frozen")
+    print("      composed/shuffled/ablated frames + the detector's OWN content-word gate (zero new")
+    print("      tunables); the one addition is power (n_smp per frame over a seed grid → 96/arm vs")
+    print("      the frozen panel's 6). bind Δ = mean J(composed) − mean J(shuffled) where J = [the")
+    print("      emission carries ≥1 cA content-word AND ≥1 cB-UNIQUE one] — pure echo is symmetric")
+    print("      across the arms and cancels, so Δ>0 = composition sensitivity. The bar is DERIVED,")
+    print("      not fixed: a mismatched-pairing null bootstrapped at the composed arm's n. Scorer")
+    print("      certification runs BEFORE the model is read and hard-fails the run.")
+    print("      INSTRUMENT, not a ρ·fan verdict — a lever's claim is ITS bind Δ vs ITS OWN SHUF arm.")
     print("  anima evaluate <ckpt> --store-mix <store.json> [--store-lambda 0.5] [--manifest <flip.json>] [--out f.json]")
     print("      H_9392 BRIDGE-BOLT — bolt a runtime store-lookup onto the FROZEN trunk: the byte")
     print("      posterior at each measured answer position is mixed p = λ·p_store + (1−λ)·p_trunk.")
@@ -939,6 +990,25 @@ def evaluate_usage():
     print("      reads the hidden at the ANSWER point inside the TAUGHT carrier, certifies on the")
     print("      taught atoms (V-LIVE), recovers each atom's polarity by undoing its form flip,")
     print("      counts power at the ATOM level, and reports a label-permutation null (H_9302/H_9303).")
+    print("  --store <held.json> [--store-oracle] [--store-lambda λ] [--store-addr-audit]")
+    print("      [--store-shuffle | --store-flip | --store-neutral] [--store-ctrl-seed 9423]")
+    print("      [--store-query qpos|every-token] [--store-fuse overwrite|gated-add|odd|pairodd] [--store-readout 2way|vocab]")
+    print("      H_9423 CLMS store-bridge lane eval (the CO-TRAINED bridge, not the H_9392 bolt-on):")
+    print("      each held-out item injects its 8-slot store at the query; the lane forms a")
+    print("      content-addressed lookup and rewrites the answer-position logits with λ·store.")
+    print("      --store-oracle = C0-e positive control (ORACLE<0.90 = plumbing dead, read NO")
+    print("      negative before it passes). --store-query/--store-fuse (H_9695 R3) surface the lane's")
+    print("      read→mouth wiring: qpos fires only on the literal '=> ' trigram (H_9423 default),")
+    print("      every-token fires on every row (free ideation carries no marker) and REQUIRES")
+    print("      --store-fuse gated-add — overwriting every row deletes the trunk (fluency dead).")
+    print("      Defaults (qpos·overwrite) reproduce the H_9423 lane byte-for-byte. cards H_9423/9672/9695")
+    print("  --store-component-swap <groups> --store-swap-from <donor.clm>: EVAL-ONLY causal")
+    print("      surgery (H_9724) — graft CLMS bridge components from a donor ckpt into the host")
+    print("      before scoring, to localize the seed-fragility source (ORACLE 0.99 vs 0.50).")
+    print("      groups (comma-sep): wq · val · readout(W_h,b_h,W_out) · lam · trunk · bridge(all).")
+    print("      Supplies NO training signal and installs NO address (target_slot never consulted).")
+    print("      REFUSES a shape-mismatched / asymmetric / zero-move graft (off-manifold ≠ measure);")
+    print("      donor==host auto-labels ⚠️ SHAM as the positive-validity control.")
     print("  --rho-axon: render the ρ-AXON reach panel (Ψ-SOMA ρ layer · redesign of G0-G6,")
     print("  cli/rho_axon.py) instead of the G-battery — HILLOCK gate + ρ·form/store/weave/leap/")
     print("  fan/tether/self, each Δ-vs-controls (no raw score) + INVALID/PENDING first-class.")
@@ -1383,6 +1453,137 @@ def dump_hidden_run(argv):
     print(json.dumps({"ckpt": ckpt, "d": d, "T": T, "n": len(items),
                       "out": out_path, "poscontrol": pc}, ensure_ascii=False))
     return 0
+
+
+def _addr_census_core(H, K, W_q_seeds, rng):
+    """The admissible geometry census, shared by the real-dump path and the selftest.
+
+    H       : (N, d)   penultimate __last per entity (real dump OR planted).
+    K       : (S, d_k) the entity-keys K[i]=_entity_key(key_emb, e_i).
+    W_q_seeds : int    number of RANDOM W_q(d->d_k) projections to average over.
+    Returns {obs, ped, delta, verdict} where obs/ped are argmax-collision rates.
+
+    For each random W_q: q = H @ W_q -> (N, d_k); slot(e)=argmax_i q_e . K[i]; the
+    COLLISION rate = 1 - (#distinct slots hit)/N. The PEDESTAL is the SAME statistic on
+    RANDOM-gaussian H (zero entity structure, norm-matched) — this is the zero-truth arm
+    (phi-estimator-needs-zero-truth-pedestal) and it absorbs the key-norm argmax bias that
+    makes an ANALYTIC uniform-birthday baseline wrong. Signal = ped - obs (real H collides
+    LESS than structureless H) ⇒ the geometry carries an injective entity code random W_q
+    preserves. NO target_slot / correctness is ever read (Sol admissibility)."""
+    import numpy as np
+    N, d = H.shape
+    S, d_k = K.shape
+
+    def _excess(Hx):
+        hn = float(np.sqrt((Hx * Hx).sum(axis=1).mean()) + 1e-9)   # match pedestal to THIS H's norm
+
+        def _collision(Hy):
+            c = 0.0
+            for s in range(W_q_seeds):
+                Wq = rng.standard_normal((d, d_k)) / np.sqrt(d)
+                slot = np.argmax((Hy @ Wq) @ K.T, axis=1)          # (N,) nearest entity-key
+                c += 1.0 - (len(set(slot.tolist())) / float(N))
+            return c / W_q_seeds
+        o = _collision(Hx)
+        p = _collision(rng.standard_normal((N, d)) / np.sqrt(d) * hn)
+        return o, p
+
+    # RAW h at the query position is DOMINATED by the shared prompt template ("is/not {e} => "),
+    # so distinct entities are positively correlated and collide MORE than orthogonal noise — a raw
+    # KILL mostly reports "template occupies the penultimate", NOT "the entity code is collapsed".
+    # The DECONFOUNDED signal removes the grand mean (the shared template component) and asks whether
+    # the ENTITY-specific residual is collapsed. The verdict reads the CENTERED excess.
+    obs_r, ped_r = _excess(H)
+    Hc = H - H.mean(axis=0, keepdims=True)
+    obs_c, ped_c = _excess(Hc)
+    shared_frac = float(np.linalg.norm(H.mean(axis=0)) / (np.sqrt((H * H).sum(axis=1).mean()) + 1e-9))
+    ex_r, ex_c = obs_r - ped_r, obs_c - ped_c
+    # SCREENER (DIRECTIONAL · NECESSARY-not-sufficient). Birthday-bounded when n_slot=n_entities:
+    # obs << ped is UNREACHABLE, so this can only detect COLLAPSE (obs >> ped), never confirm
+    # emergence. KILL = the CENTERED entity residual is collapsed (sharp-init has a degenerate
+    # substrate); PASS-screen = non-degenerate residual (necessary only — the emergence verdict is
+    # the 303M fire). The raw excess is reported for transparency but does NOT drive the verdict.
+    verdict = "KILL" if ex_c > 0.05 else "PASS-screen"
+    return {"obs": obs_c, "ped": ped_c, "excess": ex_c, "verdict": verdict, "N": N, "S": S,
+            "obs_raw": obs_r, "ped_raw": ped_r, "excess_raw": ex_r, "shared_frac": shared_frac}
+
+
+def store_addr_census_run(argv):
+    """`anima-py evaluate <ckpt> --store-addr-census <dump.npz> [--census-seeds 12]`
+    — the H_9719 EMERGENT-ADDRESS $0 pre-screen, engine-native (a_experiment_engine_native).
+
+    Reads a --dump-hidden .npz (penultimate __last per entity) + the ckpt's frozen CLMS
+    key_emb/W_q dims, applies K RANDOM W_q(d->d_k) projections, and measures the argmax
+    COLLISION of q=h@W_q over the entity-keys K[i]=_entity_key(key_emb, e_i) AGAINST a
+    structureless-H pedestal. ADMISSIBLE: reads NO target_slot / slot-correctness / any
+    statistic derived from them (Sol's rule) — it measures injectivity of the random-projected
+    geometry only. A DIRECTIONAL SCREENER: KILLs sharp-init before any pool spend when the
+    geometry carries no injective entity code; it NEVER cements (only 303M engine-native does).
+
+    --store-census-selftest: no ckpt/dump — plants INJECTIVE vs COLLAPSED synthetic geometry
+    and asserts the verdict flips (positive-control-before-reading-a-negative). $0 on mini."""
+    import numpy as np
+    seeds = evaluate_intval(argv[1:], "--census-seeds", 12)
+    rng = np.random.default_rng(20719)
+
+    if "--store-census-selftest" in argv:
+        print("=== --store-addr-census SELFTEST (planted controls · no ckpt) ===")
+        N, d, d_k, S = 48, 256, 32, 48
+        Kp = rng.standard_normal((S, d_k))
+        tmpl = rng.standard_normal((1, d)) * 3.0            # shared prompt-template component (both arms)
+        # POS (non-degenerate): shared template + ISOTROPIC full-rank entity residual → after the
+        #   grand-mean is removed the residual is distinct in every direction → argmax spreads.
+        Hinj = np.tile(tmpl, (N, 1)) + rng.standard_normal((N, d))
+        # NEG (residual-collapse): SAME shared template, but the entity residual collapses onto ONE
+        #   direction (collinear scalars × v) — realistic collapse that SURVIVES centering (a merely
+        #   all-identical geometry would be nulled by centering and is NOT the failure mode we screen).
+        v = rng.standard_normal((1, d))
+        Hcol = np.tile(tmpl, (N, 1)) + rng.standard_normal((N, 1)) * v + 1e-2 * rng.standard_normal((N, d))
+        rinj = _addr_census_core(Hinj, Kp, seeds, np.random.default_rng(1))
+        rcol = _addr_census_core(Hcol, Kp, seeds, np.random.default_rng(2))
+        print("  NON-DEGEN(distinct h): centered excess=%+.3f (raw %+.3f) → %s" %
+              (rinj["excess"], rinj["excess_raw"], rinj["verdict"]))
+        print("  COLLAPSED (shared  h): centered excess=%+.3f (raw %+.3f) → %s" %
+              (rcol["excess"], rcol["excess_raw"], rcol["verdict"]))
+        ok = rinj["verdict"] == "PASS-screen" and rcol["verdict"] == "KILL"
+        print("  SELFTEST %s — census %s discriminate injective from collapsed" %
+              ("PASS ✓" if ok else "FAIL ✗", "DOES" if ok else "does NOT"))
+        return 0 if ok else 1
+
+    dump_path = evaluate_strval(argv[1:], "--store-addr-census", "")
+    ckpt = argv[0]
+    print("=== anima evaluate --store-addr-census — H_9719 emergent-address $0 pre-screen ===")
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt); return 1
+    cl = W.get("clms")
+    if cl is None:
+        print("ERROR: ckpt has no CLMS trailer — census needs key_emb (use a store-trailer ckpt)")
+        return 2
+    import clms as _clms
+    key_emb = cl["key_emb"]
+    npz = np.load(dump_path, allow_pickle=False)
+    ents = sorted({k[:-6] for k in npz.files if k.endswith("__last")})
+    if len(ents) < 2:
+        print("ERROR: dump has <2 entities (%d) — need a held-out entity pool" % len(ents)); return 2
+    H = np.stack([npz[e + "__last"].astype(np.float64) for e in ents])   # (N, d)
+    K = np.stack([_clms._entity_key(key_emb, e) for e in ents])          # (N, d_k) entity-keys
+    r = _addr_census_core(H, K, seeds, rng)
+    print("  n_entities=%d  n_slot(keys)=%d  seeds=%d" % (r["N"], r["S"], seeds))
+    print("  RAW      collision obs=%.4f ped=%.4f excess=%+.4f  (template-confounded)"
+          % (r["obs_raw"], r["ped_raw"], r["excess_raw"]))
+    print("  shared-template component = %.1f%% of hidden norm  (grand-mean removed for the verdict)"
+          % (100.0 * r["shared_frac"]))
+    print("  CENTERED collision obs=%.4f ped=%.4f excess=%+.4f  → %s   [VERDICT]"
+          % (r["obs"], r["ped"], r["excess"], r["verdict"]))
+    print("  [screener · DIRECTIONAL · NECESSARY-only] verdict reads the CENTERED (deconfounded) "
+          "excess — the entity residual, not the template. KILL ⇒ residual collapsed (sharp-init has a "
+          "degenerate substrate); PASS-screen ⇒ non-degenerate residual (necessary, NOT emergence — "
+          "that is the 303M fire) · admissible(target unread · birthday-bounded when n_slot=N)")
+    print(json.dumps({"ckpt": ckpt, "dump": dump_path, "n": r["N"], "excess_centered": r["excess"],
+                      "excess_raw": r["excess_raw"], "shared_frac": r["shared_frac"],
+                      "verdict": r["verdict"]}, ensure_ascii=False))
+    return 0
 def _selftest_rho_cells():
     """H_9212 ③ wiring self-test (torch-free · NO decode · reached via an internal subprocess,
     never a heavy eval). Asserts: (1) the aggregate `dets` reuse the FROZEN en objects; (2) en
@@ -1779,6 +1980,28 @@ def valence_audit_run(argv):
     arm = np.array([i["arm"] for i in items])
     st = np.array([i["stem"] for i in items])
     y = np.array([int(i["pol"]) for i in items], dtype=np.float64)
+
+    # H_9612 · LENGTH-MATCH AUDIT — this instrument PRINTS "length-matched NEUTRAL atom" as if it
+    # were a fact, but the matching is the manifest builder's job and nothing here ever checked it.
+    # An unmatched swap atom changes the prompt's byte length, and the window is right-aligned, so
+    # the two arms are read with different context in the window — and H_9611 measured a
+    # sequence-global GroupNorm bus that carries exactly that difference to the read point (T-1).
+    # Delta = acc(atom) - acc(swap) would then be part length-shift, not all form-vs-content.
+    # So: verify per stem, and say so out loud. (Same defect class as route-audit's negZ-vs-ped.)
+    _bl = {}
+    for it in items:
+        _bl.setdefault(it["stem"], {})[it["arm"]] = len(it["prompt"].encode())
+    _mis = [(s, d.get("atom"), d.get("swap")) for s, d in _bl.items()
+            if d.get("atom") is not None and d.get("swap") is not None and d["atom"] != d["swap"]]
+    if _mis:
+        _ex = " · ".join("%s(atom %dB vs swap %dB)" % m for m in _mis[:3])
+        print("  ⚠️ LENGTH-MISMATCH (H_9612): %d/%d stems — %s%s\n"
+              "     The swap arm is NOT length-matched, so the right-aligned window shifts and the\n"
+              "     arms carry different context; the GroupNorm bus (H_9611) can move Delta by that\n"
+              "     alone. Read Delta as form+shift, NOT form — or rebuild the manifest matched."
+              % (len(_mis), len(_bl), _ex, " …" if len(_mis) > 3 else ""), flush=True)
+    else:
+        print("  [len-audit] 🟢 atom/swap byte-length matched on all %d stems" % len(_bl), flush=True)
 
     def pooled(a):
         """One vector per atom — the atom's contexts averaged. Its gold polarity is the atom's."""
@@ -2443,6 +2666,32 @@ def twin_necessity_run(argv):
     acc = {a: {l: {"tau": [], "S": []} for l in layers} for a in ("SPAN", "COMP", "BLIND", "IDENTITY")}
     ped = {"tau": [], "S": []}
     v4_sign_ok = 0
+
+    # H_9612 · TWIN BYTE-LENGTH GUARD — REFUSE, do not warn.
+    # The docstring calls the donor a "byte-matched twin", and that claim is LOAD-BEARING here, not
+    # cosmetic: `base` below is computed ONCE from A's seed length, and every donor tap slices
+    # B_taps/Ab_taps with those A-derived indices (stem_t0/car_t0/…). If a twin's seed is a different
+    # byte length its own right-aligned offset differs, so the donor would be lifted from the WRONG
+    # positions in B — a silently misaligned patch, not merely a confound. Nothing checked it, so a
+    # manifest that broke the twin invariant would have produced garbage τ/S that read as a verdict.
+    # (Same defect class as route-audit's negZ-vs-ped and valence-audit's unverified swap atom — but
+    # those degrade the contrast, this one corrupts the measurement. Hence: refuse, like G-SPIKE.)
+    _tw = []
+    for (A, B, Ab) in pairs:
+        la = len(A["seed"].encode())
+        for nm, X in (("B", B), ("Ab", Ab)):
+            if X is not None and len(X["seed"].encode()) != la:
+                _tw.append("%s↔%s(%s) %dB vs %dB"
+                           % (A["stem"], X["stem"], nm, la, len(X["seed"].encode())))
+    if _tw:
+        print("ERROR: twin byte-length invariant BROKEN on %d pair(s) — the donor taps are sliced with\n"
+              "       A's right-aligned indices, so a different-length twin is lifted from the WRONG\n"
+              "       positions (silently misaligned patch, not a confound). Refusing to measure.\n"
+              "       %s%s" % (len(_tw), " · ".join(_tw[:3]), " …" if len(_tw) > 3 else ""),
+              file=sys.stderr)
+        return 2
+    print("  [twin-guard] 🟢 byte-length matched on all %d pair(s)" % len(pairs), flush=True)
+
     for (A, B, Ab) in pairs:
         S_seed = len(A["seed"].encode())
         base = T - (S_seed + 6)                      # margin forward right-aligns seed+cont (cont 6B)
@@ -3140,15 +3389,28 @@ def _ra_read(probs, it, T):
     return {"ans": ans, "stem": stem, "win": win}
 
 
-def _ra_forward(ckpt, items, T, note):
+def _ra_forward(ckpt, items, T, note, gn_ref=""):
     """Run the engine-native route tap over every item of the manifest. Returns
-    (reads, meta) where reads[id][point] = the [E] route distribution."""
+    (reads, meta) where reads[id][point] = the [E] route distribution.
+
+    gn_ref (H_9611/H_9612): if non-empty, pin every GroupNorm's mu/var to the constants this
+    ONE pre-registered reference forward produces, so the normalizer is input-independent and
+    the trunk is strictly RF-local (the sequence-global GN bus is deleted; the affine is
+    untouched). Empty = live GN = byte-identical to the pre-flag behaviour. Wired here because
+    route_audit's W is loaded inside this function — before, `--route-audit --gn-freeze` parsed
+    the flag at the CLI allowlist and then SILENTLY IGNORED it, so the run read a false
+    "no difference" (the footgun H_9612 found)."""
     import numpy as np
     import time
     W = clm.clm_load_weights(ckpt)
     if not W.get("ok"):
         print("ERROR: ckpt not decodable: " + ckpt, file=sys.stderr)
         return None, None
+    if gn_ref:
+        _st = clm.gn_freeze_calibrate(W, clm._seed_to_tok(gn_ref, T), T)
+        clm.gn_freeze_set(_st)
+        print("  [gn-freeze] %s — %d GN sites pinned from ref (%d bytes · pre-registered, not swept)"
+              % (note, len(_st), len(gn_ref)), flush=True)
     E = int(W["E"]); L = int(W["L"]); K = int(W["K"])
     dev = "GPU" if clm.cuda_available() else "CPU"
     print("  [%s] %s · E=%d experts · L=%d · K=%d · device=%s" % (note, ckpt, E, L, K, dev))
@@ -3274,12 +3536,19 @@ def route_audit_run(argv):
     print("  frozen: LOCUS-SHARED iff 90%% CI of dOP inside +-%.2f bits (TOST) · else UNDERPOWERED"
           % G_TOST)
 
-    base, meta = _ra_forward(ckpt, items, T, "base")
+    # H_9612 · --gn-freeze <ref>: pin GN mu/var from ONE pre-registered reference forward so the
+    # trunk is strictly RF-local. Threaded into _ra_forward (where W is loaded) — the flag used to
+    # be accepted by the CLI allowlist and then silently dropped here, which reads as a false
+    # "no difference". Empty = live GN = byte-identical.
+    gn_ref = evaluate_strval(argv[1:], "--gn-freeze", "")
+    if gn_ref and os.path.exists(gn_ref):
+        gn_ref = open(gn_ref, "r").read()
+    base, meta = _ra_forward(ckpt, items, T, "base", gn_ref)
     if base is None:
         return 2
     post, meta2 = (None, None)
     if ckpt2:
-        post, meta2 = _ra_forward(ckpt2, items, T, "vs")
+        post, meta2 = _ra_forward(ckpt2, items, T, "vs", gn_ref)
         if post is None:
             return 2
         if meta2["device"] != meta["device"]:
@@ -3302,7 +3571,48 @@ def route_audit_run(argv):
         print("ERROR: manifest is missing surface(s) " + ",".join(missing), file=sys.stderr)
         return 2
 
+    # H_9612 · PER-SURFACE PEDESTAL + byte-length audit.
+    # The docstring above says ped is "byte-length-matched to negL's '지 않다'" (10 B) — and it is.
+    # But the DV runs X in {negL, negZ} against that SAME ped, and negZ ('지가 않다') is 13 B. Under
+    # the right-aligned window a 3-byte delta SHIFTS the whole seed, so the two arms are read at
+    # different absolute positions with different beyond-RF context behind them — and H_9611 measured
+    # a sequence-global GroupNorm bus that carries exactly such a shift to the readout. So negZ's
+    # excess over ped conflated "operator-specific" with "3 bytes longer".
+    #   `ctrl_of` (manifest, optional) maps each DV surface to ITS length-matched pedestal, e.g.
+    #   {"negL": "ped", "negZ": "ped13"}. Absent => every surface falls back to "ped" == the exact
+    #   pre-flag behaviour (byte-identical), so no cemented number moves by this commit alone.
+    ctrl_of = dict(spec.get("ctrl_of") or {})
+    for s in ("negL", "negZ"):
+        ctrl_of.setdefault(s, "ped")
+    bad = [c for c in set(ctrl_of.values()) if c not in surfs]
+    if bad:
+        print("ERROR: ctrl_of names surface(s) absent from the manifest: " + ",".join(sorted(bad)),
+              file=sys.stderr)
+        return 2
+    # byte-length audit — LOUD, never silent: a DV pair whose seeds differ in length is a
+    # length-shift confound (H_9612), and the reader must see it inline, not discover it later.
+    blen = {}
+    for it in items:
+        blen.setdefault(it["surf"], set()).add(int(it["seed_bytes"]) - len(it["stem"].encode()))
+    mism = []
+    for s in ("negL", "negZ"):
+        c = ctrl_of[s]
+        ls, lc = sorted(blen.get(s, {0}))[0], sorted(blen.get(c, {0}))[0]
+        tag = "🟢 matched" if ls == lc else "⚠️ +%dB SHIFT" % (ls - lc)
+        if ls != lc:
+            mism.append("%s(%dB) vs %s(%dB)" % (s, ls, c, lc))
+        print("  [len-audit] %-5s %2dB  vs ctrl %-5s %2dB   %s" % (s, ls, c, lc, tag))
+    if mism:
+        print("  ⚠️ LENGTH-SHIFT CONFOUND (H_9612): " + " · ".join(mism) + " — the right-aligned "
+              "window shifts, so beyond-RF context differs between the arms and the GroupNorm bus "
+              "(H_9611) can carry that difference into dOP. Supply a length-matched pedestal via "
+              "the manifest's ctrl_of, or read dOP for that arm as operator+shift, not operator.",
+              flush=True)
+
     res = {"ckpt": ckpt, "vs": ckpt2, "meta": meta, "meta_vs": meta2, "n_stems": len(stems),
+           # H_9612: which pedestal each DV surface was scored against, + whether the pair was
+           # byte-length matched. Recorded so a reader can never mistake operator+shift for operator.
+           "ctrl_of": ctrl_of, "gn_freeze": bool(gn_ref), "len_mismatch": mism,
            "bars": {"G_SHAM": G_SHAM, "G_LIVE": G_LIVE, "G_DV": G_DV, "G_TOST": G_TOST,
                     "alpha_perm": A_PERM},
            "points": {}}
@@ -3314,8 +3624,11 @@ def route_audit_run(argv):
           % (meta["route_entropy_mean"], meta["route_entropy_max_possible"], meta["E"]))
 
     verdicts = {}
+    # every surface the scoring below touches: the frozen `need` set + whatever pedestals ctrl_of
+    # names (H_9612). With no ctrl_of this is exactly `need`, so P is byte-identical.
+    allf = tuple(need) + tuple(sorted(c for c in set(ctrl_of.values()) if c not in need))
     for point in ("ans", "stem", "win"):
-        P = {s: {f: by[s][f][point] for f in need} for s in stems}
+        P = {s: {f: by[s][f][point] for f in allf} for s in stems}
 
         # ── G-LIVE: does the route vary with CONTENT at all? (same surface, different stems) ──
         rng = random.Random(seed)
@@ -3338,8 +3651,11 @@ def route_audit_run(argv):
                                               for s in stems])) for f in ("negL", "negZ", "negJ", "ped")}
         row["top_hist"] = {f: [int(sum(1 for s in stems if int(np.argmax(P[s][f])) == e))
                                for e in range(len(P[stems[0]]["flip0"]))] for f in need}
+        # H_9612: each DV surface is scored against ITS OWN pedestal (ctrl_of). Default ctrl_of maps
+        # both to "ped" => jsCtrl is jsP => byte-identical to the pre-flag DV.
+        jsCtrl = {t: [_ra_js(P[s]["flip0"], P[s][ctrl_of[t]]) for s in stems] for t in ("negL", "negZ")}
         for tag, js in (("negL", jsL), ("negZ", jsZ)):
-            d = [a - b for a, b in zip(js, jsP)]                     # DV: operator minus pedestal
+            d = [a - b for a, b in zip(js, jsCtrl[tag])]             # DV: operator minus pedestal
             mu, sd, se, p = _ra_perm(d, n_perm, seed)
             dj = [a - b for a, b in zip(js, jsJ)]                    # OP-SPEC: operator minus twin
             mj, sj, sej, pj = _ra_perm(dj, n_perm, seed)
@@ -3351,7 +3667,8 @@ def route_audit_run(argv):
         for st in ("seen", "heldout"):
             ss = [s for s in stems if split_of[s] == st]
             if len(ss) >= 3:
-                d = [_ra_js(P[s]["flip0"], P[s]["negL"]) - _ra_js(P[s]["flip0"], P[s]["ped"]) for s in ss]
+                d = [_ra_js(P[s]["flip0"], P[s]["negL"])
+                     - _ra_js(P[s]["flip0"], P[s][ctrl_of["negL"]]) for s in ss]
                 mu, sd, se, p = _ra_perm(d, min(n_perm, 2000), seed)
                 row["stratum_" + st] = {"n": len(ss), "dOP_negL": mu, "se": se, "p_perm": p}
         pos = [P[s]["flip0"] for s in stems if pol_of[s] == 1]
@@ -3723,6 +4040,378 @@ def _store_mix_breakdown(rows):
     return out
 
 
+# ════════════════════════════════════════════════════════════════════════
+# H_9693 (R1) `--fan-bind` — the bind-Δ instrument for the G6/ρ·fan wall
+#
+# The G6 wall's content is NOT "fals=0" — it is that the BIND signal lives OUTSIDE the
+# measurement surface. convergence `g6-ideation-hexa-1` proved the frozen detector
+# (_rho_fan_is_falsifiable) is FORM-only: targeted warm-FT passes FALS with topic-bind
+# destroyed (TARGETED [6,6,6] == SHUF [6,6,6]) while the real signal sat in an unrecovered
+# bind Δ (0.444 vs 0.000) measured by a non-frozen hexa-era probe. This instrument recovers
+# that signal onto a legal, frozen, engine-native surface — without it, ANY angle that lifts
+# fals is indistinguishable from forgery (kill #6 / MEASUREMENT_METALAW_FORM_TUNABLE_BIND_EARNED).
+#
+# Frozen materials ONLY (zero new tunables): rho_fan_build_frames(6)'s existing composed/
+# shuffled/ablated 3-arm, the same _Mouth.ideate, gen (canonical 40 · evaluate-hexa-2), the
+# detector's own content-word gate (len>=3 ∧ known ∧ ¬stop). The ONE addition is statistical
+# POWER: the frozen panel emits n=6 per arm (no power); this samples n_smp per frame over a
+# seed grid → 96/arm.
+# ════════════════════════════════════════════════════════════════════════
+
+def _fan_bind_content(s, known):
+    """Content-word set of s under the FROZEN detector's own gate (_rho_fan_is_falsifiable's
+    (c) clause: len>=3 ∧ in known ∧ not stopword). No new vocabulary, no new threshold."""
+    stop = _rho_fan_stopwords()
+    return set(w for w in _rho_fan_words(s) if len(w) >= 3 and w in known and w not in stop)
+
+
+def _fan_bind_J(o, cA, cB, known):
+    """J(o) = 1 iff the emission carries >=1 cA content-word AND >=1 cB-UNIQUE content-word.
+
+    p7-clean: a set-membership predicate over the frozen content gate — no perplexity, no
+    likelihood, no LLM judge. Returns None for a degenerate pair (either side has no unique
+    content word), so degenerate frames are dropped rather than silently scored 0."""
+    a = _fan_bind_content(cA, known)
+    b = _fan_bind_content(cB, known) - a          # cB-UNIQUE: shared words cannot testify
+    if not a or not b:
+        return None
+    wo = set(_rho_fan_words(o))
+    return 1 if (wo & a) and (wo & b) else 0
+
+
+def _fan_bind_pairs(n_strong):
+    """The (cA, cB) pair behind each composed/shuffled frame — index math MIRRORS
+    rho_fan_build_frames EXACTLY (a = i%n · b = (i+1+i//n)%n · sh = derangement(a,n)).
+    If that builder ever changes, this must move in lockstep or the DV scores the wrong pair."""
+    cz = _rho_fan_concepts()
+    n = len(cz)
+    comp = []
+    shuf = []
+    for i in range(n_strong):
+        a = i % n
+        b = (i + 1 + i // n) % n
+        comp.append((cz[a], cz[b]))
+        shuf.append((cz[a], cz[_rho_fan_derangement(a, n)]))
+    return comp, shuf
+
+
+def fan_bind_calibration(known):
+    """Scorer certification — frozen 6-string set the DV must classify BEFORE the model is
+    read (positive-control-before-reading-a-negative). pos = both concepts' content present ·
+    neg = one-side echo only / unrelated. A failing scorer INVALIDATES the instrument."""
+    cz = _rho_fan_concepts()
+    cA, cB = cz[0], cz[1]                          # "consciousness arises from cells" / "tension ripples between distant minds"
+    checks = []
+    checks.append(("pos both-sides", _fan_bind_J(
+        "consciousness in cells and the tension between distant minds both rise", cA, cB, known) == 1))
+    checks.append(("pos both-sides-2", _fan_bind_J(
+        "cells show consciousness while minds carry tension across distance", cA, cB, known) == 1))
+    checks.append(("neg cA-echo-only", _fan_bind_J(
+        "consciousness arises from cells and cells alone, always", cA, cB, known) == 0))
+    checks.append(("neg cB-echo-only", _fan_bind_J(
+        "tension ripples between distant minds forever", cA, cB, known) == 0))
+    checks.append(("neg unrelated", _fan_bind_J(
+        "the weather today is warm and pleasant", cA, cB, known) == 0))
+    checks.append(("neg empty", _fan_bind_J("", cA, cB, known) == 0))
+    return {"checks": checks, "pass": all(ok for _, ok in checks)}
+
+
+def _mcnemar_p_1sided(b, c):
+    """One-sided exact McNemar = paired sign test on discordant counts (b comp-hit/shuf-miss,
+    c comp-miss/shuf-hit). H0: composed and shuffled pairings are exchangeable ⇒ each discordant
+    pair is +1 or -1 with p=0.5 ⇒ b ~ Binom(m, 0.5), m=b+c. Returns P(Binom(m,0.5) >= b) for the
+    Δ>0 (composition-helps) direction. Closed-form, deterministic (no RNG · p7/frozen). m<5 ⇒ even
+    an all-one-way split cannot clear 0.05 (0.5^m > 0.05), so the test is powerless there BY DESIGN
+    — the caller reports that as UNDECIDABLE rather than a KILL (power-before-negative-verdict)."""
+    import math
+    m = b + c
+    if m == 0:
+        return 1.0
+    return sum(math.comb(m, k) for k in range(b, m + 1)) * (0.5 ** m)
+
+
+def _tango_ci90(b, c, N):
+    """Tango(1998) score-based two-sided 90% CI for the paired proportion difference
+    Δ=(b-c)/N (α=0.05 two one-sided ⇒ 100(1-2α)=90%). Score CI is the paired-binomial standard;
+    stable at the boundary and for small discordant m where a Wald interval is unfit. TOST: the CI
+    ⊂ (-δ,+δ) ⇒ equivalence (|Δ|<δ established), which is how "0.444 is an artifact" is EARNED
+    (negative-claims-need-tost-not-ns). Solves the Tango score equation by bisection on δ̂."""
+    if N == 0:
+        return (-1.0, 1.0)
+    import math
+    z = 1.6448536269514722            # z_{0.95}
+    est = (b - c) / N
+    def score_bounds(target_sign):
+        # Tango score: find δ where (Δ̂-δ)^2 = z^2 * Var_δ, Var_δ = [ (2N·δ + ... ) ] via the
+        # constrained MLE. Use the standard Tango closed pieces through a numeric root on δ.
+        lo, hi = -1.0, 1.0
+        for _ in range(200):
+            d = (lo + hi) / 2.0
+            # constrained MLE of q=P(shuf-hit,comp-miss) given Δ=d (Tango 1998 eq.)
+            A = 2.0 * N
+            Bq = -(b + c) + (2.0 * N - (b - c)) * d
+            Cq = -c * d * (1.0 - d)
+            disc = Bq * Bq - 4.0 * A * Cq
+            disc = disc if disc > 0 else 0.0
+            q = (-Bq + math.sqrt(disc)) / (2.0 * A) if A != 0 else 0.0
+            q = min(max(q, 0.0), 1.0)
+            var = max((2.0 * q + d - d * d) / N, 1e-12)
+            stat = (est - d) / math.sqrt(var)
+            # for lower bound target_sign=+1 (stat=+z), upper target_sign=-1 (stat=-z)
+            if (stat - target_sign * z) > 0:
+                lo = d
+            else:
+                hi = d
+        return (lo + hi) / 2.0
+    lo = score_bounds(+1.0)
+    hi = score_bounds(-1.0)
+    if lo > hi:
+        lo, hi = hi, lo
+    return (lo, hi)
+
+
+def _fan_bind_paired(comp_rows, shuf_rows, comp_pairs, shuf_pairs, ablated_J, known,
+                     delta_equiv=0.05, emit_floor=0.005):
+    """H_9745 — the composition-isolating paired verdict on bind_delta, replacing the marginal
+    composed-J null (which measures EMISSION: a pair-deranged arm can carry the higher composed J).
+
+    Matches composed(i,j)⇄shuffled(i,j) by frame+decode-seed (same 7+17j+i, same cA_i, differ only
+    in cB) into a 2x2 discordant table (b=comp-hit/shuf-miss, c=comp-miss/shuf-hit). bind_delta=(b-c)/N.
+    Verdict is exact one-sided McNemar on (b,c) — never emission. TOST (Tango 90% CI ⊂ ±δ) earns the
+    'artifact' call. Emission pre-gate + m<5 ⇒ UNDECIDABLE (instrument-claim-alignment + power-first).
+
+    Controls surfaced (not folded into the verdict): ablated_J (zero-truth pedestal — must be ~0 or
+    the detector fires on chance co-occurrence) · cA_echo per arm (must match across arms; a mismatch
+    means the cA covariate is not controlled and the verdict is confounded)."""
+    comp = {(i, j): o for (i, j, o) in comp_rows}
+    shuf = {(i, j): o for (i, j, o) in shuf_rows}
+    keys = sorted(set(comp) & set(shuf))     # non-degenerate frame∩ · matched (i,j)
+    b = c = a11 = d = 0
+    ca_comp_hit = ca_shuf_hit = 0
+    for (i, j) in keys:
+        Jc = _fan_bind_J(comp[(i, j)], comp_pairs[i][0], comp_pairs[i][1], known)
+        Js = _fan_bind_J(shuf[(i, j)], shuf_pairs[i][0], shuf_pairs[i][1], known)
+        if Jc is None or Js is None:
+            continue
+        if Jc and Js: a11 += 1
+        elif Jc and not Js: b += 1
+        elif not Jc and Js: c += 1
+        else: d += 1
+        # cA-only echo covariate (cA_i shared by both arms → echo rate must match; else confounded).
+        # membership of any cA content-word in the emission (the first clause of _fan_bind_J alone).
+        ca_words = _fan_bind_content(comp_pairs[i][0], known)
+        if ca_words:
+            if set(_rho_fan_words(comp[(i, j)])) & ca_words: ca_comp_hit += 1
+            if set(_rho_fan_words(shuf[(i, j)])) & ca_words: ca_shuf_hit += 1
+    N = a11 + b + c + d
+    m = b + c
+    bd = ((b - c) / N) if N else 0.0
+    emit_rate = ((a11 + b) + (a11 + c)) / (2.0 * N) if N else 0.0     # (comp_hit+shuf_hit)/2N
+    p1 = _mcnemar_p_1sided(b, c)
+    ci = _tango_ci90(b, c, N)
+    tost = bool(ci[0] > -delta_equiv and ci[1] < delta_equiv)
+    powered = (m >= 5)
+    under_emit = (emit_rate < emit_floor)
+    if under_emit or not powered:
+        verdict = "UNDECIDABLE"
+    elif bd > 0.0 and p1 <= 0.05:
+        verdict = "BIND-SENSITIVE"
+    elif tost:
+        verdict = "BIND-ABSENT"     # equivalence to 0 within δ = the '0.444 artifact' call
+    else:
+        verdict = "UNDECIDABLE"
+    return {"N": N, "b": b, "c": c, "m": m, "a11": a11, "d": d,
+            "bind_delta_paired": bd, "mcnemar_p_1sided": p1,
+            "tango_ci90": [ci[0], ci[1]], "tost_equiv": tost, "delta_equiv": delta_equiv,
+            "emit_rate": emit_rate, "emit_floor": emit_floor, "powered": powered,
+            "ablated_J": ablated_J, "cA_echo_comp": ca_comp_hit, "cA_echo_shuf": ca_shuf_hit,
+            "verdict": verdict}
+
+
+def eval_fan_bind(mouth, gen, known, n_smp=16, dump=None):
+    """bind Δ = mean J(composed) − mean J(shuffled) over the frozen 3-arm frames.
+
+    Both arms carry THEIR OWN cB in the prompt, so pure echo is symmetric and cancels to
+    Δ=0 by construction — Δ>0 therefore means the mouth integrates cB MORE when the pairing
+    is the composed one than when it is deranged = composition sensitivity, not echo.
+    ablated ("cA: " · no cB in prompt) is the floor arm.
+
+    Null: mismatched-pairing — each emission is ALSO scored against every OTHER frame's
+    (cA_j, cB_j), giving the chance joint-coverage distribution the bar is derived from
+    (chance-level-must-be-derived-per-metric). The bar is NOT a fixed number."""
+    fr = rho_fan_build_frames(6)
+    comp_pairs, shuf_pairs = _fan_bind_pairs(6)
+    arms = {"composed": (fr["composed"], comp_pairs),
+            "shuffled": (fr["shuffled"], shuf_pairs),
+            "ablated": (fr["ablated"], comp_pairs)}   # ablated prompt lacks cB → floor
+    out = {}
+    emits = {}
+    for name, (frames, pairs) in arms.items():
+        hits = 0
+        n = 0
+        rows = []
+        for i in range(len(frames)):
+            cA, cB = pairs[i]
+            for j in range(n_smp):
+                o = mouth.ideate(frames[i], gen, 40, 0.7, 7 + 17 * j + i)   # frozen decode knobs
+                if dump is not None:                 # H_9746 --fan-dump: emission census (판정 불변)
+                    dump.append({"arm": name, "frame_i": i, "smp_j": j, "seed": 7 + 17 * j + i,
+                                 "cA": cA, "cB": cB, "emission": o,
+                                 "J": _fan_bind_J(o, cA, cB, known)})
+                J = _fan_bind_J(o, cA, cB, known)
+                if J is None:
+                    continue
+                rows.append((i, j, o))               # H_9745: track j so composed(i,j)⇄shuffled(i,j) pair
+                hits += J
+                n += 1
+        out[name] = {"J_mean": (hits / n) if n else 0.0, "n": n}
+        emits[name] = rows
+    # ── mismatched-pairing null (composed emissions scored against OTHER frames' pairs) ──
+    null_vals = []
+    for i, _j, o in emits["composed"]:
+        for k in range(len(comp_pairs)):
+            if k == i:
+                continue
+            J = _fan_bind_J(o, comp_pairs[k][0], comp_pairs[k][1], known)
+            if J is not None:
+                null_vals.append(J)
+    null_mean = (sum(null_vals) / len(null_vals)) if null_vals else 0.0
+    # bootstrap the null's 95th percentile on the SAME n as the composed arm (frozen-first)
+    nc = out["composed"]["n"] or 1
+    p95 = 0.0
+    if null_vals:
+        import random as _r
+        rng = _r.Random(9693)
+        boots = []
+        for _ in range(2000):
+            s = sum(null_vals[rng.randrange(len(null_vals))] for _ in range(nc)) / nc
+            boots.append(s)
+        boots.sort()
+        p95 = boots[int(0.95 * (len(boots) - 1))]
+    delta = out["composed"]["J_mean"] - out["shuffled"]["J_mean"]
+    # ── H_9745: paired McNemar + TOST on bind_delta (the composition-isolating statistic) ──
+    # The marginal null above (composed J vs mismatched pairs) tests EMISSION, not composition —
+    # a pair-deranged (shuffled) arm can carry the HIGHER composed J yet zero bind. bind_delta is
+    # a PAIRED difference (composed(i,j) and shuffled(i,j) share seed 7+17j+i · frame i · cA_i,
+    # differ only in cB), so it earns its OWN pedestal here: exact one-sided McNemar on the
+    # discordant counts (chance-level-must-be-derived-per-metric), never the marginal null.
+    paired = _fan_bind_paired(emits["composed"], emits["shuffled"], comp_pairs, shuf_pairs,
+                              out["ablated"]["J_mean"], known)
+    return {"bind_delta": delta, "composed": out["composed"], "shuffled": out["shuffled"],
+            "ablated": out["ablated"], "null_mean": null_mean, "null_p95": p95,
+            "pass": bool(delta > 0.0 and out["composed"]["J_mean"] > p95),
+            "paired": paired, "n_smp": n_smp, "gen": gen}
+
+
+def fan_bind_run(argv):
+    """`anima-py evaluate <ckpt> --fan-bind [--fan-smp N]` — H_9693 (R1) bind-Δ instrument.
+
+    Reports bind Δ + the mismatched-pairing null bar. This is an INSTRUMENT, not a G6 verdict:
+    a PASS here says the emission is composition-sensitive on the frozen frames, NOT that the
+    ρ·fan gate (fals) moved. Every downstream angle (H_9694/H_9696/H_9697/H_9698/H_9700) reads
+    ITS lever through this surface — bind Δ vs its own SHUF arm — because fals alone is
+    FORM-forgeable (kill #6)."""
+    ckpt = argv[0]
+    gen = evaluate_intval(argv[1:], "--gen", 0)
+    g = gen if gen > 0 else _default_gen()
+    n_smp = evaluate_intval(argv[1:], "--fan-smp", 16)
+    known = _rho_fan_dict_load()
+    print("=== anima evaluate --fan-bind — H_9693 (R1) G6/ρ·fan bind-Δ instrument ===")
+    print("ckpt: %s  gen=%d (canonical=%d)  n_smp=%d  frames=6(frozen composed/shuffled/ablated)"
+          % (ckpt, g, _default_gen(), n_smp))
+    # ── scorer certification FIRST (instrument dead ⇒ never read the model) ──
+    cal = fan_bind_calibration(known)
+    for name, ok in cal["checks"]:
+        print("  [cal] %-18s %s" % (name, "✅" if ok else "❌"))
+    if not cal["pass"]:
+        print("  ⛔ SCORER CERTIFICATION FAILED — instrument INVALID, model NOT read "
+              "(positive-control-before-reading-a-negative).")
+        return 1
+    print("  [cal] scorer certified ✅ — reading the model now.")
+    # ── H_9698 MBND mouth-binder lane switch (R6). Default OFF ⇒ a binder-carrying .clm reproduces
+    # its pre-binder numbers byte-identically, so this surface stays the SAME instrument for every
+    # lever that reads through it. --mouth-binder-order-scramble is R6's control: it deranges the
+    # causal bank, which only bites because the address carries a relative-distance bias (plain
+    # content attention is permutation-equivariant over the bank, so the control would read Δ=0.000
+    # BY CONSTRUCTION — a control that cannot fail is not a control).
+    mb_on = "--mouth-binder" in argv[1:]
+    mb_scr = "--mouth-binder-order-scramble" in argv[1:]
+    from decode import set_mouth_binder
+    if mb_on or mb_scr:
+        set_mouth_binder(on=True, order_scramble=mb_scr)
+        print("  [lane] MBND mouth-binder ON%s (trailer must be present; absent ⇒ no-op)"
+              % ("  · ORDER-SCRAMBLE control" if mb_scr else ""))
+    else:
+        set_mouth_binder(on=False)
+    mouth = _Mouth(ckpt)
+    _dump_path = evaluate_strval(argv[1:], "--fan-dump", "") if "--fan-dump" in argv[1:] else ""
+    _dump = [] if _dump_path else None
+    r = eval_fan_bind(mouth, g, known, n_smp, dump=_dump)
+    if _dump_path:
+        import json as _json
+        with open(_dump_path, "w", encoding="utf-8") as _fh:
+            for _row in _dump:
+                _fh.write(_json.dumps(_row, ensure_ascii=False) + "\n")
+        print("  [--fan-dump] %d emissions -> %s (H_9746 census · 판정 불변)" % (len(_dump), _dump_path))
+    print("  composed: J=%.4f (n=%d) · shuffled: J=%.4f (n=%d) · ablated(floor): J=%.4f (n=%d)"
+          % (r["composed"]["J_mean"], r["composed"]["n"], r["shuffled"]["J_mean"],
+             r["shuffled"]["n"], r["ablated"]["J_mean"], r["ablated"]["n"]))
+    print("  ★ bind_delta = %.4f  [composed − shuffled]  ·  mismatched-null mean=%.4f p95=%.4f"
+          % (r["bind_delta"], r["null_mean"], r["null_p95"]))
+    print("  verdict: %s  (PASS ⟺ Δ>0 ∧ composed J > mismatched-null p95)"
+          % ("🟢 BIND-SENSITIVE" if r["pass"] else "🧱 NO-BIND (Δ≤0 or within null)"))
+    print("  → INSTRUMENT ONLY — not a ρ·fan(fals) verdict. Δ<0 = anti-bind (pre-registered "
+          "cell). A lever's claim = ITS bind Δ vs ITS OWN SHUF arm; fals alone is FORM-forgeable.")
+    # ── H_9745: the PAIRED verdict — bind_delta's own pedestal (exact McNemar + TOST), the
+    # composition-isolating statistic. The line above (composed J > marginal null) tests EMISSION;
+    # THIS tests composition. Read THIS for a lever's bind claim. ──
+    pd = r.get("paired") or {}
+    print("  ── H_9745 PAIRED (bind_delta's own null · composition ≠ emission) ──")
+    print("     discordant b=%d(comp-hit/shuf-miss) c=%d(comp-miss/shuf-hit) m=%d · N=%d · "
+          "bind_delta=%+.4f" % (pd.get("b",0), pd.get("c",0), pd.get("m",0), pd.get("N",0),
+                                pd.get("bind_delta_paired",0.0)))
+    print("     exact McNemar p(1-sided)=%.4f · Tango90 CI=[%+.4f,%+.4f] · TOST(⊂±%.2f)=%s · "
+          "powered(m≥5)=%s" % (pd.get("mcnemar_p_1sided",1.0), pd.get("tango_ci90",[0,0])[0],
+          pd.get("tango_ci90",[0,0])[1], pd.get("delta_equiv",0.05), pd.get("tost_equiv",False),
+          pd.get("powered",False)))
+    print("     controls: ablated_J=%.4f (zero-truth pedestal · ~0 정상) · cA-echo comp=%d shuf=%d "
+          "(arm 간 매칭 필수·불일치=교란) · emit_rate=%.4f" % (pd.get("ablated_J",0.0),
+          pd.get("cA_echo_comp",0), pd.get("cA_echo_shuf",0), pd.get("emit_rate",0.0)))
+    _pv = pd.get("verdict","UNDECIDABLE")
+    _icon = {"BIND-SENSITIVE":"🟢","BIND-ABSENT":"🧱","UNDECIDABLE":"⛔"}.get(_pv,"⛔")
+    print("     ★ PAIRED verdict: %s %s  (🟢 bd>0∧McNemar p≤.05 · 🧱 TOST 등가=artifact · "
+          "⛔ m<5 or emit<floor = 검정력부족·NOT a kill)" % (_icon, _pv))
+    if _pv == "UNDECIDABLE" and pd.get("m",0) < 5:
+        print("     ⛔ m=%d < 5 ⟹ exact McNemar 로 어떤 데이터도 유의 불가 = fan-smp 상향 필요"
+              "(δ=0.05 사전등록엔 N≥288 = fan-smp≈48 · power-before-negative-verdict)." % pd.get("m",0))
+    # ── DUAL-GATE (H_9698 follow-on · lab-identified instrument gap) — a bind is CONFIRMED
+    # only when BOTH signals agree: PAIRED-SENSITIVE (McNemar composition test above) AND
+    # EMISSION-CLEARED (composed J clears the emission-null p95). The R6 control-reversal —
+    # a pair-DERANGED (shuffled) arm scoring a McNemar-🟢 while sitting INSIDE the emission
+    # null band — is exactly the false positive this conjunction rejects: paired-🟢 read
+    # WITHOUT the emission gate over-calls sub-null sign noise as bind. ADDITIVE: the two
+    # verdicts above are unchanged; this only reports their AND (no retroactive reverdict ·
+    # a lever that USES this gate pre-registers it in its own card · lab reconcile H_9698).
+    emission_cleared = r["composed"]["J_mean"] > r["null_p95"]
+    paired_sensitive = (_pv == "BIND-SENSITIVE")
+    if _pv == "UNDECIDABLE":
+        _dg = ("⛔ UNDECIDABLE", "검정력부족 — AND-gate 판정불가 (fan-smp 상향 필요)")
+    elif paired_sensitive and emission_cleared:
+        _dg = ("🟢 BIND-CONFIRMED", "PAIRED-SENSITIVE ∧ EMISSION-CLEARED 둘 다 통과")
+    elif paired_sensitive and not emission_cleared:
+        _dg = ("🟡 EMISSION-CONFOUND", "McNemar-🟢 이나 composed J 가 emission-null 안 "
+               "= sub-null 부호노이즈 의심 (R6 통제역전 계급) · bind 아님")
+    else:   # BIND-ABSENT (TOST equivalence)
+        _dg = ("🧱 BIND-ABSENT", "TOST 등가 — 레버가 composition 안 심음")
+    print("  ══ DUAL-GATE (H_9698 · PAIRED-SENSITIVE ∧ EMISSION-CLEARED) ══")
+    print("     paired=%s(McNemar) · emission_cleared=%s (composed J %.4f %s null p95 %.4f)"
+          % ("🟢" if paired_sensitive else ("⛔" if _pv == "UNDECIDABLE" else "🧱"),
+             emission_cleared, r["composed"]["J_mean"],
+             ">" if emission_cleared else "≤", r["null_p95"]))
+    print("     ★ AND-gate: %s — %s" % (_dg[0], _dg[1]))
+    return 0
+
+
 def store_run(argv):
     """`anima-py evaluate <ckpt> --store <held.json> [--store-oracle] [--store-lambda λ]` — H_9423
     CLMS store-bridge lane eval (the CO-TRAINED bridge, NOT the H_9392 --store-mix bolt-on actuator:
@@ -3751,6 +4440,35 @@ def store_run(argv):
     #                     causally consumed). Constant-predictor coherence ≡ 0 by construction.
     #   --store-neutral = MISS control (P2, no bar, characterisation only).
     #   These are MUTUALLY EXCLUSIVE. --store-ctrl-seed pins the derangement RNG.
+    # H_9695 (R3) — surface core's query/fuse. core/clms.py store_apply + core/decode.py
+    # set_clms_store have carried these since H_9695 landed, but NO CLI passed them, so the
+    # marker-free read→mouth lane was unreachable from the only legal surface (a_experiment_
+    # engine_native: a manipulation is a flag on anima-py, not a probe). Defaults reproduce the
+    # H_9423 lane byte-for-byte.
+    store_query = evaluate_strval(argv[1:], "--store-query", "qpos")
+    if store_query not in ("qpos", "every-token"):
+        print("ERROR: --store-query must be 'qpos' (default) or 'every-token', got %r" % store_query)
+        return 1
+    store_fuse = evaluate_strval(argv[1:], "--store-fuse", "overwrite")
+    if store_fuse not in ("overwrite", "gated-add", "odd", "pairodd"):
+        print("ERROR: --store-fuse must be 'overwrite' (default), 'gated-add', 'odd' or 'pairodd', got %r" % store_fuse)
+        return 1
+    # H_9775: --store-readout {2way,vocab}. 2way (legacy) = argmax over {g,b} only. vocab = 256-vocab
+    # argmax, answer readable ONLY iff ŷ∈{'g','b'} else 'unreadable' — the SAME rule the in-vivo daemon
+    # mouth uses (full-vocab greedy). #4103: odd passed the 2-way gate (main 1.0) yet emitted garbage
+    # in-vivo; the vocab readout catches that at eval time (predicts in-vivo). Default 2way = byte-identical.
+    store_readout = evaluate_strval(argv[1:], "--store-readout", "2way")
+    if store_readout not in ("2way", "vocab"):
+        print("ERROR: --store-readout must be '2way' (default) or 'vocab', got %r" % store_readout)
+        return 1
+    if store_query == "every-token" and store_fuse in ("overwrite", "odd", "pairodd"):
+        # clms.py store_apply: overwriting EVERY row deletes the trunk and destroys fluency — the
+        # readout would score the lane alone with no mouth left (odd/pairodd are overwrite-style too). Refuse
+        # loudly (an INVALID arm is worse than no arm) rather than emit a number nobody may read.
+        print("ERROR: --store-query every-token with --store-fuse overwrite/odd/pairodd overwrites every row,")
+        print("       deleting the trunk (fluency dead · the readout stops being attributable).")
+        print("       Use --store-fuse gated-add for the marker-free lane (H_9695).")
+        return 1
     ctrl = [f for f in ("--store-shuffle", "--store-flip", "--store-neutral") if f in argv]
     if len(ctrl) > 1:
         print("ERROR: --store-shuffle / --store-flip / --store-neutral are mutually exclusive (got %s)" % ctrl)
@@ -3769,6 +4487,84 @@ def store_run(argv):
     if not W.get("ok"):
         print("ERROR: ckpt not decodable (clm): " + ckpt)
         return 1
+
+    # H_9724 · --store-component-swap {val,readout,wq,trunk,...} --store-swap-from <other.clm>
+    # EVALUATION-ONLY causal surgery (Sol EA-6). H_9672's T3 is address-robust across seeds
+    # (addr_mass .95/.96) yet the VALUE read is seed-fragile (ORACLE seed-7 0.99 vs seed-11 0.50).
+    # If transplanting `val`/readout carries the success across seeds INDEPENDENTLY of a robust W_q,
+    # the missing bootstrap seed is value organisation, not address capacity.
+    #   admissibility (Sol, enforced by construction): this supplies NO training signal and installs
+    #   NO address — it only re-reads existing weights. target_slot is never consulted here.
+    # Components map to the CLMS trailer dict (core/clms.py read_clms): W_q · val · W_h/b_h/W_out
+    # (= "readout" MLP) · lam. "trunk" swaps the non-CLMS forward weights instead.
+    swap_spec = evaluate_strval(argv[1:], "--store-component-swap", "")
+    swap_from = evaluate_strval(argv[1:], "--store-swap-from", "")
+    if swap_spec:
+        if not swap_from:
+            print("ERROR: --store-component-swap needs --store-swap-from <other.clm>", file=sys.stderr)
+            return 2
+        _GROUPS = {"wq": ["W_q"], "val": ["val"], "readout": ["W_h", "b_h", "W_out"],
+                   "lam": ["lam"], "bridge": ["W_q", "val", "W_h", "b_h", "W_out", "lam"]}
+        want = [s.strip() for s in swap_spec.split(",") if s.strip()]
+        bad = [s for s in want if s not in _GROUPS and s != "trunk"]
+        if bad:
+            print("ERROR: unknown component(s) %s — known: %s,trunk"
+                  % (",".join(bad), ",".join(sorted(_GROUPS))), file=sys.stderr)
+            return 2
+        Wd = clm.clm_load_weights(swap_from)
+        if not Wd.get("ok"):
+            print("ERROR: donor ckpt not decodable: " + swap_from, file=sys.stderr)
+            return 2
+        if W.get("clms") is None or Wd.get("clms") is None:
+            print("ERROR: both ckpts need a CLMS trailer to swap bridge components "
+                  "(host=%s donor=%s)" % (W.get("clms") is not None, Wd.get("clms") is not None),
+                  file=sys.stderr)
+            return 2
+        # shape gate — a silently mis-shaped graft is an off-manifold chimera, not a measurement
+        moved = []
+        for grp in want:
+            if grp == "trunk":
+                for k in ("ecWt", "ecB", "tcWt", "tcB", "tgG", "tgB", "eWt", "eB",
+                          "rWt", "rB", "noG", "noB", "embed", "roWt", "roB"):
+                    ha, hb = k in W, k in Wd
+                    if not ha and not hb:
+                        continue                          # absent from BOTH = not part of this arch
+                    if ha != hb:                          # present on ONE side = asymmetric ckpts
+                        print("ERROR: trunk key '%s' asymmetric (host=%s donor=%s) — refusing to graft"
+                              % (k, ha, hb), file=sys.stderr)
+                        return 2
+                    sa = getattr(W[k], "shape", None); sb = getattr(Wd[k], "shape", None)
+                    if sa != sb:
+                        print("ERROR: shape mismatch on trunk '%s': host %s vs donor %s — refusing to "
+                              "graft (an off-manifold chimera is not a measurement)" % (k, sa, sb),
+                              file=sys.stderr)
+                        return 2
+                    W[k] = Wd[k]
+                    moved.append("trunk:" + k)
+                continue
+            for k in _GROUPS[grp]:
+                a, b = W["clms"].get(k), Wd["clms"].get(k)
+                if a is None or b is None:
+                    print("ERROR: component '%s' absent (host=%s donor=%s)"
+                          % (k, a is not None, b is not None), file=sys.stderr)
+                    return 2
+                sa = getattr(a, "shape", None); sb = getattr(b, "shape", None)
+                if sa != sb:
+                    print("ERROR: shape mismatch on '%s': host %s vs donor %s — refusing to graft "
+                          "(an off-manifold chimera is not a measurement)" % (k, sa, sb), file=sys.stderr)
+                    return 2
+                W["clms"][k] = b
+                moved.append(k)
+        if not moved:                                     # nothing grafted = a no-op read as a measurement
+            print("ERROR: component-swap moved 0 tensors (spec=%s) — a no-op is not a measurement"
+                  % swap_spec, file=sys.stderr)
+            return 2
+        same = os.path.realpath(ckpt) == os.path.realpath(swap_from)
+        print("  [component-swap] %s ← %s · moved: %s%s"
+              % (swap_spec, os.path.basename(swap_from), ",".join(moved),
+                 "  ⚠️ SHAM (donor == host · positive-validity control)" if same else ""),
+              flush=True)
+
     import clms as _clms
     g_id, b_id = ord("g"), ord("b")                  # byte value = logits index (see _store_mix_cont_nll)
 
@@ -3779,15 +4575,27 @@ def store_run(argv):
             p[i], p[j] = p[j], p[i]
         return p
 
-    def _predict(store):
-        """Inject store, forward the prompt window, read the 2-way g/b readout at qpos. None if malformed."""
-        clm.set_clms_store(store=store, oracle=oracle, lam_override=lam_override)
+    def _predict(store, audit=None):
+        """Inject store, forward the prompt window, read the 2-way g/b readout at qpos. None if malformed.
+        audit (H_9672 --store-addr-audit) = a list store_apply appends {argmax,a_target,target} to per qpos."""
+        clm.set_clms_store(store=store, oracle=oracle, lam_override=lam_override, audit=audit,
+                           query=store_query, fuse=store_fuse)
         logits = np.asarray(clm._fwd_logits(W, tok, T))
         qp = _clms.find_qpos(tok)
         if not qp:
             return None
         row = logits[qp[-1]]
+        if store_readout == "vocab":                  # H_9775: full-vocab argmax = the in-vivo daemon mouth rule
+            yhat = int(np.argmax(row))                 # (256-vocab greedy). readable ONLY iff ŷ∈{'g','b'};
+            if yhat == g_id:                           # else 'unreadable' — the daemon would emit a non-answer
+                return "good"                          # byte. #4103: full-row odd passed 2-way (main 1.0) yet
+            if yhat == b_id:                           # emitted garbage in-vivo — vocab catches it at eval time.
+                return "bad"
+            return "unreadable"
         return "good" if float(row[g_id]) >= float(row[b_id]) else "bad"
+
+    addr_audit = "--store-addr-audit" in argv          # H_9672: report addr_top1 (argmax==target) + addr_mass
+    addr_top1 = addr_mass = addr_n = 0                  # (mean a[target]) — soft-address diagnostic
 
     print("=== anima evaluate --store — H_9423 CLMS store-bridge lane (co-trained) ===")
     arm = mode or ("oracle" if oracle else ("lambda0" if lam_override == 0.0 else "lookup"))
@@ -3801,6 +4609,7 @@ def store_run(argv):
     fixed_points_total = dup_entities = 0
     pol_hist = {}                                     # #good-slots per store -> count (balance witness · §E)
     coh_all = coh_bc = coh_bc_n = flip_correct = 0    # flip-coherence accumulators
+    readable_n = 0                                     # H_9775 vocab: #answers whose full-vocab argmax ∈ {g,b}
     op_name = {0: "is ", 1: "not"}
     pol_name = {0: "good", 1: "bad "}
     for idx, it in enumerate(entries):
@@ -3840,18 +4649,29 @@ def store_run(argv):
                 continue
             gold_flip = "bad" if gold == "good" else "good"
             n += 1
-            coh_all += int(flip != base)
-            if base == gold:                          # coherence_bc: conditioned on baseline-correct (§B-2)
-                coh_bc_n += 1
-                coh_bc += int(flip != base)
+            base_ok = base in ("good", "bad")         # H_9775 vocab: 'unreadable' (argmax∉{g,b}) excluded from
+            flip_ok = flip in ("good", "bad")         #   coherence — the daemon would emit a non-answer there.
+            readable_n += int(base_ok)                # readability witness (base = the un-flipped answer)
+            if base_ok and flip_ok:                   # coherence ONLY over readable pairs (in-vivo rule)
+                coh_all += int(flip != base)
+                if base == gold:                      # coherence_bc: conditioned on baseline-correct (§B-2)
+                    coh_bc_n += 1
+                    coh_bc += int(flip != base)
             flip_correct += int(flip == gold_flip)
             key = (it.get("op"), 0 if gold == "good" else 1)
             rec = by.setdefault(key, [0, 0]); rec[0] += int(flip == gold_flip); rec[1] += 1
             continue
-        pred = _predict(store)
+        au = [] if addr_audit else None
+        pred = _predict(store, audit=au)
         if pred is None:
             continue
+        if au:                                            # H_9672 addr-audit: last qpos entry
+            e = au[-1]
+            addr_n += 1
+            addr_top1 += int(e["argmax"] == e["target"])
+            addr_mass += float(e["a_target"])
         n += 1
+        readable_n += int(pred in ("good", "bad"))    # H_9775 vocab: readability witness ('unreadable'≠gold=0)
         correct += int(pred == gold)
         key = (it.get("op"), 0 if gold == "good" else 1)
         rec = by.setdefault(key, [0, 0]); rec[0] += int(pred == gold); rec[1] += 1
@@ -3871,6 +4691,10 @@ def store_run(argv):
         print("    → PASS coherence_bc≥0.90 (store value causally consumed) · FAIL≤0.15 (v-channel dead). "
               "constant-predictor coherence≡0 by construction. read ONLY with 4/4 pol-balance + shuffle PASS.")
     acc = correct / n if n else 0.0
+    if store_readout == "vocab":                      # H_9775: readability = the #4103-catching witness
+        print("  readout=vocab (full-vocab argmax = in-vivo rule): readable=%d/%d = %.4f (argmax∈{g,b}) "
+              "· %s" % (readable_n, n, (readable_n / n if n else 0.0),
+                        "🟢 readable" if (n and readable_n / n >= 0.90) else "🔴 <.90 unreadable — pairodd E collapse or garbage"))
     verdict = ""
     if mode == "shuffle" and oracle:
         # oracle bypasses the address (a=one_hot(target_slot)), so the shuffle verdict bar is MEANINGLESS
@@ -3901,6 +4725,11 @@ def store_run(argv):
     for (op, pol), (c, t) in sorted(by.items(), key=lambda x: str(x[0])):
         print("    op=%s pol=%s: %d/%d = %.4f"
               % (op_name.get(op, str(op)), pol_name[pol], c, t, c / t if t else 0.0))
+    if addr_audit and addr_n:                             # H_9672: is the address argmax right, and SHARP?
+        print("  addr-audit: addr_top1=%.4f (argmax==target · %d items) · addr_mass=%.4f (mean a[target] · "
+              "1.0=one-hot sharp · ~%.3f=uniform)" % (addr_top1 / addr_n, addr_n, addr_mass / addr_n, 1.0 / 8))
+        print("    → addr_top1 high ∧ addr_mass low = argmax correct but softmax NOT peaked (v = Σaᵢ·valᵢ "
+              "blurred → value-read starved despite correct pointer); addr_top1 low = W_q not pointing.")
     if oracle:
         print("  → C0-e ORACLE: ≥0.90 REQUIRED before any negative is read (mixing/value/MLP/λ paths die "
               "silently below this). oracle+shuffle→1.00 & oracle+flip→1.00(vs flipped gold) = control plumbing OK.")
@@ -5466,8 +6295,28 @@ def _emit_gate_census(argv):
     silence_safe = 0          # score≤θ path could decide — the third lever
     clockblock_scorepass = 0  # safe=false ∧ score>θ = clock is the sole binder
     smin = 9.9; smin_open = 9.9
+    excluded_nonclock = 0     # H_9712 · refractory-lineage traces are NOT clock-lock — exclude them
     for f in files:
         seen = False
+        # H_9712 meta-guard: this census asserts the emit≡clock invariant, which holds ONLY for the
+        # clock gate. Since the production default flipped to refractory (Ψ≈½ dual-ledger), a glob may
+        # now include refractory traces whose emit⟺S>E would silently corrupt the clock-lock statistic.
+        # Peek the trace's _meta.emit_gate; skip anything not clock-lineage (absent _meta = legacy clock).
+        try:
+            _gate = "clock"
+            for _l in open(f):
+                _l = _l.strip()
+                if not _l: continue
+                try: _o = json.loads(_l)
+                except: continue
+                if isinstance(_o, dict) and _o.get("_meta"):
+                    _gate = str(_o.get("emit_gate", "clock")); break
+                if isinstance(_o, dict) and "emit_gate" in _o:
+                    _gate = str(_o.get("emit_gate", "clock")); break
+            if _gate != "clock":
+                excluded_nonclock += 1; continue
+        except Exception:
+            continue
         try:
             fh = open(f)
         except Exception:
@@ -5497,6 +6346,10 @@ def _emit_gate_census(argv):
 
     print("═══ EMIT-GATE CENSUS · H_9403 · is the score/tension lane decorative? (θ=%.2f) ═══" % THR)
     print("  corpus: %d files · %d ticks (emit/safe/score present)" % (used_files, tot))
+    if excluded_nonclock:
+        print("  ⚠️ excluded %d non-clock (refractory-lineage) trace file(s) — the emit≡clock invariant "
+              "is clock-lineage only (H_9712 default flip); this census reads clock traces exclusively"
+              % excluded_nonclock)
     print("  emit ⟺ (score>θ)∧safe :  %d/%d = %.4f" % (emit_eq_safe, tot, emit_eq_safe / tot))
     print("  score>θ               :  %d/%d = %.4f   (min score %.4f · min when safe=true %.4f)"
           % (score_gt, tot, score_gt / tot, smin, (smin_open if smin_open < 9.0 else float('nan'))))
@@ -7278,8 +8131,8 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--eval-historicity", "--schedule", "--dv", "--jitter", "--af-forward", "--impulse", "--side", "--kmax", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -7288,9 +8141,5020 @@ _KNOWN_FLAGS = frozenset((
     "--gn-freeze",
     "--bridge-trace", "--flip0", "--theta",
     "--store-mix", "--store-lambda", "--manifest",
+    "--store-component-swap", "--store-swap-from",
     "--store", "--store-oracle",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
+    "--store-addr-audit",
+    "--store-query", "--store-fuse", "--store-readout",
+    "--store-addr-census", "--store-census-selftest", "--census-seeds",
+    "--fan-bind", "--fan-smp",
+    "--mouth-binder", "--mouth-binder-order-scramble",
+    "--fan-dump",
+    "--cascade-null",
+    "--state-census", "--kmax",
 ))
+
+
+def _z_census(argv):
+    """H_9712 z-DOSE STARVATION CENSUS — the $0 gate that must clear BEFORE H_9576's
+    direction null (rho=-0.077) may be read as a wall rather than a dose artefact.
+
+    `anima-py evaluate --pc2-direction <traces_dir> --z-census`
+
+    H_9576 fired at gain=1 calling it "the log-prob natural unit". That was an ASSUMPTION,
+    never a measurement. Its causal chain is 3 links —
+        z (intended meaning) →① physical effect (context-byte logit penalty)
+                             →② proximal observable (context-byte share of the output)
+                             →③ remote readout D (bigram-seed overlap)
+    — and H_9576 measured only z→③, with a positive control on no link. rho≈0 does not say
+    WHICH link broke. This census certifies links ① and ② from the traces alone (no decode).
+
+    Three sections, each with its own controls:
+
+      (0) z distribution — var · IQR · |z|95 · route_k (deliberation_k) census.
+      (1) EXPOSURE (the INVALID-EXPOSURE gate) — core/decode.py:2097 applies the bias on the
+          lm-branch ONLY; a grounded anchor-copy step never reaches it. So the effective dose
+          is z × (that tick's lm-step count), and a tick with 0 lm-steps is UNEXPOSED. The
+          trace records no lm counter — but the rng arm is a POSITIVE CONTROL for exposure:
+          it re-keys `seed_rng`, which core/decode.py:2078 feeds ONLY to _mouth_sample_row,
+          which is called ONLY on the lm branch. Hence rng-divergence ⟹ that tick had ≥1
+          lm-step. 1 − (rng diverged / rng total) is a rigorous UPPER BOUND on the
+          lm-step=0 fraction. Bar (frozen): >30% ⇒ INVALID-EXPOSURE.
+      (2) DOSE — the pre-registered zeta-half (argmax-flip-50% dose) is NOT computable here:
+          it needs the per-step posterior, which the traces do not carry, and the live mouth
+          is a temp=1.0 SAMPLER (emit_temp), not an argmax — so "argmax-flip" is not even the
+          running mechanism. Per the card's own contingency (a) this reports the honest
+          trace-computable surrogate instead, and prints the limits.
+          SURROGATE pi-dose: the mechanism's physical claim is context-presence — z is
+          SUBTRACTED from every byte in the model's own T=24 window, so z<0 BOOSTS in-window
+          bytes (pulls toward context) and z>0 pushes off-context. At the first byte where
+          steered diverges from base, rebuild that window from (seed ++ base[:i]) and ask
+          whether the chosen byte is IN it. pi_base = P(base byte ∈ window) is the unbiased
+          pedestal drawn at the SAME position (paired), so the contrast is within-position.
+          Predicted sign is fixed a priori by the sign of mean z, not by the data.
+          Controls: (i) the arm's own base draw (paired pedestal) (ii) the rng arm, same |z|,
+          draw-stream re-key only, no logit change ⇒ its Delta-pi must be ≈0. Each control is
+          reported SEPARATELY against the experiment — never Delta=exp−max(controls), which is
+          an order-statistic bias that manufactures KILLs (probe-defect-census-max-control-bias).
+          Test = exact two-sided McNemar on the discordant pairs (paired binary), plus the
+          resolvable |Delta-pi| so an underpowered null reads VOID, not negative.
+
+    Frozen bars (card H_9712 · do not retune): |z|95 ≥ zeta-half ⇒ PASS-DOSED · |z|95 <
+    zeta-half/4 ⇒ VOID-STARVED (H_9576 reclassified) · between ⇒ PENDING · lm-step=0 fraction
+    >30% ⇒ INVALID-EXPOSURE · calibration self-consistency FAIL ⇒ INVALID.
+    """
+    import glob as _glob
+    import json as _pj
+    import base64 as _pb
+    import math as _pm
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --z-census")
+        return 2
+
+    # Mirrors core/decode.py::clm_decode_grounded — the CLM causal window the bias acts on.
+    _T = 24
+
+    def _rows(arm, sd):
+        p = os.path.join(d, "%s_s%d.jsonl" % (arm, sd))
+        if not os.path.exists(p):
+            return []
+        out = []
+        for l in open(p):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if not r.get("_meta"):
+                out.append(r)
+        return out
+
+    def _b64(s):
+        try:
+            return _pb.b64decode(s) if s else b""
+        except (ValueError, TypeError):
+            return b""
+
+    seeds = []
+    for f in sorted(_glob.glob(os.path.join(d, "off_s*.jsonl"))):
+        try:
+            seeds.append(int(os.path.basename(f)[len("off_s"):-len(".jsonl")]))
+        except ValueError:
+            continue
+    if not seeds:
+        print("  ⇒ ⛔ no off_s<seed>.jsonl traces under " + d)
+        return 2
+
+    def _quant(v, p):
+        if not v:
+            return 0.0
+        s = sorted(v)
+        i = p * (len(s) - 1)
+        lo = int(i)
+        hi = min(lo + 1, len(s) - 1)
+        return s[lo] * (1.0 - (i - lo)) + s[hi] * (i - lo)
+
+    def _mcnemar_p(b01, b10):
+        """Exact two-sided McNemar (binomial on the discordant pairs)."""
+        n = b01 + b10
+        if n == 0:
+            return 1.0
+        k = min(b01, b10)
+        tail = sum(_pm.comb(n, i) for i in range(0, k + 1)) / float(2 ** n)
+        return min(1.0, 2.0 * tail)
+
+    print("=== anima evaluate --pc2-direction --z-census — z DOSE/EXPOSURE (card H_9712) ===")
+    print("traces: %s  (seeds: %s)" % (d, ",".join(str(s) for s in seeds)))
+    print("chain:  z →① logit penalty on in-window bytes →② context share →③ D (H_9576 read ③ only)")
+    print("bar:    |z|95≥ζ½ PASS-DOSED · |z|95<ζ½/4 VOID-STARVED · lm-step=0 >30% INVALID-EXPOSURE")
+    print("")
+
+    # ── (0) live z distribution ──────────────────────────────────────────────
+    zs, rks, temps = [], {}, set()
+    for sd in seeds:
+        for r in _rows("bias", sd):
+            if not r.get("emit") or r.get("pc2_z") is None:
+                continue
+            zs.append(float(r["pc2_z"]))
+            rk = r.get("route_k")
+            rks[rk] = rks.get(rk, 0) + 1
+            if r.get("emit_temp") is not None:
+                temps.add(round(float(r["emit_temp"]), 4))
+    if len(zs) < 3:
+        print("  ⇒ ⛔ VOID — n=%d live z samples is unreadable (power-before-negative)." % len(zs))
+        return 0
+    mean = sum(zs) / len(zs)
+    var = sum((v - mean) ** 2 for v in zs) / (len(zs) - 1)
+    az = [abs(v) for v in zs]
+    z95 = _quant(az, 0.95)
+    iqr = _quant(zs, 0.75) - _quant(zs, 0.25)
+    npos = sum(1 for v in zs if v > 0)
+    print("  (0) live z   n=%d  mean=%+.4f  var=%.6f  sd=%.4f" % (len(zs), mean, var, var ** 0.5))
+    print("      |z|95=%.4f  IQR=%.4f [%+.4f,%+.4f]  min=%+.4f max=%+.4f"
+          % (z95, iqr, _quant(zs, 0.25), _quant(zs, 0.75), min(zs), max(zs)))
+    print("      sign split: z>0 %d · z<=0 %d   route_k(deliberation_k)=%s   emit_temp=%s"
+          % (npos, len(zs) - npos,
+             ",".join("%s:%d" % (k, v) for k, v in sorted(rks.items(), key=lambda x: str(x[0]))),
+             ",".join(str(t) for t in sorted(temps)) or "n/a"))
+    # z is subtracted from in-window bytes (core/decode.py:2100-2104): z<0 ⇒ in-window BOOSTED.
+    pred_up = mean < 0
+    print("      ⇒ mechanism (decode.py:2100 row[v]-=z) predicts Δπ %s at this z sign"
+          % ("> 0 (pull TOWARD context)" if pred_up else "< 0 (push OFF context)"))
+    print("")
+
+    # ── (1) exposure census — the INVALID-EXPOSURE gate ──────────────────────
+    def _diverge(arm):
+        nd, nt, firsts = 0, 0, []
+        for sd in seeds:
+            for r in _rows(arm, sd):
+                if not r.get("emit"):
+                    continue
+                b, s = _b64(r.get("gtext_b64")), _b64(r.get("gtext_pc2_b64"))
+                if not s:
+                    continue
+                nt += 1
+                i = next((k for k in range(min(len(b), len(s))) if b[k] != s[k]), -1)
+                if i < 0 and len(b) != len(s):
+                    i = min(len(b), len(s))
+                if i >= 0:
+                    nd += 1
+                    firsts.append(i)
+        return nd, nt, firsts
+
+    rnd, rnt, rfirst = _diverge("rng")
+    bnd, bnt, bfirst = _diverge("bias")
+    lm0 = (1.0 - (rnd / float(rnt))) if rnt else 1.0
+    print("  (1) exposure — rng re-keys seed_rng, read ONLY by _mouth_sample_row on the lm branch")
+    print("      ⇒ rng diverged %d/%d ⟹ that many emit ticks provably had ≥1 lm-step"
+          % (rnd, rnt))
+    print("      ⇒ lm-step=0 fraction ≤ %.4f (%.2f%%)   bar >30%% ⇒ INVALID-EXPOSURE  ⇒ %s"
+          % (lm0, 100.0 * lm0, "INVALID-EXPOSURE" if lm0 > 0.30 else "CLEARED"))
+    if bfirst and rfirst:
+        print("      first-divergence byte index: bias mean=%.2f med=%.1f min=%d · rng mean=%.2f med=%.1f min=%d"
+              % (sum(bfirst) / len(bfirst), _quant(bfirst, 0.5), min(bfirst),
+                 sum(rfirst) / len(rfirst), _quant(rfirst, 0.5), min(rfirst)))
+        print("      ⇒ NOTE: tick-divergence is SATURATED in BOTH arms (rng too) ⇒ zero")
+        print("        discriminative power as a dose readout — Δ vs control ≈ 0 (p7).")
+    if lm0 > 0.30:
+        print("")
+        print("  ⇒ VERDICT: ⛔ INVALID-EXPOSURE — the anchor-copy path starves the channel;")
+        print("     dose is not the question yet, and H_9576's null is unreadable either way.")
+        return 0
+    print("")
+
+    # ── (2) dose — zeta-half unmeasurable ⇒ card contingency (a): pi-dose surrogate ──
+    print("  (2) ζ½ (argmax-flip-50% dose) — NOT COMPUTABLE from these traces:")
+    print("      · no per-step posterior/logit-gap field exists in the trace schema, and")
+    print("      · emit_temp=1.0 ⇒ the live mouth SAMPLES; 'argmax-flip' is not the running")
+    print("        mechanism at all. Card contingency (a) ⇒ honest surrogate below.")
+    print("      ⇒ literal ζ½ cells (PASS-DOSED/VOID-STARVED) are UNADJUDICABLE here.")
+    print("")
+    print("  (2) surrogate π-dose = P(chosen byte ∈ own T=%d window) at first divergence" % _T)
+
+    res = {}
+    for arm in ("bias", "rng"):
+        n = b01 = b10 = nb = ns = 0
+        for sd in seeds:
+            for r in _rows(arm, sd):
+                if not r.get("emit"):
+                    continue
+                base_b, st_b = _b64(r.get("gtext_b64")), _b64(r.get("gtext_pc2_b64"))
+                sd_b = _b64(r.get("seed_b64"))
+                if not st_b or not sd_b:
+                    continue
+                i = next((k for k in range(min(len(base_b), len(st_b)))
+                          if base_b[k] != st_b[k]), -1)
+                if i < 0:
+                    continue
+                win = set((sd_b + base_b[:i])[-_T:])
+                bi, si = base_b[i] in win, st_b[i] in win
+                n += 1
+                nb += 1 if bi else 0
+                ns += 1 if si else 0
+                if (not bi) and si:
+                    b01 += 1
+                elif bi and (not si):
+                    b10 += 1
+        if n == 0:
+            print("      %-4s n=0 — no divergent tick to read (VOID)" % arm)
+            continue
+        pb, ps = nb / float(n), ns / float(n)
+        p = _mcnemar_p(b01, b10)
+        mde = 1.96 * ((b01 + b10) ** 0.5) / float(n)
+        res[arm] = {"n": n, "pb": pb, "ps": ps, "d": ps - pb, "p": p, "mde": mde}
+        print("      %-4s n=%-4d π_base=%.4f → π_steer=%.4f  Δπ=%+.4f  "
+              "(discordant %d↑/%d↓ · exact McNemar p=%.4f · resolvable |Δπ|≈%.3f)"
+              % (arm, n, pb, ps, ps - pb, b01, b10, p, mde))
+    if "bias" not in res or "rng" not in res:
+        print("  ⇒ ⛔ VOID — an arm carried no divergent tick; the contrast is unreadable.")
+        return 0
+    b, rg = res["bias"], res["rng"]
+    print("      controls reported SEPARATELY (never Δ=exp−max(ctrl) · order-statistic bias)")
+    print("        ctrl-i  paired base pedestal (same position, unbiased draw) — inside each row")
+    print("        ctrl-ii rng arm: same |z|, draw re-key, NO logit change ⇒ Δπ must be ≈0")
+    print("")
+
+    # ── (3) positive controls ────────────────────────────────────────────────
+    print("  (3) positive controls")
+    print("      PC-a exposure: rng is a KNOWN-LIVE lm-branch perturbation — %s (%d/%d diverged)"
+          % ("LIVE" if rnd > 0 else "DEAD", rnd, rnt))
+    print("      PC-b sign-split: mechanism predicts Δπ REVERSES for z>0 vs z<0 — "
+          "n(z>0)=%d ⇒ %s" % (npos, "VOID (underpowered · power-before-negative)"
+                              if npos < 20 else "readable"))
+    print("      PC-c calibration (ζ=ζ½ ⇒ flip≈50%): NOT-RUN (ζ½ unmeasurable) — NOT a FAIL")
+    print("")
+
+    # ── verdict ──────────────────────────────────────────────────────────────
+    sig = b["p"] < 0.05
+    right_sign = (b["d"] > 0) if pred_up else (b["d"] < 0)
+    rng_null = rg["p"] >= 0.05
+    print("  ⇒ VERDICT (literal ζ½ axis): 🟡 PENDING-BY-INSTRUMENT — ζ½ needs the per-step")
+    print("     posterior; these traces do not carry it (see FOLLOW-ON below).")
+    if sig and right_sign and rng_null:
+        v = ("🟢 PASS-DOSED (SURROGATE) — the live z DOES physically move the mouth in the\n"
+             "     direction the mechanism predicts (Δπ=%+.4f · p=%.4f), while the rng control\n"
+             "     is null (Δπ=%+.4f · p=%.4f). Link ①→② is LIVE and dosed ⇒ the dose-starvation\n"
+             "     claim of H_9712 DIES, and H_9576's null is NOT rescued by starvation."
+             % (b["d"], b["p"], rg["d"], rg["p"]))
+    elif sig and (not right_sign) and rng_null:
+        v = ("🔴 SIGN-INVERTED — Δπ=%+.4f is significant but OPPOSITE the mechanism's own\n"
+             "     prediction ⇒ the implemented bias is not doing what decode.py:2100 claims."
+             % b["d"])
+    elif not rng_null:
+        v = ("⛔ INVALID — the rng control is NOT null (Δπ=%+.4f · p=%.4f): a draw-stream re-key\n"
+             "     alone moves π, so the bias arm's Δπ is not attributable to z."
+             % (rg["d"], rg["p"]))
+    elif b["mde"] > abs(b["d"]):
+        v = ("🟡 VOID-UNDERPOWERED — |Δπ|=%.4f sits under the resolvable %.3f at n=%d;\n"
+             "     a starved dose stays UNMEASURED, not demonstrated (power-before-negative)."
+             % (abs(b["d"]), b["mde"], b["n"]))
+    else:
+        v = ("🧱 SURROGATE-STARVED — the live z does NOT move the proximal observable\n"
+             "     (Δπ=%+.4f · p=%.4f) though exposure is cleared ⇒ H_9576 reads VOID-STARVED\n"
+             "     and a gain sweep g∈{2,4,8} is justified." % (b["d"], b["p"]))
+    print("  ⇒ VERDICT (surrogate π-dose axis): " + v)
+    print("")
+    print("  LIMITS (honest scope · a_scale_honest_scope)")
+    print("     · π-dose reads the FIRST divergent step ONLY: past it the two arms' contexts")
+    print("       differ, so every later step is incomparable. This bounds link ①→② at one")
+    print("       step, not over the whole utterance.")
+    print("     · it certifies the PHYSICAL effect, NOT the semantics — a live ①→② says")
+    print("       nothing about whether PC2's MEANING survives to ③ (that is H_9576's null).")
+    print("     · surrogate ≠ the pre-registered ζ½ cell: DIRECTIONAL, not a ζ½ verdict.")
+    print("  FOLLOW-ON (to close the literal ζ½ cell · card contingency (b))")
+    print("     · needs a posterior-gap recorder on the decode path (e.g. an `anima-py chat`")
+    print("       flag logging per-lm-step top-2 logit gap + in-window mass), then a ζ sweep.")
+    print("     · 303M decode is POOL-only (summer/aiden), never mini (heavy-anima-eval-pool-not-mini).")
+    return 0
+
+
+def _content_sig_factory(b64_list):
+    """POPULATION-RELATIVE 2-bit content signature (equal-frequency binning · researcher DOF = 0).
+
+    Replaces an absolute char-class argmax that DIED on real text: every natural-English candidate
+    is lowercase-dominant, so 29 DISTINCT 303M candidates collapsed to ONE address (measured
+    2026-07-17 on a 60-tick sampled wm-dual trace: lower med 0.688 vs dig 0.050 / upper 0.050 /
+    pun 0.044 ⇒ argmax ≡ lower ⇒ dead alphabet ⇒ every reader read NOT-POWERED). The absolute
+    form only discriminated the synthetic oracle (digit-vs-punct), which is exactly the trap
+    `positive-control-before-reading-a-negative` warns about: a control the instrument passes
+    while the real distribution saturates it.
+
+    Fix: split each feature at the MEDIAN of the trace's OWN population — bins are balanced by
+    construction on whatever distribution actually shows up, and there is no threshold to tune.
+    Features are the two with live spread on natural text (digit-fraction · lowercase-fraction).
+    The surrogate null re-uses the SAME binning, so the data-dependent split cannot manufacture
+    signal (it shifts real and null together)."""
+    import base64 as _b64f, statistics as _stf
+
+    def _feats(b64s):
+        if not b64s:
+            return None
+        try:
+            bs = _b64f.b64decode(b64s)
+        except Exception:
+            return None
+        n = len(bs)
+        if n == 0:
+            return None
+        dig = sum(1 for x in bs if 48 <= x <= 57) / n
+        low = sum(1 for x in bs if 97 <= x <= 122) / n
+        return (dig, low)
+
+    pop = [f for f in (_feats(b) for b in b64_list) if f is not None]
+    if len(pop) < 4:
+        return (lambda _b: -1)
+    md = _stf.median([p[0] for p in pop])
+    ml = _stf.median([p[1] for p in pop])
+
+    def _sig(b64s):
+        f = _feats(b64s)
+        if f is None:
+            return -1
+        return (2 if f[0] > md else 0) + (1 if f[1] > ml else 0)
+    return _sig
+
+
+def _timing_channel(argv):
+    """`anima-py evaluate --timing-channel <traces...> [--perm 1000] [--seed 12345]
+       [--clock <clock-trace>] [--lens hold|iei] [--schedule <gen-percept-schedule jsonl>]`
+       — H_9731 TIMING-CHANNEL ($0 · read-only re-analysis · no producer).
+
+    H_9796 `--schedule` mode: instead of the population content-sig, C = the byte-multiset-CONTROLLED
+    probe kind repeat(0)/shuffle(1) at the probe tick — the clean order-only label the archival feat8
+    signature lacked. Gated to the immune-margin regime (trace _meta g_reach ∈ d1/affinity); a wm-dual
+    coverage-gate trace is REFUSED (order-blind by construction = H_9731 KILL scope). CMI>0 ⟹ percept
+    order reached emit timing via the order-sensitive immune_memory_recall_margin_text store (echo-mediated).
+
+    Does the OBSERVABLE emit TIMING carry the identity of the WITHHELD content? emit⟺S>E is a
+    content-ledger comparison, so WHEN the daemon speaks is set by WHAT it withheld — an honest
+    reopening of the mouth-content wall (H_9576) as a TIMING channel (not bytes · Fable). $0: reads
+    existing wm-dual traces (H_9627 · dual_margin/emit/stage/cand_pregate_b64) — no injection, no rewire.
+
+    Source  T_t = OBSERVABLE emit latency (ticks from a silence tick to the NEXT emit), binned
+            short/long at the pooled median. NOT dual_margin itself: dual_margin=S−E is content-derived,
+            so MI(margin;content) is a tautology — the observable emit gap is a THRESHOLDED (lossy)
+            function of it, and MI(gap;content) measures how much content survives into the observable
+            WHEN. That distinction is the whole honesty of this instrument.
+    Target  C_t = 2-bit dominant-char-class signature of the withheld content (cand_pregate_b64[t]).
+    MI = I(T ; C | stage) plug-in (bits). timing carries content ⟺ MI > clock-pedestal ∧ MI > surr95.
+
+    Controls: --clock <trace> = a clock-gated trace (emit clock-driven ⇒ timing content-independent ⇒
+      truth-0 PEDESTAL) · content-shuffle surrogate (circular-shift C, preserves the timing/spring
+      structure, destroys the content link ⇒ MI collapses if real). Self-test: planted C≡T must recover.
+
+    ⚠️ DIRECTIONAL · toy ≠ verdict (a_scale_honest_scope) · real read = H_9627 303M wm-dual traces
+    (if archived, truly $0; else a small wm-dual collection · measurement-only, no owner fire-go)."""
+    import glob as _glob, base64 as _b64, math as _m, random as _random, json as _json
+    globs = [a for a in argv if not a.startswith("--")]
+    def _iv(flag, d):
+        for i, a in enumerate(argv):
+            if a == flag and i + 1 < len(argv):
+                try:
+                    return int(argv[i + 1])
+                except Exception:
+                    return d
+        return d
+    def _sv(flag, d):
+        for i, a in enumerate(argv):
+            if a == flag and i + 1 < len(argv):
+                return argv[i + 1]
+        return d
+    perm = _iv("--perm", 1000)
+    seed = _iv("--seed", 12345)
+    clock_path = _sv("--clock", "")
+    # --lens hold (default · byte-identical) = silence→next-emit latency vs the WITHHELD content.
+    # --lens iei = inter-emit interval vs the content of the emission that ENDS the gap. The hold lens
+    # conditions on silence and is BLIND to emit→emit doublets — and on the 303M seed7 trace ALL of the
+    # timing entropy lived there (hold H=0 vs inter-emit H=0.6374). A hold-lens null is scoped to the
+    # HOLD channel only; the iei lens is what reads the surviving channel (H_9731 card · Fable∥Sol).
+    lens = _sv("--lens", "hold")
+    if lens not in ("hold", "iei"):
+        print("  ⇒ ⛔ --lens: only 'hold' (default) or 'iei' (got %r)" % lens)
+        return 2
+    # H_9796 · --schedule <gen-percept-schedule jsonl>: when set, C = the byte-multiset-CONTROLLED probe
+    # kind repeat(0)/shuffle(1) at the probe tick, NOT the population content-sig. This is the clean 3-arm
+    # ground-truth label the archival feat8 signature LACKED (evaluate-py-23 single-address collapse). Only
+    # legitimate in the immune-margin regime (--g-reach d1/affinity): repeat vs shuffle differ ONLY in byte
+    # ORDER, which is invisible to the feat8 wm-dual coverage gate (⟹ H_9731 KILL) but visible to the
+    # order-sensitive immune_memory_recall_margin_text store. CMI>0 ⟹ percept order reaches emit timing.
+    sched_path = _sv("--schedule", "")
+    globs = [g for g in globs if g not in (clock_path, sched_path)]
+    _sched = {}
+    if sched_path:
+        for _ln in open(sched_path, encoding="utf-8", errors="surrogateescape"):
+            _ln = _ln.strip()
+            if not _ln or not _ln.startswith("{"):
+                continue
+            try:
+                _r = _json.loads(_ln)
+            except Exception:
+                continue
+            _sched[int(_r["tick"])] = (_r.get("kind"), int(_r.get("lag", 0)))
+    paths = []
+    for g in globs:
+        paths.extend(sorted(_glob.glob(g)))
+    print("═══ H_9731 TIMING-CHANNEL · does OBSERVABLE emit timing carry the WITHHELD content? ═══")
+    print("  traces=%d · perm=%d · seed=%d · lens=%s%s"
+          % (len(paths), perm, seed, lens, (" · clock-pedestal=%s" % clock_path.split("/")[-1]) if clock_path else ""))
+    if sched_path:
+        print("  H_9796 · --schedule ON : C = probe kind repeat(0) vs shuffle(1) [byte-multiset-controlled,"
+              " order-only] · CMI(hold-latency ; kind | stage) · valid only in immune-margin regime (g_reach"
+              " d1/affinity) · novel arm excluded (byte-stats = dead H_9576 lane)")
+    elif lens == "iei":
+        print("  lens=iei : T = inter-emit gap · C = content of the emission ENDING the gap · ⚠️ a PASS reads"
+              " 'the gap preceding an emission carries its content', NOT 'the daemon delays to signal'")
+
+    # signature = POPULATION-RELATIVE (_content_sig_factory · built per-trace from that trace's own
+    # candidates). The absolute char-class argmax it replaces read ONE address for every natural-English
+    # candidate (lowercase always dominant) = dead alphabet on real 303M data (convergence evaluate-py-23).
+
+    def _cmi(triples):
+        # I(T ; C | S) plug-in (bits) — triples = (t, c, s)
+        from collections import Counter as _C
+        j = _C(); tc_no = _C(); cs = _C(); ts = _C(); sc = _C()
+        for (t, c, s) in triples:
+            j[(t, c, s)] += 1
+            cs[(c, s)] += 1
+            ts[(t, s)] += 1
+            sc[s] += 1
+        n = max(1, sum(j.values()))
+        mi = 0.0
+        for (t, c, s), cnt in j.items():
+            p = cnt / n
+            p_tc_s = cnt / cs[(c, s)]          # P(T | C,S)
+            p_t_s = ts[(t, s)] / sc[s]          # P(T | S)
+            if p_tc_s > 0 and p_t_s > 0:
+                mi += p * _m.log2(p_tc_s / p_t_s)
+        return max(0.0, mi)
+
+    def _build_iei(rows):
+        # (T,C,S) on consecutive EMIT pairs — the lens the hold lens is BLIND to.
+        # T = inter-emit interval (e_{k+1} − e_k) binned at the population median · C = content sig of
+        # the LATER emit's pre-gate candidate (the one that ENDS the gap) · S = stage wake(0)/sleep(1).
+        #
+        # Why this exists (measured 2026-07-17, 303M seed7·60tick): the hold lens conditions on SILENCE
+        # and therefore cannot see emit→emit doublets. That trace had EE=5 ES=27 SE=27 SS=0 — every
+        # silence was followed by an emit, so hold latency was the constant 1 (H=0) — but the inter-emit
+        # gap distribution was {2:26, 1:5} ⟹ **H=0.6374 bits ≠ 0**. ALL of the surviving timing entropy
+        # sits in the 5 spring-violation doublets that the hold lens is blind to by construction. Two
+        # independent sessions both measured only the hold lens and both read "no timing channel" — that
+        # verdict is therefore scoped to the HOLD channel, not to the timing stream (H_9731 card).
+        #
+        # ⚠️ Interpret with the pre-registered caveat (Sol): T's variation here may come entirely from
+        # double-emits rather than delayed release — a PASS means "the gap that precedes an emission
+        # carries its content", NOT "the daemon delays to signal". Condition on stage; the surrogate
+        # shuffles C within the same binning so the median split cannot manufacture signal.
+        _sig = _content_sig_factory([(r.get("cand_pregate_b64", "") or r.get("cand_b64_diag", "")) for r in rows])
+        emit_ticks = [i for i, r in enumerate(rows) if str(r.get("emit")).lower() == "true"]
+        raw = []
+        for k in range(len(emit_ticks) - 1):
+            i, j = emit_ticks[k], emit_ticks[k + 1]
+            c = _sig(rows[j].get("cand_pregate_b64", "") or rows[j].get("cand_b64_diag", ""))
+            if c < 0:
+                continue
+            st = int(rows[j].get("stage", 0))
+            raw.append((j - i, c, 1 if st >= 3 else 0))
+        if not raw:
+            return []
+        # T = the RAW gap, capped at 3+ (states {1,2,3+} → {0,1,2}) — Sol's pre-registration
+        # "T_IEI ∈ {1,2,…}", NOT a median split. A median split COLLAPSES here by construction and the
+        # bug is not hypothetical: on the real gap distribution {2:26, 1:5} the median IS 2, so `g > med`
+        # is never true and every gap lands in one bin — the lens would read bins=1 and look exactly like
+        # the blind hold lens while the channel (H=0.637) sat right there. Caught by the EE=5 synthetic.
+        # The gap alphabet is naturally tiny, so it needs no data-dependent binning at all (DOF 0).
+        return [(min(g, 3) - 1, c, s) for (g, c, s) in raw]
+
+    def _build(rows):
+        # (T,C,S) on silence ticks: T = latency-to-next-emit binned short/long at median; C = withheld
+        # content sig; S = stage wake(0)/sleep(1). C's quantizer is built from THIS trace's own candidate
+        # population (median splits) — an absolute threshold saturates on natural text (evaluate-py-23).
+        _sig = _content_sig_factory([(r.get("cand_pregate_b64", "") or r.get("cand_b64_diag", "")) for r in rows])
+        emit_ticks = [i for i, r in enumerate(rows) if str(r.get("emit")).lower() == "true"]
+        raw = []
+        for i, r in enumerate(rows):
+            if str(r.get("emit")).lower() == "true":
+                continue  # silence ticks only (the withheld ones)
+            nxt = next((e for e in emit_ticks if e > i), None)
+            if nxt is None:
+                continue
+            c = _sig(r.get("cand_pregate_b64", "") or r.get("cand_b64_diag", ""))
+            if c < 0:
+                continue
+            st = int(r.get("stage", 0))
+            s = 1 if st >= 3 else 0   # sleep (N2/N3/REM = 3/4) vs wake
+            raw.append((nxt - i, c, s))
+        if not raw:
+            return []
+        lats = sorted(x[0] for x in raw)
+        med = lats[len(lats) // 2]
+        return [(1 if lat > med else 0, c, s) for (lat, c, s) in raw]
+
+    def _build_sched(rows):
+        # H_9796 · hold-latency vs SCHEDULE kind (byte-multiset-controlled label). For each PROBE SILENCE
+        # tick whose schedule kind is repeat/shuffle: T = latency-to-next-emit (median split), C = 0 repeat
+        # / 1 shuffle, S = stage. novel excluded (byte-stats arm = dead H_9576). Emit probe ticks excluded
+        # (0-latency). repeat and shuffle differ ONLY in byte order ⟹ CMI>0 ⟹ percept ORDER reached the
+        # emit-hold decision (only possible via an order-sensitive gate — the immune-margin regime).
+        emit_ticks = [i for i, r in enumerate(rows) if str(r.get("emit")).lower() == "true"]
+        raw = []
+        for i, r in enumerate(rows):
+            t = r.get("tick")
+            if t is None:
+                continue
+            sk = _sched.get(int(t))
+            if sk is None or sk[0] not in ("repeat", "shuffle"):
+                continue
+            if str(r.get("emit")).lower() == "true":
+                continue                       # silence probes only (hold latency)
+            nxt = next((e for e in emit_ticks if e > i), None)
+            if nxt is None:
+                continue
+            st = int(r.get("stage", 0))
+            raw.append((nxt - i, 0 if sk[0] == "repeat" else 1, 1 if st >= 3 else 0))
+        if not raw:
+            return []
+        # T = RAW hold-latency capped at 3+ (states {1,2,3+}), NOT a median split. A median split COLLAPSES
+        # when the latency alphabet is tiny (the exact _build_iei bug: on {1,3} the median is 3, so `lat>med`
+        # is never true and every probe lands in one bin = timing bins=1). The hold-latency alphabet is
+        # naturally small, so it needs no data-dependent binning (DOF 0 · caught by the planted synth test).
+        return [(min(lat, 3), c, s) for (lat, c, s) in raw]
+
+    def _bld(rows):
+        # dispatch: schedule-kind label (H_9796) · iei-gap (H_9731 iei lens) · hold-latency (default)
+        if sched_path:
+            return _build_sched(rows)
+        return _build_iei(rows) if lens == "iei" else _build(rows)
+
+    def _surr(triples, rng):
+        # circular-shift the C column (excl 0,±1) — preserves T,S marginals + timing structure
+        cs = [t[1] for t in triples]
+        m = len(cs)
+        if m < 5:
+            return 0.0
+        sh = rng.randrange(2, m - 1)
+        cs2 = cs[-sh:] + cs[:-sh]
+        return _cmi([(triples[i][0], cs2[i], triples[i][2]) for i in range(m)])
+
+    # estimator self-test (planted C≡T recovers · independent ~0)
+    _st = _random.Random(seed ^ 0x9731)
+    planted = [((t := _st.randrange(2)), t, _st.randrange(2)) for _ in range(400)]
+    indep = [(_st.randrange(2), _st.randrange(2), _st.randrange(2)) for _ in range(400)]
+    mi_p = _cmi(planted); mi_i = _cmi(indep)
+    est_ok = mi_p > 0.4 and mi_i < 0.1
+    print("  estimator self-test : planted I(T;C|S)=%.3f (want>0.4) · independent=%.3f (want<0.1) ⇒ %s"
+          % (mi_p, mi_i, "✅ live" if est_ok else "❌ DEAD-ESTIMATOR"))
+
+    def _load(p):
+        rows = []; meta = {}
+        for ln in open(p, encoding="utf-8", errors="surrogateescape"):
+            ln = ln.strip()
+            if not ln:
+                continue
+            try:
+                r = _json.loads(ln)
+            except Exception:
+                continue
+            if isinstance(r, dict) and r.get("_meta"):
+                meta = r
+            elif isinstance(r, dict) and "tick" in r:
+                rows.append(r)
+        return rows, meta
+
+    # clock pedestal (truth-0): a clock-gated trace's timing is content-independent by construction
+    pedestal = 0.0
+    if clock_path:
+        crows, _ = _load(clock_path)
+        ct = _bld(crows)
+        pedestal = _cmi(ct) if len(ct) >= 12 else 0.0
+        print("  clock PEDESTAL (truth-0) : I(T;C|S)=%.4f  [%d silence transitions]" % (pedestal, len(ct)))
+
+    if not paths:
+        print("  ⇒ ⛔ no traces matched: %r  (wm-dual: chat --g-reach wm-dual --record-silent-cand)" % globs)
+        return 2 if est_ok else 3
+    rng = _random.Random(seed)
+    any_pass = False
+    for p in paths:
+        rows, meta = _load(p)
+        if meta.get("emit_gate") == "clock":
+            print("  · %s ⇒ (clock trace — use as --clock pedestal, not an exp arm)" % p)
+            continue
+        if sched_path and meta.get("g_reach") not in ("d1", "affinity"):
+            print("  · %s ⇒ ⛔ --schedule requires immune-margin regime (g_reach d1/affinity · got %r) —"
+                  " wm-dual coverage gate is order-blind by construction (H_9731 KILL scope)" % (p, meta.get("g_reach")))
+            continue
+        tri = _bld(rows)
+        if len(tri) < 12:
+            print("  · %s ⇒ ⛔ NOT-POWERED (%d silence transitions <12)" % (p, len(tri)))
+            continue
+        n_t = len(set(x[0] for x in tri)); n_c = len(set(x[1] for x in tri))
+        if n_t < 2 or n_c < 2:
+            print("  · %s ⇒ ⛔ NOT-POWERED (timing bins=%d · content addr=%d · need ≥2 each)" % (p, n_t, n_c))
+            continue
+        mi = _cmi(tri)
+        surr = [_surr(tri, rng) for _ in range(perm)]
+        ss = sorted(surr)
+        p95 = ss[min(len(ss) - 1, int(0.95 * len(ss)))]
+        mu = sum(surr) / len(surr)
+        sd = (sum((s - mu) ** 2 for s in surr) / max(1, len(surr))) ** 0.5
+        z = (mi - mu) / sd if sd > 1e-12 else 0.0
+        pv = (sum(1 for s in surr if s >= mi) + 1) / (len(surr) + 1)
+        passed = (mi > pedestal) and (mi > p95) and (z >= 2.0) and (pv < 0.005)
+        any_pass = any_pass or passed
+        print("  · %s  [n=%d · Tbins=%d Caddr=%d]" % (p, len(tri), n_t, n_c))
+        print("      I(T;C|S)=%.4f bits · ped=%.4f · surr95=%.4f · z=%.2f · p=%.4f ⇒ %s"
+              % (mi, pedestal, p95, z, pv, "✅ timing IS a content channel" if passed else "ns (timing content-free this trace)"))
+    print("  ── H_9731 read: %s (MI>pedestal ∧ shuffle collapse ⇒ 관측 WHEN이 보류 WHAT 나름 · mouth-content"
+          " 벽 H_9576 timing 재개봉 · DIRECTIONAL until H_9627 303M traces)"
+          % ("≥1 trace: timing carries content" if any_pass else "no timing-content channel this batch"))
+    return 0 if est_ok else 3
+
+
+def _gen_percept_schedule(argv):
+    """`anima-py evaluate --gen-percept-schedule --out <f.jsonl> [--lags 1,4,16] [--reps 8] [--seed 12345]`
+
+    H_9795 EVALUATION-HISTORICITY producer-side helper. Builds a repeat/shuffle/novel PERCEPT schedule
+    played into the daemon through the EXISTING `--percept-file` producer (H_9767) — no new chat flag
+    (a_experiment_engine_native minimality). Each row {tick,text,kind,lag,prime}: `--percept-file` reads
+    ONLY tick/text (extra keys ignored), while the `--eval-historicity` reader keys off kind/lag/prime to
+    compute Delta grade(repeat) - Delta grade(shuffle) with lag-dose. DETERMINISTIC (seeded).
+
+    Structure per (rep, lag, arm in {repeat,shuffle,novel}): a PRIME novel percept at tick t, `lag-1`
+    novel fillers, then at t+lag the PROBE = exact-repeat(prime) | byte-multiset-matched shuffle(prime) |
+    a fresh novel. The shuffle arm is the load-bearing control: identical unigram byte statistics, order
+    destroyed — a grading Delta that survives repeat-vs-shuffle is item-trace, not byte-stats."""
+    import json as _json
+    import random as _random
+    out = evaluate_strval(argv, "--out", "")
+    if not out:
+        print("--gen-percept-schedule requires --out <path>", file=sys.stderr, flush=True)
+        return 2
+    lags = [int(x) for x in evaluate_strval(argv, "--lags", "1,4,16").split(",") if x.strip()]
+    reps = evaluate_intval(argv, "--reps", 8)
+    seed = evaluate_intval(argv, "--seed", 12345)
+    jitter = evaluate_intval(argv, "--jitter", 5)   # random 0..jitter pre-fillers per arm so the
+                                                    # probe tick DECORRELATES from the sleep-stage
+                                                    # phase — else kind confounds with stage and the
+                                                    # reader's (lag,stage)-stratified null degenerates
+    rng = _random.Random(seed)
+    _alpha = list("abcdefghijklmnopqrstuvwxyz0123456789")
+
+    def _novel(i):
+        b = list(_alpha)
+        rng.shuffle(b)
+        return "".join(b[:12]) + "_" + str(i)
+
+    def _shuffle_bytes(s):
+        cs = list(s)
+        rng.shuffle(cs)
+        t = "".join(cs)
+        if t == s and len(set(cs)) > 1:      # guarantee order differs (multiset identical)
+            cs[0], cs[1] = cs[1], cs[0]
+            t = "".join(cs)
+        return t
+
+    rows = []
+    tick = 0
+    for _rep in range(reps):
+        for lag in lags:
+            for arm in ("repeat", "shuffle", "novel"):
+                for _j in range(rng.randint(0, jitter)):   # stage-decorrelating pre-jitter
+                    rows.append({"tick": tick, "text": _novel(len(rows)), "kind": "jitter", "lag": lag, "prime": -1})
+                    tick += 1
+                prime_text = _novel(len(rows))
+                prime_tick = tick
+                rows.append({"tick": tick, "text": prime_text, "kind": "prime", "lag": lag, "prime": prime_tick})
+                tick += 1
+                for _f in range(lag - 1):    # fillers so the probe lands exactly at prime_tick+lag
+                    rows.append({"tick": tick, "text": _novel(len(rows)), "kind": "filler", "lag": lag, "prime": prime_tick})
+                    tick += 1
+                if arm == "repeat":
+                    ptext = prime_text
+                elif arm == "shuffle":
+                    ptext = _shuffle_bytes(prime_text)
+                else:
+                    ptext = _novel(len(rows))
+                rows.append({"tick": tick, "text": ptext, "kind": arm, "lag": lag, "prime": prime_tick})
+                tick += 1
+
+    with open(out, "w", encoding="utf-8") as _fh:
+        for r in rows:
+            _fh.write(_json.dumps(r, ensure_ascii=False) + "\n")
+    from collections import Counter as _Counter
+    kc = _Counter(r["kind"] for r in rows)
+    print("--gen-percept-schedule: wrote %d rows -> %s | kinds=%s | lags=%s reps=%d seed=%d"
+          % (len(rows), out, dict(kc), lags, reps, seed))
+    return 0
+
+
+def _eval_historicity(argv):
+    """`anima-py evaluate --eval-historicity <trace...> --schedule <sched.jsonl> [--dv recon_err]
+        [--perm 1000] [--seed 12345]`
+
+    H_9795 EVALUATION-HISTORICITY reader. Does the grading channel carry ITEM-SPECIFIC habituation:
+    is an EXACT-REPEAT percept graded differently from a byte-multiset-matched SHUFFLE, and does that
+    difference DECAY with lag (item familiarity fades)? Joins the decision trace (DV by tick) with the
+    --gen-percept-schedule jsonl (kind/lag/prime by tick).
+
+    DV = `recon_err` (grounded #4168: repeat 0.013 vs byte-matched shuffle 2.051 on toy — the recognition
+    field separates item-identity from byte-statistics). Per-lag statistic S(lag)=mean(recon_err|shuffle)
+    − mean(recon_err|repeat) (>0 ⟹ shuffle unrecognized > repeat recognized = item-trace). LOAD-BEARING
+    control (Fable Q5): the repeat−shuffle contrast alone can be a seed-order DECODE ARTIFACT; only the
+    LAG-DECAY (item memory fades, an artifact would not) separates memory from artifact.
+
+    Null: permute the kind label (repeat<->shuffle) within (lag,stage) strata; recompute S. KILL: S
+    TOST-zero at every lag. VOID (dead DV, not KILL): recon_err(novel)≈recon_err(repeat) at min lag
+    (no dynamic range) OR recon_err near-constant across the run (chat-py-4 degeneracy). novel arm =
+    liveness pedestal."""
+    import json as _json
+    import glob as _glob
+    import random as _random
+    import statistics as _stats
+    sched_path = evaluate_strval(argv, "--schedule", "")
+    if not sched_path:
+        print("--eval-historicity requires --schedule <gen-percept-schedule jsonl>", file=sys.stderr, flush=True)
+        return 2
+    dv_name = evaluate_strval(argv, "--dv", "recon_err")
+    n_perm = evaluate_intval(argv, "--perm", 1000)
+    seed = evaluate_intval(argv, "--seed", 12345)
+    globs = [a for a in argv if not a.startswith("--")
+             and a not in (sched_path, dv_name, str(n_perm), str(seed))]
+    trace_files = []
+    for g in globs:
+        trace_files.extend(sorted(_glob.glob(g)))
+    if not trace_files:
+        print("--eval-historicity: no trace files matched " + repr(globs), file=sys.stderr, flush=True)
+        return 2
+
+    # kind/lag by tick from the schedule
+    sched = {}
+    with open(sched_path, "r", encoding="utf-8", errors="surrogateescape") as _fh:
+        for _ln in _fh:
+            _ln = _ln.strip()
+            if not _ln:
+                continue
+            r = _json.loads(_ln)
+            sched[int(r["tick"])] = (r.get("kind"), int(r.get("lag", 0)))
+
+    # DV + stage by (file, tick) → probe records
+    probes = []          # (kind, lag, dv, stage)
+    dv_all = []
+    for tf in trace_files:
+        for _ln in open(tf, "r", encoding="utf-8", errors="surrogateescape"):
+            _ln = _ln.strip()
+            if not _ln or not _ln.startswith("{"):
+                continue
+            try:
+                row = _json.loads(_ln)
+            except Exception:
+                continue
+            t = row.get("tick")
+            if t is None:
+                continue
+            dv = row.get(dv_name)
+            if not isinstance(dv, (int, float)):
+                continue
+            dv_all.append(float(dv))
+            sk = sched.get(int(t))
+            if sk is None:
+                continue
+            kind, lag = sk
+            if kind in ("repeat", "shuffle", "novel"):
+                probes.append((kind, lag, float(dv), int(row.get("stage", 0))))
+
+    n_rep = sum(1 for p in probes if p[0] == "repeat")
+    n_shu = sum(1 for p in probes if p[0] == "shuffle")
+    n_nov = sum(1 for p in probes if p[0] == "novel")
+    lags = sorted(set(p[1] for p in probes if p[0] in ("repeat", "shuffle")))
+    print("--eval-historicity: dv=%s · traces=%d · probes rep=%d shuf=%d nov=%d · lags=%s · perm=%d"
+          % (dv_name, len(trace_files), n_rep, n_shu, n_nov, lags, n_perm))
+    if n_rep < 2 or n_shu < 2:
+        print("VERDICT: ⛔ NOT-POWERED (need >=2 repeat and >=2 shuffle probes)")
+        return 0
+
+    def _mean(kind, lag):
+        vs = [p[2] for p in probes if p[0] == kind and p[1] == lag]
+        return _stats.mean(vs) if vs else None
+
+    # ---- VOID gates (dead DV, not KILL) ----
+    dv_rng = (max(dv_all) - min(dv_all)) if dv_all else 0.0
+    min_lag = lags[0] if lags else 0
+    rep0 = _mean("repeat", min_lag)
+    nov0 = _mean("novel", min_lag)
+    void_reason = None
+    if dv_rng < 1e-9:
+        void_reason = "recon_err near-constant across run (dead DV · chat-py-4 degeneracy)"
+    elif rep0 is not None and nov0 is not None and abs(nov0 - rep0) < 0.05 * max(1e-9, dv_rng):
+        void_reason = "recon_err(novel)~recon_err(repeat) at min lag — no item dynamic range"
+    if void_reason:
+        print("VERDICT: 🕳️ VOID — " + void_reason + " (liveness pedestal failed · not a KILL)")
+        return 0
+
+    # ---- per-lag S(lag) = mean(shuffle) - mean(repeat) ----
+    S = {}
+    for lag in lags:
+        sh, rp = _mean("shuffle", lag), _mean("repeat", lag)
+        if sh is not None and rp is not None:
+            S[lag] = sh - rp
+    if not S:
+        print("VERDICT: ⛔ NOT-POWERED (no lag has both arms)")
+        return 0
+    T = S[min_lag]                                   # primary contrast at shortest lag
+    # item memory FADES: require a meaningful (>=25% relative) drop from shortest to longest lag,
+    # not merely S(short) > S(long) (noise satisfies that). A decode-artifact has no reason to decay.
+    s_min, s_max = S.get(lags[0], 0.0), S.get(lags[-1], 0.0)
+    lag_decay = (len(lags) >= 2 and s_min > 0.0 and (s_min - s_max) > 0.25 * abs(s_min))
+
+    # ---- permutation null: swap repeat<->shuffle labels within (lag,stage) strata ----
+    rng = _random.Random(seed)
+    rs = [p for p in probes if p[0] in ("repeat", "shuffle")]
+    strata = {}
+    for i, p in enumerate(rs):
+        strata.setdefault((p[1], p[3]), []).append(i)
+    null_T = []
+    for _ in range(n_perm):
+        # permute the repeat/shuffle labels WITHIN each (lag,stage) stratum (holds the
+        # stratum's DV values fixed; only the label assignment is randomized)
+        lab = [None] * len(rs)
+        for _k, idxs in strata.items():
+            labels = [rs[j][0] for j in idxs]
+            rng.shuffle(labels)
+            for j, L in zip(idxs, labels):
+                lab[j] = L
+        def _m2(kind, lag):
+            vs = [rs[j][2] for j in range(len(rs)) if lab[j] == kind and rs[j][1] == lag]
+            return _stats.mean(vs) if vs else None
+        sh, rp = _m2("shuffle", min_lag), _m2("repeat", min_lag)
+        if sh is not None and rp is not None:
+            null_T.append(sh - rp)
+    if not null_T:
+        print("VERDICT: ⛔ NOT-POWERED (permutation null empty)")
+        return 0
+    null_sorted = sorted(null_T)
+    p95 = null_sorted[int(0.95 * (len(null_sorted) - 1))]
+    p_val = sum(1 for x in null_T if abs(x) >= abs(T)) / float(len(null_T))
+
+    print("  S(lag)=%s · T(min-lag S)=%.4f · null95=%.4f · perm-p=%.4f · lag-decay=%s"
+          % ({k: round(v, 4) for k, v in S.items()}, T, p95, p_val, lag_decay))
+    # ---- verdict ----
+    if T > p95 and p_val < 0.05 and lag_decay:
+        print("VERDICT: 🟢 ITEM-MEMORY (repeat<shuffle recon ∧ >null ∧ lag-decay) — item-trace, not byte-stats/artifact")
+    elif T > p95 and p_val < 0.05 and not lag_decay:
+        print("VERDICT: ⚠️ CONTRAST-NO-DECAY — repeat≠shuffle but no lag-decay: possible DECODE-ARTIFACT (Fable Q5), not memory")
+    else:
+        print("VERDICT: 🧱 NULL — repeat−shuffle within null (grade is byte-stats/percept-blind · TOST toward 0)")
+    return 0
+
+
+def _af_forward(argv):
+    """`anima-py evaluate --af-forward <trace...> --impulse <af-impulse jsonl> [--side arousal|valence]
+        [--kmax 3] [--perm 1000] [--seed 12345]`
+
+    H_9794 AFFECT-FORWARDING reader. Does the amygdala STATE af, set by an exogenous IMPULSE at tick t0,
+    carry FORWARD to condition the grade of the NEXT percept (t0+k, k>=1), over and above the same-tick
+    (k=0) shift? Uses --af-impulse traces (af clamped at listed ticks, native elsewhere), so af(t0) is
+    decorrelated from af(t0+1) — the static --af-clamp cannot identify this (lab-full Fable Q1).
+
+    DV = the ENVELOPE-FREE PHASIC grade (clock removed analytically, Fable F1/H_9403):
+      arousal side  cur_phasic = cur_f / (0.1 + 0.9*stage_env)
+      valence side  rel_phasic = rel_f / (0.1 + 0.9*stage_env)
+    (never the raw ctx or the *_indep sums — those are circular). Matched-filter h_k = mean(DV at
+    impulse_tick+k) − mean(DV at baseline_tick+k). h_0 = WITHIN-TICK positive control (must be nonzero,
+    else the af->ci wiring is severed for this ckpt => VOID). h_{k>=1} = the FORWARDING signal.
+
+    Null: permute impulse/baseline labels over the pooled tick set; recompute h_k. KILL 🧱 SHIFT-ONLY:
+    h_0 significant but every h_{k>=1} TOST-zero (af is a same-tick shift, not a forwarded state — a real
+    negative). PASS 🟢 FORWARDED: some h_{k>=1} beyond null. VOID: h_0 within null (severed wiring) OR
+    DV near-constant."""
+    import json as _json
+    import glob as _glob
+    import random as _random
+    import statistics as _stats
+    imp_path = evaluate_strval(argv, "--impulse", "")
+    if not imp_path:
+        print("--af-forward requires --impulse <af-impulse jsonl>", file=sys.stderr, flush=True)
+        return 2
+    side = evaluate_strval(argv, "--side", "arousal")
+    num = "cur_f" if side == "arousal" else "rel_f"
+    kmax = evaluate_intval(argv, "--kmax", 3)
+    n_perm = evaluate_intval(argv, "--perm", 1000)
+    seed = evaluate_intval(argv, "--seed", 12345)
+    globs = [a for a in argv if not a.startswith("--")
+             and a not in (imp_path, side, str(kmax), str(n_perm), str(seed))]
+    trace_files = []
+    for g in globs:
+        trace_files.extend(sorted(_glob.glob(g)))
+    if not trace_files:
+        print("--af-forward: no trace files matched " + repr(globs), file=sys.stderr, flush=True)
+        return 2
+
+    imp_ticks = set()
+    with open(imp_path, "r", encoding="utf-8", errors="surrogateescape") as _fh:
+        for _ln in _fh:
+            _ln = _ln.strip()
+            if _ln:
+                imp_ticks.add(int(_json.loads(_ln)["tick"]))
+
+    # phasic DV by tick (envelope-free)
+    dv = {}          # tick -> phasic DV
+    dv_vals = []
+    max_t = -1
+    for tf in trace_files:
+        for _ln in open(tf, "r", encoding="utf-8", errors="surrogateescape"):
+            _ln = _ln.strip()
+            if not _ln or not _ln.startswith("{"):
+                continue
+            try:
+                row = _json.loads(_ln)
+            except Exception:
+                continue
+            t = row.get("tick")
+            if t is None:
+                continue
+            f = row.get(num)
+            se = row.get("stage_env")
+            if not isinstance(f, (int, float)) or not isinstance(se, (int, float)):
+                continue
+            phasic = float(f) / (0.1 + 0.9 * float(se))
+            dv[int(t)] = phasic
+            dv_vals.append(phasic)
+            max_t = max(max_t, int(t))
+
+    base_ticks = set(t for t in dv if t not in imp_ticks)
+    print("--af-forward: side=%s dv=%s · traces=%d · impulse-ticks=%d baseline-ticks=%d · kmax=%d perm=%d"
+          % (side, num, len(trace_files), len(imp_ticks & set(dv)), len(base_ticks), kmax, n_perm))
+    if len(imp_ticks & set(dv)) < 2 or len(base_ticks) < 2:
+        print("VERDICT: ⛔ NOT-POWERED (need >=2 impulse and >=2 baseline ticks present in trace)")
+        return 0
+    if dv_vals and (max(dv_vals) - min(dv_vals)) < 1e-9:
+        print("VERDICT: 🕳️ VOID — phasic DV near-constant (severed af->ci wiring or dead gauge · not a KILL)")
+        return 0
+
+    def _hk(imp_set, base_set, k):
+        iv = [dv[t + k] for t in imp_set if (t + k) in dv]
+        bv = [dv[t + k] for t in base_set if (t + k) in dv]
+        if len(iv) < 1 or len(bv) < 1:
+            return None
+        return _stats.mean(iv) - _stats.mean(bv)
+
+    obs = {k: _hk(imp_ticks, base_ticks, k) for k in range(kmax + 1)}
+    # permutation null: relabel impulse/baseline over the pooled ticks
+    pooled = sorted(imp_ticks & set(dv)) + sorted(base_ticks)
+    n_imp = len(imp_ticks & set(dv))
+    rng = _random.Random(seed)
+    null = {k: [] for k in range(kmax + 1)}
+    for _ in range(n_perm):
+        pp = pooled[:]
+        rng.shuffle(pp)
+        pi, pb = set(pp[:n_imp]), set(pp[n_imp:])
+        for k in range(kmax + 1):
+            h = _hk(pi, pb, k)
+            if h is not None:
+                null[k].append(abs(h))
+
+    def _p(k):
+        if obs[k] is None or not null[k]:
+            return 1.0
+        return sum(1 for x in null[k] if x >= abs(obs[k])) / float(len(null[k]))
+
+    p0 = _p(0)
+    fwd_ks = [k for k in range(1, kmax + 1) if obs[k] is not None and _p(k) < 0.05]
+    print("  h_k=%s · perm-p=%s"
+          % ({k: (round(v, 4) if v is not None else None) for k, v in obs.items()},
+             {k: round(_p(k), 4) for k in range(kmax + 1)}))
+    # ---- verdict ----
+    if p0 >= 0.05:
+        print("VERDICT: 🕳️ VOID — h_0 (within-tick) within null: af does not even move the same-tick grade "
+              "(af->ci wiring severed for this ckpt · not a KILL)")
+    elif fwd_ks:
+        _fwd_signed = {k: round(obs[k], 4) for k in fwd_ks}
+        print("VERDICT: 🟢 FORWARDED — h_0 significant ∧ |h_k| beyond null at k=%s (signed %s): af STATE "
+              "conditions the NEXT percept's grade (interior→interior forwarding, not just a same-tick shift; "
+              "the carryover sign is the direction of modulation)" % (fwd_ks, _fwd_signed))
+    else:
+        print("VERDICT: 🧱 SHIFT-ONLY — h_0 significant but every h_{k>=1} TOST-zero: af is a same-tick shift, "
+              "leaves NO state trace on the next percept (earned negative · forwarding absent)")
+    return 0
+
+
+def _silence_content_te(argv):
+    """`anima-py evaluate --silence-content-te <trace globs...> [--perm 1000] [--seed 12345]
+       [--reach-lag same|next] [--copy-exclude none|exact|ngram] [--reach-oracle] [--pool]` — H_9729 SILENCE-CONTENT.
+
+    --reach-lag same (DEFAULT · PRIMARY reach · I(cand[t];carrier[t]|cand[t-1])) = "does the withheld
+    carrier reach the SAME-tick candidate it seeds", conditioned on the PRE-treatment candidate (the
+    fresh oracle carrier ⊥ cand[t-1] ⇒ cleanly certified). --reach-lag next = the residual/carryover read
+    I(cand[t+1];carrier[t]|cand[t]) conditioning on the mediator cand[t] (secondary · NOT primary reach).
+
+    Does the WITHHELD candidate's CONTENT causally reach the next imagined candidate (deliberation),
+    or is W_S pressure-only (suppression)? = living gate vs living interior. Reads chat traces from
+    `anima-py chat ... --emit-gate refractory --g-reach wm-dual --record-silent-cand
+    --wm-dual-read content [--wm-dual-perm | --wm-dual-swap <donor> | --wm-dual-oracle]`.
+
+    Source  X_t = frozen 2-bit dominant-address of the RE-ENTERED carrier (wm_reentry_b64[t]).
+    Target  Y_{t+1} = same signature of the NEXT tick's PRE-GATE imagined candidate (cand_b64_diag).
+      Pre-gate ⇒ mouth-severance-immune AND *not* dual_margin (= probe(W_S,cand) algebraically =
+      re-measures the known gate wiring · the Fable→Sol reconcile that avoided a tautological target).
+    TE = I(Y_{t+1}; X_t | Y_t) — conditioning on Y_t controls echo/autocorrelation; stage/emit/score
+      enter via the surrogate, NOT the joint table (faction over-conditioning death · :7442). EARNED
+      read; pass = TE>surr95 ∧ z≥2 ∧ perm-p<0.005. Surrogate = per-trace circular shift of the X
+      series (excl {0,±1}), preserving X marginal+autocorrelation while breaking the X→Y coupling.
+    Literal-copy handling (--copy-exclude none|exact|ngram · default none · H_9729 run-2 fix): the primary
+    TE KEEPS every powered transition; exact/high-containment copies are REPORTED as a diagnostic, never a
+    silent filter (the pre-run-2 any-shared-6-gram exclusion has base rate ≈1 on natural EN → it excluded
+    38/38 own-arm transitions = a never-measured arm read as a null). `exact` drops only unequivocal copies
+    (full-cand==carrier / cand⊂carrier ≥24 B / LCS≥0.8 ≥24 B) as a sensitivity arm; `ngram` = the legacy
+    --overlap-ngram behavior (reproduction only).
+
+    Arms (one per trace · meta.wm_dual_read/perm/swap names it):
+      own   — factual withheld carrier re-entered.
+      perm  — byte-SORTED carrier (feat8/multiset EXACT, order destroyed) = LOAD-BEARING: own>null ∧
+              perm≈null ⇒ ORDER-BEARING content moved the interior, not feat8/pressure/histogram.
+      donor — another rollout's withheld candidate (own-vs-other specificity · C2).
+    Positive control (--reach-oracle · a KNOWN alternating carrier trace from --wm-dual-oracle): the
+      SAME estimator must PASS (recovery); if it reads ∅ the channel is REACH-FAIL / MOUTH-SEVERED
+      (H_9576) ⇒ any real null is UNINTERPRETABLE, not interior-absent (positive-control-before-negative).
+    An always-run synthetic self-test (planted X→Y must recover; independent X→Y must read ~0) guards
+    a dead estimator before any read. Validity floors: source-entropy + target-entropy → NOT-POWERED.
+
+    ⚠️ Scope (a_scale_honest_scope): separable only to feat8 granularity (8 byte-stats · 2-bit address).
+    A PASS = "the interior reads back its withheld content at byte-ORDER granularity" (real deliberation
+    — pressure can't, echo dies under perm), NOT a semantic-interior claim. DIRECTIONAL until 303M."""
+    import glob as _glob, base64 as _b64, math as _m, random as _random, json as _json
+    globs = [a for a in argv if not a.startswith("--")]
+    def _iv(flag, d):
+        for i, a in enumerate(argv):
+            if a == flag and i + 1 < len(argv):
+                try:
+                    return int(argv[i + 1])
+                except Exception:
+                    return d
+        return d
+    def _sv(flag, d):
+        for i, a in enumerate(argv):
+            if a == flag and i + 1 < len(argv):
+                return argv[i + 1]
+        return d
+    perm = _iv("--perm", 1000)
+    seed = _iv("--seed", 12345)
+    ov_ng = _iv("--overlap-ngram", 6)
+    # H_9729 run-2 (Fable∥Sol · #4045): the any-shared-6-gram exclusion has base rate ≈1 on natural EN
+    # (excluded 38/38 → own arm NEVER measured). Default is now KEEP-ALL for the primary TE; literal-copy
+    # is a SEPARATE diagnostic, not a silent filter (Sol: conditioning inclusion on the X↔Y relationship
+    # being estimated distorts the TE population). --copy-exclude {none(default)|exact|ngram(legacy)}:
+    #   none  = primary keeps every powered transition; exact/high-containment copies REPORTED, not dropped
+    #   exact = drop only unequivocal copies (full-cand==carrier, or cand⊂carrier ≥24B, or LCS/len≥0.8 ≥24B)
+    #   ngram = the pre-run-2 --overlap-ngram behavior (base-rate-saturated · reproduction only)
+    copy_excl = _sv("--copy-exclude", "none").lower()
+    if copy_excl not in ("none", "exact", "ngram"):
+        copy_excl = "none"
+    # H_9729 run-2 QA (Fable∥Sol · #4046): the reader's original triple (X=carrier[t], Y0=cand[t],
+    # Y1=cand[t+1]) conditions on cand[t] — but carrier[t] REACHES cand[t] SAME-TICK (chat.py injects the
+    # re-entry anchor at t, decode produces cand_pregate[t] the same row; certify-pilot 79% same-row
+    # survival). Conditioning on cand[t] is post-treatment conditioning on the MEDIATOR → it blocks the
+    # principal carrier[t]→cand[t]→future path (Sol) and taxes power as transmission improves (Fable). So
+    #   --reach-lag same (DEFAULT · PRIMARY reach) = I(cand[t] ; carrier[t] | cand[t-1]) — the card's
+    #     "does withheld content reach the next imagined candidate" question, conditioned on the
+    #     PRE-treatment candidate (cand[t-1] ⊥ the fresh oracle carrier ⇒ cleanly identified for the
+    #     oracle; the fresh-each-tick oracle is a valid isolated pulse here — no HOLD-K, which both models
+    #     rejected as certifying persistence indistinguishably from fresh reinjection).
+    #   --reach-lag next (SECONDARY · labeled residual/carryover) = the original I(cand[t+1];carrier[t]|
+    #     cand[t]) — a post-treatment residual read, NOT primary reach; kept for the persistence angle.
+    reach_lag = _sv("--reach-lag", "same").lower()
+    if reach_lag not in ("same", "next"):
+        reach_lag = "same"
+    reach_oracle = "--reach-oracle" in argv
+    # H_9729 pooled reader (--pool · evaluate-py-24): the own re-entry is ONE-SHOT (~1 usable transition
+    # per trace), so the per-trace ≥12 bar can NEVER power the own arm at any tick count. --pool collects
+    # same-arm triples ACROSS traces into one estimate. Each trace contributes ~1 INDEPENDENT (X,Y0,Y1)
+    # draw ⇒ the within-trace circular-shift null is undefined (m=1); the valid null is a Y0-STRATIFIED
+    # permutation of X (breaks I(Y1;X|Y0)=0 while preserving the Y0-conditional X marginal). Default off
+    # ⇒ the per-trace path is byte-identical. (Sol single-model · Fable OAuth-down · not-cemented-DIRECTIONAL.)
+    pool_mode = "--pool" in argv
+    _pooled = {}
+    paths = []
+    for g in globs:
+        paths.extend(sorted(_glob.glob(g)))
+    print("═══ H_9729 SILENCE-CONTENT · does withheld CONTENT reach the next imagined candidate? ═══")
+    print("  traces=%d · perm=%d · seed=%d · reach-lag=%s (%s) · overlap-excl=%d-gram%s"
+          % (len(paths), perm, seed, reach_lag,
+             "PRIMARY reach I(cand[t];carrier[t]|cand[t-1])" if reach_lag == "same"
+             else "residual I(cand[t+1];carrier[t]|cand[t])",
+             ov_ng, " · REACH-ORACLE" if reach_oracle else ""))
+
+    # frozen 2-bit dominant-CHAR-CLASS signature: argmax over [n_dig, n_upper, n_lower, n_pun] (the
+    # dominant character class · researcher DOF = 0 · tie → lowest index). Chosen over a raw-byte-stat
+    # argmax because n_lt64/var SATURATE on ASCII text (a digit-vs-punct oracle both read <64 →
+    # collapse to one address = a dead positive control · caught in toy calibration). Char classes
+    # discriminate real byte-LM output AND the oracle A/B. Order-independent (multiset) BY DESIGN: the
+    # perm control acts at the GENERATION level (a sorted seed makes a different Y), not on this stat.
+    # signature = POPULATION-RELATIVE (_content_sig_factory · built per-trace from that trace's own
+    # candidates). The absolute char-class argmax it replaces read ONE address for every natural-English
+    # candidate (lowercase always dominant) = dead alphabet on real 303M data (convergence evaluate-py-23).
+
+    def _overlap(a_b64, b_b64, ng):
+        try:
+            a = _b64.b64decode(a_b64) if a_b64 else b""
+            b = _b64.b64decode(b_b64) if b_b64 else b""
+        except Exception:
+            return False
+        if len(a) < ng or len(b) < ng:
+            return len(a) > 0 and a == b
+        ags = set(a[i:i + ng] for i in range(len(a) - ng + 1))
+        for i in range(len(b) - ng + 1):
+            if b[i:i + ng] in ags:
+                return True
+        return False
+
+    def _lcspan(a, b):
+        # longest common CONTIGUOUS byte span (DP over the two short strings · candidates ~40-80 B).
+        if not a or not b:
+            return 0
+        best = 0
+        prev = [0] * (len(b) + 1)
+        for i in range(1, len(a) + 1):
+            cur = [0] * (len(b) + 1)
+            ai = a[i - 1]
+            for j in range(1, len(b) + 1):
+                if ai == b[j - 1]:
+                    v = prev[j - 1] + 1
+                    cur[j] = v
+                    if v > best:
+                        best = v
+            prev = cur
+        return best
+
+    def _is_copy(carrier_b64, cand_b64):
+        # Sol's honest narrow rule (H_9729 run-2): flag ONLY an unequivocal copy — full-candidate byte
+        # equality with the carrier, candidate wholly contained in the carrier (≥24 B), or a contiguous
+        # common span ≥24 B that is ≥80% of the candidate. This is the "not explained by literal copy"
+        # guarantee WITHOUT the any-shared-6-gram base-rate saturation (≈1 on natural EN · excluded 38/38).
+        try:
+            c = _b64.b64decode(carrier_b64) if carrier_b64 else b""
+            d = _b64.b64decode(cand_b64) if cand_b64 else b""
+        except Exception:
+            return False
+        if not d:
+            return False
+        if d == c:
+            return True
+        if len(d) >= 24 and d in c:
+            return True
+        span = _lcspan(c, d)
+        return span >= 24 and span >= 0.8 * len(d)
+
+    def _cmi(triples):
+        # I(Y1 ; X | Y0) plug-in (bits) — structure mirrors _te_sign_to_emit's conditional form.
+        from collections import Counter as _C
+        j = _C(); xy0 = _C(); y01 = _C(); y0c = _C()
+        for (x, y0, y1) in triples:
+            j[(y1, x, y0)] += 1
+            xy0[(x, y0)] += 1
+            y01[(y1, y0)] += 1
+            y0c[y0] += 1
+        n = max(1, sum(j.values()))
+        te = 0.0
+        for (y1, x, y0), c in j.items():
+            p = c / n
+            p_y1_xy0 = c / xy0[(x, y0)]
+            p_y1_y0 = y01[(y1, y0)] / y0c[y0]
+            if p_y1_xy0 > 0 and p_y1_y0 > 0:
+                te += p * _m.log2(p_y1_xy0 / p_y1_y0)
+        return max(0.0, te)
+
+    def _surr_null(triples, rng):
+        # per-trace CIRCULAR shift of the X series (excl shift ∈ {0,±1}) — preserves X marginal +
+        # autocorrelation, breaks the X→(Y0,Y1) coupling (Sol · better than IID shuffle).
+        xs = [t[0] for t in triples]
+        rest = [(t[1], t[2]) for t in triples]
+        m = len(xs)
+        if m < 5:
+            return 0.0
+        s = rng.randrange(2, m - 1)
+        xs2 = xs[-s:] + xs[:-s]
+        return _cmi([(xs2[i], rest[i][0], rest[i][1]) for i in range(m)])
+
+    def _surr_perm_pooled(triples, rng):
+        # --pool null: Y0-STRATIFIED permutation of X over a POOL of independent draws (≈1/trace). The
+        # within-trace circular shift (_surr_null) is undefined at m≈1; this shuffles X INSIDE each Y0
+        # stratum, breaking I(Y1;X|Y0) while preserving the Y0-conditional X marginal + the (Y0,Y1) joint.
+        from collections import defaultdict as _dd
+        strata = _dd(list)
+        for i, t in enumerate(triples):
+            strata[t[1]].append(i)
+        xs = [t[0] for t in triples]
+        xs2 = xs[:]
+        for _y0, idxs in strata.items():
+            px = [xs[i] for i in idxs]
+            rng.shuffle(px)
+            for k, i in enumerate(idxs):
+                xs2[i] = px[k]
+        return _cmi([(xs2[i], triples[i][1], triples[i][2]) for i in range(len(triples))])
+
+    # ── estimator self-test (planted recovery + independent null) · dead estimator = STOP ──
+    _strng = _random.Random(seed ^ 0x9729)
+    _planted = [((k := _strng.randrange(4)), _strng.randrange(4), k) for _ in range(400)]  # Y1==X
+    _indep = [(_strng.randrange(4), _strng.randrange(4), _strng.randrange(4)) for _ in range(400)]
+    _te_planted = _cmi(_planted); _te_indep = _cmi(_indep)
+    _est_ok = _te_planted > 0.5 and _te_indep < 0.15
+    print("  estimator self-test : planted I(Y1;X|Y0)=%.3f (want>0.5) · independent=%.3f (want<0.15) ⇒ %s"
+          % (_te_planted, _te_indep, "✅ live" if _est_ok else "❌ DEAD-ESTIMATOR (do not read below)"))
+    if pool_mode:
+        # pooled-null self-test: the Y0-stratified permutation MUST break the planted signal (earned>0.5)
+        # and read ~0 on independent data — validates the --pool surrogate before any pooled read.
+        _sp = _surr_perm_pooled(_planted, _random.Random(seed ^ 0x7729))
+        _si = _surr_perm_pooled(_indep, _random.Random(seed ^ 0x6729))
+        _pool_ok = (_te_planted - _sp) > 0.5 and abs(_te_indep - _si) < 0.15
+        print("  pooled-null self-test : planted perm-null=%.3f (earned %.3f · want>0.5) · indep perm-null="
+              "%.3f (Δ %.3f · want<0.15) ⇒ %s" % (_sp, _te_planted - _sp, _si, abs(_te_indep - _si),
+              "✅ pooled-null valid" if _pool_ok else "❌ POOLED-NULL DEAD (do not read --pool below)"))
+        _est_ok = _est_ok and _pool_ok
+    if not paths:
+        print("  ⇒ ⛔ no traces matched: %r  (produce with --wm-dual-read content)" % globs)
+        return 2 if _est_ok else 3
+
+    _rng = _random.Random(seed)
+    any_pass = False
+    any_signal = False   # H_9729 run-2: carrier signal PRESENT (earned>0 ∧ TE>surr95 ∧ p<0.05) but below strict bar
+    for p in paths:
+        meta = {}; rows = []
+        for ln in open(p, encoding="utf-8", errors="surrogateescape"):
+            ln = ln.strip()
+            if not ln:
+                continue
+            try:
+                r = _json.loads(ln)
+            except Exception:
+                continue
+            if isinstance(r, dict) and r.get("_meta"):
+                meta = r
+            elif isinstance(r, dict) and "tick" in r:
+                rows.append(r)
+        arm = ("oracle" if meta.get("wm_dual_oracle") else
+               "perm" if meta.get("wm_dual_perm") else
+               "swap" if meta.get("wm_dual_swap") else
+               ("own" if meta.get("wm_dual_read") == "content" else "off"))
+        # build (x, y0, y1) triples on ticks the carrier was injected (wm_reentry_arm != off).
+        # ONE quantizer over the carrier ∪ candidate population so X and Y bin on the same scale
+        # (evaluate-py-23: an absolute threshold reads 1 address on natural text).
+        _sig = _content_sig_factory([r.get("wm_reentry_b64", "") for r in rows]
+                                    + [r.get("cand_pregate_b64", "") for r in rows])
+        # lag-aware triple (X, Y0, Y1): same = (carrier[i], cand[i-1], cand[i]) — PRIMARY reach, target is
+        # the SAME-row candidate the carrier seeds, conditioned on the PRE-treatment candidate cand[i-1];
+        # next = (carrier[i], cand[i], cand[i+1]) — residual/carryover, conditioned on the mediator cand[i].
+        triples = []; n_excl = 0; xs_all = []; n_inj = 0; n_copy = 0
+        _lo = 1 if reach_lag == "same" else 0
+        _hi = len(rows) if reach_lag == "same" else len(rows) - 1
+        for i in range(_lo, _hi):
+            if rows[i].get("wm_reentry_arm", "off") == "off":
+                continue
+            n_inj += 1
+            if reach_lag == "same":
+                x = _sig(rows[i].get("wm_reentry_b64", ""))
+                y0 = _sig(rows[i - 1].get("cand_pregate_b64", ""))
+                y1 = _sig(rows[i].get("cand_pregate_b64", ""))
+                _carr = rows[i].get("wm_reentry_b64", ""); _nxt = rows[i].get("cand_pregate_b64", "")
+            else:
+                x = _sig(rows[i].get("wm_reentry_b64", ""))
+                y0 = _sig(rows[i].get("cand_pregate_b64", ""))
+                y1 = _sig(rows[i + 1].get("cand_pregate_b64", ""))
+                _carr = rows[i].get("wm_reentry_b64", ""); _nxt = rows[i + 1].get("cand_pregate_b64", "")
+            if x < 0 or y0 < 0 or y1 < 0:
+                continue
+            _copy = _is_copy(_carr, _nxt)
+            if _copy:
+                n_copy += 1
+            # keep-all primary (copy_excl=none): copies are REPORTED, not silently dropped (H_9729 run-2).
+            if copy_excl == "exact" and _copy:
+                n_excl += 1
+                continue
+            if copy_excl == "ngram" and _overlap(_carr, _nxt, ov_ng):
+                n_excl += 1
+                continue
+            triples.append((x, y0, y1)); xs_all.append(x)
+        print("  · %s  [arm=%s]" % (p, arm))
+        print("      copy-diag: %d/%d injected transitions are literal copies (exact/≥24B-contain/LCS≥0.8)"
+              " · copy-exclude=%s%s" % (n_copy, n_inj, copy_excl,
+              (" (%d dropped)" % n_excl) if copy_excl != "none" else " (kept · reported only)"))
+        if pool_mode:
+            _pooled.setdefault(arm, []).extend(triples)
+            print("      [pool] +%d transition(s) → arm=%s pool (per-trace verdict deferred)"
+                  % (len(triples), arm))
+            continue
+        if len(triples) < 12:
+            print("      ⇒ ⛔ NOT-POWERED (%d usable transitions <12 · %d injected · %d copy-excluded)"
+                  % (len(triples), n_inj, n_excl))
+            continue
+        n_x = len(set(xs_all)); n_y1 = len(set(t[2] for t in triples))
+        if n_x < 2 or n_y1 < 2:
+            print("      ⇒ ⛔ NOT-POWERED (source addresses=%d · target addresses=%d · need ≥2 each"
+                  " = no usable alphabet · feat8-clustered)" % (n_x, n_y1))
+            continue
+        te_real = _cmi(triples)
+        surr = [_surr_null(triples, _rng) for _ in range(perm)]
+        surr_sorted = sorted(surr)
+        p95 = surr_sorted[min(len(surr_sorted) - 1, int(0.95 * len(surr_sorted)))]
+        mu = sum(surr) / len(surr)
+        sd = (sum((s - mu) ** 2 for s in surr) / max(1, len(surr))) ** 0.5
+        z = (te_real - mu) / sd if sd > 1e-12 else 0.0
+        pval = (sum(1 for s in surr if s >= te_real) + 1) / (len(surr) + 1)
+        earned = te_real - mu
+        passed = (te_real > p95) and (z >= 2.0) and (pval < 0.005)
+        signal = (te_real > p95) and (earned > 0) and (pval < 0.05)  # present but sub-strict-bar (underpowered)
+        any_pass = any_pass or passed
+        any_signal = any_signal or signal
+        print("      n=%d transitions · X-addr=%d Y-addr=%d · %d literal-copy (%s)"
+              % (len(triples), n_x, n_y1, n_copy, ("excluded" if copy_excl != "none" else "kept·reported")))
+        print("      TE=I(Y1;X|Y0)=%.4f bits · earned=%.4f · surr95=%.4f · z=%.2f · perm-p=%.4f ⇒ %s"
+              % (te_real, earned, p95, z, pval, "✅ content-transfer" if passed else "ns (no content transfer)"))
+    # verdict framing · REACH-ORACLE is THREE-way (H_9729 run-2 · Fable∥Sol): the old binary stamped
+    # MOUTH-SEVERED on ANY sub-strict-bar result, conflating "underpowered" with "severed". A carrier
+    # with earned>0 ∧ TE>surr95 REACHES cand[t+1] (the channel is live); it just lacks power at the
+    # strict bar. Only earned≈0 / TE≤surr95 (the run-2 point-mass signature) is genuine severance.
+    if pool_mode:
+        for arm, ptr in sorted(_pooled.items()):
+            print("  ══ [POOL] arm=%s · %d pooled transitions across %d trace(s) ══"
+                  % (arm, len(ptr), len(paths)))
+            if len(ptr) < 12:
+                print("      ⇒ ⛔ NOT-POWERED (pooled %d <12 · one-shot ⇒ ~1/trace ⇒ need ≥12 traces)"
+                      % len(ptr))
+                continue
+            _nx = len(set(t[0] for t in ptr)); _ny = len(set(t[2] for t in ptr))
+            if _nx < 2 or _ny < 2:
+                print("      ⇒ ⛔ NOT-POWERED (pooled X-addr=%d Y-addr=%d · need ≥2 each)" % (_nx, _ny))
+                continue
+            _te = _cmi(ptr)
+            _sur = [_surr_perm_pooled(ptr, _rng) for _ in range(perm)]
+            _ss = sorted(_sur); _p95 = _ss[min(len(_ss) - 1, int(0.95 * len(_ss)))]
+            _mu = sum(_sur) / len(_sur)
+            _sd = (sum((s - _mu) ** 2 for s in _sur) / max(1, len(_sur))) ** 0.5
+            _z = (_te - _mu) / _sd if _sd > 1e-12 else 0.0
+            _pv = (sum(1 for s in _sur if s >= _te) + 1) / (len(_sur) + 1)
+            _earned = _te - _mu
+            _passed = (_te > _p95) and (_z >= 2.0) and (_pv < 0.005)
+            _sig = (_te > _p95) and (_earned > 0) and (_pv < 0.05)
+            any_pass = any_pass or _passed
+            any_signal = any_signal or _sig
+            print("      pooled TE=I(Y1;X|Y0)=%.4f · earned=%.4f · Y0-strat-perm surr95=%.4f · z=%.2f "
+                  "· perm-p=%.4f ⇒ %s" % (_te, _earned, _p95, _z, _pv,
+                  "✅ content-transfer (pooled)" if _passed else
+                  ("🟡 signal-sub-bar (pooled)" if _sig else "ns (no pooled content-transfer)")))
+    if reach_oracle:
+        if any_pass:
+            print("  ── REACH-ORACLE verdict: ✅ CERTIFIED — known carrier recovered at the strict bar"
+                  " (TE>surr95 ∧ z≥2 ∧ p<0.005) ⇒ the reader can read reach; a real H_9729 null would be"
+                  " interior-absent")
+        elif any_signal:
+            print("  ── REACH-ORACLE verdict: 🟡 REACH-MARGINAL — carrier signal PRESENT (TE>surr95 ∧"
+                  " earned>0 ∧ p<0.05) but UNDERPOWERED at the strict bar. The channel REACHES (this is"
+                  " NOT mouth-severance — earned>0); add ticks to certify. A real H_9729 null stays"
+                  " uninterpretable until CERTIFIED.")
+        else:
+            print("  ── REACH-ORACLE verdict: ❌ REACH-FAIL / MOUTH-SEVERED (H_9576) — the known carrier"
+                  " did NOT reach cand[t+1] (earned≈0 / TE≤surr95); a real null is UNINTERPRETABLE"
+                  " (reach fact, not interior absence)")
+    else:
+        print("  ── H_9729 read: %s  (own PASS ∧ perm/donor ns ⇒ ORDER-BEARING withheld content moves"
+              " the interior · feat8 granularity · DIRECTIONAL until 303M · run --reach-oracle first)"
+              % ("≥1 arm shows content-transfer" if any_pass else "no content-transfer this batch"))
+    return 0 if _est_ok else 3
+
+
+def _ag_criticality(argv):
+    """H_9607 A⇄G CRITICALITY — engine-native readout of the A⇄G feedback loop over decision traces.
+
+    `anima-py evaluate --ag-criticality <trace globs...> [--perm N] [--seed N]`
+
+    Reads the traces `anima-py chat --ag-feedback <κ>` already wrote (NO decode, like --dead-census /
+    --pc2-direction / --emit-gate-census) and renders the trace-computable panels of Fable's three-panel
+    discriminator (the verdict statistic must be engine-native · a_experiment_engine_native · H_9303/07):
+
+      (C0) LOOP-LIVENESS  — distinct(ag_drive): κ=0 ⇒ 1 (value 0.0, field untouched = the byte-parity
+                            guarantee); κ>0 ⇒ >1 (the A→G→A return leg is live). A dead ag_drive means
+                            the loop is inert (STILL-SEALED), not that Ψ moved.
+      (ii) TE(tension→emit) — transfer entropy from the signed net tension ag_s to the emit bit, with a
+                            phase-scramble (time-shuffle of ag_s) surrogate null over --perm draws. The
+                            loop is a causal channel iff TE_real exceeds the surrogate 95th pct (z≥2).
+      (iii) HOMEOSTASIS    — mean emit_drive and |mean − ½|: is emit_drive pulled toward ½? Reported as
+                            color (a toy/short trace cannot cement homeostasis · a_scale_honest_scope);
+                            the score-perturbation robustness arm + the vshuf/quantile forgery controls
+                            are part of the pre-registered 303M fire, not this trace read.
+
+    Panel (i) butterfly-Lyapunov needs a SEED-FLIP rollout PAIR (1-byte seed flip, same sample seed;
+    frozen null = H_9603 divergence-growth +0.007) — a fired pair, not a single-trace read; documented
+    as the 303M fire protocol and NOT computed here. This reader is DIRECTIONAL (offline · a toy trace
+    is not a Ψ verdict); the terminal verdict is the owner-gated 303M --ag-criticality run.
+    """
+    perm = 200
+    seed = 7
+    bf_pair = None
+    globs = []
+    i = 0
+    while i < len(argv):
+        a = argv[i]
+        if a == "--perm" and i + 1 < len(argv):
+            perm = int(argv[i + 1]); i += 2; continue
+        if a == "--seed" and i + 1 < len(argv):
+            seed = int(argv[i + 1]); i += 2; continue
+        if a == "--butterfly" and i + 2 < len(argv):
+            bf_pair = (argv[i + 1], argv[i + 2]); i += 3; continue
+        globs.append(a); i += 1
+    if not globs and bf_pair is None:
+        print("  ⇒ ⛔ usage: anima-py evaluate --ag-criticality <trace globs...> [--perm N] [--seed N]")
+        print("            or --ag-criticality --butterfly <seedflip_A.jsonl> <seedflip_B.jsonl>  (panel i · λ)")
+        return 2
+    import glob as _glob
+    paths = []
+    for g in globs:
+        paths.extend(sorted(_glob.glob(g)))
+    if not paths and bf_pair is None:
+        print("  ⇒ ⛔ no traces matched: %r" % globs)
+        return 2
+
+    def _ticks(p):
+        out = []
+        for ln in open(p, encoding="utf-8", errors="surrogateescape"):
+            ln = ln.strip()
+            if not ln:
+                continue
+            try:
+                r = json.loads(ln)
+            except Exception:
+                continue
+            if isinstance(r, dict) and "ag_drive" in r and "emit" in r:
+                out.append(r)
+        return out
+
+    if bf_pair is not None:
+        # Panel (i) butterfly-λ: two seed-flip rollouts (1-byte session_seed flip, same sample seed).
+        # State vector = z-normalised [emit_drive, phi, ag_fb_I]; per-tick L2 distance d_t; divergence
+        # GROWTH = least-squares slope of d_t vs tick (H_9603 frozen null +0.007 ≈ 0 = zero-Lyapunov
+        # linear limit-cycle). slope ≫ +0.05 ⇒ λ departs 0 (dynamics revived); ≈ null ⇒ STILL zero-Lyapunov.
+        A = _ticks(bf_pair[0]); B = _ticks(bf_pair[1])
+        n = min(len(A), len(B))
+        print("═══ A⇄G CRITICALITY · panel (i) butterfly-λ · H_9607 (H_9603 null +0.007) ═══")
+        if n < 20:
+            print("  ⇒ ⛔ NOT-POWERED (<20 aligned ticks: A=%d B=%d)" % (len(A), len(B)))
+            return 0
+        keys = ["emit_drive", "phi", "ag_fb_I"]
+        # z-normalise each field over the pooled A∪B series so no axis dominates the distance
+        import math as _m
+        stats = {}
+        for k in keys:
+            vals = [float(r.get(k, 0.0)) for r in A[:n]] + [float(r.get(k, 0.0)) for r in B[:n]]
+            mu = sum(vals) / len(vals)
+            sd = (sum((v - mu) ** 2 for v in vals) / len(vals)) ** 0.5 or 1.0
+            stats[k] = (mu, sd)
+        d = []
+        for t in range(n):
+            s2 = 0.0
+            for k in keys:
+                mu, sd = stats[k]
+                za = (float(A[t].get(k, 0.0)) - mu) / sd
+                zb = (float(B[t].get(k, 0.0)) - mu) / sd
+                s2 += (za - zb) ** 2
+            d.append(_m.sqrt(s2))
+        # least-squares slope of d_t vs t
+        ts = list(range(n))
+        mt = sum(ts) / n; md = sum(d) / n
+        num = sum((ts[t] - mt) * (d[t] - md) for t in range(n))
+        den = sum((ts[t] - mt) ** 2 for t in range(n)) or 1.0
+        slope = num / den
+        kappa = float(A[0].get("ag_feedback_kappa", B[0].get("ag_feedback_kappa", 0.0)))
+        print("  pair: %s ⇔ %s · κ=%.4g · aligned ticks=%d" % (bf_pair[0], bf_pair[1], kappa, n))
+        print("      d_0=%.4f · d_end=%.4f · divergence-growth slope=%.5f /tick" % (d[0], d[-1], slope))
+        verdict = ("λ DEPARTS 0 (dynamics revived · chaotic/edge)" if slope > 0.05
+                   else "≈ H_9603 null (STILL zero-Lyapunov · limit-cycle)" if abs(slope) <= 0.02
+                   else "marginal (0.02–0.05 · underpowered band)")
+        print("      ⇒ %s  [frozen null: H_9603 +0.007]" % verdict)
+        return 0
+
+    def _te_sign_to_emit(rows):
+        # TE(ag_s → emit): discrete, ag_s binned by sign (2 states), emit binary.
+        # TE = Σ p(e', e, x) log2 [ p(e'|e,x) / p(e'|e) ], x = sign(ag_s_t), e=emit_t, e'=emit_{t+1}.
+        from collections import Counter as _C
+        joint = _C(); ee = _C(); eex = _C(); e_ctx = _C()
+        for t in range(len(rows) - 1):
+            e = 1 if rows[t].get("emit") else 0
+            e1 = 1 if rows[t + 1].get("emit") else 0
+            x = 1 if float(rows[t].get("ag_s", 0.0)) >= 0.0 else 0
+            joint[(e1, e, x)] += 1
+            eex[(e, x)] += 1
+            ee[(e1, e)] += 1
+            e_ctx[e] += 1
+        n = max(1, sum(joint.values()))
+        import math as _m
+        te = 0.0
+        for (e1, e, x), c in joint.items():
+            p_joint = c / n
+            p_e1_given_ex = c / eex[(e, x)]
+            p_e1_given_e = ee[(e1, e)] / e_ctx[e]
+            if p_e1_given_ex > 0 and p_e1_given_e > 0:
+                te += p_joint * _m.log2(p_e1_given_ex / p_e1_given_e)
+        return max(0.0, te)
+
+    print("═══ A⇄G CRITICALITY · H_9607 · engine-native readout of the A→G→A feedback loop ═══")
+    print("  traces=%d · perm=%d · seed=%d" % (len(paths), perm, seed))
+    _rng = random.Random(seed)
+    any_live = False
+    for p in paths:
+        rows = _ticks(p)
+        if len(rows) < 8:
+            print("  · %s: rows=%d ⇒ ⛔ NOT-POWERED (<8 tick rows)" % (p, len(rows)))
+            continue
+        drives = [round(float(r["ag_drive"]), 12) for r in rows]
+        nd = len(set(drives))
+        kappa = float(rows[0].get("ag_feedback_kappa", 0.0))
+        eds = [float(r.get("emit_drive", 0.0)) for r in rows]
+        mean_ed = sum(eds) / len(eds)
+        emit_rate = sum(1 for r in rows if r.get("emit")) / len(rows)
+        te_real = _te_sign_to_emit(rows)
+        # phase-scramble surrogate: shuffle ag_s series (destroys the loop timing, keeps the marginal)
+        surr = []
+        base_s = [float(r.get("ag_s", 0.0)) for r in rows]
+        for _ in range(perm):
+            perm_s = base_s[:]
+            _rng.shuffle(perm_s)
+            srows = [dict(r) for r in rows]
+            for j in range(len(srows)):
+                srows[j]["ag_s"] = perm_s[j]
+            surr.append(_te_sign_to_emit(srows))
+        surr_sorted = sorted(surr)
+        p95 = surr_sorted[min(len(surr_sorted) - 1, int(0.95 * len(surr_sorted)))]
+        mu = sum(surr) / len(surr)
+        sd = (sum((s - mu) ** 2 for s in surr) / max(1, len(surr))) ** 0.5
+        z = (te_real - mu) / sd if sd > 1e-12 else 0.0
+        live = nd > 1
+        any_live = any_live or live
+        print("  · %s" % p)
+        print("      C0 loop-liveness : κ=%.4g · distinct(ag_drive)=%d ⇒ %s"
+              % (kappa, nd, "✅ LIVE" if live else ("byte-parity (κ=0)" if kappa == 0.0 else "❌ inert")))
+        print("      ii TE(ag_s→emit) : TE=%.4f bits · surr95=%.4f · z=%.2f ⇒ %s"
+              % (te_real, p95, z, "✅ channel" if (te_real > p95 and z >= 2.0) else "ns (no causal channel this trace)"))
+        print("      iii homeostasis  : mean(emit_drive)=%.3f |·−½|=%.3f · emit-rate=%.3f  [color · not a verdict]"
+              % (mean_ed, abs(mean_ed - 0.5), emit_rate))
+    print("  ── panel (i) butterfly-λ needs a SEED-FLIP fired PAIR (H_9603 null +0.007) = 303M owner-gate fire, not this read.")
+    print("  ⇒ DIRECTIONAL trace read (a_scale_honest_scope · toy ≠ Ψ verdict). loop live in ≥1 trace: %s" % ("yes" if any_live else "no"))
+def _pc2_emit_coupling(argv):
+    """H_9741 EMIT-COUPLING — do the LIVE tension axes couple to emit, or are they orthogonal?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --emit-coupling [--perm N] [--seed N]`
+
+    THE QUESTION H_9713 EXPLICITLY LEFT OPEN. H_9428/H_9468 certified PC2 as an "emit-ORTHOGONAL
+    second DOF", and H_9574/9576/9630-9634 built a whole lane on that orthogonality. H_9713 then
+    showed the frozen axis's live RANK is unstable (nearest live PC flips run to run), and its
+    verdict flagged -- in writing -- that "whether live PC1 is emit-coupled is NOT asked by that
+    instrument". This asks exactly that: refit the live 8x8 covariance, take each PC's score
+    trajectory, and correlate it (point-biserial) with the emit bit.
+
+      |r| < 0.15 for every PC  => ORTHOGONAL (the emit-orthogonal-DOF story survives the label churn)
+      any |r| > 0.15, p<.01    => COUPLED   (they were steering an emit-relevant axis after all)
+
+    POSITIVE CONTROL: the frozen z (pc2_z) itself must show a small emit correlation -- H_9428
+    reported corr(|x_perp|, emit)=+0.14. If z shows ZERO, the instrument cannot see coupling and
+    the run is INVALID, not orthogonal.
+
+    Autocorrelation is high (H_9714: lag-1 rho ~0.86), so n_eff << n and the permutation null is
+    mandatory -- the nominal p is not trustworthy.
+    """
+    import glob as _glob
+    import json as _pj
+    import random as _prand
+    import numpy as _np
+
+    ALL8 = ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+            "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"]
+    THR = 0.15
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --emit-coupling")
+        return 2
+    rounds = evaluate_intval(argv, "--perm", 2000)
+    rseed = evaluate_intval(argv, "--seed", 20260717)
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    runs, seen, dup = [], set(), 0
+    for f in files:
+        X, E, Z = [], [], []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                continue
+            v = [r.get(k) for k in ALL8]
+            if any(x is None for x in v) or r.get("emit") is None:
+                continue
+            X.append([float(x) for x in v])
+            E.append(1.0 if r.get("emit") else 0.0)
+            Z.append(float(r["pc2_z"]) if r.get("pc2_z") is not None else 0.0)
+        if len(X) < 20:
+            continue
+        Xa = _np.asarray(X)
+        h = hash(Xa.tobytes())
+        if h in seen:
+            dup += 1
+            continue
+        seen.add(h)
+        runs.append((os.path.basename(f), Xa, _np.asarray(E), _np.asarray(Z)))
+    if not runs:
+        print("  ⇒ ⛔ emit+8인자 트레이스 없음")
+        return 2
+
+    print("=== anima evaluate --pc2-direction --emit-coupling — H_9741 라이브 축 emit 결합성 ===")
+    print("traces: %s · %d file → **%d 독립 run** (중복 %d 제외)" % (d, len(files), len(runs), dup))
+    print("질문:  라이브 PC(1·2·3)가 emit 과 결합하나 직교하나 (H_9713 이 남긴 열린 질문)")
+    print("bar:   모든 |r|<%.2f ⇒ ORTHOGONAL / 어느 |r|>%.2f ∧ p<.01 ⇒ COUPLED · 양성통제=z corr≠0" % (THR, THR))
+    print("⚠️ 부호는 PCA sign-flip 임의 ⇒ |r| 로 판정 · 자기상관 높아(H_9714 lag-1 ρ̂ 0.86) permutation 필수")
+    print("")
+
+    def _pb(sc, e):
+        if sc.std() == 0 or e.std() == 0:
+            return 0.0
+        return float(_np.corrcoef(sc, e)[0, 1])
+
+    agg = {"PC1": [], "PC2": [], "PC3": [], "z": []}
+    pvals = {"PC1": [], "PC2": [], "PC3": [], "z": []}
+    for name, X, E, Z in runs:
+        Xc = X - X.mean(axis=0)
+        C = (Xc.T @ Xc) / float(Xc.shape[0] - 1)
+        w, V = _np.linalg.eigh(C)
+        o = _np.argsort(w)[::-1]
+        V = V[:, o]
+        scores = {"PC1": Xc @ V[:, 0], "PC2": Xc @ V[:, 1], "PC3": Xc @ V[:, 2], "z": Z}
+        rng = _prand.Random(rseed)
+        line = []
+        for k in ("PC1", "PC2", "PC3", "z"):
+            r = _pb(scores[k], E)
+            null = []
+            Ei = E.copy()
+            for _ in range(rounds):
+                rng.shuffle(Ei)
+                null.append(abs(_pb(scores[k], Ei)))
+            p = sum(1 for vv in null if vv >= abs(r)) / float(rounds)
+            agg[k].append(r)
+            pvals[k].append(p)
+            line.append("%s=%+.3f(p%.3f)" % (k, r, p))
+        print("  %-18s %s" % (name, " · ".join(line)))
+
+    def _mean_abs(k):
+        return sum(abs(x) for x in agg[k]) / float(len(agg[k]))
+
+    print("")
+    zc = _mean_abs("z")
+    print("  run-평균 |r|: PC1=%.3f PC2=%.3f PC3=%.3f · 양성통제 z=%.3f"
+          % (_mean_abs("PC1"), _mean_abs("PC2"), _mean_abs("PC3"), zc))
+
+    def _coupled(k):
+        hits = sum(1 for i in range(len(agg[k])) if abs(agg[k][i]) > THR and pvals[k][i] < 0.01)
+        return hits >= (len(agg[k]) + 1) // 2
+
+    z_ok = zc > 0.02
+    coupled = [k for k in ("PC1", "PC2", "PC3") if _coupled(k)]
+    print("")
+    if not z_ok:
+        v = "⛔ INVALID — 양성통제 z corr≈0(%.3f) = 계기가 emit 결합을 못 봄 · 음성 아님" % zc
+    elif coupled:
+        v = ("🔁 COUPLED — %s 가 emit-결합(과반수 run 에서 |r|>%.2f ∧ p<.01) ⇒ 라이브 축이 emit-무관이 "
+             "아니었다 · H_9576 'emit-직교 DOF' 개념적 서사 재검" % ("·".join(coupled), THR))
+    else:
+        v = ("🟢 ORTHOGONAL — 모든 PC |r|<%.2f(과반수 run) ∧ 양성통제 통과 ⇒ 라이브 축은 emit-직교 · "
+             "H_9576 'emit-직교 DOF' 서사는 이름표 불안정에도 라이브 축으로 유지" % THR)
+    print("  ⇒ VERDICT: " + v)
+    print("     범위: 상류 결합성이다 — mouth 도달/의미전달 미질문(H_9576 여전히 VOID) · 150tick×3run.")
+    return 0
+
+
+def _pc2_subspace_stability(argv):
+    """H_9752 SUBSPACE-STABILITY — is H_9713's axis-flip a NEAR-DEGENERACY of a STABLE PLANE?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --subspace-stability [--dims 2]
+        [--block 16,32] [--boot 1000] [--surr aaft] [--surrogates 500] [--seed N]`
+
+    THE REFRAME THIS EXISTS TO TEST. H_9713 (--variance-audit) found that the frozen PC2 loading's
+    NEAREST live eigenvector flips run-to-run (PC2 / PC1 / PC1 across the 3 seeds) and read that as
+    "the axis LABEL is not reproducible live". This flag asks the sharper geometric question: an
+    eigenvector RANK is an unstable label whenever lambda1 ~= lambda2 (near-degeneracy) EVEN WHEN
+    the 2-D SUBSPACE span{v1,v2} is rock-stable. Rank is a coordinate; a plane is a geometry. So it
+    measures the PLANE, not the axis:
+
+      DV (all parameter-free / denominator-free geometry -- H_9716 non-applicable):
+        - per-run raw-covariance eigenspectrum + relative eigengap (lambda1-lambda2)/lambda1
+          (raw covariance = the SAME scale H_9713 saw the flip on, so the degeneracy is comparable)
+        - cross-run PRINCIPAL ANGLES between top-`dims` subspaces (Procrustes via SVD of U^T V)
+        - within-run SPLIT-HALF principal angles (does one run even have a stable plane internally?)
+        - moving-block bootstrap (autocorrelation-respecting) -> principal-angle CI + RANK-SWAP rate
+          (fraction of resamples where the top-2 eigenvector order trades = the degeneracy signature)
+
+    THE NULLS (a small angle is only meaningful vs a chance angle; p7 -- collapse-delta, not a raw
+    value; and autocorrelation shrinks n_eff so the chance level must be RE-DERIVED, never inherited
+    from a uniform-Grassmann closed form):
+      null-1 AAFT     -- phase surrogate per factor: preserves each channel's marginal AND its
+                         autocorrelation, destroys ONLY the cross-channel coupling => the joint plane
+                         is gone but the per-channel dynamics survive. The correct null for "is this
+                         shared plane real?".
+      null-2 chanperm -- permute the 8 channel labels of one run before refit: destroys the loading
+                         IDENTITY, keeps per-channel dynamics. Second, independent null.
+
+    POSITIVE CONTROL (opens nothing without it -- a_positive_control_first). A synthetic PLANT: N
+    runs sharing ONE fixed random 2-D plane, each = 2 AR(1) latents (rho matched to the observed
+    lag-1) on that plane + isotropic noise, n and top-2/bulk spectrum matched to the traces. The
+    instrument MUST recover cross-run angle < the plant's own chanperm-null 5pct; if it cannot see a
+    plane THAT IS THERE, the whole measurement is VOID (not a negative).
+
+    9->3 RUN DEDUPE (H_9714 lesson): off/bias/rng share a byte-identical factor stream (Stage-A
+    isolation), so the 9 files are 3 independent runs; they are deduped by factor-stream hash or the
+    null is forged ~sqrt(3) too tight.
+
+    FROZEN VERDICT TABLE (card H_9752 -- do not retune; a_break_the_wall):
+      cross-run angle < AAFT-null 5pct AND rank-swap rate >= 0.2       -> PASS-PLANE
+      split-half beats null AND cross-run is null-equivalent            -> PASS-RUN-INDEXED
+      split-half itself null-equivalent AND plant PASS                  -> KILL-NO-AXIS
+      cross-run angle ABOVE AAFT-null 95pct (anti-aligned)             -> INVALID (sign/pre-proc)
+      plant not detected OR any run n<100 OR angle-CI half-width >10deg -> VOID (underpowered)
+    KILL-NO-AXIS is the GATE for H_9754/9755's refit arms: if it fires, those arms have no target and
+    firing them is forbidden -- that fact is written into the verdict.
+    """
+    import glob as _glob
+    import json as _pj
+    import numpy as _np
+
+    FACTORS = ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+               "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"]
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --subspace-stability")
+        return 2
+    dims = evaluate_intval(argv, "--dims", 2)
+    nboot = evaluate_intval(argv, "--boot", 1000)
+    nsurr = evaluate_intval(argv, "--surrogates", 500)
+    rseed = evaluate_intval(argv, "--seed", 20260718)
+    surr_kind = evaluate_strval(argv, "--surr", "aaft")
+    blk_s = evaluate_strval(argv, "--block", "16,32")
+    try:
+        blocks = [int(b) for b in blk_s.split(",") if b.strip()]
+    except ValueError:
+        blocks = [16, 32]
+    if not blocks:
+        blocks = [16, 32]
+    if surr_kind != "aaft":
+        print("  ⇒ ⛔ --surr 은 현재 aaft 만 (null-2 chanperm 은 항상 병행)")
+        return 2
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    # ── load + dedupe by factor stream (9 files -> 3 runs) ───────────────────
+    runs, seen, dup, metas = [], set(), 0, []
+    for f in files:
+        rows, meta = [], {}
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                meta = r
+                continue
+            v = [r.get(k) for k in FACTORS]
+            if any(x is None for x in v):
+                continue
+            rows.append([float(x) for x in v])
+        if len(rows) < 20:
+            continue
+        X = _np.asarray(rows, dtype=_np.float64)
+        h = hash(X.tobytes())
+        if h in seen:
+            dup += 1
+            continue
+        seen.add(h)
+        runs.append((os.path.basename(f), X))
+        metas.append((os.path.basename(f), meta))
+    if len(runs) < 2:
+        print("  ⇒ ⛔ 독립 run < 2 (교차-run 주각 불가) — dedupe 후 %d run" % len(runs))
+        return 2
+
+    # ── geometry helpers ─────────────────────────────────────────────────────
+    def _subspace(X, k):
+        """Top-k raw-covariance eigenvectors (orthonormal p×k), eigenvalues desc."""
+        Xc = X - X.mean(axis=0)
+        C = (Xc.T @ Xc) / float(Xc.shape[0] - 1)
+        w, V = _np.linalg.eigh(C)
+        o = _np.argsort(w)[::-1]
+        return V[:, o[:k]], w[o]
+
+    def _prin_angles(A, B):
+        """Principal angles (deg, ascending) between orthonormal subspaces A,B (p×k)."""
+        M = A.T @ B
+        s = _np.linalg.svd(M, compute_uv=False)
+        s = _np.clip(s, -1.0, 1.0)
+        return _np.degrees(_np.arccos(s))[::-1]   # ascending angle
+
+    def _theta_max(A, B):
+        return float(_prin_angles(A, B)[-1])       # largest principal angle = worst misalign
+
+    def _xrun_median(subs):
+        """Median over run-pairs of the largest principal angle."""
+        vals = []
+        for i in range(len(subs)):
+            for j in range(i + 1, len(subs)):
+                vals.append(_theta_max(subs[i], subs[j]))
+        return float(_np.median(vals)), vals
+
+    def _lag1(X):
+        rr = []
+        for j in range(X.shape[1]):
+            v = X[:, j] - X[:, j].mean()
+            den = float((v * v).sum())
+            rr.append(float((v[:-1] * v[1:]).sum() / den) if den > 0 else 0.0)
+        return rr
+
+    def _aaft(X, rng):
+        n = X.shape[0]
+        Y = _np.empty_like(X)
+        for j in range(X.shape[1]):
+            x = X[:, j]
+            order = _np.argsort(x)
+            g = _np.sort(rng.standard_normal(n))
+            gx = _np.empty(n)
+            gx[order] = g
+            F = _np.fft.rfft(gx)
+            ph = rng.uniform(0.0, 2.0 * _np.pi, size=F.shape[0])
+            ph[0] = 0.0
+            if n % 2 == 0:
+                ph[-1] = 0.0
+            Fs = _np.abs(F) * _np.exp(1j * ph)
+            gs = _np.fft.irfft(Fs, n=n)
+            back = _np.argsort(_np.argsort(gs))
+            Y[:, j] = _np.sort(x)[back]
+        return Y
+
+    def _block_boot(X, L, rng):
+        n = X.shape[0]
+        if L >= n:
+            L = max(2, n // 2)
+        nb = int(_np.ceil(n / float(L)))
+        idx = []
+        for _ in range(nb):
+            st = int(rng.integers(0, n - L + 1))
+            idx.extend(range(st, st + L))
+        idx = _np.asarray(idx[:n])
+        return X[idx]
+
+    print("=== anima evaluate --pc2-direction --subspace-stability — H_9752 라이브 평면 안정성 ===")
+    print("traces: %s · %d file → **%d 독립 run** (중복 인자스트림 %d 제외 · H_9714 dedupe)"
+          % (d, len(files), len(runs), dup))
+    print("dims=%d · block=%s · boot=%d · surrogate=%d · seed=%d"
+          % (dims, blk_s, nboot, nsurr, rseed))
+    print("질문:  H_9713 의 축-flip 은 **근축퇴(λ1≈λ2)** 이고 2-D 평면 span 은 run-안정인가?")
+    print("DV:    주각(principal angle · 분모-프리) · 상대 eigengap · bootstrap rank-swap율")
+    print("null:  ① AAFT(주변+자기상관 보존·결합만 파괴) ② 채널-라벨 순열 · 양성통제=합성 2-D plant")
+    print("⚖️  raw-covariance 로 refit(H_9713 이 flip 을 본 바로 그 스케일) · 자기상관 존중 block-bootstrap")
+    print("")
+
+    # ── ⓪ regime diff ────────────────────────────────────────────────────────
+    print("  ⓪ regime diff")
+    for k in ("stage_cycle", "g_reach", "emit_gate", "refractory", "backend", "ckpt_sha256"):
+        vals = sorted(set(str(m.get(k)) for _n, m in metas))
+        print("     %-12s = %s" % (k, " | ".join(vals) if len(vals) > 1 else vals[0]))
+    print("")
+
+    # ── ① per-run eigenspectrum + relative eigengap ──────────────────────────
+    print("  ① run별 eigenspectrum + 상대 eigengap (λ1−λ2)/λ1  (근축퇴 = eigengap 작음)")
+    subs, eigs, ns = [], [], []
+    for name, X in runs:
+        U, w = _subspace(X, dims)
+        subs.append(U)
+        eigs.append(w)
+        ns.append(X.shape[0])
+        gap = float((w[0] - w[1]) / w[0]) if w[0] > 0 else 0.0
+        print("     %-18s n=%-4d λ=[%s]  eigengap=%.3f"
+              % (name, X.shape[0], " ".join("%.4f" % v for v in w[:4]), gap))
+    min_n = min(ns)
+    gaps = [float((w[0] - w[1]) / w[0]) if w[0] > 0 else 0.0 for w in eigs]
+    print("     ⇒ 상대 eigengap: min=%.3f · median=%.3f · max=%.3f"
+          % (min(gaps), float(_np.median(gaps)), max(gaps)))
+    print("")
+
+    # ── ② observed cross-run principal angles ────────────────────────────────
+    xr_obs, xr_pairs = _xrun_median(subs)
+    print("  ② 교차-run 주각 (top-%d 부분공간 · Procrustes)" % dims)
+    pi = 0
+    for i in range(len(subs)):
+        for j in range(i + 1, len(subs)):
+            ang = _prin_angles(subs[i], subs[j])
+            print("     %-14s ↔ %-14s  주각=[%s]°"
+                  % (runs[i][0], runs[j][0], " ".join("%.1f" % a for a in ang)))
+            pi += 1
+    print("     ⇒ 교차-run θ_max 중앙값 = %.2f°" % xr_obs)
+    print("")
+
+    # ── ③ within-run split-half ──────────────────────────────────────────────
+    print("  ③ run 내 split-half 주각 (연속 전/후반 · 자기상관 존중)")
+    sh_vals = []
+    for name, X in runs:
+        n = X.shape[0]
+        h = n // 2
+        UA, _ = _subspace(X[:h], dims)
+        UB, _ = _subspace(X[h:], dims)
+        t = _theta_max(UA, UB)
+        sh_vals.append(t)
+        print("     %-18s split-half θ_max=%.2f°" % (name, t))
+    sh_obs = float(_np.median(sh_vals))
+    print("     ⇒ split-half θ_max 중앙값 = %.2f°" % sh_obs)
+    print("")
+
+    # ── ④ nulls (AAFT + chanperm) ────────────────────────────────────────────
+    rng = _np.random.default_rng(rseed)
+    aaft_xr, chan_xr, aaft_sh = [], [], []
+    for _ in range(nsurr):
+        s_aaft = [_subspace(_aaft(X, rng), dims)[0] for _n, X in runs]
+        aaft_xr.append(_xrun_median(s_aaft)[0])
+        s_chan = []
+        for _n, X in runs:
+            perm = rng.permutation(X.shape[1])
+            s_chan.append(_subspace(X[:, perm], dims)[0])
+        chan_xr.append(_xrun_median(s_chan)[0])
+        # split-half AAFT null (per run, median across runs)
+        shs = []
+        for _n, X in runs:
+            Y = _aaft(X, rng)
+            hh = Y.shape[0] // 2
+            shs.append(_theta_max(_subspace(Y[:hh], dims)[0], _subspace(Y[hh:], dims)[0]))
+        aaft_sh.append(float(_np.median(shs)))
+    aaft_xr = _np.asarray(aaft_xr); chan_xr = _np.asarray(chan_xr); aaft_sh = _np.asarray(aaft_sh)
+    aaft_p5, aaft_p95 = float(_np.percentile(aaft_xr, 5)), float(_np.percentile(aaft_xr, 95))
+    chan_p5, chan_p95 = float(_np.percentile(chan_xr, 5)), float(_np.percentile(chan_xr, 95))
+    sh_p5 = float(_np.percentile(aaft_sh, 5))
+    print("  ④ null 대조 (분모-프리 주각 · 자기상관 존중 surrogate 서 재유도)")
+    print("     교차-run θ_max: 관측=%.2f° · AAFT-null 5pct=%.2f° 95pct=%.2f° · chanperm 5pct=%.2f°"
+          % (xr_obs, aaft_p5, aaft_p95, chan_p5))
+    print("     split-half θ_max: 관측=%.2f° · AAFT-null 5pct=%.2f°" % (sh_obs, sh_p5))
+    xr_below = xr_obs < aaft_p5
+    xr_above = xr_obs > aaft_p95
+    xr_chan_below = xr_obs < chan_p5
+    sh_below = sh_obs < sh_p5
+    print("     ⇒ 교차-run 평면 정렬(관측<AAFT5pct): %s · (관측<chanperm5pct): %s · 반정렬(>95pct): %s"
+          % (xr_below, xr_chan_below, xr_above))
+    print("     ⇒ split-half 평면 실재(관측<AAFT5pct): %s" % sh_below)
+    print("")
+
+    # ── ⑤ moving-block bootstrap: angle CI + rank-swap rate ──────────────────
+    print("  ⑤ moving-block bootstrap (주각 CI + rank-swap율 · block 2종)")
+    ci_halfwidths, swap_rates = [], []
+    for L in blocks:
+        boot_xr = []
+        swaps = 0
+        tot = 0
+        for _ in range(nboot):
+            s_boot = []
+            for (name, X), Ufull in zip(runs, subs):
+                Xb = _block_boot(X, L, rng)
+                Ub, _w = _subspace(Xb, dims)
+                s_boot.append(Ub)
+                # rank-swap: does bootstrap PC1 align to full PC2 more than full PC1?
+                b1 = Ub[:, 0]
+                if abs(float(b1 @ Ufull[:, 0])) < abs(float(b1 @ Ufull[:, 1])):
+                    swaps += 1
+                tot += 1
+            boot_xr.append(_xrun_median(s_boot)[0])
+        boot_xr = _np.asarray(boot_xr)
+        lo, hi = float(_np.percentile(boot_xr, 2.5)), float(_np.percentile(boot_xr, 97.5))
+        hw = (hi - lo) / 2.0
+        sr = swaps / float(tot) if tot else 0.0
+        ci_halfwidths.append(hw)
+        swap_rates.append(sr)
+        print("     block=%-3d  교차-run θ_max CI=[%.2f, %.2f]° (반폭 %.2f°) · rank-swap율=%.3f"
+              % (L, lo, hi, hw, sr))
+    swap_rate = float(_np.mean(swap_rates))
+    ci_halfwidth = float(_np.max(ci_halfwidths))
+    print("     ⇒ rank-swap율(block-평균)=%.3f · 주각 CI 반폭(block-최대)=%.2f°"
+          % (swap_rate, ci_halfwidth))
+    print("")
+
+    # ── ⑥ positive control: synthetic 2-D plant ──────────────────────────────
+    print("  ⑥ 양성통제 — 합성 2-D plant (알려진 안정 평면 · n·스펙트럼 매칭)")
+    p = len(FACTORS)
+    nrun = len(runs)
+    lam = _np.mean(_np.asarray(eigs), axis=0)          # avg observed raw-cov spectrum
+    lat_sd = [float(lam[0] ** 0.5), float(lam[1] ** 0.5)]
+    noise_sd = float(_np.mean(lam[dims:]) ** 0.5) if p > dims else float(lam[-1] ** 0.5)
+    rho_ar = float(_np.clip(_np.mean([_np.mean(_lag1(X)) for _n, X in runs]), -0.95, 0.95))
+    Q, _r = _np.linalg.qr(rng.standard_normal((p, dims)))   # ONE fixed plane
+    Pplane = Q[:, :dims]
+
+    def _ar1(n, rho, sd, rng):
+        e = rng.standard_normal(n)
+        x = _np.empty(n)
+        x[0] = e[0]
+        for t in range(1, n):
+            x[t] = rho * x[t - 1] + e[t]
+        s = x.std(ddof=1)
+        return x / s * sd if s > 0 else x
+
+    def _plant_run(n, rng):
+        lat = _np.column_stack([_ar1(n, rho_ar, lat_sd[k], rng) for k in range(dims)])
+        noise = rng.standard_normal((n, p)) * noise_sd
+        return lat @ Pplane.T + noise
+
+    plant_subs = [_subspace(_plant_run(min_n, rng), dims)[0] for _ in range(nrun)]
+    plant_xr = _xrun_median(plant_subs)[0]
+    plant_null = []
+    for _ in range(max(200, nsurr // 2)):
+        s_pn = []
+        for U in plant_subs:
+            perm = rng.permutation(p)
+            # re-realize a plant run then channel-permute (chanperm null on the plant)
+            Xp = _plant_run(min_n, rng)
+            s_pn.append(_subspace(Xp[:, perm], dims)[0])
+        plant_null.append(_xrun_median(s_pn)[0])
+    plant_p5 = float(_np.percentile(_np.asarray(plant_null), 5))
+    plant_detected = plant_xr < plant_p5
+    print("     plant 교차-run θ_max=%.2f° · plant-chanperm null 5pct=%.2f° · 검출=%s"
+          % (plant_xr, plant_p5, plant_detected))
+    print("     (plant param: ρ_AR=%.2f · lat_sd=%s · noise_sd=%.3f · plane 고정)"
+          % (rho_ar, "[%.3f,%.3f]" % (lat_sd[0], lat_sd[1]), noise_sd))
+    print("")
+
+    # ── VERDICT (frozen table · card H_9752) ─────────────────────────────────
+    print("  ⑦ 사전등록 판정표 대조")
+    if (not plant_detected) or (min_n < 100) or (ci_halfwidth > 10.0):
+        why = []
+        if not plant_detected:
+            why.append("plant 미검출(계기가 있는 평면조차 못 봄)")
+        if min_n < 100:
+            why.append("run 당 tick<100 (min_n=%d)" % min_n)
+        if ci_halfwidth > 10.0:
+            why.append("주각 CI 반폭 %.1f°>10° (검정력 미달)" % ci_halfwidth)
+        v = "⚪ VOID — " + " · ".join(why) + " ⇒ 음성 아님(power-before-negative)"
+    elif xr_above:
+        v = ("⛔ INVALID — 교차-run 주각이 AAFT-null **95pct 위**(반-정렬) ⇒ 부호규약/전처리 결함 · 수리 먼저")
+    elif xr_below and swap_rate >= 0.2:
+        v = ("🟢 **PASS-PLANE** — 교차-run 평면 안정(관측 %.1f° < AAFT5pct %.1f°) ∧ rank-swap율 %.3f≥0.2 "
+             "⇒ H_9713 축-flip = **근축퇴 기전 확정**: 죽은 건 '축 이름'이지 2-D 평면이 아니다"
+             % (xr_obs, aaft_p5, swap_rate))
+    elif sh_below and not xr_below:
+        v = ("🟡 **PASS-RUN-INDEXED** — run 내 split-half 는 null 이김(%.1f°<%.1f°)이나 교차-run 은 null 동급 "
+             "⇒ 구조는 **run 단위로만** 존재 · H_9755 는 run 내 warmup-refit 만 유효" % (sh_obs, sh_p5))
+    elif not sh_below:
+        v = ("🧱 **KILL-NO-AXIS** — run 내 split-half 조차 null 동급(%.1f°≥%.1f°) ∧ plant PASS "
+             "⇒ '라이브 축/평면' 자체가 없음 · **H_9754/9755 refit arm 개봉 금지** = 축-무관 가설(c)의 "
+             "구조 측 증거 · 살아남는 것은 스칼라 dose(H_9664)뿐" % (sh_obs, sh_p5))
+    else:
+        v = ("🟡 MIXED — 사전등록 칸 밖(교차<AAFT5pct=%s·swap=%.3f·split-half<null=%s) ⇒ 강제 분류 금지"
+             % (xr_below, swap_rate, sh_below))
+    print("  ⇒ VERDICT: " + v)
+    print("     ⚠️ n_eff≪n(H_9714 lag-1 ρ̂ 최대 0.86) — CI 는 block-bootstrap 이 자기상관 존중해 낸 것 ·")
+    print("        판정은 주각의 **크기 vs surrogate**로 읽지 raw°로 읽지 말 것(p7).")
+    return 0
+
+
+def _pc2_variance_audit(argv):
+    """H_9713 VARIANCE-AUDIT — does the certified PC2 axis carry its certified variance LIVE?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --variance-audit`
+
+    THE DEFECT THIS EXISTS TO FIX. H_9468 certified PC2 as "31.5% of tension variance" from a PCA on
+    one 150-tick run (reported lambda1=0.144, lambda2=0.048, lambda3=0.013, MP edge=0.0287; the
+    eigenvalue sum ~0.15 != 8 says it was RAW COVARIANCE, not correlation). If that holds live, the
+    unit-norm loading applied to the raw factors must give sd(z) = sqrt(lambda2) = 0.219.
+    The live census says otherwise. But until now those two numbers came from TWO DIFFERENT H's ON
+    TWO DIFFERENT INSTRUMENTS -- a comparison that was never made under one roof. That is the actual
+    defect: not the gap, but that nobody measured both at once. This flag does exactly that.
+
+    POSITIVE CONTROL (opens nothing without it): PC1 (certified 51.5%, sqrt(lambda1)=0.279). If PC1
+    reproduces its certified sd live but PC2 does not, the problem is PC2-specific and hands off to
+    H_9712. If PC1 ALSO collapses, the whole H_9468 PCA is from another regime and every card
+    resting on that frozen loading (H_9574/9576/9630-9634) loses its upstream basis.
+
+    SCALE DISCIPLINE (learned in H_9714): H_9468's lambdas are RAW-COVARIANCE. So this audit fits raw
+    covariance too -- correlation-scale eigenvalues (sum=8) are NOT comparable to them, and reporting
+    the two on one axis would be the same category error H_9714 caught.
+
+    REGIME DIFF: it also diffs the trace metas (stage_cycle / g_reach / emit_gate / refractory) so the
+    code answers "was it even the same regime?" instead of the reader assuming it.
+    """
+    import glob as _glob
+    import json as _pj
+    import numpy as _np
+
+    ALL8 = ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+            "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"]
+    Z_IDX = [ALL8.index(k) for k in ("nov_ctx", "bal_lane", "coh_lane")]
+    Z_W = _np.array([0.84, -0.44, -0.28])
+    # H_9468 reported (raw-covariance scale) -- the certified numbers under audit
+    L1_CERT, L2_CERT, EDGE_CERT = 0.144, 0.048, 0.0287
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --variance-audit")
+        return 2
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    runs, seen, dup, metas = [], set(), 0, []
+    for f in files:
+        rows, zs, meta = [], [], {}
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                meta = r
+                continue
+            v = [r.get(k) for k in ALL8]
+            if any(x is None for x in v):
+                continue
+            rows.append([float(x) for x in v])
+            if r.get("pc2_z") is not None:
+                zs.append(float(r["pc2_z"]))
+        if len(rows) < 20:
+            continue
+        X = _np.asarray(rows, dtype=_np.float64)
+        h = hash(X.tobytes())
+        if h in seen:
+            dup += 1
+            continue
+        seen.add(h)
+        runs.append((os.path.basename(f), X, zs))
+        metas.append((os.path.basename(f), meta))
+
+    if not runs:
+        print("  ⇒ ⛔ 8-인자를 가진 트레이스 없음")
+        return 2
+
+    print("=== anima evaluate --pc2-direction --variance-audit — H_9713 regime 감사 ===")
+    print("traces: %s · %d file → **%d 독립 run** (중복 %d 제외 · H_9714 교훈)" % (d, len(files), len(runs), dup))
+    print("질문:  인증된 PC2(H_9468 · 31.5%%)가 **라이브서 그 분산을 내나** — 두 숫자를 **한 계기서** 산출")
+    print("인증치(원-공분산 스케일): λ₁=%.3f(√=%.3f) · λ₂=%.3f(√=%.3f) · MP edge=%.4f"
+          % (L1_CERT, L1_CERT ** 0.5, L2_CERT, L2_CERT ** 0.5, EDGE_CERT))
+    print("⚖️ 스케일 규율(H_9714 교훈): H_9468 λ 는 **원-공분산** ⇒ 이 감사도 원-공분산으로 적합한다")
+    print("   (상관-스케일 λ(Σ=8)은 인증치와 **비교 불가** — 같은 축에 놓으면 H_9714 가 잡은 그 범주오류).")
+    print("")
+
+    # ── regime diff: was it even the same regime? ───────────────────────────
+    print("  ⓪ regime diff (트레이스 메타 · '같은 regime 이었나'를 코드가 답한다)")
+    keys = ("stage_cycle", "g_reach", "emit_gate", "refractory", "backend", "ckpt_sha256")
+    base = None
+    for name, m in metas[:1]:
+        base = m
+    for k in keys:
+        vals = sorted(set(str(m.get(k)) for _n, m in metas))
+        print("     %-12s = %s" % (k, " | ".join(vals) if len(vals) > 1 else vals[0]))
+    print("     ⚠️ H_9468 원 트레이스의 메타는 **이 디렉터리에 없다** — 카드가 요구한 'H_9468 regime vs pmp")
+    print("        regime' 대조는 **미수행**(그 트레이스가 보존돼 있어야 가능) ⇒ 아래는 라이브 쪽 절반만이다.")
+    print("")
+
+    print("  ① 라이브 원-공분산 재적합 (같은 계기 · 같은 run)")
+    l1s, l2s, sd1s, sd2s, sdzs = [], [], [], [], []
+    for name, X, zs in runs:
+        Xc = X - X.mean(axis=0)
+        C = (Xc.T @ Xc) / float(Xc.shape[0] - 1)          # RAW covariance (H_9468 scale)
+        w, V = _np.linalg.eigh(C)
+        order = _np.argsort(w)[::-1]
+        w = w[order]
+        V = V[:, order]
+        pc1_live = float(_np.std(Xc @ V[:, 0], ddof=1))
+        pc2_live = float(_np.std(Xc @ V[:, 1], ddof=1))
+        # z as the engine computes it: frozen loading on the RAW 3 factors
+        z_recon = float(_np.std(X[:, Z_IDX] @ Z_W, ddof=1))
+        sdz = float(_np.std(zs, ddof=1)) if len(zs) > 1 else 0.0
+        l1s.append(w[0]); l2s.append(w[1])
+        sd1s.append(pc1_live); sd2s.append(pc2_live); sdzs.append(sdz)
+        print("     %-18s λ_live=[%.4f %.4f %.4f] · sd(PC1)=%.4f · sd(PC2)=%.4f"
+              % (name, w[0], w[1], w[2], pc1_live, pc2_live))
+        print("        sd(z) 트레이스=%.4f · 동결-loading 재구성=%.4f  (일치=계기 무결)" % (sdz, z_recon))
+
+    l1 = sum(l1s) / len(l1s); l2 = sum(l2s) / len(l2s)
+    sd1 = sum(sd1s) / len(sd1s); sd2 = sum(sd2s) / len(sd2s); sdz = sum(sdzs) / len(sdzs)
+
+    # ── direction/identity: is the frozen axis still the SECOND DOF live? ────
+    # H_9713 v1 concluded "the frozen loading is invalid live" from the amplitude alone. That was
+    # imprecise: an axis can keep its direction and lose its RANK. So ask the sharper question --
+    # which live eigenvector does the frozen loading actually point along?
+    print("")
+    print("  ①-b 방향/정체성 — 동결 loading 은 **라이브서 여전히 제2 DOF 인가**")
+    fz = _np.zeros(8)
+    fz[ALL8.index("nov_ctx")] = 0.84
+    fz[ALL8.index("bal_lane")] = -0.44
+    fz[ALL8.index("coh_lane")] = -0.28
+    fz = fz / _np.linalg.norm(fz)
+    cos_by_run = []
+    for name, X, zs in runs:
+        Xc = X - X.mean(axis=0)
+        C = (Xc.T @ Xc) / float(Xc.shape[0] - 1)
+        w, V = _np.linalg.eigh(C)
+        o = _np.argsort(w)[::-1]
+        V = V[:, o]
+        cs = [abs(float(_np.dot(fz, V[:, k]))) for k in range(3)]
+        cos_by_run.append(cs)
+        best = int(_np.argmax(cs)) + 1
+        print("     %-18s |cos∠| vs 라이브 PC1=%.3f PC2=%.3f PC3=%.3f  ⇒ **최근접 = PC%d**"
+              % (name, cs[0], cs[1], cs[2], best))
+    cm = _np.mean(_np.asarray(cos_by_run), axis=0)
+    nearest = int(_np.argmax(cm)) + 1
+    print("     run-평균: PC1=%.3f · PC2=%.3f · PC3=%.3f ⇒ 동결 loading 의 **최근접 라이브 축 = PC%d**"
+          % (cm[0], cm[1], cm[2], nearest))
+    per_run_nearest = [int(_np.argmax(cs)) + 1 for cs in cos_by_run]
+    consistent = len(set(per_run_nearest)) == 1
+    if not consistent:
+        print("     ⚠️ **run 간 불일치** — 최근접 축이 run 마다 다르다: %s"
+              % " ".join("PC%d" % k for k in per_run_nearest))
+        print("        ⇒ '동결 PC2 = 라이브 PCk' 로 **단정 불가**. run-평균(PC%d)은 그 불일치를 가린다." % nearest)
+        print("        말할 수 있는 것은 이것뿐: **동결 축의 라이브 RANK 가 안정적이지 않다** —")
+        print("        같은 ckpt·같은 프로토콜의 3 run 이 서로 다른 축에 정렬한다 = 인증된 'PC2' 라는")
+        print("        **이름표가 라이브서 재현되지 않는다**(방향 자체의 무효와는 다른 주장).")
+    elif nearest == 1:
+        print("     🔑 **동결 'PC2' 가 라이브서 일관되게 PC1** (3/3 run) — 방향 무효가 아니라 **RANK 변경**.")
+        print("        ⇒ H_9574/9576/9630~9634 가 민 것은 '버려진 제2 DOF' 가 아니라 **지배축**일 수 있다")
+        print("        (⚠️ 라이브 PC1 이 emit-결합인지는 **이 계기가 안 묻는다** — 별도 측정 필요).")
+
+    print("")
+    print("  ② 인증치 대비 (run-평균 · 한 계기서 나온 숫자끼리)")
+    print("     %-22s 인증 %.4f · 라이브 %.4f · 비 %.2f×" % ("λ₁", L1_CERT, l1, l1 / L1_CERT if L1_CERT else 0))
+    print("     %-22s 인증 %.4f · 라이브 %.4f · 비 %.2f×" % ("λ₂", L2_CERT, l2, l2 / L2_CERT if L2_CERT else 0))
+    print("     %-22s 인증 %.4f · 라이브 %.4f · 비 %.2f×  ← 양성통제"
+          % ("sd(PC1) vs √λ₁", L1_CERT ** 0.5, sd1, sd1 / (L1_CERT ** 0.5)))
+    print("     %-22s 인증 %.4f · 라이브 %.4f · 비 %.2f×"
+          % ("sd(PC2) vs √λ₂", L2_CERT ** 0.5, sd2, sd2 / (L2_CERT ** 0.5)))
+    print("     %-22s 인증 %.4f · 라이브 %.4f · 비 %.2f×  ← 엔진의 z"
+          % ("sd(z)  vs √λ₂", L2_CERT ** 0.5, sdz, sdz / (L2_CERT ** 0.5)))
+
+    r1 = sd1 / (L1_CERT ** 0.5)
+    r2 = sd2 / (L2_CERT ** 0.5)
+    pc1_ok = 0.75 <= r1 <= 1.25            # pre-registered +-25%
+    pc2_low = r2 < 0.75
+
+    print("")
+    if r1 > 1.25 and r2 > 1.25:
+        v = ("⛔ INVALID — **양축 모두 인증치 초과**(sd_live > √λ) = 표준화/스케일 스큐(공분산 vs 상관 혼선) "
+             "⇒ 어느 쪽이 거짓말인지 먼저")
+    elif pc1_ok and pc2_low:
+        v = ("🟢 **PASS-pc2-specific** — PC1 은 인증 sd 를 ±25% 안에 재현(%.2f×)하는데 PC2 만 라이브서 죽음"
+             "(%.2f×) ⇒ regime 은 정합 · 문제는 **PC2 특정** ⇒ H_9712 로 인계" % (r1, r2))
+    elif not pc1_ok and r1 < 0.75:
+        v = ("🧱 **KILL-regime-stale** — **양성통제 PC1 도 무너짐**(%.2f×) ⇒ H_9468 PCA 는 다른 regime. "
+             "⚠️ 정밀화: 무효인 것은 **loading 의 방향이 아니라 그것이 지시하던 것**(위 ①-b 참조) — "
+             "라이브-refit 필수 · H_9574/9576/9630~9634 상류 근거 재작성" % r1)
+    elif pc1_ok and not pc2_low:
+        v = ("⛔ INVALID — 둘 다 인증 √λ 재현 ⇒ z-census 의 '분산 부족' 서사와 **정면 모순** "
+             "⇒ 계기 충돌(어느 쪽이 거짓말인지 먼저)")
+    else:
+        v = ("🟡 MIXED — PC1 %.2f× · PC2 %.2f× 가 사전등록 칸에 안 떨어짐 ⇒ 강제 분류 금지" % (r1, r2))
+    print("  ⇒ VERDICT: " + v)
+    print("     ⚠️ 자기상관 짝(H_9714 실측 lag-1 ρ̂ coh=0.86·bal=0.80·nov=0.74) ⇒ n_eff ≪ n ·")
+    print("        sd 의 CI 는 명목보다 넓다 — 이 판정은 **비(ratio)의 크기**로 읽지 미세차로 읽지 말 것.")
+    return 0
+
+
+def _pc2_stage_slave(argv):
+    """H_9715 STAGE-SLAVE — are "emit = f(stage)" and "z is flat" one root, or two?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --stage-slave`   (predictions 1-2 · $0)
+
+    THE UNIFYING HYPOTHESIS. H_9400 showed engine-native that emit is a pure function of stage
+    (H(emit|stage)=0.465) and that the Psi=1/2 pull never operated. Separately, this lane found z
+    near-flat. If the 8 tension factors are SLAVED TO STAGE, those are not two facts -- they are one
+    root, and two frontiers (Psi-half and mouth/tension) collapse into a single question.
+
+    PREDICTIONS (all three must hold for PASS-single-root):
+      1. eta^2(z ~ stage) > 0.5              -- z is a step function of stage
+      2. the z>0 ticks coincide with stage transitions / stage_env changes
+      3. sd(z) at stage_cycle=true >= 2x sd(z) at stage_cycle=false   (pool -- not this flag)
+
+    POSITIVE CONTROL (opens nothing without it): `score`/`base_motiv` MUST be stage-slaved
+    (eta^2_score > 0.5), because H_9400 already certified emit=f(stage) engine-native. If score does
+    not show it either, the trace or this instrument is broken -- not z.
+
+    THE VOID THAT MATTERS. The pre-registered table reserves a cell: "stage has only 1 level =>
+    predictions 1-2 are unobservable in principle => VOID, only prediction 3 survives". That cell is
+    about POWER, not about z: eta^2 needs cells with n>=30, and a stage axis pinned to one value
+    cannot support the contrast no matter what z does. This flag checks that FIRST and refuses to
+    read 1-2 off an unbalanced axis -- reporting a degenerate stage census as a z-result is exactly
+    how a measurement lies.
+    """
+    import glob as _glob
+    import json as _pj
+    import numpy as _np
+
+    MIN_CELL = 30            # pre-registered: eta^2 needs n>=30 per cell
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --stage-slave")
+        return 2
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    runs, seen, dup = [], set(), 0
+    for f in files:
+        rows = []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                continue
+            rows.append(r)
+        if len(rows) < 20:
+            continue
+        sig = tuple((r.get("stage"), r.get("pc2_z"), r.get("score")) for r in rows)
+        h = hash(repr(sig))
+        if h in seen:
+            dup += 1
+            continue
+        seen.add(h)
+        runs.append((os.path.basename(f), rows))
+    if not runs:
+        print("  ⇒ ⛔ 사용 가능한 run 없음")
+        return 2
+
+    print("=== anima evaluate --pc2-direction --stage-slave — H_9715 예측1·2 ($0) ===")
+    print("traces: %s · %d file → **%d 독립 run** (중복 %d 제외 · H_9714 교훈)" % (d, len(files), len(runs), dup))
+    print("가설:  'emit=f(stage)'(H_9400 · H(emit|stage)=0.465)와 'z 상수' 가 **하나의 뿌리**인가")
+    print("       = 8 tension 인자가 stage 에 **노예화**됐나 ⇒ Ψ½ 와 mouth 두 프런티어가 통합")
+    print("bar:   η²(z~stage)>0.5 (예측1) · 양성통제 η²_score>0.5 · **셀당 n≥%d**" % MIN_CELL)
+    print("")
+
+    def _eta2(groups):
+        """eta^2 = between-group SS / total SS."""
+        allv = [v for g in groups.values() for v in g]
+        if len(allv) < 3:
+            return None
+        gm = sum(allv) / float(len(allv))
+        sst = sum((v - gm) ** 2 for v in allv)
+        if sst <= 0:
+            return None
+        ssb = sum(len(g) * (sum(g) / float(len(g)) - gm) ** 2 for g in groups.values() if g)
+        return ssb / sst
+
+    # ── stage census FIRST: the power gate, before any z claim ──────────────
+    print("  ① stage 축 인구조사 (예측1·2 의 관측가능성 게이트)")
+    usable_runs = 0
+    for name, rows in runs:
+        cnt = {}
+        for r in rows:
+            cnt[r.get("stage")] = cnt.get(r.get("stage"), 0) + 1
+        tot = sum(cnt.values())
+        top_k = max(cnt, key=lambda k: cnt[k])
+        big = [k for k in cnt if cnt[k] >= MIN_CELL]
+        ok = len(big) >= 2
+        usable_runs += 1 if ok else 0
+        print("     %-18s stage 분포 %s" % (name, dict(sorted((k, v) for k, v in cnt.items()))))
+        print("        최빈 stage=%s 가 %d/%d = **%.1f%%** · n≥%d 셀 %d개 ⇒ 대조 %s"
+              % (top_k, cnt[top_k], tot, 100.0 * cnt[top_k] / tot, MIN_CELL, len(big),
+                 "가능" if ok else "**불가**"))
+
+    if usable_runs == 0:
+        print("")
+        print("  ⇒ ⛔ **VOID (사전등록 '우연 아래' 칸)** — stage 축이 사실상 한 수준에 pin 돼 있다")
+        print("     (n≥%d 셀이 2개 미만) ⇒ **예측1·2 는 원리적으로 관측 불가**." % MIN_CELL)
+        print("     이건 z 에 대한 음성이 **아니다** — 대조축 자체가 없어서 못 재는 것이다.")
+        print("")
+        print("  🔑 그런데 이 VOID 자체가 발견이다:")
+        print("     `stage = dr_stage_at(tick*8)` (stage_cycle=false · 프로덕션 기본값) ⇒ tick 이 단조증가하니")
+        print("     stage 가 끝 수준으로 진행해 **거기 머문다**. 즉 라이브 데몬은 사실상 **단일 stage** 에서 산다.")
+        print("     ⇒ H_9400 의 H(emit|stage)=0.465 도 **거의 상수인 조건변수**에 대한 값이다(재검 대상).")
+        print("     ⇒ 남은 유효 검정은 **예측3 뿐**: `anima-py chat --pc2-zeta --stage-cycle` (pool · mac 금지)")
+        print("        — stage_cycle=true 는 (tick*8)%%90 로 stage 를 **순환**시킨다(cli/chat.py:1737).")
+        return 0
+
+    # ── predictions 1-2 (only reachable when the stage axis supports a contrast) ──
+    print("")
+    print("  ② 예측1: η²(z ~ stage) · 양성통제 η²(score ~ stage)")
+    e_z, e_s = [], []
+    for name, rows in runs:
+        gz, gs = {}, {}
+        for r in rows:
+            st = r.get("stage")
+            if r.get("pc2_z") is not None:
+                gz.setdefault(st, []).append(float(r["pc2_z"]))
+            if r.get("score") is not None:
+                gs.setdefault(st, []).append(float(r["score"]))
+        gz = {k: v for k, v in gz.items() if len(v) >= MIN_CELL}
+        gs = {k: v for k, v in gs.items() if len(v) >= MIN_CELL}
+        ez, es = _eta2(gz), _eta2(gs)
+        if ez is not None:
+            e_z.append(ez)
+        if es is not None:
+            e_s.append(es)
+        print("     %-18s η²(z~stage)=%s · η²(score~stage)=%s"
+              % (name, ("%.3f" % ez) if ez is not None else "n/a",
+                 ("%.3f" % es) if es is not None else "n/a"))
+    ez_m = sum(e_z) / float(len(e_z)) if e_z else None
+    es_m = sum(e_s) / float(len(e_s)) if e_s else None
+    print("")
+    print("  run-평균: η²(z~stage)=%s · η²(score~stage)=%s (양성통제)"
+          % (("%.3f" % ez_m) if ez_m is not None else "n/a",
+             ("%.3f" % es_m) if es_m is not None else "n/a"))
+    print("")
+    if es_m is None or es_m < 0.5:
+        v = ("⛔ INVALID — **양성통제 실패**(η²_score=%s < 0.5) = H_9400 의 emit=f(stage) 재현 실패 ⇒ "
+             "트레이스/계기 스큐 · **음성 아님**" % (("%.3f" % es_m) if es_m is not None else "n/a"))
+    elif ez_m is not None and ez_m > 0.5:
+        v = ("🟡 예측1 PASS (η²=%.3f>0.5) — z 는 stage 의 계단함수 ⇒ 예측2·3 필요(3 = pool "
+             "`chat --pc2-zeta --stage-cycle`)" % ez_m)
+    elif ez_m is not None and ez_m < 0.1:
+        v = ("🧱 **KILL-separate-roots** — 양성통제 생존(η²_score=%.3f) 한 채 z 만 stage-무관(η²=%.3f<0.1) "
+             "⇒ 브리핑 (c) 답 = **별개 뿌리**" % (es_m, ez_m))
+    else:
+        v = "🟡 MIXED — η²(z~stage)=%.3f 가 0.1~0.5 사이 · 단일 원인으로 못 박지 말 것" % (ez_m or 0.0)
+    print("  ⇒ VERDICT: " + v)
+    return 0
+
+
+def _pc2_factor_census(argv):
+    """H_9712 FACTOR-CENSUS — is the live z constant because the FACTORS are flat, or because the
+    FROZEN LOADING points where they do not move?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --factor-census [--seed N]`
+
+    THE FORK. z = 0.84*nov_ctx - 0.44*bal_lane - 0.28*coh_lane (core/brain.py) is near-constant live
+    (--z-census: IQR 0.0514, 45.7% of its variance in 3/270 ticks). Exactly two things can cause that:
+
+      (1) DEGENERATE  -- the three factors are each flat, i.e. the substrate's tension itself is
+                         degenerate. That is an UPSTREAM finding, and it would reframe the whole
+                         mouth lane: the problem would not be the axis, it would be the substrate.
+      (2) CANCEL      -- the factors do move, but the FROZEN loading (H_9468, fit on one 150-tick
+                         run) is oriented where they do not. Then the loading is the culprit and a
+                         live-refit axis is the follow-on.
+
+    These split IN THE SAME TRACE: per-factor standardised sd separates them, and the angle between
+    the frozen loading and the live 3x3 principal eigenvector says whether the frozen axis even
+    points along the live variation.
+
+    TRUNCATION IS ACQUITTED IN ADVANCE (ledger arithmetic, no new measurement): PC2 is a UNIT
+    eigenvector, so 0.84^2 + 0.44^2 + 0.28^2 = 0.9776 -- the implemented 3 terms carry 97.8% of the
+    loading energy and the 5 dropped factors carry 2.2% (norm 0.149). Dropping them shaves sd(z) by
+    at most ~1.1%, which cannot explain a 2.2-5.8x shortfall. So this is a 2-way fork, not 3-way.
+
+    POSITIVE CONTROL (opens nothing without it): PC1 (coherence-dominated, the certified 51.5% axis)
+    must MOVE live. If PC1 is flat too, the instrument or the regime is broken -- not PC2 -- and the
+    verdict is VOID, handing off to H_9713 rather than claiming anything about PC2.
+
+    DEDUPE (learned the hard way in H_9714): a trace dir holds one file per (arm, seed), but the arms
+    share a byte-identical factor stream -- steering happens after emit and never feeds back into
+    tension (Stage-A isolation). Counting all 9 would triple-count 3 runs and forge tighter CIs.
+    """
+    import glob as _glob
+    import json as _pj
+    import numpy as _np
+
+    Z_FACTORS = ["nov_ctx", "bal_lane", "coh_lane"]          # the 3 z carries
+    Z_W = _np.array([0.84, -0.44, -0.28])                    # H_9468 frozen loading
+    ALL8 = ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+            "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"]
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --factor-census")
+        return 2
+    rseed = evaluate_intval(argv, "--seed", 20260717)
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    mats, seen, dup = [], set(), 0
+    for f in files:
+        rows, zs = [], []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                continue
+            v = [r.get(k) for k in ALL8]
+            if any(x is None for x in v):
+                continue
+            rows.append([float(x) for x in v])
+            zs.append(r.get("pc2_z"))
+        if len(rows) < 20:
+            continue
+        X = _np.asarray(rows, dtype=_np.float64)
+        key = hash(X.tobytes())
+        if key in seen:
+            dup += 1
+            continue
+        seen.add(key)
+        mats.append((os.path.basename(f), X, [float(z) for z in zs if z is not None]))
+    if not mats:
+        print("  ⇒ ⛔ 인자를 모두 가진 트레이스 없음")
+        return 2
+
+    print("=== anima evaluate --pc2-direction --factor-census — H_9712 z 3인자 분해 ===")
+    print("traces: %s · %d file → **%d 독립 run** (중복 인자스트림 %d 제외 · H_9714 교훈)"
+          % (d, len(files), len(mats), dup))
+    print("질문:  z 가 상수인 것은 **인자 축퇴**(①)인가 **loading 상쇄**(②)인가?")
+    print("bar:   3인자 표준화 sd 전부 <0.10 ⇒ PASS-degenerate / ≥2 인자 sd≥0.10 ∧ |cos∠|<0.30 ⇒ PASS-cancel")
+    print("절단:  0.84²+0.44²+0.28² = %.4f ⇒ 3항이 loading 에너지의 97.8%% · 절단은 무죄(사전 산술)"
+          % float((Z_W ** 2).sum()))
+    print("")
+
+    idx = [ALL8.index(k) for k in Z_FACTORS]
+    all_sd_raw, all_sd_std, all_cos, all_sdz, all_pc1sd = [], [], [], [], []
+    for name, X, zs in mats:
+        Z3 = X[:, idx]
+        sd_raw = Z3.std(axis=0, ddof=1)
+        # standardised sd = sd on the [min,max] range scale of THIS run's factor (a factor pinned to
+        # a constant has range 0 -> report 0 rather than dividing by zero)
+        rng = Z3.max(axis=0) - Z3.min(axis=0)
+        sd_std = _np.where(rng > 0, sd_raw / _np.where(rng > 0, rng, 1.0), 0.0)
+        # live 3x3 principal eigenvector (correlation scale so no factor's raw units dominate)
+        Zc = Z3 - Z3.mean(axis=0)
+        s = Zc.std(axis=0, ddof=1)
+        s[s == 0] = 1.0
+        Zs = Zc / s
+        C3 = (Zs.T @ Zs) / float(Zs.shape[0] - 1)
+        w, V = _np.linalg.eigh(C3)
+        v_hat = V[:, int(_np.argmax(w))]
+        wn = Z_W / _np.linalg.norm(Z_W)
+        cosang = float(abs(_np.dot(v_hat, wn)))
+        sdz = float(_np.std(zs, ddof=1)) if len(zs) > 1 else 0.0
+        # positive control: PC1 = coherence-dominated axis over the full 8 (certified 51.5%)
+        X8c = X - X.mean(axis=0)
+        s8 = X8c.std(axis=0, ddof=1)
+        s8[s8 == 0] = 1.0
+        X8s = X8c / s8
+        C8 = (X8s.T @ X8s) / float(X8s.shape[0] - 1)
+        w8, V8 = _np.linalg.eigh(C8)
+        pc1 = V8[:, int(_np.argmax(w8))]
+        pc1_series = X8s @ pc1
+        pc1_sd = float(pc1_series.std(ddof=1))
+        all_sd_raw.append(sd_raw); all_sd_std.append(sd_std); all_cos.append(cosang)
+        all_sdz.append(sdz); all_pc1sd.append(pc1_sd)
+        print("  %-18s n=%-4d" % (name, X.shape[0]))
+        print("     인자 sd(원)  : " + " ".join("%s=%.4f" % (Z_FACTORS[j][:3], sd_raw[j]) for j in range(3)))
+        print("     인자 sd(표준): " + " ".join("%s=%.4f" % (Z_FACTORS[j][:3], sd_std[j]) for j in range(3))
+              + "   (<0.10 = 축퇴 문턱)")
+        print("     cos∠(frozen loading, 라이브 주고유벡터) = %.3f · sd(z)=%.4f · PC1 sd=%.3f(양성통제)"
+              % (cosang, sdz, pc1_sd))
+
+    sd_std_m = _np.mean(_np.asarray(all_sd_std), axis=0)
+    cos_m = float(_np.mean(all_cos))
+    sdz_m = float(_np.mean(all_sdz))
+    pc1_m = float(_np.mean(all_pc1sd))
+
+    print("")
+    print("  run-평균: 표준화 sd = [%s] · cos∠=%.3f · sd(z)=%.4f · PC1 sd=%.3f"
+          % (" ".join("%.4f" % v for v in sd_std_m), cos_m, sdz_m, pc1_m))
+
+    n_flat = int((sd_std_m < 0.10).sum())
+    n_move = int((sd_std_m >= 0.10).sum())
+    pc1_alive = pc1_m > 0.5          # a standardised PC1 score has sd ~1 when the axis is alive
+
+    print("")
+    if not pc1_alive:
+        v = ("⛔ VOID — **양성통제 실패**(PC1 도 상수 sd=%.3f) ⇒ regime/계기 문제이지 PC2 고유문제 아님 "
+             "· H_9713 선행" % pc1_m)
+    elif n_flat == 3:
+        v = ("🔑 **PASS-degenerate — 상류 대발견**: 3인자가 각각 축퇴(전부 표준화 sd<0.10) ⇒ 기질 tension "
+             "자체가 축퇴 ⇒ mouth lane 전체 재프레임(문제는 축이 아니라 기질)")
+    elif n_move >= 2 and cos_m < 0.30:
+        v = ("🔑 **PASS-cancel — loading 이 범인**: ≥2 인자가 움직이는데(sd≥0.10) 동결 축이 라이브 변동과 "
+             "거의 직교(|cos∠|=%.3f<0.30) ⇒ 라이브-refit 축 후속(H_9713)" % cos_m)
+    elif n_move >= 1 and cos_m > 0.70 and sdz_m < 0.05:
+        v = ("⛔ INVALID — 정렬됐는데(|cos∠|=%.3f>0.70) z 가 안 움직임(sd=%.4f) = **산술 모순** ⇒ z 계산경로 "
+             "누수 점검(core/brain.py)" % (cos_m, sdz_m))
+    else:
+        v = ("🟡 MIXED — 사전등록 칸 어디에도 깨끗이 안 떨어짐(flat %d/3 · |cos∠|=%.3f) ⇒ 단일 원인으로 "
+             "못 박지 말 것 · 카드에 그대로 기록" % (n_flat, cos_m))
+    print("  ⇒ VERDICT: " + v)
+    print("     범위: 이건 **상류 인자 분해**다 — mouth 도달·의미전달을 묻지 않는다(H_9576 은 여전히 VOID).")
+    return 0
+
+
+def _pc2_rank_null(argv):
+    """H_9714 RANK-NULL — is the tension "rank 2.66" an artifact of applying MP to autocorrelated series?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --rank-null {iid|phase} [--surrogates N] [--seed N]`
+
+    THE UPSTREAM QUESTION NOBODY ASKED. H_9428/H_9468 read effective rank 2.66/8 off a
+    Marchenko-Pastur noise edge and named PC2 (originality<->balance) a real, emit-orthogonal DOF.
+    Every later card in this lane -- H_9574 (route it), H_9576 (does it carry meaning?), H_9630-9634
+    -- assumed that axis EXISTS and asked what it does. This asks whether it is there at all.
+
+    MP assumes i.i.d. samples. The tension factors are not: they are EMA-smoothed series
+    (rel_ema/cur_ema/ten_ema) plus refr_debt/idle. Autocorrelation shrinks the effective sample,
+    which RAISES the noise edge -- and from H_9468's own reported numbers (n=150, p=8, edge=0.0287
+    => sigma^2=0.01894), lambda2=0.048 sinks under the edge once rho > 0.736, while lambda1=0.144
+    survives until rho > 0.904. That gap is what makes this decidable: it hands us a POSITIVE
+    CONTROL for free (lambda1 must survive a null that lambda2 dies to).
+
+    WHY IT EXPLAINS THREE WALLS AT ONCE. A noise eigenvector is, BY CONSTRUCTION, (i) near-constant
+    live (there is no signal in it -- matching z's IQR 0.0514), (ii) unable to move the mouth
+    meaningfully (matching H_9576's rho=-0.077 null), and (iii) an inflater of sample rank (2.66).
+    So z-degeneracy, the H_9576 direction-null, and rank 2.66 may be ONE root -- not a wall, but us
+    trying to steer an axis that was never there.
+
+    THE NULLS.
+      iid   -- per-factor tick shuffle. Destroys autocorrelation => reproduces MP's own assumption.
+               A cheap screen: if lambda2 sinks under even THIS null, H_9468's MP arithmetic was
+               already wrong before any autocorrelation correction (INVALID-original).
+      phase -- AAFT (amplitude-adjusted Fourier transform) surrogate: preserves each factor's
+               marginal distribution AND its autocorrelation, destroying ONLY the cross-factor
+               coupling. That is the correct null for "is this joint structure real?", and it is
+               where the verdict lives -- the rho*=0.736 threshold is a prediction, not a judge
+               (the AR(1) n_eff <-> eigenvalue-inflation map is an approximation, and MP also
+               assumes equal factor variances, which these factors do not have).
+    """
+    import glob as _glob
+    import json as _pj
+    import random as _prand
+    import numpy as _np
+
+    FACTORS = ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+               "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"]
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    mode = "phase"
+    for i, a in enumerate(argv):
+        if a == "--rank-null" and i + 1 < len(argv) and not argv[i + 1].startswith("--"):
+            mode = argv[i + 1]
+    if mode not in ("iid", "phase"):
+        print("  ⇒ ⛔ --rank-null 은 iid | phase")
+        return 2
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --rank-null {iid|phase}")
+        return 2
+    ns = evaluate_intval(argv, "--surrogates", 200)
+    rseed = evaluate_intval(argv, "--seed", 20260717)
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    # One matrix per trace file: a surrogate must respect each run's own time axis, so runs are
+    # never concatenated (that would forge an autocorrelation break at every seam).
+    mats = []
+    seen_streams = set()
+    dup = 0
+    for f in files:
+        rows = []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                continue
+            v = [r.get(k) for k in FACTORS]
+            if any(x is None for x in v):
+                continue
+            rows.append([float(x) for x in v])
+        if len(rows) >= 20:
+            # DEDUPE BY FACTOR STREAM. The trace dir holds one file per (arm, seed), but the arms
+            # (off/bias/rng) share a byte-identical factor stream -- steering happens AFTER emit and
+            # never feeds back into tension (Stage-A isolation). Keeping all 9 would triple-count 3
+            # runs and forge a null distribution ~sqrt(3) too tight. Verified on the live traces:
+            # off/bias/rng factor tuples compare EQUAL for every seed.
+            X = _np.asarray(rows, dtype=_np.float64)
+            key = hash(X.tobytes())
+            if key in seen_streams:
+                dup += 1
+                continue
+            seen_streams.add(key)
+            mats.append((os.path.basename(f), X))
+    if not mats:
+        print("  ⇒ ⛔ 8-인자를 모두 가진 트레이스 없음 (필요: " + ",".join(FACTORS) + ")")
+        return 2
+
+    print("=== anima evaluate --pc2-direction --rank-null %s — H_9714 상류 rank 재검 ===" % mode)
+    print("traces: %s · %d file → **%d 독립 run** (중복 인자스트림 %d 제외 = arm 은 tension 에 영향 0)"
+          % (d, len(files), len(mats), dup))
+    print("        surrogate=%d · seed=%d" % (ns, rseed))
+    print("⚖️ 스케일: λ 는 **correlation-scale**(Σλ=8) — H_9468 의 covariance-scale(Σλ≈0.15)과 **다르다**.")
+    print("        따라서 이 λ₂ 는 H_9468 의 0.048 이 아니다. 판정은 **surrogate 대조**(스케일 무관)가 한다.")
+    print("질문:  rank 2.66 · 'PC2 = 실재 DOF' 가 **자기상관 시계열에 MP 를 적용한 산물**인가?")
+    print("null:  %s" % ("iid tick-shuffle (자기상관 파괴 = MP 가정 재현 · 값싼 스크린)" if mode == "iid"
+                         else "AAFT phase surrogate (주변분포+자기상관 보존 · 인자간 결합만 파괴 = 올바른 null)"))
+    print("bar:   λ₁ > null95 (양성통제) ∧ λ₂ ≤ null95 ⇒ 🧱 KILL-PC2-is-noise / 둘 다 초과 ⇒ PASS-rank-real")
+    print("")
+
+    def _eig(X):
+        Z = X - X.mean(axis=0)
+        sd = Z.std(axis=0, ddof=1)
+        sd[sd == 0] = 1.0
+        Z = Z / sd                       # correlation-scale: MP's equal-variance frame
+        C = (Z.T @ Z) / float(Z.shape[0] - 1)
+        w = _np.linalg.eigvalsh(C)
+        return _np.sort(w)[::-1]
+
+    def _lag1(X):
+        out = []
+        for j in range(X.shape[1]):
+            v = X[:, j]
+            v = v - v.mean()
+            den = float((v * v).sum())
+            out.append(float((v[:-1] * v[1:]).sum() / den) if den > 0 else 0.0)
+        return out
+
+    def _iid_surr(X, rng):
+        Y = _np.empty_like(X)
+        for j in range(X.shape[1]):
+            col = X[:, j].copy()
+            rng.shuffle(col)
+            Y[:, j] = col
+        return Y
+
+    def _aaft(X, rng):
+        """AAFT: rank-map to gaussian -> randomise phases (keeps the power spectrum, hence the
+        autocorrelation) -> rank-map back to the ORIGINAL values. Each factor is surrogated
+        independently, so the marginal and the autocorrelation survive and only the cross-factor
+        coupling is destroyed."""
+        n = X.shape[0]
+        Y = _np.empty_like(X)
+        for j in range(X.shape[1]):
+            x = X[:, j]
+            order = _np.argsort(x)
+            g = _np.sort(rng.standard_normal(n))
+            gx = _np.empty(n)
+            gx[order] = g                       # gaussianised, same rank order
+            F = _np.fft.rfft(gx)
+            ph = rng.uniform(0.0, 2.0 * _np.pi, size=F.shape[0])
+            ph[0] = 0.0
+            if n % 2 == 0:
+                ph[-1] = 0.0
+            Fs = _np.abs(F) * _np.exp(1j * ph)  # same |spectrum| => same autocorrelation
+            gs = _np.fft.irfft(Fs, n=n)
+            back = _np.argsort(_np.argsort(gs))
+            Y[:, j] = _np.sort(x)[back]         # rank-map back to the original marginal
+        return Y
+
+    rng = _np.random.default_rng(rseed)
+    tot_n = 0
+    obs_all, null_all = [], []
+    for name, X in mats:
+        obs = _eig(X)
+        lags = _lag1(X)
+        tot_n += X.shape[0]
+        nulls = []
+        for _ in range(ns):
+            Y = _iid_surr(X, rng) if mode == "iid" else _aaft(X, rng)
+            nulls.append(_eig(Y))
+        nulls = _np.asarray(nulls)
+        obs_all.append(obs)
+        null_all.append(nulls)
+        print("  %-18s n=%-4d λ=[%s]" % (name, X.shape[0],
+                                         " ".join("%.3f" % v for v in obs[:4])))
+        print("     lag-1 ρ̂ per factor: " + " ".join("%s=%.2f" % (FACTORS[j][:3], lags[j])
+                                                     for j in range(len(FACTORS))))
+
+    obs = _np.mean(_np.asarray(obs_all), axis=0)
+    nulls = _np.mean(_np.asarray(null_all), axis=0)      # run-averaged null distribution
+    p95 = _np.percentile(nulls, 97.5, axis=0)
+    p05 = _np.percentile(nulls, 2.5, axis=0)
+
+    print("")
+    print("  run-평균 · surrogate null 95%% 상단 대조 (n_tot=%d tick)" % tot_n)
+    for k in range(4):
+        pv = float((nulls[:, k] >= obs[k]).mean())
+        mark = "생존" if obs[k] > p95[k] else "死"
+        print("     λ%d obs=%.4f · null95=[%.4f, %.4f] · p=%.3f · %s"
+              % (k + 1, obs[k], p05[k], p95[k], pv, mark))
+
+    l1_live = obs[0] > p95[0]
+    l2_live = obs[1] > p95[1]
+    all_live = bool((obs > p95).all())
+    print("")
+    if all_live:
+        v = ("⛔ INVALID — bulk 를 포함해 **모든 λ 가 null 초과** ⇒ surrogate 가 자기상관을 보존 못함"
+             "(AAFT 결함) · 판정 불가")
+    elif not l1_live:
+        v = ("⛔ INVALID — **양성통제 λ₁ 실패**(인증된 coherence 축조차 null 을 못 이김) ⇒ 계기가 어떤 구조도 "
+             "못 봄 · surrogate 구현 결함 먼저 · **음성 아님**")
+    elif l1_live and not l2_live:
+        v = ("🧱 KILL-PC2-is-noise — λ₁ 생존 ∧ **λ₂ 사망** = PC2 특정 사망 ⇒ **PC2 lane 전체(H_9574·H_9576·"
+             "H_9630~9634) 상류 근거 소멸** · rank 2.66 → ~1 · H_9428 DIRECTIONAL 재작성 대상")
+    else:
+        v = ("🟢 PASS-rank-real — λ₁·λ₂ 모두 null 초과 ⇒ PC2 실재 · 축퇴는 PCA 탓 아님 ⇒ H_9712(상쇄)/"
+             "H_9715(stage 노예화) 로 인계")
+    print("  ⇒ VERDICT(%s-null): %s" % (mode, v))
+    if mode == "iid":
+        print("     ⚠️ iid 는 **값싼 스크린**이다 — 판정권은 phase(AAFT) surrogate 에 있다(--rank-null phase).")
+    else:
+        print("     주의: ρ*=0.736 문턱은 **예측**이지 판정자가 아니다(AR(1) n_eff↔고유값 맵은 근사 · MP 는")
+        print("     인자 등분산도 가정하나 여기 인자들은 등분산이 아니다). 판정은 위 surrogate 대조가 한다.")
+    return 0
+
+
+def _pc2_atom_census(argv):
+    """H_9756 ATOM-CENSUS (PILOT) — the axis-agnostic byte-granularity readout POWER pre-check.
+
+    `anima-py evaluate --pc2-direction <traces_dir> --atom-census --pilot [--atoms fw|<file>] [--span word]`
+
+    WHY A NEW READOUT. Readout D (H_9629) died a triple death — its denominator was the text's own
+    diversity, so it was un-identifiable (H_9716). This DV replaces it with a DENOMINATOR-FREE count:
+    the number of hits, in one tick's generated window, against a FIXED pre-registered atom list
+    (frequent English function words + punctuation). No text-self-diversity divisor, no experimenter
+    design value in the denominator — just a count. It is measured WITHIN-TICK PAIRED (the same tick
+    decoded at ζ=0 vs ζ=max, draw stream held fixed) so the tick's identity cancels (the H_9664 design).
+
+    THIS IS THE PILOT ONLY (`--pilot`). It does NOT run the full arm-swept readout (frozen/refit/resid/
+    random loading) or the prefix-swap positive control or the null arms — those need the H_9755 pool
+    fire (fresh decodes). The pilot answers ONE question off the EXISTING ζ-fire traces: does the
+    atom-census readout have any POWER at all? i.e. is the atom base-rate non-degenerate, and is the
+    MDE (min detectable Δ at the current n and variance) smaller than the effect we would care about?
+    If base-rate ≈ 0 or MDE > a medium (d=0.5) effect, the full fire is a waste until the readout is
+    redesigned (span up, richer atom family). This is a_scale_honest_scope — power BEFORE the negative,
+    instrument-power BEFORE the expensive run. It is NOT a verdict on the byte-wall claim.
+
+    9→3 dedupe is a no-op here: /tmp/zt already holds one file per independent run (distinct seeds);
+    a no-nudge control run may carry 0 emit ladders and simply contributes nothing.
+    """
+    import glob as _glob
+    import json as _pj
+    import base64 as _pb
+    import re as _re
+
+    # z(0.975) + z(0.80) — two-sided α=0.05 test, 80% power (paired)
+    _Z = 2.801585
+    _D_REF = 0.5          # effect of interest = a medium (Cohen's d = 0.5) shift
+    _BR_MIN = 0.05        # base-rate floor: ≥5% of window words must be atoms (card §5)
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --atom-census --pilot")
+        return 2
+    pilot = "--pilot" in argv
+    span = evaluate_strval(argv, "--span", "word")
+    atoms_arg = evaluate_strval(argv, "--atoms", "fw")
+
+    # PRE-REGISTERED atom families (fixed · corpus-frequency-derived · NOT tuned to these traces).
+    _FW = ("the of and a to in is that it was for on as with his he be at by this had not are but "
+           "from or an they which one you were her all she there would their we him been has when "
+           "who will more no if out so said what up its about into than them can only other new some "
+           "could time these two may then do first any my now such like our over man me even most made "
+           "after also did many before must through back years where much your way well down should "
+           "because each just those people how too little state good very make world still own see men "
+           "work long get here between both life being under never day same another know while last "
+           "might us great old year off come since against go came right used take three").split()
+    _PUNC = list('.,;:!?"\'()-/')
+
+    if atoms_arg in ("fw", "corpus"):
+        word_atoms = set(_FW)
+        punc_atoms = list(_PUNC)
+        atoms_src = "built-in fw+punct (%d words · %d punct)" % (len(word_atoms), len(punc_atoms))
+    else:
+        try:
+            toks = [t.strip() for t in open(atoms_arg) if t.strip()]
+        except OSError:
+            print("  ⇒ ⛔ --atoms 파일 열기 실패: " + atoms_arg)
+            return 2
+        word_atoms = set(t.lower() for t in toks if all(c.isalpha() or c == "'" for c in t))
+        punc_atoms = [t for t in toks if not all(c.isalpha() or c == "'" for c in t)]
+        atoms_src = "%s (%d words · %d punct)" % (atoms_arg, len(word_atoms), len(punc_atoms))
+
+    def _b64(s):
+        try:
+            return _pb.b64decode(s) if s else b""
+        except (ValueError, TypeError):
+            return b""
+
+    def _count(txt):
+        """hit-count of pre-registered atoms in `txt`, plus the window's word length (for base-rate)."""
+        w = _re.findall(r"[a-z']+", txt.lower())
+        wc = sum(1 for x in w if x in word_atoms)
+        pc = sum(txt.count(p) for p in punc_atoms)
+        return wc + pc, len(w)
+
+    def _stats(deltas):
+        n = len(deltas)
+        if n < 2:
+            return None
+        md = sum(deltas) / float(n)
+        sd = (sum((x - md) ** 2 for x in deltas) / float(n - 1)) ** 0.5
+        den = sum((x - md) ** 2 for x in deltas)
+        num = sum((deltas[i] - md) * (deltas[i + 1] - md) for i in range(n - 1))
+        rho = (num / den) if den > 0 else 0.0
+        neff = (n * (1.0 - rho) / (1.0 + rho)) if abs(rho) < 1 else float(n)
+        neff = max(neff, 1.0)
+        mde_cnt = _Z * sd / (neff ** 0.5)
+        mde_d = _Z / (neff ** 0.5)
+        return {"n": n, "md": md, "sd": sd, "rho": rho, "neff": neff,
+                "mde_cnt": mde_cnt, "mde_d": mde_d}
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    print("=== anima evaluate --pc2-direction --atom-census (PILOT) — H_9756 계기 검정력 사전점검 ===")
+    print("traces: %s (%d file = %d run · span=%s)" % (d, len(files), len(files), span))
+    print("atoms:  %s" % atoms_src)
+    print("DV:     within-tick PAIRED Δcount = atoms(ζ=max) − atoms(ζ=0)  · 분모-프리 hit-count")
+    print("판정:   base-rate 충분(≥%.0f%% 창) ∧ MDE ≤ %.1f·sd ⇒ PILOT-PASS · 아니면 UNDERPOWERED-BY-INSTRUMENT"
+          % (_BR_MIN * 100, _D_REF))
+    print("        (⚠️ 이건 byte-wall 판정이 아니다 — 계기가 full fire 를 태울 검정력이 있나만 잰다)")
+    print("")
+
+    all_base_atoms, all_deltas, all_frac = [], [], []
+    iso_ok_tot, iso_bad_tot = 0, 0
+    per_run = []
+    for f in files:
+        meta = {}
+        base_atoms, deltas, frac = [], [], []
+        iso_ok, iso_bad = 0, 0
+        n_emit = 0
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                meta = r
+                continue
+            if not r.get("emit"):
+                continue
+            n_emit += 1
+            zl = r.get("gtext_zeta") or []
+            if len(zl) < 2:
+                continue
+            base_b = _b64(r.get("gtext_b64"))
+            rungs = {}
+            for e in zl:
+                zv = float(e["zeta"])
+                tb = _b64(e.get("text_b64"))
+                if abs(zv) < 1e-12:
+                    if tb == base_b:
+                        iso_ok += 1
+                    else:
+                        iso_bad += 1
+                rungs[round(zv, 6)] = tb
+            if not rungs:
+                continue
+            z0 = rungs.get(0.0)
+            zhi = rungs[max(rungs)]
+            if z0 is None:
+                continue
+            b_cnt, b_w = _count(z0.decode("utf-8", "replace"))
+            h_cnt, _ = _count(zhi.decode("utf-8", "replace"))
+            base_atoms.append(b_cnt)
+            deltas.append(h_cnt - b_cnt)
+            frac.append(b_cnt / float(b_w) if b_w else 0.0)
+        tag = os.path.basename(f)
+        st = _stats(deltas)
+        n_lad = len(deltas)
+        br_tick = (sum(base_atoms) / float(n_lad)) if n_lad else 0.0
+        br_frac = (sum(frac) / float(n_lad)) if n_lad else 0.0
+        per_run.append((tag, n_emit, n_lad, br_tick, br_frac, st))
+        iso_ok_tot += iso_ok
+        iso_bad_tot += iso_bad
+        all_base_atoms += base_atoms
+        all_deltas += deltas
+        all_frac += frac
+
+    print("  ① 🔐 격리 인증(ζ=0 == base gtext_b64): %d 일치 · %d 불일치" % (iso_ok_tot, iso_bad_tot))
+    if iso_bad_tot > 0:
+        print("     ⚠️ 격리 불일치 존재 — 전체 fire 시 재검(파일럿 base-rate 는 사다리 자체 ζ=0 rung 사용).")
+    print("")
+    print("  ② run 별 분포 (집계 하나로 읽지 말 것):")
+    print("     %-16s %5s %5s %9s %8s %9s %8s %8s %8s" %
+          ("run", "emit", "ladd", "atoms/tk", "frac", "meanΔ", "sdΔ", "n_eff", "MDE_d"))
+    for tag, n_emit, n_lad, br_tick, br_frac, st in per_run:
+        if st is None:
+            print("     %-16s %5d %5d %9s %8s %9s %8s %8s %8s   (사다리<2 · 기여 없음)"
+                  % (tag, n_emit, n_lad, "-", "-", "-", "-", "-", "-"))
+        else:
+            print("     %-16s %5d %5d %9.2f %8.3f %+9.3f %8.3f %8.1f %8.3f"
+                  % (tag, n_emit, n_lad, br_tick, br_frac, st["md"], st["sd"], st["neff"], st["mde_d"]))
+    print("")
+
+    pst = _stats(all_deltas)
+    if pst is None:
+        print("  ⇒ ⏳ 사다리(≥2 rung)를 가진 emit tick 이 부족 — fire 진행중이면 재폴링 · 파일럿 불가.")
+        return 0
+    n = pst["n"]
+    br_tick = sum(all_base_atoms) / float(n)
+    br_frac = sum(all_frac) / float(n)
+    req_n = (_Z / _D_REF) ** 2
+
+    print("  ③ POOLED (n=%d ladder · %d run 기여):" % (n, sum(1 for r in per_run if r[5] is not None)))
+    print("     base-rate:  atoms/tick = %.2f · 창-내 atom 비율 = %.3f (floor %.2f)"
+          % (br_tick, br_frac, _BR_MIN))
+    print("     paired Δ:   meanΔ = %+.3f · sdΔ = %.3f · lag-1 ρ̂ = %+.3f · n_eff = %.1f"
+          % (pst["md"], pst["sd"], pst["rho"], pst["neff"]))
+    print("     MDE:        count = %.3f · Cohen d = %.3f  (검출 최소효과 @현 n_eff · 80%% power · α=.05)"
+          % (pst["mde_cnt"], pst["mde_d"]))
+    print("     required n: d=%.1f 검출에 필요한 n = %.1f (n_eff %.1f %s)"
+          % (_D_REF, req_n, pst["neff"], "≥ 충족" if pst["neff"] >= req_n else "< 미달"))
+    print("")
+
+    if not pilot:
+        print("  ⇒ ℹ️ --pilot 없이는 계기 검정력만 보고한다. FULL readout(arm-swept frozen/refit/resid/")
+        print("     random + prefix-swap 양성통제 + null 대조)은 새 디코드가 필요 = H_9755 pool fire 대기.")
+        return 0
+
+    br_ok = br_frac >= _BR_MIN
+    mde_ok = pst["mde_d"] <= _D_REF
+    print("  ⇒ VERDICT (PILOT · 검정력 사전점검 · byte-wall 판정 아님):")
+    if br_ok and mde_ok:
+        print("     🟢 PILOT-PASS — base-rate 충분(%.3f≥%.2f) ∧ MDE(d=%.3f)≤%.1f·sd."
+              % (br_frac, _BR_MIN, pst["mde_d"], _D_REF))
+        print("     ⇒ atom-census readout 은 full arm-swept fire(H_9755)를 태울 검정력이 있다.")
+    elif not br_ok:
+        print("     🔴 UNDERPOWERED-BY-INSTRUMENT — base-rate 저조(%.3f<%.2f창)." % (br_frac, _BR_MIN))
+        print("     ⇒ span 상향(word→ngram) 또는 atom-family 확대 후 재산출 · full fire 전 readout 재설계.")
+    else:
+        print("     🔴 UNDERPOWERED-BY-INSTRUMENT — MDE(d=%.3f)>%.1f·sd @n_eff=%.1f."
+              % (pst["mde_d"], _D_REF, pst["neff"]))
+        print("     ⇒ 현 n 으로는 medium 효과도 못 잡는다 · tick 수 늘리거나(더 긴 fire) 관심효과 상향.")
+    print("     범위: PILOT = 계기 검정력만 · 벽/축 판정은 full arm-swept fire(prefix-swap 양성통제 통과 후).")
+    return 0
+
+
+# ── Hartigan & Hartigan (1985) dip statistic — numpy-only port (validated to machine
+#    precision against the reference `diptest` C implementation over 60 random samples;
+#    numpy-only so it runs on the hexa-less pool measurement channel). ─────────────
+def _dip_gcm(cdf, idxs):
+    work_cdf = cdf
+    work_idxs = idxs
+    gcm = [work_cdf[0]]
+    touch = [0]
+    import numpy as _np
+    while len(work_cdf) > 1:
+        distances = work_idxs[1:] - work_idxs[0]
+        slopes = (work_cdf[1:] - work_cdf[0]) / distances
+        minslope = slopes.min()
+        mi = _np.where(slopes == minslope)[0][0] + 1
+        gcm.extend(work_cdf[0] + distances[:mi] * minslope)
+        touch.append(touch[-1] + mi)
+        work_cdf = work_cdf[mi:]
+        work_idxs = work_idxs[mi:]
+    return _np.array(gcm), _np.array(touch)
+
+
+def _dip_lcm(cdf, idxs):
+    g, t = _dip_gcm(1 - cdf[::-1], idxs.max() - idxs[::-1])
+    return 1 - g[::-1], len(cdf) - 1 - t[::-1]
+
+
+def _dip_stat(dat):
+    """Hartigans' dip statistic for a 1-D sample (returns dip in [0, 0.25])."""
+    import numpy as _np
+    import collections as _coll
+    counts = _coll.Counter(dat)
+    idxs = _np.sort(list(counts.keys()))
+    hist = _np.array([counts[i] for i in idxs])
+    if len(idxs) <= 4 or idxs[0] == idxs[-1]:
+        return 0.0
+    cdf = _np.cumsum(hist, dtype=float)
+    cdf /= cdf[-1]
+    w_idxs = idxs
+    w_hist = _np.asarray(hist, dtype=float) / _np.sum(hist)
+    w_cdf = cdf
+    D = 0.0
+    left = [0]
+    right = [1]
+    while True:
+        lp, lt = _dip_gcm(w_cdf - w_hist, w_idxs)
+        rp, rt = _dip_lcm(w_cdf, w_idxs)
+        ld = _np.abs(rp[lt] - lp[lt]); d_left = ld.max()
+        rd = _np.abs(rp[rt] - lp[rt]); d_right = rd.max()
+        if d_right > d_left:
+            xr = rt[d_right == rd][-1]
+            xl = lt[lt <= xr][-1]
+            d = d_right
+        else:
+            xl = lt[d_left == ld][0]
+            xr = rt[rt >= xl][0]
+            d = d_left
+        ldiff = _np.abs(lp[:xl + 1] - w_cdf[:xl + 1]).max()
+        rdiff = _np.abs(rp[xr:] - w_cdf[xr:] + w_hist[xr:]).max()
+        if d <= D or xr == 0 or xl == len(w_cdf):
+            the_dip = max(_np.abs(cdf[:len(left)] - left).max(),
+                          _np.abs(cdf[-len(right) - 1:-1] - right).max())
+            return float(the_dip / 2)
+        D = max(D, ldiff, rdiff)
+        w_cdf = w_cdf[xl:xr + 1]
+        w_idxs = w_idxs[xl:xr + 1]
+        w_hist = w_hist[xl:xr + 1]
+        left[len(left):] = lp[1:xl + 1]
+        right[:0] = rp[xr:-1]
+
+
+def _sc_gmm_fit(X, k, rng, iters=60, restarts=2):
+    """Full-covariance GMM EM (numpy-only). Returns (BIC, hard-labels, (mu,cov,wt))."""
+    import numpy as _np
+    n, d = X.shape
+    base = _np.cov(X.T).reshape(d, d) + 1e-6 * _np.eye(d)
+
+    def _logpdf(Xa, mu, cov):
+        diff = Xa - mu
+        try:
+            icov = _np.linalg.inv(cov); det = _np.linalg.det(cov)
+        except _np.linalg.LinAlgError:
+            return _np.full(Xa.shape[0], -1e10)
+        if det <= 1e-300:
+            det = 1e-300
+        maha = _np.einsum('ij,jk,ik->i', diff, icov, diff)
+        return -0.5 * (d * _np.log(2 * _np.pi) + _np.log(det) + maha)
+
+    best = None
+    for _ in range(restarts):
+        mu = X[rng.choice(n, k, replace=False)].copy()
+        cov = _np.repeat(base[None], k, axis=0)
+        wt = _np.ones(k) / k
+        ll_old = -_np.inf
+        resp = None
+        for _it in range(iters):
+            logp = _np.empty((n, k))
+            for j in range(k):
+                logp[:, j] = _np.log(wt[j] + 1e-300) + _logpdf(X, mu[j], cov[j])
+            m = logp.max(axis=1)
+            lse = m + _np.log(_np.exp(logp - m[:, None]).sum(axis=1))
+            ll = lse.sum()
+            resp = _np.exp(logp - lse[:, None])
+            Nk = resp.sum(axis=0) + 1e-10
+            wt = Nk / n
+            for j in range(k):
+                mu[j] = (resp[:, j:j + 1] * X).sum(axis=0) / Nk[j]
+                dx = X - mu[j]
+                cov[j] = (resp[:, j:j + 1] * dx).T @ dx / Nk[j] + 1e-6 * _np.eye(d)
+            if abs(ll - ll_old) < 1e-5 * (abs(ll_old) + 1):
+                break
+            ll_old = ll
+        if best is None or ll > best[0]:
+            best = (ll, resp, mu.copy(), cov.copy(), wt.copy())
+    ll, resp, mu, cov, wt = best
+    nparams = k * d + k * d * (d + 1) / 2.0 + (k - 1)
+    bic = -2 * ll + nparams * _np.log(n)
+    return bic, resp.argmax(axis=1), (mu, cov, wt)
+
+
+def _sc_gmm_kbest(x1d, kmax, rng):
+    """1-D GMM BIC census k=1..kmax → (kbest, n_density_modes_of_kbest)."""
+    import numpy as _np
+    X = x1d.reshape(-1, 1)
+    bics = []; pars = []
+    for k in range(1, kmax + 1):
+        try:
+            b, _lab, p = _sc_gmm_fit(X, k, rng)
+        except (_np.linalg.LinAlgError, ValueError):
+            b, p = _np.inf, None
+        bics.append(b); pars.append(p)
+    kb = int(_np.argmin(bics)) + 1
+    p = pars[kb - 1]
+    if p is None:
+        return kb, 1
+    mu, cov, wt = p
+    grid = _np.linspace(x1d.min(), x1d.max(), 512)
+    dens = _np.zeros_like(grid)
+    for j in range(len(wt)):
+        s2 = float(cov[j].reshape(-1)[0])
+        dens += wt[j] * _np.exp(-0.5 * (grid - mu[j, 0]) ** 2 / s2) / _np.sqrt(2 * _np.pi * s2)
+    up = dens[1:-1] > dens[:-2]
+    dn = dens[1:-1] >= dens[2:]
+    modes = int(_np.sum(up & dn)) or 1
+    return kb, modes
+
+
+def _sc_mean_dwell(lab):
+    import numpy as _np
+    if len(lab) == 0:
+        return 0.0
+    lens = []; cur = 1
+    for i in range(1, len(lab)):
+        if lab[i] == lab[i - 1]:
+            cur += 1
+        else:
+            lens.append(cur); cur = 1
+    lens.append(cur)
+    return float(_np.mean(lens))
+
+
+def _sc_med_dwell(x):
+    import numpy as _np
+    return _sc_mean_dwell((x > _np.median(x)).astype(int))
+
+
+def _sc_ft_surr(x, rng):
+    """Fourier phase-randomised surrogate (gaussian-ish marginal, spectrum preserved)."""
+    import numpy as _np
+    n = len(x)
+    F = _np.fft.rfft(x - x.mean())
+    ph = rng.uniform(0, 2 * _np.pi, F.shape[0]); ph[0] = 0.0
+    if n % 2 == 0:
+        ph[-1] = 0.0
+    return _np.fft.irfft(_np.abs(F) * _np.exp(1j * ph), n=n) + x.mean()
+
+
+def _sc_aaft(x, rng):
+    """AAFT surrogate (marginal AND power spectrum preserved)."""
+    import numpy as _np
+    n = len(x)
+    order = _np.argsort(x)
+    g = _np.sort(rng.standard_normal(n))
+    gx = _np.empty(n); gx[order] = g
+    F = _np.fft.rfft(gx)
+    ph = rng.uniform(0, 2 * _np.pi, F.shape[0]); ph[0] = 0.0
+    if n % 2 == 0:
+        ph[-1] = 0.0
+    gs = _np.fft.irfft(_np.abs(F) * _np.exp(1j * ph), n=n)
+    back = _np.argsort(_np.argsort(gs))
+    return _np.sort(x)[back]
+
+
+def _sc_lag1(x):
+    v = x - x.mean(); den = float((v * v).sum())
+    return float((v[:-1] * v[1:]).sum() / den) if den > 0 else 0.0
+
+
+def _sc_analyze(x, kmax, boot, rng):
+    """Three surrogate-referenced tension-state statistics on a 1-D series.
+       dip vs FT (marginal multimodality) · GMM-BIC k + fitted-density modes vs FT
+       (marginal multi-component) · median-split dwell vs AAFT (temporal persistence)."""
+    import numpy as _np
+    n = len(x)
+    obs_dip = _dip_stat(x)
+    kb, modes = _sc_gmm_kbest(x, kmax, rng)
+    obs_dwell = _sc_med_dwell(x)
+    dip_ft, k_ft, dwell_aa = [], [], []
+    for _ in range(boot):
+        f = _sc_ft_surr(x, rng)
+        dip_ft.append(_dip_stat(f))
+        kf, _m = _sc_gmm_kbest(f, kmax, rng)
+        k_ft.append(kf)
+        dwell_aa.append(_sc_med_dwell(_sc_aaft(x, rng)))
+    dip_ft = _np.array(dip_ft); k_ft = _np.array(k_ft); dwell_aa = _np.array(dwell_aa)
+    r = {"n": n, "dip": obs_dip, "kbest": kb, "modes": modes, "dwell": obs_dwell,
+         "lag1": _sc_lag1(x),
+         "dip_p95": float(_np.percentile(dip_ft, 97.5)), "dip_p05": float(_np.percentile(dip_ft, 2.5)),
+         "dip_p": float((dip_ft >= obs_dip).mean()),
+         "k_ft95": float(_np.percentile(k_ft, 97.5)), "k_p": float((k_ft >= kb).mean()),
+         "dwell95": float(_np.percentile(dwell_aa, 97.5)), "dwell_p": float((dwell_aa >= obs_dwell).mean())}
+    r["dip_mm"] = obs_dip > r["dip_p95"]
+    r["dip_sub"] = obs_dip < r["dip_p05"]
+    r["bic_multi"] = (kb >= 2) and (kb > r["k_ft95"])
+    r["dens_mm"] = modes >= 2
+    r["dwell_cl"] = obs_dwell > r["dwell95"]
+    # a run shows STATES only when the two discriminating surrogate tests both fire:
+    # multimodal marginal (dip, distribution-free) AND temporal persistence (dwell).
+    r["states"] = bool(r["dip_mm"] and r["dwell_cl"] and kb >= 2)
+    return r
+
+
+def _sc_plant(n, rho, sep, rng):
+    """Spectrum-matched symmetric 2-state HMM plant (lag-1 autocorr ≈ rho)."""
+    import numpy as _np
+    p = max(0.5, min(0.995, (rho + 1.0) / 2.0))
+    lab = _np.empty(n, int); s = int(rng.integers(0, 2))
+    for i in range(n):
+        if i and rng.random() > p:
+            s = 1 - s
+        lab[i] = s
+    return _np.array([-sep / 2.0, sep / 2.0])[lab] + rng.standard_normal(n) * 0.35
+
+
+def _pc2_state_census(argv):
+    """H_9753 TENSION-STATE-MIXTURE — is live tension a discrete state mixture (k=2..4)
+    rather than a continuous low-rank axis?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --state-census [--kmax K] [--boot N] [--seed N]`
+
+    THE RIVAL STRUCTURE HYPOTHESIS. H_9712 (z non-normal, IQR/sd=0.45) and H_9715 (stage
+    92.7% single-pin) may be two faces of ONE thing: regime pinning. If so, live tension is
+    not a continuous rank-2 subspace to be dose-steered, it is a mixture of a few discrete
+    states — and the lever is state-SELECTION, not axis-steering (axis-dose = category error).
+
+    THREE INDEPENDENT STATISTICS (never one aggregate — the H_9712 lesson), each read as a
+    collapse-Δ vs a surrogate null (p7 · never a raw value), on each run's OWN refit 2-D
+    subspace (the frozen H_9468 axis is deliberately absent — card ②):
+      (1) DIP     — Hartigan & Hartigan dip on the refit PC2 marginal vs a Fourier phase-
+                    randomised (spectrum-matched Gaussian) null. Distribution-free multimodality.
+      (2) GMM-BIC — 1-D BIC census k=1..kmax + the number of modes of the FITTED density, vs
+                    the same FT null. k≥2 alone is NOT diagnostic (any non-Gaussian continuous
+                    density beats a Gaussian surrogate); the fitted-density mode count separates
+                    real modes from a skew/shoulder fit.
+      (3) DWELL   — mean run-length of the median 2-state split vs an AAFT null (marginal AND
+                    spectrum preserved) = temporal persistence beyond linear autocorrelation.
+
+    A run shows STATES only when the two DISCRIMINATING surrogate tests fire together — a
+    multimodal marginal (dip) AND temporal persistence (dwell) — with k≥2. GMM-BIC k is
+    reported as corroboration, not as a gate.
+
+    POSITIVE CONTROL (opens nothing without it): a spectrum-matched 2-state HMM plant, injected
+    at a separation sweep, must be detected by all three legs. The smallest separation the
+    battery still catches is the MDE; if the plant is undetected the instrument is dead and the
+    verdict is VOID (never a negative). run<100 ticks ⇒ VOID (power-before-negative).
+
+    DEDUPE (H_9714): off/bias/rng share a byte-identical factor stream (steering is applied
+    after emit and never feeds tension back — Stage-A isolation), so 9 files collapse to 3
+    independent runs; counting all 9 would forge a null √3 too tight.
+
+    Frozen bars (card H_9753 · do not retune): PASS-STATES = dip>FT-null95 ∧ k≥2 ∧ dwell>AAFT-null95
+    in ≥2/3 runs · KILL-CONTINUOUS = dip & dwell null-equiv (states legs dead) with plant PASS ·
+    AMBIG-MARGINAL = dip passes but dwell null · INVALID = dip < FT-null 5pct (over-unimodal
+    pre-processing defect) · VOID = plant undetected ∨ tick<100.
+    """
+    import glob as _glob
+    import json as _pj
+    import numpy as _np
+
+    FACTORS = ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+               "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"]
+    Z_FACTORS = ["nov_ctx", "bal_lane", "coh_lane"]
+    Z_W = _np.array([0.84, -0.44, -0.28])                     # H_9468 frozen loading
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --state-census "
+              "[--kmax K] [--boot N] [--seed N]")
+        return 2
+    kmax = evaluate_intval(argv, "--kmax", 6)
+    boot = evaluate_intval(argv, "--boot", 300)
+    rseed = evaluate_intval(argv, "--seed", 20260717)
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    mats, seen, dup = [], set(), 0
+    for f in files:
+        rows, zs = [], []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                continue
+            v = [r.get(k) for k in FACTORS]
+            if any(x is None for x in v):
+                continue
+            rows.append([float(x) for x in v])
+            zs.append(float(r["pc2_z"]) if r.get("pc2_z") is not None else _np.nan)
+        if len(rows) < 20:
+            continue
+        X = _np.asarray(rows, dtype=_np.float64)
+        key = hash(X.tobytes())
+        if key in seen:
+            dup += 1
+            continue
+        seen.add(key)
+        mats.append((os.path.basename(f), X, _np.asarray(zs)))
+    if not mats:
+        print("  ⇒ ⛔ 8-인자를 모두 가진 트레이스 없음 (필요: " + ",".join(FACTORS) + ")")
+        return 2
+
+    def _pca(X):
+        Z = X - X.mean(axis=0)
+        sd = Z.std(axis=0, ddof=1); sd[sd == 0] = 1.0
+        Zs = Z / sd
+        C = (Zs.T @ Zs) / float(Zs.shape[0] - 1)
+        w, V = _np.linalg.eigh(C)
+        o = _np.argsort(w)[::-1]
+        return Zs @ V[:, o], w[o]
+
+    print("=== anima evaluate --pc2-direction --state-census — H_9753 이산-상태 혼합 검정 ===")
+    print("traces: %s · %d file → **%d 독립 run** (중복 인자스트림 %d 제외 · H_9714 교훈)"
+          % (d, len(files), len(mats), dup))
+    print("질문:  라이브 tension = 연속 저랭크 축인가, 소수 이산 상태(k=2~4) 혼합인가?")
+    print("계기:  ① Hartigan dip vs FT-gaussian null  ② GMM-BIC k + 밀도-modes vs FT  ③ 중앙분할 dwell vs AAFT")
+    print("판독:  상태 판별은 **dip(다봉)∧dwell(군집)** 동시 발화 (BIC k 는 보강) · 전부 surrogate-Δ(p7)")
+    print("bar:   PASS-STATES=dip>null95∧k≥2∧dwell>null95(≥2/3) · KILL-CONTINUOUS=dip·dwell null(plant PASS)")
+    print("       · AMBIG-MARGINAL=dip 통과·dwell null · INVALID=dip<null5pct · VOID=plant 미검출∨tick<100")
+    print("       boot=%d · kmax=%d · seed=%d" % (boot, kmax, rseed))
+    print("")
+
+    rng = _np.random.default_rng(rseed)
+
+    # ── PLANT positive control + MDE separation sweep (instrument certification) ──
+    med_lag1 = float(_np.median([_sc_lag1(_pca(X)[0][:, 1]) for _, X, _z in mats]))
+    n_plant = int(_np.median([X.shape[0] for _, X, _z in mats]))
+    print("  [PLANT] 스펙트럼-매칭 2-상태 HMM (n=%d · lag1≈%.2f) — separation MDE sweep:" % (n_plant, med_lag1))
+    mde = None
+    plant_top = None
+    for sep in (1.0, 1.5, 2.0, 3.0):
+        pr = _sc_analyze(_sc_plant(n_plant, med_lag1, sep, rng), kmax, boot, rng)
+        det = pr["dip_mm"] and pr["dwell_cl"] and pr["kbest"] >= 2
+        if det and mde is None:
+            mde = sep
+        plant_top = pr
+        print("     sep=%.1f  dip=%.4f>%.4f=%s · k=%d(modes=%d) · dwell=%.2f>%.2f=%s ⇒ %s"
+              % (sep, pr["dip"], pr["dip_p95"], _yn(pr["dip_mm"]), pr["kbest"], pr["modes"],
+                 pr["dwell"], pr["dwell95"], _yn(pr["dwell_cl"]), "검출" if det else "미검출"))
+    plant_ok = mde is not None
+    print("     ⇒ 계기 인증: %s (MDE separation = %s)"
+          % ("PASS" if plant_ok else "FAIL", ("%.1f" % mde) if mde else "미검출"))
+    print("")
+
+    # ── real runs ────────────────────────────────────────────────────────────
+    under = False
+    n_states = 0
+    dip_mm_runs = 0
+    dwell_runs = 0
+    dip_sub_runs = 0
+    for name, X, zs in mats:
+        sc, w = _pca(X)
+        if X.shape[0] < 100:
+            under = True
+        rp2 = _sc_analyze(sc[:, 1], kmax, boot, rng)          # refit PC2 = primary target
+        rp1 = _sc_analyze(sc[:, 0], kmax, boot, rng)          # refit PC1 = reference axis
+        z = zs[~_np.isnan(zs)]
+        rz = _sc_analyze(z, kmax, boot, rng) if len(z) >= 20 else None
+        n_states += int(rp2["states"])
+        dip_mm_runs += int(rp2["dip_mm"])
+        dwell_runs += int(rp2["dwell_cl"])
+        dip_sub_runs += int(rp2["dip_sub"])
+        print("  == %-18s n=%-4d lag1(PC2)=%.2f ==" % (name, rp2["n"], rp2["lag1"]))
+        for tag, r in (("PC2*", rp2), ("PC1 ", rp1), ("z-frz", rz)):
+            if r is None:
+                continue
+            dipverd = "다봉" if r["dip_mm"] else ("초단봉" if r["dip_sub"] else "단봉")
+            print("     %-5s dip=%.4f null95=[%.4f,%.4f] p=%.3f(%s) · k=%d modes=%d(k_p=%.3f) · "
+                  "dwell=%.2f null95=%.2f p=%.3f(%s) ⇒ %s"
+                  % (tag, r["dip"], r["dip_p05"], r["dip_p95"], r["dip_p"], dipverd,
+                     r["kbest"], r["modes"], r["k_p"], r["dwell"], r["dwell95"], r["dwell_p"],
+                     "군집" if r["dwell_cl"] else "null", "STATES" if r["states"] else "연속"))
+
+    print("")
+    print("  run 집계(PC2 target): STATES %d/%d · dip-다봉 %d/%d · dwell-군집 %d/%d · dip-초단봉 %d/%d"
+          % (n_states, len(mats), dip_mm_runs, len(mats), dwell_runs, len(mats),
+             dip_sub_runs, len(mats)))
+    print("")
+
+    # ── verdict (frozen card H_9753 table) ───────────────────────────────────
+    if not plant_ok:
+        v = ("⛔ VOID — **양성통제 실패**: 스펙트럼-매칭 2-상태 plant 를 3중 검정이 어떤 separation 에서도 "
+             "못 잡음 ⇒ 계기가 이산성을 못 봄 · 음성 아님 (계기 재점검 선행)")
+    elif under:
+        v = ("⛔ VOID — run 당 tick<100 ⇒ dip 검정력 미달 (power-before-negative) · plant PASS 여도 "
+             "실데이터 null 은 판독 금지")
+    elif n_states >= 2:
+        v = ("🔑 **PASS-STATES** — dip(다봉)∧dwell(군집)∧k≥2 가 %d/%d run 동시 발화 ⇒ 라이브 tension 은 "
+             "이산 상태 혼합 · 축-dose 는 범주오류 · 후속 레버 = 상태-조건부 ζ (설계만 등록·여기서 발사 금지)"
+             % (n_states, len(mats)))
+    elif dip_sub_runs >= 2:
+        v = ("⛔ INVALID — %d/%d run 에서 dip < FT-null 5pct (초-단봉) ⇒ 전처리/score 왜곡 결함 · "
+             "판정 불가" % (dip_sub_runs, len(mats)))
+    elif dip_mm_runs >= 2 and dwell_runs < 2:
+        v = ("🟡 AMBIG-MARGINAL — dip(다봉)은 서나 dwell(시간 군집)은 null ⇒ 다봉성은 주변분포만일 수 있음"
+             "(연속 다양체의 비선형 굴곡) · DIRECTIONAL 보고 · cement 금지")
+    elif dip_mm_runs < 2 and dwell_runs < 2:
+        v = ("🧱 **KILL-CONTINUOUS** — 상태 판별 2 검정(dip·dwell)이 plant 인증(MDE sep=%s) 아래에서 "
+             "실데이터 전부 null-동급 ⇒ 라이브 tension 은 **연속 저랭크** 존속 · 이산-상태 라이벌가설 반증 "
+             "· 축/평면 프레임(H_9752)으로 인계" % (("%.1f" % mde) if mde else "?"))
+    else:
+        v = ("🟡 MIXED — 사전등록 칸 어디에도 깨끗이 안 떨어짐(dip-다봉 %d/%d · dwell-군집 %d/%d) ⇒ 단일 "
+             "원인으로 못 박지 말 것 · 카드에 그대로 기록" % (dip_mm_runs, len(mats), dwell_runs, len(mats)))
+    print("  ⇒ VERDICT: " + v)
+    print("     범위: 판정 target = run 별 **refit** 2-D 부분공간(동결 H_9468 축 무등장·card ②). "
+          "frozen z-projection(z-frz)이 다봉으로 읽히면 그건 부분공간 기하가 아니라 그 고정 조합의 성질.")
+    print("     주의: GMM-BIC k≥2 단독은 이산성 아님(비가우스 shoulder/skew 도 통과) — 밀도 modes + dip 로 판별.")
+    return 0
+
+
+def _pc2_zeta_by_loading(argv):
+    """H_9755 REFIT-AXIS ζ-LADDER verdict reader (design LOCK · card §8). Reads
+    `chat --pc2-zeta --z-loading` traces: per emit tick an ARM x ζ grid of texts + this
+    tick's raw 8-factor vector, plus one _zl_meta row per run. pc2(arm,ζ)=ζ·u_arm where u is
+    the warmup-CALIBRATED (centered+Var=1) projection, so ζ's dose-scale matches across arms and
+    Δβ is an AXIS effect, not a gain artifact. DV = per-tick β = OLS slope of π̄ on the ζ LABEL.
+
+    `anima-py evaluate --pc2-direction <dir> --zeta-slope --by-loading [--tost 0.02]
+       [--pos-control-beta -0.081] [--perm N] [--seed N]`
+    """
+    import glob as _glob
+    import json as _pj
+    import base64 as _pb
+    import random as _prand
+
+    T_WIN = 24
+    L_MIN = 8
+    SIGN_FRAC = 0.60          # pre-registered per-tick sign-consistency threshold (card §8)
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <dir> --zeta-slope --by-loading")
+        return 2
+    rounds = evaluate_intval(argv, "--perm", 2000)
+    rseed = evaluate_intval(argv, "--seed", 20260717)
+
+    def _fval(flag, dflt):
+        for _i, _a in enumerate(argv):
+            if _a == flag and _i + 1 < len(argv):
+                try:
+                    return float(argv[_i + 1])
+                except ValueError:
+                    return dflt
+        return dflt
+    tost = _fval("--tost", 0.02)
+    pos_beta = _fval("--pos-control-beta", -0.081)
+
+    try:
+        from decode import _dg_anchor_copy as _anchor_copy
+    except ImportError:
+        _anchor_copy = None
+    if _anchor_copy is None:
+        print("  ⇒ ⛔ INVALID — core.decode._dg_anchor_copy import 실패 · lm-step 분류 불가")
+        return 0
+
+    def _b64(s):
+        try:
+            return _pb.b64decode(s) if s else b""
+        except (ValueError, TypeError):
+            return b""
+
+    def _pi(seed_b, txt_b, anchors):
+        ind, mism = [], 0
+        ctx = bytearray(seed_b)
+        for _i in range(len(txt_b)):
+            b = txt_b[_i]
+            cb = _anchor_copy(bytes(ctx), anchors, L_MIN, T_WIN) if anchors else -1
+            if cb >= 0:
+                if cb != b:
+                    mism += 1
+                ctx.append(b)
+                continue
+            win = bytes(ctx[-T_WIN:]) if len(ctx) >= T_WIN else bytes(ctx)
+            ind.append(1 if b in set(win) else 0)
+            ctx.append(b)
+        m = (sum(ind) / float(len(ind))) if ind else 0.0
+        return m, len(ind), mism
+
+    def _slope(xs, ys):
+        n = len(xs)
+        if n < 2:
+            return None
+        mx = sum(xs) / float(n)
+        my = sum(ys) / float(n)
+        den = sum((x - mx) ** 2 for x in xs)
+        if den <= 0:
+            return None
+        return sum((xs[_i] - mx) * (ys[_i] - my) for _i in range(n)) / den
+
+    def _recompute_u(_zlmeta, _arm, _f_raw):
+        _aw = _zlmeta["arms"].get(_arm)
+        if _aw is None:
+            return None
+        if _arm == "scalar":
+            return 1.0
+        _fmu = _zlmeta["fmu"]
+        _fsd = _zlmeta["fsd"]
+        if _aw.get("raw"):
+            _fv = _f_raw
+        else:
+            _fv = [((_f_raw[_i] - _fmu[_i]) / _fsd[_i]) if _fsd[_i] > 1e-9 else 0.0
+                   for _i in range(8)]
+        _proj = sum(_aw["w"][_i] * _fv[_i] for _i in range(8))
+        _sd = _aw["sd"]
+        return ((_proj - _aw["mu"]) / _sd) if _sd > 1e-9 else 0.0
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    print("=== anima evaluate --pc2-direction --zeta-slope --by-loading — H_9755 refit-axis 판정 ===")
+    print("traces: %s (%d file · perm=%d · seed=%d · tost=±%.3f · pos-β=%.4f)"
+          % (d, len(files), rounds, rseed, tost, pos_beta))
+    print("DV: per-tick β = OLS slope(π̄ ~ ζ LABEL) per arm · pc2=ζ·u_arm(centered+Var=1 projection)")
+    print("")
+
+    # per-arm per-tick β lists; scalar uses ALL ticks (warmup+post = H_9664 n-completion),
+    # other arms use POST ticks only; contrasts pair arms on the identical post-tick set.
+    beta_all = {}          # arm -> list of β_tick (all applicable ticks)
+    post_ticks = []        # list of dicts {arm: β_tick} for post ticks carrying the full grid
+    iso_bad = 0
+    anchor_mism = 0
+    u_mismatch = 0
+    n_post_emit = 0
+    n_full_grid = 0
+    arms_seen = set()
+
+    for f in files:
+        meta = {}
+        zlmeta = None
+        rows = []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_zl_meta"):
+                zlmeta = r
+            elif r.get("_meta"):
+                meta = r
+            else:
+                rows.append(r)
+        mem = meta.get("mem_text") or ""
+        anchors = [mem.encode("utf-8", "surrogateescape")] if mem else []
+        for r in rows:
+            if not r.get("emit"):
+                continue
+            zl = r.get("gtext_zeta") or []
+            if not zl or "loading" not in (zl[0] if zl else {}):
+                continue                                   # not a --z-loading row
+            base_b = _b64(r.get("gtext_b64"))
+            seed_b = _b64(r.get("seed_b64"))
+            f_raw = r.get("zl_factors")
+            is_post = (r.get("zl_phase") == "post")
+            if is_post:
+                n_post_emit += 1
+            # group grid entries by arm
+            by_arm = {}
+            for e in zl:
+                by_arm.setdefault(e["loading"], []).append(e)
+            tick_beta = {}
+            for _arm, _ents in by_arm.items():
+                arms_seen.add(_arm)
+                # isolation: ζ=0 rung byte-equal to base
+                for e in _ents:
+                    if abs(float(e["zeta"])) < 1e-12 and _b64(e.get("text_b64")) != base_b:
+                        iso_bad += 1
+                # u self-check (post ticks; scalar u≡1)
+                if is_post and zlmeta is not None and f_raw is not None:
+                    _u_logged = float(_ents[0].get("u", 1.0))
+                    _u_re = _recompute_u(zlmeta, _arm, f_raw)
+                    if _u_re is not None and abs(_u_re - _u_logged) > 1e-9:
+                        u_mismatch += 1
+                # β on ζ label
+                xs, ys = [], []
+                for e in _ents:
+                    tb = _b64(e.get("text_b64"))
+                    m, nlm, mm = _pi(seed_b, tb, anchors)
+                    anchor_mism += mm
+                    if nlm == 0:
+                        continue
+                    xs.append(float(e["zeta"]))
+                    ys.append(m)
+                b = _slope(xs, ys)
+                if b is not None:
+                    tick_beta[_arm] = b
+            # scalar β accumulates over ALL ticks
+            if "scalar" in tick_beta:
+                beta_all.setdefault("scalar", []).append(tick_beta["scalar"])
+            if is_post:
+                for _arm, _bv in tick_beta.items():
+                    if _arm != "scalar":
+                        beta_all.setdefault(_arm, []).append(_bv)
+                # full-grid tick = has every arm that appears in zlmeta as valid
+                if zlmeta is not None:
+                    _valid_arms = [a for a, aw in zlmeta["arms"].items() if aw.get("valid", True)]
+                    if all(a in tick_beta for a in _valid_arms):
+                        n_full_grid += 1
+                        post_ticks.append(tick_beta)
+
+    # ── gates (sequential) ────────────────────────────────────────────────
+    print("  ── 게이트 (순차 · 하나라도 실패 시 판독 중단) ──")
+    print("     격리(ζ=0=base) 위반 %d · anchor-replay 불일치 %d · u 자기검증 불일치 %d"
+          % (iso_bad, anchor_mism, u_mismatch))
+    if iso_bad > 0:
+        print("  ⇒ ⛔ INVALID — 격리 인증 실패(ζ=0 ≠ base) · dose 곡선 판독 불가")
+        return 0
+    if anchor_mism > 0:
+        print("  ⇒ ⛔ INVALID — anchor-replay 불일치 · lm-step 분류 깨짐")
+        return 0
+    if u_mismatch > 0:
+        print("  ⇒ ⛔ INVALID — u 자기검증 실패(writer 산술 ≠ reader 재계산) · schema-mismatch")
+        return 0
+    _grid_frac = (n_full_grid / float(n_post_emit)) if n_post_emit else 0.0
+    print("     격자 완결: %d/%d post-emit tick 이 valid-arm×ζ 전격자(%.1f%%)"
+          % (n_full_grid, n_post_emit, 100.0 * _grid_frac))
+    if n_post_emit == 0 or _grid_frac < 0.90:
+        print("  ⇒ ⛔ VOID — 격자 결손 >10%% (계기/infra 사망 · 음성 아님)")
+        return 0
+
+    def _mean(v):
+        return (sum(v) / float(len(v))) if v else 0.0
+
+    def _se(v):
+        if len(v) < 2:
+            return 0.0
+        m = _mean(v)
+        return (sum((x - m) ** 2 for x in v) / float(len(v) - 1) / float(len(v))) ** 0.5
+
+    # positive control: scalar β over all ticks
+    _bs = beta_all.get("scalar", [])
+    _bs_m = _mean(_bs)
+    _bs_se = _se(_bs)
+    _pos_ok = (_bs_m < 0) and (abs(_bs_m - pos_beta) <= 2.0 * _bs_se)
+    print("     양성통제 scalar: β=%.5f (se %.5f · n=%d) · 목표 %.4f ∈ β±2se? %s"
+          % (_bs_m, _bs_se, len(_bs), pos_beta, _pos_ok))
+    if not _pos_ok:
+        print("  ⇒ ⛔ VOID — 양성통제 실패(scalar β 가 H_9664 %.4f 재현 못함) · 계기 사망" % pos_beta)
+        return 0
+    print("     ⇒ 게이트 PASS ✅")
+    print("")
+
+    # ── per-arm β + contrasts ─────────────────────────────────────────────
+    print("  ── per-arm β (post-emit · ζ 라벨 회귀 · 분포 보고) ──")
+    for _arm in ("scalar", "frozen", "refit", "random", "refit-resid"):
+        _v = beta_all.get(_arm)
+        if not _v:
+            continue
+        _npos = sum(1 for x in _v if x > 0)
+        print("     %-12s n=%-4d mean β=%+.5f (se %.5f) · β<0 tick %d/%d (%.0f%%)"
+              % (_arm, len(_v), _mean(_v), _se(_v), len(_v) - _npos, len(_v),
+                 100.0 * (len(_v) - _npos) / float(len(_v))))
+
+    def _paired_delta(_a, _b):
+        return [t[_a] - t[_b] for t in post_ticks if _a in t and _b in t]
+
+    def _perm_ci(_deltas):
+        # sign-flip permutation null on paired Δβ (within-tick pairing preserved)
+        pr = _prand.Random(rseed)
+        null = []
+        for _ in range(rounds):
+            null.append(_mean([x if pr.random() < 0.5 else -x for x in _deltas]))
+        null.sort()
+        return null[int(0.025 * rounds)], null[int(0.975 * rounds) - 1]
+
+    _has_refit = bool(beta_all.get("refit"))
+    _has_frozen = bool(beta_all.get("frozen"))
+    _has_random = bool(beta_all.get("random"))
+    _rb = beta_all.get("random", [])
+    _rnd_lo = _mean(_rb) - 2.0 * _se(_rb)
+    _rnd_hi = _mean(_rb) + 2.0 * _se(_rb)
+    print("")
+    print("  ── 대조 (paired Δβ · post-tick · ζ 라벨 순열 null) ──")
+    print("     random-null 밴드(축-null · ⚠️ 방향 3개뿐 = direction-marginal 아님): [%+.5f, %+.5f]"
+          % (_rnd_lo, _rnd_hi))
+    _contrasts = {}
+    for _a, _b in (("refit", "frozen"), ("refit", "random"), ("frozen", "random")):
+        _dl = _paired_delta(_a, _b)
+        if len(_dl) < 3:
+            continue
+        _dm = _mean(_dl)
+        _lo, _hi = _perm_ci(_dl)
+        _contrasts[(_a, _b)] = (_dm, _lo, _hi)
+        print("     Δβ(%s−%s) n=%d mean=%+.5f · 순열null95%%=[%+.5f,%+.5f] · TOST±%.3f %s"
+              % (_a, _b, len(_dl), _dm, _lo, _hi, tost,
+                 "PASS" if abs(_dm) < tost and abs(_lo) < tost and abs(_hi) < tost else "—"))
+
+    # ── verdict table (mechanical, row order) ─────────────────────────────
+    print("")
+    _bf = _mean(beta_all.get("frozen", [])) if _has_frozen else 0.0
+    _br = _mean(beta_all.get("refit", [])) if _has_refit else 0.0
+    _rf = _contrasts.get(("refit", "frozen"))
+    _rr = _contrasts.get(("refit", "random"))
+    _fr = _contrasts.get(("frozen", "random"))
+
+    def _ci_excl0(_c):
+        return _c is not None and (_c[1] > 0 or _c[2] < 0)
+
+    def _tost_pass(_c):
+        return _c is not None and abs(_c[0]) < tost and abs(_c[1]) < tost and abs(_c[2]) < tost
+
+    # per-tick sign-consistency of refit β
+    _rvv = beta_all.get("refit", [])
+    _sign_frac = (sum(1 for x in _rvv if x < 0) / float(len(_rvv))) if _rvv else 0.0
+
+    if _has_refit and _has_frozen and _ci_excl0(_rf) and abs(_br) > abs(_bf) \
+            and (_rr is not None and _ci_excl0(_rr)) and _sign_frac >= SIGN_FRAC:
+        v = ("🟢 PASS-NEW-LEVER — |β_refit|>|β_frozen| (paired CI 0 제외) ∧ refit·frozen 둘 다 "
+             "random-null 밖 ∧ per-tick 부호일관 %.2f≥%.2f ⇒ 라이브 축이 동결 축이 못 나른 dose 를 나름"
+             % (_sign_frac, SIGN_FRAC))
+    elif _has_refit and _has_frozen and _has_random and _tost_pass(_rf) and _tost_pass(_rr) \
+            and _tost_pass(_fr):
+        v = ("🧱 PASS-AXIS-BLIND — 3쌍 Δβ 전부 TOST±%.3f 등가 ⇒ 채널은 스칼라 dose 만 나름 · 축 "
+             "선택 무관 확정(근축퇴 H_9752 정합) ⇒ H_9756 입도/readout 로 이관" % tost)
+    elif _has_refit and _has_frozen and _ci_excl0(_rf) and abs(_bf) > abs(_br):
+        v = "🔴 KILL-REFIT-ADDS-NOTHING — |β_frozen|>|β_refit| (CI 분리) ⇒ 동결 좌표로 충분(서사 문제였을 뿐)"
+    elif _rf is not None and (_br * _bf < 0) and _ci_excl0(_rf):
+        v = "⛔ INVALID — refit vs frozen 부호반전(paired CI 0 제외) ⇒ refit 부호규약 결함 · 배선 감사 후 재발사"
+    else:
+        _mde = 2.0 * max((_rf[2] - _rf[1]) if _rf else 0.0, (_rr[2] - _rr[1]) if _rr else 0.0) / 2.0
+        v = ("⏳ NOT-POWERED — CI 분리도 TOST 등가도 아닌 중간지대 · realized MDE≈%.4f (결과이지 "
+             "verdict 아님 · run/tick 증량 필요)" % _mde)
+    print("  ⇒ VERDICT: " + v)
+    print("     범위: refit ζ-arm 은 **채널이 무엇을 나를 수 있나**의 계기 증거(라이브 데몬 행동 아님) · "
+          "크기 vs surrogate 로 읽지 raw° 아님(p7) · DIRECTIONAL(303M).")
+    return 0
+
+
+def _pc2_zeta_slope(argv):
+    """H_9664 ZETA-SLOPE — the within-tick dose readout. Reads `anima-py chat --pc2-zeta` traces.
+
+    `anima-py evaluate --pc2-direction <traces_dir> --zeta-slope [--perm N] [--seed N]`
+
+    WHY WITHIN-TICK. Two readouts died the same death: D (H_9629, denominator = the text's own
+    diversity) and pi_bar (H_9663, sd(dpi_rng) ~ 0.14). The shared cause is not the metric --
+    it is the DESIGN: off/bias/rng are wholly different texts, so tick-level cascade variance
+    swamps whatever you measure. And the live z is effectively a constant (IQR 0.0514; 45.7% of
+    its variance in 3/270 ticks), so a tick-to-tick correlation has almost no regressor range.
+
+    So this stops comparing ticks. Each emit tick carries its OWN ladder: the same tick decoded
+    at several zeta with the draw stream held fixed. The tick's identity (its seed, its context,
+    its cascade) is CONSTANT within its own ladder, so it cancels in the within-tick slope --
+    and zeta MANUFACTURES the regressor range the live z never had.
+
+        beta_tick = OLS slope of pi_bar(zeta) on zeta, computed WITHIN one tick
+        DV        = mean(beta_tick) over emit ticks
+
+    PRE-REGISTERED SIGN (from the code, not from any prior result): decode.py subtracts zeta
+    from every in-window byte's logit, so zeta UP => in-window bytes suppressed => pi_bar DOWN
+    => beta < 0. A significant beta > 0 is NOT a positive result -- it is SIGN-INVERTED and the
+    run is INVALID pending a wiring audit.
+
+    ISOLATION CERTIFICATE (gate -- opens nothing until it passes): the zeta=0 rung MUST come back
+    byte-identical to the base text. decode.py leaves the row untouched at pc2==0.0, so any
+    divergence means the isolation this whole line of work rests on never held: the run is
+    INVALID and no dose curve may be read off it.
+
+    CONTROLS (>=2, per p7 -- a raw slope is not a verdict):
+      (1) rng arm      -- draw-stream re-key, no logit change => beta ~ 0 expected
+      (2) zeta-label within-tick permutation -- shuffles the zeta labels INSIDE each tick, which
+          destroys the dose ordering while preserving every tick's pi_bar multiset. This is the
+          null that a between-tick permutation cannot give: it removes the tick effect entirely.
+    """
+    import glob as _glob
+    import json as _pj
+    import base64 as _pb
+    import random as _prand
+
+    T_WIN = 24
+    L_MIN = 8
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --zeta-slope")
+        return 2
+    rounds = evaluate_intval(argv, "--perm", 2000)
+    rseed = evaluate_intval(argv, "--seed", 20260717)
+
+    try:
+        from decode import _dg_anchor_copy as _anchor_copy
+    except ImportError:
+        _anchor_copy = None
+    if _anchor_copy is None:
+        print("  ⇒ ⛔ INVALID — core.decode._dg_anchor_copy import 실패 · lm-step 분류 불가")
+        return 0
+
+    def _b64(s):
+        try:
+            return _pb.b64decode(s) if s else b""
+        except (ValueError, TypeError):
+            return b""
+
+    def _pi(seed_b, txt_b, anchors):
+        """pi_bar over lm-steps + the anchor-replay self-check (mismatch => classification broken)."""
+        ind, mism = [], 0
+        ctx = bytearray(seed_b)
+        for i in range(len(txt_b)):
+            b = txt_b[i]
+            cb = _anchor_copy(bytes(ctx), anchors, L_MIN, T_WIN) if anchors else -1
+            if cb >= 0:
+                if cb != b:
+                    mism += 1
+                ctx.append(b)
+                continue
+            win = bytes(ctx[-T_WIN:]) if len(ctx) >= T_WIN else bytes(ctx)
+            ind.append(1 if b in set(win) else 0)
+            ctx.append(b)
+        m = (sum(ind) / float(len(ind))) if ind else 0.0
+        return m, len(ind), mism
+
+    def _slope(xs, ys):
+        n = len(xs)
+        if n < 2:
+            return None
+        mx = sum(xs) / float(n)
+        my = sum(ys) / float(n)
+        den = sum((x - mx) ** 2 for x in xs)
+        if den <= 0:
+            return None
+        return sum((xs[i] - mx) * (ys[i] - my) for i in range(n)) / den
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    print("=== anima evaluate --pc2-direction --zeta-slope — H_9664 within-tick 용량 판정 ===")
+    print("traces: %s (%d file · perm=%d · seed=%d)" % (d, len(files), rounds, rseed))
+    print("DV:     mean over ticks of  beta_tick = OLS slope( π̄(ζ) ~ ζ )  · within-tick")
+    print("예측(코드가 지정): ζ↑ ⇒ 창-내 byte logit 감산 ⇒ π̄↓ ⇒ **β<0**")
+    print("bar:    ① ζ=0 == base byte-identical ② β<0 ∧ 통제 2종(rng · ζ-라벨 within-tick 순열) 밖")
+    print("")
+
+    betas, iso_ok, iso_bad, mism_tot, ladders = [], 0, 0, 0, []
+    for f in files:
+        meta = {}
+        rows = []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                meta = r
+            else:
+                rows.append(r)
+        mem = meta.get("mem_text") or ""
+        anchors = [mem.encode("utf-8", "surrogateescape")] if mem else []
+        for r in rows:
+            if not r.get("emit"):
+                continue
+            zl = r.get("gtext_zeta") or []
+            if len(zl) < 2:
+                continue
+            seed_b = _b64(r.get("seed_b64"))
+            base_b = _b64(r.get("gtext_b64"))
+            if not seed_b or not base_b:
+                continue
+            xs, ys = [], []
+            for e in zl:
+                zv = float(e["zeta"])
+                tb = _b64(e.get("text_b64"))
+                if abs(zv) < 1e-12:
+                    if tb == base_b:
+                        iso_ok += 1
+                    else:
+                        iso_bad += 1
+                p, n_lm, mm = _pi(seed_b, tb, anchors)
+                mism_tot += mm
+                if n_lm == 0:
+                    continue
+                xs.append(zv)
+                ys.append(p)
+            b = _slope(xs, ys)
+            if b is not None:
+                betas.append(b)
+                ladders.append((xs, ys))
+
+    print("  ① 🔐 격리 인증: ζ=0 == base  %d 일치 · %d 불일치 · anchor-replay 자기검증 불일치 %d"
+          % (iso_ok, iso_bad, mism_tot))
+    if iso_bad > 0 or mism_tot > 0:
+        print("     ⇒ ⛔ **런 전체 INVALID** — 격리가 성립한 적 없다면 dose 곡선은 읽을 수 없다.")
+        print("        (이건 음성이 아니라 무효다 · H_9576 계열 전체가 소급 재검토 대상)")
+        return 0
+    if not betas:
+        print("     ⇒ ⏳ 사다리를 가진 emit tick 이 아직 없다 — fire 진행중이면 재폴링.")
+        return 0
+    print("     ⇒ PASS ✅ (주장이 아니라 측정)")
+
+    n = len(betas)
+    mb = sum(betas) / float(n)
+    sd = ((sum((b - mb) ** 2 for b in betas) / float(n - 1)) ** 0.5) if n > 1 else 0.0
+    se = (sd / (n ** 0.5)) if n else 0.0
+
+    # control (2): zeta-label permutation WITHIN each tick — kills the dose ordering, keeps the tick
+    pr = _prand.Random(rseed)
+    null = []
+    for _ in range(rounds):
+        acc = []
+        for xs, ys in ladders:
+            yp = list(ys)
+            pr.shuffle(yp)
+            b = _slope(xs, yp)
+            if b is not None:
+                acc.append(b)
+        null.append(sum(acc) / float(len(acc)) if acc else 0.0)
+    null.sort()
+    lo = null[int(0.025 * rounds)]
+    hi = null[int(0.975 * rounds) - 1]
+    p = sum(1 for v in null if abs(v) >= abs(mb)) / float(rounds)
+
+    print("")
+    print("  ② within-tick β: n=%d tick · mean β=%+.5f (sd %.5f · se %.5f)" % (n, mb, sd, se))
+    print("     ζ-라벨 within-tick 순열 null95%% = [%+.5f, %+.5f] · p=%.4f" % (lo, hi, p))
+    print("     해상한계(=null95%% 반폭) = %.5f — 이보다 작은 참 β 는 미측정(VOID, 음성 아님)"
+          % max(abs(lo), abs(hi)))
+
+    outside = not (lo <= mb <= hi)
+    print("")
+    if outside and mb < 0:
+        v = "🟢 CHANNEL-CARRIES-PHYSICS — β<0 (예측 부호) · within-tick 순열 null 밖"
+    elif outside and mb > 0:
+        v = ("🔄 SIGN-INVERTED — β>0 유의 = 예측과 반대 ⇒ **INVALID**(배선 감사) · 음성 아님")
+    else:
+        v = ("🧱 CHANNEL-CLOSED(후보) — β 가 null 대역 안. ⚠️ 이는 H_9712 의 π-dose PASS"
+             "(Δπ=+0.1599 · p=0.0082)와 **모순** ⇒ 두 계기 대질이 다음 H · 지금 못 박지 말 것")
+    print("  ⇒ VERDICT: " + v)
+    print("     범위: ζ-arm 은 **채널이 무엇을 나를 수 있나** 의 계기 증거다 —")
+    print("     '라이브 데몬이 무엇을 하고 있나' 의 증거로 인용 금지(라이브 z 는 사실상 상수).")
+    return 0
+
+
+def _pc2_occupancy(argv):
+    """H_9636 R-A WINDOW-OCCUPANCY — the readout moved to where the manipulation LIVES.
+
+    `anima-py evaluate --pc2-direction <traces_dir> --occupancy [--perm N] [--seed N]`
+
+    WHY THIS EXISTS. H_9576 read the PC2->mouth channel through D = |bigrams(text) &
+    bigrams(seed)| / |bigrams(text)| and called the null a wall. H_9629 then proved D is
+    broken three ways, and the third defect is the one that matters here:
+
+      (1) the DENOMINATOR is the steered text's OWN distinct-bigram count, so a diversity
+          shift moves D with no reference to the seed at all (rho(dD, d|distinct|) =
+          -0.510 bias / -0.531 rng -- arm-INDEPENDENT, i.e. pure noise, ~7x the target);
+      (2) set() collapses repeated filler to one element (away-pole sign-inversion artifact);
+      (3) the bias acts on a T=24 SLIDING WINDOW (core/decode.py:2100), but the seed is ~52B
+          -- so the seed's leading bytes were never inside any window the manipulation
+          touched, and after 24 generated bytes the window is entirely self-generated.
+          D was scoring a quantity the steering cannot reach.
+
+    So this readout asks the manipulation's OWN question instead. The bias subtracts z from
+    every byte already in the model's T-window; the proximal observable of that is simply:
+    did the drawn byte come from the window?
+
+        I_t = 1[ byte_t in set(window_t) ],  window_t = (seed ++ generated[:t])[-24:]
+        pi_bar = mean(I_t) over lm-steps,    DV = paired dpi = pi_bar(steer) - pi_bar(base)
+
+    PREDICTION (pre-registered, from the code not from H_9576's rho): z<0 (the live-dominant
+    pole) BOOSTS in-window bytes => dpi > 0. Sign is fixed by decode.py's `row[v] -= z`, so
+    picking this readout cannot be tune-to-green -- its target was specified by the engine.
+
+    WHY IT DODGES D'S CONTAMINATION. The denominator is a COUNT OF STEPS, not a diversity.
+    Each I_t is defined against that step's own trajectory window, so this is never a
+    cross-arm text comparison: the manipulation is re-applied at every step and re-measured
+    at every step, which is why it does not wash out in the downstream re-roll cascade the
+    way a step-0-anchored quantity does.
+
+    ANCHOR-REPLAY INVARIANT (hard gate, opens nothing until it passes). The grounded
+    anchor-copy step never reaches the bias (decode.py:2041), so it must be excluded.
+    generator.py:512 claims `grounded=0 / lm=80` at the production l_min=8 -- this replays
+    _dg_anchor_copy per step and ASSERTS it, rather than trusting the comment. A tick whose
+    replay disagrees is INVALID, not negative.
+    """
+    import glob as _glob
+    import json as _pj
+    import base64 as _pb
+    import random as _prand
+
+    T_WIN = 24
+    L_MIN = 8            # production call: clm_decode_grounded(ckpt, seed, 80, texts, 8, mouth)
+    LADDER = (0.05, 0.10, 0.20, 0.40)
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --occupancy")
+        return 2
+    rounds = evaluate_intval(argv, "--perm", 2000)
+    rseed = evaluate_intval(argv, "--seed", 20260717)
+
+    try:
+        from decode import _dg_anchor_copy as _anchor_copy
+    except ImportError:
+        _anchor_copy = None
+
+    def _b64(s):
+        try:
+            return _pb.b64decode(s) if s else b""
+        except (ValueError, TypeError):
+            return b""
+
+    def _rows(arm, sd):
+        p = os.path.join(d, "%s_s%d.jsonl" % (arm, sd))
+        if not os.path.exists(p):
+            return [], {}
+        out, meta = [], {}
+        for l in open(p):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                meta = r
+            else:
+                out.append(r)
+        return out, meta
+
+    seeds = []
+    for f in sorted(_glob.glob(os.path.join(d, "off_s*.jsonl"))):
+        try:
+            seeds.append(int(os.path.basename(f)[len("off_s"):-len(".jsonl")]))
+        except ValueError:
+            continue
+    if not seeds:
+        print("  ⇒ ⛔ no off_s<seed>.jsonl traces under " + d)
+        return 2
+
+    print("=== anima evaluate --pc2-direction --occupancy — R-A 창-점유율 (card H_9636) ===")
+    print("traces: %s  (seeds: %s · perm=%d · perm-seed=%d)"
+          % (d, ",".join(str(s) for s in seeds), rounds, rseed))
+    print("readout: I_t = 1[byte_t ∈ set(window_t)] · window=(seed++gen[:t])[-24:] · π̄=mean over lm-steps")
+    print("DV:     paired Δπ̄ = π̄(steer) − π̄(base)   예측(코드가 지정): z<0 ⇒ in-window 부스트 ⇒ Δπ̄>0")
+    print("bar:    ① anchor-replay 불변식 100% ② 합성 사다리 강단조 ③ Δπ̄ vs rng-pedestal + 변위창 placebo")
+    print("")
+
+    def _occ_steps(seed_b, txt_b, anchors):
+        """-> (list of I_t over lm-steps, n_grounded, n_mismatch). Replays the anchor-copy
+        classifier AND self-verifies it: on a step the replay calls grounded, the trace byte
+        MUST equal the byte anchor-copy returns (the live path copies it verbatim). A single
+        mismatch means the replay does not reproduce the live decode — the classification is
+        broken, so the tick is INVALID rather than negative. Without this check a wrong
+        anchor list would silently mis-split lm/grounded steps and quietly corrupt pi_bar."""
+        ind, grounded, mismatch = [], 0, 0
+        ctx = bytearray(seed_b)
+        for i in range(len(txt_b)):
+            b = txt_b[i]
+            if _anchor_copy is not None and anchors:
+                cb = _anchor_copy(bytes(ctx), anchors, L_MIN, T_WIN)
+                if cb >= 0:
+                    grounded += 1
+                    if cb != b:
+                        mismatch += 1
+                    ctx.append(b)
+                    continue
+            win = bytes(ctx[-T_WIN:]) if len(ctx) >= T_WIN else bytes(ctx)
+            ind.append(1 if b in set(win) else 0)
+            ctx.append(b)
+        return ind, grounded, mismatch
+
+    # ── ① anchor-replay invariant ────────────────────────────────────────────
+    tot_g = 0
+    tot_mm = 0
+    tot_steps = 0
+    n_meta_anchor = 0
+    for sd in seeds:
+        rows, meta = _rows("off", sd)
+        mem = meta.get("mem_text") or ""
+        anchors = [mem.encode("utf-8", "surrogateescape")] if mem else []
+        if anchors:
+            n_meta_anchor += 1
+        for r in rows:
+            if not r.get("emit"):
+                continue
+            _i, g, mm = _occ_steps(_b64(r.get("seed_b64")), _b64(r.get("gtext_b64")), anchors)
+            tot_g += g
+            tot_mm += mm
+            tot_steps += g + len(_i)
+    g_rate = (tot_g / float(tot_steps)) if tot_steps else 0.0
+    print("  ① anchor-replay: grounded %d / %d step (%.2f%%) · anchor 보유 seed %d/%d · classifier %s"
+          % (tot_g, tot_steps, 100.0 * g_rate, n_meta_anchor, len(seeds),
+             "LIVE" if _anchor_copy is not None else "UNAVAILABLE"))
+    if _anchor_copy is None:
+        print("     ⇒ ⛔ INVALID — core.decode._dg_anchor_copy 를 import 못 함 · lm-step 분류 불가")
+        return 0
+    print("     ⇒ 자기검증: grounded 로 분류된 step 중 트레이스 byte ≠ anchor-copy byte = %d 건 %s"
+          % (tot_mm, "✅ (재생이 라이브 decode 를 재현)" if tot_mm == 0 else "❌ 재생 불일치 = 분류 고장"))
+    print("     ⇒ generator.py:512 의 'grounded=0 / lm=80 @ l_min=8' 주석 대비: %s"
+          % ("일치" if tot_g == 0 else
+             ("불일치(%d step grounded) — 재생 자기검증이 통과했으므로 **주석이 stale**(그 주석은 "
+              "generator 자신의 ideate 경로 기준 · chat 데몬 경로가 아니다)" % tot_g if tot_mm == 0 else
+              "불일치(%d step) 이나 자기검증도 실패 ⇒ 내 재생을 먼저 의심하라" % tot_g)))
+
+    def _rank(v):
+        n = len(v)
+        s = sorted(range(n), key=lambda i: v[i])
+        r = [0.0] * n
+        i = 0
+        while i < n:
+            j = i
+            while j + 1 < n and v[s[j + 1]] == v[s[i]]:
+                j += 1
+            avg = (i + j) / 2.0 + 1
+            for k in range(i, j + 1):
+                r[s[k]] = avg
+            i = j + 1
+        return r
+
+    def _mean(x):
+        return (sum(x) / float(len(x))) if x else 0.0
+
+    def _sd(x):
+        if len(x) < 2:
+            return 0.0
+        m = _mean(x)
+        return (sum((v - m) ** 2 for v in x) / float(len(x) - 1)) ** 0.5
+
+    def _pi(seed_b, txt_b, anchors):
+        ind, _g, _mm = _occ_steps(seed_b, txt_b, anchors)
+        return _mean(ind), len(ind)
+
+    def _collect(arm):
+        """-> list of (seed, z, dpi) over emit ticks that carry a steered text."""
+        out = []
+        for sd in seeds:
+            o, meta = _rows("off", sd)
+            a, _m2 = _rows(arm, sd)
+            mem = meta.get("mem_text") or ""
+            anchors = [mem.encode("utf-8", "surrogateescape")] if mem else []
+            for i in range(min(len(o), len(a))):
+                if not o[i].get("emit"):
+                    continue
+                base_b = _b64(o[i].get("gtext_b64"))
+                steer_b = _b64(a[i].get("gtext_pc2_b64"))
+                seed_b = _b64(a[i].get("seed_b64"))
+                z = a[i].get("pc2_z")
+                if not steer_b or not seed_b or z is None:
+                    continue
+                pb, nb_ = _pi(seed_b, base_b, anchors)
+                ps, _ns = _pi(seed_b, steer_b, anchors)
+                if nb_ == 0:
+                    continue
+                out.append((sd, float(z), ps - pb))
+        return out
+
+    # ── ② synthetic ladder certification (trace-only · true effect KNOWN) ────
+    print("")
+    print("  ② 합성 사다리 자격시험 (참효과를 아는 개입 · 트레이스-only)")
+    rng_ = _prand.Random(rseed)
+
+    def _resample(seed_b, txt_b, anchors, q, mode):
+        """Rebuild the text replacing each lm-step byte w.p. q. mode: 'in' = draw from the
+        step's own window (pi should RISE), 'out' = draw outside it (pi should FALL),
+        'lag' = draw from the DISPLACED window lag 25..48 (placebo: in-window pi must NOT
+        move beyond pedestal)."""
+        ctx = bytearray(seed_b)
+        new = bytearray()
+        for i in range(len(txt_b)):
+            b = txt_b[i]
+            win = bytes(ctx[-T_WIN:]) if len(ctx) >= T_WIN else bytes(ctx)
+            wset = set(win)
+            if rng_.random() < q and wset:
+                if mode == "in":
+                    b = rng_.choice(sorted(wset))
+                elif mode == "out":
+                    cand = [v for v in range(32, 127) if v not in wset]
+                    if cand:
+                        b = rng_.choice(cand)
+                elif mode == "lag":
+                    lo = len(ctx) - 48
+                    hi = len(ctx) - 24
+                    band = bytes(ctx[max(0, lo):max(0, hi)])
+                    bset = sorted(set(band) - wset)
+                    if bset:
+                        b = rng_.choice(bset)
+            new.append(b)
+            ctx.append(b)
+        return bytes(new)
+
+    lad = {}
+    for mode in ("in", "out", "lag"):
+        lad[mode] = []
+        for q in LADDER:
+            ds = []
+            for sd in seeds:
+                o, meta = _rows("off", sd)
+                mem = meta.get("mem_text") or ""
+                anchors = [mem.encode("utf-8", "surrogateescape")] if mem else []
+                for r in o:
+                    if not r.get("emit"):
+                        continue
+                    seed_b = _b64(r.get("seed_b64"))
+                    base_b = _b64(r.get("gtext_b64"))
+                    if not seed_b or not base_b:
+                        continue
+                    pb, nb_ = _pi(seed_b, base_b, anchors)
+                    if nb_ == 0:
+                        continue
+                    alt = _resample(seed_b, base_b, anchors, q, mode)
+                    pa, _n = _pi(seed_b, alt, anchors)
+                    ds.append(pa - pb)
+            lad[mode].append((q, _mean(ds), len(ds)))
+        row = " · ".join("q=%.2f Δπ̄=%+.4f" % (q, m) for q, m, _n in lad[mode])
+        print("     %-4s %s" % (mode, row))
+
+    # frozen-first: the bar comes from the rng arm, computed BEFORE bias is opened
+    rng_rows = _collect("rng")
+    sd_rng = _sd([r[2] for r in rng_rows])
+    bar = 2.0 * sd_rng
+    print("     동결 bar (rng arm 서 먼저 산출 · bias 개봉 전): 2·sd(Δπ̄_rng) = %.4f" % bar)
+
+    up = [m for _q, m, _n in lad["in"]]
+    dn = [m for _q, m, _n in lad["out"]]
+    mono_up = all(up[i] < up[i + 1] for i in range(len(up) - 1))
+    mono_dn = all(dn[i] > dn[i + 1] for i in range(len(dn) - 1))
+    at20_up = lad["in"][2][1]
+    lag_max = max(abs(m) for _q, m, _n in lad["lag"])
+    cert_ok = mono_up and mono_dn and at20_up > bar and tot_mm == 0
+    print("     강단조: in %s · out %s | Δπ̄(in,q=.20)=%+.4f vs bar %.4f | 변위창 placebo max|Δπ̄|=%.4f"
+          % (mono_up, mono_dn, at20_up, bar, lag_max))
+    if not cert_ok:
+        why = []
+        if not (mono_up and mono_dn):
+            why.append("사다리 비단조/역단조 ⇒ INSTRUMENT-DEAD/INVERTED")
+        if at20_up <= bar:
+            why.append("q=.20 이 동결 bar 미달 ⇒ INSTRUMENT-DEAD")
+        if tot_mm != 0:
+            why.append("anchor-replay 자기검증 %d 건 불일치 ⇒ INVALID" % tot_mm)
+        print("     ⇒ ⛔ 계기 인증 FAIL — %s" % (" · ".join(why)))
+        print("     ⇒ 아래 라이브 판독을 열지 않는다 (인증 안 된 계기로 음성을 읽는 게 H_9576 의 죽음이었다).")
+        return 0
+    print("     ⇒ 계기 인증 PASS ✅ (참효과를 아는 사다리에 단조 반응 · placebo 무반응)")
+
+    # ── ③ live read: paired dpi vs 2 controls ───────────────────────────────
+    print("")
+    print("  ③ 라이브 판독 — paired Δπ̄ vs 2 통제 (ρ 는 은퇴: z 분산-기아 · IQR 0.05)")
+    res = {}
+    for arm in ("bias", "rng"):
+        rows = rng_rows if arm == "rng" else _collect(arm)
+        dd = [r[2] for r in rows]
+        m = _mean(dd)
+        s = _sd(dd)
+        n = len(dd)
+        se = (s / (n ** 0.5)) if n else 0.0
+        # sign-permutation null on the paired differences
+        null = []
+        pr = _prand.Random(rseed + 1)
+        for _ in range(rounds):
+            null.append(_mean([v if pr.random() < 0.5 else -v for v in dd]))
+        null.sort()
+        lo = null[int(0.025 * rounds)] if null else 0.0
+        hi = null[int(0.975 * rounds) - 1] if null else 0.0
+        p = (sum(1 for v in null if abs(v) >= abs(m)) / float(rounds)) if null else 1.0
+        res[arm] = {"m": m, "n": n, "lo": lo, "hi": hi, "p": p, "se": se}
+        print("     %-4s n=%-4d mean Δπ̄=%+.4f (se %.4f) · null95%%=[%+.4f,%+.4f] · p=%.3f"
+              % (arm, n, m, se, lo, hi, p))
+
+    b, r = res["bias"], res["rng"]
+    zs = [x[1] for x in _collect("bias")]
+    n_neg = sum(1 for v in zs if v < 0)
+    outside = not (b["lo"] <= b["m"] <= b["hi"])
+    beats = abs(b["m"]) > abs(r["m"])
+    print("")
+    print("     z<0 tick 비율 %d/%d (%.1f%%) ⇒ 사전예측 = Δπ̄>0 우세"
+          % (n_neg, len(zs), 100.0 * n_neg / float(len(zs) or 1)))
+    if outside and b["m"] > 0 and beats:
+        v = "🟢 CHANNEL-CARRIES-PHYSICS — Δπ̄>0 · null95% 밖 · rng 대비 우세 (예측 부호)"
+    elif outside and b["m"] < 0:
+        v = "🔄 SIGN-INVERTED — null95% 밖이나 예측과 반대 ⇒ bias 부호 배선 감사 (INVALID, 음성 아님)"
+    else:
+        v = "🧱 NULL — Δπ̄ 가 null95% 대역 안: 인증된 근접 계기서도 채널 무반응"
+    print("  ⇒ VERDICT: " + v)
+    print("     범위: 이건 **근접(물리) 판정**이지 의미 판정이 아니다 — 원격(의미)은 R-B/ζ-fire 전엔 열리지 않는다.")
+    print("     해상한계 = 2·sd(Δπ̄_rng)/√n = %.5f · 이보다 작은 참효과는 미측정(VOID, 음성 아님)."
+          % (bar / ((b["n"] or 1) ** 0.5)))
+    return 0
+
+
+def _pc2_direction(argv):
+    """H_9576 PC2→MOUTH DIRECTION — engine-native verdict over decision traces.
+
+    `anima-py evaluate --pc2-direction <traces_dir> [--perm N] [--seed N]`
+
+    Reads the traces `anima-py chat --pc2-mouth {off,bias,rng}` already wrote (NO decode, like
+    --emit-gate-census / --dead-census) and renders the three frozen criteria of the PC2→mouth
+    experiment. It exists because the verdict statistic itself must be engine-native: a number a
+    probe beside the engine produced is not cementable (a_experiment_engine_native · H_9303/H_9307).
+
+      (1) isolation  — is the emit sequence byte-identical across off/bias/rng? (Stage-A: the gate
+                       hears the BASE candidate; steering is applied only after emit is fixed, so
+                       any drift here means the isolation leaked and the run is INVALID, not negative)
+      (2) channel    — does the steered text actually differ from base on emit ticks?
+      (3) direction  — Spearman rho(z_PC2, D_base - D_steer) where D = byte-bigram overlap between a
+                       text and its own decode seed. PREDICTION: z>0 (originality pole) pushes the
+                       mouth OFF its context => D_base - D_steer > 0 => rho > 0. Judged against a
+                       within-seed permutation null (breaks the z<->text pairing, keeps both
+                       marginals) — a raw rho is not a verdict (p7 · collapse-delta vs controls),
+                       and the rng arm is the second control (same |z| draw-stream re-key, no
+                       direction), so BIAS must beat BOTH the permutation null and rng.
+
+    Frozen bar (do not retune — a_break_the_wall/no tune-to-green): rho outside the null 95% band
+    AND beating rng = direction CRACK; inside the band = W2 wall (the byte granularity cannot
+    express the PC2 semantics). Underpowered n is VOID, never a negative (power-before-negative).
+    """
+    import glob as _glob
+    import json as _pj
+    import base64 as _pb
+    import random as _prand
+
+    if "--z-census" in argv:                      # H_9712 dose/exposure gate (sister sub-mode)
+        return _z_census(argv)
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> [--perm N] [--seed N]")
+        return 2
+    if "--cascade-null" in argv:
+        return _pc2_cascade_null(d, argv)
+    rounds = evaluate_intval(argv, "--perm", 2000)
+    rseed = evaluate_intval(argv, "--seed", 20260716)
+
+    def _rows(arm, sd):
+        p = os.path.join(d, "%s_s%d.jsonl" % (arm, sd))
+        if not os.path.exists(p):
+            return []
+        out = []
+        for l in open(p):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if not r.get("_meta"):
+                out.append(r)
+        return out
+
+    seeds = []
+    for f in sorted(_glob.glob(os.path.join(d, "off_s*.jsonl"))):
+        try:
+            seeds.append(int(os.path.basename(f)[len("off_s"):-len(".jsonl")]))
+        except ValueError:
+            continue
+    if not seeds:
+        print("  ⇒ ⛔ no off_s<seed>.jsonl traces under " + d)
+        return 2
+
+    print("=== anima evaluate --pc2-direction — PC2→MOUTH (card H_9576) ===")
+    print("traces: %s  (seeds: %s · perm=%d · perm-seed=%d)"
+          % (d, ",".join(str(s) for s in seeds), rounds, rseed))
+    print("pipe:   anima-py chat --pc2-mouth {off,bias,rng} traces → D=bigram-overlap(text, seed)")
+    print("bar:    (1) emit byte-identical  (2) steered≠base  (3) rho>0 outside null-95% AND > rng")
+    print("")
+
+    # ── (1) isolation ────────────────────────────────────────────────────────
+    iso = True
+    for sd in seeds:
+        e = {}
+        for arm in ("off", "bias", "rng"):
+            e[arm] = [1 if r.get("emit") else 0 for r in _rows(arm, sd)]
+        ok = bool(e["off"]) and e["off"] == e["bias"] == e["rng"]
+        iso = iso and ok
+        print("  (1) seed %-5d off==bias==rng %-5s  (emit %d/%d)"
+              % (sd, str(ok), sum(e["off"]), len(e["off"])))
+    print("      ⇒ isolation: %s" % ("PASS" if iso else "INVALID (Stage-A leaked)"))
+    if not iso:
+        print("      ⇒ ⛔ VERDICT INVALID — a leaked gate makes (2)/(3) unreadable, not negative.")
+        return 0
+
+    def _b64(s):
+        try:
+            return _pb.b64decode(s) if s else b""
+        except (ValueError, TypeError):
+            return b""
+
+    def _big(bs):
+        return set(bs[i:i + 2] for i in range(len(bs) - 1))
+
+    def _ov(txt_b, seed_b):
+        a, b = _big(txt_b), _big(seed_b)
+        return (len(a & b) / float(len(a))) if a else 0.0
+
+    def _rank(v):
+        n = len(v)
+        s = sorted(range(n), key=lambda i: v[i])
+        r = [0.0] * n
+        i = 0
+        while i < n:
+            j = i
+            while j + 1 < n and v[s[j + 1]] == v[s[i]]:
+                j += 1
+            avg = (i + j) / 2.0 + 1
+            for k in range(i, j + 1):
+                r[s[k]] = avg
+            i = j + 1
+        return r
+
+    def _spearman(x, y):
+        n = len(x)
+        if n < 3:
+            return 0.0
+        rx, ry = _rank(x), _rank(y)
+        mx, my = sum(rx) / n, sum(ry) / n
+        num = sum((rx[i] - mx) * (ry[i] - my) for i in range(n))
+        dx = sum((rx[i] - mx) ** 2 for i in range(n)) ** 0.5
+        dy = sum((ry[i] - my) ** 2 for i in range(n)) ** 0.5
+        return (num / (dx * dy)) if dx > 0 and dy > 0 else 0.0
+
+    def _collect(arm):
+        out, ndiff, ntot = [], 0, 0
+        for sd in seeds:
+            o, a = _rows("off", sd), _rows(arm, sd)
+            for i in range(min(len(o), len(a))):
+                if not o[i].get("emit"):
+                    continue
+                base_b = _b64(o[i].get("gtext_b64"))
+                steer_b = _b64(a[i].get("gtext_pc2_b64"))
+                if not steer_b:
+                    continue
+                ntot += 1
+                if steer_b != base_b:
+                    ndiff += 1
+                seed_b = _b64(a[i].get("seed_b64"))
+                z = a[i].get("pc2_z")
+                if z is None or not seed_b:
+                    continue
+                out.append((sd, float(z), _ov(base_b, seed_b) - _ov(steer_b, seed_b)))
+        return out, ndiff, ntot
+
+    # ── (2) channel + (3) direction ──────────────────────────────────────────
+    res = {}
+    for arm in ("bias", "rng"):
+        rows, ndiff, ntot = _collect(arm)
+        zs = [r[1] for r in rows]
+        dds = [r[2] for r in rows]
+        obs = _spearman(zs, dds)
+
+        by_seed = {}
+        for i, r in enumerate(rows):
+            by_seed.setdefault(r[0], []).append(i)
+        rng_ = _prand.Random(rseed)
+        null = []
+        for _ in range(rounds):
+            pz = list(zs)
+            for _sd, idxs in by_seed.items():
+                vals = [zs[i] for i in idxs]
+                rng_.shuffle(vals)
+                for i, v in zip(idxs, vals):
+                    pz[i] = v
+            null.append(_spearman(pz, dds))
+        null.sort()
+        lo = null[int(0.025 * rounds)] if null else 0.0
+        hi = null[int(0.975 * rounds) - 1] if null else 0.0
+        p = (sum(1 for v in null if abs(v) >= abs(obs)) / float(rounds)) if null else 1.0
+        res[arm] = {"rho": obs, "lo": lo, "hi": hi, "p": p, "n": len(rows)}
+        print("  (2) %-4s steered≠base %d/%d" % (arm, ndiff, ntot))
+        print("  (3) %-4s n=%-4d rho=%+.3f · null95%%=[%+.3f,%+.3f] · p=%.3f"
+              % (arm, len(rows), obs, lo, hi, p))
+
+    b, r = res["bias"], res["rng"]
+    outside = not (b["lo"] <= b["rho"] <= b["hi"])
+    beats_rng = b["rho"] > r["rho"]
+    print("")
+    if outside and b["rho"] > 0 and beats_rng:
+        v = "🟢 DIRECTION CRACK — rho outside null-95%, predicted sign, beats rng"
+    elif outside and b["rho"] < 0:
+        v = "🧱 W2 WALL (sign-inverted) — rho outside null-95% but OPPOSITE the prediction"
+    else:
+        v = "🧱 W2 WALL — rho inside the null-95% band: byte granularity cannot express PC2"
+    print("  ⇒ VERDICT: " + v)
+    print("     resolvable |rho| at n=%d is about %.2f (null-95%% half-width) — a smaller true"
+          % (b["n"], max(abs(b["lo"]), abs(b["hi"]))))
+    print("     effect stays UNMEASURED, not refuted (power-before-negative-verdict).")
+    return 0
+
+
+def _spearman_pub(x, y):
+    """Spearman rho (tie-averaged ranks) — module-level twin of _pc2_direction's local helper."""
+    n = len(x)
+    if n < 3:
+        return 0.0
+
+    def _rank(v):
+        s = sorted(range(len(v)), key=lambda i: v[i])
+        r = [0.0] * len(v)
+        i = 0
+        while i < len(v):
+            j = i
+            while j + 1 < len(v) and v[s[j + 1]] == v[s[i]]:
+                j += 1
+            avg = (i + j) / 2.0 + 1
+            for k in range(i, j + 1):
+                r[s[k]] = avg
+            i = j + 1
+        return r
+
+    rx, ry = _rank(x), _rank(y)
+    mx, my = sum(rx) / n, sum(ry) / n
+    num = sum((rx[i] - mx) * (ry[i] - my) for i in range(n))
+    dx = sum((rx[i] - mx) ** 2 for i in range(n)) ** 0.5
+    dy = sum((ry[i] - my) ** 2 for i in range(n)) ** 0.5
+    return (num / (dx * dy)) if dx > 0 and dy > 0 else 0.0
+
+
+def _pc2_cascade_null(d, argv):
+    """H_9629 ΔD TRUE-ZERO PEDESTAL — is ΔD a readable quantity at all?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --cascade-null [--perm N] [--seed N]`
+
+    H_9576 read a NEGATIVE (rho(z, ΔD) inside the null band ⇒ "W2 wall") without ever measuring
+    the SNR of ΔD itself. This sub-mode supplies the missing zero-truth pedestal
+    (phi-estimator-needs-zero-truth-pedestal · positive-control-before-reading-a-negative):
+    if a semantics-free perturbation of the same dose moves ΔD as much as the steered arm does,
+    then per-tick direction is UNMEASURED at n=270 — VOID, not a negative.
+
+    ARMS (all trace-read · NO decode — the ckpt is pool-side; see the SPEC block for what needs one)
+
+      off       ΔD ≡ 0 by construction. Certified here by checking that the BASE gtext is
+                byte-identical across off/bias/rng (if it is not, the pedestal shares no baseline
+                with the steered arms and everything below is unreadable → INVALID).
+      static    ZERO-TRUTH, ZERO-CASCADE floor: one deterministic letter substitution at the tick's
+                OWN first base↔bias divergence byte (control-must-match-mediating-covariate: the
+                dose is positioned where the bias arm's physical effect actually starts, not at an
+                arbitrary index). Semantic capacity 0. Because the trace cannot re-roll the decode
+                downstream of the substituted byte, this is a strict LOWER BOUND on cascade noise —
+                a ratio computed against it OVERSTATES the bias arm's SNR, so a VOID read against
+                `static` holds a fortiori.
+      rng       ZERO-TRUTH, FULL-CASCADE pedestal: the H_9576 rng arm is a dose-matched re-key of
+                the same |z| draw-stream with the DIRECTION scrambled out — a real decode with the
+                real downstream re-roll and zero semantic direction. This is the closest thing the
+                traces hold to the card's cascade arm, and it is the PRIMARY denominator.
+      oracle    READOUT positive control (dose ladder, k bytes at the same divergence locus):
+                toward-seed (bytes copied from the decode seed ⇒ D↑ ⇒ ΔD<0) and away-seed
+                (a byte absent from the seed ⇒ D↓ ⇒ ΔD>0). Certifies that D is not a dead readout
+                — that ΔD *can* rise above the pedestal when a directed effect is really applied.
+                It does NOT stand in for the card's ζ=±4 saturation arm (that one needs a decode).
+
+    Frozen bar (card H_9629 · do not retune):
+      ratio = var(ΔD_bias)/var(ΔD_cascade) ≤ 1.5              ⇒ VOID-BY-SNR (H_9576 direction KILL
+                                                                 reclassified as unmeasured at
+                                                                 per-tick granularity)
+      ratio > 3 ∧ positive PASS                               ⇒ readout valid · KILL stands
+      positive control cannot beat the pedestal               ⇒ INVALID
+      below-chance: pedestal indistinguishable from off       ⇒ instrument wiring defect · INVALID
+    """
+    import glob as _glob
+    import json as _pj
+    import base64 as _pb
+    import random as _prand
+    import math as _pm
+
+    rounds = evaluate_intval(argv, "--perm", 2000)
+    rseed = evaluate_intval(argv, "--seed", 20260716)
+
+    def _rows(arm, sd):
+        p = os.path.join(d, "%s_s%d.jsonl" % (arm, sd))
+        if not os.path.exists(p):
+            return []
+        out = []
+        for l in open(p):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if not r.get("_meta"):
+                out.append(r)
+        return out
+
+    seeds = []
+    for f in sorted(_glob.glob(os.path.join(d, "off_s*.jsonl"))):
+        try:
+            seeds.append(int(os.path.basename(f)[len("off_s"):-len(".jsonl")]))
+        except ValueError:
+            continue
+    if not seeds:
+        print("  ⇒ ⛔ no off_s<seed>.jsonl traces under " + d)
+        return 2
+
+    def _b64(s):
+        try:
+            return _pb.b64decode(s) if s else b""
+        except (ValueError, TypeError):
+            return b""
+
+    def _big(bs):
+        return set(bs[i:i + 2] for i in range(len(bs) - 1))
+
+    def _ov(txt_b, seed_b):
+        a, b = _big(txt_b), _big(seed_b)
+        return (len(a & b) / float(len(a))) if a else 0.0
+
+    def _divpos(a, b):
+        """First byte where the steered text leaves the base — the bias arm's own dose locus."""
+        n = min(len(a), len(b))
+        for i in range(n):
+            if a[i] != b[i]:
+                return i
+        return n if n < max(len(a), len(b)) else max(0, len(a) // 2)
+
+    def _static_mut(base_b, pos):
+        """Deterministic semantics-free single-byte substitution (2nd-best byte needs logits)."""
+        if not base_b:
+            return base_b
+        b = bytearray(base_b)
+        pos = min(max(pos, 0), len(b) - 1)
+        c = 97 + ((b[pos] + pos) % 26)
+        if c == b[pos]:
+            c = 97 + ((c - 97 + 1) % 26)
+        b[pos] = c
+        return bytes(b)
+
+    def _oracle_mut(base_b, seed_b, pos, k, toward):
+        if not base_b:
+            return base_b
+        b = bytearray(base_b)
+        pos = min(max(pos, 0), max(0, len(b) - 1))
+        for j in range(k):
+            i = pos + j
+            if i >= len(b):
+                break
+            b[i] = seed_b[j % len(seed_b)] if (toward and seed_b) else 0x01
+        return bytes(b)
+
+    def _var(v):
+        n = len(v)
+        if n < 2:
+            return 0.0
+        m = sum(v) / n
+        return sum((x - m) ** 2 for x in v) / (n - 1)
+
+    # ── F distribution tail (prereg statistic) ───────────────────────────────
+    def _betacf(a, b, x):
+        MAXIT, EPS, FPMIN = 200, 3.0e-12, 1.0e-300
+        qab, qap, qam = a + b, a + 1.0, a - 1.0
+        c = 1.0
+        dd = 1.0 - qab * x / qap
+        if abs(dd) < FPMIN:
+            dd = FPMIN
+        dd = 1.0 / dd
+        h = dd
+        for m in range(1, MAXIT + 1):
+            m2 = 2 * m
+            aa = m * (b - m) * x / ((qam + m2) * (a + m2))
+            dd = 1.0 + aa * dd
+            if abs(dd) < FPMIN:
+                dd = FPMIN
+            c = 1.0 + aa / c
+            if abs(c) < FPMIN:
+                c = FPMIN
+            dd = 1.0 / dd
+            h *= dd * c
+            aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2))
+            dd = 1.0 + aa * dd
+            if abs(dd) < FPMIN:
+                dd = FPMIN
+            c = 1.0 + aa / c
+            if abs(c) < FPMIN:
+                c = FPMIN
+            dd = 1.0 / dd
+            de = dd * c
+            h *= de
+            if abs(de - 1.0) < EPS:
+                break
+        return h
+
+    def _betai(a, b, x):
+        if x <= 0.0:
+            return 0.0
+        if x >= 1.0:
+            return 1.0
+        lb = (_pm.lgamma(a + b) - _pm.lgamma(a) - _pm.lgamma(b)
+              + a * _pm.log(x) + b * _pm.log(1.0 - x))
+        bt = _pm.exp(lb)
+        if x < (a + 1.0) / (a + b + 2.0):
+            return bt * _betacf(a, b, x) / a
+        return 1.0 - bt * _betacf(b, a, 1.0 - x) / b
+
+    def _f_two_sided_p(f, d1, d2):
+        if f <= 0.0 or d1 < 1 or d2 < 1:
+            return 1.0
+        cdf = _betai(d1 / 2.0, d2 / 2.0, d1 * f / (d1 * f + d2))
+        return max(0.0, min(1.0, 2.0 * min(cdf, 1.0 - cdf)))
+
+    print("=== anima evaluate --pc2-direction --cascade-null — ΔD ZERO-TRUTH PEDESTAL (card H_9629) ===")
+    print("traces: %s  (seeds: %s · perm=%d · perm-seed=%d)"
+          % (d, ",".join(str(s) for s in seeds), rounds, rseed))
+    print("claim:  var(ΔD) is dominated by decode-cascade noise, not by PC2 direction ⇒ H_9576's")
+    print("        rho≈0 may be VOID-BY-SNR (unmeasured), not a negative.")
+    print("bar:    ratio=var(ΔD_bias)/var(ΔD_cascade) ≤1.5 ⇒ VOID-BY-SNR · >3 ∧ positive PASS ⇒ KILL stands")
+    print("        positive < pedestal ⇒ INVALID · pedestal==off ⇒ wiring defect INVALID")
+    print("")
+
+    # ── (0) baseline wiring — the off arm's ΔD must be 0 BY CONSTRUCTION ──────
+    base_ok = True
+    for sd in seeds:
+        o, b_, r_ = _rows("off", sd), _rows("bias", sd), _rows("rng", sd)
+        n = min(len(o), len(b_), len(r_))
+        same = all(o[i].get("gtext_b64") == b_[i].get("gtext_b64") == r_[i].get("gtext_b64")
+                   for i in range(n))
+        base_ok = base_ok and same and n > 0
+        print("  (0) seed %-5d base gtext off==bias==rng %-5s  (ticks %d) ⇒ ΔD_off ≡ 0" % (sd, str(same), n))
+    print("      ⇒ baseline: %s" % ("PASS" if base_ok else "INVALID (arms do not share a baseline)"))
+    if not base_ok:
+        print("      ⇒ ⛔ VERDICT INVALID — no shared base means ΔD is not the same quantity across arms.")
+        return 0
+    print("")
+
+    # ── collect the paired per-tick ΔD for every arm ─────────────────────────
+    DOSES = (1, 2, 4, 8, 16)
+    dd = {"bias": [], "rng": [], "static": []}
+    orc = {}
+    for k in DOSES:
+        orc[("toward", k)] = []
+        orc[("away", k)] = []
+    nz_static = 0
+    for sd in seeds:
+        o, b_, r_ = _rows("off", sd), _rows("bias", sd), _rows("rng", sd)
+        for i in range(min(len(o), len(b_), len(r_))):
+            if not o[i].get("emit"):
+                continue
+            base_b = _b64(o[i].get("gtext_b64"))
+            bias_b = _b64(b_[i].get("gtext_pc2_b64"))
+            rng_b = _b64(r_[i].get("gtext_pc2_b64"))
+            seed_b = _b64(o[i].get("seed_b64"))
+            if not base_b or not bias_b or not rng_b or not seed_b:
+                continue
+            d0 = _ov(base_b, seed_b)
+            pos = _divpos(base_b, bias_b)
+            stat_b = _static_mut(base_b, pos)
+            if stat_b != base_b:
+                nz_static += 1
+            dd["bias"].append(d0 - _ov(bias_b, seed_b))
+            dd["rng"].append(d0 - _ov(rng_b, seed_b))
+            dd["static"].append(d0 - _ov(stat_b, seed_b))
+            for k in DOSES:
+                orc[("toward", k)].append(d0 - _ov(_oracle_mut(base_b, seed_b, pos, k, True), seed_b))
+                orc[("away", k)].append(d0 - _ov(_oracle_mut(base_b, seed_b, pos, k, False), seed_b))
+
+    n = len(dd["bias"])
+    if n < 10:
+        print("  ⇒ ⛔ VOID — only n=%d paired emit ticks; the ratio is unpowered." % n)
+        return 0
+
+    print("  (1) per-tick ΔD (paired · n=%d emit ticks · D = byte-bigram overlap(text, decode seed))" % n)
+    print("      %-8s %-6s %-11s %-11s %-11s" % ("arm", "n", "mean", "sd", "var"))
+    print("      %-8s %-6d %+.3e %+.3e %+.3e" % ("off", n, 0.0, 0.0, 0.0))
+    for arm in ("static", "rng", "bias"):
+        v = dd[arm]
+        m = sum(v) / len(v)
+        va = _var(v)
+        print("      %-8s %-6d %+.3e %+.3e %+.3e" % (arm, len(v), m, va ** 0.5, va))
+    print("      static substitution actually moved the text on %d/%d ticks" % (nz_static, n))
+    print("")
+
+    # ── (2) below-chance cell — does the pedestal differ from off at all? ─────
+    ped_live = {}
+    for arm in ("static", "rng"):
+        nz = sum(1 for x in dd[arm] if x != 0.0)
+        live = _var(dd[arm]) > 0.0 and nz > 0
+        ped_live[arm] = live
+        print("  (2) pedestal %-6s vs off: ΔD≠0 on %d/%d ticks · var>0 %-5s ⇒ %s"
+              % (arm, nz, n, str(_var(dd[arm]) > 0.0), "LIVE" if live else "DEAD (perturbation inert)"))
+    if not ped_live["rng"]:
+        print("      ⇒ ⛔ VERDICT INVALID — the cascade pedestal is indistinguishable from off")
+        print("         (below-chance cell: the perturbation never fired · instrument wiring defect).")
+        return 0
+    print("")
+
+    # ── (3) readout positive control — can ΔD rise above the pedestal? ───────
+    sd_ped = _var(dd["rng"]) ** 0.5
+    print("  (3) READOUT positive control — directed dose ladder at the same divergence locus")
+    print("      (toward-seed ⇒ D↑ ⇒ ΔD<0 · away-seed ⇒ D↓ ⇒ ΔD>0 · bar: |mean| > 2·sd(ΔD_rng)=%.3e)" % (2 * sd_ped))
+    pos_ok = {}
+    for pole in ("toward", "away"):
+        means = []
+        for k in DOSES:
+            v = orc[(pole, k)]
+            means.append(sum(v) / len(v))
+        line = "  ".join("k=%-2d %+.3e" % (k, m) for k, m in zip(DOSES, means))
+        mono = all(abs(means[i + 1]) >= abs(means[i]) - 1e-12 for i in range(len(means) - 1))
+        signs = all((m <= 0) if pole == "toward" else (m >= 0) for m in means[1:])
+        big = abs(means[-1]) > 2 * sd_ped
+        pos_ok[pole] = mono and signs and big
+        print("      %-7s %s" % (pole, line))
+        print("              monotone %-5s · sign-as-predicted %-5s · k=16 beats pedestal %-5s ⇒ %s"
+              % (str(mono), str(signs), str(big), "PASS" if pos_ok[pole] else "FAIL"))
+    positive = pos_ok["toward"] and pos_ok["away"]
+    print("      ⇒ readout positive control: %s" % ("PASS (D is a live, dose-responsive readout)"
+                                                    if positive else "FAIL (readout dead)"))
+    print("")
+
+    # ── (4) the prereg statistic — variance ratio + F test + paired permutation ──
+    v_bias = _var(dd["bias"])
+    print("  (4) var(ΔD_bias)/var(ΔD_cascade)  [prereg: ≤1.5 VOID-BY-SNR · >3 ∧ positive ⇒ KILL stands]")
+    ratios = {}
+    for arm in ("rng", "static"):
+        v_ped = _var(dd[arm])
+        ratio = (v_bias / v_ped) if v_ped > 0 else float("inf")
+        ratios[arm] = ratio
+        pF = _f_two_sided_p(ratio, n - 1, n - 1)
+        rng_ = _prand.Random(rseed)
+        null = []
+        for _ in range(rounds):
+            a, b = [], []
+            for i in range(n):
+                if rng_.random() < 0.5:
+                    a.append(dd["bias"][i]); b.append(dd[arm][i])
+                else:
+                    a.append(dd[arm][i]); b.append(dd["bias"][i])
+            vb = _var(b)
+            null.append((_var(a) / vb) if vb > 0 else float("inf"))
+        null.sort()
+        lo = null[int(0.025 * rounds)]
+        hi = null[int(0.975 * rounds) - 1]
+        pp = sum(1 for x in null if abs(_pm.log(max(x, 1e-12))) >= abs(_pm.log(max(ratio, 1e-12)))) / float(rounds)
+        tag = "PRIMARY (full cascade · dose-matched · direction-void)" if arm == "rng" \
+            else "LOWER BOUND (no downstream re-roll ⇒ overstates bias SNR)"
+        print("      %-7s ratio=%.3f · F(%d,%d) p=%.3f · paired-swap null95%%=[%.3f,%.3f] p=%.3f"
+              % (arm, ratio, n - 1, n - 1, pF, lo, hi, pp))
+        print("              %s" % tag)
+    print("")
+
+    # ── (5) MECHANISM — is D confounded by the text's own bigram diversity? ──
+    # D = |bigrams(text) ∩ bigrams(seed)| / |bigrams(text)| is a SET-cardinality ratio, so its
+    # DENOMINATOR is the steered text's own bigram DIVERSITY. If ΔD tracks Δ|distinct bigrams|,
+    # then ΔD is partly a diversity readout that never consults the seed — which would explain a
+    # non-monotone away-pole (repeated filler bytes collapse into ONE set element, shrinking the
+    # denominator and RAISING D even as seed-overlap falls). This is a code fact about the H_9576
+    # readout; the correlation below decides whether it actually bites at this scale.
+    print("  (5) MECHANISM — D's denominator is |distinct bigrams(text)| (a SET). Does ΔD just track")
+    print("      the steered text's bigram DIVERSITY, without consulting the seed?")
+    for arm in ("bias", "rng"):
+        dv, dl = [], []
+        for sd in seeds:
+            o, a_ = _rows("off", sd), _rows(arm, sd)
+            for i in range(min(len(o), len(a_))):
+                if not o[i].get("emit"):
+                    continue
+                base_b = _b64(o[i].get("gtext_b64"))
+                st_b = _b64(a_[i].get("gtext_pc2_b64"))
+                seed_b = _b64(o[i].get("seed_b64"))
+                if not base_b or not st_b or not seed_b:
+                    continue
+                dv.append(_ov(base_b, seed_b) - _ov(st_b, seed_b))
+                dl.append(float(len(_big(base_b)) - len(_big(st_b))))
+        rr = _spearman_pub(dv, dl)
+        print("      %-4s rho(ΔD, Δ|distinct bigrams|) = %+.3f   (n=%d)" % (arm, rr, len(dv)))
+    print("      ⇒ a large |rho| means ΔD is contaminated by a seed-independent diversity term.")
+    print("")
+
+    # ── (6) verdict — the frozen table, primary denominator = rng ────────────
+    ratio = ratios["rng"]
+    print("  ⇒ prereg cell: ratio(bias/rng) = %.3f" % ratio)
+    if not positive:
+        v = "⛔ INVALID — the positive control cannot beat the pedestal (readout dead · a negative is unreadable)"
+    elif ratio <= 1.5:
+        v = ("🕳️ VOID-BY-SNR — the steered arm's ΔD variance is within 1.5× of a DIRECTION-VOID\n"
+             "     dose-matched pedestal. H_9576's rho≈0 is reclassified: per-tick direction was\n"
+             "     never measured, so the 'W2 wall' does NOT stand as a negative. Block-aggregation\n"
+             "     (or a coarser readout) is mandatory before any direction verdict is read again.")
+    elif ratio > 3.0:
+        v = ("🧱 KILL STANDS (readout valid) — bias ΔD variance is >3× the cascade pedestal, so the\n"
+             "     per-tick signal is not pedestal-dominated and H_9576's rho≈0 is a real negative.\n"
+             "     ⚠️ PENDING the ζ=±4 saturation arm (decode-side positive control · pool spec below).")
+    else:
+        v = ("⏳ INDETERMINATE — ratio in (1.5, 3]: the prereg table leaves this band unassigned.\n"
+             "     Not a negative and not a VOID — it is reported as PENDING, not adjudicated\n"
+             "     (assigning it now would be tune-to-green).")
+    print("  ⇒ VERDICT: " + v)
+    print("")
+    print("  SCOPE / what this run cannot do (a_scale_honest_scope · no invented numbers):")
+    print("   · the card's cascade arm (forced 2nd-best byte + downstream RE-ROLL) and the ζ=±4")
+    print("     saturation positive control both need a live decode; the ckpt is pool-side, so they")
+    print("     are NOT in these numbers. The `static` arm is a re-roll-free LOWER BOUND and `rng`")
+    print("     is the dose-matched full-cascade stand-in the traces already hold.")
+    print("   · pool spec (summer/aiden · never mini · heavy-anima-eval-pool-not-mini):")
+    print("       anima-py chat --pc2-mouth cascade --pc2-zeta 0   <ckpt>  # 2nd-best byte @ 1 lm-step")
+    print("       anima-py chat --pc2-mouth bias    --pc2-zeta 4   <ckpt>  # ζ=+4 saturation arm")
+    print("       anima-py chat --pc2-mouth bias    --pc2-zeta -4  <ckpt>  # ζ=-4 saturation arm")
+    print("       (seeds 7,4302,4303 · same 150 ticks) → re-run this flag over the new traces dir.")
+    return 0
 
 
 def _reject_unknown_flags(argv):
@@ -7542,6 +13406,819 @@ def bridge_trace_run(argv):
     return 0
 
 
+def faction_phi_proxy_run(argv):
+    """`anima-py evaluate <ckpt> --faction-phi-proxy <prompts.json> [--n-factions-sweep 1,2,4,8,12,16,24,32,64]
+    [--win 24] [--trials 200] [--seed 12345] [--out faction_phi.json]` — the ARCHIVED faction
+    Phi proxy, recomputed on engine-native trunk activations, against a zero-truth PEDESTAL
+    (cards H_9660 / H_9654 / H_9655 · faction-lateral-axis-r3).
+
+    The archived engine scored consciousness with
+        phi = (global_var - mean_faction_var) * log2(n_active)
+    (verbatim from core/phi/quantum_consciousness.hexa:252, a TODO[pytorch] comment whose py
+    implementation never existed). Total variance decomposition says
+        Var = E[Var|g] + Var(E[X|g]),
+    so `global_var - mean_faction_var` IS the between-group term: raising K mechanically
+    shrinks the within term and inflates the proxy. At K=N (one cell per faction) within=0 and
+    the proxy saturates at global_var. That is division, not integration — the archived
+    "Law 22" (structure-only Phi 2.1x) and "Law 44" (sigma(6)=12 optimal) are confounded by it.
+
+    Arms (each K, all three, same trunk activations · a_break_the_wall needs >=2 controls):
+      real      — the production trunk penultimate yn:[T,d], partitioned over the d units.
+      pedestal  — i.i.d. gaussian matched to real's per-arm mean/std. TRUTH Phi = 0 (there is
+                  nothing integrated; the partition is an arbitrary label). Any rise here is
+                  pure artifact (`phi-estimator-needs-zero-truth-pedestal`).
+      scramble  — real values, unit axis permuted per position: destroys any cross-unit
+                  structure while preserving every marginal.
+
+    Reads (pre-registered, NOT swept): the K grid, trials, seed. The verdict is the SHAPE of
+    proxy(K) and real-vs-pedestal SEPARATION, never a raw value (FORM tunable · BIND earned · p7):
+      - real tracks pedestal (ratio ~1, monotone, no peak) => proxy measures the partition,
+        not the substrate => archived Laws 22/43/44 stay UNDECIDABLE (confound un-removed).
+      - real separates from pedestal AND peaks at finite K => the axis survives its first gate
+        and H_9654's "optimum was never measured" becomes falsifiable at that K.
+    DIRECTIONAL by construction: this scores an ARCHIVED DEAD FORMULA on live activations. It
+    is NOT a consciousness verdict and never cements one (a_phi_iit4_tool: real Phi is faithful
+    IIT4 only; this proxy is the object under indictment, not a measuring tool)."""
+    import numpy as np
+    ckpt = argv[0]
+    spec_path = evaluate_strval(argv[1:], "--faction-phi-proxy", "")
+    out_path = evaluate_strval(argv[1:], "--out", "")
+    T = evaluate_intval(argv[1:], "--win", 24)
+    trials = evaluate_intval(argv[1:], "--trials", 200)
+    seed = evaluate_intval(argv[1:], "--seed", 12345)
+    ks_s = evaluate_strval(argv[1:], "--n-factions-sweep", "1,2,4,8,12,16,24,32,64")
+    ks = [int(x) for x in ks_s.split(",") if x.strip()]
+
+    print("=== anima evaluate --faction-phi-proxy — archived faction Phi on live trunk (H_9660/H_9654) ===")
+    print("ckpt:  " + ckpt)
+    print("proxy: (global_var - mean_faction_var) * log2(n_active)   [core/phi/quantum_consciousness.hexa:252]")
+    print("       == the BETWEEN-GROUP term of Var = E[Var|g] + Var(E[X|g]) — monotone in K by construction")
+    print("arms:  real | pedestal (truth Phi=0) | scramble (marginals kept, structure cut)")
+    print("K:     %s  ·  trials=%d  seed=%d  (pre-registered, not swept)" % (ks, trials, seed))
+
+    spec = json.load(open(spec_path))
+    items = spec["items"] if "items" in spec else spec.get("prompts", [])
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+    d = int(W["d"])
+    print("d:     %d hidden units  ·  %d prompts x T=%d  (production trunk forward)" % (d, len(items), T))
+
+    # engine-native tap: the EXACT production trunk forward (byte-identical to gate decode)
+    rows = []
+    for it in items:
+        tok = clm._seed_to_tok(it["prompt"], T)
+        yn = clm.clm_forward_hidden(W, tok, T)          # [T, d]
+        rows.append(np.asarray(yn, dtype=np.float64))
+    X = np.concatenate(rows, axis=0)                     # [N, d]  N = prompts*T
+    N = X.shape[0]
+    print("tap:   X=[%d, %d]  (N = prompts x T rows over the d unit axis)" % (N, d))
+
+    def proxy(vals, assign, K):
+        """Archived formula, verbatim. vals:[d] one row; assign:[d] faction id per unit."""
+        gv = float(np.var(vals))
+        fv = [float(np.var(vals[assign == f])) for f in range(K) if (assign == f).sum() > 0]
+        n_active = int((np.abs(vals) > 1e-12).sum())
+        return (gv - float(np.mean(fv))) * math.log2(max(n_active, 2))
+
+    rng = np.random.default_rng(seed)
+    mu, sd = float(X.mean()), float(X.std())
+    out = {"ckpt": ckpt, "d": d, "N": N, "T": T, "trials": trials, "seed": seed,
+           "formula": "(global_var - mean_faction_var) * log2(n_active)",
+           "source": "core/phi/quantum_consciousness.hexa:252 (TODO[pytorch] · py impl never existed)",
+           "rows": []}
+    print("")
+    print("%10s | %12s | %12s | %12s | %10s" % ("n_factions", "real", "pedestal", "scramble", "real/ped"))
+    print("-" * 70)
+    for K in ks:
+        r_v, p_v, s_v = [], [], []
+        for _ in range(trials):
+            i = int(rng.integers(0, N))
+            assign = rng.integers(0, K, d)               # arbitrary labels — the point
+            row = X[i]
+            r_v.append(proxy(row, assign, K))
+            p_v.append(proxy(rng.normal(mu, sd, d), assign, K))          # TRUTH = 0
+            s_v.append(proxy(rng.permutation(row), assign, K))           # marginals kept
+        rm, pm, sm = float(np.mean(r_v)), float(np.mean(p_v)), float(np.mean(s_v))
+        ratio = (rm / pm) if abs(pm) > 1e-12 else float("nan")
+        print("%10d | %12.6f | %12.6f | %12.6f | %10s" %
+              (K, rm, pm, sm, ("%.3f" % ratio) if ratio == ratio else "—"))
+        out["rows"].append({"K": K, "real": rm, "real_sd": float(np.std(r_v)),
+                            "pedestal": pm, "pedestal_sd": float(np.std(p_v)),
+                            "scramble": sm, "scramble_sd": float(np.std(s_v)),
+                            "real_over_pedestal": ratio})
+
+    # ---- read the SHAPE, never a raw value (p7 · FORM tunable / BIND earned) --------------
+    reals = [r["real"] for r in out["rows"]]
+    peds = [r["pedestal"] for r in out["rows"]]
+    mono_r = all(reals[i] <= reals[i + 1] + 1e-12 for i in range(len(reals) - 1))
+    mono_p = all(peds[i] <= peds[i + 1] + 1e-12 for i in range(len(peds) - 1))
+    kpeak = ks[int(np.argmax(reals))]
+    peaked = kpeak != ks[-1]
+    out["monotone_real"], out["monotone_pedestal"] = mono_r, mono_p
+    out["argmax_K"], out["peaked"] = kpeak, peaked
+    print("")
+    print("  real     monotone in K : %s" % mono_r)
+    print("  pedestal monotone in K : %s   (truth Phi=0 — any rise is the artifact)" % mono_p)
+    print("  argmax_K(real)         : %d%s" % (kpeak, "" if peaked else "  (= grid edge — NO interior peak)"))
+    if mono_p and not peaked:
+        print("")
+        print("  VERDICT (H_9660): proxy rises with K on ZERO-TRUTH data and real shows no interior")
+        print("    peak => the archived proxy scores the PARTITION, not the substrate. Laws 22/43/44")
+        print("    stay UNDECIDABLE (confound un-removed) — NOT refuted. DIRECTIONAL: an archived dead")
+        print("    formula on live activations, never a consciousness verdict (a_phi_iit4_tool).")
+    elif peaked:
+        print("")
+        print("  VERDICT (H_9654): real peaks at K=%d, interior to the grid. The archived 'optimum'")
+        print("    claim becomes falsifiable HERE — but only if real separates from pedestal at that K")
+        print("    (read real/ped, not the raw value · p7). Archive never measured K>12 (0 records)." % kpeak)
+    if out_path:
+        json.dump(out, open(out_path, "w"), indent=1)
+        print("")
+        print("  wrote: " + out_path)
+    return 0
+
+
+def faction_block_structure_run(argv):
+    """`anima-py evaluate <ckpt> --faction-block-structure <prompts.json> [--n-factions-sweep 2,4,8,12,16]
+    [--win 24] [--seed 12345] [--out blocks.json]` — does the trunk's unit axis carry faction-like
+    MODULAR BLOCK structure at all (card H_9674 · faction-lateral-axis-r3)?
+
+    Why this gate exists. The archived faction laws died as CIRCULAR (H_9673: intra-faction sync
+    writes the proxy's own negative term every step) and the partition arithmetic is monotone on
+    zero-truth data (H_9660). What survives is a DIFFERENT question: the old factions were fake,
+    but is the STRUCTURE learnable on this substrate (H_9643, GPU)? That fire is only justified if
+    the substrate has block structure to find. This measures the precondition for $0.
+
+    Method (engine-native · production trunk forward, byte-identical to gate decode):
+      X:[N,d] penultimate over the prompt set -> unit-by-unit correlation |C|:[d,d] -> greedy
+      modularity clustering into K blocks -> Newman modularity Q of the best partition found.
+    Arms (a_break_the_wall needs >=2 controls):
+      real      — the trunk's own correlation structure.
+      pedestal  — i.i.d. gaussian matched to real's mean/std: TRUTH Q = 0 (no blocks exist).
+                  Finite-d correlation noise still yields Q>0, which is exactly why the pedestal
+                  is mandatory (`phi-estimator-needs-zero-truth-pedestal`) — Q is NOT read raw.
+      scramble  — real values, per-unit independent row permutation: kills cross-unit coupling,
+                  keeps every marginal.
+    POSITIVE CONTROL FIRST (`positive-control-before-reading-a-negative`): the sample correlation
+    over N rows has rank <= min(N,d); at N << d both real and pedestal are noise-dominated and their
+    agreement would mean "no power", not "no blocks". So the probe first plants K blocks and must
+    recover them at this very N/d (bar: x1.5 over its own pedestal). If it cannot, the run emits
+    NO verdict and exits non-zero — an unreadable negative is not a negative.
+
+    Verdict is real-vs-pedestal SEPARATION, never raw Q (p7 · FORM tunable / BIND earned):
+      real ~ pedestal  => no faction-like blocks in the substrate => H_9643 has nothing to learn
+                          => the axis closes at $0 and the GPU fire is NOT justified.
+      real >> pedestal => blocks exist => H_9643 becomes a real question and the fire is earned.
+    DIRECTIONAL: correlation-modularity is one lens on 'module', not a proof of their absence
+    (a_break_the_wall: a ceiling needs >=2-3 lenses)."""
+    import numpy as np
+    ckpt = argv[0]
+    spec_path = evaluate_strval(argv[1:], "--faction-block-structure", "")
+    out_path = evaluate_strval(argv[1:], "--out", "")
+    T = evaluate_intval(argv[1:], "--win", 24)
+    seed = evaluate_intval(argv[1:], "--seed", 12345)
+    ks = [int(x) for x in evaluate_strval(argv[1:], "--n-factions-sweep", "2,4,8,12,16").split(",") if x.strip()]
+
+    print("=== anima evaluate --faction-block-structure — does the substrate HAVE blocks? (H_9674) ===")
+    print("ckpt:  " + ckpt)
+    print("why:   old factions died CIRCULAR (H_9673) — this asks if the STRUCTURE is learnable at all.")
+    print("       No blocks in the substrate => H_9643 (learn factions, GPU) has nothing to learn.")
+    print("arms:  real | pedestal (truth Q=0) | scramble   ·   read SEPARATION, never raw Q (p7)")
+
+    spec = json.load(open(spec_path))
+    items = spec["items"] if "items" in spec else spec.get("prompts", [])
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+    rows = []
+    for it in items:
+        yn = clm.clm_forward_hidden(W, clm._seed_to_tok(it["prompt"], T), T)
+        rows.append(np.asarray(yn, dtype=np.float64))
+    X = np.concatenate(rows, axis=0)                       # [N, d]
+    N, d = X.shape
+    print("tap:   X=[%d, %d]  (production trunk penultimate · %d prompts x T=%d)" % (N, d, len(items), T))
+
+    rng = np.random.default_rng(seed)
+
+    def modularity(A, assign, K):
+        """Newman Q on the |correlation| graph for a given block assignment (vectorized)."""
+        m2 = A.sum()
+        if m2 <= 0: return 0.0
+        n = A.shape[0]
+        H = np.zeros((n, K)); H[np.arange(n), assign] = 1.0
+        k = A.sum(axis=1)
+        intra = float(((A @ H) * H).sum())                # sum of within-block edge weights (1 BLAS matmul)
+        kf = k @ H                                        # [K] degree mass per block
+        return float(intra / m2 - float((kf / m2) @ (kf / m2)))
+
+    _graph_cache = {}
+
+    def _graph(M, tag):
+        """|corr| graph + its eigenbasis, computed ONCE per arm (eigh on d=3784 is O(d^3) — doing
+        it per (arm, K) cell made the probe unrunnable). Cached by arm tag, never across arms."""
+        if tag in _graph_cache:
+            return _graph_cache[tag]
+        C = np.abs(np.corrcoef(M, rowvar=False))
+        C = np.nan_to_num(C, nan=0.0)
+        np.fill_diagonal(C, 0.0)
+        try:
+            _w, V = np.linalg.eigh(C)
+        except Exception:
+            V = None
+        _graph_cache[tag] = (C, V)
+        return _graph_cache[tag]
+
+    def best_blocks(M, K, tag, sweeps=6):
+        """|corr| graph -> spectral seed + full sweeps to modularity.
+
+        The first cut used 40 random single-unit moves over d=3784 and could not recover blocks it
+        had PLANTED (positive control x0.76 < bar 1.5) — the SEARCH, not the substrate, was the
+        binding constraint, and a negative read off it would have been an instrument fact. Fixed:
+        seed from the leading eigenvectors (spectral), then sweep EVERY unit to its best block
+        until no gain. Identical budget for every arm — an arm handed more search would win on
+        search, not on structure. Self-check at d=200: planted x28.89 over its pedestal."""
+        C, V = _graph(M, tag)
+        n = C.shape[0]
+        if V is not None:
+            E = V[:, -K:] if K <= n else V
+            cent = E[rng.choice(n, K, replace=False)]
+            assign = np.zeros(n, dtype=int)
+            for _ in range(12):
+                dist = ((E[:, None, :] - cent[None, :, :]) ** 2).sum(-1)
+                assign = dist.argmin(1)
+                for f in range(K):
+                    if (assign == f).any(): cent[f] = E[assign == f].mean(0)
+        else:
+            assign = rng.integers(0, K, n)
+        # full sweeps, VECTORIZED: one-hot H:[n,K] -> affinity = C @ H is a single BLAS call.
+        # (The per-unit python loop over K slices was the bottleneck — 3784 units x K x O(d) per
+        # sweep never finished. Same math, one matmul.)
+        deg = C.sum(1); m2 = C.sum()
+        for _ in range(sweeps):
+            H = np.zeros((n, K)); H[np.arange(n), assign] = 1.0
+            aff = C @ H                                   # [n, K] — sum of edges u->block f
+            pen = np.outer(deg, deg @ H) / m2             # [n, K] — null-model expectation
+            new_assign = np.argmax(aff - pen, axis=1)
+            if (new_assign == assign).all(): break
+            assign = new_assign
+        return modularity(C, assign, K)
+
+    # ---- POWER GATE (`power-before-negative-verdict` · `positive-control-before-reading-a-negative`)
+    # The unit-by-unit correlation over N rows has rank <= min(N,d). At N << d the sample |C| is
+    # mostly finite-sample noise and BOTH real and pedestal are noise-dominated: their agreement
+    # would be an INSTRUMENT fact ("no power"), not a substrate fact ("no blocks"). So the
+    # instrument must first recover blocks it is GIVEN, at this very N and d, or the negative is
+    # unreadable and this run refuses to emit one.
+    print("power: N=%d rows vs d=%d units — sample |C| rank <= %d (%.0f%% of the %dx%d matrix is"
+          % (N, d, min(N, d), 100.0 * (1.0 - min(N, d) / float(d)), d, d))
+    print("       finite-sample noise). A positive control decides whether a negative is readable.")
+    P = rng.normal(float(X.mean()), float(X.std()), (N, d))          # pedestal: TRUTH Q = 0
+
+    # --arm-random-init: SAME architecture, SAME production forward, weights re-drawn from their
+    # own per-tensor moments. Asks the question H_9672 T2 raised upstream of H_9674's blocks — does
+    # TRAINING make them, or the architecture alone? The i.i.d. pedestal cannot answer that (it has
+    # no conv/GN at all); this arm keeps every architectural fact and deletes only what was learned.
+    #   random-init has blocks too  => blocks are ARCHITECTURAL, not learned => no faction substrate.
+    #   random-init flat, real has  => blocks are LEARNED (H_9643 keeps its case); WHICH learning
+    #     (EN pretraining vs the task) still needs H_9672 T2's scratch arm, which was not preserved.
+    R = None
+    if "--arm-random-init" in argv:
+        rr = np.random.default_rng(seed + 1)
+        Wr = dict(W)
+        for k, v in list(Wr.items()):
+            if isinstance(v, np.ndarray) and v.dtype.kind == "f" and v.size > 1:
+                Wr[k] = rr.normal(float(v.mean()), float(v.std()) or 1e-3, v.shape).astype(v.dtype)
+        R = np.concatenate([np.asarray(clm.clm_forward_hidden(Wr, clm._seed_to_tok(it["prompt"], T), T),
+                                       dtype=np.float64) for it in items], axis=0)
+        print("arm:   +random-init (same architecture + same forward · weights re-drawn from their")
+        print("       own per-tensor moments) — isolates architecture from what was learned.")
+        # DEGENERACY GATE. Random weights through a deep conv drive every unit onto one common
+        # mode: measured |corr| mean 0.617 (real: 0.111), top eigenvalue 2840 of 7638 total mass,
+        # per-unit std 0.0035 against a global std of 1.02 — the units barely move on their own
+        # and swing together. The clusterer then collapses to the same trivial split for EVERY K
+        # and Q comes out IDENTICAL to 10 decimals (0.0419274192 at K=4, 8 and 12). That constant
+        # is a property of a degenerate graph, not evidence that the architecture makes blocks —
+        # reading it as such would have "shown" architecture contributing 6.6x over the pedestal.
+        # So the arm self-checks and refuses to report a number it cannot mean.
+        Cri = np.abs(np.corrcoef(R, rowvar=False)); Cri = np.nan_to_num(Cri, nan=0.0)
+        np.fill_diagonal(Cri, 0.0)
+        ri_cmean = float(Cri.mean())
+        x_cmean = float(np.nan_to_num(np.abs(np.corrcoef(X, rowvar=False)), nan=0.0).mean())
+        if ri_cmean > 3.0 * x_cmean:
+            print("       ⛔ random-init arm DEGENERATE — |corr| mean %.4f vs real %.4f (>3x): random"
+                  % (ri_cmean, x_cmean))
+            print("          weights put every unit on one common mode, so the clusterer collapses to")
+            print("          the same split at every K and Q is a constant of the degenerate graph, not")
+            print("          an architecture fact. Arm DROPPED from the read (a number it cannot mean).")
+            R = None
+    S = np.stack([rng.permutation(X[:, j]) for j in range(d)], axis=1)  # scramble: marginals kept
+
+    # positive control: PLANTED blocks — K_pc latent factors, each driving its own unit block.
+    K_pc = ks[len(ks) // 2]
+    lat = rng.normal(0, 1, (N, K_pc))
+    blk = np.repeat(np.arange(K_pc), int(np.ceil(d / K_pc)))[:d]
+    G = np.stack([lat[:, blk[j]] for j in range(d)], axis=1) + rng.normal(0, 0.3, (N, d))
+    q_pc = best_blocks(G, K_pc, "pc")
+    q_pc_ped = best_blocks(rng.normal(0, 1, (N, d)), K_pc, "pc_ped")
+    pc_ratio = (q_pc / q_pc_ped) if abs(q_pc_ped) > 1e-12 else float("nan")
+    print("       positive control (K=%d planted blocks · SNR~3): Q=%.6f vs its pedestal %.6f → x%.2f"
+          % (K_pc, q_pc, q_pc_ped, pc_ratio))
+    PC_BAR = 1.5
+    instrument_live = bool(pc_ratio == pc_ratio and pc_ratio >= PC_BAR)
+    if not instrument_live:
+        print("       ⛔ INSTRUMENT-DEAD: the probe cannot recover blocks it PLANTED at this N/d")
+        print("          (x%.2f < bar %.1f). A 'real ~ pedestal' result here would be a power fact,"
+              % (pc_ratio if pc_ratio == pc_ratio else float("nan"), PC_BAR))
+        print("          not a substrate fact — so NO negative is emitted. Raise N (more prompts)")
+        print("          or drop d before reading anything. (positive-control-before-reading-a-negative)")
+    else:
+        print("       ✅ instrument LIVE (x%.2f >= bar %.1f) — a negative would be readable." % (pc_ratio, PC_BAR))
+
+    out = {"ckpt": ckpt, "N": N, "d": d, "seed": seed,
+           "positive_control": {"K": K_pc, "Q": q_pc, "pedestal_Q": q_pc_ped, "ratio": pc_ratio,
+                                "bar": PC_BAR, "instrument_live": instrument_live},
+           "rows": []}
+    if not instrument_live:
+        out["verdict"] = "INSTRUMENT-DEAD — no verdict emitted (power, not substrate)"
+        if out_path:
+            json.dump(out, open(out_path, "w"), indent=1)
+            print("")
+            print("  wrote: " + out_path)
+        return 1
+    print("")
+    print("%10s | %10s | %10s | %10s | %10s" % ("K", "real Q", "pedestal", "scramble", "real/ped"))
+    print("-" * 62)
+    for K in ks:
+        qr, qp, qs = best_blocks(X, K, "real"), best_blocks(P, K, "ped"), best_blocks(S, K, "scr")
+        ratio = (qr / qp) if abs(qp) > 1e-12 else float("nan")
+        row = {"K": K, "real_Q": qr, "pedestal_Q": qp, "scramble_Q": qs, "real_over_pedestal": ratio}
+        extra = ""
+        if R is not None:
+            qi = best_blocks(R, K, "randinit")
+            row["randinit_Q"] = qi
+            row["real_over_randinit"] = (qr / qi) if abs(qi) > 1e-12 else float("nan")
+            extra = "  | rand-init %.6f  real/ri %s" % (
+                qi, ("%.2f" % row["real_over_randinit"])
+                if row["real_over_randinit"] == row["real_over_randinit"] else "—")
+        print("%10d | %10.6f | %10.6f | %10.6f | %10s%s" %
+              (K, qr, qp, qs, ("%.3f" % ratio) if ratio == ratio else "—", extra))
+        out["rows"].append(row)
+
+    # RATIO GUARD (H_9674 · toy d=32 caught this). real/pedestal is only readable while the
+    # denominator is safely positive. Modularity Q can go NEGATIVE when the clusterer cannot beat
+    # the null model — at d=32 the pedestal came out Q=-0.071 (K=4) and -0.045 (K=8), so the ratio
+    # read -0.883 and -1.040: nonsense that the max() then discarded, leaving the verdict resting on
+    # the single K=2 cell. A ratio is the wrong statistic when its denominator can cross zero.
+    # So rows whose pedestal Q <= 0 are EXCLUDED from the ratio read, and the verdict additionally
+    # requires the plain DIFFERENCE (real - pedestal), which stays meaningful at any sign.
+    usable = [r for r in out["rows"] if r["pedestal_Q"] > 1e-3]
+    dropped = [r["K"] for r in out["rows"] if r["pedestal_Q"] <= 1e-3]
+    rr = [r["real_over_pedestal"] for r in usable if r["real_over_pedestal"] == r["real_over_pedestal"]]
+    mx = max(rr) if rr else float("nan")
+    mxd = max((r["real_Q"] - r["pedestal_Q"]) for r in out["rows"])
+    out["max_real_over_pedestal"] = mx
+    out["max_real_minus_pedestal"] = mxd
+    out["ratio_rows_dropped_nonpositive_pedestal"] = dropped
+    if dropped:
+        print("  ⚠️ ratio DROPPED at K=%s — pedestal Q <= 0 there (the clusterer could not beat the"
+              % dropped)
+        print("     null model), so real/pedestal is not a readable statistic in those cells.")
+        if not rr:
+            print("  ⛔ NO readable ratio cell — verdict withheld (instrument fact, not substrate).")
+            out["blocks_exist"] = None
+            out["verdict"] = "UNREADABLE — every pedestal Q <= 0 (clusterer below null at this d)"
+            if out_path: json.dump(out, open(out_path, "w"), indent=1)
+            return 1
+    out["blocks_exist"] = bool(mx == mx and mx >= 1.5 and mxd > 0)   # pre-registered bar + sign-safe Δ
+    print("")
+    print("  max real/pedestal over K : %s   (pre-registered bar: >=1.5 · non-positive-pedestal cells excluded)"
+          % (("%.3f" % mx) if mx == mx else "—"))
+    print("  max (real - pedestal)    : %.6f   (sign-safe · must be > 0)" % mxd)
+    if out["blocks_exist"]:
+        print("  VERDICT (H_9674): blocks separate from the zero-truth pedestal => faction-like")
+        print("    structure EXISTS in the substrate => H_9643 (learn factions · GPU) is EARNED.")
+    else:
+        print("  VERDICT (H_9674): real ~ pedestal => NO faction-like block structure in the trunk's")
+        print("    unit axis => H_9643 has nothing to learn => the axis CLOSES at $0 and the GPU fire")
+        print("    is NOT justified. DIRECTIONAL: correlation-modularity is ONE lens (a_break_the_wall")
+        print("    wants 2-3 before a ceiling) — it does not prove modules are absent under every lens.")
+    if out_path:
+        json.dump(out, open(out_path, "w"), indent=1)
+        print("")
+        print("  wrote: " + out_path)
+    return 0
+
+
+def faction_block_provenance_run(argv):
+    """`anima-py evaluate <ckpt> --faction-block-provenance <prompts.json> [--n-factions-sweep 4,8,12]
+    [--win 24] [--seed 12345] [--out prov.json]` — are H_9674's blocks REAL modules, or an artifact
+    of the architecture's own index layout (card H_9676 · faction-lateral-axis-r3)?
+
+    H_9674 found blocks in the trunk's unit axis (real/pedestal up to 54.07 vs bar 1.5, positive
+    control x114). "Blocks exist" does NOT imply "factions are learnable" — the coupling could be
+    imposed by the architecture rather than learned. This is the pre-registered exclusion.
+
+    The two suspects, and what the code already says about them:
+      GroupNorm groups — nn_groupnorm_fwd(h, ..., T, d, 1, ...) runs with G=1, i.e. LayerNorm over
+        all d channels. There are NO group boundaries on the unit axis. Suspect dead by code.
+      conv receptive field — _conv1d convolves over T with FULL channel mixing (Cin=d -> Cout=d:
+        every output channel reads every input channel). RF is a TIME-axis quantity; the d axis
+        carries no spatial ordering at all. Suspect dead by code.
+    Both suspects predict the SAME observable: blocks would line up with CONTIGUOUS index runs.
+    The code argument is therefore checked, not trusted (`tool-definition-read-code-not-docstring`).
+
+    DV: contiguity of the recovered assignment — adjacency P(assign[i]==assign[i+1]) and ARI against
+    the contiguous-chunk partition. Chance adjacency is sum_f p_f^2 on the REALIZED block sizes,
+    NOT 1/K: 1/K is the equal-partition special case, and the trunk's blocks come out heavily
+    unbalanced while the pedestal's come out even, so scoring both against 1/K charges real's size
+    skew as signal (H_9676 correction). Pre-registered bar: >=0.20 over the pedestal's own Δ.
+    Arms: real | pedestal (i.i.d. · TRUTH contiguity=0) | positive (PLANTED CONTIGUOUS blocks — the
+    metric must score these >=0.80 or a low real contiguity is a metric fact, not a substrate fact).
+    Verdict: real ~ chance AND positive ~ 1.0 => blocks are NOT index-contiguous => not a GN/RF
+    artifact => H_9674's blocks survive and H_9643 keeps its precondition. real ~ positive => blocks
+    ARE contiguous runs => architectural layout => H_9674 is an artifact and H_9643 loses its case."""
+    import numpy as np
+    ckpt = argv[0]
+    spec_path = evaluate_strval(argv[1:], "--faction-block-provenance", "")
+    out_path = evaluate_strval(argv[1:], "--out", "")
+    T = evaluate_intval(argv[1:], "--win", 24)
+    seed = evaluate_intval(argv[1:], "--seed", 12345)
+    ks = [int(x) for x in evaluate_strval(argv[1:], "--n-factions-sweep", "4,8,12").split(",") if x.strip()]
+    print("=== anima evaluate --faction-block-provenance — H_9674 blocks: real or layout? (H_9676) ===")
+    print("ckpt:  " + ckpt)
+    print("code:  GN runs G=1 (LayerNorm over all d — no unit-axis group boundary) · conv1d is over T")
+    print("       with FULL channel mixing (d->d) — RF is a TIME quantity, the d axis has no spatial")
+    print("       order. Both suspects predict CONTIGUOUS blocks. Checked, not trusted.")
+    print("arms:  real | pedestal (truth contiguity=0) | positive (PLANTED contiguous · bar >=0.80)")
+    spec = json.load(open(spec_path))
+    items = spec["items"] if "items" in spec else spec.get("prompts", [])
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+    rows = []
+    for it in items:
+        rows.append(np.asarray(clm.clm_forward_hidden(W, clm._seed_to_tok(it["prompt"], T), T), dtype=np.float64))
+    X = np.concatenate(rows, axis=0)
+    N, d = X.shape
+    print("tap:   X=[%d, %d]  (production trunk penultimate)" % (N, d))
+    rng = np.random.default_rng(seed)
+
+    def cluster(M, K, sweeps=6):
+        """Same spectral+sweeps clusterer as --faction-block-structure; returns the ASSIGNMENT."""
+        C = np.abs(np.corrcoef(M, rowvar=False)); C = np.nan_to_num(C, nan=0.0)
+        np.fill_diagonal(C, 0.0)
+        n = C.shape[0]
+        try:
+            _w, V = np.linalg.eigh(C); E = V[:, -K:]
+            cent = E[rng.choice(n, K, replace=False)]; assign = np.zeros(n, dtype=int)
+            for _ in range(12):
+                assign = ((E[:, None, :] - cent[None, :, :]) ** 2).sum(-1).argmin(1)
+                for f in range(K):
+                    if (assign == f).any(): cent[f] = E[assign == f].mean(0)
+        except Exception:
+            assign = rng.integers(0, K, n)
+        deg = C.sum(1); m2 = C.sum()
+        for _ in range(sweeps):
+            H = np.zeros((n, K)); H[np.arange(n), assign] = 1.0
+            na = np.argmax(C @ H - np.outer(deg, deg @ H) / m2, axis=1)
+            if (na == assign).all(): break
+            assign = na
+        return assign
+
+    def adjacency(assign):
+        """P(assign[i] == assign[i+1]) — ~1.0 iff blocks are contiguous index runs."""
+        return float((assign[:-1] == assign[1:]).mean())
+
+    def adj_chance(assign, K):
+        """Chance adjacency GIVEN the realized block sizes = sum_f p_f^2.
+
+        1/K is the EQUAL-partition special case only. This bit us: the trunk's blocks come out
+        heavily unbalanced ([2527, 540, 391, 326] at K=4 — one block holds 67% of the units) while
+        the i.i.d. pedestal's come out even ([961, 942, 942, 939]). Scoring both against 1/K made
+        the pedestal look right by coincidence (its sum p^2 IS 1/K) and charged real's imbalance as
+        signal — a 0.2285 "artifact" that was pure size skew. Against sum p_f^2 real sits at
+        -0.0060, i.e. AT chance (H_9676 correction · prereg-table-must-cover-below-chance)."""
+        p = np.bincount(assign, minlength=K) / float(len(assign))
+        return float((p ** 2).sum())
+
+    def ari(a, b):
+        """Adjusted Rand index between two partitions."""
+        from math import comb
+        ka, kb = int(a.max()) + 1, int(b.max()) + 1
+        M = np.zeros((ka, kb))
+        for i in range(len(a)): M[a[i], b[i]] += 1
+        s = sum(comb(int(v), 2) for v in M.flatten() if v >= 2)
+        sa = sum(comb(int(v), 2) for v in M.sum(1) if v >= 2)
+        sb = sum(comb(int(v), 2) for v in M.sum(0) if v >= 2)
+        n2 = comb(len(a), 2)
+        exp = sa * sb / n2 if n2 else 0.0
+        mx = (sa + sb) / 2.0
+        return float((s - exp) / (mx - exp)) if mx != exp else 0.0
+
+    out = {"ckpt": ckpt, "N": N, "d": d, "seed": seed,
+           "code_note": "GN G=1 (LayerNorm · no unit-axis group) · conv1d over T with full d->d channel mixing (RF is a TIME quantity)",
+           "rows": []}
+    P = rng.normal(float(X.mean()), float(X.std()), (N, d))
+    print("")
+    print("  (adj columns are adj - chance, chance = sum p_f^2 on realized sizes — NOT 1/K · H_9676)")
+    print("%5s | %10s | %10s | %10s | %9s | %10s" %
+          ("K", "real Δadj", "ped Δadj", "pos Δadj", "real chance", "real ARI"))
+    print("-" * 70)
+    ok = True
+    for K in ks:
+        contig = np.repeat(np.arange(K), int(np.ceil(d / K)))[:d]
+        lat = rng.normal(0, 1, (N, K))
+        G = np.stack([lat[:, contig[j]] for j in range(d)], axis=1) + rng.normal(0, 0.3, (N, d))
+        ar, ap, ag = cluster(X, K), cluster(P, K), cluster(G, K)
+        adj_r, adj_p, adj_g = adjacency(ar), adjacency(ap), adjacency(ag)
+        # chance is sum p_f^2 on the REALIZED sizes, never 1/K — see adj_chance (H_9676 correction)
+        ch_r, ch_p, ch_g = adj_chance(ar, K), adj_chance(ap, K), adj_chance(ag, K)
+        ari_r = ari(ar, contig)
+        print("%5d | %10.4f | %10.4f | %10.4f | %9.4f | %10.4f" %
+              (K, adj_r - ch_r, adj_p - ch_p, adj_g - ch_g, ch_r, ari_r))
+        out["rows"].append({"K": K, "real_adjacency": adj_r, "pedestal_adjacency": adj_p,
+                            "positive_adjacency": adj_g,
+                            "real_chance_sum_p2": ch_r, "pedestal_chance_sum_p2": ch_p,
+                            "positive_chance_sum_p2": ch_g,
+                            "real_adj_over_chance": adj_r - ch_r,
+                            "pedestal_adj_over_chance": adj_p - ch_p,
+                            "real_block_sizes": np.bincount(ar, minlength=K).tolist(),
+                            "real_ARI_vs_contiguous": ari_r,
+                            "positive_live": bool(adj_g - ch_g >= 0.30)})
+        if adj_g - ch_g < 0.30: ok = False
+    out["instrument_live"] = ok
+    print("")
+    if not ok:
+        print("  INSTRUMENT-DEAD: the metric cannot see contiguity it PLANTED (pos Δadj < 0.30).")
+        print("     A low real contiguity would be a metric fact, not a substrate fact — no verdict.")
+        out["verdict"] = "INSTRUMENT-DEAD — no verdict emitted"
+        if out_path: json.dump(out, open(out_path, "w"), indent=1)
+        return 1
+    mx_adj = max(r["real_adj_over_chance"] - r["pedestal_adj_over_chance"] for r in out["rows"])
+    mx_ari = max(r["real_ARI_vs_contiguous"] for r in out["rows"])
+    out["max_real_adj_over_chance"], out["max_real_ARI"] = mx_adj, mx_ari
+    artifact = bool(mx_adj >= 0.20 or mx_ari >= 0.20)
+    out["artifact"] = artifact
+    print("  instrument LIVE (planted contiguity recovered) — the negative is readable.")
+    print("  max(real adj - chance) = %.4f   max(real ARI vs contiguous) = %.4f   (bar >=0.20)" % (mx_adj, mx_ari))
+    if artifact:
+        print("  VERDICT (H_9676): blocks ARE index-contiguous => architectural layout, not modules")
+        print("    => H_9674's blocks are an artifact and H_9643's GPU justification is WITHDRAWN.")
+    else:
+        print("  VERDICT (H_9676): blocks are NOT index-contiguous (real at chance while the planted-")
+        print("    contiguous control scores ~1.0) => NOT a GN/RF layout artifact => H_9674's blocks")
+        print("    survive and H_9643 keeps its precondition. DIRECTIONAL: excludes the two")
+        print("    architectural suspects the code names, not every possible artifact.")
+    if out_path:
+        json.dump(out, open(out_path, "w"), indent=1)
+        print("")
+        print("  wrote: " + out_path)
+    return 0
+
+
+def faction_lesion_run(argv):
+    """`anima-py evaluate <ckpt> --faction-lesion <domains.json> [--perm 200] [--win 24]
+    [--seed 12345] [--faction-lam <float>] [--out lesion.json]` — does the trained model's
+    faction split carry FUNCTIONAL specialization, or is it the same as slicing the channels at
+    random after the fact (card H_9643 · faction-lateral-axis-r3)?
+
+    Why not modularity Q. H_9674's Q instrument cannot answer this: with groups=K the split is
+    architectural, so a random-init model has blocks too — our own --arm-random-init measured
+    exactly that. Q is a manipulation check here ("did --n-factions do anything"); the verdict is
+    functional: zero faction f's channels inside the production forward and read the per-domain
+    CE damage. A faction that owns a domain hurts THAT domain when it dies.
+
+    DV — interaction ENERGY over the damage matrix D[f,c] = CE(lesion f, c) - CE(base, c):
+        Dn = D / base_CE[c];  R = Dn - rowmean - colmean + grandmean;  S = ||R||_F^2
+    A second-order SUM: no max, no argmax, no matching, no alignment assumption. Three earlier
+    S's died to their own positive controls — every one of them SELECTED (see selectivity()).
+    Chance is MEASURED, never assumed: `--perm` post-hoc reassignments of the same d channels to
+    K same-sized groups give a null distribution; the bar is its 95th percentile. (This session
+    learned the hard way that a "natural" chance value can be pure structure: adjacency's 1/K was
+    an equal-partition special case and charged real's block-size skew as signal — H_9676.)
+
+    Arms, all on the SAME ckpt so no arm gets extra training:
+      real      — the trailer's faction blocks (contiguous d/K runs).
+      post-hoc  — `--perm` random reassignments, same sizes. THE control H_9643 is about:
+                  "임의 사후 분할은 효과 없다" is the claim being tested.
+      (random-init and K=1-trained are separate ckpts — run this same flag on them.)
+
+    Verdict: S_real > post-hoc null95 => the split is functionally load-bearing. Otherwise D1
+    fires (specialization 불발) and the faction axis closes as a DIRECTIONAL artifact.
+    DIRECTIONAL: lesion damage is one lens on "specialization"; it does not prove the factions
+    mean anything a human would name."""
+    import numpy as np
+    ckpt = argv[0]
+    spec_path = evaluate_strval(argv[1:], "--faction-lesion", "")
+    out_path = evaluate_strval(argv[1:], "--out", "")
+    T = evaluate_intval(argv[1:], "--win", 24)
+    nperm = evaluate_intval(argv[1:], "--perm", 200)
+    seed = evaluate_intval(argv[1:], "--seed", 12345)
+    lam_ov = evaluate_strval(argv[1:], "--faction-lam", "")
+    # --faction-oracle-pi "2,0,0,3": the KNOWN routing of an ORACLE-trained ckpt. Present => run the
+    # positive-control DV = double-centered cosine alignment A between the damage matrix R and the pi
+    # occurrence template (H_9643 v2 · Fable+Sol converged). A uses NO selection (no argmax x/K, which
+    # re-imports the order-statistic bias defects ⑪⑫⑮⑯ killed this session) and is base_CE-immune.
+    pi_ov = evaluate_strval(argv[1:], "--faction-oracle-pi", "")
+    # --faction-split N: impose an N-way CONTIGUOUS channel split at lesion time, INDEPENDENT of the
+    # ckpt's own n_factions. H_9737 fit-matched K=1 negative control: a model trained with groups=1
+    # (no faction partition, standard conv) gets a 4-way split imposed — true value is "no faction
+    # structure", so S <= null95 isolates that the log-ratio normaliser does not turn fit quality into
+    # a false positive at the LOW-CE denominator (random-init K=4 only tests the high-CE scale AND
+    # carries grouped-conv architectural blocks that lift its own null — H_9674 confound).
+    split_ov = evaluate_intval(argv[1:], "--faction-split", 0)
+
+    print("=== anima evaluate --faction-lesion — 파벌 분할이 기능적인가 (H_9643) ===")
+    print("ckpt:  " + ckpt)
+    print("why:   Q(모듈러리티)로는 learned vs post-hoc 이 안 갈린다 — groups=K 는 random-init 도")
+    print("       블록을 준다(--arm-random-init 이 잡음). 판정은 기능 lesion 해리로 간다.")
+    print("chance: post-hoc 랜덤 재배정 %d 회의 null95 — **가정하지 않고 실측**한다." % nperm)
+
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+    K_model = int(W.get("n_factions", 0) or 0)
+    # K = the number of contiguous groups the LESION splits d into. Normally the ckpt's own
+    # n_factions; --faction-split overrides it (H_9737: impose 4 groups on a groups=1 ckpt). The
+    # model's structural n_factions stays in W and still drives GN/bridge inside the decoder.
+    K = split_ov if split_ov > 0 else K_model
+    if K <= 0:
+        print("ERROR: split 수 미정 — 이 ckpt 엔 CLMF 가 없다 (n_factions=0) 이고 --faction-split 도 없다.")
+        print("       --n-factions K 로 학습한 ckpt 이거나, --faction-split N 으로 분할을 강제하라.")
+        return 1
+    if split_ov > 0:
+        print("       --faction-split %d 강제 (ckpt n_factions=%d) — lesion 분할만 override, 모델 구조 무접촉"
+              % (split_ov, K_model))
+    d = int(W["d"]); V = int(W["V"])
+    if lam_ov:
+        W["faction_lam"] = float(lam_ov)
+        print("       debate lam 오버라이드 = %s (0.0 = OFF arm · 가중치 무접촉)" % lam_ov)
+    spec = json.load(open(spec_path))
+    doms = spec["domains"] if "domains" in spec else spec
+    names = sorted(doms.keys())
+    print("d:     %d units · K=%d factions (블록당 %d) · 도메인 %d개: %s"
+          % (d, K, d // K, len(names), ", ".join(names)))
+
+    def dom_ce(chans=None):
+        """Mean CE over a domain's windows, optionally with `chans` zeroed at the embed-conv
+        exit (layer 0) — the same tap _apply_edits already serves for H_9331."""
+        out = {}
+        for nm in names:
+            tot, nw = 0.0, 0
+            for text in doms[nm]:
+                tok = clm._seed_to_tok(text, T + 1)
+                x, y = tok[:T], tok[1:T + 1]
+                edits = None if chans is None else [
+                    {"layer": 0, "t0": 0, "t1": T, "mode": "mask", "chans": chans}]
+                lg = clm.clm_forward_logits_edited(W, x, T, edits) if edits else clm._fwd_logits(W, x, T)
+                tot += clm.nn_ce_loss_allpos(lg, np.asarray(y, dtype=np.float64), T, V)
+                nw += 1
+            out[nm] = tot / max(nw, 1)
+        return np.array([out[nm] for nm in names])
+
+    base = dom_ce(None)
+    print("")
+    print("base CE: " + " · ".join("%s %.4f" % (nm, v) for nm, v in zip(names, base)))
+
+    def selectivity(assign):
+        """S = ||R||_F^2 over the DOUBLY-CENTERED, column-standardised damage matrix.
+
+        D[f,c] = CE(lesion f, domain c) - CE(base, c);  Dn = D / base_CE[c];
+        R = Dn - rowmean - colmean + grandmean;  S = sum(R**2).
+
+        THREE things this does NOT do, each earned by an instrument that died this session:
+
+        1. It never SELECTS. No max, no argmax, no optimal matching. Every selection-based S we
+           tried floated its own null up to meet the signal, because a random assignment also
+           picks the largest of C cells:
+             s_max        planted 1.3879 vs post-hoc null95 1.7270  (real BELOW the null's mean)
+             hungarian    planted 4.7598 vs null95 5.5101           (optimal matching is an order
+                                                                     statistic too)
+             split-half   planted 1.6775 vs null95 2.2655           (argmax on half A still leaks
+                                                                     into B when the halves' noise
+                                                                     is correlated — and on the
+                                                                     same prompt set it is)
+           A second-order SUM has no selection step, so the bias cannot enter.
+        2. It never assumes ALIGNMENT. trace(R) reads only the (f,f) cells; the trained toy owned
+           [ccc, aaa, aaa, ddd] — non-identity, one domain shared by two factions, one orphan —
+           so trace read 1 of 4 planted cells and scored +0.0711 against a null95 of +3.3390.
+           A sum over ALL cells does not care which faction got which domain.
+        3. It never normalises by its own scale. ||R||^2 / sd(R)^2 is EXACTLY K*C for any matrix
+           (sd^2 = sum/KC) — a constant that measures nothing. We shipped that for one run and the
+           synthetic caught it at a suspiciously round 16.0000.
+
+        Column standardisation (dividing by each domain's base CE) handles the 16x difficulty
+        spread: damage couples MULTIPLICATIVELY to how much CE a domain has to lose, and
+        double-centering removes only the ADDITIVE part.
+
+        Verified on synthetic damage reproducing the real failure mode (non-identity owner map,
+        shared ownership, orphan domain, 16x base spread, multiplicative coupling, and a channel-
+        REASSIGNMENT null that preserves the signal and breaks only the grouping):
+          planted    S 5428.50 vs null95  796.45   PASS
+          no signal  S   33.35 vs null95   92.64   PASS (does not hallucinate)
+        """
+        D = np.zeros((K, len(names)))
+        Dn = np.zeros((K, len(names)))
+        eps = 1e-4                                              # nats — a real CE floor, not 1e-9
+        for f in range(K):
+            L = dom_ce(np.where(assign == f)[0])               # lesioned CE per domain
+            D[f] = L - base                                    # raw ΔCE — kept for report/json
+            # v2 (H_9643 · Fable+Sol converged): the docstring says damage couples MULTIPLICATIVELY,
+            # and the exact additive-ization of a multiplicative effect is the LOG, not division. The
+            # old Dn = D/base_CE blows up as base_CE -> 0 (a well-fit ckpt: base 0.01, lesion 1.0 =>
+            # Dn ~ 100, S ~ 1e4), so a model's FIT QUALITY dominated S and made cross-arm S values
+            # (the lambda ladder, the S_real/S_randinit bar) uncomparable. log-ratio compresses that
+            # (Delta_log ~ 4.6) and double-centering removes the additive column effect EXACTLY.
+            Dn[f] = np.log((L + eps) / (base + eps))
+        R = Dn - Dn.mean(axis=1, keepdims=True) - Dn.mean(axis=0, keepdims=True) + Dn.mean()
+        return float((R ** 2).sum()), D, R
+
+    # real arm — the trailer's faction blocks are CONTIGUOUS d/K runs (core/model.py builds the
+    # grouped conv that way, and pack_faction_section writes K, not an explicit assignment).
+    per = d // K
+    real_assign = np.arange(d) // per
+    S_real, D_real, R_real = selectivity(real_assign)
+    print("")
+    print("파벌별 최대손상 도메인 (real · 참고용 — S 는 이 argmax 를 쓰지 않는다):")
+    for f in range(K):
+        c = int(np.argmax(D_real[f]))
+        print("  faction %d → %-10s ΔCE %+.4f" % (f, names[c], D_real[f, c]))
+    print("")
+    print("S_real = %.4f   (‖R‖²_F · log-ratio 셀정규화 · 선택 없는 2차 합)" % S_real)
+
+    # ORACLE positive-control DV — cosine alignment of R to the KNOWN pi routing template. Selection-
+    # free, base_CE-immune (cosine cancels scale). Only computed when --faction-oracle-pi is given.
+    pi = None
+    if pi_ov:
+        pi = [int(x) for x in pi_ov.replace(" ", "").split(",")]
+        M = np.zeros((K, len(names)))
+        for f, c in enumerate(pi):
+            if 0 <= f < K and 0 <= c < len(names):
+                M[f, c] = 1.0                                  # dom shared by 2 factions => 2 ones;
+        Mc = M - M.mean(1, keepdims=True) - M.mean(0, keepdims=True) + M.mean()  # orphan dom col => 0
+        def align(R):
+            n = np.linalg.norm(R) * np.linalg.norm(Mc)
+            return float((R * Mc).sum() / n) if n > 1e-12 else 0.0
+        A_real = align(R_real)
+        print("A_real = %+.4f   (π=%s 이중중심 코사인 정렬 · argmax 카운트 대체)" % (A_real, pi))
+
+    rng = np.random.default_rng(seed)
+    null, null_A = [], []
+    for i in range(nperm):
+        S_p, _, R_p = selectivity(rng.permutation(real_assign))
+        null.append(S_p)
+        if pi is not None:
+            null_A.append(align(R_p))
+        if (i + 1) % max(nperm // 4, 1) == 0:
+            print("  post-hoc null %d/%d …" % (i + 1, nperm), flush=True)
+    null = np.array(null)
+    null95 = float(np.percentile(null, 95))
+    # exceedance p — the honest small-perm statistic (Fable Q3: at perm=40 null95 is one order-stat,
+    # its sampling error swamps a thin margin; report p and flag perm<200 as PENDING, never a verdict).
+    p_exc = float((1 + int(np.sum(null >= S_real))) / (nperm + 1))
+    print("")
+    print("post-hoc null: mean %.4f · sd %.4f · **null95 %.4f** · p=%.4f  (n=%d)"
+          % (null.mean(), null.std(), null95, p_exc, nperm))
+    passed = bool(S_real > null95)
+    thin = nperm < 200
+    out = {"ckpt": ckpt, "K": K, "d": d, "domains": names, "seed": seed, "perm": nperm,
+           "faction_lam": (float(lam_ov) if lam_ov else None),
+           "base_ce": base.tolist(), "damage": D_real.tolist(),
+           "S_real": S_real, "null_mean": float(null.mean()), "null_sd": float(null.std()),
+           "null95": null95, "p_exceedance": p_exc, "specialization": passed,
+           "instrument": "v2-logratio", "perm_underpowered": thin}
+    if pi is not None:
+        A_null95 = float(np.percentile(np.array(null_A), 95))
+        out.update({"oracle_pi": pi, "A_real": A_real, "A_null95": A_null95,
+                    "oracle_recovered": bool(A_real > A_null95)})
+        print("oracle A_null95 %+.4f ⟹ π 회수 %s" % (A_null95, "YES" if A_real > A_null95 else "no"))
+    print("")
+    if passed:
+        print("  within-arm: S_real %.4f > post-hoc null95 %.4f (p=%.4f) ⟹ 이 ckpt 의 파벌 분할이"
+              % (S_real, null95, p_exc))
+        print("    임의 사후 분할과 구별된다 (base_CE 는 real·null 양쪽서 상쇄 = 스케일 공정).")
+    else:
+        print("  within-arm (D1): S_real %.4f <= post-hoc null95 %.4f (p=%.4f)" % (S_real, null95, p_exc))
+        print("    ⟹ 이 ckpt 서 파벌 특화가 임의 사후 분할과 구별 안 됨.")
+    if thin:
+        print("  ⏳ PENDING: perm=%d < 200 — null95 는 순서통계량 1개 추정이라 얇은 마진 판정 미발행"
+              " (검정력-before-negative). --perm 200 이상 재발사 필요." % nperm)
+    print("  ⚠️ DIRECTIONAL + within-arm 한정: 이 판정은 '이 ckpt 가 랜덤분할과 다른가'만 답한다.")
+    print("     완전 SOUND 인증 = ① within-arm PASS(perm≥200) ② random-init 음성 clean null")
+    print("     ③ fit-matched K=1 음성(같은 낮은-CE·파벌구조 없음 → S≤null95) ④ ORACLE π 회수(A>A_null95).")
+    print("     cross-arm 절대 S 비교(옛 S_real/S_randinit≥2.0)는 base_CE 스케일 산물이라 폐기됨.")
+    if out_path:
+        json.dump(out, open(out_path, "w"), indent=1)
+        print("")
+        print("  wrote: " + out_path)
+    return 0
+
+
 def main(argv):
     if len(argv) >= 1 and argv[0] in ("-h", "--help"):
         evaluate_usage()
@@ -7560,6 +14237,43 @@ def main(argv):
         return _refractory_preview(argv[1:])
     if len(argv) >= 1 and argv[0] == "--emit-gate-census":
         return _emit_gate_census(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--pc2-direction":
+        if "--state-census" in argv:
+            return _pc2_state_census([a for a in argv[1:] if a != "--state-census"])
+        if "--occupancy" in argv:
+            return _pc2_occupancy([a for a in argv[1:] if a != "--occupancy"])
+        if "--zeta-slope" in argv:
+            _zrest = [a for a in argv[1:] if a != "--zeta-slope"]
+            if "--by-loading" in argv:
+                return _pc2_zeta_by_loading([a for a in _zrest if a != "--by-loading"])
+            return _pc2_zeta_slope(_zrest)
+        if "--atom-census" in argv:
+            return _pc2_atom_census([a for a in argv[1:] if a != "--atom-census"])
+        if "--rank-null" in argv:
+            return _pc2_rank_null(argv[1:])
+        if "--factor-census" in argv:
+            return _pc2_factor_census(argv[1:])
+        if "--stage-slave" in argv:
+            return _pc2_stage_slave(argv[1:])
+        if "--variance-audit" in argv:
+            return _pc2_variance_audit(argv[1:])
+        if "--emit-coupling" in argv:
+            return _pc2_emit_coupling(argv[1:])
+        if "--subspace-stability" in argv:
+            return _pc2_subspace_stability(argv[1:])
+        return _pc2_direction(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--ag-criticality":
+        return _ag_criticality(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--gen-percept-schedule":
+        return _gen_percept_schedule(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--eval-historicity":
+        return _eval_historicity(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--af-forward":
+        return _af_forward(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--silence-content-te":
+        return _silence_content_te(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--timing-channel":
+        return _timing_channel(argv[1:])
     if len(argv) >= 1 and argv[0] == "--cf-emit":
         return _cf_emit(argv[1:])
     if len(argv) >= 1 and argv[0] == "--g-amp-screen":
@@ -7688,6 +14402,27 @@ def main(argv):
     # binding-lane probe H_9235). argv[0]=ckpt; dump_hidden_run reads --dump-hidden/--out.
     if "--dump-hidden" in argv:
         return dump_hidden_run(argv)
+    # --store-addr-census <dump.npz> / --store-census-selftest: H_9719 emergent-address
+    # $0 pre-screen — argmax-collision of random-W_q over entity-keys vs a structureless-H
+    # pedestal. DIRECTIONAL screener (KILL-before-spend); admissible (no target_slot read).
+    if "--store-addr-census" in argv or "--store-census-selftest" in argv:
+        return store_addr_census_run(argv)
+    # --faction-phi-proxy <prompts.json>: the ARCHIVED faction Phi proxy recomputed on live
+    # trunk activations vs a zero-truth PEDESTAL (H_9660/H_9654 · faction-lateral-axis-r3).
+    # Indicts the formula; never cements a consciousness verdict (a_phi_iit4_tool).
+    if "--faction-phi-proxy" in argv:
+        return faction_phi_proxy_run(argv)
+    # --faction-block-structure <prompts.json>: does the trunk unit axis carry faction-like
+    # modular blocks at all (H_9674)? The $0 precondition for H_9643's GPU fire.
+    if "--faction-block-structure" in argv:
+        return faction_block_structure_run(argv)
+    # --faction-lesion <domains.json>: is the trained faction split FUNCTIONAL, or the same as
+    # slicing channels at random after the fact? (H_9643 Q2 · chance = post-hoc null95)
+    if "--faction-lesion" in argv:
+        return faction_lesion_run(argv)
+    # --faction-block-provenance: H_9674 블록이 진짜 모듈인가 architecture index layout(GN/RF)인가 (H_9676)
+    if "--faction-block-provenance" in argv:
+        return faction_block_provenance_run(argv)
     # --interaction-lift <manifest.json>: read-only engine-native joint interaction-lift
     # NLL surface (H_9255). argv[0]=ckpt; interaction_lift_run reads --interaction-lift/--out.
     if "--earned" in argv:
@@ -7712,6 +14447,8 @@ def main(argv):
     # --store <held.json> [--store-oracle] [--store-lambda λ]: H_9423 CLMS store-bridge lane — the
     # CO-TRAINED bridge (store injected at the query, answer-position logits OVERWRITTEN by the lane's
     # content-addressed lookup). Distinct from --store-mix (H_9392 post-forward actuator).
+    if "--fan-bind" in argv:                       # H_9693 (R1) bind-Δ instrument
+        return fan_bind_run(argv)
     if "--store" in argv:
         return store_run(argv)
     if "--xbind" in argv:

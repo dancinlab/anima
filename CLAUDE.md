@@ -48,6 +48,11 @@ anima/
 - do: ⑤ a negative is a result — **no tune-to-green**, frozen-first, no self-judge ⑥ every H on 2 surfaces ⑦ GREEN only when wired.
 - dont: skip ①/⑥ — code-blocked by `.harness/enforce_anima_gates.py` (G2 = no non-card under `HYPOTHESES/` · G5 = VERSION bump · G6 = unique H_id).
 
+## 🤖 Autonomy — NO human-approval gate (owner directive)
+
+- do: run engine/instrument/`core/`/`cli`/design changes + standing-pool cost runs **AUTONOMOUSLY**. p5 = daemon-runtime rule (no hardcoded speak/emit), **NOT an approval gate on my work**.
+- dont: tag an engine/instrument/design change `owner p5`/owner-gate and punt to human approval (owner: **NOT owner-gate**) · session-terminal on autonomously-doable work. Only real go-gate = **fleet rent=spend**.
+
 ## 📦 Packaging (pod)
 
 - do: production tree = **`core/`·`cli/`·`agent/` only** (+ vendored `stdlib/`) · `pip install anima-python` → run **`anima-py`** (install name ≠ run cmd) · hexa twin = `hx install anima`.
@@ -82,6 +87,7 @@ Keyword-trigger index. Each line is a pointer — full do/dont + the earning H_ 
 - `a_no_scatter_hypotheses_first` — 🧹 4 output surfaces: card+jsonl · ARCHITECTURE gate node · `state/verdicts/` · `/tmp`. New `state/`·`archive/state/` writes = hook+G7 blocked.
 - `a_claim_manifest`/`a_claim_verify` — claim → `hexa verify` → frozen verdict. No self-judge. Use the **global** `harness`/`hexa`.
 - `a_h_continuous_no_branch` — **owner: run the next H autonomously, no per-step go.**
+- `a_all_paths_no_leak` — 🔀 **all paths · zero leak (owner)**: at a design fork with several live angles, do NOT pick one — launch them ALL in parallel (hard design → `lab full`, implementation done concurrently = the "both" default). Every launched angle · background job · worktree · pod · venv · donor · ckpt is TRACKED (ing/poller) → RECOVERED on completion (`a_fire_recover_complete`) → CLEANED (worktree sweep · pod teardown) so leakage = 0. Forbidden: a dropped angle · unlanded code · an unswept worktree · an un-torn-down pod · an unrecovered result · an orphan proc. Scan for leaks with `end` / `worktree gc` / `hexa cloud pods`.
 - `a_discovery`/`a_discovery_log` — run discovery every batch → `domains/<DOMAIN>.log.md`.
 - `a_toy_scale_recheck`/`a_scale_honest_scope` — a toy verify ≠ closure; bound a metric to its scale.
 - `a_lab_full_diverge` — 🔀 **`sidecar lab full` = Fable 5 + Codex Sol in parallel** (2 models cover each other's blind spots; `lab fable`/`lab sol` = single-model). Brief MUST embed the **current frontier map + kill-list** (blocks regenerating dead angles). Register EVERY surviving angle as a PROPOSED card on 2 surfaces (jsonl+card); id = **origin's live max + 1** (avoid G6 collision — a parallel session may be mid-campaign) tagged as an R# series. **`a_parallel_session_compare`**: read origin's latest BEFORE registering → no duplicate fire · report AGREES/CONFLICTS/NOVEL. Divergence output = DIRECTIONAL design, never a verdict — cement only via engine-native `anima-py`.

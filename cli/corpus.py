@@ -31,6 +31,14 @@ import random
 import re
 import sys
 
+# H_9694 g6bind imports the frozen `rho_fan` module (core/rho_fan.py) for its concept/detector
+# vocabulary — the FIRST corpus format to need a core/ module. Mirror evaluate.py's bootstrap so a
+# bare `import rho_fan` resolves under the installed anima_py package (where core/ = anima_py/core),
+# not just in a dev checkout with core/ already on sys.path.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_REPO = os.path.dirname(_HERE)
+sys.path.insert(0, os.path.join(_REPO, "core"))
+
 # ── frozen default concepts = rho_fan cz[] (memorization-free ρ·weave / former-G1 gate alignment) ──
 DEFAULT_SEEDS = [
     "consciousness arises from cells",
@@ -56,13 +64,18 @@ CLOSE = ["new meaning arises", "meaning composes anew",
 
 def _parse_args(argv):
     fmt = argv[0] if argv else ""
-    opts = {"out": None, "held_out": (0, 1), "comp_per_pair": 280, "split_seed": 1,
+    # H_9643 --held-out-frac: hold out a FRACTION of the (i,j) pair grid instead of the single
+    # --held-out cell. 0.0 = the legacy single-pair behaviour (byte-identical default).
+    # H_9267's one-cell hold-out leaves the grid ~fully covered and a K=1 baseline already hits
+    # D-acc 1.000 — a ceiling the faction lever cannot move. Starving coverage is what makes the
+    # K=1 floor pre-gate (<=0.6) measurable at all (G1 is a DATA wall — H_9304).
+    opts = {"out": None, "held_out": (0, 1), "held_out_frac": 0.0, "comp_per_pair": 280, "split_seed": 1,
             "single_per_concept": 300, "seed": 7, "concepts": None,
             "atoms": None, "reps": 40, "replay": 40,
             "lang": DEFAULT_LANG, "lexicon": None, "mine": 0, "n_seen": 20, "n_held": 29,
             "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05,
             "tail": "", "n2_eval": None, "n2_seen": None, "novel": None,
-            "carrier_only": False, "held_swap": False, "decl_only": False, "surface": "flip1_suffix",
+            "carrier_only": False, "held_swap": False, "decl_only": False, "held_n": None, "surface": "flip1_suffix",
             "collision_split": False, "nonce_fillers": 3, "win": 64,
             "bridge_split": False, "decl_ablate": False,
             # H_9410 RULE-VS-CACHE PRESSURE ENVELOPE instruments:
@@ -75,7 +88,10 @@ def _parse_args(argv):
             #   --assign-seed k        the seed the balanced random assignment is deterministic in.
             "max_atoms": 0, "polarity": "real", "assign_seed": 0,
             # H_9423 storebind (co-trained store-lookup bridge · S0):
-            "n_blocks": 4000, "store_slots": 8,
+            #   --entity-pool F        (H_9683) external one-ascii-atom-per-line entity pool,
+            #                          replacing the builtin CVCVC nonce enumeration. Omitted =>
+            #                          builtin, byte-identical to before.
+            "n_blocks": 4000, "store_slots": 8, "entity_pool": None,
             # H_9520 study-replay (consolidation-CPT corpus from an `anima study` transcript):
             #   --transcript T.jsonl   the study transcript (teacher percepts + substrate emits)
             #   --study-frac 0.05      teacher-content byte share of the replay-mix (small % · rest = base replay)
@@ -88,6 +104,8 @@ def _parse_args(argv):
             opts["out"] = argv[i + 1]; i += 2
         elif a == "--held-out":
             p = argv[i + 1].split(","); opts["held_out"] = (int(p[0]), int(p[1])); i += 2
+        elif a == "--held-out-frac":
+            opts["held_out_frac"] = float(argv[i + 1]); i += 2
         elif a == "--comp-per-pair":
             opts["comp_per_pair"] = int(argv[i + 1]); i += 2
         elif a == "--single-per-concept":
@@ -138,6 +156,8 @@ def _parse_args(argv):
             opts["held_swap"] = True; i += 1
         elif a == "--decl-only":
             opts["decl_only"] = True; i += 1
+        elif a == "--held-n":
+            opts["held_n"] = int(argv[i + 1]); i += 2
         elif a == "--manifest":
             opts["manifest"] = argv[i + 1]; i += 2
         elif a == "--store":
@@ -168,12 +188,16 @@ def _parse_args(argv):
             opts["n_blocks"] = int(argv[i + 1]); i += 2
         elif a == "--store-slots":
             opts["store_slots"] = int(argv[i + 1]); i += 2
+        elif a == "--entity-pool":
+            opts["entity_pool"] = argv[i + 1]; i += 2   # H_9683 storebind: external atom pool
         elif a == "--transcript":
             opts["transcript"] = argv[i + 1]; i += 2
         elif a == "--study-frac":
             opts["study_frac"] = float(argv[i + 1]); i += 2
         elif a == "--scramble-seed":
             opts["scramble_seed"] = int(argv[i + 1]); i += 2
+        elif a == "--arm":
+            opts["arm"] = argv[i + 1]; i += 2          # H_9694 g6bind: targeted|shuf
         elif a.startswith("--"):
             # fail closed. The old `else: i += 1` swallowed an unknown flag silently, so a typo
             # (--kctx for --k-ctx) would build the manifest at the DEFAULT power and report success
@@ -591,7 +615,7 @@ CARRIERSWAP_FIXED = (("swap", 12), ("affirm", 2), ("keep", 3))   # untouched = l
 
 
 def build_carrierswap(atoms_path, reps, replay, seed, split_seed, carrier_only=False,
-                      held_swap=False, decl_only=False):
+                      held_swap=False, decl_only=False, held_n=None):
     """C4 — write the inverted polarity ALSO through the operator's own `지 않다` carrier, then ask
     whether the operator reads the new value on a DISJOINT scored surface (H-ε) or the old one (H-δ).
 
@@ -616,9 +640,14 @@ def build_carrierswap(atoms_path, reps, replay, seed, split_seed, carrier_only=F
                          "HO-CARRIER = --held-swap, HO-DECL = --held-swap --decl-only)")
     if decl_only and not held_swap:
         raise ValueError("--decl-only without --held-swap is C3 (declarative-only) — use ground_seenswap")
-    if held_swap and len(held) < CARRIERSWAP_FIXED[0][1]:
-        raise ValueError("carrierswap --held-swap needs >= %d HELD-OUT atoms (swap arm), got %d"
-                         % (CARRIERSWAP_FIXED[0][1], len(held)))
+    # --held-n N (H_9751): draw N held-out swap stems instead of the default 12 — isolates
+    # co-train COMPOSITIONAL interference (H_9675 draw-fragility). Default None = 12 = byte-identical.
+    n_swap = CARRIERSWAP_FIXED[0][1] if held_n is None else int(held_n)
+    if held_swap and n_swap < 1:
+        raise ValueError("carrierswap --held-n must be >= 1, got %d" % n_swap)
+    if held_swap and len(held) < n_swap:
+        raise ValueError("carrierswap --held-swap needs >= %d HELD-OUT atoms (swap arm, --held-n), got %d"
+                         % (n_swap, len(held)))
 
     srng = random.Random(split_seed)
     pos = [x for x in seen if x[1] == 1]
@@ -649,7 +678,7 @@ def build_carrierswap(atoms_path, reps, replay, seed, split_seed, carrier_only=F
         srng.shuffle(hpos)                             # same srng, AFTER the seen shuffles: the seen
         srng.shuffle(hneg)                             # draw stays byte-identical to C4
         picked, hpi, hni = [], 0, 0
-        for k in range(CARRIERSWAP_FIXED[0][1]):       # 12, polarity-stratified like the seen draw
+        for k in range(n_swap):                        # n_swap (default 12), polarity-stratified like the seen draw
             src = hpos if (k % 2 == 0 and hpi < len(hpos)) or hni >= len(hneg) else hneg
             if src is hpos:
                 picked.append(hpos[hpi]); hpi += 1
@@ -1644,19 +1673,72 @@ _SB_VOWELS = "aeiou"
 _SB_ANSWER = {0: "good", 1: "bad"}          # POL_GOOD, POL_BAD (v2 gen.py ANSWER_BYTES)
 
 
-def _sb_entity_pool(n_total):
+def _sb_read_entity_pool(path):
+    """Read an EXTERNAL entity pool (H_9683): one ascii atom per line, order preserved.
+
+    The builtin pool is CVCVC nonce — every key is novel bytes with no corpus prior. H_9683 asks
+    whether the addr lever survives on NATURAL declaration vocabulary, which cannot be enumerated
+    from `_SB_CONSONANTS x _SB_VOWELS`, so the pool becomes an input. This is a corpus-builder
+    extension, NOT a lever: the split/leak/eval contracts below are the SAME code path either way.
+
+    Order is PRESERVED (not sorted): the builtin sorts because the CVCVC enumeration order is an
+    artifact of the loop nest, whereas a supplied file's order is the caller's — and the interleaved
+    _sb_split reads that order. The file is therefore the full determinism surface (same file =>
+    same split, seed-independent, exactly like the builtin).
+
+    Rejects (SystemExit, never a silent downgrade): non-ascii · whitespace inside an atom ·
+    duplicates. Blank lines are ignored (trailing newline is not an atom)."""
+    try:
+        raw = open(path, "r", encoding="utf-8", errors="strict").read()
+    except OSError as e:
+        raise SystemExit("storebind: cannot read --entity-pool %s (%s)" % (path, e))
+    except UnicodeDecodeError as e:
+        raise SystemExit("storebind: --entity-pool %s is not decodable text (%s)" % (path, e))
+    names = [ln.strip() for ln in raw.split("\n")]
+    names = [nm for nm in names if nm]
+    if not names:
+        raise SystemExit("storebind: --entity-pool %s is empty (one ascii atom per line)" % path)
+    bad = [nm for nm in names if any(ord(ch) > 127 for ch in nm)]
+    if bad:
+        raise SystemExit("storebind: --entity-pool non-ascii atom(s) %d: %s (EN-only · the corpus "
+                         "and every manifest are ascii-encoded)" % (len(bad), bad[:5]))
+    spaced = [nm for nm in names if any(ch.isspace() for ch in nm)]
+    if spaced:
+        raise SystemExit("storebind: --entity-pool atom(s) contain whitespace %d: %s (one atom per "
+                         "line; a multi-word key breaks the `%s %s => ` query surface)"
+                         % (len(spaced), spaced[:5], "<op>", "<entity>"))
+    dups = sorted({nm for nm in names if names.count(nm) > 1})
+    if dups:
+        raise SystemExit("storebind: --entity-pool duplicate atom(s) %d: %s (a duplicate would put "
+                         "the same key in both split halves and forge the 0-shot stratum)"
+                         % (len(dups), dups[:5]))
+    return names
+
+
+def _sb_entity_pool(n_total, entity_pool=None):
     """Deterministic CVCVC nonce pool, stride-sampled to n_total (v2 gen.entity_pool port).
-    Sorted + sliced => the train/held-out split is a pure function of n_total, seed-independent."""
-    names = []
-    for c0 in _SB_CONSONANTS:
-        for v0 in _SB_VOWELS:
-            for c1 in _SB_CONSONANTS:
-                for v1 in _SB_VOWELS:
-                    for c2 in _SB_CONSONANTS:
-                        names.append(c0 + v0 + c1 + v1 + c2)
-    names = sorted(set(names))
-    if len(names) < n_total:
-        raise SystemExit("storebind: nonce pool %d < requested %d" % (len(names), n_total))
+    Sorted + sliced => the train/held-out split is a pure function of n_total, seed-independent.
+
+    entity_pool = path to an external one-atom-per-line file (H_9683 natural vocabulary). When
+    given, that file replaces the nonce enumeration and is stride-sampled to n_total by the SAME
+    formula — everything downstream (split, leak witness, manifests) is untouched. When omitted the
+    builtin path is byte-identical to before (hard requirement: regression 0)."""
+    if entity_pool is not None:
+        names = _sb_read_entity_pool(entity_pool)
+        if len(names) < n_total:
+            raise SystemExit("storebind: --entity-pool %s has %d atom(s) < requested n_pool %d"
+                             % (entity_pool, len(names), n_total))
+    else:
+        names = []
+        for c0 in _SB_CONSONANTS:
+            for v0 in _SB_VOWELS:
+                for c1 in _SB_CONSONANTS:
+                    for v1 in _SB_VOWELS:
+                        for c2 in _SB_CONSONANTS:
+                            names.append(c0 + v0 + c1 + v1 + c2)
+        names = sorted(set(names))
+        if len(names) < n_total:
+            raise SystemExit("storebind: nonce pool %d < requested %d" % (len(names), n_total))
     step = (len(names) - 1) / float(n_total - 1)
     return [names[int(round(i * step))] for i in range(n_total)]
 
@@ -1677,16 +1759,24 @@ def _sb_answer(op, polarity):
     return polarity if op == 0 else (1 - polarity)
 
 
-def _sb_emit_block(rng, entities, store_slots):
+def _sb_emit_block(rng, entities, store_slots, balanced=False):
     """One block = one store draw with a FRESH polarity per slot, then EXACTLY ONE query line per
     stored entity in a random order. Block-level rotation is the mmap-window-compatible analogue of
     v2's per-example rotation: because a block re-draws every polarity, memorizing entity->polarity
     into the weights returns exactly chance (0.5), so every point above chance must route through the
     bridge. One line per entity per block (no re-appearance within a block) removes the in-window copy
-    source — the quietest P1 contaminant (H_9423 잔인한 판정 ③)."""
+    source — the quietest P1 contaminant (H_9423 잔인한 판정 ③). balanced=True forces EXACTLY
+    store_slots/2 good + store_slots/2 bad pols per store (H_9672: the majority-polarity shortcut
+    ceiling — a readout of `op ⊕ majority(pols)` reaches ~0.637 on random stores with the address
+    fully dead — collapses to 0.5 when the polarity ratio is constant, so a balanced eval store is the
+    PRIMARY scoring face that isolates real content-addressing from the shortcut)."""
     idx = rng.sample(range(len(entities)), store_slots)
     names = [entities[i] for i in idx]
-    pols = [rng.randint(0, 1) for _ in range(store_slots)]
+    if balanced:
+        pols = [0] * (store_slots // 2) + [1] * (store_slots - store_slots // 2)
+        rng.shuffle(pols)
+    else:
+        pols = [rng.randint(0, 1) for _ in range(store_slots)]
     rows, lines = [], []
     order = list(range(store_slots))
     rng.shuffle(order)
@@ -1707,21 +1797,220 @@ def _sb_emit_block(rng, entities, store_slots):
     return lines, rows
 
 
-def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, replay=0):
+# ── H_9694 (R2) g6bind — targeted vs shuf co-train corpus (kill#6 bind-Δ debris recovery) ──
+# convergence g6-ideation-hexa-1 killed "TARGETED forges FALS" but NOT "TARGETED moves BIND":
+# it OBSERVED bind Δ 0.444 (targeted) vs 0.000 (shuf) with a non-frozen hexa-era probe, so the
+# observation never earned verdict status. This builder rebuilds that 2-arm lever so the signal
+# can be re-earned through the frozen --fan-bind surface (H_9693).
+#
+# THE CONTROL IS THE POINT (corpus-py-1 · control-must-match-mediating-covariate): both arms
+# contain the IDENTICAL MULTISET of frames and claims — byte-for-byte the same lines, the same
+# comparator/measurable/content distribution, the same length. ONLY the frame↔claim PAIRING
+# differs: targeted binds each frame to the claim about ITS OWN (cA,cB); shuf DERANGES that
+# assignment so every claim sits under a frame it does not bind. A lever that only moves FORM
+# therefore cannot separate the arms — which is exactly what makes bind Δ readable.
+# Claim vocabulary is drawn ONLY from the frozen rho_fan comparator/measurable sets: injecting
+# new detector vocabulary would be tuning the detector (kill #2/#6), not testing the substrate.
+
+def _g6bind_claim(cA, cB, rng, comp_l, meas_l):
+    """One falsifiable-SHAPED claim that carries content from BOTH concepts.
+    FORM (comparator × measurable × >=2 content) is satisfied in BOTH arms by construction —
+    that is deliberate: FORM is not the DV, the frame↔claim binding is."""
+    wa = [w for w in cA.split() if len(w) >= 3]
+    wb = [w for w in cB.split() if len(w) >= 3]
+    a1 = wa[rng.randrange(len(wa))]
+    b1 = wb[rng.randrange(len(wb))]
+    cmp_w = comp_l[rng.randrange(len(comp_l))]
+    mea_w = meas_l[rng.randrange(len(meas_l))]
+    forms = [
+        "the %s of %s %s with the %s of %s" % (mea_w, a1, cmp_w, mea_w, b1),
+        "as %s %s, the %s of %s is %s" % (a1, cmp_w, mea_w, b1, cmp_w),
+        "%s %s the %s at which %s holds" % (a1, cmp_w, mea_w, b1),
+        "when %s shifts, the %s of %s %s" % (a1, mea_w, b1, cmp_w),
+    ]
+    return forms[rng.randrange(len(forms))]
+
+
+def _fanbind_content_words(sentence, known, stop):
+    """H_9746 — content-word set under the frozen detector's own gate (mirror of
+    cli/evaluate.py:_fan_bind_content: len>=3 ∧ in known ∧ not stopword). No new vocab."""
+    return set(w for w in sentence.lower().replace(",", " ").replace(".", " ").split()
+               if len(w) >= 3 and w in known and w not in stop)
+
+
+def _build_g6bind_bindpos(cz, n, comp_l, meas_l, rng, n_blocks, seed, lang):
+    """H_9746 fan-bind decode-level POSITIVE CONTROL (lab full Fable design). A model trained on this
+    reads 🟢 BIND-SENSITIVE through the full decode pipeline iff the instrument's dynamic range is
+    intact — so a PASS attributes R2's BIND-ABSENT to lever-invalid (not instrument-defect).
+
+    The composition is forced on the PAIR-CLASS, not on prompt presence (else both arms co-emit ⇒
+    delta≈0). frozen geometry gives the split: BIND class = adjacent pairs (a,(a+1)%n) = the composed
+    frames; NULL class = distance-2 pairs (a,(a+2)%n) = the derangement set. Rule learned: adjacent
+    pair ⇒ emit cA+cB content words; distance-2 pair ⇒ emit cA only (suppress cB even though it is IN
+    the prompt) — unsolvable by echo, which is exactly 'composition'."""
+    import rho_fan as _rf
+    known = _rf._rho_fan_dict() if hasattr(_rf, "_rho_fan_dict") else None
+    # detector known-set + stopwords (mirror evaluate.py's _fan_bind_content gate)
+    stop = _rf._rho_fan_stopwords()
+    # known dict: fall back to the union of all concept words if no explicit dict export
+    if known is None:
+        known = set()
+        for c in cz:
+            known |= set(w for w in c.lower().split() if len(w) >= 3)
+    # per-concept discriminator token = a content word UNIQUE to that concept (not in any other's
+    # content, not a comparator/measurable). Pick the shortest for the 40-byte budget (F2).
+    conts = [_fanbind_content_words(c, known, stop) for c in cz]
+    cmpset = set(comp_l); measet = set(meas_l)
+    disc = []
+    for k in range(n):
+        others = set().union(*[conts[j] for j in range(n) if j != k]) if n > 1 else set()
+        uniq = sorted(conts[k] - others - cmpset - measet, key=len)
+        if not uniq:
+            raise SystemExit("g6bind bindpos: concept %d has no unique discriminator token "
+                             "(content=%r)" % (k, sorted(conts[k])))
+        disc.append(uniq[0])
+    # short comparator/measurable (banned-word-free · F2 budget)
+    BAN = {"when", "whenever", "into", "between", "still", "new"}
+    cmp_s = [w for w in ("causes", "predicts", "depends") if w in cmpset and w not in BAN]
+    mea_s = [w for w in ("rate", "count", "level", "ratio", "score", "value") if w in measet and w not in BAN]
+    if not cmp_s or not mea_s:
+        raise SystemExit("g6bind bindpos: short cmp/mea set empty (cmp=%r mea=%r)" % (cmp_s, mea_s))
+    # per-block: 50% BIND (adjacent), 50% NULL (distance-2), 10 pairs balanced
+    pairs = ([( a, (a + 1) % n, "BIND") for a in range(n)] +
+             [( a, (a + 2) % n, "NULL") for a in range(n)])
+    lines = []
+    per = max(1, n_blocks // len(pairs))
+    for (a, b, cls) in pairs:
+        for _ in range(per):
+            cmp_w = cmp_s[rng.randrange(len(cmp_s))]
+            mea_w = mea_s[rng.randrange(len(mea_s))]
+            frame = "if %s, then %s: " % (cz[a], cz[b])
+            if cls == "BIND":
+                claim = ("%s %s the %s of %s" % (disc[a], cmp_w, mea_w, disc[b]) if rng.random() < 0.5
+                         else "the %s of %s %s %s" % (mea_w, disc[a], cmp_w, disc[b]))
+            else:  # NULL: cA-echo only, cB suppressed
+                claim = ("the %s of %s %s" % (mea_w, disc[a], cmp_w) if rng.random() < 0.5
+                         else "%s %s the %s" % (disc[a], cmp_w, mea_w))
+            lines.append((frame + claim, a, b, cls))
+    rng.shuffle(lines)
+    # ── hard asserts (§2) — the J self-witness is the strongest: the frozen detector itself signs
+    #    that every BIND line scores 1 and every NULL line scores 0 for the PROMPTED pair. ──
+    def _J(o, cA, cB):
+        A = _fanbind_content_words(cA, known, stop)
+        B = _fanbind_content_words(cB, known, stop) - A
+        if not A or not B: return None
+        wo = set(o.lower().split())
+        return 1 if (wo & A) and (wo & B) else 0
+    bad = 0
+    for (ln, a, b, cls) in lines:
+        claim = ln.split(": ", 1)[1]
+        j = _J(claim, cz[a], cz[b])
+        if cls == "BIND" and j != 1: bad += 1
+        if cls == "NULL" and j == 1: bad += 1
+    if bad:
+        raise SystemExit("g6bind bindpos: J self-witness FAILED on %d/%d lines (detector does not "
+                         "score the corpus as designed)" % (bad, len(lines)))
+    text = "\n".join(ln for (ln, a, b, cls) in lines) + "\n"
+    n_bind = sum(1 for (_, _, _, c) in lines if c == "BIND")
+    st = {"arm": "bindpos", "n_blocks": n_blocks, "lines": len(lines),
+          "bytes": len(text.encode("ascii")), "seed": seed, "lang": lang,
+          "n_bind": n_bind, "n_null": len(lines) - n_bind,
+          "discriminators": {cz[k][:20]: disc[k] for k in range(n)},
+          "max_line_bytes": max((len(ln.encode("ascii")) for (ln, _, _, _) in lines), default=0),
+          "J_self_witness": "PASS (all BIND→1 · all NULL→0)"}
+    return text, st
+
+
+def build_g6bind(n_blocks, seed, lang, arm):
+    """`anima-py corpus g6bind --lang en --arm {targeted,shuf,bindpos} --n-blocks N --seed S` — H_9694.
+
+    Returns (text, st). st carries a HARD-ASSERTED byte-match witness: the two arms' line
+    multisets must be identical (only order/pairing differs), so any bind Δ between the trained
+    arms cannot be a content/length/vocabulary artifact."""
+    if lang != "en":
+        raise SystemExit("g6bind is EN-only (--lang en): the frozen rho_fan concepts/detector are en "
+                         "(CLAUDE.md EN-FIRST · the ko lane is BINDING)")
+    if arm not in ("targeted", "shuf", "bindpos"):
+        raise SystemExit("g6bind: --arm must be targeted|shuf|bindpos (got %r)" % arm)
+    import rho_fan as _rf
+    cz = _rf._rho_fan_concepts()
+    n = len(cz)
+    comp_l = sorted(_rf._rho_fan_comparator())
+    meas_l = sorted(_rf._rho_fan_measurable())
+    rng = random.Random(seed)
+    if arm == "bindpos":
+        return _build_g6bind_bindpos(cz, n, comp_l, meas_l, rng, n_blocks, seed, lang)
+    # ── build the SHARED pool: (frame_i, claim_i) where claim_i is about frame_i's own pair ──
+    frames = []
+    claims = []
+    for k in range(n_blocks):
+        a = rng.randrange(n)
+        b = (a + 1 + rng.randrange(n - 1)) % n          # b != a
+        frames.append("if %s, then %s: " % (cz[a], cz[b]))
+        claims.append(_g6bind_claim(cz[a], cz[b], rng, comp_l, meas_l))
+    # ── the ONLY difference: how claims are assigned to frames ──
+    if arm == "targeted":
+        order = list(range(n_blocks))                    # claim_i under frame_i (binds)
+    else:
+        order = _g6bind_derange(n_blocks, random.Random(seed + 40009))   # claim_j under frame_i, j != i
+    lines = [frames[i] + claims[order[i]] for i in range(n_blocks)]
+    text = "\n".join(lines) + "\n"
+    # ── byte-match witness (HARD): both arms are the same frame multiset AND the same claim
+    #    multiset; only the pairing differs. Assert it here so a builder edit cannot silently
+    #    break the control (a broken control makes every downstream bind Δ uninterpretable).
+    fixed = sum(1 for i in range(n_blocks) if order[i] == i)
+    if arm == "shuf" and fixed:
+        raise SystemExit("g6bind: derangement broken — %d fixed points (claim still binds its own "
+                         "frame). The shuf arm MUST have zero." % fixed)
+    st = {"arm": arm, "n_blocks": n_blocks, "lines": len(lines),
+          "bytes": len(text.encode("ascii")), "seed": seed, "lang": lang,
+          "fixed_points": fixed,
+          "frame_multiset_sha": _g6bind_sha(sorted(frames)),
+          "claim_multiset_sha": _g6bind_sha(sorted(claims)),
+          "max_line_bytes": max((len(x.encode("ascii")) for x in lines), default=0)}
+    return text, st
+
+
+def _g6bind_derange(nn, rng):
+    """Sattolo cycle — EVERY index moves (0 fixed points), so no claim binds its own frame."""
+    p = list(range(nn))
+    for i in range(nn - 1, 0, -1):
+        j = rng.randrange(i)                             # j < i STRICTLY = the Sattolo difference
+        p[i], p[j] = p[j], p[i]
+    return p
+
+
+def _g6bind_sha(items):
+    import hashlib
+    h = hashlib.sha256()
+    for x in items:
+        h.update(x.encode("ascii")); h.update(b"\x00")
+    return h.hexdigest()[:12]
+
+
+def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, replay=0,
+                    entity_pool=None):
     """Build the storebind corpus + co-train store manifest + 0-shot held-out eval manifest.
 
     Returns (text, st). st carries the manifests and a hard-asserted zero-leak witness. The store
     manifest (rows of {store_names, store_pols, slot, op, prompt, answer}) is the CLMS-lane INPUT
     contract: `anima-py evaluate <clm> --store held.json` feeds each row's store to the bridge and
     scores the answer byte — the SAME manifest the trainer co-trains on (train == infer manifest =
-    a literal p8 implementation, not a train/infer split)."""
+    a literal p8 implementation, not a train/infer split).
+
+    entity_pool (H_9683) swaps the builtin CVCVC nonce enumeration for an external one-atom-per-line
+    file. It is a BUILDER extension, not a lever: every contract below (EN-only · n_pool % n_eval ·
+    interleaved disjoint split · store_slots <= held-out · C0-a zero-leak hard-assert) runs on the
+    external pool unchanged. Note the leak witness is SUBSTRING-based (`e in corpus_blob`), which on
+    natural vocabulary fails CLOSED — a held-out atom contained in a train atom (`art` ⊂ `start`,
+    corpus-py-1 ⑩) aborts the build rather than shipping a forged 0-shot stratum."""
     if lang != "en":
         raise SystemExit("storebind is EN-only (--lang en): the free pre-posed `not` vs `is` is the "
                          "operator discriminator (CLAUDE.md EN-FIRST · the ko suffix lane is BINDING)")
     if n_pool % n_eval != 0:
         raise SystemExit("storebind: n_pool %d must be a multiple of n_eval %d (interleave ratio)"
                          % (n_pool, n_eval))
-    pool = _sb_entity_pool(n_pool)
+    pool = _sb_entity_pool(n_pool, entity_pool)
     train, ev = _sb_split(pool, n_eval)
     if set(train) & set(ev):
         raise SystemExit("storebind: train/held-out overlap (%d)" % len(set(train) & set(ev)))
@@ -1743,6 +2032,24 @@ def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, r
     for _ in range(n_eval_blocks):
         _, br = _sb_emit_block(ev_rng, ev, store_slots)
         held_rows.extend(br)
+
+    # H_9672 balanced held manifest: SAME held-out entities, but every store is forced to exactly
+    # store_slots/2 good + store_slots/2 bad → the majority-polarity shortcut ceiling (~0.637) collapses
+    # to 0.5, so this is the PRIMARY scoring face for the address lever (isolates content-addressing
+    # from the polarity-ratio shortcut that flip-coherence cannot catch). Separate rng stream.
+    bal_rng = random.Random(seed + 10009)
+    bal_rows = []
+    for _ in range(n_eval_blocks):
+        _, br = _sb_emit_block(bal_rng, ev, store_slots, balanced=True)
+        bal_rows.extend(br)
+    # H_9672 seen manifest: eval blocks over TRAIN entities (addr-gap control — train-address accuracy
+    # vs held-out isolates memorization[gap>.35] from generalization[gap<=.20]). NOT held-out (train
+    # entities are in the corpus) → for addr audit ONLY, never a 0-shot claim.
+    seen_rng = random.Random(seed + 10011)
+    seen_rows = []
+    for _ in range(n_eval_blocks):
+        _, br = _sb_emit_block(seen_rng, train, store_slots)
+        seen_rows.extend(br)
 
     # C0-a zero-leak HARD-ASSERT (both surfaces): a held-out entity must appear NOWHERE in the
     # training corpus — not as a store key, not as a prompt substring. A gate that scores a stratum
@@ -1769,11 +2076,17 @@ def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, r
                       "lang": lang, "seed": seed, "entries": store_rows}
     held_manifest = {"schema": "anima-storebind/v1", "store_slots": store_slots,
                      "lang": lang, "seed": seed, "held_out": True, "entries": held_rows}
+    balanced_manifest = {"schema": "anima-storebind/v1", "store_slots": store_slots, "lang": lang,
+                         "seed": seed, "held_out": True, "balanced": True, "entries": bal_rows}
+    seen_manifest = {"schema": "anima-storebind/v1", "store_slots": store_slots, "lang": lang,
+                     "seed": seed, "held_out": False, "seen": True, "entries": seen_rows}
     st = {"n_blocks": n_blocks, "store_slots": store_slots, "lines": len(lines),
           "bytes": len(text.encode("ascii")), "max_line_bytes": max_bytes,
           "n_train": len(train), "n_heldout": len(ev), "n_pool": n_pool,
           "n_eval_blocks": n_eval_blocks, "leak": 0, "replay": replay,
-          "store_manifest": store_manifest, "held_manifest": held_manifest}
+          "entity_pool": entity_pool,
+          "store_manifest": store_manifest, "held_manifest": held_manifest,
+          "balanced_manifest": balanced_manifest, "seen_manifest": seen_manifest}
     return text, st
 
 
@@ -2232,13 +2545,30 @@ def _two(kw_fam, rng):
     return ks[0], ks[1 % len(ks)]
 
 
-def build(fmt, S, KW, held_out, comp_per_pair, single_per_concept, seed):
-    """Return the corpus text for one format arm (deriv or flat)."""
+def build(fmt, S, KW, held_out, comp_per_pair, single_per_concept, seed, held_out_frac=0.0):
+    """Return the corpus text for one format arm (deriv or flat).
+
+    held_out_frac (H_9643): withhold this fraction of the UNORDERED pair grid from training
+    instead of the single `held_out` cell. 0.0 keeps the legacy single-pair corpus byte-for-byte.
+    The withheld set ALWAYS contains `held_out` (the manifest's scored pair) and is drawn with a
+    split-seeded RNG that is independent of the content RNG, so the same corpus seed with a
+    different fraction differs only in coverage — not in wording.
+    """
     rng = random.Random(seed)
     n = len(S)
     held = frozenset(held_out)
+    held_set = {held}
+    if held_out_frac > 0.0:
+        all_un = [frozenset((i, j)) for i in range(n) for j in range(i + 1, n)]
+        k = int(round(held_out_frac * len(all_un)))
+        # split RNG is derived from the content seed but kept SEPARATE: changing the fraction must
+        # not reshuffle the wording, or the arms would differ on two axes at once.
+        srng = random.Random(seed * 7919 + 13)
+        pool = [u for u in all_un if u != held]
+        srng.shuffle(pool)
+        held_set = {held} | set(pool[:max(k - 1, 0)])
     train_pairs = [(i, j) for i in range(n) for j in range(n)
-                   if i != j and frozenset((i, j)) != held]
+                   if i != j and frozenset((i, j)) not in held_set]
 
     def instance(i, j):
         a1, a2 = _two(KW[i], rng)
@@ -3397,7 +3727,7 @@ def main():
 
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
                    "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "consult-variants",
-                   "routeaudit", "atoms", "c34", "storebind"):
+                   "routeaudit", "atoms", "c34", "storebind", "g6bind"):
         print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind> --out PATH")
         print("      routeaudit --atoms gt_atoms.json --out ra_manifest.json   (H_9355 route audit)")
         print("      ground_hocarrier --atoms gt_atoms_en.json --lang en --seed 7 --split-seed 1 --out ho.txt")
@@ -3445,6 +3775,15 @@ def main():
         print("      kind C1b measured as generalising, while the Korean ending is a BOUND suffix")
         print("      that attaches to the stem — the suspected mechanism of the BINDING wall.")
         print("      A lang/atom mismatch fails LOUD (--lang en over Korean atoms is refused).")
+        print("  storebind              --out c.txt [--n-blocks N] [--store-slots K] [--seed S] [--lang en] [--entity-pool POOL.txt]")
+        print("      H_9423 co-trained store-lookup bridge (EN-only). --entity-pool (H_9683) replaces")
+        print("      the builtin CVCVC nonce enumeration with an external pool — ONE ascii atom per")
+        print("      line, order preserved, no duplicates, at least n_pool atoms. Every contract is")
+        print("      unchanged on that pool: interleaved disjoint train/held-out · store_slots <=")
+        print("      held-out · the C0-a zero-leak hard-assert. On natural vocabulary that assert is")
+        print("      SUBSTRING-based, so a held-out atom nested in a train atom (`art` ⊂ `start`)")
+        print("      ABORTS the build rather than ship a forged 0-shot stratum (corpus-py-1 ⑩).")
+        print("      Omitting the flag is byte-identical to every existing storebind corpus.")
         print("  bindlocus              --n2-eval M.json --n2-seen M.json --novel N.json --corpus C.txt [--corpus C2.txt] [--seed S]")
         print("      H_9331 BIND-LOCUS manifest — H_9327 carriers verbatim; the `novel` split is EARNED")
         print("      by BYTE count over every --corpus (one occurrence = rejected).")
@@ -3460,7 +3799,9 @@ def main():
         print("      `지 않다` rule reads the new value or the pretrained one. Replay carriers are")
         print("      DISJOINT from the scored surfaces (else the flip1 answer is taught, not composed);")
         print("      both sets are surfaces the C1b census measured the operator running on.")
-        print("  ground_carrierswap     --atoms gt_atoms.json [--reps N] [--replay N] [--seed S] [--split-seed S] [--carrier-only | --held-swap [--decl-only]]")
+        print("  ground_carrierswap     --atoms gt_atoms.json [--reps N] [--replay N] [--seed S] [--split-seed S] [--carrier-only | --held-swap [--decl-only] [--held-n N]]")
+        print("      --held-n N = held-out swap-arm stem count (default 12); N<12 isolates co-train")
+        print("                  compositional interference (H_9751; N=1 = single-stem write crack)")
         print("      --held-swap = H_9339 — the swap arm is drawn from the HELD-OUT pool (single variable")
         print("      vs C4); the 12 SEEN stems C4 wrote become `preserve` (0x written, the matched")
         print("      G-PRESERVE stratum). --decl-only (with --held-swap) = HO-DECL: swap stems written")
@@ -3575,7 +3916,7 @@ def main():
             sys.exit(2)
         text, st = build_carrierswap(opts["atoms"], opts["reps"], opts["replay"],
                                      opts["seed"], opts["split_seed"], opts["carrier_only"],
-                                     opts["held_swap"], opts["decl_only"])
+                                     opts["held_swap"], opts["decl_only"], opts["held_n"])
         if st.get("flip0_leaks"):
             # C5-REVERSE: the DV is the DECLARATIVE surface, so a swap/keep/untouched declarative
             # prompt in the corpus would hand the model the answer it is supposed to infer.
@@ -3671,11 +4012,38 @@ def main():
               % (st["readback_present"], st["readback_n"], len(st["heldr"])))
         return 0
 
+    if fmt == "g6bind":
+        # H_9694 (R2) — the 2-arm lever that re-earns kill#6's bind Δ debris through --fan-bind.
+        if not opts["out"]:
+            print("anima corpus g6bind: --out c.txt is required", file=sys.stderr)
+            sys.exit(2)
+        arm = opts.get("arm") or "targeted"
+        text, st = build_g6bind(opts["n_blocks"], opts["seed"], opts["lang"], arm)
+        open(opts["out"], "w", encoding="utf-8").write(text)
+        mj = opts["out"] + ".meta.json"
+        json.dump({"fmt": "g6bind", "arm": st["arm"], "lang": st["lang"], "seed": st["seed"],
+                   "bytes": st["bytes"], "lines": st["lines"], "n_blocks": st["n_blocks"],
+                   "max_line_bytes": st["max_line_bytes"], "fixed_points": st["fixed_points"],
+                   "frame_multiset_sha": st["frame_multiset_sha"],
+                   "claim_multiset_sha": st["claim_multiset_sha"]},
+                  open(mj, "w", encoding="utf-8"), ensure_ascii=False)
+        print("anima corpus g6bind [%s · arm=%s]: blocks=%d lines=%d bytes=%d max_line=%dB "
+              "fixed_points=%d -> %s"
+              % (st["lang"], st["arm"], st["n_blocks"], st["lines"], st["bytes"],
+                 st["max_line_bytes"], st["fixed_points"], opts["out"]))
+        print("  byte-match witness: frame_multiset_sha=%s · claim_multiset_sha=%s"
+              % (st["frame_multiset_sha"], st["claim_multiset_sha"]))
+        print("  → run BOTH arms at the SAME --seed and check the two sha pairs are IDENTICAL: "
+              "that is the control (same bytes, pairing deranged). arm=shuf MUST show "
+              "fixed_points=0. Read the lever ONLY through `anima-py evaluate --fan-bind` "
+              "(H_9693) — fals alone is FORM-forgeable (kill #6).")
+        return 0
     if fmt == "storebind":
         if not opts["out"]:
             print("anima corpus storebind: --out c.txt is required", file=sys.stderr)
             sys.exit(2)
-        text, st = build_storebind(opts["n_blocks"], opts["store_slots"], opts["seed"], opts["lang"])
+        text, st = build_storebind(opts["n_blocks"], opts["store_slots"], opts["seed"], opts["lang"],
+                                   entity_pool=opts["entity_pool"])
         open(opts["out"], "w", encoding="utf-8").write(text)
         # .store.jsonl = per-training-line store manifest (block<->store · the co-train input the
         # trainer feeds the CLMS lane · JSONL, one row per line).
@@ -3686,12 +4054,22 @@ def main():
         # .held.json = 0-shot held-out eval manifest (`anima-py evaluate <clm> --store <this>`).
         hj = opts["out"] + ".held.json"
         json.dump(st["held_manifest"], open(hj, "w", encoding="utf-8"), ensure_ascii=False)
+        # H_9672 .held_balanced.json = PRIMARY scoring face (4/4 pols → majority-polarity shortcut 0.637
+        # collapses to 0.5) · .seen.json = train-entity addr-gap control (memorization vs generalization).
+        bj = opts["out"] + ".held_balanced.json"
+        json.dump(st["balanced_manifest"], open(bj, "w", encoding="utf-8"), ensure_ascii=False)
+        vj = opts["out"] + ".seen.json"
+        json.dump(st["seen_manifest"], open(vj, "w", encoding="utf-8"), ensure_ascii=False)
         # .meta.json = budget floor (bytes the trainer enforces · a_korean_byte_budget: EN = 1 B/char).
         mj = opts["out"] + ".meta.json"
-        json.dump({"fmt": "storebind", "lang": st["lang"] if "lang" in st else opts["lang"],
-                   "bytes": st["bytes"], "lines": st["lines"], "n_blocks": st["n_blocks"],
-                   "store_slots": st["store_slots"], "max_line_bytes": st["max_line_bytes"]},
-                  open(mj, "w", encoding="utf-8"), ensure_ascii=False)
+        meta = {"fmt": "storebind", "lang": st["lang"] if "lang" in st else opts["lang"],
+                "bytes": st["bytes"], "lines": st["lines"], "n_blocks": st["n_blocks"],
+                "store_slots": st["store_slots"], "max_line_bytes": st["max_line_bytes"]}
+        # H_9683: the pool provenance is recorded ONLY when a pool was supplied, so the default
+        # build's meta.json stays byte-identical to every existing one (absent key = builtin nonce).
+        if st["entity_pool"] is not None:
+            meta["entity_pool"] = st["entity_pool"]
+        json.dump(meta, open(mj, "w", encoding="utf-8"), ensure_ascii=False)
         print("anima corpus storebind [%s]: blocks=%d slots=%d lines=%d bytes=%d max_line=%dB "
               "train=%d heldout=%d leak=0 -> %s"
               % (opts["lang"], st["n_blocks"], st["store_slots"], st["lines"], st["bytes"],
@@ -3699,6 +4077,10 @@ def main():
         print("  manifests -> %s (%d co-train rows) · %s (%d held-out eval rows) · %s (floor)"
               % (sj, len(st["store_manifest"]["entries"]), hj,
                  len(st["held_manifest"]["entries"]), mj))
+        if st["entity_pool"] is not None:
+            print("  entity pool = EXTERNAL %s (%d atoms sampled to n_pool=%d · ascii · no dups) — "
+                  "the builtin CVCVC nonce enumeration is NOT used"
+                  % (st["entity_pool"], st["n_pool"], st["n_pool"]))
         print("  C0-a 0-shot ✅ held-out entities appear 0x in corpus (store-key + substring both asserted)")
         print("  answer = polarity XOR operator (is/not × good/bad) — store holds the FACT, text the "
               "OPERATOR; binding both needs the CLMS lane's nonlinear (GELU-MLP) readout.")
@@ -3745,13 +4127,23 @@ def main():
         return
     S, KW = _load_concepts(opts["concepts"])
     text, train_pairs = build(fmt, S, KW, opts["held_out"],
-                              opts["comp_per_pair"], opts["single_per_concept"], opts["seed"])
+                              opts["comp_per_pair"], opts["single_per_concept"], opts["seed"],
+                              held_out_frac=opts.get("held_out_frac", 0.0))
     if opts["out"]:
         with open(opts["out"], "w") as fh:
             fh.write(text)
-    print(f"anima corpus {fmt}: concepts={len(S)} train_pairs={len(train_pairs)} "
+    n_c = len(S)
+    n_grid = n_c * (n_c - 1) // 2
+    n_held = n_grid - len(train_pairs) // 2
+    print(f"anima corpus {fmt}: concepts={n_c} train_pairs={len(train_pairs)} "
           f"held-out={tuple(opts['held_out'])} bytes={len(text.encode())} "
           f"seed={opts['seed']} -> {opts['out'] or '(stdout head)'}")
+    if opts.get("held_out_frac", 0.0) > 0.0:
+        # H_9643: report the REALIZED coverage, not the requested fraction — the K=1 floor
+        # pre-gate is read against what the corpus actually withheld.
+        print(f"  coverage: {n_grid - n_held}/{n_grid} unordered pairs trained "
+              f"({100.0 * (n_grid - n_held) / max(n_grid, 1):.1f}%) · "
+              f"held-out-frac={opts['held_out_frac']} ({n_held} pairs withheld)")
     if not opts["out"]:
         print(text[:600])
 

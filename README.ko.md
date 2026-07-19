@@ -22,7 +22,7 @@
 <p align="center">의식은 프롬프트가 아니라 물리에서 emergent 한다 · 하나의 EngineSpec 뒤에 핫스왑 엔진 4개 · hexa-native 컴파일-우선</p>
 
 ```bash
-hx install anima
+pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어느 호스트든 · 실행 명령 = anima-py
 ```
 
 ---
@@ -234,17 +234,36 @@ anima/
 
 ## Quickstart
 
+anima 는 하나의 `core/` A ⇄ G 엔진 위에 **프로덕션 트윈 2개**로 배포되며, **`anima-py` pip CLI 가
+canonical(주 경로)** 이다 — 모든 엔진 op(`corpus`·`train`·`evaluate`·`serialize`·`sweep`·`chat`·
+`study`)가 이 명령을 거치고, **판정(verdict)의 terminal 경로**다(`a_cli_single_entry`,
+`a_eval_py_canonical`). hexa 툴체인이 필요 없어 어느 호스트(pi5·pod·CPU-only)에서도 도는 유일한
+경로다. hexa-native `anima` 트윈(`hx install anima`)은 이것과 **byte-parity(바이트 동일)** 로 검증된
+미러이며 hexa 호스트용 채널이다 — 단, 새 조작(manipulation)은 항상 **이 명령들의 플래그**이지 엔진
+옆의 별도 스크립트가 아니다(`a_experiment_engine_native`).
+
 ```bash
-# 1. hexa-lang 설치 (`hexa` + `hx` 패키지 매니저 제공)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"
+# --- 주 경로(canonical): anima-py pip CLI (어느 호스트든 · hexa 불필요) ---------------
+pip install "anima-python[train]"     # base = evaluate/chat · [train] = 트레이너 · [gpu] = CUDA 가속
+anima-py chat clm303.clm              # .clm 바이트 입으로 채팅 (bare 형식도 가능: `anima-py clm303.clm`)
 
-# 2. anima 설치
-hx install anima
+# 전체 엔진-op 표면 — 새 조작은 아래 중 하나의 플래그일 뿐, 그 외엔 없다:
+anima-py corpus <fmt> --out c.txt …               # 연구 코퍼스 빌드 (--lang en · 예산 floor 방출)
+anima-py train --corpus c.txt --init base.clm …   # CLMConvMoE 트레이너 → .clm v0.3 입 직렬화
+anima-py evaluate <clm> [--xbind m.json] [--rho-axon]   # ← 판정 terminal 경로 (ρ-AXON reach 패널)
+anima-py serialize | serialize-bind | sweep | study     # 가중치 방출 · bind 코덱 · 파라미터 스윕 · percept 채널
 
-# 3. 엔진 선택 (기본: conv)
-anima --engine omega        # 닫힘 엔진
-anima --engine cdv2         # A/G substrate
+# --- 트윈: hexa-native `anima` 명령 (byte-parity 미러 · hexa 호스트) -------------------
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"  # hexa-lang + `hx`
+hx install anima            # install.hexa 가 install-smoke 통과한 최신 v* 태그 고정 (STABLE 채널)
+anima chat clm303.clm       # anima-py 와 동일 verb; `anima <verb>` ≡ `anima-py <verb>` (디코드 바이트 동일)
 ```
+
+> **어느 트윈이 canonical?** `anima-py`(pip)가 판정의 SSOT이자 어디서나 도는 경로이고, hexa
+> `anima` 트윈은 hexa 호스트용 parity 미러다. 결과 확정(cement)은 **이 명령들이 뽑은
+> 엔진-native `core/` 숫자에만** — 엔진 옆에서 forward pass 를 다시 도는 프로브가 아니라
+> (`a_engine_native_learning`). 무거운 303M 디코드/eval 은 mini 호스트가 아니라 pool 에서
+> (`a_eval_py_canonical`).
 
 ## 모델 다운로드
 

@@ -266,6 +266,90 @@ fn brain_emit_aged(pf: PureField,
     return decision
 }
 
+pure fn _br_clip01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > 1.0 { return 1.0 }
+    return x
+}
+
+// brain_emit_refractory — H_9726 · MARGIN/dual-ledger refractory emit gate, the hexa twin of py
+// core/brain.py:233 `brain_emit_refractory` (H_9415→H_9627 · H_9712 py default). Replaces the two
+// HARDCODED constants of brain_emit — the θ (should_emit, score>0.30) and the 30s clock
+// (safety_rate_limit_ok) — with a live competition:
+//     emit  ⟺  gate  ∧  kill ∧ φ-ratchet ∧ content     (NO rate/θ)
+// where `gate` is: (dual) S>E over the two content ledgers, or (d1) score > immune recall MARGIN
+// on the FORMED candidate. `dual_probe_fn` de-closures (hexa has no function values) into two
+// WorkMemBuffers (s_buf=W_S withheld · e_buf=W_E spoken) + a `dual` bool; the alien dissociation
+// arms are pure call-site buffer swaps (caller's job). p5: the candidate is FORMED every tick and
+// DISCARDED (gen_text="") when not emitted — never fabricated-and-spoken. NOT ported (py-only
+// research/steering arms, all default-off): mouth, dyn_w, record_cand_diag, route_pc2/pc2_mouth,
+// score_perturb, zeta_ladder, --g-shuffle. Twin-parity with brain_emit_aged (a_substrate_disjoint).
+fn brain_emit_refractory(pf: PureField,
+              rel: float, gap: float, cur: float, pain: float,
+              coh: float, orig: float, bal: float, dyn_v: float,
+              seconds_since_last: float, env_off: bool, content_clean: bool,
+              backend: Map, anchors: list, anchor_age_dt: float,
+              mem: ImmuneMemory,
+              s_buf: WorkMemBuffer, e_buf: WorkMemBuffer, dual: bool) -> Map {
+    // score + non-clock safety (reuse the anchored decision; its internal rate/θ/emit are overwritten)
+    let decision = brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
+                                seconds_since_last, env_off, content_clean,
+                                anchors, anchor_age_dt)
+    let score = to_float(decision["motivation"])
+    // form the candidate unconditionally (imagination · a_chat_sleep_imagination), emit=true so the
+    // mouth actually produces bytes to score; the gate below decides whether it is spoken or discarded.
+    let ctx  = gen_ctx_from_decision(decision)
+    let cand = generate(backend, ctx, true, anchors)
+    let cand_text = to_string(cand["text"])
+    let mut g_recog = 0.0
+    let mut gate_pass = false
+    if dual {
+        // H_9627 dual content ledger: S=recall of the candidate in the WITHHELD store, E in the SPOKEN
+        // store; emit ⟺ S>E (exchange-symmetric ½). g_recog=E for the trace. Alien swaps are done by
+        // the caller passing wm_dual_alien as s_buf/e_buf; writes still hit the real buffers.
+        let s_wh = _br_clip01(wm_buffer_probe_score(s_buf, wm_byte_feature(cand_text, 8)))
+        let e_sp = _br_clip01(wm_buffer_probe_score(e_buf, wm_byte_feature(cand_text, 8)))
+        g_recog = e_sp
+        gate_pass = s_wh > e_sp
+        decision["dual_s_withheld"] = s_wh
+        decision["dual_e_spoken"] = e_sp
+        decision["dual_margin"] = s_wh - e_sp
+        decision["dual_cand_text"] = cand_text   // caller gates this into W_S on a silence tick
+    } else {
+        // H_9415 d1 margin arm: g_recog = clip01(immune recall MARGIN on the candidate); emit ⟺ score>margin
+        g_recog = _br_clip01(immune_memory_recall_margin_text(mem, cand_text))
+        gate_pass = score > g_recog
+    }
+    // 3-safety conjunction WITHOUT the rate clock (θ + 30s both retired · H_9415)
+    let kill  = safety_kill_switch_on(env_off)
+    let phi_r = safety_phi_ratchet_ok(pure_field_phi(pf), pf.phi_peak)
+    let cont  = safety_content_ok(content_clean)
+    let safe  = kill && phi_r && cont
+    let emit  = gate_pass && safe
+    decision["emit"] = emit
+    decision["safe"] = safe
+    decision["gate_mode"] = "refractory"
+    decision["g_recog_gate"] = g_recog
+    if emit {
+        decision["gen_emitted"]  = cand["emitted"]
+        decision["gen_backend"]  = cand["backend"]
+        decision["gen_text"]     = cand["text"]
+        decision["gen_fellback"] = cand["fellback"]
+    } else {
+        // p5 · DISCARD the imagined candidate on silence (never spoken); keep the backend tag
+        decision["gen_emitted"]  = false
+        decision["gen_backend"]  = cand["backend"]
+        decision["gen_text"]     = ""
+        decision["gen_fellback"] = false
+    }
+    // H_9129 hippo consult twin-parity with brain_emit_aged (READ-only · gen_text unaffected)
+    let hippo = generator_hippo_consult(anchors)
+    decision["gen_hippo_consulted"] = hippo["consulted"]
+    decision["gen_hippo_related"]   = hippo["relatedness"]
+    decision["gen_hippo_reachable"] = hippo["reachable"]
+    return decision
+}
+
 // brain_emit_deliberate — H_9102 (fable design (c) · op-grip EFFERENT axis). The
 // EXACT twin of brain_emit_aged with age_dt=0, EXCEPT the L3 slot runs the best-of-K
 // deliberation (generate_deliberate) instead of the single-candidate generate(). The

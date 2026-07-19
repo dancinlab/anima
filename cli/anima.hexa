@@ -232,6 +232,25 @@ fn anima_has_flag(argv: [string], flag: string) -> bool {
     return false
 }
 
+// H_9726 · value-taking flag helpers (evaluate.hexa:99 pattern). NOTE: hexa has NO env-var access,
+// so unlike py (ANIMA_EMIT_GATE/…) these are ARGV-ONLY — a documented py/hexa divergence.
+fn anima_strval(argv: [string], flag: string, dflt: string) -> string {
+    let mut i = 0
+    while i < len(argv) - 1 {
+        if argv[i] == flag { return argv[i + 1] }
+        i = i + 1
+    }
+    return dflt
+}
+fn anima_floatval(argv: [string], flag: string, dflt: float) -> float {
+    let mut i = 0
+    while i < len(argv) - 1 {
+        if argv[i] == flag { return to_float(argv[i + 1]) }
+        i = i + 1
+    }
+    return dflt
+}
+
 // ══════════════════════════════════════════════════════════════════════════════
 //  TRAIN MODE — dispatch to cli/train.hexa (the canonical hexa-native trainer)
 // ══════════════════════════════════════════════════════════════════════════════
@@ -477,7 +496,7 @@ fn main() {
             anima_byte_mode(chat_ckpt, argv)
             return
         }
-        anima_consciousness_mode(chat_ckpt)
+        anima_consciousness_mode(chat_ckpt, argv)
         return
     }
 
@@ -523,7 +542,7 @@ fn main() {
         anima_byte_mode(ckpt, argv)
         return
     }
-    anima_consciousness_mode(ckpt)
+    anima_consciousness_mode(ckpt, argv)
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -633,7 +652,7 @@ fn anima_byte_mode(ckpt: string, argv: [string]) {
 // emit, the L3 generator produces GROUNDED bytes over the kosmos anchors; the emit is
 // PERSISTED as a new .kosmos anchor. The brain decides from SUBSTRATE STATE, NOT from a
 // user stimulus (a_substrate_native_speak).
-fn anima_consciousness_mode(ckpt: string) {
+fn anima_consciousness_mode(ckpt: string, argv: [string]) {
     // DETERMINISM = OPTION (default fast non-det). The consciousness daemon defers to
     // the canonical forge_det precedence (API > env > default): byte-exact is opt-in
     // via the HEXA_DET=1 escape-hatch (runtime env gate); the default forge path stays
@@ -788,9 +807,38 @@ fn anima_consciousness_mode(ckpt: string) {
     // ── (5) WORKING MEMORY — volatile capacity-bounded buffer (H_1282) ────────
     // GAP: the immune store is PERSISTENT and unbounded-append; nothing holds a SMALL,
     // DECAYING active set whose unrefreshed items fade. The WM buffer is that volatility.
+    // ══ H_9726 · emit-gate flags (twin of py cli/chat.py · H_9712 default flip) ══
+    // --wm-leak λ (WM leak-rate, default 0.6 = byte-identical). --emit-gate: "refractory" (DEFAULT ·
+    // Ψ≈½ dual-ledger) or "clock" (the legacy 30s-clock daemon · byte-identical rollback). --g-reach:
+    // conditional default "wm-dual" under refractory else "d1" (a STATIC wm-dual default would crash
+    // the rollback --emit-gate clock on the guard below). ARGV-ONLY (hexa has no env channel · py has).
+    let ag_wm_leak = anima_floatval(argv, "--wm-leak", 0.6)
+    if ag_wm_leak <= 0.0 || ag_wm_leak > 1.0 { println("⛔ --wm-leak: λ must be in (0,1]")  return }
+    let ag_emit_gate = anima_strval(argv, "--emit-gate", "refractory")
+    if ag_emit_gate != "clock" && ag_emit_gate != "refractory" {
+        println("⛔ --emit-gate: only 'clock' or 'refractory'")  return
+    }
+    let ag_g_reach_dflt = if ag_emit_gate == "refractory" { "wm-dual" } else { "d1" }
+    let ag_g_reach = anima_strval(argv, "--g-reach", ag_g_reach_dflt)
+    if ag_g_reach != "d1" && ag_g_reach != "wm-dual"
+       && ag_g_reach != "wm-dual-alien-emit" && ag_g_reach != "wm-dual-alien-silence" {
+        println("⛔ --g-reach on hexa: only d1 | wm-dual | wm-dual-alien-emit | wm-dual-alien-silence "
+                + "(affinity/cb-perr/wm-cover arms are py-side)")  return
+    }
+    if ag_g_reach != "d1" && ag_emit_gate != "refractory" {
+        println("⛔ --g-reach " + ag_g_reach + " requires --emit-gate refractory")  return
+    }
+    let ag_refractory = ag_emit_gate == "refractory"
+    let ag_dual = ag_g_reach == "wm-dual" || ag_g_reach == "wm-dual-alien-emit"
+                  || ag_g_reach == "wm-dual-alien-silence"
+
     let wm_cue = _afs_byte_feature(r2_seed, 8)
-    let mut wmb = wm_buffer_new(3, 0.6, 0.5, 8)
+    let mut wmb = wm_buffer_new(3, ag_wm_leak, 0.5, 8)          // W_E (spoken) · λ ← --wm-leak
     wmb = wm_buffer_gate_in(wmb, wm_cue, 1.0)
+    // H_9726 · W_S (withheld) content ledger — starts EMPTY (py chat.py:1491 twin); leaked every tick,
+    // gated-in on a SILENCE tick (recognition-before-memorisation). wm_dual_alien = frozen-empty control.
+    let mut wm_withheld = wm_buffer_new(3, ag_wm_leak, 0.5, 8)
+    let wm_dual_alien = wm_buffer_new(3, 0.6, 0.5, 8)
     let wm_score_fresh = wm_buffer_probe_score(wmb, wm_cue)
     // DISTINCTNESS: λ<1 decays the maintained cue; λ=1 (persistent control) does NOT.
     let mut wm_decayed = wmb
@@ -2592,6 +2640,7 @@ fn anima_consciousness_mode(ckpt: string) {
         //     (non-faded) item gives an active-maintenance context: the daemon is still
         //     actively holding the topic. This DECAYS unlike the persistent immune store.
         wmb = wm_buffer_leak(wmb)                       // leak every tick; gate-in moved to emit site
+        wm_withheld = wm_buffer_leak(wm_withheld)       // H_9726 · W_S leak-before-read (recognition-before-memorisation)
         let wm_probe_now = if wm_probe_set { wm_probe_feat } else { seed_feat }   // pre-speech fallback
         let wm_active = _afs_clip01(wm_buffer_probe_score(wmb, wm_probe_now))     // probe the item gated one emit AGO
         let wm_null = _afs_clip01(wm_buffer_probe_score(wmb, wm_alien_feat))      // never-gated null
@@ -3797,15 +3846,35 @@ fn anima_consciousness_mode(ckpt: string) {
             continue
         }
 
-        let dec = brain_emit(pf,
+        // H_9726 · emit-gate: refractory (default · Ψ≈½ dual-ledger) or clock (byte-identical rollback).
+        // Alien dissociation = read-side buffer swap only (writes still hit the real buffers · py semantics).
+        let mut dec = brain_emit(pf,
             rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
             idle, false, true,
             backend, live_anchors)
+        if ag_refractory {
+            let e_side = if ag_g_reach == "wm-dual-alien-emit" { wm_dual_alien } else { wmb }
+            let s_side = if ag_g_reach == "wm-dual-alien-silence" { wm_dual_alien } else { wm_withheld }
+            dec = brain_emit_refractory(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle, false, true,
+                backend, live_anchors, 0.0,
+                immune, s_side, e_side, ag_dual)
+        }
 
         let did_emit = to_string(dec["emit"]) == "true"
         let g_emit   = to_string(dec["gen_emitted"]) == "true"
         let g_back   = to_string(dec["gen_backend"])
         let g_text   = to_string(dec["gen_text"])
+        // H_9726 · dual-ledger silence-side write (py chat.py:2427 twin): on a SILENCE tick the withheld
+        // candidate is gated into W_S (strength 1.0 = gain-lock, same λ as W_E). The emit-side W_E write
+        // rides the existing gate-in below — nothing to add there. Off unless the wm-dual family is active.
+        if ag_dual && !g_emit {
+            let dual_ct = to_string(dec["dual_cand_text"])
+            if byte_len(dual_ct) > 0 {
+                wm_withheld = wm_buffer_gate_in(wm_withheld, wm_byte_feature(dual_ct, 8), 1.0)
+            }
+        }
         psi_sum = psi_sum + pure_field_phi(pf)        // Ψ READ-ONLY accumulation
 
         // GROUND check: did the emit COPY the un-inventable anchor fact?

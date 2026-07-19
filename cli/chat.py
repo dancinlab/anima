@@ -28,6 +28,7 @@ hexa `to_string(float)` == Python `repr(float)` (empirically pinned: 1/3 → "0.
 import glob
 import os
 import random
+import re
 import shutil
 import sys
 
@@ -43,7 +44,7 @@ from generator import (gen_auto_backend, gen_mouth_kind, gen_auto_chat,
                        generator_read_anchors, gen_penult_pooled_W,
                        _gen_anchor_field, _gen_g_string)  # H_1058 Part A1: SSOT anchor+phase→seed-byte extractors (side-channel only)
 from kosmos_io import create_anchor, emit_anchor_from_v3, load_anchors
-from decode import clm_load_weights, clm_decodable, penult_fold8
+from decode import clm_load_weights, clm_decodable, penult_fold8, set_clms_store
 from dream_lib import (dr_stage_at, dr_stage_name, dr_emit_envelope,
                        dr_stage_size, dr_imagination_active)
 from dream_envelope_ctx import dr_stage_scale
@@ -51,6 +52,16 @@ from dream_persist import dp_sleep_tick
 from wake_memory import mem_init, mem_push_ctx
 from imagination_replay import (ir_select_snapshots, ir_replay_tick,
                                 ir_mitosis_tick_during_replay)
+
+
+# H_9744 STORE-EPISODIC · the transducer's ENTIRE knowledge (--store-episodic on · G-W3(iii) audits
+# this line). It is one shape, not a vocabulary: `fact <entity> <pos|neg>`. The entity is copied
+# through as bytes — ASCII lowercase because core/clms.py:80 _entity_key encodes ascii and a non-ascii
+# name would raise there, not because any particular name is known here. There is deliberately NO
+# entity whitelist, NO fact dictionary and NO polarity re-interpretation: a sense organ may know the
+# shape of what it transduces, never the meaning (p2/p3 — the moment this constant learns WHICH
+# entities matter, the transducer becomes a rule injector and the design is KILLED regardless of score).
+_STORE_EPISODIC_FACT = re.compile(r"^fact ([a-z]{3,12}) (pos|neg)$")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1427,6 +1438,7 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # rel_lane sat at 0.6723 for all 720 ticks of the H_9328 rollouts, recon_err at 0.0, and the
     # decode anchor was always live_seed. A store you write to and never read from is not a loop.
     last_gtext = ""
+    _dual_reentry_text = None   # H_9729 · latched withheld carrier for 1-tick-lagged re-entry (None = nothing pending)
     # H_9352 — the rate limiter had no memory. `brain_decide_anchored` takes a
     # `seconds_since_last` argument and gates on `>= spont_min_emit_interval()` (30.0s), but
     # what the daemon passed in that slot was `5.0 + 55.0*clip01(stage_env*(0.5+urgency))` —
@@ -1482,7 +1494,13 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     wm_alien_feat = _afs_byte_feature("zzz unrelated alien content", 8)
     # H_9610 · frozen EMPTY alien WM buffer for the --g-reach wm-cover-alienwm C2 dissociation
     # control (never gated by this daemon's speech → coverage ≈ 0 → gate always open = SATURATE).
+    # H_9627 reuses it as the frozen probe for --g-reach wm-dual-alien-{emit,silence}.
     _wm_cover_alien = wm_buffer_new(3, 0.6, 0.5, 8)
+    # H_9627 · dual content ledger — the WITHHELD store W_S (spoken store W_E = the live `wmb`).
+    # SAME (k, λ, dg, dim) as wmb (:540) = gain-lock (arm-specific gain = a tune-to-green backdoor,
+    # forbidden). Starts EMPTY (nothing withheld yet). Gated on SILENCE ticks (the imagined-but-
+    # unspoken candidate · :silence-side below), leaked every tick like wmb (:wm_withheld leak).
+    wm_withheld = wm_buffer_new(3, _wm_leak_v, 0.5, 8)
     wm_null = 0.0
     # ⑥ ANCHOR — live 5-channel substrate tension at the last emit, injected as an anchor so
     # anchor_tension_fold reads a VARYING tension_5ch (mem_001's frozen baseline otherwise).
@@ -1536,6 +1554,16 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     _emit_temp = float(anima_flag_value(_cargv, "--emit-temp", "ANIMA_EMIT_TEMP", "0"))
     _emit_topk = int(anima_flag_value(_cargv, "--emit-topk", "ANIMA_EMIT_TOPK", "256"))
     _sample_seed = int(anima_flag_value(_cargv, "--sample-seed", "ANIMA_SAMPLE_SEED", "0"))
+    # H_9627 central-thesis bar · fixed motivation-score offset (λ/gate frozen) = retune-free
+    # score-perturbation robustness. wm-cover center shifts (score is the comparand · positive
+    # control); the dual gate center should stay ≈½ (emit ⊥ score). 0.0 = production byte-identical.
+    _score_perturb = float(anima_flag_value(_cargv, "--score-perturb", "ANIMA_SCORE_PERTURB", "0"))
+    # H_9790 imagination structural-residue levers (default = production byte-identical).
+    # --imag-growth off skips ONLY the replay AdaptField grow (a_chat_sleep_imagination stays);
+    # --imag-salience-shuffle deterministically permutes the selected snapshots (salience destroyed,
+    # multiset preserved) for the A_shuf consolidation-vs-content dissociation arm.
+    _imag_growth = anima_flag_value(_cargv, "--imag-growth", "ANIMA_IMAG_GROWTH", "on")
+    _imag_shuffle = anima_flag_value(_cargv, "--imag-salience-shuffle", "ANIMA_IMAG_SHUFFLE", "0") == "1"
     # H_9357 · which reverse signal feeds ag_g_drive (the A⇄G tension's G pole). a0 = current
     # production wiring (ag_g_drive = A's own complement — the H_9356 tautology, kept as the
     # falsifiability-matrix A0 arm that MUST fail the independence gate). a1 = REAL-G: the immune
@@ -1576,14 +1604,31 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     if _refractory == "earned" and _rate_sec is not None:
         raise SystemExit("--emit-refractory earned and --rate-limit-sec are mutually exclusive "
                          "(both rebind the safe rate term)")
+    # ══ H_9607 · A⇄G FEEDBACK — close the A→G→A loop (Fable design · owner-ratified via lever pick) ══
+    # The field (pure_field_step) has been a closed autonomous relaxation to LN2 (zero-Lyapunov linear
+    # limit-cycle · H_9602/9603); the A⇄G signed tension was read into the emit policy but NEVER written
+    # back. This wires the return leg: a daemon-side leaky-INTEGRAL of the signed net tension
+    # s = ag_a_drive + ag_g_drive shifts the oscillator amplitude target next tick (osc_tick drive).
+    # κ=0 (default) ⇒ drive≡0 ⇒ byte-identical production. Integral (not proportional) so the steady
+    # state is pinned at s=0 ⟺ emit_drive=½ INDEPENDENT of κ and of the field's 0.76 autonomous bias
+    # (emergent setpoint, NOT tune-to-green · H_9419). RHO/SGN are FROZEN FORM constants, not knobs
+    # (a ≥4-DOF config is unfalsifiable · H_9391). p5: own-output→field-STATE is legal (H_9336/9337);
+    # `mouth` never enters pure_field_step/osc_tick — the emit gate is untouched, the loop only moves φ.
+    _ag_feedback = float(anima_flag_value(_cargv, "--ag-feedback", "ANIMA_AG_FEEDBACK", "0.0") or "0.0")
+    ag_fb_I = 0.0            # leaky-integral state of the signed A⇄G tension (daemon state, beside refr_debt)
+    _AG_FB_RHO = 1.0 / 400.0  # FROZEN leak = slow-oscillator timescale (τ_slow=400) · calibrated a priori, NOT a knob
+    _AG_FB_SGN = -1.0         # FROZEN one-time polarity (negative feedback: s>0 ⟹ shrink target ⟹ pull emit_drive→½)
     # H_9415 p5-REWIRE · emit-gate mode (owner-ratified · H_9414 design). "clock" (default) =
     # byte-identical production (should_emit(score>θ) ∧ 30s clock). "refractory" = the ratified
     # MARGIN-refractory gate: emit ⟺ score_A > g_recog(candidate) with θ and the clock BOTH
     # retired, the refractory emerging from emit→bind (biological, not a timer). Distinct from
     # H_9404's --emit-refractory earned (which keeps should_emit(θ) and only swaps the rate SOURCE);
-    # this retires θ too, making margin the G pole. NOT yet the production default — the switch
-    # waits on the new-daemon C1-C3 measurement H (a_verified_must_wire).
-    _emit_gate = anima_flag_value(_cargv, "--emit-gate", "ANIMA_EMIT_GATE", "clock")
+    # this retires θ too, making margin the G pole. H_9712 · PRODUCTION DEFAULT (owner-approved) =
+    # "refractory" — the daemon now emits over real tension (p5 realized), NOT a hardcoded 30s clock.
+    # The Ψ≈½ mechanism is H_9627's dual content ledger (see the conditional --g-reach default below);
+    # the old clock daemon is preserved byte-identically at `--emit-gate clock` / ANIMA_EMIT_GATE=clock
+    # (rollback + clock-lineage verdict reproducibility · H_9400 stays refuted for the clock lineage).
+    _emit_gate = anima_flag_value(_cargv, "--emit-gate", "ANIMA_EMIT_GATE", "refractory")
     # H_9417 · C2 shuffle-margin CONTROL (refractory gate only). Default 0 = OFF. When 1, the gate's
     # g_recog reads the immune margin on a SEEDED BYTE-PERMUTATION of the candidate — byte multiset
     # (amplitude/statistics) preserved, sequence (content/recognition) destroyed. If emit-listening
@@ -1607,20 +1652,244 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     #     BINDS the utterance → the new cell's whole Voronoi basin raises → near-repeat candidates
     #     silenced (the restoring β spring), genuinely-novel keep d1≈d2 → reach≈0 → emit. EARNED
     #     refractory (0 on a 1-cell store), constants 0, single DOF. Composes with --g-shuffle unchanged.
-    _g_reach = anima_flag_value(_cargv, "--g-reach", "ANIMA_G_REACH", "d1")
+    # H_9712 · CONDITIONAL default (rollback-safe): the Ψ≈½ dual content ledger (H_9627 wm-dual) is the
+    # default G-pole ONLY under the refractory gate; a STATIC "wm-dual" default would make the rollback
+    # `--emit-gate clock` crash on the guard below (g_reach=wm-dual ∧ gate≠refractory → SystemExit). So
+    # the default tracks the gate: clock ⇒ d1 (exact old daemon, zero extra flags), refractory ⇒ wm-dual.
+    _g_reach = anima_flag_value(_cargv, "--g-reach", "ANIMA_G_REACH",
+                                "wm-dual" if _emit_gate == "refractory" else "d1")
     if _g_reach not in ("d1", "affinity", "cb-perr", "cb-perr-alienctx",
-                        "wm-cover", "wm-cover-alienwm"):
+                        "wm-cover", "wm-cover-alienwm",
+                        "wm-dual", "wm-dual-alien-emit", "wm-dual-alien-silence"):
         raise SystemExit("--g-reach: only 'd1' (default), 'affinity', 'cb-perr',"
-                         " 'cb-perr-alienctx' (got %r)" % _g_reach)
+                         " 'cb-perr-alienctx', 'wm-cover', 'wm-cover-alienwm', 'wm-dual',"
+                         " 'wm-dual-alien-emit', 'wm-dual-alien-silence' (got %r)" % _g_reach)
     if _g_reach != "d1" and _emit_gate != "refractory":
         raise SystemExit("--g-reach %s requires --emit-gate refractory (its only consumer)" % _g_reach)
+    # H_9738 · W_S composition TRANSPLANT seam (--ws-init <path> [--ws-init-mode scramble-keys] ·
+    # --ws-dump <path>). The static certificate (#3986) proved the imagined candidate's TEXT reaches
+    # NO store — the ONLY surviving path is its feat8 COMPOSITION accumulating in W_S → gate margin →
+    # future. S0-b (#3987) proved that channel has capacity (pairwise cos 0.82–0.88, all 8 dims vary).
+    # This seam transplants a W_S composition at t=0 so the 4 arms (empty · own · donor · act-matched
+    # key-scramble) can ask whether the COMPOSITION — not merely its activation PRESSURE — steers the
+    # future. scramble-keys keeps `act` EXACTLY (pressure fixed) and shuffles each key's 8 components
+    # (composition destroyed, norm preserved) = the control isolating identity from pressure.
+    # Parsed HERE (not at the :wm_withheld birth) because _cargv/_emit_gate are set only by now.
+    # Absent = production byte-identical (W_S starts empty · nothing dumped).
+    _ws_init = anima_flag_value(_cargv, "--ws-init", "ANIMA_WS_INIT", "")
+    _ws_init_mode = anima_flag_value(_cargv, "--ws-init-mode", "ANIMA_WS_INIT_MODE", "as-is")
+    _ws_dump = anima_flag_value(_cargv, "--ws-dump", "ANIMA_WS_DUMP", "")
+    if _ws_init_mode not in ("as-is", "scramble-keys"):
+        raise SystemExit("--ws-init-mode: 'as-is' (default) or 'scramble-keys' (got %r)" % _ws_init_mode)
+    if (_ws_init != "" or _ws_dump != "") and _emit_gate != "refractory":
+        raise SystemExit("--ws-init/--ws-dump require --emit-gate refractory (W_S exists only there)")
+    if _ws_init != "":
+        import json as _wsj
+        with open(_ws_init, "r", encoding="utf-8") as _wf:
+            _wsd = _wsj.load(_wf)
+        _wk = [list(map(float, k)) for k in _wsd["keys"]]
+        _wa = [float(a) for a in _wsd["act"]]
+        if _ws_init_mode == "scramble-keys":
+            # act EXACT, each key's 8 components shuffled deterministically (seed-derived · reproducible)
+            _wr = random.Random((_sample_seed * 2654435761 + 0x9738) & 0x7FFFFFFF)
+            _wk = [(lambda _kk: (_wr.shuffle(_kk), _kk)[1])(list(_k)) for _k in _wk]
+        wm_withheld = WorkMemBuffer(_wk, _wa, len(_wk), 3, _wm_leak_v, 0.5, 8)
+        _pln("anima-py chat: --ws-init %s (%s) · W_S seeded %d slot(s)" % (_ws_init, _ws_init_mode, len(_wk)))
+    # H_9712 · --rate-limit-sec / --emit-refractory earned feed ONLY the clock path (brain_emit's rate
+    # source). Under the new refractory default they would silently no-op, so require --emit-gate clock
+    # explicitly (loud, not silent · house style). Both are clock-lineage rate knobs.
+    if (_rate_sec is not None or _refractory == "earned") and _emit_gate != "clock":
+        raise SystemExit("--rate-limit-sec / --emit-refractory earned require --emit-gate clock "
+                         "(they are clock-path rate knobs; the default refractory gate ignores them)")
     # H_9510 HOLE-1 diagnostic · record the IMAGINED candidate on EVERY tick (emit + silence)
     # so an offline conditioned-Jaccard test can ask whether near-repeat structure appears
     # after silence runs. Measurement-only (never fed back to mouth/decode = p5-safe). OFF by
     # default → production trace byte-identical.
-    _rec_silent_cand = anima_flag_value(_cargv, "--record-silent-cand", "ANIMA_RECORD_SILENT_CAND", "0") == "1"
+    # bare-safe: a bare `--record-silent-cand` (no value) means ON (chat-py-9 footgun — the
+    # ==\"1\" form silently consumed the NEXT token as the value, so a bare flag read as OFF with
+    # no error and the whole wm-dual measurement died NOT-POWERED · H_9729). bare | `1` | env all ON.
+    _rec_silent_cand = (anima_has_flag(_cargv, "--record-silent-cand")
+                        or anima_flag_value(_cargv, "--record-silent-cand", "ANIMA_RECORD_SILENT_CAND", "0") == "1")
     if _rec_silent_cand and _emit_gate != "refractory":
         raise SystemExit("--record-silent-cand requires --emit-gate refractory (its only producer)")
+    # H_9729 SILENCE-CONTENT · does the WITHHELD candidate's CONTENT causally reach the future, or is
+    # W_S pressure-only? --wm-dual-read content re-enters the LAST withheld candidate's RAW text (not
+    # the 3-slot ledger — WorkMemBuffer has no content accessor; "last-write re-entry", Sol) as a
+    # 1-tick-lagged anchor → next decode seed (the proven-live percept path, :2305). ONE new causal
+    # surface (an anchor append); off (default) ⇒ no anchor, no latch touched ⇒ byte-identical. p5
+    # LEGAL narrowly: the carrier was imagined-but-VETOED (never entered speak()/W_E/emit roots) =
+    # delayed re-entry of internal imagination (a_chat_sleep_imagination), NOT the banned last-utterance
+    # self-seed — guarded by _dual_ct != last_gtext (direct-copy exclusion). (Fable∥Sol converged · a
+    # DIRECT state-update was rejected by both: it makes the effect true by construction / degrades
+    # "content" to feat8 before the substrate reads it.)
+    # H_9794 AFFECT-FORWARDING (--af-clamp v,a) · do() clamp on the amygdala valence/arousal
+    # gauges (interior→interior probe · default OFF · base daemon untouched). Parsed here, applied
+    # right after af_val/af_aro are computed so every downstream consumer sees the clamped value.
+    _af_clamp_raw = anima_flag_value(_cargv, "--af-clamp", "ANIMA_AF_CLAMP", "")
+    _af_clamp = None
+    if _af_clamp_raw:
+        _acp = _af_clamp_raw.split(",")
+        if len(_acp) != 2:
+            raise SystemExit("--af-clamp: expects 'v,a' (two floats in [0,1]), got %r" % _af_clamp_raw)
+        _af_clamp = (_afs_clip01(float(_acp[0])), _afs_clip01(float(_acp[1])))
+    # H_9794 AFFECT-FORWARDING (--af-impulse <f.jsonl>) · a PER-TICK af clamp schedule {tick,v,a}.
+    # The static --af-clamp cannot identify FORWARDING (af(t)≡af(t+1) collinear = a SHIFT verdict only);
+    # an IMPULSE (clamp at listed ticks, native elsewhere) decorrelates af(t) from af(t+1) so the
+    # cross-lag h_{k>=1} carryover onto the NEXT percept's grade is identifiable (lab-full Fable Q1).
+    _af_impulse_raw = anima_flag_value(_cargv, "--af-impulse", "ANIMA_AF_IMPULSE", "")
+    _af_impulse = None
+    if _af_impulse_raw:
+        import json as _afj
+        _af_impulse = {}
+        with open(_af_impulse_raw, "r", encoding="utf-8", errors="surrogateescape") as _afh:
+            for _aln in _afh:
+                _aln = _aln.strip()
+                if not _aln:
+                    continue
+                _ar = _afj.loads(_aln)
+                _af_impulse[int(_ar["tick"])] = (_afs_clip01(float(_ar["v"])), _afs_clip01(float(_ar["a"])))
+    _wm_dual_read = anima_flag_value(_cargv, "--wm-dual-read", "ANIMA_WM_DUAL_READ", "off")
+    if _wm_dual_read not in ("off", "content"):
+        raise SystemExit("--wm-dual-read: only 'off' (default) or 'content' (got %r)" % _wm_dual_read)
+    if _wm_dual_read == "content":
+        if _emit_gate != "refractory":
+            raise SystemExit("--wm-dual-read content requires --emit-gate refractory")
+        if _g_reach not in ("wm-dual", "wm-dual-alien-emit", "wm-dual-alien-silence"):
+            raise SystemExit("--wm-dual-read content requires a wm-dual --g-reach (the W_S producer)")
+        if percept_source is not None:
+            raise SystemExit("--wm-dual-read content is mutually exclusive with an anima-study percept "
+                             "source (both write live_anchors[-1])")
+
+    # H_9728 Θ−-yoked arm (#4068) · --yoke-mask <Θ+ trace> replays that trace's FINAL emit bit per tick,
+    # severing the (S>E)→emit causal loop while pinning the ½ rhythm/rate/stage. refractory-only (the gate
+    # forced_emit reaches). Donor-seed mask = primary (own-seed = byte-identical C0 certificate). Hard-fail
+    # on any tick missing from the mask (instrument-never-run: a silent default would fake coverage).
+    _yoke_mask = None
+    _yoke_src = anima_flag_value(_cargv, "--yoke-mask", "ANIMA_YOKE_MASK", "")
+    if _yoke_src:
+        if _emit_gate != "refractory":
+            raise SystemExit("--yoke-mask requires --emit-gate refractory (the forced_emit consumer)")
+        import json as _yj
+        _yoke_mask = {}
+        for _l in open(_yoke_src, "r", encoding="utf-8", errors="surrogateescape"):
+            if not _l.strip():
+                continue
+            _r = _yj.loads(_l)
+            if isinstance(_r, dict) and "tick" in _r and "emit" in _r:
+                _yoke_mask[int(_r["tick"])] = bool(_r["emit"])
+        print("  [H_9728 yoke-mask] src=%s · %d tick emit bits replayed (native S>E → would_emit · "
+              "severs pulse loop · ½ rhythm pinned)" % (_yoke_src.split("/")[-1], len(_yoke_mask)))
+
+    # H_9765 · --dual-margin-dither <eps> · exogenous do() on the emit-decision INPUT (the S−E comparison
+    # margin), the ONE relock-escape both models named after the H_9728/9729/9730 frontier terminal. Adds a
+    # SIGNED per-tick dose ±eps (state-independent · keyed on (sample_seed, tick) only) to S−E right before
+    # the >0 gate test in brain_emit_refractory. Unlike the yoke (forced_emit replays the OUTPUT bit, capped
+    # at severance≡rhythm-deviation ≤0.14 by relock), this perturbs the INPUT and lets the native bit stay
+    # native-computed → the dual-ledger spring re-equilibrates ENDOGENOUSLY → relock does not cap the dose
+    # (priced $0 #4072: eps≥0.15 flips ≥0.26 > the 0.2 floor the yoke could not clear). refractory+wm-dual
+    # only (the S−E comparison is the dual gate). eps=0.0 (default) ⇒ byte-identical (brain takes the
+    # original comparison path). p5-clean: the dither lives INSIDE the gate test, never forces past ∧safe.
+    _dither_eps = float(anima_flag_value(_cargv, "--dual-margin-dither", "ANIMA_DUAL_MARGIN_DITHER", "0") or "0")
+    if _dither_eps != 0.0:
+        if _emit_gate != "refractory":
+            raise SystemExit("--dual-margin-dither requires --emit-gate refractory (the dual gate consumer)")
+        if _g_reach not in ("wm-dual", "wm-dual-alien-emit", "wm-dual-alien-silence"):
+            raise SystemExit("--dual-margin-dither requires a wm-dual --g-reach (the S−E comparison it perturbs)")
+        if _yoke_mask is not None:
+            raise SystemExit("--dual-margin-dither is mutually exclusive with --yoke-mask "
+                             "(input-do() vs output-replay are different interventions)")
+        print("  [H_9765 dual-margin-dither] eps=%.4f · signed per-tick do() on S−E (input · not the bit · "
+              "relock-free · flip-frac meter=undithered_would_emit)" % _dither_eps)
+    # ── H_9744 STORE-EPISODIC (S2/S6) — percept fills the CLMS store; the mouth answers from it ──
+    # The lane itself is H_9423/H_9672's co-trained bridge; this only decides WHO fills the store.
+    # In eval the manifest was hand-fed (cli/evaluate.py --store); here the SESSION's own percept
+    # stream does — which is the training distribution: storebind never put the fact in the text,
+    # only the query, so in-vivo the fact must arrive as a store injection too, not as text parsing.
+    # Default OFF, and the whole path is unreachable without a percept_source (base daemon untouched).
+    _store_episodic = anima_flag_value(_cargv, "--store-episodic", "ANIMA_STORE_EPISODIC", "off")
+    if _store_episodic not in ("off", "on"):
+        raise SystemExit("--store-episodic: only 'off' (default) or 'on' (got %r)" % _store_episodic)
+    # H_9760 in-vivo odd-fusion: the daemon store lane's fuse mode (decode.py _CLMS_FUSE via
+    # set_clms_store). 'overwrite' (default) = H_9423 byte-identical; 'odd' enforces answer-oddness in
+    # store polarity (s_odd=½(s(v,g)−s(−v,g))) to close the H_9744 op=0 flip-coh gap in-vivo.
+    _store_fuse = anima_flag_value(_cargv, "--store-fuse", "ANIMA_STORE_FUSE", "overwrite")
+    if _store_fuse not in ("overwrite", "gated-add", "odd", "pairodd"):
+        raise SystemExit("--store-fuse: only 'overwrite' (default), 'gated-add', 'odd' or 'pairodd' (got %r)" % _store_fuse)
+    if _store_episodic == "on":
+        if percept_source is None:
+            raise SystemExit("--store-episodic on requires an anima-study percept source (the store is "
+                             "filled BY perception; with no afferent stream there is nothing to fill it)")
+        if _emit_gate == "refractory":
+            # p5 HARD GUARD (H_9744 F4 · the whole reason this is opt-in). The refractory gate feeds
+            # the FORMED candidate text through _recog_fn (:2452) — so a store that changes the
+            # candidate would move the emit gate itself, and emit would no longer ride real tension.
+            # v1 keeps the store strictly downstream of the gate: it changes WHAT is said, never
+            # WHETHER. Unblocking this combination needs its own pre-registration, not a flag.
+            raise SystemExit("--store-episodic on is mutually exclusive with --emit-gate refractory: "
+                             "the refractory gate reads the candidate text (_recog_fn), so a store that "
+                             "shapes the candidate would also shape the emit decision (p5). Use the "
+                             "clock gate for the store-episodic arms.")
+    # Ring width is the ckpt's, never a literal: core/clms.py store_apply indexes range(n_slot) from
+    # the trailer, so an 8 hardcoded here would silently mis-shape any other-width bridge. A ckpt with
+    # no CLMS trailer makes the flag meaningless — refuse rather than run a lane that cannot fire.
+    _ep_n_slot = 0
+    if _store_episodic == "on":
+        _ep_clms = clm_load_weights(ckpt).get("clms")
+        if _ep_clms is None:
+            raise SystemExit("--store-episodic on needs a ckpt carrying a CLMS trailer (the co-trained "
+                             "store bridge · H_9423/H_9672); %r has none, so the lane can never fire."
+                             % ckpt)
+        _ep_n_slot = int(_ep_clms["n_slot"])
+    _ep_store_ents = []       # FIFO of the last n_slot declared entities (session-local)
+    _ep_store_pols = []
+    _ep_store_writes = 0      # G-W0: how many times perception actually armed the lane
+    # H_9729 counterfactual arms (measurement-only · swap ONLY the re-entry carrier text · the
+    # wm_withheld write stays FACTUAL so the KNOWN scalar ledger is held EXACTLY — only the re-entered
+    # CONTENT is manipulated). --wm-dual-perm = byte-sort the carrier: feat8 is byte-multiset (perm-
+    # invariant · :2343) so this holds feat8/length/ledger EXACTLY and severs ONLY byte order = the
+    # LOAD-BEARING control (order-bearing content vs pressure/histogram · Sol). --wm-dual-swap <donor>
+    # = another rollout's withheld candidate at the same tick (own-vs-other specificity · C2 · Fable).
+    # Both are trace-only arm labels (never a production branch key · the :2460 lesson).
+    _wm_dual_perm = (anima_has_flag(_cargv, "--wm-dual-perm")               # bare-safe (chat-py-9)
+                     or anima_flag_value(_cargv, "--wm-dual-perm", "ANIMA_WM_DUAL_PERM", "0") == "1")
+    _wm_dual_swap_path = anima_flag_value(_cargv, "--wm-dual-swap", "ANIMA_WM_DUAL_SWAP", "")
+    # H_9729 POSITIVE CONTROL producer · --wm-dual-oracle injects a FROZEN alternating A/B carrier
+    # (two maximally feat-separable strings, tick-parity) through the SAME anchor path on EVERY tick
+    # (not just post-silence) — a KNOWN content on a KNOWN schedule. --silence-content-te --reach-
+    # oracle then requires recovery in cand[t+1]; ∅ ⇒ REACH-FAIL/MOUTH-SEVERED (H_9576) ⇒ a real null
+    # is uninterpretable. The self-killing positive control both models mandated (pre-303M gate).
+    _wm_dual_oracle = (anima_has_flag(_cargv, "--wm-dual-oracle")           # bare-safe (chat-py-9)
+                       or anima_flag_value(_cargv, "--wm-dual-oracle", "ANIMA_WM_DUAL_ORACLE", "0") == "1")
+    if (_wm_dual_perm or _wm_dual_swap_path or _wm_dual_oracle) and _wm_dual_read != "content":
+        raise SystemExit("--wm-dual-perm / --wm-dual-swap / --wm-dual-oracle require --wm-dual-read content")
+    if (1 if _wm_dual_perm else 0) + (1 if _wm_dual_swap_path else 0) + (1 if _wm_dual_oracle else 0) > 1:
+        raise SystemExit("--wm-dual-perm / --wm-dual-swap / --wm-dual-oracle are mutually exclusive arms")
+    # H_9729 run-2 oracle redesign (Fable∥Sol · #4045): the pre-run-2 oracle failed for TWO independent
+    # reasons — (a) OOD synthetic carrier (00 11 / !! ;;) the 303M English LM washes out (0/80 survival),
+    # (b) a period-2 tick-parity schedule ⊥ the reader's circular-shift null: for period-2 X every shift
+    # is X or a bijective relabel of X ⇒ CMI-invariant ⇒ every surrogate == TE_real ⇒ earned≡0.0000·p≡1.0
+    # STRUCTURALLY, whatever the mouth does. FIX: (a) two IN-DISTRIBUTION English carriers that are
+    # signature-separable on [n_dig, n_lower] — A digit-rich EN prose vs B digit-free EN prose (the LM
+    # has seen both, so it propagates them), (b) a SEEDED-RANDOM aperiodic A/B schedule (breaks the
+    # point-mass degeneracy so the circular-shift null is valid again). Survival must still be certified
+    # empirically by a pilot before reading any negative (a_scale_honest_scope).
+    _ORACLE_A = "The vault code is 7 7 4 1, opened in 1 8 8 5, room 9 0 2, box 3 6 4."
+    _ORACLE_B = "A quiet harbor at dawn, gulls over the grey water, salt wind through the pines."
+    _oracle_rng = random.Random((_sample_seed * 2654435761 + 0x9729) & 0x7FFFFFFF)
+    _wm_dual_swap = {}
+    if _wm_dual_swap_path:
+        import json as _wsj, base64 as _wsb
+        for _l in open(_wm_dual_swap_path, "r", encoding="utf-8", errors="surrogateescape"):
+            if not _l.strip():
+                continue
+            _d = _wsj.loads(_l)
+            if _d.get("_meta") or _d.get("emit"):   # donor SILENCE ticks only (withheld candidates)
+                continue
+            _e = _d.get("cand_b64_diag", "")
+            if _e:
+                _wm_dual_swap[int(_d["tick"])] = _wsb.b64decode(_e).decode("utf-8", "surrogateescape")
+        print("  [H_9729 wm-dual-swap] donor=%s · %d silence-tick 보류후보를 재진입 carrier 로 (원장 factual)"
+              % (_wm_dual_swap_path.split("/")[-1], len(_wm_dual_swap)))
     # H_9557 · PC2 ROUTING (2D-loadings H_9468/#3792): route the emit-ORTHOGONAL tension
     # axis PC2 = originality↔balance (orig+0.84·bal−0.44·coh−0.28, cos(w,PC2)=0.03) into
     # deliberation_k (the one decode channel the mouth reads) so a genuinely emit-independent
@@ -1637,10 +1906,157 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # Stage-A: the STEERED text is spoken (out_text) but every substrate root keeps the BASE
     # g_text, so the emit sequence stays byte-identical to off BY CONSTRUCTION.
     _pc2_mouth = anima_flag_value(_cargv, "--pc2-mouth", "ANIMA_PC2_MOUTH", "off")
+    # H_9664 ζ-LADDER — `--pc2-zeta z1,z2,…` re-decodes the SAME emit tick at each ζ, so the
+    # tick-level cascade variance that swamped every arm-vs-arm readout (H_9663: sd(Δπ̄_rng)≈0.14)
+    # cancels WITHIN the tick. ζ is the experimenter's dose: it MANUFACTURES the regressor range
+    # the live z does not have (IQR 0.0514 · 45.7% of its variance in 3/270 ticks). ζ=0 must come
+    # back byte-identical to base — a built-in isolation certificate, not a claim.
+    # Empty (default) ⇒ zeta_ladder=None ⇒ byte-identical to the existing path.
+    _pc2_zeta_raw = anima_flag_value(_cargv, "--pc2-zeta", "ANIMA_PC2_ZETA", "")
+    _pc2_zeta = []
+    if _pc2_zeta_raw:
+        for _tok in _pc2_zeta_raw.split(","):
+            _tok = _tok.strip()
+            if _tok:
+                _pc2_zeta.append(float(_tok))
     if _pc2_mouth not in ("off", "bias", "rng"):
         raise SystemExit("--pc2-mouth: only 'off' (default), 'bias', 'rng' (got %r)" % _pc2_mouth)
     if _pc2_mouth != "off" and _emit_gate != "refractory":
         raise SystemExit("--pc2-mouth requires --emit-gate refractory (its only consumer)")
+
+    # H_9755 REFIT-AXIS ζ-LADDER — `--z-loading a1,a2,…` turns the H_9664 scalar ladder into an
+    # arm x ζ grid (card §8 design LOCK). Each arm's per-tick modulation u is a warmup-calibrated
+    # (centered + Var=1) projection onto the arm's loading, so ζ's dose-scale matches across arms.
+    # The refit arm's loading is the top eigenvector of an ONLINE correlation-PCA over the run's
+    # first --refit-warmup ticks' 8-factor vectors (deterministic, sign-anchored to the frozen
+    # loading = H_9713 flip defense). Empty ⇒ _z_loading_arms=[] ⇒ scalar path byte-identical.
+    _Z_ARMS = ("scalar", "frozen", "refit", "random", "refit-resid")
+    _z_loading_raw = anima_flag_value(_cargv, "--z-loading", "ANIMA_Z_LOADING", "")
+    _z_loading_arms = []
+    if _z_loading_raw:
+        for _tok in _z_loading_raw.split(","):
+            _tok = _tok.strip()
+            if not _tok:
+                continue
+            if _tok not in _Z_ARMS:
+                raise SystemExit("--z-loading: arm %r not in %s" % (_tok, _Z_ARMS))
+            if _tok not in _z_loading_arms:
+                _z_loading_arms.append(_tok)
+    _refit_warmup = int(anima_flag_value(_cargv, "--refit-warmup", "ANIMA_REFIT_WARMUP", "64"))
+    if _z_loading_arms:
+        if not _pc2_zeta:
+            raise SystemExit("--z-loading requires --pc2-zeta (the dose ladder it modulates)")
+        if _emit_gate != "refractory":
+            raise SystemExit("--z-loading requires --emit-gate refractory")
+        if _refit_warmup < 4:
+            raise SystemExit("--refit-warmup must be >= 4 (got %d)" % _refit_warmup)
+
+    # frozen loading in canonical 8-space (rel,gap,cur,pain,coh,orig,bal,dyn_v);
+    # brain uses pc2_z = 0.84*orig - 0.44*bal - 0.28*coh ⇒ (coh=-0.28, orig=+0.84, bal=-0.44).
+    _ZL_WF = (0.0, 0.0, 0.0, 0.0, -0.28, 0.84, -0.44, 0.0)
+
+    def _zl_boundary(_warm, _arms, _sample_seed):
+        """Compute the frozen z_loading_state at warmup boundary. _warm = list of
+        (f_raw(8-tuple), emit_bit). Deterministic (numpy eigh + seed-derived random).
+        Returns (state_dict, meta_dict)."""
+        import numpy as _np
+        import random as _rnd
+        _X = _np.asarray([list(_fr) for _fr, _eb in _warm], dtype=_np.float64)  # (W,8)
+        _emitb = _np.asarray([1.0 if _eb else 0.0 for _fr, _eb in _warm], dtype=_np.float64)
+        _fmu = _X.mean(axis=0)
+        _fsd = _X.std(axis=0, ddof=1)
+        _dead = [bool(_fsd[_i] < 1e-9) for _i in range(8)]
+        _fsd_safe = _np.where(_np.asarray(_dead), 1.0, _fsd)
+        _Xs = (_X - _fmu) / _fsd_safe
+        _Xs[:, _np.asarray(_dead)] = 0.0                    # dead factors contribute nothing
+        _C = (_Xs.T @ _Xs) / float(_Xs.shape[0] - 1)        # 8x8 correlation matrix
+        _evals, _evecs = _np.linalg.eigh(_C)                # ascending
+        _order = _np.argsort(_evals)[::-1]
+        _evals = _evals[_order]
+        _evecs = _evecs[:, _order]
+        _w_R = _evecs[:, 0].copy()                          # top eigenvector (standardized coords)
+        _top2 = _evecs[:, :2]
+
+        # frozen loading in STANDARDIZED coords, for the sign anchor: w_F,i / fsd_i (live factors)
+        _wF_std = _np.asarray([(_ZL_WF[_i] / _fsd_safe[_i]) if not _dead[_i] else 0.0
+                               for _i in range(8)], dtype=_np.float64)
+        _nrm = _np.linalg.norm(_wF_std)
+        if _nrm > 1e-12:
+            _wF_std = _wF_std / _nrm
+
+        def _sign_anchor(_v):
+            _v = _v.copy()
+            _dp = float(_v @ _wF_std)
+            if abs(_dp) >= 1e-9:
+                if _dp < 0:
+                    _v = -_v
+            else:
+                _j = int(_np.argmax(_np.abs(_v)))           # max-|component|, ties→lowest index
+                if _v[_j] < 0:
+                    _v = -_v
+            return _v
+        _w_R = _sign_anchor(_w_R)
+
+        # refit-resid (H_9754): OLS of warmup emit bit on top-2 coords → in-plane orthogonal dir
+        _valid_resid = True
+        _w_perp = _np.zeros(8)
+        try:
+            _Y = _Xs @ _top2                                 # (W,2)
+            if float(_emitb.std(ddof=1)) < 1e-9:
+                _valid_resid = False
+            else:
+                _Yc = _np.column_stack([_np.ones(_Y.shape[0]), _Y])
+                _beta, _, _, _ = _np.linalg.lstsq(_Yc, _emitb, rcond=None)
+                _b = _beta[1:]                               # slope on the 2 coords
+                if float(_np.linalg.norm(_b)) < 1e-9:
+                    _valid_resid = False
+                else:
+                    _perp2 = _np.asarray([-_b[1], _b[0]])    # in-plane ⟂ to emit-regression dir
+                    _perp2 = _perp2 / _np.linalg.norm(_perp2)
+                    _w_perp = _sign_anchor(_top2 @ _perp2)
+        except Exception:
+            _valid_resid = False
+
+        # random axis-null: domain-separated seed-derived unit 8-vector
+        _rr = _rnd.Random((int(_sample_seed) * 2654435761 ^ 0x9755) & 0x7FFFFFFF)
+        _rvec = _np.asarray([_rr.gauss(0.0, 1.0) for _ in range(8)], dtype=_np.float64)
+        _rvec = _rvec / (_np.linalg.norm(_rvec) or 1.0)
+
+        def _arm_moments(_w, _raw):
+            _fv = _X if _raw else _Xs
+            _p = _fv @ _np.asarray(_w)
+            return float(_p.mean()), float(_p.std(ddof=1))
+
+        _defs = {
+            "scalar": (None, False),
+            "frozen": (_ZL_WF, True),      # raw-factor projection = the bias-arm signal, faithful to H_9468
+            "refit":  (tuple(_w_R.tolist()), False),
+            "random": (tuple(_rvec.tolist()), False),
+            "refit-resid": (tuple(_w_perp.tolist()), False),
+        }
+        _arms_out = {}
+        for _nm in _arms:
+            if _nm == "scalar":
+                _arms_out["scalar"] = {"valid": True}
+                continue
+            _w, _raw = _defs[_nm]
+            _mu, _sd = _arm_moments(_w, _raw)
+            _valid = (_sd >= 1e-9) and (_valid_resid or _nm != "refit-resid")
+            _arms_out[_nm] = {"w": [float(_x) for _x in _w], "mu": _mu, "sd": _sd,
+                              "raw": bool(_raw), "valid": bool(_valid)}
+        _state = {"phase": "post", "fmu": [float(_x) for _x in _fmu],
+                  "fsd": [float(_x) for _x in _fsd_safe], "arms": _arms_out}
+        _meta = {"_zl_meta": True, "warmup": len(_warm),
+                 "factor_order": ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+                                  "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"],
+                 "fmu": _state["fmu"], "fsd": _state["fsd"],
+                 "dead_factors": [_i for _i in range(8) if _dead[_i]],
+                 "eigvals": [float(_x) for _x in _evals],
+                 "eigengap": float((_evals[0] - _evals[1]) / _evals[0]) if _evals[0] > 0 else 0.0,
+                 "arms": {_k: {kk: vv for kk, vv in _v.items()} for _k, _v in _arms_out.items()},
+                 "random_seed_deriv": "(seed*2654435761 ^ 0x9755) & 0x7FFFFFFF",
+                 "refit_resid_valid": bool(_valid_resid)}
+        return _state, _meta
     # H_9411 ⑥ · dead-gauge controls (default OFF = the fix is live).
     # --scn-freeze reproduces the DEAD scn_ctx constant (skip the per-tick step) = before-state.
     # --anchor-tension-null forces the injected anchor tension_5ch to zero = zero-truth pedestal.
@@ -1694,6 +2110,11 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     imagination_mitosis_ticks = 0
     imagination_emit_violations = 0
 
+    # H_9755 refit-axis ζ-ladder online state (None unless --z-loading given ⇒ byte-identical).
+    _zl_state = ({"phase": "warmup"} if _z_loading_arms else None)
+    _zl_warm = []          # (f_raw 8-tuple, emit_bit) accumulated over the first --refit-warmup ticks
+    _zl_meta_row = None     # one-time _zl_meta trace row, set at the warmup boundary
+
     while tick < n_ticks:
         stage = dr_stage_at((tick * 8) % 90 if _stage_cycle else tick * 8)
         stage_nm = dr_stage_name(stage)
@@ -1710,13 +2131,40 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
             percept_text = percept_source(tick, _percept_transcript)
             if percept_text is not None:
                 percept_text = str(percept_text).strip() or None
+        # ── H_9744 STORE-EPISODIC (S3) · perception writes the store ──
+        # The transducer knows GRAMMAR ONLY, never content: it matches one fixed shape and copies
+        # the bytes through. No entity whitelist, no fact dictionary, no polarity re-interpretation
+        # — that content-blindness is what keeps it a sense organ (like _afs_byte_feature) instead
+        # of a p2/p3 rule injector, and G-W3(iii) audits exactly this. Slots are a FIFO of the last
+        # n_slot declarations; the lane needs the ring FULL (clms store_apply indexes range(n_slot)),
+        # so a partial ring stays unwired rather than padded with an invented entity (honesty).
+        if _store_episodic == "on" and percept_text is not None:
+            _m_fact = _STORE_EPISODIC_FACT.match(percept_text)
+            if _m_fact is not None:
+                _ep_store_ents.append(_m_fact.group(1))
+                _ep_store_pols.append(1 if _m_fact.group(2) == "pos" else 0)
+                while len(_ep_store_ents) > _ep_n_slot:      # FIFO — oldest declaration falls out
+                    _ep_store_ents.pop(0)
+                    _ep_store_pols.pop(0)
+                if len(_ep_store_ents) == _ep_n_slot:
+                    # target_slot is None: the daemon is NOT told which slot is being asked about
+                    # (that field is oracle-only · core/clms.py store_apply reads it iff oracle=True).
+                    set_clms_store(store={"entities": list(_ep_store_ents),
+                                          "pols": list(_ep_store_pols),
+                                          "target_slot": None}, fuse=_store_fuse)
+                    _ep_store_writes += 1
         # H_9411 ⑤ · Engine A lives in session time. pf was warmed once (:1293) then NEVER
         # stepped, so pure_field_phi/phase were the step-600 constants every tick and the emit
         # gate's Φ/phase safeties were judged against a frozen snapshot. Advance with the SAME
         # zero-input primitive warmup loops internally — NOT percept-driven (Engine A is the
         # zero-input field by design, pure_field_verify_zero_input); Φ now tracks the substrate's
         # own autonomous integration over the session, and stays percept-blind on purpose.
-        pf = pure_field_step(pf)
+        # H_9607 · A⇄G feedback drive = κ·SGN·I, the leaky-integral of the signed A⇄G tension carried
+        # from the PRIOR tick (s_t is derived below at :~1830, after the field step — so this tick's
+        # tension drives next tick's field: own-output(t)→field-state(t+1), the p5-legal return leg).
+        # κ=0 ⇒ ag_drive≡0.0 ⇒ pure_field_step byte-identical to production.
+        ag_drive = (_ag_feedback * _AG_FB_SGN * ag_fb_I) if _ag_feedback != 0.0 else 0.0
+        pf = pure_field_step(pf, ag_drive)
         phi_t = pure_field_phi(pf)
 
         # ── WAKE perception → working-memory ring ──
@@ -1805,6 +2253,13 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
             g_recog = 1.0 - emit_drive
             ag_g_drive = 0.0 - (1.0 - emit_drive)
         ag_conflict = conflict_scalar(ag_a_drive, ag_g_drive)
+        # H_9607 · update the leaky-integral of the SIGNED A⇄G net tension AFTER this tick's drives are
+        # known — consumed at the TOP of next tick (:~1730). s = ag_a_drive + ag_g_drive is 0 exactly
+        # when A's push and G's push cancel (a0: s = emit_drive − (1−emit_drive) = 2·emit_drive − 1),
+        # so the integral null s→0 pins the steady state at emit_drive=½ regardless of κ (emergent, not
+        # dialed). κ=0 leaves ag_fb_I evolving but unused (ag_drive gated to 0.0 above) → byte-identical.
+        ag_s_signed = ag_a_drive + ag_g_drive
+        ag_fb_I = (1.0 - _AG_FB_RHO) * ag_fb_I + ag_s_signed
         ag_budget = conflict_recruited_depth(ag_conflict, 4, 6)
         ag_pop = anima_tr_pop_conflicted(_afs_clip01(0.5 + 0.5 * ag_conflict))
         ag_settle = tension_resolve_depth(ag_pop, tr_full, 0.3, 0.5, ag_budget, 2, 0.06, tr_cfgON)
@@ -1891,6 +2346,10 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         # (delay test), never the token just gated (self-match ≡ λ = the old frozen 0.6). The
         # per-tick gate-in moved to the emit site, so silence ticks show genuine decay (λ^Δt).
         wmb = wm_buffer_leak(wmb)
+        # H_9627 · the withheld store W_S leaks every tick TOO (same λ as wmb = gain-lock). This is
+        # the passive-decay half; its active-write half is the silence-side gate-in below. Both
+        # ledgers leaking symmetrically is what lets ½ sit at the exchange-symmetric center.
+        wm_withheld = wm_buffer_leak(wm_withheld)
         if wm_probe_feat is None:
             wm_active = _afs_clip01(wm_buffer_probe_score(wmb, seed_feat))  # pre-speech fallback
         else:
@@ -1930,6 +2389,17 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         af_aro = _afs_clip01(af[1])
         if af[0] != 0.0 or af[1] != 0.0:
             amyg_valenced_any = True
+        # H_9794 --af-clamp v,a · do() clamp on the amygdala gauges (default OFF). Applied AFTER the
+        # native read so every downstream consumer (emoreg :2519 · ci lanes :2595/2606) sees the
+        # clamped value — that is the interior→interior intervention. The arm label lands in its own
+        # trace field (never a production-branched field · chat-py swap-label lesson).
+        _af_imp = _af_impulse.get(int(tick)) if _af_impulse is not None else None
+        if _af_imp is not None:              # impulse (per-tick) wins over the static clamp
+            af_val = _af_imp[0]
+            af_aro = _af_imp[1]
+        elif _af_clamp is not None:
+            af_val = _af_clamp[0]
+            af_aro = _af_clamp[1]
 
         # (14) THEORY-OF-MIND
         tom_b = other_mind_predict(omind, mem_text)
@@ -2235,9 +2705,49 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         # back (chat-py-5 root ③ stays closed). Guarded: OFF ⇒ live_seed stays [-1] ⇒ byte-identical.
         if percept_text:
             live_anchors.append({"text_payload": percept_text, "name": "percept"})
+        # H_9729 · WITHHELD-CONTENT RE-ENTRY (default OFF ⇒ byte-identical): the LAST silence tick's
+        # imagined-but-vetoed candidate (latched at :silence-write) re-enters as the decode-seed
+        # anchor (appended LAST ⇒ live_anchors[-1] ⇒ the actually-consumed seed suffix), giving W_S
+        # CONTENT a 1-tick-lagged causal path to the NEXT imagined candidate WITHOUT a new state
+        # surface. Consumed once. --wm-dual-perm byte-SORTS the carrier (feat8-preserving, order-
+        # destroying = load-bearing control) · --wm-dual-swap substitutes a donor's withheld cand.
+        # Arm label rides a trace-only field, never the anchor `name` (production never branches on
+        # "wm_withheld_reentry" — the :2460 lesson). p5-clean: vetoed imagination, not a spoken echo.
+        _wh_reentry_text = ""
+        _wh_reentry_arm = "off"
+        if _wm_dual_read == "content" and _wm_dual_oracle and tick > 0:
+            # POSITIVE CONTROL (run-2 redesign) · two IN-DISTRIBUTION English carriers, signature-separable
+            # on [n_dig, n_lower] (A digit-rich prose vs B digit-free prose — the 303M LM propagates both,
+            # unlike the OOD 00 11 / !! ;; that washed out 0/80), drawn on a SEEDED-RANDOM aperiodic
+            # schedule (NOT tick-parity — a period-2 schedule makes the reader's circular-shift null a
+            # point mass ⇒ p≡1.0 structurally). --reach-oracle requires the reader to RECOVER the A/B
+            # signal in cand[t+1]; ∅ ⇒ channel severed. Survival is certified by a pilot before any read.
+            _wh_reentry_text = _ORACLE_A if _oracle_rng.random() < 0.5 else _ORACLE_B
+            _wh_reentry_arm = "oracle"
+            live_anchors.append({"text_payload": _wh_reentry_text, "name": "wm_withheld_reentry"})
+            _dual_reentry_text = None
+        elif _wm_dual_read == "content" and _dual_reentry_text:
+            _wh_reentry_text = _dual_reentry_text
+            _wh_reentry_arm = "own"
+            if _wm_dual_perm:
+                _wh_reentry_text = bytes(sorted(_wh_reentry_text.encode("utf-8", "surrogateescape"))).decode("utf-8", "surrogateescape")
+                _wh_reentry_arm = "perm"
+            elif _wm_dual_swap:
+                _donor_wh = _wm_dual_swap.get(int(tick))
+                if _donor_wh is not None:
+                    _wh_reentry_text = _donor_wh
+                    _wh_reentry_arm = "donor"
+            live_anchors.append({"text_payload": _wh_reentry_text, "name": "wm_withheld_reentry"})
+            _dual_reentry_text = None   # consume once (write-site re-latches for the next tick)
 
         # ── op-grip: the 4 filler CONSTANTS are now LIVE op reads ──
         gap_ctx = _afs_clip01(1.0 - rel_lane)
+        # H_9607 · unconditional default for the H_9627 dual-ledger fn. It was assigned ONLY inside the
+        # `if _emit_gate == "refractory"` branch (:~2296) but read unconditionally by the H_1058 trace
+        # block (:~2389) → UnboundLocalError on the DEFAULT clock gate whenever ANIMA_DECISION_TRACE is
+        # set. A pre-existing origin/main bug the A⇄G smoke surfaced (a pool live-smoke catch a local
+        # compile misses); hoisting the None default is the minimal safe fix (refractory branch overrides).
+        _dual_fn = None
 
         # H_9404 · PAY: the substrate's own A<->G tension this tick pays down the emit-debt BEFORE the
         # gate reads it (secs_since_emit stays live above as telemetry / trace field). refr_debt is only
@@ -2250,10 +2760,11 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
             # H_9415 p5-REWIRE (owner-ratified) · emit ⟺ score_A > g_recog(candidate); θ + clock
             # RETIRED. g_recog = clip01(immune recall MARGIN on the FORMED candidate, taken BEFORE
             # bind = recognition-before-memorisation, chat-py-5). Distinct from H_9404 --emit-refractory
-            # earned (which keeps θ, only swaps the rate SOURCE); this retires θ too. Not the production
-            # default yet — the switch waits on the new-daemon C1-C3 measurement H (a_verified_must_wire).
+            # earned (which keeps θ, only swaps the rate SOURCE); this retires θ too. H_9712 · this IS
+            # the production default now (owner-approved · Ψ≈½ via H_9627 dual-ledger · clock at --emit-gate clock).
             # H_9419 · the recognition functional: d1 margin (default, byte-identical) OR the
             # affinity-reach d2−d1 (the G-pole reach lever). --g-shuffle composes with either.
+            _dual_fn = None   # H_9627 · set only by the wm-dual family (else brain uses _recog_fn)
             if _g_reach == "affinity":
                 _recog_fn = lambda _t: _afs_clip01(immune_memory_recall_reach_text(immune, _grecog_text(_t)))
             elif _g_reach == "cb-perr":
@@ -2292,8 +2803,38 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 # survives ∧ alienwm SATURATE ⇒ the gate reads "coverage of MY discourse", not a
                 # marginal candidate stat (H_9424 alienctx sign, ported to WM).
                 _recog_fn = lambda _t: _afs_clip01(wm_buffer_probe_score(_wm_cover_alien, _afs_byte_feature(_grecog_text(_t), 8)))
+            elif _g_reach in ("wm-dual", "wm-dual-alien-emit", "wm-dual-alien-silence"):
+                # H_9627 · dual content ledger — emit ⟺ S(withheld coverage) > E(spoken coverage).
+                # The probe returns (S, E); brain_emit_refractory compares them (dual_probe_fn). Both
+                # buffers are read at their LEAKED, pre-gate-in state (recognition-before-memorisation,
+                # chat-py-5) — wmb leaked at :wmb-leak, wm_withheld beside it. score_A does NOT enter
+                # the comparison (that is the escape from H_9610's one-sided store; score only sources
+                # write-strength, applied symmetrically at the emit/silence gate-in sites). The alien
+                # arms freeze ONE side's READ to a never-gated empty buffer (coverage ≈ 0) to sever
+                # exactly one restoring direction — dissociation: alien-emit kills the emit→silence
+                # brake (E≈0), alien-silence kills the silence→emit accelerator (S≈0).
+                _e_buf = _wm_cover_alien if _g_reach == "wm-dual-alien-emit" else wmb
+                _s_buf = _wm_cover_alien if _g_reach == "wm-dual-alien-silence" else wm_withheld
+                _dual_fn = (lambda _eb, _sb: (lambda _t: (
+                    _afs_clip01(wm_buffer_probe_score(_sb, _afs_byte_feature(_grecog_text(_t), 8))),
+                    _afs_clip01(wm_buffer_probe_score(_eb, _afs_byte_feature(_grecog_text(_t), 8))))))(_e_buf, _s_buf)
+                _recog_fn = lambda _t: 0.0   # unused when dual_probe_fn is set
             else:
                 _recog_fn = lambda _t: _afs_clip01(immune_memory_recall_margin_text(immune, _grecog_text(_t)))
+            _fe = None
+            if _yoke_mask is not None:
+                if int(tick) not in _yoke_mask:   # H_9728 · mask must cover the run (no silent default)
+                    raise SystemExit("--yoke-mask: tick %d absent from mask %s (INVALID · mask must cover "
+                                     "every tick of the run)" % (int(tick), _yoke_src.split("/")[-1]))
+                _fe = _yoke_mask[int(tick)]
+            # H_9765 · signed per-tick dither dose ±eps for the S−E do(). Rademacher sign from a
+            # domain-separated (sample_seed, tick) PRNG — STATE-INDEPENDENT (never reads the tick's own
+            # tension/margin) so it is a valid exogenous intervention; deterministic given (seed, tick) so
+            # the run replays. eps=0.0 ⇒ _dd=0.0 ⇒ brain takes the byte-identical comparison path.
+            _dd = 0.0
+            if _dither_eps != 0.0:
+                _dsgn = random.Random((_sample_seed * 2654435761 + tick * 40503 + 0x9765) & 0x7FFFFFFF).random()
+                _dd = _dither_eps if _dsgn < 0.5 else -_dither_eps
             dec = brain_emit_refractory(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
                              secs_since_emit, False, True,
@@ -2303,7 +2844,20 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                              _dyn_w,
                              _rec_silent_cand,  # H_9510 HOLE-1 · record imagined cand for diag
                              (_route_gain if _tension_route == "pc2" else None),  # H_9574 PC2
-                             pc2_mouth=("" if _pc2_mouth == "off" else _pc2_mouth))  # H_9575
+                             pc2_mouth=("" if _pc2_mouth == "off" else _pc2_mouth),  # H_9575
+                             dual_probe_fn=_dual_fn,  # H_9627 · dual content ledger (None = off)
+                             score_perturb=_score_perturb,  # H_9627 · central-thesis bar (0 = off)
+                             zeta_ladder=(_pc2_zeta or None),  # H_9664 ζ-ladder (None = off)
+                             forced_emit=_fe,  # H_9728 Θ−-yoked · replay Θ+ emit bit (None = Θ+ path)
+                             dual_margin_dither=_dd,  # H_9765 · signed do() on S−E input (0.0 = byte-id)
+                             z_loading_state=_zl_state)  # H_9755 refit-axis ζ-ladder (None = off)
+            # H_9755 warmup: accumulate every tick's factor vector + realized emit bit; at the
+            # boundary freeze the online-PCA refit loading (deterministic · sign-anchored to frozen).
+            if _z_loading_arms and _zl_state is not None and _zl_state.get("phase") == "warmup":
+                _zl_warm.append(((rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane,
+                                  agloop_ctx), bool(dec.get("gen_emitted"))))
+                if len(_zl_warm) >= _refit_warmup:
+                    _zl_state, _zl_meta_row = _zl_boundary(_zl_warm, _z_loading_arms, _sample_seed)
         else:
             dec = brain_emit(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
@@ -2323,6 +2877,24 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         g_emit = str(dec["gen_emitted"]).lower() == "true"
         g_back = str(dec["gen_backend"])
         g_text = str(dec["gen_text"])
+        # H_9627 · dual content ledger — the SILENCE-side write. On a silence tick the candidate was
+        # imagined (dual_cand_text) but not spoken; gate it into W_S (withheld). This is the active
+        # accelerator half the one-sided wm-cover gate lacked: silence now WRITES substrate state,
+        # symmetric to emit's W_E gate-in (:2427, feat8(g_text)). Same strength 1.0 = gain-lock. The
+        # emit-side W_E update rides the existing emit block, so nothing to add there. Off unless the
+        # wm-dual family is active (dual_cand_text present only then).
+        _next_dual_reentry = None   # H_9729 · re-latch each tick (None on non-qualifying ⇒ no recurrent monologue)
+        if _dual_fn is not None and not g_emit:
+            _dual_ct = str(dec.get("dual_cand_text", ""))
+            if byte_len(_dual_ct) > 0:
+                wm_withheld = wm_buffer_gate_in(wm_withheld, _afs_byte_feature(_dual_ct, 8), 1.0)
+                # H_9729 · latch this withheld candidate's RAW text for next-tick re-entry (the
+                # wm_withheld feat8 write ABOVE stays factual — only the re-entry CONTENT is the
+                # measured surface). Direct-copy/p5 guard: skip when it equals the last utterance
+                # (that would be a banned self-seed). "last-write re-entry", not ledger recall.
+                if _wm_dual_read == "content" and _dual_ct != last_gtext:
+                    _next_dual_reentry = _dual_ct
+        _dual_reentry_text = _next_dual_reentry
         # anima study · record this tick for the teacher loop (guarded — no-op in production).
         # The percept source may read the returned transcript to decide the next percept; silence
         # (did_emit False) is a real signal it must respect, never a cue to re-prompt/force emit.
@@ -2498,6 +3070,12 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         #    EMIT score>0.3∧safe · ACTIVE_VETO score>0.3∧¬safe (a braked live impulse) · PASSIVE score<=0.3.
         if _trace_fh is not None:
             import json as _json, hashlib as _hl, base64 as _b64
+            # H_9755 one-time _zl_meta row (warmup PCA loadings + moments) — the evaluate reader
+            # recomputes u from zl_factors + this meta and refuses the run on any mismatch.
+            if _zl_meta_row is not None and not _zl_meta_row.get("_written"):
+                _zl_meta_row["_written"] = True
+                _trace_fh.write(_json.dumps({_mk: _mv for _mk, _mv in _zl_meta_row.items()
+                                             if _mk != "_written"}) + "\n")
             _score = float(dec["motivation"])
             _safe = str(dec["safe"]).lower() == "true"
             _imp = _score > 0.3          # engine_g should_emit / PROACTIVE_THRESHOLD
@@ -2557,6 +3135,11 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                     "g_arm": str(_g_arm), "refractory": (_refractory or None),
                     "g_reach": str(_g_reach), "emit_gate": str(_emit_gate),  # H_9419
                     "tension_route": str(_tension_route), "route_gain": float(_route_gain),  # H_9557
+                    # H_9729 · SILENCE-CONTENT arm provenance (the reader binds a trace to its arm).
+                    "wm_dual_read": str(_wm_dual_read), "wm_dual_perm": bool(_wm_dual_perm),
+                    "wm_dual_swap": bool(bool(_wm_dual_swap_path)), "wm_dual_oracle": bool(_wm_dual_oracle),
+                    "yoked": bool(_yoke_mask is not None),
+                    "yoke_src": (_yoke_src.split("/")[-1] if _yoke_mask is not None else ""),
                 }) + "\n")
             # build the row now (decision vars fresh); the WRITE is deferred to end-of-tick
             # so grow_feats captures ALL 3 afield grow paths (C8 + C8b + N3/REM imagination,
@@ -2577,9 +3160,23 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 "gen_emitted": g_emit, "gen_backend": g_back, "swapped": swapped,
                 "psi_gws": psi_gws, "psi_lprec": psi_lprec, "emit_drive": float(emit_drive),
                 "secs_since_emit": float(secs_since_emit),
+                # H_9607 · A⇄G feedback telemetry (κ=0 ⇒ ag_drive≡0.0; ag_fb_I/ag_s still evolve as
+                # monitor-only). --ag-criticality reads these: ag_s=signed net, ag_fb_I=leaky-integral,
+                # ag_drive=κ·SGN·I fed to the field. distinct(ag_drive)>1 confirms the loop is live.
+                "ag_s": float(ag_s_signed), "ag_fb_I": float(ag_fb_I),
+                "ag_drive": float(ag_drive), "ag_feedback_kappa": float(_ag_feedback),
                 "gtext_sha": _hl.sha256(_gtb).hexdigest()[:16], "gtext_len": byte_len(g_text),
                 "gtext_b64": _b64.b64encode(_gtb).decode("ascii"),
                 "cand_b64_diag": dec.get("cand_b64_diag", ""),  # H_9510 HOLE-1 · imagined cand (diag)
+                # H_9729 · SILENCE-CONTENT re-entry: the carrier injected this tick (source X for TE)
+                # + its arm (off/own/perm/donor · trace-only label). --silence-content-te reads X from
+                # wm_reentry_b64[t] and the target Y from cand_b64_diag[t+1] (pre-gate · mouth-immune).
+                "wm_reentry_arm": _wh_reentry_arm,
+                "wm_reentry_b64": (_b64.b64encode(_wh_reentry_text.encode("utf-8", "surrogateescape")).decode("ascii") if _wh_reentry_text else ""),
+                # H_9729 · the PRE-GATE imagined candidate this tick (brain's dual_cand_text · set every
+                # tick the dual gate runs, BEFORE the emit/silence decision) = the TE target Y_{t+1}.
+                # Pre-gate ⇒ mouth-severance-immune (Y never transits the byte mouth · Sol reconcile).
+                "cand_pregate_b64": (_b64.b64encode(str(dec.get("dual_cand_text", "")).encode("utf-8", "surrogateescape")).decode("ascii") if dec.get("dual_cand_text") else ""),
                 # H_1058 Part A1 side-channel: the mouth's actually-consumed decode-seed bytes
                 # (phi_leg.py TRUE-consumed-bytes context source; a_substrate_disjoint · p5).
                 "seed_len": len(_seed_b), "seed_b64": _b64.b64encode(_seed_b).decode("ascii"),
@@ -2594,11 +3191,28 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 # the ratified gate produced a live band (both emit and silence ticks) vs mute/saturate.
                 "gate_mode": str(dec.get("gate_mode", "clock")),
                 "g_recog_gate": (float(dec["g_recog_gate"]) if dec.get("g_recog_gate") is not None else None),
+                # H_9627 · dual content ledger — S(withheld) · E(spoken) · margin S−E per tick, so the
+                # offline analysis reads regime-split autocov (two-sided spring) and score-perturb
+                # robustness directly from the trace (None when the wm-dual family is off).
+                "dual_s_withheld": (float(dec["dual_s_withheld"]) if dec.get("dual_s_withheld") is not None else None),
+                "dual_e_spoken": (float(dec["dual_e_spoken"]) if dec.get("dual_e_spoken") is not None else None),
+                "dual_margin": (float(dec["dual_margin"]) if dec.get("dual_margin") is not None else None),
+                "would_emit": (bool(dec["would_emit"]) if dec.get("would_emit") is not None else None),  # H_9728 yoke severance-dose
                 "pc2_proj": (float(dec["pc2_proj"]) if dec.get("pc2_proj") is not None else None),  # H_9557
                 "route_k": (int(dec["route_k"]) if dec.get("route_k") is not None else None),  # H_9557
                 "pc2_z": (float(dec["pc2_z"]) if dec.get("pc2_z") is not None else None),  # H_9575
                 "pc2_arm": str(_pc2_mouth),  # H_9575
                 "gtext_pc2_b64": (_b64.b64encode(str(dec.get("gen_text_steered", "")).encode("utf-8", "surrogateescape")).decode("ascii") if dec.get("gen_text_steered") else None),  # H_9575 · steered (spoken) text
+                # H_9664 ζ-ladder: [{zeta, text_b64}] per emit tick. ζ=0 entry MUST equal
+                # gtext_b64 byte-for-byte (isolation certificate). Absent ⇒ [] ⇒ flag off.
+                "gtext_zeta": [dict({"zeta": _zr["zeta"],
+                                "text_b64": _b64.b64encode(str(_zr["text"]).encode("utf-8", "surrogateescape")).decode("ascii")},
+                                **({"loading": _zr["loading"], "u": _zr["u"]} if "loading" in _zr else {}))
+                               for _zr in (dec.get("gen_text_zeta") or [])],
+                # H_9755 refit-axis ζ-ladder — this tick's raw 8-factor vector + phase, for the
+                # evaluate --by-loading u-self-check. Absent unless --z-loading on ⇒ legacy unchanged.
+                **({"zl_factors": dec.get("zl_factors"), "zl_phase": dec.get("zl_phase")}
+                   if _z_loading_arms else {}),
                 # H_9413 L5 · BOTH G readouts every tick (arm-independent counterfactual): the
                 # discarded recall MARGIN (pending_rel · a4 source) AND the production top-2 GAP
                 # (pending_gap · a1 source), so --g-readout-info can re-screen either readout offline
@@ -2615,6 +3229,9 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 # valence/arousal · ca3=hippocampus replay · wm=working-memory. (Fable D2 spec.)
                 "cb_surprise": float(cb_surprise), "af_val": float(af_val),
                 "af_aro": float(af_aro), "ca3_ctx": float(ca3_ctx),
+                # H_9794 --af-clamp / --af-impulse arm labels (trace-only · null when OFF · never a branch key)
+                "af_clamp": (list(_af_clamp) if _af_clamp is not None else None),
+                "af_impulse": (list(_af_imp) if _af_imp is not None else None),
                 "wm_active": float(wm_active),
                 # H_9411 dead-gauge control arms (trace-only null/pedestal · never a branch key)
                 # — the collapse-Δ vs these is the liveness verdict, not the raw value (Ψ-SOMA/p7).
@@ -2713,6 +3330,11 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         if dr_imagination_active(stage) == 1:
             imag_budget = dr_stage_size(stage)
             imag_snaps = ir_select_snapshots(wake_mem, tick, imag_budget)
+            if _imag_shuffle and imag_snaps:
+                # H_9790 A_shuf: deterministic salience-destroying permutation (multiset preserved).
+                _iss = sum((_j + 1) * _b for _j, _b in
+                           enumerate(bytearray(session_seed.encode("utf-8", "surrogateescape"))))
+                random.Random((_iss * 2654435761 + tick) & 0x7FFFFFFF).shuffle(imag_snaps)
             imag_i = 0
             while imag_i < len(imag_snaps):
                 rec = ir_replay_tick(imag_snaps[imag_i])
@@ -2728,9 +3350,10 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 # feature contact-inhibits to a no-op; this makes the grow REAL (cell_count rises), still det + emit-free.
                 _imag_feat = session_seed + "|imag|" + str(imag_snaps[imag_i]["ctx_tokens"][0]) + "|" + str(imag_snaps[imag_i]["source_index"])
                 _h1058_imag_feat = _afs_byte_feature(_imag_feat, 8)
-                afield = vadapt_field_step(afield, _h1058_imag_feat, cfg)
-                _h1058_grow_feats.append(list(_h1058_imag_feat))
-                cell_count = vadapt_field_cells(afield)
+                if _imag_growth != "off":   # H_9790 A_off lesion: skip ONLY the replay grow
+                    afield = vadapt_field_step(afield, _h1058_imag_feat, cfg)
+                    _h1058_grow_feats.append(list(_h1058_imag_feat))
+                    cell_count = vadapt_field_cells(afield)
                 imagination_mitosis_ticks = imagination_mitosis_ticks + 1
                 imag_i = imag_i + 1
             imagination_replayed_total = imagination_replayed_total + len(imag_snaps)
@@ -2743,8 +3366,29 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
 
         tick = tick + 1
 
+    # H_9744 (S4) · the store is SESSION memory, so it dies with the session. set_clms_store writes a
+    # process global (core/decode.py:302), and a later daemon in this same process would otherwise
+    # inherit a previous session's facts — cli/evaluate.py:4428 resets for the same reason. G-W3(v).
+    if _store_episodic == "on":
+        set_clms_store(None)
+        _pln("store-episodic  : writes=" + str(_ep_store_writes)
+             + "  ring=" + str(len(_ep_store_ents)) + "/" + str(_ep_n_slot) + "  (session store cleared)")
+
     if _trace_fh is not None:
         _trace_fh.close()
+
+    # H_9738 · persist the FINAL W_S composition (keys + act) so a later run can transplant it
+    # (--ws-init). Measurement-only side channel: nothing in this session read it back, so the
+    # emit path is byte-untouched (absent --ws-dump = production byte-identical).
+    if _ws_dump != "":
+        import json as _wsj2
+        with open(_ws_dump, "w", encoding="utf-8") as _wf2:
+            _wsj2.dump({"keys": [list(map(float, k)) for k in wm_withheld.keys],
+                        "act": [float(a) for a in wm_withheld.act],
+                        "n_slots": int(wm_withheld.n_slots),
+                        "lam": float(wm_withheld.lam),
+                        "sample_seed": int(_sample_seed)}, _wf2)
+        _pln("anima-py chat: --ws-dump %s · W_S %d slot(s) persisted" % (_ws_dump, wm_withheld.n_slots))
 
     # ══ LANE-23b SESSION END — persist the grounded self as a .kosmos self-anchor (twin of the
     #    hexa session-end persist · a_kosmos · closes H_1471 R2b). Single write entry create_anchor,

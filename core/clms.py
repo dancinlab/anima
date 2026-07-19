@@ -41,6 +41,16 @@ def _softmax(z):
     return e / e.sum()
 
 
+def _sigmoid(x):
+    """Overflow-safe logistic (H_9696 gate). The naive 1/(1+exp(-x)) warns and loses the branch for
+    |x|>~700; a saturated gate is a LEGITIMATE state here (gate→0 is how the lane stays silent where
+    it has nothing to say), so it must saturate cleanly rather than RuntimeWarning."""
+    if x >= 0.0:
+        return 1.0 / (1.0 + np.exp(-x))
+    e = np.exp(x)
+    return e / (1.0 + e)
+
+
 def _gelu(x):
     # tanh approximation — MUST match CLMSModule's F.gelu(approximate="tanh") for 2-production parity
     # (constants byte-identical to core/clml._gelu).
@@ -71,8 +81,24 @@ def _entity_key(key_emb, entity):
     return key_emb[ids].mean(axis=0)
 
 
-def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None):
+def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, audit=None,
+                query="qpos", fuse="overwrite", fresh_yn=None):
     """CLMS store-bridge lane: OVERWRITE the answer-position logits row with λ·store_logits.
+
+    query/fuse (H_9695 R3 · the read→mouth wiring the G6 angles need · defaults reproduce the
+    H_9423 lane byte-for-byte):
+      query="qpos"        — fire only where find_qpos hits the literal "=> " trigram (H_9423).
+      query="every-token" — fire at EVERY row. The literal trigram cannot exist in free ideation,
+                            so a G6-facing lane must be able to query without a marker. Note the
+                            marker is not merely absent in free generation: teaching the mouth to
+                            emit "=> " itself would be kill #1's scaffold moved inside the mouth,
+                            which is why the legal form is a learned gate (H_9696), not a literal.
+      fuse="overwrite"    — out[t] = λ·s (H_9423 store_only gate: the structural shortcut-cut that
+                            makes the storebind readout attributable to the lane alone).
+      fuse="gated-add"    — out[t] = logits[t] + λ·s. Overwriting EVERY row would delete the trunk
+                            and destroy fluency (dist<5 kills the ρ·fan panel before bind can be
+                            read); additive keeps the lane a perturbation whose CONTENT-dependence
+                            is what the scramble controls test.
 
     logits : (T, V) float — readout(+CLML) logits. The caller's array is NOT mutated (internal copy).
     yn     : (T, d) float — pre-slot trunk penultimate (= _fwd_trunk output = yn_trunk, the SAME tap
@@ -86,9 +112,14 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None):
              dead, independent of whether addressing can be learned — read no negative before it passes).
     lam_override : None = file λ · 0.0 = λ0 control (C2, byte-identical passthrough) · 1.0 = store_only.
 
-    Passthrough (returns logits unchanged): clms None · lane_type==0 · store None · qpos empty · λ==0.
+    Passthrough (returns logits unchanged): clms None · lane_type==0 · store None · λ==0 · and
+    (query="qpos" only) qpos empty. query="every-token" does NOT require qpos — free ideation
+    contains no "=> " by construction, so gating the marker-free lane on the marker would silence
+    it exactly where it is meant to fire (H_9695).
     Op order is IDENTICAL to CLMSModule.forward (2-production parity)."""
-    if clms is None or int(clms.get("lane_type", 0)) == 0 or store is None or not qpos:
+    if clms is None or int(clms.get("lane_type", 0)) == 0 or store is None:
+        return logits
+    if query == "qpos" and not qpos:
         return logits
     lam = float(clms["lam"]) if lam_override is None else float(lam_override)
     if lam == 0.0:
@@ -99,21 +130,81 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None):
     ents = store["entities"]
     pols = np.asarray(store["pols"], dtype=np.int64)
     K = np.stack([_entity_key(key_emb, ents[i]) for i in range(n_slot)])   # (n_slot, d_k)
-    V_slots = clms["val"][pols]                                            # (n_slot, d_s)
+    lane_type = int(clms.get("lane_type", 1))
+    if lane_type == 4:
+        # H_9696 CLMS-FAN: free ideation carries no polarity, so the value cannot be val[pols]. The
+        # slot's value is projected out of the slot's OWN key — the lane retrieves "which word I am
+        # holding is relevant here" and re-injects its identity = the mouth-internal binding operator
+        # H_1603 names as the shared missing part of both walls.
+        V_slots = K @ clms["W_v"]                                          # (n_slot, d_s)
+    else:
+        V_slots = clms["val"][pols]                                        # (n_slot, d_s)
     scale = 1.0 / np.sqrt(float(clms["d_k"]))
     out = logits.copy()
-    for t in qpos:
+    if query == "every-token":
+        rows = range(len(yn))          # H_9695: marker-free — the lane queries at every position
+    elif query == "qpos":
+        rows = qpos
+    else:
+        raise ValueError("store_apply: query must be 'qpos' or 'every-token' (got %r)" % query)
+    if fuse not in ("overwrite", "gated-add", "odd", "pairodd"):
+        raise ValueError("store_apply: fuse must be 'overwrite', 'gated-add', 'odd' or 'pairodd' (got %r)" % fuse)
+    for t in rows:
         h = yn[t]                                                          # (d,)
-        q = h @ clms["W_q"]                                               # (d_k,) [row-vector conv, CLML-form]
+        if lane_type == 5:                                                 # H_9720-ⓐ fresh query lane
+            hf = (fresh_yn[t] if fresh_yn is not None else h)              # early-layer tap (decode supplies it)
+            q = _gelu(hf @ clms["W_fresh"]) @ clms["W_q_fresh"]           # (d_k,) disjoint address query
+        else:
+            q = h @ clms["W_q"]                                           # (d_k,) [row-vector conv, CLML-form]
         if oracle:
             a = np.zeros(n_slot, dtype=q.dtype)
             a[int(store["target_slot"])] = 1.0                            # softmax bypassed (address free)
         else:
             a = _softmax(q @ K.T * scale)                                # (n_slot,) content-address lookup
-        v = a @ V_slots                                                   # (d_s,) = Σ aᵢ·val[polᵢ]
-        z = _gelu(np.concatenate([v, h]) @ clms["W_h"] + clms["b_h"])     # (r,) [v; h] order fixed
+        if audit is not None:                                            # H_9672 addr-audit (None=byte-identical)
+            ts = store.get("target_slot")
+            audit.append({"argmax": int(np.argmax(a)),
+                          "a_target": float(a[int(ts)]) if ts is not None else -1.0,
+                          "target": int(ts) if ts is not None else -1})
+        if lane_type == 3:                                                # RV-3 majority-null centering (H_9710)
+            a = a - (1.0 / n_slot)                                        # v≡0 at uniform a → shortcut basin gone
+        v = a @ V_slots                                                   # (d_s,) = Σ (aᵢ−c)·val[polᵢ]
+        if lane_type in (2, 3, 4, 5):
+            g = h @ clms["W_g"]                                           # (d_g,) op-gate bottleneck (H_9423)
+            z = _gelu(np.concatenate([v, g]) @ clms["W_h"] + clms["b_h"]) # (r,) [v; g] fusion (v un-diluted)
+        else:                                                             # lane_type 1 legacy: [v; h] fusion
+            z = _gelu(np.concatenate([v, h]) @ clms["W_h"] + clms["b_h"]) # (r,) — S1/S2 artifacts, no silent recast
         s = z @ clms["W_out"]                                             # (V,)
-        out[t] = (lam * s).astype(dt)                                     # ★ overwrite = store_only gate
+        if fuse == "odd":                                                 # H_9760 odd-symmetrized fusion:
+            v_neg = -v                                                    #   s_odd = ½(s(v,g) − s(−v,g)) cancels the
+            if lane_type in (2, 3, 4, 5):                                 #   even (op-gate g-path) prior that emits a
+                z_neg = _gelu(np.concatenate([v_neg, g]) @ clms["W_h"] + clms["b_h"])  # polarity-invariant constant on
+            else:                                                         #   op=0 (H_9744 flip-coh gap). For lane_type 3
+                z_neg = _gelu(np.concatenate([v_neg, h]) @ clms["W_h"] + clms["b_h"])  # (Σ(aᵢ−1/n)=0 ⟹ v_flip≡−v) this
+            s = 0.5 * (s - z_neg @ clms["W_out"])                         #   makes fixed-address flip-coherence = 1.
+        elif fuse == "pairodd":                                           # H_9775 Π-equivariant pair-odd: full-row odd
+            v_neg = -v                                                    #   (H_9760) killed the g/b argmax because it
+            if lane_type in (2, 3, 4, 5):                                 #   subtracted the even level that made g/b the
+                z_neg = _gelu(np.concatenate([v_neg, g]) @ clms["W_h"] + clms["b_h"])  # top logits. Here out[c∉{g,b}]=
+            else:                                                         #   ½(s⁺+s⁻) PRESERVES that even level (argmax
+                z_neg = _gelu(np.concatenate([v_neg, h]) @ clms["W_h"] + clms["b_h"])  # stays g/b = readable) while
+            s_neg = z_neg @ clms["W_out"]                                 #   swapping ONLY the answer pair makes the g/b
+            G_BYTE, B_BYTE = 103, 98                                      #   margin exactly odd in store polarity (Π =
+            sp_g, sp_b = float(s[G_BYTE]), float(s[B_BYTE])              #   103↔98 = the task's answer alphabet, not
+            sn_g, sn_b = float(s_neg[G_BYTE]), float(s_neg[B_BYTE])      #   per-query gold). readability = measured DV.
+            s = 0.5 * (s + s_neg)                                         #   out[c] = ½(s⁺[c]+s⁻[c]) for c∉{g,b}
+            s[G_BYTE] = 0.5 * (sp_g + sn_b)                               #   out[g] = ½(s⁺[g]+s⁻[b])
+            s[B_BYTE] = 0.5 * (sp_b + sn_g)                               #   out[b] = ½(s⁺[b]+s⁻[g])  ⟹ margin odd
+        if lane_type == 4:
+            # H_9696 learned query gate — the legal replacement for the "=> " literal. A literal
+            # taught to the mouth is kill #1's scaffold relocated; a data-dependent nonlinear gate is
+            # precisely the class kill #7 left unmeasured. gate→0 lets the lane stay silent where it
+            # has nothing to say, which is what keeps free-gen fluency (dist>=5) alive.
+            s = _sigmoid(float(h @ clms["W_gate"])) * s
+        if fuse in ("overwrite", "odd", "pairodd"):                       # odd/pairodd use overwrite semantics (H_9760/H_9775)
+            out[t] = (lam * s).astype(dt)                                 # ★ store_only gate (H_9423)
+        else:                                                             # gated-add (H_9695/H_9696)
+            out[t] = (logits[t] + lam * s).astype(dt)                     # lane = perturbation, trunk kept
     return out
 
 
@@ -127,20 +218,98 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None):
 #    instrument-death vector, train-pod vs eval-host generation drift degrades the lookup silently
 #    and a single-host determinism gate can't catch it. 64KB is 0.02% of a 303M .clm — store it.)
 # --------------------------------------------------------------------------- #
-_ARR_ORDER = ("key_emb", "W_q", "val", "W_h", "b_h", "W_out", "lam")
+_ARR_ORDER = ("key_emb", "W_q", "val", "W_h", "b_h", "W_out", "lam")               # lane_type 1 (legacy)
+_ARR_ORDER_V2 = ("key_emb", "W_q", "W_g", "val", "W_h", "b_h", "W_out", "lam")     # lane_type 2 (H_9423 W_g)
+# lane_type 3 = 2 + RV-3 majority-null centering (H_9710) — SAME arrays/header as V2, no new tensors.
+# lane_type 4 (H_9696 CLMS-FAN): W_v projects the VALUE out of the slot's own key (free ideation has
+# no polarity, so val[pols] has nothing to index) and W_gate is the learned query gate that replaces
+# the "=> " literal. NOTE the number: lane_type 3 was taken by H_9710 (merged first) — same ID-race
+# class as hypotheses-jsonl-3, one axis over. Pre-emptor keeps the number; this lane yields to 4.
+_ARR_ORDER_V4 = ("key_emb", "W_q", "W_g", "W_v", "W_gate", "W_h", "b_h", "W_out", "lam")
+# lane_type 5 (H_9720-ⓐ EN-disjoint fresh query lane): the address query is read from an early-layer
+# tap through W_fresh→W_q_fresh (store-CE co-adapts an entity basis off the EN-occupied penultimate);
+# W_q stays packed (unused for addressing, kept for diagnostics). Header adds fresh_k·fresh_L.
+_ARR_ORDER_V5 = ("key_emb", "W_q", "W_fresh", "W_q_fresh", "W_g", "val", "W_h", "b_h", "W_out", "lam")
+
+
+# ── H_9696 (R4) perceptual charging — what the store holds during free ideation ──────────
+# The storebind lane got its store from a runtime manifest. Free ideation has no manifest, and both
+# lab-full models named the same missing part: something must WRITE the store from what the mouth is
+# actually reading. The one p5-clean answer is perception — the decode window's own content words
+# become the keys (holding what you read in WM is a perception route, never the emit gate). p8-clean
+# REQUIRES train and eval to charge through THIS SAME function: a manifest at train and a window at
+# eval is literally a train/infer split.
+
+def charge_store(tok, known, n_slot=8, min_len=3):
+    """Build a store from the decode window's own bytes (perceptual charging · H_9696).
+
+    tok   : the window's byte list (the SAME bytes the trunk sees — no side channel).
+    known : the frozen dictionary the ρ·fan detector already uses. A nonce CANNOT be a G6 store entry
+            because the detector's content-word gate requires `w in known` (rho_fan.py:364), so a
+            store of CVCVC nonces is invisible to the very gate G6 scores — this is exactly where
+            H_9672's synthetic-nonce lane and a G6-facing lane part ways.
+    Returns {"entities": [w]*n_slot, "pols": [0]*n_slot, "target_slot": None}; pols is a structural
+    placeholder (lane_type 4 derives its value from the key via W_v, never from pols). Fewer than
+    n_slot distinct words ⇒ the tail repeats the last (a short window must not change the slot count,
+    or the softmax denominator would move with window length). No content word ⇒ None = the lane
+    stays passthrough (honest silence beats a fabricated store)."""
+    s = "".join(chr(b) for b in tok if 0 <= b < 128)
+    words = []
+    seen = set()
+    for w in _tokenize_ascii(s):
+        if len(w) >= min_len and w in known and w not in seen:
+            seen.add(w)
+            words.append(w)
+    if not words:
+        return None
+    while len(words) < n_slot:
+        words.append(words[-1])
+    return {"entities": words[:n_slot], "pols": [0] * n_slot, "target_slot": None}
+
+
+def _tokenize_ascii(s):
+    """Lowercased alnum runs — the shape rho_fan._rho_fan_words uses, kept local so core/clms does not
+    import the scorer (the lane must not depend on the gate that judges it)."""
+    out = []
+    cur = []
+    for ch in s:
+        if ch.isalnum():
+            cur.append(ch.lower())
+        else:
+            if cur:
+                out.append("".join(cur)); cur = []
+    if cur:
+        out.append("".join(cur))
+    return out
 _KEY_ALPHABET = 256
 
 
 def pack_clms(w: dict) -> bytes:
-    """Pack a CLMS weight dict into appended trailer bytes. `w` = key_emb (256,d_k), W_q (d,d_k),
-    val (2,d_s), W_h (d_s+d,r), b_h (r,), W_out (r,V), lam scalar, lane_type, n_slot, d_k, d_s, r,
-    key_seed. Absent trailer <=> byte-identical model, so a writer only calls this when the model
-    actually has a CLMS lane."""
+    """Pack a CLMS weight dict into appended trailer bytes. Absent trailer <=> byte-identical model, so
+    a writer only calls this when the model actually has a CLMS lane. lane_type 2 (H_9423, default for a
+    trained torch module) inserts d_g into the header (<BIIIIII) and W_g after W_q; lane_type 1 (legacy
+    S1/S2 artifacts) keeps the original <BIIIII header and no W_g — the reader branches on lane_type."""
     out = bytearray()
     out += CLMS_MAGIC
-    out += struct.pack("<BIIIII", int(w.get("lane_type", 1)), int(w["n_slot"]),
-                       int(w["d_k"]), int(w["d_s"]), int(w["r"]), int(w["key_seed"]))
-    for name in _ARR_ORDER:
+    lane_type = int(w.get("lane_type", 2))
+    if lane_type == 5:        # H_9720-ⓐ fresh query lane — V2 header + fresh_k/fresh_L, W_fresh/W_q_fresh
+        out += struct.pack("<BIIIIIIII", 5, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
+                           int(w["d_g"]), int(w["r"]), int(w["key_seed"]),
+                           int(w["fresh_k"]), int(w["fresh_L"]))
+        order = _ARR_ORDER_V5
+    elif lane_type == 4:      # H_9696 CLMS-FAN — same header as V2/V3, extra W_v/W_gate arrays
+        out += struct.pack("<BIIIIII", 4, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
+                           int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
+        order = _ARR_ORDER_V4
+    elif lane_type in (2, 3):   # 2 = W_g fusion (H_9423) · 3 = 2 + majority-null centering (H_9710 RV-3)
+        out += struct.pack("<BIIIIII", lane_type, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
+                           int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
+        order = _ARR_ORDER_V2
+    else:
+        out += struct.pack("<BIIIII", 1, int(w["n_slot"]), int(w["d_k"]),
+                           int(w["d_s"]), int(w["r"]), int(w["key_seed"]))
+        order = _ARR_ORDER
+    for name in order:
         out += np.asarray(w[name], dtype="<f4").reshape(-1).tobytes()
     return bytes(out)
 
@@ -150,11 +319,24 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
     W["V"]). Returns (clms_dict, new_off) or (None, off) if absent/short (passthrough-safe, same guard
     idiom as read_clml). Round-trip byte-identity is trivial: every array is <f4 in the file, the reader
     frombuffers and the writer tobytes — no recompute, no RNG."""
-    if off < 0 or off + 25 > len(buf) or buf[off:off + 4] != CLMS_MAGIC:
+    if off < 0 or off + 5 > len(buf) or buf[off:off + 4] != CLMS_MAGIC:
         return None, off
     p = off + 4
     lane_type = buf[p]; p += 1
-    n_slot, d_k, d_s, r, key_seed = struct.unpack_from("<IIIII", buf, p); p += 20
+    fresh_k = fresh_L = 0
+    if lane_type == 5:                                     # H_9720-ⓐ fresh query lane (+fresh_k/fresh_L)
+        if p + 32 > len(buf):
+            return None, off
+        n_slot, d_k, d_s, d_g, r, key_seed, fresh_k, fresh_L = struct.unpack_from("<IIIIIIII", buf, p); p += 32
+    elif lane_type in (2, 3, 4):                           # 2 = W_g · 3 = +centering (RV-3) · 4 = CLMS-FAN
+        if p + 24 > len(buf):
+            return None, off
+        n_slot, d_k, d_s, d_g, r, key_seed = struct.unpack_from("<IIIIII", buf, p); p += 24
+    else:                                                  # lane_type 1 legacy (no W_g; d_g=0)
+        if p + 20 > len(buf):
+            return None, off
+        n_slot, d_k, d_s, r, key_seed = struct.unpack_from("<IIIII", buf, p); p += 20
+        d_g = 0
 
     def take(n, shape):
         nonlocal p
@@ -162,11 +344,22 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
         return arr
 
     clms = {"lane_type": int(lane_type), "n_slot": int(n_slot), "d_k": int(d_k),
-            "d_s": int(d_s), "r": int(r), "key_seed": int(key_seed)}
+            "d_s": int(d_s), "d_g": int(d_g), "r": int(r), "key_seed": int(key_seed),
+            "fresh_k": int(fresh_k), "fresh_L": int(fresh_L)}
     clms["key_emb"] = take(_KEY_ALPHABET * d_k, (_KEY_ALPHABET, d_k))
     clms["W_q"] = take(d * d_k, (d, d_k))
-    clms["val"] = take(2 * d_s, (2, d_s))
-    clms["W_h"] = take((d_s + d) * r, (d_s + d, r))
+    if lane_type == 5:                                    # H_9720-ⓐ fresh lane: W_fresh · W_q_fresh (pack order)
+        clms["W_fresh"] = take(d * fresh_k, (d, fresh_k))
+        clms["W_q_fresh"] = take(fresh_k * d_k, (fresh_k, d_k))
+    if lane_type in (2, 3, 4, 5):
+        clms["W_g"] = take(d * d_g, (d, d_g))
+    if lane_type == 4:                                     # H_9696: value-from-key + learned gate
+        clms["W_v"] = take(d_k * d_s, (d_k, d_s))
+        clms["W_gate"] = take(d, (d,))
+    if lane_type != 4:                                     # lane 4 has no polarity table (W_v replaces it)
+        clms["val"] = take(2 * d_s, (2, d_s))
+    w_h_in = (d_s + d_g) if lane_type in (2, 3, 4, 5) else (d_s + d)
+    clms["W_h"] = take(w_h_in * r, (w_h_in, r))
     clms["b_h"] = take(r, (r,))
     clms["W_out"] = take(r * V, (r, V))
     clms["lam"] = float(np.frombuffer(buf, "<f4", 1, p)[0]); p += 4
@@ -179,17 +372,30 @@ def clms_weights_from_torch(mod) -> dict:
     are all non-square, so a missing transpose dies as a shape error (never silently)."""
     def n(t):
         return t.detach().cpu().numpy().astype("<f4")
-    return {
-        "lane_type": 1, "n_slot": mod.n_slot, "d_k": mod.d_k, "d_s": mod.d_s, "r": mod.r,
-        "key_seed": mod.key_seed,
+    out = {
+        "lane_type": (5 if int(getattr(mod, "fresh_k", 0)) > 0 else       # 5=H_9720-ⓐ fresh query lane
+                      (4 if getattr(mod, "fangate", False) else
+                       (3 if getattr(mod, "val_center", False) else 2))),  # 4=CLMS-FAN · 3=RV-3 · 2=W_g
+        "n_slot": mod.n_slot, "d_k": mod.d_k, "d_s": mod.d_s,
+        "d_g": mod.d_g, "r": mod.r, "key_seed": mod.key_seed,
+        "fresh_k": int(getattr(mod, "fresh_k", 0)), "fresh_L": int(getattr(mod, "fresh_L", 3)),
         "key_emb": n(mod.key_emb),
         "W_q": n(mod.W_q.weight).T,          # (d_k,d) → (d,d_k)
+        "W_g": n(mod.W_g.weight).T,          # (d_g,d) → (d,d_g)  H_9423 fusion bottleneck
         "val": n(mod.val),                    # (2,d_s)
-        "W_h": n(mod.W_h.weight).T,          # (r,d_s+d) → (d_s+d,r)
+        "W_h": n(mod.W_h.weight).T,          # (r,d_s+d_g) → (d_s+d_g,r)
         "b_h": n(mod.W_h.bias),
         "W_out": n(mod.W_out.weight).T,      # (V,r) → (r,V)
         "lam": n(mod.lam).reshape(1),
     }
+    if out["lane_type"] == 5:                 # H_9720-ⓐ — fresh query lane projections
+        out["W_fresh"] = n(mod.W_fresh.weight).T      # (fresh_k,d) → (d,fresh_k)
+        out["W_q_fresh"] = n(mod.W_q_fresh.weight).T  # (d_k,fresh_k) → (fresh_k,d_k)
+    if out["lane_type"] == 4:                 # H_9696 — value-from-key + learned gate; val not packed
+        out["W_v"] = n(mod.W_v.weight).T      # (d_s,d_k) → (d_k,d_s)
+        out["W_gate"] = n(mod.W_gate.weight).reshape(-1)   # (1,d) → (d,)
+        out.pop("val", None)
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -215,10 +421,19 @@ if _HAS_TORCH:
         (② shortcut-cut is structural, not a regulariser)."""
 
         def __init__(self, d, V, n_slot=8, d_k=64, d_s=64, r=128,
-                     key_seed=9423, key_emb=None, lam0=1.0):
+                     key_seed=9423, key_emb=None, lam0=1.0, d_g=64, val_center=False, fangate=False,
+                     fresh_k=0, fresh_L=3):
             super().__init__()
             self.d, self.V, self.n_slot = d, V, n_slot
             self.d_k, self.d_s, self.r, self.key_seed = d_k, d_s, r, key_seed
+            self.d_g = d_g                                          # H_9423 fusion-bottleneck (lane_type 2)
+            self.val_center = bool(val_center)                     # RV-3 majority-null centering (lane_type 3)
+            self.fangate = bool(fangate)                           # H_9696 CLMS-FAN (lane_type 4)
+            # H_9720-ⓐ EN-disjoint fresh query lane (lane_type 5): the ADDRESS query is read from an
+            # early-layer tap (detached from the trunk in the trainer) through W_fresh·W_q_fresh — store-CE
+            # co-adapts an entity basis that does NOT compete with EN-CE for the penultimate. fresh_k=0 =
+            # off = every existing lane byte-identical (nothing packed, forward unchanged).
+            self.fresh_k, self.fresh_L = int(fresh_k), int(fresh_L)
             self.scale = 1.0 / (d_k ** 0.5)
             if key_emb is None:
                 ke = (np.random.RandomState(key_seed).standard_normal((256, d_k))
@@ -227,8 +442,22 @@ if _HAS_TORCH:
                 ke = np.asarray(key_emb, dtype="<f4")
             self.register_buffer("key_emb", _torch.from_numpy(ke.copy()), persistent=True)
             self.W_q = _nn.Linear(d, d_k, bias=False)
+            if self.fresh_k > 0:                                   # H_9720-ⓐ fresh query lane params
+                self.W_fresh = _nn.Linear(d, self.fresh_k, bias=False)      # tap(d) → fresh_k
+                self.W_q_fresh = _nn.Linear(self.fresh_k, d_k, bias=False)  # fresh_k → d_k address
+            # H_9423 value-read fix: yn_q enters the fusion MLP through a learned bottleneck W_g:d→d_g
+            # (op is ~1 bit; d_g=64 suffices) so the store value v (d_s) is not diluted 59× against the
+            # raw d=3784 penultimate. Restores the toy [v64;g64] fusion geometry d_model-invariantly —
+            # the S2 both-arm ORACLE-death (0.47/0.49) was v drowned in [v; yn_q] at d=3784.
+            self.W_g = _nn.Linear(d, d_g, bias=False)
             self.val = _nn.Parameter(_torch.randn(2, d_s) * 0.02)
-            self.W_h = _nn.Linear(d_s + d, r)
+            if self.fangate:
+                # H_9696: free ideation has no polarity — the value is projected from the slot's OWN
+                # key (W_v), and a learned data-dependent gate (W_gate) replaces the "=> " literal.
+                # `val` stays allocated but is UNUSED on this lane (and is not packed).
+                self.W_v = _nn.Linear(d_k, d_s, bias=False)
+                self.W_gate = _nn.Linear(d, 1, bias=False)
+            self.W_h = _nn.Linear(d_s + d_g, r)
             self.W_out = _nn.Linear(r, V, bias=False)
             self.lam = _nn.Parameter(_torch.tensor(float(lam0)))   # monitor-only scalar (no loss term)
 
@@ -241,16 +470,30 @@ if _HAS_TORCH:
                 rows.append(self.key_emb[ids].mean(dim=0))
             return _torch.stack(rows)
 
-        def forward(self, yn_q, K, pols, oracle_slot=None):
+        def forward(self, yn_q, K, pols, oracle_slot=None, need_att=False, yn_fresh=None):
             # yn_q:(B,d) query-position penultimate · K:(B,n_slot,d_k) · pols:(B,n_slot) in {0,1}
-            q = self.W_q(yn_q)                                            # (B,d_k)
-            att = _torch.bmm(K, q.unsqueeze(-1)).squeeze(-1) * self.scale  # (B,n_slot)
+            # yn_fresh:(B,d) H_9720-ⓐ early-layer tap (trainer detaches it); when present + fresh_k>0 the
+            # ADDRESS query comes from the disjoint fresh lane, but yn_q STILL drives the W_g op-gate below.
+            if self.fresh_k > 0 and yn_fresh is not None:
+                q = self.W_q_fresh(_F.gelu(self.W_fresh(yn_fresh), approximate="tanh"))  # (B,d_k)
+            else:
+                q = self.W_q(yn_q)                                        # (B,d_k)
+            att = _torch.bmm(K, q.unsqueeze(-1)).squeeze(-1) * self.scale  # (B,n_slot) address logits
             if oracle_slot is not None:
                 a = _F.one_hot(oracle_slot, self.n_slot).to(q.dtype)      # (B,n_slot) softmax bypassed
             else:
                 a = _torch.softmax(att, dim=-1)
-            V_slots = self.val[pols]                                      # (B,n_slot,d_s)
+            V_slots = self.W_v(K) if self.fangate else self.val[pols]     # (B,n_slot,d_s)
+            if self.val_center:                                           # RV-3 majority-null centering (H_9710)
+                a = a - (1.0 / self.n_slot)                               # v≡0 at uniform a → shortcut basin gone
             v = _torch.bmm(a.unsqueeze(1), V_slots).squeeze(1)           # (B,d_s)
-            z = _F.gelu(self.W_h(_torch.cat([v, yn_q], dim=-1)), approximate="tanh")   # (B,r)
+            g = self.W_g(yn_q)                                            # (B,d_g) op-gate bottleneck
+            z = _F.gelu(self.W_h(_torch.cat([v, g], dim=-1)), approximate="tanh")   # (B,r) [v; g] fusion
             s = self.W_out(z)                                             # (B,V)
-            return self.lam * s
+            if self.fangate:
+                s = _torch.sigmoid(self.W_gate(yn_q)) * s                 # (B,1)*(B,V) learned gate
+            out = self.lam * s
+            # H_9672 addr-loss: expose the pre-softmax address logits so the trainer can supervise them
+            # (L_addr = CE(att, target_slot)). att is computed regardless of oracle_slot, so oracle-train
+            # + addr-loss compose. need_att=False → byte-identical to the prior single-return signature.
+            return (out, att) if need_att else out

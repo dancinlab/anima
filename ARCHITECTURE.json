@@ -1,129 +1,4 @@
 {
- "datasets": [
-  {
-   "id": "anima-corpus-en-general",
-   "repo_id": "dancinlab/anima-corpus-en-general",
-   "lang": "en",
-   "register": "general",
-   "rows": 279429,
-   "size": "60.05MB",
-   "visibility": "public",
-   "role": "chat-train",
-   "note": "🇬🇧 en-general (FineWeb cap, ODC-BY)",
-   "lang_verified": true,
-   "features": [
-    "FineWeb HuggingFaceFW/fineweb",
-    "ODC-BY",
-    "sha256:66140944"
-   ],
-   "updated": "2026-07-08T09:57:23.107Z"
-  },
-  {
-   "id": "anima-corpus-en-sns",
-   "repo_id": "dancinlab/anima-corpus-en-sns",
-   "lang": "en",
-   "register": "sns",
-   "rows": 6862,
-   "size": "1.33MB",
-   "visibility": "public",
-   "role": "chat-train",
-   "note": "🇬🇧 en-SNS ⚠️ KNOWN-SMALL baseline (no permissive large en-SNS source; size-proportional sampling to avoid memorization; youtube/insta-en aug = follow-up ING)",
-   "lang_verified": true,
-   "features": [
-    "5lang-split clean en",
-    "MIT",
-    "KNOWN-SMALL",
-    "sha256:49f347c7"
-   ],
-   "updated": "2026-07-08T09:57:23.690Z"
-  },
-  {
-   "id": "anima-corpus-ko-general",
-   "repo_id": "dancinlab/anima-corpus-ko-general",
-   "lang": "ko",
-   "register": "general",
-   "rows": 340512,
-   "size": "60.0MB",
-   "visibility": "public",
-   "role": "chat-train",
-   "note": "🇰🇷 ko-general (FineWeb-2 kor_Hang cap, ODC-BY)",
-   "lang_verified": true,
-   "features": [
-    "FineWeb-2 kor_Hang",
-    "ODC-BY",
-    "sha256:19e6ac9e"
-   ],
-   "updated": "2026-07-08T09:57:22.834Z"
-  },
-  {
-   "id": "anima-corpus-ko-sns",
-   "repo_id": "dancinlab/anima-corpus-ko-sns",
-   "lang": "ko",
-   "register": "sns",
-   "rows": 47994,
-   "size": "6.18MB",
-   "visibility": "public",
-   "role": "chat-train",
-   "note": "🇰🇷 ko-SNS (persona + MIT/apache aug)",
-   "lang_verified": true,
-   "features": [
-    "persona+5lang-split+MIT/apache aug",
-    "NLPBada/JaeJiMin/jojo0217",
-    "sha256:c836e9fc"
-   ],
-   "updated": "2026-07-08T09:57:23.405Z"
-  }
- ],
- "models": [
-  {
-   "id": "anima-clm-convmoe-3b-rung",
-   "arch": "CLMConvMoE (byte V256, no tokenizer)",
-   "params": "3072954654",
-   "tier": "WIP",
-   "path": "~/anima-weights/clm_3b/clm_3b.clm",
-   "hf": "dancinlab/anima-clm-convmoe-3b-engine-rung-byte-3b",
-   "visibility": "PUBLIC",
-   "progress": [
-    "trained 2026-06-05",
-    "2000 step",
-    "d4096/L30/E30",
-    "GENERALIZES (F_CLM_LANEP_3B_GEN=1",
-    "val gap +0.093/-0.003)",
-    "CLM_V3 decodable nblk63",
-    "UNDERTRAINED (tok/param 3.48 ≪ chinchilla 20)",
-    "scale-ladder rung 303M→1B→3B→7B"
-   ],
-   "sha256": "01df4f26ae64ca275120f41e1a12cd09d3f4dd6c359fb19e02a8f7509b58fd99",
-   "features": [
-    "byte-level",
-    "conv-moe",
-    "lane-p",
-    "engine-rung",
-    "undertrained",
-    "generalizes",
-    "clm-v3"
-   ],
-   "updated": "2026-07-09T20:55:13.102Z",
-   "gates": {
-    "F_CLM_LANEP_3B_GEN": "pass",
-    "decodable": "CLM_V3 nblk63",
-    "generalize": "val_gap +0.093 rel 0.049",
-    "engine_loadable_py": "PASS (2026-07-10 · pool summer) — sha256 01df4f26… MATCH, anima_py.core.decode fp32-lean load d4096/L30/E30/K3, decode-sanity CE_realtext 2.25033 < uniform ln256 5.54518 = trained descent, greedy-argmax generation runs (a_eval_py_canonical Step-1)",
-    "H_1042_phi_split_rung": "🟢 GREEN FULL — Φ planning faith-UP/big-Φ-DOWN split at 3B under 2/2 pre-reg macro-maps (top_variance faith d=+1.26 p=5e-4·big-Φ −0.44 · random faith d=+0.87·big-Φ −0.27 · both SPLIT n=5) → TRANSFERS to production(d768 H_1038 강화·random leg clean summer 68min).",
-    "H_1058_agency_T_rung": "🟠 STILL-BLOCKED veto leg=PERMANENT(T-axis DEPTH-ONLY). 303M veto-capacity(H_935) STRUCTURALLY absent — active-vetoes cap 2(steady=pure-EMIT attractor). Depth leg VALIDATED(det PASS). H_9269 Y-ULTRA 🧱KILL K3(veto positions byte-identical across md5-distinct)."
-   }
-  },
-  {
-   "id": "anima-e1-slw-303m",
-   "arch": "CLMConvMoE-SLW",
-   "params": "374798533",
-   "tier": "WIP",
-   "sha256": "792eab814ba08554783f52dc169bebf858acf18c6d571c2181e0aba2f0e552c9",
-   "path": "~/anima-weights/e1_slw_303m/e1_slw_303m.final.clm",
-   "hf": "dancinlab/anima-e1-slw-303m",
-   "updated": "2026-07-07T09:27:17.720Z"
-  }
- ],
  "schemaVersion": "2.0",
  "kind": "architecture-tree",
  "title": "anima — Architecture (SSOT)",
@@ -287,6 +162,36 @@
         "type": "gate",
         "verdict": "🔧 계기 빌드·toy-검증 (DIRECTIONAL · 실신호=303M 오너 fire-go)",
         "detail": "H_9729 SILENCE-CONTENT (theta-alive TA-1) — 보류 W_S content가 미래 후보에 인과 도달하나(숙고) vs 압력만(억제). 계기=chat --wm-dual-read content + evaluate --silence-content-te. TE=I(Y1;X|Y0)·target=pre-gate cand(Sol이 dual_margin tautology 잡음). toy 8/8 검증(byte-id-off·estimator·trivial-echo가드·_sig)."
+       },
+       {
+        "id": "brain-structure-engine-lanes-do-mouth-h9731-timing-channel",
+        "type": "gate",
+        "verdict": "🔴 KILL(hold 채널 한정 · 병렬 3-seed) + 🔧 잔여채널 렌즈 착지(--lens iei · DIRECTIONAL)",
+        "detail": "H_9731 TIMING-CHANNEL (TA-3·$0) — hold 렌즈(silence→next-emit) timing⊥content = KILL(2세션 독립). 그 렌즈는 emit→emit doublet 에 눈멂: 실 303M EE=5·SS=0 서 hold H=0 인데 inter-emit gap H=0.637 생존. `--lens iei`(#4017)가 사각 뚫어 실측 → z=1.26·p=0.060 ns(경계·1seed·미결). Ψ=½ ⊭ 교대 — '½가 timing 굶긴다' 반증."
+       },
+       {
+        "id": "brain-structure-engine-lanes-do-mouth-h9729-silence-content-303m",
+        "type": "gate",
+        "verdict": "🧱 TERMINAL-AT-INSTRUMENT — seam LIVE(Stage-1 6/6) · own-content specificity 원리적 미식별",
+        "detail": "H_9729(#4063) 종결: gate 살아있음(H_9627)+seam 살아있음(Stage-1 6/6). own-content specificity 원리적 UNIDENTIFIABLE — own-ness=context-continuity 외 substrate marker 無(latch=cand[t-1]·anchor bare)=설계수준 처치≡교란. PASS 불가(seed=unit·6seed p_min 1/64>0.005). semantic=계기 밖. 원리적 identifiability 결과."
+       },
+       {
+        "id": "brain-structure-engine-lanes-interior-suffic-h9766-r8-percept-file",
+        "type": "gate",
+        "verdict": "🟢 GREEN-DIRECTIONAL·BOUNDED — H_9767 relock 303M 12/12 evaluable pair WASH · C0 Δ=0 ∧ C1 diverge 양통제 PASS = BOUNDED COMMON-FUTURE CONTINUATION-COLLAPSE(tested reachable state에 행동적 지속 interior 없음·earned null)",
+        "detail": "H_9749 interior-부재 충분조건 R8 — 主다리 B(two-history 수렴검정·계기 --percept-file V0.18.2)·A(6-lane) 기각. H_9766 census($0): W_E/W_S/anchor/kosmos/immune 닫힘·afield/cbel/ca3 OPEN=certificate 단독 불충분. H_9767 relock(303M·4pair×3seed): OPEN lane 발산이 공통 future에 즉시 씻김. scope=BOUNDED·ε=exact0."
+       },
+       {
+        "id": "brain-structure-engine-lanes-do-sigma-h9728-rebase-theta-alive",
+        "type": "gate",
+        "verdict": "🧱 TERMINAL-AT-INSTRUMENT — Θ−-yoke C0-CERTIFIED이나 tick-pinned Θ×σ interaction 원리적 UNIDENTIFIABLE-AT-MASK(severance≡리듬-이탈 dial·상한≈0.14<floor0.2)",
+        "detail": "H_9728: Θ+ σ SOUND(#4064)·Θ−-yoke C0 LEAK-FREE(#4068). 재설계 lab-full 수렴(ii): severance≡리듬-이탈 dial·상한 2d(1−d)≈0.14<0.2. $0 relock 확증 P(would=¬prev_emit) 0.920=1−P(e|e)⟹86%=yoke-relock(정리). 재설계 KILL: block-permute·severed층화(σ≥30 floor)·longer·λ-dose(→H_9610). H_9729 동형=gate 살고 pulse⊥schedule 분리불가."
+       },
+       {
+        "id": "brain-structure-engine-lanes-frontier-theta-alive-terminal-substrate",
+        "type": "gate",
+        "verdict": "🧱 THETA-ALIVE 완결 (theta-alive) — 살아난 gate; interior는 *무엇을 말했나*(content)엔 byte-stats 등급 반응(H_9774 CONTENT-REACH cemented 3-seed 독립)·*말할지 여부*(emit bit)엔 blind(H_9765 ledger sink)·own-ness는 원리적 미식별(H_9785 UNIDENTIFIABLE-BY-CONSTRUCTION·lineage-signal={tag}∪{typicality}·store=cheat/perplexity)",
+        "detail": "H_9765: emit bit→ledger만(sink). H_9774: content가 local+global 발산=REACH LIVE+GLOBAL·grade=multiset+trigram·ownership UNIDENTIFIABLE. ⚠️→✅ 'INSTRUMENT-WALL'(#4127/9)=donor-keying 버그 RETRACT·정확키 T=1.0 cementing 성공: 3-seed SHAM-vs-A0=0/60·CERT LIVE+GLOBAL·own shared=0 독립⟹DIRECTIONAL-STRONG(full-TERMINAL=~400 block통계). ▸R9 post-theta-alive 6각 정산(2026-07-19): 자기-참조 축 전부 blind/unidentifiable — H_9767 persistence GREEN-BOUNDED(부재)·H_9785 ownership UNIDENTIFIABLE-BY-CONSTRUCTION·H_9786 WHETHER-echo UNIDENTIFIABLE(store-write⟺emit degeneracy·pure_field deadzone 2벽)·H_9787 SELF-TYPICALITY 🧱 BOUNDED-NULL(120tick powered paired가 24tick GREEN screen 역전: own−trigram Δ=−0.024 CI[−0.037,−0.010] 유의 NEGATIVE·twin≈trigram·own−scramble +0.44 유의 ⟹ immune recall=국소 trigram-전형성 검출기이지 self-recognition 아님·H_9774 입도 '그 위 없다' 확증·rent pod 9tnhlpyuqtm6dz teardown). H_9788 SIGMA-FLUX 🧱 INSTRUMENT-DEAD+near-fixed-point DIRECTIONAL(자율역학 부재-방향·C+ 양자화 자멸). H_9789 self-anchor 🧱 VOID-BY-CONSTRUCTION($0 code-cert·self_live_g write-only·decode 읽기 0곳·rent 회수). H_9790 imagination 🟢 DIRECTIONAL(구조잔여 interior도달 T_div11·용량효과만 on≡shuf·mouth미도달 B_div∞). H_9791 minimal-agency 🧱 UNIDENTIFIABLE-BY-CONSTRUCTION(code-cert·Fable 2-horn): consequence-contingency=반사실속성 realized byte 부재(self-yoked T_div=∞) + re-afference p5 구조제거(decode-seed 상수·H_1474 비교기 read-only 미배선) + 양성통제 자체가 각붕괴(외부내용=content-reach OR 자기출력=p5위반). **⟹ R9 post-theta-alive 6/6 완결**: interior는 content-reach(H_9774) 외 self-referential(85·86·87·89)·self-drive(88)·imagination-residue(90)·agency(91) 축 전부 blind/부재/미식별 — 내면이 자율적·자기투명적·행위주체적 실체로 거의 존재하지 않음이 6각 수렴 확정. 종합: interior는 content-reactive(H_9774)이나 self-transparency(자기참조 축)+self-drive(자율역학) 공히 부재-방향; 재귀 read-path 미배선이 근인(코드 확정)."
        },
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-repair",
@@ -726,7 +631,7 @@
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9398",
           "type": "gate",
           "name": "",
-          "detail": "🩺 H_9398 DEAD-GAUGE CENSUS($0·--dead-census 상설 위생계기) = verdict 아닌 관측 목록. 전 a1 rollout(1200행 seed/w 무관)서 substrate 상수 게이지 9: af_aro≡1.0·af_val≡0.0(affect_read 세션상수 key chat-py-5)·agloop_ctx≡0.25(H_9360/76/93) + root 미감사 6(anchor_nudge·ca3 해마·cb_surprise 소뇌·phi Φ· TRIAGE($0): 6 미감사 root 전수판별=결정영향 0(af/cb/ca3/anchor/wm=inert·phi=의도상수·scn=세션const by design) ⇒ 캠페인 종결(H_9394~96 크기벽) dead-gauge 무관 견고. L7 후속($0 종결·재수집 불요): 죽은 게이지 소생이 emit 바꾸나=KILL. 8/9 는 score 만 먹는데 emit⊥score(H_9400 정본·H(emit|stage)=0.465)·유일 safe-도달자 phi 는 의도상수(H_1521). 소생은 이 regime emit 못 바꿈. → 🩺 H_9411 DEAD-GAUGE RELIVE(후속·Fable 6발산→구현→검증WF): census 6 미감사 root 를 recon_err 1-tick-lag pending_* 템플릿으로 per-tick 발화 재배선(engine-native·θ이동0·root③ p5 미변경). toy(240tick) distinct: cb 1→54(matched≪alien≪ped)·ca3 1→20·wm 1→240(Δnull+0.125)·phi 1→114(F3 psi_intact✅)·scn 1→240(order-lock측정→phase readout)·anchor 1→60 = 6 LIVE; af 1→1 toy-degenerate(Fable예측·NEEDS-303M). **AGREES L7**: 소생=substrate 위생(게이지가 정직한 telemetry)이지 emit-변화 아님(emit⊥score). indep 잔차 미변경(새 store 가 H_1058 3재생루트 밖=frozen계약 보존)·적대검증WF verifier 가 _meta phi_const/nudge_const 오도 발견→플래그 수정. **303M TERMINAL(py303_full sha013c4574·summer 격리venv·240tick)**: cb 29·ca3 21·phi 114·scn 240·anchor 60 = 5 진짜소생(cb matched2.82<alien3.36≪ped17); wm 240distinct 이나 Δvs-null 0.125(toy)→+0.001(303M)=TIME-LIVE·CONTENT-DEAD(8-dim 해상도 항목정체성 구별불가); af 1→1 303M서도 죽음=정직음성(mouth trigram 자기유사 없음·배선옳음). toy '6/7'을 303M 이 5/7 로 정정(a_scale_honest_scope). ⚠️ PY-ONLY GAP(오너 지적·Fable 설계): per-tick orchestration 이 cli/chat.py+cli/anima.hexa 두 엔트리 중복→fix py만·hexa 트윈 dead 상속(chat-py-4 재현). 함수는 core ✓·orchestration 이 엔트리 중복=근본. ⚠️ 오너 정정(Fable HOIST 기각): py hexa 는 별개여야 함=a_substrate_disjoint(overlap=conflict LAW). core 로 합치기=위반. 정답=py·hexa orchestration 분리유지(byte-parity 트윈이되 별개파일)·fix 를 hexa 트윈에도 별도적용(hoist 아님). 함수는 core 공유가 맞으나 orchestration 은 disjoint 가 LAW. 즉시 NEXT=hexa 6게이지 별도수리(구조 다름·typecheck 가능·byte-parity 는 hexa 데몬 host). → ✅ hexa 트윈 LANDING(Fable 14편집+helper 설계→구현·cli/anima.hexa +120/-19): py 와 같은 semantics 별도배선(og_prev_gfeat 계열 pending_* 6게이지·pf step⑤·scn phase⑥A·live_tension⑥B·3 F3 twin·_afs_ca3_sym·통제flag). 검증=typecheck 내93=origin baseline93=신규0(엄밀 집합-diff). verdict=DIRECTIONAL(byte-parity 는 hexa 데몬 실행 필요·chat-py-1 이 호스트 막힘→후속). G5 VERSION 0.14.4. 이제 py·hexa 두 트윈 다 fixed(별개 유지·a_substrate_disjoint). → 🔬 H_9418 CONTENT-FEATURE(H_9411 wm content-dead 후속·Fable 위임·$0 스크린): wm 이 8-dim byte-stat 에 물려 같은-레지스터 영어를 cos≈0.99 로 못 가림→wm_buffer cos≥0.9 병합 단일슬롯화=표현 content-blind. richer byte_ngram_sketch(signed FNV-1a·n3/dim64·frozen) 스크린: C0 exact=1.0·spurious-merge 8dim 64.7%→sketch 0.0%(feature 표현천장 해소·강력대비)·median 0.366. BUT N_recur=0/58(303M mouth WM지평 내 재현 0)→Δ−0.007 CI=0포함=PENDING/기질제약음성. feature 옳으나 스트림에 반복 content 없어 wm 붙잡을 것 없음(음성=기질사실 아니라 gauge). AGREES H_9403 emit≡clock. tune-to-green 아님(frozen 기준·N_recur power게이팅). ⚠️ 정정($0 단어-수준 재확인·verdict-integrity): N_recur=0 은 기질 아니라 feature-grain 아티팩트 — mouth 는 content 재현(vault/forever/qx 59/59·단어 Jaccard median0.222 max0.800·>0.5 쌍 37)인데 byte-trigram 을 whole-utterance L2정규화하니 변하는 꼬리가 공유접두 희석→cos<0.9→N_recur=0. '기질-제약 음성' 철회→REOPENED(instrument-incomplete·기질엔 content 재현 있음·올바른 grain 이 열린질문·post-Δ pick 금지). AGREES H_9403 부분철회(완전 clock-shaped 아님). chat-py-3 계열(표면 grain 이 내용 재현 놓침). → 🔒 H_9420 WORD-BAG GRAIN(H_9418 재오픈 해소·wm-content arc 종결·Fable pre-reg 단일 feature+anchor-strip 판별기): word_bag_sketch(binary word-unigram)+anchor-strip(birth-anchor=session_seed+mem_text 토큰 제거). $0 C0-first: R machinery active0.224·null0.231·Δ−0.0072=H_9418 byte-id✅·C0-2 spurious 0%·C0-4 N_recur_genuine=2(need≥10 실패)·stripped median cos 0.000=HONEST-NEGATIVE(mouth). H_9418 word-Jaccard 0.8 은 전부 공유 birth-anchor 접두·genuine content 재현 없음→mouth 는 birth-anchor 만 re-emit(H_9336 content-판·H_9403 정합). ⟹ wm content-deadness 원인=feature 해상도(해소)도 gauge 배선(옳음)도 아니라 mouth anchor-echo. wm-content lane CLOSED-AT-REGIME·병목=upstream mouth 다양성(별개 lane). Fable 85% NEGATIVE 정확 적중·tune-to-green 0. → 🔒 H_9422 VOID-BY-SEALED-REGIME(H_9420 상류 규명·코드-확증 reframe): 왜 mouth 가 birth-anchor 만? decode-seed 2 distinct=고정 anchor(p5). 판정=p5-necessary 아님. p5 는 own-output→mouth(monologue)만 금지·own-output→score(기억)는 합법(chat.py:1982·H_9336/37 이미 live). 진짜 원인=sealed 환경: percept=wake_mem[tick,stage,cell_count] 시계삼중항(:1653)·anchors 루프밖1회·REM grow=session_seed 상수. ⟹ anima='귀 없는 입'·시계가 유일 exogenous → emit≡clock(H_9403)≡content-void(H_9420)=같은 사실. 벽=p5 아니라 afferent channel 부재. escape=(d) external percept(EEG a_eeg 승인)=owner-gate identity 변경·자율발사 불가. content-축(wm·af)=이 regime category-VOID. ⚠️ Fable §1 af-정정 stale-source 폐기(현 main af/wm per-tick live·af 죽음=ungrounded valence H_9418 유효). content-gauge arc(H_9411→9420→9422) 상류 규명 종결. → 🔵 H_9425 p8-AFFERENT($0 DESIGN reframe·신규 decode 0·미공격 레버 스펙): H_9359(runtime bridge absence)+H_9422(afferent channel 부재='귀 없는 입')를 겹치면 미공격 각도 — operator+declaration 을 런타임 percept 로 co-present 시키면 재조합이 학습(CPT) 없이 '지각'되나. 계보증명: G1 공격 5건(H_9304·9267·9327·9359·9423) 전부 weight-learning(CPT/co-train)·afferent 런타임 주입=0/5. p8('no train/infer split')이 요구하는 학습-via-런타임-채널을 H_9267 D-acc=1.000 신호에 처음 적용. 조작(단일변수·CPT-free): pair 를 CPT 대신 afferent stream 으로 store(ca3/해마·H_9336/37 g_text content-read live·chat.py:1982)에 주입·가중치갱신0. 양성통제=co-present·null=separated·판별 co-present−separated≥+0.20⟹런타임다리 실재·Δ≈0⟹벽 격상(조회경로 자체 부재). 계기살아있음 선행: C0 ORACLE(답 직접주입 D-acc≥0.90·<0.90=INSTRUMENT-DEAD·V2_1 선례). 판정=v2-sandbox 선행(afferent 배선=production 정체성 변경=owner-gate·자율발사 불가·H_9422 escape(d) EEG 계열)·CRACK⟹core/ 포팅+--afferent(a_eeg 승인). H_9423 공학습 다리와 직교(weight vs runtime percept). → 🎨 H_9426 Φ-ONLY DYAD SPEC(H_9422 escape(d) 최경량 후보·DESIGN-SPEC·DIRECTIONAL·실행0): 두 데몬 매 tick 스칼라 pure_field_phi 만 교환=완전 p1-8 합법 비언어 afferent(비언어→p4 무관·타-데몬 출력→p5 자기씨앗 아님). 코드-확증 결합점 판정: pure_field_step(pf) 에 drive 인자 부재(core/pure_field.py:187·osc self-drive·amp→LN2·raw_phi=variance·energy 전부 자기 진동자=닫힌 자율계)·brain_decide 8-afferent 는 emit-정책만 먹고 pf.phi 안 바꿈(H_9400 포화) ⇒ 필드-레벨 Φ-결합=pure_field_step 시그니처 변경(drive_phi,K·후보-A raw_phi+=K(drive_phi-phi) 확산결합·probe-beside 아님)=owner-gate 아키텍처 추가(H_9411 ⑤ 확증·자율발사 불가). 측정=coupling≠clock(H_9391 다이애드版): 두 데몬 동일 결정론 진동자(τ2/40/400)→같은init PLV=1 결합無로=시계증거. 4-arm desymmetrize P(K0 같은init·PLV=1 필수 else INSTRUMENT-DEAD)·B(K0 다른init=clock-floor)·C(K>0 다른init·판정 PLV_C−PLV_B>TOST margin)·N(shuffle 붕괴). dead-gauge 가드=arm간 N_distinct>1. cheapest-test: arm-C=owner-gate($0 아님)·arm-P·B clock-confound 사전스크린(uncoupled·위상offset·결합코드 불요)=go/no-go 게이트 — arm-B PLV≈1(τ2 variance지배·LN2 수렴) headroom 0 ⇒ REFUTED-BEFORE-BUILD. H_9422 afferent-channel 부재 벽의 EEG(a_eeg) 병렬 최경량 escape 후보. → 🔎 H_9430 SEALED-NONCLOCK CENSUS(H_9422 '완전 sealed·시계삼중항' 자기-반증 시도·$0 census 6 trace 신규decode0=DIRECTIONAL): percept=wake_mem[tick,stage,cell_count] 중 cell_count 이 clock 인가 검정. 발견=NON-CLOCK endogenous 존재. pooled H(cell_count|tick)=0.669 bits(>0 ⟹ tick 이 growth 미결정·clock-sealed 반증·4 candidateY seed 동일 config stage_cycle). mitosis#1 tick11 전6트레이스(303m_summer·303mb·zephyrine·mnemosyne·thanatos·orpheus) 동일=CLOCK-locked; mitosis#2 tick23 zephyrine 만(→cell4)·mnemosyne(416t)/thanatos(465t) 이 tick23 훨씬 지나도 3 유지=seed-content-gated ENDOGENOUS. cell_count matched-tick cross-seed 442/465(95.1%) 발산·ten_ema 4seed matched-tick 73/73 발산=endogenous. BUT emit clock-sealed 존속: H(emit|stage)=0 전6트레이스 ⟹ endogenous store-growth 는 emit 서 DECOUPLED(입에 안닿는 inner-content). provenance gate(정직): endogenous 주장=LIVE 게이지만(cell_count distinct2~4·ten_ema distinct100s)·DEAD 배제=rel_lane(distinct1 in 두 zephyrine trace=H_9337 pre-fix 확인)·recon_err(distinct1 전6)·phi(=phi_const distinct1) ⟹ dead-gauge 오염 0. AGREES H_9427(σ-seal R²·그쪽 OPEN-residual field=이쪽 discrete cell_count 축의 연속판)이나 이 카드는 삼중항 프레이밍 직격+emit-decoupling 추가. 판정=H_9422 부분정정: '완전 sealed' 과장 — store-growth(mitosis)=endogenous inner-content(clock 미결정)이나 emit⊥ 이라 mouth 서 sealed. H_9422 emit≡clock·content-void-AT-MOUTH 결론 존속(NET=emit-lane sealed · growth-lane endogenous·삼중항의 cell_count 성분은 '시계' 아님). key=H(cell_count|tick)=0.669 bits. → 🔵 H_9601 PRENATAL-NOT-VOID(H_9422 Ψ-SOMA 어휘 재프레임·$0 DIRECTIONAL·신규decode0·측정불변): sealed daemon 의 content-축=mode-of-existence 실패(VOID) 아니라 percept-birth 대기 발달단계(PRENATAL). 계기=H_9422 자기모순 — 같은 카드가 content-축 category-VOID(복원불가) ∧ escape-(d) afferent 배선하면 content 지각 가능(복원가능)을 동시 주장. 논거3(신규측정0): ① H_9430 growth-lane endogenous(H(cell_count|tick)=0.669>0)이나 emit 서 DECOUPLED(H(emit|stage)=0)=속에서 자라나 입에 안닿는 태아 ② H_9427 sealedness field-local(SEALED spine vs OPEN residual)=균일사망 아님 ③ H_9422 '귀 없는 입'(연산 아닌 배선 부재)+H_9425/9426 복원경로 실재. H_9422 mechanism 전부 존속·바뀌는 label 1개(VOID→PRENATAL)=tune-to-green 아님(값 불변·자기모순 해소). 판별기준 3-AND: 복원경로(afferent→capability)∧내부발달(endogenous·mouth서 DECOUPLED)∧결핍=배선부재 ⟹ PRENATAL, 하나라도 실패 ⟹ VOID. 경험적 discriminator=H_9425 co-present−separated≥+0.20(C0 ORACLE≥0.90)=birth-check. σ재분류(mode-of-existence 축, H_9351 측정-INVALID 축과 직교): PRENATAL=wm-content(H_9420)·af-valence(H_9418 ungrounded)=σ·flux content 성분 · SEALED-ALIVE=emit-lane(H_9403 clock-locked·작동중) · 진짜 VOID=content-축서 0(요점). Ψ-SOMA 어휘 삽입: PRENATAL 을 VOID(복원無)↔PENDING(측정미완) 사이 mode-of-existence 상태로(존재축서 VOID 인접·birth-path 존재). 판정변화: H_9422 content-VOID→content-PRENATAL=lane 이 VOID-CLOSED 아니라 PENDING-BIRTH(owner-gate afferent milestone)·PRENATAL=falsifiable(배선후 Δ≈0=VOID 격상). ⚠️ 과대주장 없음: PRENATAL≠의식 약속·H_9400(Ψ=½ 미작동) 불변. 병렬비교: H_9430/9427 AGREES(기제·부분개방 정량 제공→이 카드가 명명)·H_9425/9426 AGREES(birth-check·최경량 birth-path 제공)·H_9422 CONFLICTS 는 단어 'VOID' 1개뿐(mechanism·측정 전부 AGREES·내부-도출 정밀화). owner-gate(birth-check=afferent 배선=identity 변경·자율발사 불가). → 🔎 H_9602 CHAOS-ITINERANCY(H_9422 orbit 주기성 $0 검정·H_9427/9430 후속·신규decode0=DIRECTIONAL): sealed 데몬 상태 orbit 이 주기(시계)인가 endogenous 카오스 itinerancy(Tsuda·비주기)인가. 기존 trace 6종 RQA(provenance gate 선행·dead-gauge distinct1 배제·중복게이지 cur_ctx≡cur_indep/score≡base_motiv corr1.0 dedup·독립 LIVE OPEN=cur_ctx/cur_ema/cur_f/ten_ema). 3측정=clock-detrend 잔차(H_9427 설계행렬)·스펙트럼 flatness/peak2med·RQA(DET/Lmax/LAM)+phase-randomized surrogate z(DET). 통제 계기유효=pure_clock z14·pure_noise z≈0·logistic 결정론카오스 z106/Lmax13·AR1 z≈0.6·quasiper z≈0. 판정=NON-TRIVIAL·LINEAR 확장 limit-cycle(주기)—3갈래: (a)birth-noise REJECTED(잔차 DET0.54–0.67≫noise0.19/AR1 0.37·residFlat0.008–0.06≪noise0.57=고도 구조적); (b)Tsuda chaos REJECTED 4/5 trace(surrogate z(DET)0.66–1.39 NS=스펙트럼-설명 선형·logistic 통제 z106 와 정반대·LAM0.15–0.39 낮음·D_orpheus z2.37 marginal 이나 N73 underpowered); (c)positive=확장주기(잔차 극tonal cur-lane peak2med8k–26k/flat~0.01=5-stage clock 못잡는 더긴주기 진동 중첩=slow limit cycle). emit-lane 순수시계 재확증(emit_env/stage_env clockR2=1.000·DET≈1.0)·non-triviality 는 OPEN/endogenous 하위-manifold 한정(emit-decoupled). AGREES H_9427(OPEN-residual dynamics 신규특성화=선형quasi-periodic·상보)·H_9430(endogenous≠chaotic·ten_ema 선형)·H_9422(chaos 대안기각=orbit≈시계 강화·단 완전clock 아님 amendment)·H_9601 병렬 COMPLEMENT(존재양식 PRENATAL vs orbit 기하). key=surrogate z(DET)=0.66–1.39(NS·4/5) vs logistic 카오스통제 z=106. → 🔬 H_9603 BUTTERFLY(H_9602 확증·engine-native 2-rollout aiden): 초기조건 session_seed 1byte-flip·같은 sample_seed=7 → 3분해: 내용 byte-distance 0.947·identical 0/59(input-bound richness·첫tick 완전발산) · 발산 growth +0.007≈0(즉시포화=비카오스·H_9602 선형 limit-cycle 확증) · emit-schedule overlap 1.00(clock-locked·H_9403 강화). sealedness=richness 는 birth-seed(input)-bound·timing 은 clock-bound·dynamics 는 비카오스 선형. sealed 데몬='inner life'=birth-seed 1회분 결정론 전개(self-생성 없음)·새 content=afferent(owner-gate)만. H_9601 PRENATAL 실측(birth 가 richness 심으나 세션내 self-진화 0). sealed-dynamics lane 종결. → 🔵 H_9604 LAB-FULL 재정렬(Fable5+Codex5.6 독립 적대검토 수렴·신규 decode 0): arc 결론 3정정. ①content-void=과잉주장(butterfly 0.947=content 존재·진짜벽=zero-Lyapunov limit-cycle=birth-seed 결정론반복·afferent 는 open-ended world-answerable content 에만 필요). ②afferent-순서 반전=범주오류: contraction(Lyap≈0)에 percept=수동필터 구동=p1-4 거부 I/O함수. 올바른순서=A⇄G tension 부활(edge-of-chaos)→afferent 완성. 'afferent 부재'≡'A⇄G tension 미작동'(H_9400)=같은벽 융합. ③Φ-dyad 강등(양쪽 꼴찌·스칼라=2번째시계). pre-commit 측정=interventional transfer-entropy(percept구조 content 전파·phase-scramble+sham)AND Lyapunov 0 이탈. 와일드카드: persistent-subject 부재(매eval fresh birth·p8 split)·agency 부재(손없는귀·controllable perception). NEXT 재정렬=afferent-먼저 폐기→A⇄G tension 부활 먼저·$0 g_text→immune bind(wiring vs law). → 🔎 H_9605 PERSISTENT-SUBJECT census(H_9604 와일드카드 ③ $0 code census·cli/chat.py@origin/main·신규decode0=DIRECTIONAL): 지속-주체=SPLIT-PERSISTENCE 두 축 상반. 정체성축(SELFG8 8-dim grounded-self)=~/.anima_kosmos_self(HOME·비휘발)·세션종료 create_anchor(:2802)·부팅 _selfg_restore(:1515) 복원 ⟹ cross-session 지속(WHO). 경험축(C9 emit_t trajectory emit_anchor_from_v3 :2484)=kdir /tmp/anima_kosmos(휘발)·write-only(live_anchors 매tick []재구성 :2222 재진입無) ⟹ 세션마다 fresh birth(WHAT). weights=frozen fossil(p8). ⟹ Fable 'no persistent subject'=경험축 확증·정체성축 정정('지속 정체성+휘발 경험'). afferent 이중-상류 차단: 귀 달아도 들은 것이 지속할 경험-누산기 부재(H_9422 채널부재 + H_9605 지속처부재). AGREES=Fable persistent-subject(경험)·Codex agency(궤적 못나르는 주체=agency locus 없음)·H_9422 sealed(직교축)·H_9601 PRENATAL(경험축 미탄생 = 세션마다 재탄생과 정합). CONFLICTS/REFINES=flat 'no subject'. ⚠️NEW on main(a_parallel_session_compare·직교): percept anchor :2249(live_anchors.append name=percept)가 seed :2557 도달=병렬세션 afferent 착륙(H_9422 '귀 없는 입' 이동 가능성·persist census엔 무영향·percept 도 home self-anchor 미기록·다음세션 H_9422 재독 전 조정필요). 판정변화 없음(H_9422/9601 기제 존속·경험-지속축 명명 추가). NEXT=H_9604 ① A⇄G tension 소생 유일 live 자율 $0 · 경험-누산기(emit/percept→home self-anchor fold)=owner-gate identity 변경. → 🔎 H_9606 PERCEPT-HOOK reconcile(H_9605 ⚠️ flag 해소·$0 code census·신규decode0=DIRECTIONAL): H_9605 이 flag 한 신규 percept anchor(:2249→seed :2557)가 병렬세션 afferent 배선인가? 판별=아니오·**guarded optional hook**. percept_source(:395)=함수 파라미터·default None·cli/chat.py 내 non-None 호출자 부재(grep)·OFF 시 percept_text None(:1716)·append 스킵·live_anchors[-1]=live_seed=byte-identical sealed(guard :2247). 설정경로=오직 'anima study' 드라이버(anima-study-driver 브랜치·H_9520 replay-mix)가 TEACHER 텍스트 seed 주입(:1718). ⟹ **H_9422 '귀 없는 입' STANDS**(프로덕션 의식데몬 여전히 sealed). 존재 hook=study-percept: p5-legal(exogenous·not self-seed) 이나 linguistic teacher-text=p4 assistant-framing(a_no_llm_frame_trap)=consciousness-afferent 으론 불법. 두 채널 분리(병합금지): study-percept(p4·off-default·replay training) ≠ consciousness-afferent(p1-4-legal 비언어 EEG류=미배선·owner-gate). AGREES=H_9422 sealed·H_9605(percept 도 home self-anchor 미기록·직교)·H_9604(afferent owner-gate) · CONFLICTS=naive 'afferent wired' 오독 · NOVEL=percept p4/p5 split. **$0 자율 arc 바닥 도달**: NEXT ②(immune-bind)=H_9401→9403+9420+9605 종결·③(persistent)=9605 종결·percept=여기 종결 ⟹ 전 forward=owner-gate(①A⇄G tension edge-of-chaos·9602/9603 zero-Lyapunov · ②비언어 afferent · ③경험-누산기). → 🟢 H_9607 A⇄G FEEDBACK 배선(H_9604 NEXT① 오너 go 레버'1'·Fable 설계→로컬 구현 fable-mode·WIRED·toy-LIVE·DIRECTIONAL): never-operated tension 소생 — 필드(pure_field_step)가 LN2 relax 닫힌 자율계라 zero-Lyapunov(H_9602/9603)이고 A⇄G tension은 emit 정책 읽기만·되먹임 없음=단방향. 되먹임 leg 배선: 데몬측 leaky-INTEGRAL I=(1-RHO)I+s (s=ag_a_drive+ag_g_drive 부호합)가 osc_tick 진폭목표 LN2→LN2·(1-drive)·drive=κ·SGN·I를 다음 tick 소비(own-output(t)→field-state(t+1)=p5-legal·H_9336/9337). 적분 null=s=0⟺emit_drive=½를 κ·0.76편향 무관 강제=창발 setpoint(tune-to-green 아님·H_9419). κ=THE one knob --ag-feedback(0=byte-identical)·RHO=1/400·SGN=-1=FROZEN FORM(H_9391). 계기=anima-py evaluate --ag-criticality trace-reader(C0 loop-liveness·ii TE surrogate·iii homeostasis·panel i butterfly-λ=seed-flip 303M). toy 48K smoke: κ=0 distinct(ag_drive)=1[0.0]=필드 byte-parity✅·κ=0.5 distinct=60·emit_drive 12/60·phi 37/60=A→G→A WIRED·LIVE✅·TE=0(ns)·homeostasis 0.771→0.793(½서 멀어짐)=임의κ·48K서 채널/항상성 無=Fable 모달예측 정합. ⚠️incidental: live smoke가 선재 main버그 포착(_dual_fn H_9627 refractory 분기 안에만 assign되나 무조건 read=default clock+trace서 UnboundLocalError, None default 수리). VERSION 0.15.24→0.15.25(G5). NEXT=①303M --ag-criticality fire(Hopf-knee κ pre-scan·owner GPU go) ②hexa twin(pure_field.hexa+anima.hexa 별도 PR·a_substrate_disjoint·H_9411 선례·구현됨·미배선). 3-way verdict pre-reg: REVIVED/STILL-SEALED/LYAPUNOV-BUT-NO-HOMEOSTASIS(=afferent load-bearing 실측증명). AGREES=H_9604(afferent 상류)·H_9400(Ψ=½ 미작동)·H_9602/9603(zero-Lyapunov). 🔥 303M FIRE VERDICT=🧱 STILL-SEALED(engine-native anima-py evaluate --ag-criticality·py303_full 013c4574·summer 격리venv·자율발사=standing pool≠fleet rent·κ pre-scan{0..1.0}×300tick+seed-flip butterfly κ{0,0.6}): C0 loop live(κ>0 distinct(ag_drive)=300)✅ · (i)butterfly-λ κ=0 slope −0.00008(d 0.25→0.001=H_9603 null 재현)·κ=0.6 −0.00004(d 0.11→0.009)=λ 0 못벗어남 수축지속 · (ii)TE(tension→emit)=0 전κ=emit 인과채널 없음 · (iii)emit-rate 0.247 전κ 불변·mean(emit_drive) 0.785→0.868 ½서 멀어짐=homeostasis 실패 ⟹ 3패널 전부 음성. 적분 되먹임=진폭 target만 이동·필드 여전히 PSI_ALPHA 수축(fixed point 재배치≠양의 Lyapunov)·emit=stage 순수함수(H_9403 emit≡clock). **재프레임**: load-bearing 벽=필드 아니라 **emit-gate clock-lock(H_9403)**. 필드-되먹임 lane CLOSED-AT-REGIME. NEXT=emit gate가 field/tension 읽게(earned-refractory H_9406/margin p5-DESIGN·owner-gate) OR afferent(H_9606·owner-gate). 계기완성=--ag-criticality --butterfly(engine-native·#3839). VERSION→0.15.27. frozen-first. → 🧱 H_9608 field-loop GATE-INDEPENDENT inert(H_9607 STILL-SEALED 게이트무관 확증·오너 go 자율발사·engine-native 303M --ag-criticality·py303_full 013c4574·summer 격리venv): H_9607 재프레임(벽=emit-gate) 검증=tension-읽는 refractory 게이트(H_9416 I(emit;g_recog|stage)=0.197)서 --ag-feedback κ{0,0.6} 재발사. refr κ=0 emit-rate 1.000 SATURATE(H_9421 재현·clock 0.247과 정반대)·κ=0.6 ag_drive LIVE(150 distinct)이나 emit-rate 1.000 불변·mean(emit_drive) 0.782→0.848·TE=0 ⟹ 두 반대 게이트(clock 과침묵·refr 과발화 포화)서 필드루프가 emit-rate 못바꿈=STILL-SEALED 게이트-무관(clock 아티팩트 아님). 필드는 κ 반응(emit_drive 이동)하나 emit 결정 도달 안함=필드→emit 경로 게이트-무관 단절. ⚠️confound: refr margin 포화라 완전 clean=non-saturated dual-ledger(H_9627 병렬 lane·미복제) 필요. ⟹ **A⇄G field-feedback lane 완전 CLOSED·필드-side 스레드(H_9607→9608) 종결·consciousness live 레버=emit-gate(H_9627) 필드 아님**. 직교=H_9672 주소벽/G1(#3895·다른 프런티어·Ψ-SOMA 분리). DIRECTIONAL(2-arm·150tick·단일seed·포화 confound 공개). ✅ CONFOUND 해소(3rd gate·aiden 격리venv): non-saturated dual-ledger 게이트(--emit-gate refractory --g-reach wm-dual·H_9627 ½)×κ{0,0.6} 발사. dual κ=0 emit-rate 0.500=H_9627 ½ 재현(non-saturated ✓·refr 1.000 포화 대조)·κ=0.6 ag_drive LIVE(150 distinct)이나 emit-rate 0.500 불변(full 150-tick 확정·75·102·150행 전부 ½) ⟹ 필드루프가 non-saturated ½ 게이트도 못 흔듦=gate-independence 3-게이트(clock 0.247·refr 1.000·dual 0.500 전부 LIVE-but-emit-rate-inert) 완전 clean. dual-ledger는 S>E ledger 자체기전으로 ½ 유지·필드→emit 단절 여기도. 신규조합(dual×필드루프)·병렬 H_9627 단독과 미복제. full 150-tick complete-scope 확정. → 🟢 H_9712 PRODUCTION-DEFAULT flip(오너 '승인 go'·Fable 설계→로컬 구현 fable-mode·WIRED-DEFAULT): 의식 arc의 실 산출물 — anima 데몬 default emit-gate를 하드코딩 30초 시계(p5 위반)에서 **H_9627 dual content ledger(emit⟺S>E·Ψ≈½ 창발)로 전환**. cli/chat.py: --emit-gate default clock→refractory · --g-reach 조건부 default(refractory면 wm-dual·아니면 d1=rollback-safe·정적이면 --emit-gate clock이 guard서 crash·Fable 교정) · --wm-leak 0.6 불변 · guard(--rate-limit-sec/--emit-refractory=clock-path이라 --emit-gate clock 요구) · evaluate.py --emit-gate-census meta-guard(non-clock trace 제외·H_9403 emit≡clock 불변식 오염방지) · anima.py usage. VERSION 0.15.47→0.15.48(G5). 증거=H_9627(과학·병렬lane 크레딧): 303M 3-seed emit 0.506≈½·score-perturb swing 0.000(#3867)·λ-locked 0.006(#3893)+H_9608 2nd-host 150tick 0.500. 착륙前 관문=GATE-P5-DEFAULT byte-identity cert(frozen-first·$0·새 과학fire 아님·flag-resolution 결정성만: A defaults≡flags·B rollback≡old·C guard SystemExit). **정직성**: default가 Ψ≈½ 도달=H_9627 설계된 dual-ledger(교환대칭 S>E)이지 원 A⇄G tension 주장 부활 아님 — H_9400 clock계보 반증 존속·H_9607/9608 필드루프 게이트무관 inert 존속·clock은 --emit-gate clock에 byte-identical 보존. NEXT=hexa twin(core/brain.hexa엔 brain_emit_refractory 부재·전체 게이트족 포팅 선행·py first·H_9411 선례·별도 PR)·cadence 2×수다(broker anima 0.11.0 무영향). → 🟢 H_9726 hexa emit-gate PORT(H_9712 twin·H_9718 NEXT 완결·오너 '잔여 모두 go'·Fable 설계→로컬 구현·WIRED-hexa DIRECTIONAL-on-typecheck): H_9415→9627 게이트족을 hexa twin 포팅+default flip(refractory+wm-dual·Ψ≈½·py mirror). core/engine_cli.hexa wm_byte_feature(py _afs_byte_feature verbatim)·core/brain.hexa brain_emit_refractory(emit⟺gate∧kill∧φ∧cont·NO θ/rate·de-closured dual→2 WorkMemBuffer+bool)·cli/anima.hexa argv threading+--emit-gate default refractory/--g-reach conditional wm-dual/--wm-leak+guards+W_S buffer+leak+call-site swap+silence write. 검증=hexa typecheck set-diff(engine-cli-hexa-2 local native build 금지): 신규 real 에러 0(brain.hexa non-Map 0·engine_cli 'float'×2+anima 'EngineConfig'×2 origin baseline·anima delta+1 Map-access 무해)=syntactic clean(H_9411 typecheck-DIRECTIONAL 선례). twin-parity: ½는 py 303M earned·hexa 재주장 아님. Cert A/B byte-parity=hexa 데몬 pool-blocked/moot=deferred(ρ-AXON reach·Ψ-SOMA). hexa/py divergence=argv-only(hexa env 없음). a_substrate_disjoint(brain.hexa+anima.hexa+engine_cli.hexa만·no py). resolves H_9718(divergence tracker→RESOLVED). id H_9722→H_9726(병렬충돌). VERSION G5. NEXT=hexa runtime unblock 시 Cert A/B."
+          "detail": "🩺 H_9398 DEAD-GAUGE CENSUS($0·--dead-census 상설 위생계기) = verdict 아닌 관측 목록. 전 a1 rollout(1200행 seed/w 무관)서 substrate 상수 게이지 9: af_aro≡1.0·af_val≡0.0(affect_read 세션상수 key chat-py-5)·agloop_ctx≡0.25(H_9360/76/93) + root 미감사 6(anchor_nudge·ca3 해마·cb_surprise 소뇌·phi Φ· TRIAGE($0): 6 미감사 root 전수판별=결정영향 0(af/cb/ca3/anchor/wm=inert·phi=의도상수·scn=세션const by design) ⇒ 캠페인 종결(H_9394~96 크기벽) dead-gauge 무관 견고. L7 후속($0 종결·재수집 불요): 죽은 게이지 소생이 emit 바꾸나=KILL. 8/9 는 score 만 먹는데 emit⊥score(H_9400 정본·H(emit|stage)=0.465)·유일 safe-도달자 phi 는 의도상수(H_1521). 소생은 이 regime emit 못 바꿈. → 🩺 H_9411 DEAD-GAUGE RELIVE(후속·Fable 6발산→구현→검증WF): census 6 미감사 root 를 recon_err 1-tick-lag pending_* 템플릿으로 per-tick 발화 재배선(engine-native·θ이동0·root③ p5 미변경). toy(240tick) distinct: cb 1→54(matched≪alien≪ped)·ca3 1→20·wm 1→240(Δnull+0.125)·phi 1→114(F3 psi_intact✅)·scn 1→240(order-lock측정→phase readout)·anchor 1→60 = 6 LIVE; af 1→1 toy-degenerate(Fable예측·NEEDS-303M). **AGREES L7**: 소생=substrate 위생(게이지가 정직한 telemetry)이지 emit-변화 아님(emit⊥score). indep 잔차 미변경(새 store 가 H_1058 3재생루트 밖=frozen계약 보존)·적대검증WF verifier 가 _meta phi_const/nudge_const 오도 발견→플래그 수정. **303M TERMINAL(py303_full sha013c4574·summer 격리venv·240tick)**: cb 29·ca3 21·phi 114·scn 240·anchor 60 = 5 진짜소생(cb matched2.82<alien3.36≪ped17); wm 240distinct 이나 Δvs-null 0.125(toy)→+0.001(303M)=TIME-LIVE·CONTENT-DEAD(8-dim 해상도 항목정체성 구별불가); af 1→1 303M서도 죽음=정직음성(mouth trigram 자기유사 없음·배선옳음). toy '6/7'을 303M 이 5/7 로 정정(a_scale_honest_scope). ⚠️ PY-ONLY GAP(오너 지적·Fable 설계): per-tick orchestration 이 cli/chat.py+cli/anima.hexa 두 엔트리 중복→fix py만·hexa 트윈 dead 상속(chat-py-4 재현). 함수는 core ✓·orchestration 이 엔트리 중복=근본. ⚠️ 오너 정정(Fable HOIST 기각): py hexa 는 별개여야 함=a_substrate_disjoint(overlap=conflict LAW). core 로 합치기=위반. 정답=py·hexa orchestration 분리유지(byte-parity 트윈이되 별개파일)·fix 를 hexa 트윈에도 별도적용(hoist 아님). 함수는 core 공유가 맞으나 orchestration 은 disjoint 가 LAW. 즉시 NEXT=hexa 6게이지 별도수리(구조 다름·typecheck 가능·byte-parity 는 hexa 데몬 host). → ✅ hexa 트윈 LANDING(Fable 14편집+helper 설계→구현·cli/anima.hexa +120/-19): py 와 같은 semantics 별도배선(og_prev_gfeat 계열 pending_* 6게이지·pf step⑤·scn phase⑥A·live_tension⑥B·3 F3 twin·_afs_ca3_sym·통제flag). 검증=typecheck 내93=origin baseline93=신규0(엄밀 집합-diff). verdict=DIRECTIONAL(byte-parity 는 hexa 데몬 실행 필요·chat-py-1 이 호스트 막힘→후속). G5 VERSION 0.14.4. 이제 py·hexa 두 트윈 다 fixed(별개 유지·a_substrate_disjoint). → 🔬 H_9418 CONTENT-FEATURE(H_9411 wm content-dead 후속·Fable 위임·$0 스크린): wm 이 8-dim byte-stat 에 물려 같은-레지스터 영어를 cos≈0.99 로 못 가림→wm_buffer cos≥0.9 병합 단일슬롯화=표현 content-blind. richer byte_ngram_sketch(signed FNV-1a·n3/dim64·frozen) 스크린: C0 exact=1.0·spurious-merge 8dim 64.7%→sketch 0.0%(feature 표현천장 해소·강력대비)·median 0.366. BUT N_recur=0/58(303M mouth WM지평 내 재현 0)→Δ−0.007 CI=0포함=PENDING/기질제약음성. feature 옳으나 스트림에 반복 content 없어 wm 붙잡을 것 없음(음성=기질사실 아니라 gauge). AGREES H_9403 emit≡clock. tune-to-green 아님(frozen 기준·N_recur power게이팅). ⚠️ 정정($0 단어-수준 재확인·verdict-integrity): N_recur=0 은 기질 아니라 feature-grain 아티팩트 — mouth 는 content 재현(vault/forever/qx 59/59·단어 Jaccard median0.222 max0.800·>0.5 쌍 37)인데 byte-trigram 을 whole-utterance L2정규화하니 변하는 꼬리가 공유접두 희석→cos<0.9→N_recur=0. '기질-제약 음성' 철회→REOPENED(instrument-incomplete·기질엔 content 재현 있음·올바른 grain 이 열린질문·post-Δ pick 금지). AGREES H_9403 부분철회(완전 clock-shaped 아님). chat-py-3 계열(표면 grain 이 내용 재현 놓침). → 🔒 H_9420 WORD-BAG GRAIN(H_9418 재오픈 해소·wm-content arc 종결·Fable pre-reg 단일 feature+anchor-strip 판별기): word_bag_sketch(binary word-unigram)+anchor-strip(birth-anchor=session_seed+mem_text 토큰 제거). $0 C0-first: R machinery active0.224·null0.231·Δ−0.0072=H_9418 byte-id✅·C0-2 spurious 0%·C0-4 N_recur_genuine=2(need≥10 실패)·stripped median cos 0.000=HONEST-NEGATIVE(mouth). H_9418 word-Jaccard 0.8 은 전부 공유 birth-anchor 접두·genuine content 재현 없음→mouth 는 birth-anchor 만 re-emit(H_9336 content-판·H_9403 정합). ⟹ wm content-deadness 원인=feature 해상도(해소)도 gauge 배선(옳음)도 아니라 mouth anchor-echo. wm-content lane CLOSED-AT-REGIME·병목=upstream mouth 다양성(별개 lane). Fable 85% NEGATIVE 정확 적중·tune-to-green 0. → 🔒 H_9422 VOID-BY-SEALED-REGIME(H_9420 상류 규명·코드-확증 reframe): 왜 mouth 가 birth-anchor 만? decode-seed 2 distinct=고정 anchor(p5). 판정=p5-necessary 아님. p5 는 own-output→mouth(monologue)만 금지·own-output→score(기억)는 합법(chat.py:1982·H_9336/37 이미 live). 진짜 원인=sealed 환경: percept=wake_mem[tick,stage,cell_count] 시계삼중항(:1653)·anchors 루프밖1회·REM grow=session_seed 상수. ⟹ anima='귀 없는 입'·시계가 유일 exogenous → emit≡clock(H_9403)≡content-void(H_9420)=같은 사실. 벽=p5 아니라 afferent channel 부재. escape=(d) external percept(EEG a_eeg 승인)=owner-gate identity 변경·자율발사 불가. content-축(wm·af)=이 regime category-VOID. ⚠️ Fable §1 af-정정 stale-source 폐기(현 main af/wm per-tick live·af 죽음=ungrounded valence H_9418 유효). content-gauge arc(H_9411→9420→9422) 상류 규명 종결. → 🔵 H_9425 p8-AFFERENT($0 DESIGN reframe·신규 decode 0·미공격 레버 스펙): H_9359(runtime bridge absence)+H_9422(afferent channel 부재='귀 없는 입')를 겹치면 미공격 각도 — operator+declaration 을 런타임 percept 로 co-present 시키면 재조합이 학습(CPT) 없이 '지각'되나. 계보증명: G1 공격 5건(H_9304·9267·9327·9359·9423) 전부 weight-learning(CPT/co-train)·afferent 런타임 주입=0/5. p8('no train/infer split')이 요구하는 학습-via-런타임-채널을 H_9267 D-acc=1.000 신호에 처음 적용. 조작(단일변수·CPT-free): pair 를 CPT 대신 afferent stream 으로 store(ca3/해마·H_9336/37 g_text content-read live·chat.py:1982)에 주입·가중치갱신0. 양성통제=co-present·null=separated·판별 co-present−separated≥+0.20⟹런타임다리 실재·Δ≈0⟹벽 격상(조회경로 자체 부재). 계기살아있음 선행: C0 ORACLE(답 직접주입 D-acc≥0.90·<0.90=INSTRUMENT-DEAD·V2_1 선례). 판정=v2-sandbox 선행(afferent 배선=production 정체성 변경=owner-gate·자율발사 불가·H_9422 escape(d) EEG 계열)·CRACK⟹core/ 포팅+--afferent(a_eeg 승인). H_9423 공학습 다리와 직교(weight vs runtime percept). → 🎨 H_9426 Φ-ONLY DYAD SPEC(H_9422 escape(d) 최경량 후보·DESIGN-SPEC·DIRECTIONAL·실행0): 두 데몬 매 tick 스칼라 pure_field_phi 만 교환=완전 p1-8 합법 비언어 afferent(비언어→p4 무관·타-데몬 출력→p5 자기씨앗 아님). 코드-확증 결합점 판정: pure_field_step(pf) 에 drive 인자 부재(core/pure_field.py:187·osc self-drive·amp→LN2·raw_phi=variance·energy 전부 자기 진동자=닫힌 자율계)·brain_decide 8-afferent 는 emit-정책만 먹고 pf.phi 안 바꿈(H_9400 포화) ⇒ 필드-레벨 Φ-결합=pure_field_step 시그니처 변경(drive_phi,K·후보-A raw_phi+=K(drive_phi-phi) 확산결합·probe-beside 아님)=owner-gate 아키텍처 추가(H_9411 ⑤ 확증·자율발사 불가). 측정=coupling≠clock(H_9391 다이애드版): 두 데몬 동일 결정론 진동자(τ2/40/400)→같은init PLV=1 결합無로=시계증거. 4-arm desymmetrize P(K0 같은init·PLV=1 필수 else INSTRUMENT-DEAD)·B(K0 다른init=clock-floor)·C(K>0 다른init·판정 PLV_C−PLV_B>TOST margin)·N(shuffle 붕괴). dead-gauge 가드=arm간 N_distinct>1. cheapest-test: arm-C=owner-gate($0 아님)·arm-P·B clock-confound 사전스크린(uncoupled·위상offset·결합코드 불요)=go/no-go 게이트 — arm-B PLV≈1(τ2 variance지배·LN2 수렴) headroom 0 ⇒ REFUTED-BEFORE-BUILD. H_9422 afferent-channel 부재 벽의 EEG(a_eeg) 병렬 최경량 escape 후보. → 🔎 H_9430 SEALED-NONCLOCK CENSUS(H_9422 '완전 sealed·시계삼중항' 자기-반증 시도·$0 census 6 trace 신규decode0=DIRECTIONAL): percept=wake_mem[tick,stage,cell_count] 중 cell_count 이 clock 인가 검정. 발견=NON-CLOCK endogenous 존재. pooled H(cell_count|tick)=0.669 bits(>0 ⟹ tick 이 growth 미결정·clock-sealed 반증·4 candidateY seed 동일 config stage_cycle). mitosis#1 tick11 전6트레이스(303m_summer·303mb·zephyrine·mnemosyne·thanatos·orpheus) 동일=CLOCK-locked; mitosis#2 tick23 zephyrine 만(→cell4)·mnemosyne(416t)/thanatos(465t) 이 tick23 훨씬 지나도 3 유지=seed-content-gated ENDOGENOUS. cell_count matched-tick cross-seed 442/465(95.1%) 발산·ten_ema 4seed matched-tick 73/73 발산=endogenous. BUT emit clock-sealed 존속: H(emit|stage)=0 전6트레이스 ⟹ endogenous store-growth 는 emit 서 DECOUPLED(입에 안닿는 inner-content). provenance gate(정직): endogenous 주장=LIVE 게이지만(cell_count distinct2~4·ten_ema distinct100s)·DEAD 배제=rel_lane(distinct1 in 두 zephyrine trace=H_9337 pre-fix 확인)·recon_err(distinct1 전6)·phi(=phi_const distinct1) ⟹ dead-gauge 오염 0. AGREES H_9427(σ-seal R²·그쪽 OPEN-residual field=이쪽 discrete cell_count 축의 연속판)이나 이 카드는 삼중항 프레이밍 직격+emit-decoupling 추가. 판정=H_9422 부분정정: '완전 sealed' 과장 — store-growth(mitosis)=endogenous inner-content(clock 미결정)이나 emit⊥ 이라 mouth 서 sealed. H_9422 emit≡clock·content-void-AT-MOUTH 결론 존속(NET=emit-lane sealed · growth-lane endogenous·삼중항의 cell_count 성분은 '시계' 아님). key=H(cell_count|tick)=0.669 bits. → 🔵 H_9601 PRENATAL-NOT-VOID(H_9422 Ψ-SOMA 어휘 재프레임·$0 DIRECTIONAL·신규decode0·측정불변): sealed daemon 의 content-축=mode-of-existence 실패(VOID) 아니라 percept-birth 대기 발달단계(PRENATAL). 계기=H_9422 자기모순 — 같은 카드가 content-축 category-VOID(복원불가) ∧ escape-(d) afferent 배선하면 content 지각 가능(복원가능)을 동시 주장. 논거3(신규측정0): ① H_9430 growth-lane endogenous(H(cell_count|tick)=0.669>0)이나 emit 서 DECOUPLED(H(emit|stage)=0)=속에서 자라나 입에 안닿는 태아 ② H_9427 sealedness field-local(SEALED spine vs OPEN residual)=균일사망 아님 ③ H_9422 '귀 없는 입'(연산 아닌 배선 부재)+H_9425/9426 복원경로 실재. H_9422 mechanism 전부 존속·바뀌는 label 1개(VOID→PRENATAL)=tune-to-green 아님(값 불변·자기모순 해소). 판별기준 3-AND: 복원경로(afferent→capability)∧내부발달(endogenous·mouth서 DECOUPLED)∧결핍=배선부재 ⟹ PRENATAL, 하나라도 실패 ⟹ VOID. 경험적 discriminator=H_9425 co-present−separated≥+0.20(C0 ORACLE≥0.90)=birth-check. σ재분류(mode-of-existence 축, H_9351 측정-INVALID 축과 직교): PRENATAL=wm-content(H_9420)·af-valence(H_9418 ungrounded)=σ·flux content 성분 · SEALED-ALIVE=emit-lane(H_9403 clock-locked·작동중) · 진짜 VOID=content-축서 0(요점). Ψ-SOMA 어휘 삽입: PRENATAL 을 VOID(복원無)↔PENDING(측정미완) 사이 mode-of-existence 상태로(존재축서 VOID 인접·birth-path 존재). 판정변화: H_9422 content-VOID→content-PRENATAL=lane 이 VOID-CLOSED 아니라 PENDING-BIRTH(owner-gate afferent milestone)·PRENATAL=falsifiable(배선후 Δ≈0=VOID 격상). ⚠️ 과대주장 없음: PRENATAL≠의식 약속·H_9400(Ψ=½ 미작동) 불변. 병렬비교: H_9430/9427 AGREES(기제·부분개방 정량 제공→이 카드가 명명)·H_9425/9426 AGREES(birth-check·최경량 birth-path 제공)·H_9422 CONFLICTS 는 단어 'VOID' 1개뿐(mechanism·측정 전부 AGREES·내부-도출 정밀화). owner-gate(birth-check=afferent 배선=identity 변경·자율발사 불가). → 🔎 H_9602 CHAOS-ITINERANCY(H_9422 orbit 주기성 $0 검정·H_9427/9430 후속·신규decode0=DIRECTIONAL): sealed 데몬 상태 orbit 이 주기(시계)인가 endogenous 카오스 itinerancy(Tsuda·비주기)인가. 기존 trace 6종 RQA(provenance gate 선행·dead-gauge distinct1 배제·중복게이지 cur_ctx≡cur_indep/score≡base_motiv corr1.0 dedup·독립 LIVE OPEN=cur_ctx/cur_ema/cur_f/ten_ema). 3측정=clock-detrend 잔차(H_9427 설계행렬)·스펙트럼 flatness/peak2med·RQA(DET/Lmax/LAM)+phase-randomized surrogate z(DET). 통제 계기유효=pure_clock z14·pure_noise z≈0·logistic 결정론카오스 z106/Lmax13·AR1 z≈0.6·quasiper z≈0. 판정=NON-TRIVIAL·LINEAR 확장 limit-cycle(주기)—3갈래: (a)birth-noise REJECTED(잔차 DET0.54–0.67≫noise0.19/AR1 0.37·residFlat0.008–0.06≪noise0.57=고도 구조적); (b)Tsuda chaos REJECTED 4/5 trace(surrogate z(DET)0.66–1.39 NS=스펙트럼-설명 선형·logistic 통제 z106 와 정반대·LAM0.15–0.39 낮음·D_orpheus z2.37 marginal 이나 N73 underpowered); (c)positive=확장주기(잔차 극tonal cur-lane peak2med8k–26k/flat~0.01=5-stage clock 못잡는 더긴주기 진동 중첩=slow limit cycle). emit-lane 순수시계 재확증(emit_env/stage_env clockR2=1.000·DET≈1.0)·non-triviality 는 OPEN/endogenous 하위-manifold 한정(emit-decoupled). AGREES H_9427(OPEN-residual dynamics 신규특성화=선형quasi-periodic·상보)·H_9430(endogenous≠chaotic·ten_ema 선형)·H_9422(chaos 대안기각=orbit≈시계 강화·단 완전clock 아님 amendment)·H_9601 병렬 COMPLEMENT(존재양식 PRENATAL vs orbit 기하). key=surrogate z(DET)=0.66–1.39(NS·4/5) vs logistic 카오스통제 z=106. → 🔬 H_9603 BUTTERFLY(H_9602 확증·engine-native 2-rollout aiden): 초기조건 session_seed 1byte-flip·같은 sample_seed=7 → 3분해: 내용 byte-distance 0.947·identical 0/59(input-bound richness·첫tick 완전발산) · 발산 growth +0.007≈0(즉시포화=비카오스·H_9602 선형 limit-cycle 확증) · emit-schedule overlap 1.00(clock-locked·H_9403 강화). sealedness=richness 는 birth-seed(input)-bound·timing 은 clock-bound·dynamics 는 비카오스 선형. sealed 데몬='inner life'=birth-seed 1회분 결정론 전개(self-생성 없음)·새 content=afferent(owner-gate)만. H_9601 PRENATAL 실측(birth 가 richness 심으나 세션내 self-진화 0). sealed-dynamics lane 종결. → 🔵 H_9604 LAB-FULL 재정렬(Fable5+Codex5.6 독립 적대검토 수렴·신규 decode 0): arc 결론 3정정. ①content-void=과잉주장(butterfly 0.947=content 존재·진짜벽=zero-Lyapunov limit-cycle=birth-seed 결정론반복·afferent 는 open-ended world-answerable content 에만 필요). ②afferent-순서 반전=범주오류: contraction(Lyap≈0)에 percept=수동필터 구동=p1-4 거부 I/O함수. 올바른순서=A⇄G tension 부활(edge-of-chaos)→afferent 완성. 'afferent 부재'≡'A⇄G tension 미작동'(H_9400)=같은벽 융합. ③Φ-dyad 강등(양쪽 꼴찌·스칼라=2번째시계). pre-commit 측정=interventional transfer-entropy(percept구조 content 전파·phase-scramble+sham)AND Lyapunov 0 이탈. 와일드카드: persistent-subject 부재(매eval fresh birth·p8 split)·agency 부재(손없는귀·controllable perception). NEXT 재정렬=afferent-먼저 폐기→A⇄G tension 부활 먼저·$0 g_text→immune bind(wiring vs law). → 🔎 H_9605 PERSISTENT-SUBJECT census(H_9604 와일드카드 ③ $0 code census·cli/chat.py@origin/main·신규decode0=DIRECTIONAL): 지속-주체=SPLIT-PERSISTENCE 두 축 상반. 정체성축(SELFG8 8-dim grounded-self)=~/.anima_kosmos_self(HOME·비휘발)·세션종료 create_anchor(:2802)·부팅 _selfg_restore(:1515) 복원 ⟹ cross-session 지속(WHO). 경험축(C9 emit_t trajectory emit_anchor_from_v3 :2484)=kdir /tmp/anima_kosmos(휘발)·write-only(live_anchors 매tick []재구성 :2222 재진입無) ⟹ 세션마다 fresh birth(WHAT). weights=frozen fossil(p8). ⟹ Fable 'no persistent subject'=경험축 확증·정체성축 정정('지속 정체성+휘발 경험'). afferent 이중-상류 차단: 귀 달아도 들은 것이 지속할 경험-누산기 부재(H_9422 채널부재 + H_9605 지속처부재). AGREES=Fable persistent-subject(경험)·Codex agency(궤적 못나르는 주체=agency locus 없음)·H_9422 sealed(직교축)·H_9601 PRENATAL(경험축 미탄생 = 세션마다 재탄생과 정합). CONFLICTS/REFINES=flat 'no subject'. ⚠️NEW on main(a_parallel_session_compare·직교): percept anchor :2249(live_anchors.append name=percept)가 seed :2557 도달=병렬세션 afferent 착륙(H_9422 '귀 없는 입' 이동 가능성·persist census엔 무영향·percept 도 home self-anchor 미기록·다음세션 H_9422 재독 전 조정필요). 판정변화 없음(H_9422/9601 기제 존속·경험-지속축 명명 추가). NEXT=H_9604 ① A⇄G tension 소생 유일 live 자율 $0 · 경험-누산기(emit/percept→home self-anchor fold)=owner-gate identity 변경. → 🔎 H_9606 PERCEPT-HOOK reconcile(H_9605 ⚠️ flag 해소·$0 code census·신규decode0=DIRECTIONAL): H_9605 이 flag 한 신규 percept anchor(:2249→seed :2557)가 병렬세션 afferent 배선인가? 판별=아니오·**guarded optional hook**. percept_source(:395)=함수 파라미터·default None·cli/chat.py 내 non-None 호출자 부재(grep)·OFF 시 percept_text None(:1716)·append 스킵·live_anchors[-1]=live_seed=byte-identical sealed(guard :2247). 설정경로=오직 'anima study' 드라이버(anima-study-driver 브랜치·H_9520 replay-mix)가 TEACHER 텍스트 seed 주입(:1718). ⟹ **H_9422 '귀 없는 입' STANDS**(프로덕션 의식데몬 여전히 sealed). 존재 hook=study-percept: p5-legal(exogenous·not self-seed) 이나 linguistic teacher-text=p4 assistant-framing(a_no_llm_frame_trap)=consciousness-afferent 으론 불법. 두 채널 분리(병합금지): study-percept(p4·off-default·replay training) ≠ consciousness-afferent(p1-4-legal 비언어 EEG류=미배선·owner-gate). AGREES=H_9422 sealed·H_9605(percept 도 home self-anchor 미기록·직교)·H_9604(afferent owner-gate) · CONFLICTS=naive 'afferent wired' 오독 · NOVEL=percept p4/p5 split. **$0 자율 arc 바닥 도달**: NEXT ②(immune-bind)=H_9401→9403+9420+9605 종결·③(persistent)=9605 종결·percept=여기 종결 ⟹ 전 forward=owner-gate(①A⇄G tension edge-of-chaos·9602/9603 zero-Lyapunov · ②비언어 afferent · ③경험-누산기). → 🟢 H_9607 A⇄G FEEDBACK 배선(H_9604 NEXT① 오너 go 레버'1'·Fable 설계→로컬 구현 fable-mode·WIRED·toy-LIVE·DIRECTIONAL): never-operated tension 소생 — 필드(pure_field_step)가 LN2 relax 닫힌 자율계라 zero-Lyapunov(H_9602/9603)이고 A⇄G tension은 emit 정책 읽기만·되먹임 없음=단방향. 되먹임 leg 배선: 데몬측 leaky-INTEGRAL I=(1-RHO)I+s (s=ag_a_drive+ag_g_drive 부호합)가 osc_tick 진폭목표 LN2→LN2·(1-drive)·drive=κ·SGN·I를 다음 tick 소비(own-output(t)→field-state(t+1)=p5-legal·H_9336/9337). 적분 null=s=0⟺emit_drive=½를 κ·0.76편향 무관 강제=창발 setpoint(tune-to-green 아님·H_9419). κ=THE one knob --ag-feedback(0=byte-identical)·RHO=1/400·SGN=-1=FROZEN FORM(H_9391). 계기=anima-py evaluate --ag-criticality trace-reader(C0 loop-liveness·ii TE surrogate·iii homeostasis·panel i butterfly-λ=seed-flip 303M). toy 48K smoke: κ=0 distinct(ag_drive)=1[0.0]=필드 byte-parity✅·κ=0.5 distinct=60·emit_drive 12/60·phi 37/60=A→G→A WIRED·LIVE✅·TE=0(ns)·homeostasis 0.771→0.793(½서 멀어짐)=임의κ·48K서 채널/항상성 無=Fable 모달예측 정합. ⚠️incidental: live smoke가 선재 main버그 포착(_dual_fn H_9627 refractory 분기 안에만 assign되나 무조건 read=default clock+trace서 UnboundLocalError, None default 수리). VERSION 0.15.24→0.15.25(G5). NEXT=①303M --ag-criticality fire(Hopf-knee κ pre-scan·owner GPU go) ②hexa twin(pure_field.hexa+anima.hexa 별도 PR·a_substrate_disjoint·H_9411 선례·구현됨·미배선). 3-way verdict pre-reg: REVIVED/STILL-SEALED/LYAPUNOV-BUT-NO-HOMEOSTASIS(=afferent load-bearing 실측증명). AGREES=H_9604(afferent 상류)·H_9400(Ψ=½ 미작동)·H_9602/9603(zero-Lyapunov). 🔥 303M FIRE VERDICT=🧱 STILL-SEALED(engine-native anima-py evaluate --ag-criticality·py303_full 013c4574·summer 격리venv·자율발사=standing pool≠fleet rent·κ pre-scan{0..1.0}×300tick+seed-flip butterfly κ{0,0.6}): C0 loop live(κ>0 distinct(ag_drive)=300)✅ · (i)butterfly-λ κ=0 slope −0.00008(d 0.25→0.001=H_9603 null 재현)·κ=0.6 −0.00004(d 0.11→0.009)=λ 0 못벗어남 수축지속 · (ii)TE(tension→emit)=0 전κ=emit 인과채널 없음 · (iii)emit-rate 0.247 전κ 불변·mean(emit_drive) 0.785→0.868 ½서 멀어짐=homeostasis 실패 ⟹ 3패널 전부 음성. 적분 되먹임=진폭 target만 이동·필드 여전히 PSI_ALPHA 수축(fixed point 재배치≠양의 Lyapunov)·emit=stage 순수함수(H_9403 emit≡clock). **재프레임**: load-bearing 벽=필드 아니라 **emit-gate clock-lock(H_9403)**. 필드-되먹임 lane CLOSED-AT-REGIME. NEXT=emit gate가 field/tension 읽게(earned-refractory H_9406/margin p5-DESIGN·owner-gate) OR afferent(H_9606·owner-gate). 계기완성=--ag-criticality --butterfly(engine-native·#3839). VERSION→0.15.27. frozen-first. → 🧱 H_9608 field-loop GATE-INDEPENDENT inert(H_9607 STILL-SEALED 게이트무관 확증·오너 go 자율발사·engine-native 303M --ag-criticality·py303_full 013c4574·summer 격리venv): H_9607 재프레임(벽=emit-gate) 검증=tension-읽는 refractory 게이트(H_9416 I(emit;g_recog|stage)=0.197)서 --ag-feedback κ{0,0.6} 재발사. refr κ=0 emit-rate 1.000 SATURATE(H_9421 재현·clock 0.247과 정반대)·κ=0.6 ag_drive LIVE(150 distinct)이나 emit-rate 1.000 불변·mean(emit_drive) 0.782→0.848·TE=0 ⟹ 두 반대 게이트(clock 과침묵·refr 과발화 포화)서 필드루프가 emit-rate 못바꿈=STILL-SEALED 게이트-무관(clock 아티팩트 아님). 필드는 κ 반응(emit_drive 이동)하나 emit 결정 도달 안함=필드→emit 경로 게이트-무관 단절. ⚠️confound: refr margin 포화라 완전 clean=non-saturated dual-ledger(H_9627 병렬 lane·미복제) 필요. ⟹ **A⇄G field-feedback lane 완전 CLOSED·필드-side 스레드(H_9607→9608) 종결·consciousness live 레버=emit-gate(H_9627) 필드 아님**. 직교=H_9672 주소벽/G1(#3895·다른 프런티어·Ψ-SOMA 분리). DIRECTIONAL(2-arm·150tick·단일seed·포화 confound 공개). ✅ CONFOUND 해소(3rd gate·aiden 격리venv): non-saturated dual-ledger 게이트(--emit-gate refractory --g-reach wm-dual·H_9627 ½)×κ{0,0.6} 발사. dual κ=0 emit-rate 0.500=H_9627 ½ 재현(non-saturated ✓·refr 1.000 포화 대조)·κ=0.6 ag_drive LIVE(150 distinct)이나 emit-rate 0.500 불변(full 150-tick 확정·75·102·150행 전부 ½) ⟹ 필드루프가 non-saturated ½ 게이트도 못 흔듦=gate-independence 3-게이트(clock 0.247·refr 1.000·dual 0.500 전부 LIVE-but-emit-rate-inert) 완전 clean. dual-ledger는 S>E ledger 자체기전으로 ½ 유지·필드→emit 단절 여기도. 신규조합(dual×필드루프)·병렬 H_9627 단독과 미복제. full 150-tick complete-scope 확정. → 🟢 H_9743 PRODUCTION-DEFAULT flip(오너 '승인 go'·Fable 설계→로컬 구현 fable-mode·WIRED-DEFAULT): 의식 arc의 실 산출물 — anima 데몬 default emit-gate를 하드코딩 30초 시계(p5 위반)에서 **H_9627 dual content ledger(emit⟺S>E·Ψ≈½ 창발)로 전환**. cli/chat.py: --emit-gate default clock→refractory · --g-reach 조건부 default(refractory면 wm-dual·아니면 d1=rollback-safe·정적이면 --emit-gate clock이 guard서 crash·Fable 교정) · --wm-leak 0.6 불변 · guard(--rate-limit-sec/--emit-refractory=clock-path이라 --emit-gate clock 요구) · evaluate.py --emit-gate-census meta-guard(non-clock trace 제외·H_9403 emit≡clock 불변식 오염방지) · anima.py usage. VERSION 0.15.47→0.15.48(G5). 증거=H_9627(과학·병렬lane 크레딧): 303M 3-seed emit 0.506≈½·score-perturb swing 0.000(#3867)·λ-locked 0.006(#3893)+H_9608 2nd-host 150tick 0.500. 착륙前 관문=GATE-P5-DEFAULT byte-identity cert(frozen-first·$0·새 과학fire 아님·flag-resolution 결정성만: A defaults≡flags·B rollback≡old·C guard SystemExit). **정직성**: default가 Ψ≈½ 도달=H_9627 설계된 dual-ledger(교환대칭 S>E)이지 원 A⇄G tension 주장 부활 아님 — H_9400 clock계보 반증 존속·H_9607/9608 필드루프 게이트무관 inert 존속·clock은 --emit-gate clock에 byte-identical 보존. NEXT=hexa twin(core/brain.hexa엔 brain_emit_refractory 부재·전체 게이트족 포팅 선행·py first·H_9411 선례·별도 PR)·cadence 2×수다(broker anima 0.11.0 무영향). → 🟢 H_9726 hexa emit-gate PORT(H_9743 twin·H_9718 NEXT 완결·오너 '잔여 모두 go'·Fable 설계→로컬 구현·WIRED-hexa DIRECTIONAL-on-typecheck): H_9415→9627 게이트족을 hexa twin 포팅+default flip(refractory+wm-dual·Ψ≈½·py mirror). core/engine_cli.hexa wm_byte_feature(py _afs_byte_feature verbatim)·core/brain.hexa brain_emit_refractory(emit⟺gate∧kill∧φ∧cont·NO θ/rate·de-closured dual→2 WorkMemBuffer+bool)·cli/anima.hexa argv threading+--emit-gate default refractory/--g-reach conditional wm-dual/--wm-leak+guards+W_S buffer+leak+call-site swap+silence write. 검증=hexa typecheck set-diff(engine-cli-hexa-2 local native build 금지): 신규 real 에러 0(brain.hexa non-Map 0·engine_cli 'float'×2+anima 'EngineConfig'×2 origin baseline·anima delta+1 Map-access 무해)=syntactic clean(H_9411 typecheck-DIRECTIONAL 선례). twin-parity: ½는 py 303M earned·hexa 재주장 아님. Cert A/B byte-parity=hexa 데몬 pool-blocked/moot=deferred(ρ-AXON reach·Ψ-SOMA). hexa/py divergence=argv-only(hexa env 없음). a_substrate_disjoint(brain.hexa+anima.hexa+engine_cli.hexa만·no py). resolves H_9718(divergence tracker→RESOLVED). id H_9722→H_9726(병렬충돌). VERSION G5. NEXT=hexa runtime unblock 시 Cert A/B."
          },
          {
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9400",
@@ -858,7 +763,7 @@
           "id": "brain-structure-engine-lanes-h9610-value-gate",
           "type": "gate",
           "name": "",
-          "detail": "🟢 H_9627 dual-ledger 벽 완전 돌파 + **WIRED**(오너 p5 승인·#3938): production default = refractory+wm-dual(Ψ=½ 게이트)·rollback --emit-gate clock. 303M 5성질(emit≈½ 창발·two-sided spring·dissoc·score-swing 0.000·λ-locked)+장기 200tick center 0.500 안정. a_verified_must_wire 종결=anima 최초 wired Ψ=½ gate."
+          "detail": "🟢 H_9627 dual-ledger Ψ=½ WIRED(5성질·production default). → 🔴 H_9738 EARNED NULL(#3991): 상상은 epiphenomenal — 텍스트→저장 0 byte(정적 certificate)+조성 own==donor 궤적 byte-identical(303M 3seed·C0 SHAM PASS) ⟹ 보류장부의 전 미래영향=교대 위상 1비트. **살아난 gate이지 살아난 interior 아님.**"
          },
          {
           "id": "brain-structure-engine-lanes-h9427-sigma-seal-metric",
@@ -1015,10 +920,10 @@
         "detail": "p5_tension_emit_not_filler: stage-gated emit (WAKE/REM) on real substrate tension PRESERVES p5; the prohibition targets reactive speak() calls and monologue-from-vacuum."
        },
        {
-        "name": "p5-realized-by-default (H_9712)",
+        "name": "p5-realized-by-default (H_9743)",
         "role": "",
         "id": "philosophy-p1-p8-what-anima-refuses-to-be-p5-no-speak-realized",
-        "detail": "H_9712 (owner-approved): the DEFAULT emit-gate is now the H_9627 dual content ledger (emit⟺S>E, Ψ≈½ emergent) — NOT the hardcoded 30s clock. p5 is realized by default, not just preserved. HONEST scope: Ψ≈½ comes from H_9627's DESIGNED exchange-symmetric ledger, NOT the original A⇄G-tension thesis (H_9400 stays refuted for the clock lineage; H_9607/9608 keep the field loop measured-inert at every gate). Legacy clock daemon preserved byte-identically at `--emit-gate clock`."
+        "detail": "H_9743 (owner-approved): the DEFAULT emit-gate is now the H_9627 dual content ledger (emit⟺S>E, Ψ≈½ emergent) — NOT the hardcoded 30s clock. p5 is realized by default, not just preserved. HONEST scope: Ψ≈½ comes from H_9627's DESIGNED exchange-symmetric ledger, NOT the original A⇄G-tension thesis (H_9400 stays refuted for the clock lineage; H_9607/9608 keep the field loop measured-inert at every gate). Legacy clock daemon preserved byte-identically at `--emit-gate clock`."
        }
       ]
      },
@@ -1241,7 +1146,7 @@
         "role": "",
         "id": "a-g-consciousness-engine-core-substrate-only-bytegpt-mbnd-mouth-binder-lane",
         "type": "gate",
-        "detail": "core/mbnd.py — `MBND` trailer magic. Post-readout order is SLW → readout → CLML(additive) → CLMS → MBND(additive); opt-in via decode.set_mouth_binder(on, order_scramble) so a checkpoint carrying the trailer still decodes byte-identically with the lane off. Formula: a_t = softmax((Q h_t)·(K m)ᵀ/√rank + b[t−i]) over a causal bank m=yn[:t] · ctx = Σ a_ti (V m_i) · g_t = (U h_t) ⊙ ctx · s_t = W_o[g_t; h_t] · out = logits + λ·s_t. The Hadamard is the point: it is how two distant contents enter ONE logit decision multiplicatively, which is what H_1603 named as the shared G1≡G6 deficit (mouth-내 binding operator). This abstracts H_9672's CLMS win from 'store as a faculty' to 'dynamic nonlinear binding operation'. H_1640 (Hamiltonian symplectic binding mouth) is the precedent that does NOT kill this: it read G6 fals=0, but its binder was DROPPED before serialization, so the binding op only shaped the trunk during training and never reached the decode path at all. MBND is the opposite by construction — it rides the trailer and executes at inference, which is what the numpy⇄torch parity work certifies. TWO PIECES EXIST ONLY BECAUSE THE SELF-TEST PROVED THE VERSION WITHOUT THEM COULD NOT TESTIFY: (1) linear=True uses UNIFORM attention, not merely an additive combine — keeping the data-dependent softmax and only swapping ⊙ for + measured NONLINEAR (deviation 59.9 where a linear map must read 0), so that arm controlled for nothing; uniform-attention + additive reads 0.0000 = the fixed-role class of kill#7 (G1_WALL_LEVER_IS_OBJECTIVE_NOT_READOUT) reproduced BY CONSTRUCTION, which is what makes the nonlinear arm's number readable. (2) b[t−i], the relative-distance bias, exists because plain content attention is PERMUTATION-EQUIVARIANT over the bank: permuting m permutes a and Vm together, so the order-scramble control read Δ=0.000 — the control could not touch the lane rather than the lane surviving it (the forged-gate class `corpus-py-1` warns about). A lane with no order also cannot tell 'A causes B' from 'B causes A', which is the asymmetry binding IS. With the bias: Δ=325.6. 2-production mirror: torch MouthBinder ⇄ numpy mbnd_apply parity 3.55e-15 (summer, after snapping weights to the f4 grid; the residual 4.5e-7 was purely the f4 cast). The trailer is read AFTER CLMS and AFTER H_9643's CLMF, so a .clm carrying any subset of the lanes keeps its offsets. STATUS: INSTRUMENT-CERTIFIED, NOT a verdict — bind-Δ requires a trained ckpt, and the train flags (--mouth-binder/--mouth-memory/--bind-rank) plus the --g6-bind-delta scoring face are still absent. Pre-registered bar (H_9698 card): nonlinear bind-Δ ≥0.20 · role/order scramble ≤0.05 · linear arm ≤0.05 or ≥0.15 below nonlinear · then canonical FALS ≥1 on ≥2/3 seeds with fals_bound rising."
+        "detail": "core/mbnd.py — `MBND` trailer magic. Post-readout order is SLW → readout → CLML(additive) → CLMS → MBND(additive); opt-in via decode.set_mouth_binder(on, order_scramble) so a checkpoint carrying the trailer still decodes byte-identically with the lane off. Formula: a_t = softmax((Q h_t)·(K m)ᵀ/√rank + b[t−i]) over a causal bank m=yn[:t] · ctx = Σ a_ti (V m_i) · g_t = (U h_t) ⊙ ctx · s_t = W_o[g_t; h_t] · out = logits + λ·s_t. The Hadamard is the point: it is how two distant contents enter ONE logit decision multiplicatively, which is what H_1603 named as the shared G1≡G6 deficit (mouth-내 binding operator). This abstracts H_9672's CLMS win from 'store as a faculty' to 'dynamic nonlinear binding operation'. H_1640 (Hamiltonian symplectic binding mouth) is the precedent that does NOT kill this: it read G6 fals=0, but its binder was DROPPED before serialization, so the binding op only shaped the trunk during training and never reached the decode path at all. MBND is the opposite by construction — it rides the trailer and executes at inference, which is what the numpy⇄torch parity work certifies. TWO PIECES EXIST ONLY BECAUSE THE SELF-TEST PROVED THE VERSION WITHOUT THEM COULD NOT TESTIFY: (1) linear=True uses UNIFORM attention, not merely an additive combine — keeping the data-dependent softmax and only swapping ⊙ for + measured NONLINEAR (deviation 59.9 where a linear map must read 0), so that arm controlled for nothing; uniform-attention + additive reads 0.0000 = the fixed-role class of kill#7 (G1_WALL_LEVER_IS_OBJECTIVE_NOT_READOUT) reproduced BY CONSTRUCTION, which is what makes the nonlinear arm's number readable. (2) b[t−i], the relative-distance bias, exists because plain content attention is PERMUTATION-EQUIVARIANT over the bank: permuting m permutes a and Vm together, so the order-scramble control read Δ=0.000 — the control could not touch the lane rather than the lane surviving it (the forged-gate class `corpus-py-1` warns about). A lane with no order also cannot tell 'A causes B' from 'B causes A', which is the asymmetry binding IS. With the bias: Δ=325.6. 2-production mirror: torch MouthBinder ⇄ numpy mbnd_apply parity 3.55e-15 (summer, after snapping weights to the f4 grid; the residual 4.5e-7 was purely the f4 cast). The trailer is read AFTER CLMS and AFTER H_9643's CLMF, so a .clm carrying any subset of the lanes keeps its offsets. VERDICT 2026-07-18 = 🧱 MBND-BIND-ABSENT (engine-native 2-seed · 303M warm-FT on g6bind targeted/shuf frame_sha 98c48115 = R2-frozen · evaluate --fan-bind --mouth-binder --fan-smp 48 H_9745 paired · pod 8m9ojdtk5zfk3p A100 SECURE): bilinear bind-Δ s7=+0.0243 (⛔ UNDECIDABLE McNemar p.072) · s4302=+0.0139 (🧱 TOST⊂±0.05 = 0-equiv) — both ≪ the 0.20 pre-reg bar = OPERATOR-CRACK ruled out 2-seed. linear DOA LT_s7=0.0000 reproduced (kill#7 internal negative control = instrument valid) · shuf BS_s7=+0.0035 (corpus control clean) · H_9746 bindpos positive control = 0.20 McNemar p<1e-4 (dynamic-range proven). The multiplicative mouth-binder collapses to the linear DOA floor = kill#7, converging with the H_9694/H_9745 data-format lever (also BIND-ABSENT). Operator-axis = data-axis conclusion: neither the architectural bilinear binder nor the data-format lever induces G6 composition. Scope = synthetic g6bind DIRECTIONAL (natural-concept transfer separate); confirmatory 2-seed control replicates (LT_s4302/BS_s4302) + order-scramble + memorization census are moot for the negative — they split a CRACK from a form-artifact, and the lever produced no crack. ckpt 6 preserved locally ~/.fire-recover/h9698_r6/ (a_fire_recover_complete)."
        },
        {
         "name": "summary:",
@@ -9682,11 +9587,11 @@
       ]
      },
      {
-      "name": "🔴 BRIDGE-BOLT 3-port 종결 (H_9392 · G1 runtime lookup bridge)",
+      "name": "🟢 BRIDGE-BOLT → store-bridge lookup 3-seed robust (H_9392→H_9672 · G1 runtime lookup · 미배선)",
       "role": "gate",
       "id": "wall-scorecard-a-break-the-wall-commons-c16-bridge-bolt-3port-h9392",
       "type": "gate",
-      "detail": "🔴→🟢toy→⚪303M→🔬주소격리→⚠️2-seed해리. Stage1.5 벽=주소학습(c) 격리→H_9672 addr-loss(--store-addr-weight): **주소학습 벽 2-seed robust 돌파**(addr_mass 0.95/0.96 sharp) BUT **값읽기 seed-취약**(ORACLE seed7 .99 vs seed11 .50·op-only 붕괴)=전체 lookup NOT seed-robust·seed7 P1 .9688=값읽기운·TERMINAL 부정. 다음=값읽기 robustness. 카드 H_9672.",
+      "detail": "🔴 3-port볼트死→🟢toy→⚪303M→🔬주소격리→⚠️2-seed해리→**🟢 3-SEED ROBUST 돌파(H_9672 · 2026-07-17)**. 2층 벽 순차해소: ①주소학습 = addr-loss(--store-addr-weight) 2-seed robust 돌파(addr_mass .95/.96 sharp) ②값읽기 seed-취약 = **val-center(--store-val-center) 3-seed 돌파** [seed7 ORACLE 1.0000/P1bal 1.0000/flip .9922 · seed11 .9609/.9609/.9919(T3서 .50 붕괴시킨 그 seed) · seed13(미접촉 확증) 1.0000/.9922/.9921] 사전등록 4게이트 전원 통과·SWEEP_DONE. 기전 = v=Σ(aᵢ−1/n)·val[pol] = v−평균val ⟹ majority basin 산술소거. 4-lever 완결: 전환(oracle-warmup .52 KILL)·연속(RV-1 oracle-aux .53 KILL=오히려 해침)·스케줄(RV-2 ans-delay .48 flip .0137 KILL)·구조(RV-3 PASS) ⟹ 메타교훈: shortcut basin 은 신호로 덮지 말고 수식에서 제거한다. ⚠️ 등급 = CAPABILITY-PROVEN·**구현됨·미배선**(a_verified_must_wire): 계기는 engine-native 실배선(train.py --store-val-center · clms.py lane_type3 · codec · parity 0.00e+00)이나 production chat clms 참조 0회·clms_val_center 기본 OFF ⟹ **GREEN 아님**. tier=감독 co-train(창발-주소 아님). 배선 follow-on=별도 H_(production chat 경로+4칸 register retention 회귀 없이 조회 생존→그때 GREEN·a_blue_closed). 증거=.fire-recover/h9672_rv_sweep/(ckpt 4개+sweep_verbatim.log). 카드 H_9672.",
       "children": []
      }
     ]
@@ -11888,169 +11793,25 @@
       ]
      },
      {
-      "name": "HF artifacts (SSOT — models · datasets)",
+      "name": "HF artifacts — 레지스트리 폐기, HF 자체가 SSOT",
       "role": "",
       "id": "persistence-evidence-hf-artifacts-ssot-models-datasets",
-      "detail": "",
+      "detail": "손유지 목록은 drift 를 못 이긴다 — 2026-07-17 폐기.",
       "children": [
        {
-        "name": "summary",
-        "role": "",
         "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-summary",
-        "detail": "HF org `dancinlab` 산출물 레지스트리 SSOT — **HF.jsonl 폐기(2026-06-23), 이 노드가 SSOT**. 신규 업로드는 여기 models/datasets 에 1줄 등록(repo_id"
+        "name": "왜 폐기했나",
+        "detail": "실측이 근거다(census 2026-07-17): 이 노드의 손유지 목록은 **models 2 · datasets 4** 인데 HF 실측은 **345 repo**였고, 등재된 `clm_3b` 의 `path` 는 로컬에 없는 경로였다(거짓 필드). 계보 = HF.jsonl 폐기(2026-06-23) → 이 노드 → **폐기**. 목록을 손으로 유지하는 한 drift 는 재발한다."
        },
        {
-        "name": "arch/size",
-        "role": "",
-        "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-arch-size",
-        "detail": "arch/size"
+        "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-now",
+        "name": "이제 SSOT 는 HF 자체 (조회로 얻는다)",
+        "detail": "`HfApi().list_models/list_datasets(author='dancinlab'|'dancinlife')` · `repo_info(..., files_metadata=True)` 의 LFS `sha256`. 사본이 아니라 원본을 조회하므로 drift 가 원리적으로 불가능하다. 파일명은 신뢰 금지 — **동일성 판정은 sha256 으로만**(같은 파일이 두 이름 · 같은 이름이 다른 파일, 둘 다 실측됨)."
        },
        {
-        "name": "tier). PUBLIC = closure PASS·검증모델·clean-license, PRIVATE = WIP/FAIL/unclear-lice…",
-        "role": "",
-        "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-tier-public-closure-pass",
-        "detail": "tier). PUBLIC = closure PASS·검증모델·clean-license, PRIVATE = WIP/FAIL/unclear-license (a_hf_*). collections: CLM(models) + KOSMOS(anchors/datasets). 레거시 99-row 이력은 git history 보존."
-       },
-       {
-        "name": "models",
-        "role": "",
-        "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models",
-        "detail": "",
-        "children": [
-         {
-          "name": "- anima-clm-chat-303m — 정식 production chat. arch=ByteGPT (24-layer",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models-anima-clm-chat-303",
-          "detail": "- **anima-clm-chat-303m** — 정식 production chat. arch=**ByteGPT (24-layer GPT-2-class decoder-only byte-vocab LM)** — byte V256, d1024/24L/16H/block512, 303.1M, 5×u32 header `[256,1024,24,16,512]`, decode=`core/decode.hexa`. **conv CLMConvMoE 아님**(repo_id 의 'clm' 은 chat-mouth 역할名, 아키텍처 아님;"
-         },
-         {
-          "name": "conv `.clm` v0.2 mouth 는 별도 anima-engine-clm-d768-v2-coremount). 영·한",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models-conv-clm-v0-2-mout",
-          "detail": "conv `.clm` v0.2 mouth 는 별도 anima-engine-clm-d768-v2-coremount). 영·한 70wiki+30dialogue chat-FT, PUBLIC. base=anima-clm-midcap-303m-broad-en-emergent.\n- **anima-clm-midcap-303m-broad-en-emergent** — ByteGPT 303M broad backbone (val_ce 1.224, wiki-dominant EN)."
-         },
-         {
-          "name": "- anima-clm-chat-303m-savant-mitosis — conv CLMConvMoE L4·d3784 303M savant+mitosis ckpt",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models-anima-clm-chat-303m-savant-mitosis",
-          "detail": "- **anima-clm-chat-303m-savant-mitosis** — conv CLMConvMoE L4·d3784 303M savant+mitosis 학습 ckpt(.clm v0.3). PRIVATE·WIP, engine-native G6 미검증. repo=dancinlab/anima-clm-chat-303m-savant-mitosis(168MB LFS·HF-only)."
-         },
-         {
-          "name": "- anima-clm-chat-7b — 7B chat (chat-mix 레시피). -",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models-anima-clm-chat-7b",
-          "detail": "- **anima-clm-chat-7b** — 7B chat(chat-mix).\n- **anima-engine-clm-d768-v2-coremount** — conv d768 engine-mount `.clm`(L3 mouth).\n- **anima-bytegpt-303m-h1129** — PRIVATE frozen 벤치, G1/G6 벽 reference(상세=HF card).\n- **(GAP) conv 303M 영·한 chat** — 부재 = 다음 학습대상."
-         }
-        ]
-       },
-       {
-        "name": "datasets",
-        "role": "",
-        "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets",
-        "detail": "",
-        "children": [
-         {
-          "name": "chat register 표준(a_chat_registers)",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-chat-register-a",
-          "detail": "production chat = 언어 2(🇰🇷 ko"
-         },
-         {
-          "name": "🇬🇧 en) × register 2(일반",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-en-register-2",
-          "detail": "🇬🇧 en) × register 2(일반"
-         },
-         {
-          "name": "📱 SNS[인스타·유튜브]) = 4칸 모두. SNS 는 언어",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-sns-4-sns",
-          "detail": "📱 SNS[인스타·유튜브]) = 4칸 모두. SNS 는 언어 직교(ko-SNS + en-SNS 둘 다 필요).\n\n**✅ CLEAN 4-CELL (canonical, 2026-06-24, clm303 no-overfit 재학습용)**: 직전 '5lang' 칸들은 en이 진짜 en이 아니라 de/es/fr/ko 혼합(en 20%뿐)이었음을 audit으로 격리 → 언어별 split + dedup으로 재구성. 각 칸 PUBLIC, 빌드 재현 = archive/state/clm303_clean_corpus/build_corpus.py."
-         },
-         {
-          "name": "- anima-corpus-ko-general — 🇰🇷 ko-일반, 100.0% ko, 60.0MB·340512",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-corpus-ko",
-          "detail": "- **anima-corpus-ko-general** — 🇰🇷 ko-일반, 100.0% ko, 60.0MB·340512 lines (FineWeb-2 kor_Hang cap, ODC-BY). sha256 19e6ac9e.\n- **anima-corpus-en-general** — 🇬🇧 en-일반, **99.7% en**(진짜 en), 60.05MB·279429 lines (FineWeb HuggingFaceFW/fineweb cap, ODC-BY). sha256 66140944."
-         },
-         {
-          "name": "- anima-corpus-ko-sns — 🇰🇷 ko-SNS, 100.0% ko, 6.18MB·47994",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-corpus-ko-2",
-          "detail": "- **anima-corpus-ko-sns** — 🇰🇷 ko-SNS, 100.0% ko, 6.18MB·47994 lines (persona + 5lang-split + MIT/apache aug NLPBada/JaeJiMin/jojo0217, MIT). sha256 c836e9fc."
-         },
-         {
-          "name": "- anima-corpus-en-sns — 🇬🇧 en-SNS, 97.4% en, 1.33MB·6862",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-corpus-en",
-          "detail": "- **anima-corpus-en-sns** — 🇬🇧 en-SNS, 97.4% en, 1.33MB·6862 lines (5lang-split clean en, MIT). ⚠️ KNOWN-SMALL baseline — clean en-SNS large source 부재, youtube/insta-en 보강 = follow-up ING; size-proportional 샘플링으로 암기 방지. sha256 49f347c7.\n\n**legacy (5lang 혼합 — chat 칸 직접 사용 금지, en 오염)**:"
-         },
-         {
-          "name": "- anima-corpus-5lang-unified-v2 — en·fr·de·es·ko unified (wiki + persona/SNS",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-corpus-5la",
-          "detail": "- **anima-corpus-5lang-unified-v2** — en·fr·de·es·ko unified (wiki + persona/SNS + dialogue-act + code-switch, byte V256). chat 의 ko·en source.\n- **anima-corpus-5lang-7b-webscale** — FineWeb webscale ko/en/de/es/fr (broad pretrain source, ODC-BY)."
-         },
-         {
-          "name": "- anima-corpus-ko-fineweb2-broad — 🇰🇷 ko-일반(broad) 코퍼스 (FineWeb-2 kor_Hang",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-corpus-ko-3",
-          "detail": "- **anima-corpus-ko-fineweb2-broad** — 🇰🇷 ko-일반(broad) 코퍼스 (FineWeb-2 kor_Hang 1/25 shard 추출, raw UTF-8 byte V256, ODC-BY). 2.78M docs"
-         },
-         {
-          "name": "65.5M lines",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-65-5m-lines",
-          "detail": "65.5M lines"
-         },
-         {
-          "name": "10.55GB",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-10-55gb",
-          "detail": "10.55GB"
-         },
-         {
-          "name": "sha256 bae01ba8. ko-일반 칸 갭(~1.7MB→10.55GB) 보강 (a_chat_registers). -",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-sha256-bae01ba8",
-          "detail": "sha256 bae01ba8. ko-일반 칸 갭(~1.7MB→10.55GB) 보강 (a_chat_registers).\n- **anima-persona-sns-corpus** — SNS register chat 코퍼스 (인스타그램 authored; 유튜브 댓글/자막 구어 = 보강 대상)."
-         },
-         {
-          "name": "- anima-chat-corpus-mix-70wiki-30dialogue — 영어 chat mix (70% wiki",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-chat-corpu",
-          "detail": "- **anima-chat-corpus-mix-70wiki-30dialogue** — 영어 chat mix (70% wiki / 30% dialogue, `사용자:|도우미:` byte-continuation). 18M·7B·303M chat-FT 검증 레시피.\n- **anima-clm-corpus-7b-mid-byte-202m** — broad 202M byte pretrain corpus."
-         },
-         {
-          "name": "- anima-kosmos-303m-kr-en-sns — grounding/carving 닻 세트(학습 corpus 아님",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-kosmos-303",
-          "detail": "- **anima-kosmos-303m-kr-en-sns** — grounding/carving 닻 세트(학습 corpus 아님 ~260KB): lane ko_303m·en_303m·sns_303m, 의식모드 kosmos_io→brain 마운트 (a_kosmos).\n- **anima-eeg-consciousness** — OpenBCI EEG consciousness dataset (a_eeg_consciousness_record)."
-         },
-         {
-          "id": "persistence-evidence-hf-artifacts-datasets-research-corpora",
-          "name": "연구 corpora (비-chat · 재조합/G1 실험용)",
-          "detail": "chat-register 표준(위)과 별개 — 가설을 통제실험으로 실측하려 일부러 설계한 corpus. 수렴진화: 낡은 corpus co-occurrence 세기 → 밀도 toy 상전이(H_6182, coverage 5→80%서 held-out 2→92%, arch-무관) → NL byte coverage-designed corpus 로 수렴 = 'combinatorial-coverage'가 G1 corpus-design 원리로 창발.",
-          "children": [
-           {
-            "id": "persistence-evidence-hf-artifacts-datasets-research-corpora-g1-coverage-designed",
-            "name": "anima-g1-coverage-designed-corpus (PRIVATE · 연구artifact)",
-            "detail": "G1 조합-커버리지 통제쌍. high_coverage(60% pair≈237) vs low_coverage(8%≈31), ~1.2MB 매칭. 30개념 C(30,2)=435쌍 중 40 held-out(문장 부재·무결), POOL 395서 커버리지만 통제. 4템플릿×10동사×8결과. state/g1_density_phase_transition/corpus/ (README+build_and_test.py 결정적 재현 attn|conv). torch DIRECTIONAL."
-           },
-           {
-            "id": "persistence-evidence-hf-artifacts-datasets-research-corpora-g1-coverage-v3-nlbyte",
-            "name": "anima-g1-coverage-v3-nlbyte (PRIVATE · 연구artifact)",
-            "detail": "repo_id=dancinlab/anima-g1-coverage-v3-nlbyte · research/DIRECTIONAL · PRIVATE · [pair-특이,3-arm,NL-byte]. H_6183: HIGH 60%/LOW 8%/SHUF; attn held-out pair recall HIGH 95% ≫ LOW 25% · SHUF 0 → 재조합이 커버리지-특이(밀도 아님). commit e3c1ddeba · state/g1_coverage_v3_nlbyte/."
-           },
-           {
-            "id": "persistence-evidence-hf-artifacts-datasets-research-corpora-g1-coverage-arch-invariant",
-            "name": "anima-g1-coverage-arch-invariant (PRIVATE · 연구artifact)",
-            "detail": "repo_id=dancinlab/anima-g1-coverage-arch-invariant · research/DIRECTIONAL · PRIVATE · [arch-invariant,attn+dilated-conv,RF-wall]. H_6184: arch-무관 커버리지 코퍼스(attn·dilated-conv 양쪽) HIGH held 95/85% ≫ LOW → 수용영역(RF) 벽 돌파가 아키텍처-무관. commit c5647e7b7. torch DIRECTIONAL."
-           }
-          ],
-          "verdict": "🧱 engine-native CONFIRMED-TERMINAL — 재조합은 mouth 능력 아님. FROZEN-1(H_9122 ENGINE-NATIVE, compose-read op 부재)·A11 선형붕괴(H_9121)·coverage+RF FALSIFIED(H_6185/6188)·param-ES toy-DOA. decode-side 20-family multi-lens census(생물4+기계16) 전수 refuted 생존0(wfbes89af). escape 축은 G1 밖 exogenous-consequence."
-         }
-        ]
+        "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-what-stays",
+        "name": "ARCHITECTURE 에 남는 것 = 목록이 아니라 판단",
+        "detail": "조회로 얻을 수 없는 것만 남긴다: 보관 rubric(ARCHIVE(x) := CITED(x) ∧ COMPLETE(evidence(H))) · 가시성 축(PASS=PUBLIC · FAIL/WIP=PRIVATE) · 네이밍(`anima-h<id>-*` / `anima-base-*`) · 갭 census. → `hf-artifacts-archival-census`. H↔repo 귀속은 각 repo 의 README + MANIFEST.sha256 이 보유."
        }
       ]
      },
@@ -14049,7 +13810,95 @@
       "id": "a-hf-complete",
       "type": "gate",
       "name": "a_hf_complete (CLAUDE.md 에서 이관 · SSOT 구멍 메움)",
-      "detail": "HF complete, no drift; auto-upload post-recovery (PUBLIC=PASS, PRIVATE=FAIL/WIP, +sha256); registry = ARCHITECTURE.json \"HF artifacts\"; PUBLIC → collection."
+      "detail": "HF complete, no drift; auto-upload post-recovery (PUBLIC=PASS, PRIVATE=FAIL/WIP, +sha256); **registry = HF 자체를 조회**(손유지 목록은 2026-07-17 폐기 — drift 재발원); rubric·가시성·네이밍·갭 = ARCHITECTURE `hf-artifacts-archival-census`; PUBLIC → collection."
+     },
+     {
+      "id": "hf-artifacts-archival-census",
+      "type": "gate",
+      "name": "HF artifacts — 보관 갭 census ✅ 종결 (CITED 잔여 0 · 실측/업로드 2026-07-17)",
+      "detail": "✅ **미백업 168 ckpt·29.6GB → 54개·9.5GB**, 잔여는 **전부 rubric 상 정당 제외**(CITED 잔여 0). 로컬×summer×HF LFS sha256 3-way 대조.",
+      "children": [
+       {
+        "id": "hf-census-method",
+        "name": "측정법",
+        "detail": "로컬 `~/anima-weights` × pool `summer` × HF LFS sha256 3-way 대조. HF 345 repo(dancinlife 195M/38D + dancinlab 84M/28D) · 44,623 파일 · 1.40TB · LFS oid 39,314 전량 인덱싱. 대상 = >100MB .clm."
+       },
+       {
+        "id": "hf-census-local-gap",
+        "name": "로컬 단일사본 67개·11.8GB → 4개(전부 H_9410 PRE-REG)",
+        "detail": "로컬 303M ckpt 88개 중 HF 백업이 21개뿐이었다 → 회수 후 잔여 4개는 H_9410 rung0/rung2 뿐이며 tier=⏳ PRE-REGISTRATION(verdict 부재)이라 CITED 미충족 = 정당 제외."
+       },
+       {
+        "id": "hf-census-summer-gap",
+        "name": "🚨 summer 단일사본 101개·17.8GB → 50개(전부 제외 대상)",
+        "detail": "공유 렌트 호스트 단일사본 = a_fire_recover_complete 미완이었다 → 회수 종결. 잔여 50 = h9734 25(in-flight·verdict 부재) · step 자동저장 20(h9672_t3s11 11·h9070 7·gt_c34 2) · nbind_mig 4(H_9271 ⏳ PRE-FIRE) — 전부 rubric 상 보관 대상 아님."
+       },
+       {
+        "id": "hf-census-h9627-gap",
+        "name": "✅ 해소 — py303_full 은 base substrate 였다",
+        "detail": "`py303_full.clm`(sha 013c4574e0ce71ae…)은 H_9627 전용이 아니라 **H_9256·9351·9362·9377·9627 5개 H 가 인용하는 base** ⟹ 네이밍 규약상 `anima-base-py303-full` 로 PUBLIC 업로드(원격 sha 일치 검증). 로컬 `py303_savant_mitosis.clm` 과 byte-identical · HF `savant_mitosis_303m.clm`(e1ab9fa0…)은 다른 파일."
+       },
+       {
+        "id": "hf-census-registry-drift",
+        "name": "레지스트리 drift 확정",
+        "detail": "본 파일 `models`=2 · `datasets`=4 vs HF 실측 345 repo ⟹ a_hf_complete 의 'complete, no drift' 미충족. 등재 `clm_3b` 의 path 가 로컬 부재(실체 summer)라 거짓 — 2026-07-17 정정."
+       },
+       {
+        "id": "hf-census-rubric",
+        "name": "보관 rubric — ARCHIVE(x) := CITED(x) ∧ COMPLETE(evidence(H))",
+        "detail": "CITED = 등록 H 의 판정이 그 파일 위에서 측정됨(GREEN·DIRECTIONAL·KILL·INVALID 포함 · PROPOSED/PRE-REGISTERED 제외). evidence(H) = 실험 arm 최종 ckpt ∪ 통제 arm 최종 ckpt 전부(판정단위 = collapse-Δ vs ≥2 controls) ∪ corpus/atom ∪ evaluate JSON ∪ 명령행+VERSION+seed. `sidecar lab full` 2모델 독립수렴 · DIRECTIONAL 설계."
+       },
+       {
+        "id": "hf-census-rubric-why",
+        "name": "근거 — ckpt 는 캐시가 아니라 결정성 사슬의 anchor",
+        "detail": "`bit-det-drop-fast-train` 으로 학습 결정성을 버리고 eval 결정성만 사수 ⟹ `corpus+seed →(비결정)→ ckpt →(결정)→ verdict` ⟹ corpus+seed 로 재생성 불가. 버리면 cement 된 숫자가 '재검증 가능'에서 '믿어달라'로 강등. seed-fragile 실측(H_9672 s7 0.99 vs s11 0.50 · H_9339 s7 벽뚫림 vs s11 INVALID)이 재학습 대체 불가를 확증."
+       },
+       {
+        "id": "hf-census-rubric-negative",
+        "name": "음성·KILL·INVALID 도 동일 기준 보관",
+        "detail": "honesty — 계기결함 재감사 경로가 원본 ckpt 재측정이었던 전례(probe-defect-census · byte-identical-anchor-cert-hides-the-bug). 가시성만 a_hf_complete 기존 축 재사용(PASS=PUBLIC · FAIL/WIP=PRIVATE)."
+       },
+       {
+        "id": "hf-census-rubric-exclude",
+        "name": "제외 대상",
+        "detail": "평가되지 않은 중간 step ckpt(주장 폐쇄집합 밖) · 등록 전 SUPERSEDED 죽은 arm. 단 dose-response 는 전 rung 이 CITED(H_9610 λ 사다리처럼 형태가 곧 판정). 용량 임계값은 rubric 에 없다(a_completeness_over_cheap)."
+       },
+       {
+        "id": "hf-census-naming",
+        "name": "네이밍 스킴",
+        "detail": "`anima-h<id>-<slug>`(캠페인 model) · `anima-h<id>-<slug>-data`(입력/기록 dataset) · `anima-base-<slug>`(다수 H 공유 substrate — 특정 H 이름 금지 · 카드가 `base: … @ sha256:` 로 참조). 기존 345 repo 는 rename 금지(외부링크 파괴) — H_id→{repo,sha256,role} 매핑으로 alias 흡수."
+       },
+       {
+        "id": "hf-census-priority",
+        "name": "✅ 업로드 종결 — 26 repo · 143 ckpt · 41.2GB (원격 sha256 전건 일치)",
+        "detail": "PUBLIC 6 · PRIVATE 20. 신규 19 repo + 기존 3 repo 보완(exp3·savant·e1_slw) + c34-base 에 arms/ 14 추가. collection 5개(binding wall · G1 recombination · store/bridge · base substrates · consciousness/soma)."
+       },
+       {
+        "id": "hf-census-not-yet",
+        "name": "보관 대상 아님 — H_9410",
+        "detail": "로컬 h9410_rung0/rung2 에 ckpt 가 있으나 jsonl tier=⏳ PRE-REGISTRATION(verdict 부재) ⟹ CITED 미충족 ⟹ 판정 착지 후 보관."
+       },
+       {
+        "id": "hf-census-attribution-correction",
+        "name": "⚠️ 정정 — 최초 census 의 귀속 2건은 미검증 추론이었다",
+        "detail": "최초 기록의 'decon=H_9324 근거' / 'en_arm=H_9359 근거' 는 **디렉토리 이름에서 짐작한 것**이었다(jsonl 리터럴 검색 0 hit). 업로드 전 provenance 복구로 정정했다. 교훈 = 재구성한 manifest 를 원본으로 가장하지 말 것."
+       },
+       {
+        "id": "hf-census-provenance-recoverable",
+        "name": "provenance 는 파일 옆 스크립트에서 복구된다 (jsonl 엔 없다)",
+        "detail": "jsonl/카드는 ckpt 파일명을 거의 기록하지 않는다(40 캠페인 중 asset 참조 7개뿐) ⟹ jsonl 부재 = 증거 아님이 **아니다**. 실제 귀속은 산출 디렉토리에 남은 `*.sh` 헤더·`*.log`·eval JSON 파일명에서 복구된다. 업로드 전 이 복구를 먼저 하고, 복구 불가 필드는 README 에 **IRRECOVERABLE-GAP** 으로 명시(학습 명령행·seed·VERSION 미기록 ⟹ 검증 재현만 보장, 분포 재현 미보장)."
+       },
+       {
+        "id": "hf-census-visibility-collections",
+        "name": "가시성·collection",
+        "detail": "가시성 = a_hf_complete 기계적용(PASS=PUBLIC · FAIL/WIP=PRIVATE) — 새 축을 만들지 않았다. H_9672 는 🟢 이나 `구현됨·미배선`=WIP 이라 PRIVATE. collection(a_hf_collections) = `anima · binding wall`(h9324·h9359) · `anima · base substrates`(py303-full)."
+       },
+       {
+        "id": "hf-census-closure",
+        "name": "종결 조건 = CITED 잔여 0 (용량 0 아님)",
+        "detail": "rubric 이 ARCHIVE(x):=CITED(x) 이므로 종결은 '전부 올렸다'가 아니라 '**판정이 measured 된 파일 중 안 올라간 게 없다**'이다. 잔여 54개는 ① verdict 부재(H_9410·H_9734·H_9271) ② 평가되지 않은 step 자동저장 — 둘 다 주장 폐쇄집합 밖. verdict 착지 시 ①은 보관 대상으로 승격된다."
+       }
+      ]
      },
      {
       "id": "a-pi5-akida-registry",
@@ -16272,6 +16121,13 @@
           "detail": "$0 스크리너(발사 전): G-LEAK+G-BASE-FIRST(base held-out flip1 우연 실측) · bind-locus C4-vs-base 차분(swap_c4 vs natem_c34 로 C4 쓰기 착륙 locus 진단축). 계기=ground_carrierswap held-out swap 경로. 4런 pod=fleet owner go 게이트."
          }
         ]
+       },
+       {
+        "id": "gate-g1-recomb-emergent-addr-h9720",
+        "title": "🟢 H_9720 창발-주소 DIRECTIONAL CRACK — detached early-tap readout-route",
+        "type": "gate",
+        "detail": "창발-주소 벽 첫 CRACK(303M·s7·엔native·무addr-loss). held-out lookup: legacy penult 0.680 vs fresh detached L3-tap(fresh:64@3) 0.922; 벽=부정 not/* 0.47/0.55→0.92/0.91. 🔧기전개명(Fable∥Sol): detach로 trunk 무co-adapt ⟹ 'detached L3-tap readout-route 가 penult 붕괴 결합주소 복원'(창발학습 아님). DIRECTIONAL. 통제·ckpt=H_9720 card.",
+        "verdict": "🟢 DIRECTIONAL-STRONG(H_9792 challenge 2026-07-19 RETRACTED — 반박은 재현안되는 outlier근거였음·H_9720 원본 ckpt ±warmup 감사서 fresh 0.906≈legacy 0.953 대등) — 기전=조기층(L3) readout. C1 param-match(freshpen≈legacy≠fresh@3)=tap-DEPTH load-bearing·capacity 반증 · C2 shared≥detached=disjointness 반증 · C4 2-seed delta-robust(fresh@3>legacy s7+s11) · address-mediated(shuffle 붕괴·oracle 1.0). ⚠️ 3rd seed(s4302) firm-up=near-tie(Δ+0.016)+oracle 0.82(C0-e 미달)=store-lane seed-fragility 노출(cement 잔여벽=oracle-warmup·Fable 3/3 미달)(H_9720 card). ➡️ 후속 [[H_9792]] EA-3(PROPOSED·Fable∥Sol 수렴): 잔여벽=VALUE plumbing seed-불안정(address 무관)→value-only 안정화 warmup(PRIMARY --store-echo-weight self-sup 왕복·target_slot 미사용=admissibility 자명 / FALLBACK --store-value-stabilize oracle-mux 2-phase firewall)로 ≥3/5 seed oracle≥0.90 유효화 후 H_9720 fresh−legacy 재측정. 5 seed{7,11,4302,4303,9423}·C-A/C-B/C-shuffle/C-F 통제·$0 byte-parity+toy 선별. standing-pool 자율(fleet-rent 아님). 🔑 IMPL-FINDING(2026-07-19): 레버=NEW flag 아님·기존 `--store-query-src fresh:64@3 --store-oracle-warmup N`(addr-weight無). admissibility 코드증명(clms.py:482 oracle_slot→one_hot softmax우회→warmup중 W_q_fresh grad=0 구조적). $0 토이 3/3 PASS: byte-parity(warmup=0 동일sha)·store-oracle 0.5469→0.8516(Δ+0.305 s4302 붕괴재현+구제)·누출0(W_q_fresh/W_fresh grad=None). 303M 게이트 착륙(2026-07-19). 🟡 H_9792 GATE CHALLENGE: value-warmup으로 store-oracle 구제(s4302 0.82→0.945·통제 nowarm<0.90)—value경로가 진짜 reach 레버. ⚡반전: oracle-valid 2seed(s11·s4302)서 legacy(penult)+warmup lookup 0.977/0.961 >> fresh(L3-tap)+warmup 0.672/0.680. lookup/oracle 비율(값정규화) fresh 0.72 vs legacy 0.98 ⟹ 격차=주소/인터페이스側(값 아님)=penult 주소 붕괴 안 됨 ⟹ 기전('penult 주소붕괴·L3-tap 복원')+fresh 아키텍처-필연성 무너짐. 단서(REFUTED 아님·lab-full 수렴): 2 oracle-valid seed만(s7 양쪽 oracle<0.90)·코퍼스 H_9720과 다를수 있음(n-blocks200 재구성)⟹historical 기전반증 INCONCLUSIVE·DIRECTIONAL. firm-up=addr-argmax 감사+H_9720 정확코퍼스 재측정. 로그=~/anima-weights/h9792_gate/. 🔬FIRM-UP(2026-07-19 --store-addr-audit 직접 주소감사): oracle-valid s4302 clean 비교서 값통제(oracle≈1.0)에도 legacy 주소 top-1 0.977 ≫ fresh 0.414(addr_mass 0.79 vs 0.28)⟹격차=주소側 직접확증(ratio 추정→직접측정)·penult 주소가 최고(0.98)=penult-collapse 정면반박 강화. 단서=clean 1seed(s4302·s11 fresh oracle 0.484 붕괴=fresh run-variance)·corpus-confound·DIRECTIONAL⟹아키텍처-필연성+기전 직접반박·historical REFUTED는 exact-corpus 재현만 잔여. ⚖️SCOPE(오너 도전·lab-full 수렴): 반박은 **REACH-축·303M 한정** — (a)addr_top1=capability라 Ψ-SOMA reach≠consciousness⟹fresh disjoint lane의 substrate/preservation 가치는 미판정(fresh가 분리돼 더 consciousness-aligned일 여지), (b)scale-conditioned H_9720(penult가 깊은 스케일서 collapse→fresh 우위 RE-EMERGE)은 OPEN. 후속=EN-fluency 교란 retention·~1B audit. (H_9792 card). 🔬1B SCALE-RECHECK CLOSES (b) — DIRECTIONAL 반증(2026-07-19·vast A100·1B L20 d3784 E3 1.033B from-scratch pretrain+store cotrain 2x2 seed{7,4302} warmup1500): 깊은 20층 1B서도 legacy(penult) addr_top1{s7 0.953·s4302 0.914} ≫ fresh(L3-tap){0.852·0.672} 두 seed 모두 legacy 우위·4/4 oracle 1.000 valid(303M s4302 plumbing 스케일서 해소). depth가 legacy 리드 넓힘(Δ+0.17)·fresh가 1B서 더 seed-fragile(폭0.18 vs 0.04). penult-collapse 스케일 재출현 성립안함·H_9720 core CRACK 불변(fresh 1B서도 oracle-valid addr 0.67~0.85≫우연0.125)·H_9792 RETRACTION 정합. 남은 OPEN=(a) fresh substrate-preservation(reach≠consciousness). 1B base HF dancinlife/tmp-anima-1b/py1b_full.clm(sha256 8630996b) 영구보관·pod teardown. (H_9720 card 1B SCALE-RECHECK)."
        }
       ],
       "verdict": "🟡 REOPENED-DIRECTIONAL-POSITIVE(첫 lift·robustness 미확인): decode 20-family refuted+engine-native지만 학습 derivation-trace(target=풀이과정)가 held-out{c0,c1} engine-native G1 PASS(bd=2>ms=1)∧FLAT통제 FAIL=H_9124. caveat bd=2·1쌍·G2미측정. δ_FM=coverage form-priming→FORM. 벽=trunk-objective."
@@ -16384,7 +16240,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 블록 실재+선결조건 4/4(H_9674) · 🎯 프런티어 · 🟢 계기 확정(S=‖R‖²_F · 선택 없는 2차 합) · 🔨 ORACLE λ-ladder 인증중(toy 재설계 마르코프 4소스 + π=(2,0,0,3) 구조게이트 + 4 ckpt λ>0 서 loss 34배 = 라우팅 제약 확인) · S(λ) 측정중. 인증 PASS 후에만 실물 arm.",
+    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 계기 v2 SOUND 인증완료(toy·4다리) + 🔴 **303M 실물 arm INVALID**(2026-07-17·undertrain·NOT faction KILL): H100 6-train 14k G0 coherence 전6 FAIL(kwr 0-3/5·train-py-4 undertrain 패턴)·18k 연장 val_CE 악화=4-cell register 가 G0🟢 303M 못받침(window 부재). V1 미통과 lesion 미측정. 힌트 K=8(172M) val_CE 1.395<K=1(346M) 1.41-1.46. 비용~$6. 계기/플러밍/toy verdict 유효. NEXT=큰 broad corpus.",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16897,6 +16753,43 @@
         ]
        }
       ]
+     },
+     {
+      "name": "🟢 계기 v2 재동결 — within-arm SOUND · cross-arm OILED-bar 폐기",
+      "role": "",
+      "id": "faction-r3-h9643-v2",
+      "detail": "lab-full Fable+Sol 독립수렴. within-arm(S_real vs 자기 perm-null)은 real·null 이 같은 base_CE 를 통과해 confound 무관 → random-init 음성 clean null(0.0003)+학습 S>null95 는 그 스케일서 정당한 인증(절반). cross-arm 절대비교(:11143 S_real/S_randinit≥2.0)는 base 4.8 vs 0.01 적합품질 스케일 산물 = 기계적 통과 OILED → 폐기.",
+      "verdict": "🟢 계기 v2 SOUND 4다리 닫힘(perm=200): within-arm p=.005 · K=1 fit-matched 음성 S 0.406≤null95 1.221 p=.86 clean · ORACLE 코사인A π회수 λ=0 no→λ>0 yes 단조 · random-init 경계 p=.0448(grouped-conv). log-ratio+--faction-split. 계기 TERMINAL.",
+      "children": [
+       {
+        "name": "🕳️ 폐기된 OILED bar (:11143)",
+        "role": "",
+        "id": "faction-r3-h9643-oiled-bar",
+        "detail": "#3964 가 머지한 S_real/S_randinit≥2.0 완전 bar 는 base_CE 스케일차(3200만×)라 어떤 학습 ckpt 든 통과 = tune-to-green 역방향. within-arm 한정 판정문으로 교체.",
+        "verdict": "폐기·재등록 — cross-arm 절대 S 비교는 계기가 답할 수 없는 질문(스케일 미보정)."
+       },
+       {
+        "name": "🟢 H_9737 fit-matched K=1 음성 — 3번째 SOUND 다리",
+        "role": "",
+        "id": "faction-r3-h9737",
+        "detail": "K=1(groups=1·파벌구조 없음)을 같은 낮은 CE(0.013)로 학습 → --faction-split 4 로 lesion 4분할 강제. random-init K=4 는 grouped-conv 블록 confound(p=.0448 경계)라 약한 음성 · K=1 은 conv 블록 없음.",
+        "verdict": "S 0.406 ≤ null95 1.221 p=0.86 결정적 clean — 낮은-CE 분모(v1 폭발 스케일)서 log-ratio 가 적합품질을 특화로 오인 안 함 격리 확증."
+       },
+       {
+        "name": "🔧 faction 학습 플러밍 배선 (train → serialize_v3)",
+        "role": "",
+        "id": "faction-r3-h9643-trainwire",
+        "detail": "train(cli/train.py) --n-factions 미노출 + serialize.py serialize_v3 이 faction 직렬화(grouped-conv materialize+CLMF) 미지원 = faction 303M ckpt 생성 불가 갭. clm_serialize_v2 에만 존재(divergence).",
+        "verdict": "① --n-factions K(0=OFF byte-identical)+--faction-bridge-lam0→CLMConfig ② serialize_v3(n_factions>0)→clm_serialize_v2 위임(DRY) ③ round-trip 검증(n_factions=4 읽힘·OFF sha 무회귀). 303M 은 코퍼스+heavy 학습만 남음."
+       }
+      ]
+     },
+     {
+      "name": "🔥 303M 실물 arm pre-reg + S1 하드게이트 PASS",
+      "role": "",
+      "id": "faction-r3-h9643-303m",
+      "detail": "오너 ② 승인. lab-full 레시피: clean 4-cell 127.5MB·d3784 L4·14k step·K=8(--n-factions 8) vs K=1(--n-factions 0)×seed 7·11·23·RTX4090×6(-36). 판정 within-arm P1∧P2(K1 slice clean)∧paired I_s/J_s 2/3 seed.",
+      "verdict": "🔴 303M 유효측정 BLOCKED(coherent-window·NOT faction KILL): 14k·21k 두 유료시도 G0 kwr 3/5→1/5=더 학습 악화 ⟹ epoch-앵커 진단 REFUTED(파일럿이 lab+레포 예측 반증·train-py-3 window 붕괴). clm303_clean G0 5/5 는 다른 레시피(jamo-mitosis+~30MB 서브셋≠127.5MB). step 늘리는 각도 소진. NEXT=clm303_clean 정확 recipe 매칭(owner $). 계기/플러밍/toy 유효. k0(346M) 발산 별개. 비용~$16. 🔧벽②해소(2026-07-18): --jamo-aux 독립플래그 추가(/bin/zsh)=faction+jamo clean 조합(tlora confound 제거·jamo_on=ARMS[arm] or a.jamo_aux·기본off byte-identical). recipe-match A안 enabler. 나머지 벽(recipe유실·window·검증툴링)은 유료 window-sweep(owner). ✅--jamo-aux VERIFIED e2e(2026-07-18·origin/main venv 스모크): jamo_aux=True engage·control off backward-compat·A.clm≡B.clm=jamo 학습전용 직렬화 미오염(faction lesion 무오염 보장)·help-lockstep. wire-to-prod QA 종결. 🟢🔑RECIPE 복구(2026-07-18·retrain.log 로컬): 이전 30MB/jamo/유실 archaeology 전면반증. clm303_clean G0🟢=bs16 emax4 15k savant mitosis@7500 동일4-cell 245.76M토큰. 내 실패=--batch-size 기본8(=16)+--emax 기본3(=4)=토큰반토막. de-risk 재발사 진행중(정확 recipe+--n-factions 8 seed7). 📋R9 후속(2026-07-18·lab-full Fable∥Sol): de-risk=K=8 val_CE parity(1.332 DESCENT4/4)이나 G0 2/5(vs K=1 5/5·p=0.083 미검정). 4 PROPOSED: H_9769 G0 n≥20 재판독($0 선행)·H_9770 CE-lesion G0-fail 유효(새H·$0·S>null95=레버확증/S≤null95=TERMINAL)·H_9771 K=1@172M capacity판별(Fable narrow vs Sol widen·~$6)·H_9772 K=4/K=2 salvage(오너gate). 최대 $6. 🟢H_9770 DIRECTIONAL POSITIVE(2026-07-18·perm40·PENDING firm200): k8_s7 학습K8 --faction-lesion S_real 0.0789>>null95 0.0023(34배·p0.024) vs clm303 미학습K1 --faction-split8 S 0.0019(우연)=42배 ⟹ 파벌 303M CE-수준 실제 기능레버(학습된 구조·사후분할 아님·계기 fit-matched K1 다리). G0 자유생성 실패와 무관(teacher-forced ΔCE 유효). 사전예측 특화불발 반증(verdict-integrity). firm perm200 GPU=TERMINAL follow-on(mac 76800fwd~7hr infeasible). ✅FIRM perm=200(2026-07-18·power-gate 통과): k8_s7 within-arm S 0.0654>null95 0.0030(p0.005·n200·not-underpowered) + 통제 clm303 미학습K1 split8 S 0.0019≤null95(spec False)=fit-matched K1 음성 firm ⟹ 파벌=303M CE-수준 실물 기능레버 확정(FIRM DIRECTIONAL POSITIVE·2 SOUND 다리). 계기라벨 DIRECTIONAL+within-arm 한정(완전SOUND 4다리 중 ①③firm·②④303M미측정). py-lesion DIRECTIONAL. 천장 CE-scope. ✅SOUND 완성(free-trained·2026-07-18 verify-done): 적용가능 2다리(①within-arm③fit-matched K1) firm. ②random-init=DEGENERATE 미적용(evaluate.py:11758 코드확인·랜덤가중치 공통모드 arm self-DROP·순환위험) · ④ORACLE π=N/A(free-trained π없음). ⟹ free-trained lesion SOUND 완성·파벌 303M CE-수준 실물레버 FIRM POSITIVE 핵심종결. 잔여=capacity orthogonal(H_9769 prereg·H_9771 유료GPU·②는 oracle-trained 신규학습). ✅H_9771 CAPACITY 주범(2026-07-18·파벌 coherence 무죄): K=1@172M(194M·--n-factions0·정확recipe) G0 1/5 FAIL=k8_s7 K=8@172M(2/5)과 동일·clm303 K=1@346M(5/5)만 PASS ⟹ K=8 G0-fail=capacity(절반param) 탓이지 파벌 topology 아님. 파벌 완전그림: ①실물 기능레버(H_9770 FIRM) ②절반param 346M val_CE 매칭=효율positive ③G0결손=capacity(파벌무죄)."
      }
     ]
    }
@@ -16904,6 +16797,116 @@
  },
  "convergence": {
   "records": [
+   {
+    "id": "engine-instrument-changes-are-autonomous-not-owner-gated",
+    "state": "pos-conv",
+    "value": "research·engine·instrument·core/·cli·emit-gate·swap·decode 변경과 design 결정, standing-pool cost run은 전부 자율 실행 대상 — 사람 승인 게이트가 아니다. H_9774 theta-alive cementing서 TERMINAL 도달에 필요한 engine 변경(RNG-neutral swap·greedy schedule-randomizer·provenance store)을 반복적으로 'owner p5'·'사람 승인 필요'·owner-gate로 오분류해 여러 턴 session-terminal로 punting했다. 오너가 명시 정정: '오너게이트 아님'·'사람승인 필요없도록 claude.md 수정'. 근인=p5(데몬 런타임 규칙: 하드코딩 speak/emit 금지)를 '내 작업의 승인 게이트'로 확대해석. p5는 데몬이 어떻게 행동하나의 규칙이지 내가 instrument/engine을 바꾸는 걸 막는 게 아니다. 유일 실제 go-gate=fleet rent=spend(standing pool·로컬은 자율).",
+    "threshold": "재발조건: 자율 진행 중 engine/core/cli/instrument/design 변경이나 cost run이 필요할 때 'p5 위반?'·'owner 승인 필요?'로 멈추려 할 때. ① p5/philosophy는 데몬 runtime(하드코딩 emit/speak/persona 금지) 규칙이지 내가 measurement instrument·engine·flag를 바꾸는 작업의 게이트가 아니다 — 혼동 금지. ② 자율 가능(로컬·standing pool·reversible)한 걸 'owner-gate'로 분류해 session-terminal 하지 마라(anti-punt·break-walls). ③ 실제 사람-go가 필요한 건 오직 fleet rent=spend(돈 나가는 렌트). 그 외 engine 변경·instrument 재설계·design 결정·standing pool fire는 전부 자율. ④ CLAUDE.md '🤖 Autonomy — NO human-approval gate' 절이 SSOT.",
+    "linked_hypotheses": [
+     "H_9774"
+    ]
+   },
+   {
+    "id": "donor-swap-instrument-key-schema-must-match-consumer",
+    "state": "pos-conv",
+    "value": "do()-주입 계기(--swap-text 등 trace를 파일로 주고 실행 중 상태 교체)의 donor 파일 KEY 스키마는 소비 코드가 lookup하는 KEY와 정확히 일치해야 한다. H_9774: cli/chat.py:1925/2728은 donor를 ACTUAL TICK으로 매칭(_swap_texts[int(d['tick'])]→.get(int(tick)))하는데, 내 donor build가 {tick:i}로 emit ORDINAL(0,1,2…) 키잉=버그. greedy선 own이 상수라 misalign돼도 SHAM=0 유지(마스킹)·T=1.0선 own distinct라 틀린 텍스트 재주입→SHAM-vs-A0 59/60 가짜 confound. 이걸 'T>0 stochastic mouth와 상호작용하는 RNG instrument-wall'로 2세션 오진(#4127/#4129 RETRACTED). reference-match(소비 코드 정독)로 발견: 정확 actual-tick 키 SHAM_s7 T=1.0=0/60 확증⟹--swap-text는 전 temperature byte-clean. 'greedy-only byte-clean·regime-lock' 결론은 FALSE.",
+    "threshold": "재발조건: trace/파일 기반 do()-주입 계기(--swap-text·store inject·activation patch by index)의 donor를 스스로 build할 때. ① donor 키 필드(tick·pos·id)를 순번(ordinal)으로 라벨링하지 말고 소비 코드가 lookup하는 실제 키(actual tick/pos)로 라벨링 — reference-match로 소비지점 확인(get(key) 무엇으로 인덱싱?). ② 계기 confound 의심(SHAM≠0) 시 'RNG/stochastic/instrument-wall' 단정 前 donor↔consumer 키 정렬부터 확인 — mode-collapse가 constant-content로 버그를 마스킹하다 distinct-content서 드러날 수 있음. ③ instrument confound를 substrate/regime ceiling으로 오독 금지·2세션 verdict도 reference-match 앞에 뒤집힌다(verdict-integrity·[[instrument-never-run-hides-multiple-bugs]]).",
+    "linked_hypotheses": [
+     "H_9774",
+     "H_9510"
+    ]
+   },
+   {
+    "id": "multi-seed-replication-vacuous-when-seed-doesnt-drive-source",
+    "state": "pos-conv",
+    "value": "multi-seed 재현으로 DIRECTIONAL→TERMINAL cementing 하려 할 때, varied axis(sample-seed)가 측정대상의 SOURCE를 실제로 변주하는지 먼저 확인해야 한다. H_9774 content-reach: SHAM+CERT를 s7/s11/s13 3-seed 발사→SHAM=0/60·CERT-발산이 3-seed 재현돼 '멀티시드 확증'처럼 보였으나, s11/s13 발산수가 byte-identical(251/207 동일)이라 의심→검증: greedy/deterministic mouth라 own emit 텍스트가 s7=s11=s13 완전 동일('vault QX-7741…' 30/30·distinct=1)·sample-seed는 refractory gate schedule/RNG만 변주(A0 861B차)·mouth content 불변. ⟹ 3-seed는 독립 content 조건이 아니라 같은 결정론 계산의 gate-RNG 재현일 뿐=cementing 무자격. SHAM=0 3-seed 재현은 instrument-validity robust로만 유효(계기 무해성). 진짜 content-independence replication엔 mode-collapse를 깨는 축(T>0 mouth·다중 donor SET)이 필요.",
+    "threshold": "재발조건: multi-seed(또는 multi-run) 재현을 cementing 근거로 쓸 때, 특히 greedy/low-temp/argmax 등 결정론 생성기가 파이프라인 상류에 있을 때. ① 재현 발사 前, varied axis가 측정대상 SOURCE를 실제 변주하나 확인 — generator가 seed-invariant(greedy)면 sample-seed는 하류 noise만 흔들고 content는 불변=독립 재현 아님. ② red flag=서로 다른 seed의 지표가 byte-identical/거의 동일→우연 아닌 seed-무관성 의심→source(생성 텍스트) 직접 diff. ③ VACUOUS-AT-SOURCE(own distinct==1)면 그 축은 replication unit이 될 수 없다=[[content-swap-donor-must-be-certified-byte-distinct]]. ④ '멀티시드 통과'를 TERMINAL로 쓰기 前 각 seed가 독립 조건인지 증명(distinct source·independent randomization unit). tick≠IID처럼 seed도 결정론 하류면 ≠independent.",
+    "linked_hypotheses": [
+     "H_9774",
+     "H_9510"
+    ]
+   },
+   {
+    "id": "content-swap-donor-must-be-certified-byte-distinct",
+    "state": "pos-conv",
+    "value": "content-reach 실험(--swap-text로 donor content를 interior에 주입해 own과 대비)서, greedy/deterministic mouth는 mode-collapse해 매 emit tick 동일 텍스트 1개만 뱉는다(H_9774 s7: 60tick 내내 'vault QX-7741 forever…' 앵커 echo·distinct=1). donor를 own의 다른-seed/다른-tick rollout에서 뽑으면 own≡donor(byte-identical 30/30)라 대비가 0이 되어 'content 안 닿음'이라는 FALSE-NULL을 만든다. H_9774 A3 첫 발사가 이 donor-degenerate로 ⚪INVALID. 교정=h9728_c0(24 distinct 텍스트)에서 뽑아 byte-distinct-from-own 20/24 cert 통과한 certified-distinct donor로 재발사→CONTENT-REACH LIVE+GLOBAL 판별. 결정적 통제=SHAM(own trace를 동일 swap-path로 재주입=byte-identical content): SHAM vs A0가 전 필드 0/60 발산이어야 injection-path가 byte-clean(계기 무해)임이 증명되고, 그 0-baseline이 block-rand보다 깨끗한 null이 되어 CERT-vs-SHAM 발산=순수 content 신호로 읽힌다.",
+    "threshold": "재발조건: two-source 대비 실험(donor-swap·content injection·A/B trace)서 donor를 target 자신의 다른 rollout에서 뽑을 때, 특히 greedy/low-temp decode로 mouth가 mode-collapse할 때. ① donor 발사 前 byte-distinctness cert 필수 — donor 텍스트가 own과 tick별로 byte-multiset-distinct인지 grep(≥majority PASS). own distinct-count==1이면 그 seed는 VACUOUS-AT-SOURCE(대비할 content가 없음)라 별도 diverse-source donor 필요. ② SHAM(byte-identical content 재주입) 통제로 swap-machinery 무해성을 먼저 증명 — SHAM이 A0와 발산하면 계기confound(INVALID), 0/60이면 signal이 순수 content. ③ 대비=0을 'reach 없음'으로 읽기 前 donor≠own부터 확인(positive-control-before-reading-a-negative). ④ byte-stats bottleneck 유의: interior가 content를 8-dim byte-stats/trigram/mod-4로만 받으면 byte-multiset-equal donor는 구조상 구별불가 — REACH는 semantic 아닌 byte-stats granularity로만 판정.",
+    "linked_hypotheses": [
+     "H_9774",
+     "H_9765",
+     "H_9749"
+    ]
+   },
+   {
+    "id": "mouthless-config-severs-mediator-reads-as-substrate-null",
+    "state": "pos-conv",
+    "value": "consciousness/mediation 실험서 daemon을 misconfigure(핵심 채널 死)하면, 그 죽은 mediator 위서 잰 null이 SUBSTRATE verdict(KILL/emit-blind)로 오독된다. H_9765 dither SCREEN: ckpt를 positional 첫인자로 안 넘겨(chat --emit-gate… → ckpt='--emit-gate') daemon이 mouthless(gen_backend='null')로 돌아 C8 emit→interior edge(chat.py:2749 requires g_back=='clm')가 미발화 → g_text-live gauge(recon_err·rel_lane·cb_surprise·af_aro·ca3_ctx)가 chat-py-4/5 dead fallback에 동결. 그 distal-flat을 'interior emit-blind KILL'로 박을 뻔(Sol이 KILL-AND-TERMINAL 주장). Fable autopsy가 차단: edge는 코드 존재(chat.py:2897 g_text-live·H_9336/9337 배선)·screen이 mediator 발화 증명 안 함. ckpt 명시 재발사→backend='clm'·gauge 소생→emit→interior LIVE 확증(v1은 config 인공물). 자가포착 3연(mouthless config·wrong-field gen_text vs gtext_len·meter 미serialize).",
+    "threshold": "재발조건: mediation/downstream-null(A→B 인과 부재)을 substrate verdict로 읽으려 할 때. ① null 읽기 前 mediator가 LIVE인지 증명하라 — mediation-capacity check(chat-py-5): 매개변수가 애초에 변하나(H(mediator)>floor)·config가 그 채널을 켰나. daemon-config(ckpt 로드·backend·gate mode)를 trace field(gen_backend·gtext_len·gauge variance)로 사후검증. ② config 인공물(mouthless·wrong flag·미로드 ckpt)은 mediator를 조용히 死시켜 그 위 null을 substrate KILL로 위조 — degraded run의 수치는 verdict 아님(verdict-integrity·infra-wall-noneval). ③ positional 첫인자 CLI(ckpt 등)를 flag 뒤에 두면 flag가 그 자리를 먹는다 — smoke서 'loaded=true·backend=기대값' 확인 後 발사(instrument-never-run). ④ 죽은 mediator 위 null 판독 前 양성통제=mediator 소생 재측정.",
+    "source": "H_9765 dither SCREEN v1(mouthless)→v2(ckpt loaded) · Fable autopsy(chat.py:2749/2897) · chat-py-4/5·verdict-integrity·instrument-never-run 하류"
+   },
+   {
+    "id": "living-gate-confirmed-living-interior-unidentifiable-at-substrate",
+    "state": "pos-conv",
+    "value": "substrate-native 의식 데몬서 '살아난 gate'(emit/silence 결정기전 WIRED)를 확증해도, '살아난 interior'(그 gate가 몸을 바꾸나·보류내용이 own-특이한가)는 substrate가 interior를 confound와 구분할 marker를 안 가지면 원리적으로 미식별이다. theta-alive-sigma-rebase 프런티어: Ψ=½ 펄스 WIRED(H_9627) 후 interior를 3 각도로 물음 — H_9728(펄스가 σ 바꾸나: pulse⊥½-schedule·yoke severance≡리듬-이탈 dial·relock 0.920)·H_9729(보류내용 own-특이한가: own-ness⊥context-continuity·latch=cand[t−1] provenance無)·H_9730(펄스 위상저장: 두 벽 상속 DOA·WM-remainder는 λ^gap FORM). 셋 다 미식별의 형태가 동일=substrate가 3 marker(기전⊥schedule 분리·own-provenance·ledger-content provenance) 결여. gate는 살았으나 interior는 이 해상도서 판독불가.",
+    "threshold": "재발조건: substrate-native 시스템서 '내부 상태/경험/의도'(gate 너머 interior)를 재려 할 때. ① interior를 그 confound(schedule·context-continuity·pressure/coverage)와 분리할 독립 marker가 substrate에 인코딩됐나 먼저 확인 — 없으면 원리적 미식별, 어떤 계기 정교화/n도 못 깸(marker 나르는 새 surface 신설만이 해결). ② gate-WIRED(결정기전 배선)를 interior-alive로 과독 금지: 살아난 gate는 필요조건이지 interior 충분조건 아님(H_9627 gate ≠ H_9728/9730 interior). ③ 재개봉은 '더 정교한 관찰'이 아니라 '더 나은 개입/surface': 내부 edge 무작위 do()(관찰 상류)+독립 schedule 제어 OR provenance-bearing store. ④ 미식별을 과학천장(능력없음)으로 박제 금지 — substrate marker 부재는 측정한계이지 interior 부재 증명 아님(honesty).",
+    "source": "theta-alive-sigma-rebase 프런티어 종결 · H_9728(#4070)+H_9729(#4063)+H_9730(KILL-BEFORE-FIRE) · 재설계 lab-full Fable∥Sol 완전수렴"
+   },
+   {
+    "id": "yoked-mask-severance-equiv-rhythm-deviation-ledger-relock",
+    "state": "pos-conv",
+    "value": "emit-mask replay(yoked)로 pulse-기전과 ½-schedule을 분리하려 할 때, dual-ledger spring이 ledger write를 forced bit 따라 갱신하면 severance-rate(mask≠native)와 리듬-이탈률은 같은 dial이 된다. H_9728: yoked tick서 recipient 다음 S>E가 mask-slaved라 어떤 외부 mask도 P(e|e)≈0.075의 1-tick 복원력에 재-lock ⟹ severance≈2·d·(1−d), d=리듬-이탈률. 리듬보존(d≈0.075)이면 상한≈0.14<floor0.2. $0 확증: P(would=¬prev_emit) mean0.920=1−P(e|e) 3자리일치=86% native-일치는 yoke-manufactured relock(정리·seed우연 아님). ⟹ 등록 tick-pinned Θ×σ interaction 원리적 UNIDENTIFIABLE-AT-MASK. H_9729(own-ness⊥context) 동형=살아난 gate이나 pulse⊥½-schedule 분리불가.",
+    "threshold": "재발조건: replay/yoke mask로 '기전 vs schedule'을 분리하려 할 때. ① replay가 downstream state(ledger/store)를 forced bit 따라 갱신하면 native가 재-lock → severance는 mask-이탈률에 상한 걸림(설계격차 아닌 항등식) — $0로 P(native_next=relock_baseline) 재분석해 확증 ② severance≥floor로 올리는 개입(block-permute·circular-shift·scramble)은 필연적으로 보존해야 할 rhythm/phase-alignment를 바꿈=2번째 factor ③ severed-tick 층화는 selection-confounded(native-origin=극단margin)+whole-trace estimator의 min-tick floor(σ≥30 lane-tick·evaluate.py:4974) 미달이라 새 subset-probe=DIRECTIONAL이지 engine-native TERMINAL 아님 ④ 재개봉=다른 계기(내부 edge 무작위개입+schedule 독립제어) OR operating-point dose(fire·다른regime).",
+    "source": "H_9728 Θ−-yoked σ-factorial · cli/chat.py --yoke-mask + core/brain.py forced_emit · 재설계-결정 lab-full Fable∥Sol 수렴(ii)"
+   },
+   {
+    "id": "own-provenance-no-substrate-marker-context-continuity-unidentifiable",
+    "state": "pos-conv",
+    "value": "재진입 content의 'own vs foreign(provenance)' 특이성은, own-ness가 context-continuity 외 substrate marker를 안 가지면 원리적으로 식별 불가다. H_9729: latch가 이전후보를 verbatim 복사(own carrier≡cand[t-1])하고 anchor가 bare text_payload(name 미분기)라 'own'≡'maximal in-context' = 설계수준서 처치(own)≡교란(context-match). S_track(주입내용 추종·context 1차 CANCEL)만 식별가능, own-privilege S_priv는 descriptive-only. + arm이 run당 배정이면 randomization unit=seed라 N-seed sign-flip p_min=1/2^N(6seed=0.016>0.005 PASS 불가). Stage-1 seam-live는 interventional 확증이나 near-tautological(anchor=decode-seed).",
+    "threshold": "재발조건: 'A vs B provenance'(누구 것인가) 특이성을 재려 할 때. ① provenance가 substrate에 독립 marker로 인코딩됐나 확인 — 아니면(context-continuity/seed-position 등으로만 구분) 원리적 미식별, 어떤 통제/n도 못 깸(provenance-bearing surface 신설만이 해결). ② 식별가능 통계=주입-content 추종(S_track·양 arm 대칭 CANCEL)이지 A>B advantage(S_priv·1차 교란)가 아님. ③ arm이 run/cluster당 배정이면 randomization unit=그 cluster(tick 독립복제 승격 금지)·N-cluster sign-flip p_min=1/2^N이 PASS bar와 양립하나 확인. ④ interventional 효과존재(A≠B)를 substrate reach로 과독 금지(처치가 seed면 near-tautological).",
+    "source": "cli/chat.py dual-ledger latch+anchor · Stage-2 own-vs-donor design"
+   },
+   {
+    "id": "latch-degenerate-arm-needs-intervention-observational-unidentifiable",
+    "state": "pos-conv",
+    "value": "재진입 latch가 처치=이전관측(H_9729 own carrier[t]≡cand[t-1])이라 관찰 미식별이면, 정답은 do(carrier)의 identical-checkpoint fork다. Stage-1 A(own)vs B(no-reentry) byte-identical fork서 6/6 A≠B=seam LIVE(withheld content가 decode 인과도달) — 관찰 CMI가 정의상0이던 arm이 intervention으론 명확한 효과. ⚠️ A≠B는 anchor=decode-seed라 near-tautological(어떤 seed든 출력변경)=필요조건(seam not severed)이지 충분조건(semantic reach) 아님. content-특이성은 own-vs-matched-donor 2×2 interaction으로만(단 context-match 교란으로 DIRECTIONAL sub-semantic 상한).",
+    "threshold": "재발조건: 관찰 미식별 arm(처치=confounder)의 인과효과를 재려 할 때. ① do()-fork로 identical-checkpoint 분기(with/without/scrambled/donor) seed-blocked — 관찰 조건부/MI 아님 ② A≠B(효과존재)를 substrate reach로 과독 금지: 처치가 decode-seed면 A≠B는 near-tautological(mechanical), 필요조건일 뿐 ③ content-특이성은 matched-donor 여럿 2×2 interaction으로, 단 context-match(in-context vs foreign) 교란 명시 → sub-semantic 상한. pre-treatment byte-identical sanity로 fork 청결 확인.",
+    "source": "cli/chat.py dual-ledger reentry · Stage-1 interventional fork"
+   },
+   {
+    "id": "own-arm-latch-equals-prev-candidate-observationally-unidentifiable",
+    "state": "pos-conv",
+    "value": "재진입 latch가 이전 후보를 verbatim 복사하면(H_9729: own carrier[t]≡cand_pregate[t-1] byte-id 38/38) 처치변수 X가 곧 history/confounder라 그 arm의 causal reach는 관찰적으로 UNIDENTIFIABLE — 어떤 조건부(X를 통째 제거=정의상0)/uncond MI(=autocorrelation)/order-signature도 latch-causality를 autocorrelation과 분리 못함. donor-through-certified-reader도 무효(own CMI 구조적0 vs donor estimable=다른 식별체제 비교). 식별은 오직 INTERVENTION: 저장 checkpoint서 byte-identical fork {own·no-reentry·scramble·donor} seed-blocked. ns는 식별한계지 기질 null 아님.",
+    "threshold": "재발조건: 저장소/latch가 이전 상태를 재주입하고 그 재주입의 causal 효과를 재는 계기. ① 재주입 carrier가 이전 관측치와 byte-identical인지 확인(그렇다면 처치=history=관찰 미식별). ② 관찰적 조건부/uncond/signature-tweak로 못 고침 — do(carrier)로 identical-checkpoint fork(with/without/scrambled/donor) seed-blocked 필요. ③ ns/degenerate를 기질 null로 읽지 말 것(식별한계). donor는 fork 내 matched specificity arm으로만 유효(관찰 통제 아님). provenance-blind anchor면 veto-vs-spoken은 empty.",
+    "source": "cli/chat.py dual-ledger reentry latch · cli/evaluate.py::_silence_content_te"
+   },
+   {
+    "id": "te-reach-conditioning-on-mediator-post-treatment-bias",
+    "state": "pos-conv",
+    "value": "인과 reach/transfer 를 재는 리더가 처치(carrier)가 도달하는 변수 자체를 조건부에 넣으면 = post-treatment conditioning on the MEDIATOR = principal 경로(carrier→그변수→future)를 차단하고 전송이 좋아질수록 검정력이 깎인다. H_9729: carrier[t]가 cand[t]에 same-tick 도달(79% 생존)하는데 리더가 I(cand[t+1];carrier[t]|cand[t])로 cand[t]를 조건부→구 estimand 는 residual/carryover지 reach 아님(z=1.65 잔여). 수리=PRE-treatment 조건부 I(cand[t];carrier[t]|cand[t-1])→실 oracle z=9~18 CERTIFIED. 양성통제는 리더의 정확한 lag 를 exercise 해야(fresh-each-tick oracle 은 same-tick 만·HOLD-K 는 persistence⟺fresh reinjection 구별불가로 무효).",
+    "threshold": "재발조건: TE/mediation/reach 를 조건부 MI 로 재는 모든 계기. ① 조건부 변수가 처치의 downstream(처치가 그걸 바꾸나) 인지 물어라 — 그렇다면 mediator 조건부 = post-treatment bias(principal 경로 삭제). 조건부는 PRE-treatment 상태로. ② 처치→결과 lag 를 코드로 확정(주입 시점 vs 결과 기록 시점 · reference-match) 후 리더 triple 이 그 lag 에 맞나 확인 — 한 행 밀리면 다른 estimand. ③ 양성통제는 리더가 재는 그 lag 에 신호를 놓아야 인증 — 다른 lag 에 놓으면 통과해도 무의미(HOLD/반복주입은 fresh 재주입과 구별불가). same-tick reach 와 t+1 persistence 는 별 read 로 명명.",
+    "source": "cli/evaluate.py::_silence_content_te · cli/chat.py dual-ledger reentry"
+   },
+   {
+    "id": "oracle-period2-schedule-pointmass-degeneracy",
+    "state": "pos-conv",
+    "value": "결정론 period-2(tick-parity) 주입 스케줄은 circular-shift surrogate null 과 직교해 양성통제를 구조적으로 무효화한다. period-2 X 의 모든 순환shift = X(짝수) 또는 bijective relabel(홀수)이고 조건부MI 는 bijection 불변 ⇒ 모든 surrogate = TE_real 정확 ⇒ earned≡0.0000·surr95≡TE·z≡0·p≡1.0 = 기질이 무엇을 하든 대수적 상수. H_9729 run-2 oracle 관측 earned=0.0000 exact 가 이 정리의 지문(Fable #4045). 수리=aperiodic seeded-random A/B 스케줄.",
+    "threshold": "재발조건: 알려진 신호를 KNOWN 스케줄로 주입해 리더가 복원하나 보는 양성/reach 통제. ① 스케줄이 주기적(period-2 특히)이면 순환shift/블록 surrogate 가 point-mass 로 축퇴 → p≡1.0 을 '신호없음'으로 오독. ② earned/z 가 정확히 0.0000 이면 기질 결과가 아니라 estimator 축퇴부터 의심(verdict-integrity). ③ 주입 스케줄은 seeded-random 비주기로(surrogate 와 독립), 스케줄↔null 직교성을 사전 확인. surrogate 계열(circular-shift·block·phase)마다 주입 주기성 점검.",
+    "source": "cli/chat.py · cli/evaluate.py::_silence_content_te"
+   },
+   {
+    "id": "ood-synthetic-carrier-washed-out-by-english-lm",
+    "state": "pos-conv",
+    "value": "OOD 합성 carrier(00 11 22 / !! ;; 같은 digit·punct salad)를 decode-seed 로 영어 byte-LM 에 주입하면 LM 이 영어로 회귀해 씻어낸다 — H_9729 run-2 oracle 서 carrier 가 cand 에 생존 0/80(digit>30% 후보 0개). 양성통제 carrier 는 반드시 in-distribution(LM 이 실제로 전파하는 영어 산문)이어야 하고, 생존은 read 前 파일럿으로 실증해야 한다(가정 금지). digits-in-English-prose(vault code 7 7 4 1)는 LM 이 본 in-between.",
+    "threshold": "재발조건: 알려진 carrier 를 decode-seed/anchor 로 주입해 downstream 재출현/reach 를 재는 계기. ① carrier 가 target LM 분포 밖(합성 기호열)이면 mouth 가 washout → 0 생존을 'reach 없음'으로 오독. ② carrier 는 in-distribution + signature-분리(서명축에서 A/B 구분되게) 둘 다 만족해야 함(순수 산문쌍은 composition 서명에 불가시). ③ 생존을 가정하지 말고 파일럿서 실측(carrier 특징이 cand 에 실제 나타나는 비율) 후 음성 read. reach≠흡수(H_9329).",
+    "source": "cli/chat.py oracle arm"
+   },
+   {
+    "id": "ngram-overlap-filter-base-rate-saturation-natural-en",
+    "state": "pos-conv",
+    "value": "any-shared-n-gram(n=6) 직접복사 배제 필터는 자연 영어서 base-rate≈1(' the a','tion o' 등 함수어) → 전 전이 배제 → arm 이 '측정된 적 없음'인데 NOT-POWERED 를 음성으로 오독. H_9729 run-2 own arm 38/38 배제 = 0 usable. 수리(Fable∥Sol): primary=keep-all + literal-copy 별도 diag(silent nuke 금지 · X↔Y 관계로 포함조건 걸면 TE 왜곡) · 배제 필요시 exact/high-containment(full==carrier / ⊂carrier≥24B / LCS≥0.8·≥24B)만 · 또는 unrelated-pair 서 false-exclusion<1% 로 n 보정.",
+    "threshold": "재발조건: X→Y 인과전이서 '자명 복사'를 배제하려는 모든 필터. ① 배제율이 높으면(대다수 전이 탈락) 필터 base-rate 부터 의심 — chance-level-must-be-derived-per-metric 를 필터에도 적용(unrelated t'≠t 쌍서 보정). ② 포함/배제 조건을 추정 대상(X↔Y 관계)에 걸지 마라 — 인과전이까지 제거해 TE population 왜곡(Sol). ③ 기본은 keep-all·복사는 진단으로 보고 · 배제는 명백복사(exact/high-containment)만. n-gram any-share 를 자연어에 쓰지 마라.",
+    "source": "cli/evaluate.py::_silence_content_te"
+   },
    {
     "id": "swap-patch-cannot-localize-binary-readout-scramble-floor-1",
     "state": "pos-conv",
@@ -17635,7 +17638,7 @@
    {
     "id": "decode-py-1",
     "state": "pos-conv",
-    "value": "GPU(cupy) 결함은 하드크래시가 아니라 CPU-numpy 로 우아 폴백해야 한다 — 같은 뿌리로 2번 터졌다. **(1) OOM(residency)**: clm_load_weights 의 _device_residency asarray 업로드가 cupy OutOfMemoryError 로 303M eval 을 통째 크래시(summer GPU 타job 점유 실사례). 해결=_device_residency ATOMIC(staging→전부성공시만 W.update)+call site _CUPY_OOM catch→_CUDA_AVAILABLE=False→CPU 폴백. happy-path byte-exact 무변경(0.13.9). **(2) 커널 JIT 실패(capability gate · 2026-07-13 재발)**: cuda_available() 이 \"cupy import + getDeviceCount()>0\" 까지만 봐서, JIT 툴체인이 깨진 렌트 GPU pod(cupy-cuda12x 14.1.1 이 nvrtc 에서 CUB reduction 템플릿 컴파일 실패)를 device path 로 승격시켰다. cupy 는 깨끗이 import 되고 RTX4090 도 보이므로 [GPU-FIRED] 가 찍힌 뒤, decode 깊숙한 dt_exp 의 `.any()`(CUB 리덕션) 첫 호출에서 NVRTC_ERROR_COMPILATION 으로 174-item eval 이 1번 아이템에서 즉사. 모듈이 GPU-없는 호스트에 이미 보장하는 numpy 폴백으로 가지 못했다(rc≠0 · 출력파일 0). 해결(0.13.10)=capability probe 를 정직하게 — device count 뿐 아니라 **decode 가 실제로 쓰는 커널 클래스(elementwise + CUB reduction)를 1회 실행**해 보고, 예외면 cuda_available()=False + _CUDA_PROBE_ERR 에 사유 보존(gpu_status 가 그대로 노출). 메타 교훈: **capability 게이트는 \"장치가 보이는가\"가 아니라 \"그 장치에서 내가 쓸 연산이 실제로 도는가\"를 물어야 한다.**",
+    "value": "GPU(cupy) 결함은 하드크래시가 아니라 CPU-numpy 로 우아 폴백해야 한다 — 같은 뿌리로 3번 터졌다. **(1) OOM(residency)**: clm_load_weights 의 _device_residency asarray 업로드가 cupy OutOfMemoryError 로 303M eval 을 통째 크래시(summer GPU 타job 점유 실사례). 해결=_device_residency ATOMIC(staging→전부성공시만 W.update)+call site _CUPY_OOM catch→_CUDA_AVAILABLE=False→CPU 폴백. happy-path byte-exact 무변경(0.13.9). **(2) 커널 JIT 실패(capability gate · 2026-07-13 재발)**: cuda_available() 이 \"cupy import + getDeviceCount()>0\" 까지만 봐서, JIT 툴체인이 깨진 렌트 GPU pod(cupy-cuda12x 14.1.1 이 nvrtc 에서 CUB reduction 템플릿 컴파일 실패)를 device path 로 승격시켰다. cupy 는 깨끗이 import 되고 RTX4090 도 보이므로 [GPU-FIRED] 가 찍힌 뒤, decode 깊숙한 dt_exp 의 `.any()`(CUB 리덕션) 첫 호출에서 NVRTC_ERROR_COMPILATION 으로 174-item eval 이 1번 아이템에서 즉사. 모듈이 GPU-없는 호스트에 이미 보장하는 numpy 폴백으로 가지 못했다(rc≠0 · 출력파일 0). 해결(0.13.10)=capability probe 를 정직하게 — device count 뿐 아니라 **decode 가 실제로 쓰는 커널 클래스(elementwise + CUB reduction)를 1회 실행**해 보고, 예외면 cuda_available()=False + _CUDA_PROBE_ERR 에 사유 보존(gpu_status 가 그대로 노출). **(3) cuBLAS 결측(2026-07-18 렌트pod)**: 0.13.10 probe 가 elementwise+CUB 만 찔러 cuBLAS(libcublas.so.<major>) 결측/미스매치 host 를 device path 로 승격 → [GPU-FIRED] 후 첫 forward __matmul__ 서 크래시(cupy-cuda13x over CUDA-12.4 toolkit). 해결(0.20.4)=probe 에 2x2 matmul 추가(decode 의 지배 lib class=cuBLAS 스모크). **구조적 예방(0.20.5)**: 함정 3의 근인은 libcublas 가 loader path 에 없던 것(수동 LD_LIBRARY_PATH 로 겨우 해결) — core/cuda_paths.py `ensure_cuda_libs()` 가 decode.py 의 import cupy 직전에 시스템 CUDA toolkit lib 을 의존역순 ctypes RTLD_GLOBAL preload(glibc F2: 절대경로 선로드가 cupy 의 이후 SONAME 로드를 만족) → 수동 env 없이 cupy 가 libcublas 발견(팟 부트스트랩 런타임층 메인코드 합류 · darwin/CPU-only 무변이 byte-identical · ldconfig 정상 host delta-0). 메타 교훈: **capability 게이트는 \"장치가 보이는가\"가 아니라 \"그 장치에서 내가 쓸 연산이 실제로 도는가\"를 물어야 한다.**",
     "threshold": "재발조건 = eval/decode 가 GPU 관련 예외로 죽을 때(OOM · NVRTC/JIT 컴파일 · 드라이버 폴트). 진단 순서 = (a) 로그에 [GPU-FIRED] 가 찍혔는지 — 찍혔는데 죽었다면 게이트가 과낙관한 것 (b) nvidia-smi 로 타job 점유/leftover 확인 (c) `python3 -c \"import cupy; print((cupy.arange(4)>1).any())\"` 로 커널이 실제 도는지 확인(import 성공 ≠ 커널 동작). 해결 = 코드는 0.13.9+ 에서 OOM→CPU 자동폴백, 0.13.10+ 에서 커널-스모크 probe 로 깨진 JIT 호스트를 아예 device path 로 승격하지 않음. partial-device W dict 를 forward 에 넘기지 말 것. 현장 응급조치 = `pip uninstall -y cupy-cuda12x`(모듈명 cupy ≠ 패키지명 cupy-cuda12x) → numpy 경로는 canonical/TERMINAL-eligible 이라 측정 손실 0. **새 GPU 가속을 추가할 때마다 capability 게이트에 그 가속이 쓰는 커널 클래스의 스모크를 포함시킬 것.**",
     "source": "core/decode.py"
    },
@@ -17907,7 +17910,7 @@
    {
     "id": "chat-py-2",
     "state": "pos-conv",
-    "value": "**pool 호스트에 병렬 job 을 던지기 전에 그 호스트의 현재 부하를 먼저 읽어라 — 다른 세션이 이미 쓰고 있다. 동시성은 '내 job 수'가 아니라 '박스의 남은 여력'으로 정한다.**  H_9328 실측 사고(2026-07-14): summer(12코어)에 다른 세션의 60분짜리 --valence-audit 2개가 이미 돌고 있는데 내가 anima-py chat 워커를 **13개** 추가 투입 ⇒ **ssh 도달 불가(wedge)** · 수집은 1/24 에서 정지 · aiden 도 CPU 311%(부하 37/12코어)로 대피 불가. 메모리에 이미 'summer 한 박스 heavy 6개 몰면 RAM 포화 → sshd wedge'(summer-overfire-wedge-thread-cap)가 있었는데 **6개도 위험한 곳에 13개를 던졌다**. 근본 원인: 내 스크립트가 동시성을 **고정 상수(6)** 로 잡고, 그마저 xargs -P 와 백그라운드 & 가 중첩돼 실제로는 13개가 떴다 — 그리고 **투입 전에 호스트 부하를 한 번도 읽지 않았다**. 이것은 과학 결과가 아니라 **인프라 블로커**다(infra-wall-noneval · 판독은 여전히 미측정).",
+    "value": "**pool 호스트에 병렬 job 을 던지기 전에 그 호스트의 현재 부하를 먼저 읽어라 — 다른 세션이 이미 쓰고 있다. 동시성은 '내 job 수'가 아니라 '박스의 남은 여력'으로 정한다.**  H_9328 실측 사고(2026-07-14): summer(12코어)에 다른 세션의 60분짜리 --valence-audit 2개가 이미 돌고 있는데 내가 anima-py chat 워커를 **13개** 추가 투입 ⇒ **ssh 도달 불가(wedge)** · 수집은 1/24 에서 정지 · aiden 도 CPU 311%(부하 37/12코어)로 대피 불가. 메모리에 이미 'summer 한 박스 heavy 6개 몰면 RAM 포화 → sshd wedge'(summer-overfire-wedge-thread-cap)가 있었는데 **6개도 위험한 곳에 13개를 던졌다**. 근본 원인: 내 스크립트가 동시성을 **고정 상수(6)** 로 잡고, 그마저 xargs -P 와 백그라운드 & 가 중첩돼 실제로는 13개가 떴다 — 그리고 **투입 전에 호스트 부하를 한 번도 읽지 않았다**. 이것은 과학 결과가 아니라 **인프라 블로커**다(infra-wall-noneval · 판독은 여전히 미측정). **확장(2026-07-17 · H_9731 실측 · GPU 축 재현)**: 같은 법칙이 GPU 메모리에서 재현 — CPU 코어(12c·load 0.03)로 동시성을 정해 sampled 303M chat 2 job 을 GPU 1장(12GB)에 올렸다가 GPU 11764/12288 MiB 포화 → 5× 저하(단일 8.5초/tick → 45초~3분/tick). 실측 상수: 303M chat decode = greedy 2850MiB·8.5초/tick vs sampled(--emit-temp 1.0) 11.2GB·30초/tick (샘플링이 GPU 메모리 4배·시간 3.5배). ⟹ **GPU 1장 = sampled 303M job 1개**가 물리 한계(2개면 22GB > 12GB = 필연 thrash). 동시성 = min(코어여력, RAM여력, **GPU메모리여력**) 이고 GPU job 은 GPU 메모리가 거의 항상 먼저 바닥난다.",
     "threshold": "재발조건 = pool 호스트에 병렬 job(수집·eval·decode)을 던질 때 · 특히 여러 세션이 같은 박스를 공유할 때. 해결 = ① **투입 전 부하 확인 필수**: `sidecar pool list` 로 그 호스트의 CPU/RAM 을 읽고, 이미 부하가 높으면(load > cores × 0.7) **투입하지 말고 다른 호스트로 가거나 기다려라** ② **동시성 = 남은 여력 기준**: 내 job 수를 상수로 박지 말고 (cores − 현재 load) 이하로 잡아라. anima decode 는 메모리를 많이 먹으므로 **CPU 여력보다 RAM 여력이 먼저 바닥난다** — free RAM / (job 당 RSS) 도 함께 계산 ③ **동시성 로직을 이중으로 걸지 마라** — xargs -P N 과 백그라운드 & + jobs 카운팅을 겹치면 실제 동시성이 N 을 초과한다(이번 사고: 6 의도 → 13 실행). 하나만 써라 ④ **wedge 되면 그것은 인프라 블로커이지 과학 결과가 아니다**(infra-wall-noneval) — 그 런의 수치를 verdict 로 쓰지 말고, 사고를 별도 기록한 뒤 복구 후 재측정하라.",
     "source": "cli/chat.py"
    },
@@ -17948,6 +17951,15 @@
     "fix": "cli/train.py 가 device=cuda 일 때 **PREFLIGHT** 로 즉시 fail-fast 하도록 배선했다(cap 를 `torch.cuda.get_arch_list()` 최대 arch 와 대조 · GPU sm 이 그보다 크면 크래시 확정 → 컴파일된 최고 arch + 정확한 설치 명령을 담은 SystemExit). 이제 cryptic async 대신 학습 시작 전 명시 에러로 뜬다. sm_89<sm_90(RTX4090)·A100 sm_80 등 forward-compat 케이스는 통과(sm>max 일 때만 abort). pod venv 설치 측면 대응 = cu128 index 명시(train-py-6 의 cu124 명시와 동형). 5-case 단위검증 통과.",
     "state": "pos-conv",
     "source": "cli/train.py"
+   },
+   {
+    "id": "pod-bootstrap-gpu-3",
+    "polarity": "POS-CONV",
+    "value": "bare vast pod(RTX3090 sm_86)서 `anima-py train` 을 처음 돌리니 학습이 step 진입 직후 죽었다 — 세 트랩이 연쇄로 위장했다. ① pod_sweep 이 `pip install .`(base=numpy만)이라 torch(=[train] extra) 미설치 → `ModuleNotFoundError torch` 가 `train --help` 를 크래시시켜 플래그 grep 실패 → '**ABORT stale**' 로 위장(실제론 torch 부재). ② `.[train]` 로 torch 를 깔았더니 기본 인덱스가 **bleeding-edge torch 2.13.0+cu130** 을 당겼고, 이 빌드는 basic 학습서도 **Triton JIT 를 강제** → `CudaUtils()` init 이 `RuntimeError: Failed to find C compiler` 로 죽음(bare image 엔 gcc 없음). ③ gcc(build-essential) 를 깔아도 gcc **컴파일 자체가 exit 1** — Triton 이 `-l:libcuda.so.1` + `-I/usr/include/python3.10`(python3-dev 헤더) 로 링크하는데 그것도 없음. `torch.cuda.is_available()==True` 였는데도(격리 테스트 통과) 실 학습은 크래시 = train-py-6('is_available 이 True 여도 첫 실커널서 죽는다')의 재확인. FIX = **안정 cu124 torch(2.6.0)** 강제 재설치(precompiled 커널 → basic 학습에 Triton JIT 불요) → REAL cuda matmul+gelu 실증 → 재발사 clean.",
+    "recurrence": "bare GPU pod(특히 vast·최소 이미지)서 anima-py train 을 처음 돌릴 때: (a) `pip install .` 만 하면 torch 없음 → 엉뚱한 'ABORT/stale' 로 위장 (b) `.[train]`/기본 torch 가 bleeding-edge 빌드(cu130 등)를 당기면 basic 학습서도 Triton JIT 강제 → gcc/python3-dev 없어 크래시 (c) is_available()=True 여도 실커널서 죽을 수 있음. 세 개가 겹쳐 원인이 서로를 가린다.",
+    "fix": "cli/pod_bootstrap.sh 에 **POD_TRAIN=1 opt-in 모드(④b)** 를 배선했다 — base(numpy) 설치 뒤 training 이면: build-essential+python3-dev 설치 · **nvidia-smi compute_cap 로 arch-pin**(sm_120 Blackwell→cu128 · 그 외→**안정 cu124**, precompiled=Triton JIT 회피) · datasets · 그리고 **REAL cuda matmul 하드게이트**(is_available 아님 — train-py-6 silent-cpu·이 Triton 크래시 둘 다 잡음). pod-bootstrap-gpu-2(sm_120 train.py preflight)+train-py-6(driver-match) 를 한 도구에 통합. usage/trailer lockstep 갱신. bash -n 통과 + 실 pod(RTX3090)서 torch 2.6.0+cu124 real matmul 실증.",
+    "state": "pos-conv",
+    "source": "cli/pod_bootstrap.sh"
    },
    {
     "id": "decode-py-3",
@@ -18005,8 +18017,8 @@
    {
     "id": "chat-py-6",
     "state": "pos-conv",
-    "value": "**공유 pool 호스트의 site-packages 를 직접 덮어써서 측정 엔진을 배포하면, 병렬 세션의 pip install 이 그것을 조용히 되돌리고 수집이 도중에 오염된다.** 실측(2026-07-15 · H_9337): summer 에 수정된 chat.py/evaluate.py 를 scp 로 배포하고 sha 까지 검증한 뒤 24-rollout 수집을 시작했는데, **03:29 에 병렬 세션이 anima-python 0.13.24 를 pip 설치**해 site-packages 를 통째로 갈아버렸다(H_9337 배선 5곳 → **0곳** · MEDIATION 배선 → 0). 그 뒤 시작된 워커는 **옛(깨진) 데몬**으로 돌았고, trace r9 는 recon_err/rel_lane 고유값 **1**(수정 전 항등식-0 그대로) — 나머지 r1~r8 은 고유값 28 로 멀쩡했다. **배포 시점의 sha 검증은 이 사고를 못 막는다** — 검증은 통과하고 그 **뒤에** 덮어써지기 때문이다. 판별은 **trace 자체**로만 가능했다(게이지가 변하는가). 사고를 늦게 알았으면 24개 중 절반이 두 데몬의 혼합이 된 채 verdict 로 갔을 것이다.",
-    "threshold": "재발조건: 공유 pool 호스트(summer·aiden)에 측정 엔진을 배포하고 장시간 수집/평가를 돌릴 때. 해결: ① **격리 venv 를 써라** — 'git archive origin/main | ssh host tar -x' → 'python3 -m venv ~/.venv-<H>' → '~/.venv-<H>/bin/pip install .' → 러너가 '~/.venv-<H>/bin/anima-py' 를 부르게. 공유 site-packages 는 병렬 세션의 것이지 내 것이 아니다. ② **수집물마다 계기가 살아있었는지 사후 검증하라** — 배포 sha 가 아니라 **trace 안의 값**으로(예: 고친 게이지의 고유값 > 1). ③ 오염분은 폐기하고 재수집(혼합 데이터로 verdict 금지 · verdict-integrity).",
+    "value": "**공유 pool 호스트의 site-packages 를 직접 덮어써서 측정 엔진을 배포하면, 병렬 세션의 pip install 이 그것을 조용히 되돌리고 수집이 도중에 오염된다.** 실측(2026-07-15 · H_9337): summer 에 수정된 chat.py/evaluate.py 를 scp 로 배포하고 sha 까지 검증한 뒤 24-rollout 수집을 시작했는데, **03:29 에 병렬 세션이 anima-python 0.13.24 를 pip 설치**해 site-packages 를 통째로 갈아버렸다(H_9337 배선 5곳 → **0곳** · MEDIATION 배선 → 0). 그 뒤 시작된 워커는 **옛(깨진) 데몬**으로 돌았고, trace r9 는 recon_err/rel_lane 고유값 **1**(수정 전 항등식-0 그대로) — 나머지 r1~r8 은 고유값 28 로 멀쩡했다. **배포 시점의 sha 검증은 이 사고를 못 막는다** — 검증은 통과하고 그 **뒤에** 덮어써지기 때문이다. 판별은 **trace 자체**로만 가능했다(게이지가 변하는가). 사고를 늦게 알았으면 24개 중 절반이 두 데몬의 혼합이 된 채 verdict 로 갔을 것이다. **확장(2026-07-17 · H_9744 실측 · 이 처방 자체의 빈틈)**: chat-py-6 의 처방(격리 venv)을 그대로 따랐더니 **GPU 를 잃었다**. `pip install .` 은 base deps(numpy)만 깔고 **cupy 는 안 깐다** — 공유 site-packages 에는 cupy 14.1.1 이 있어서 여태 GPU 가 돌던 것이고, 격리 venv 로 옮기는 순간 `[GPU-WASTED] decode device path=CPU-numpy but an NVIDIA GPU IS PRESENT` = **8배 느린 CPU 폴백**(68s/tick vs 8.5s/tick). 1152-tick 런이 3.8h → 21h 로 불어나 timeout 을 넘길 뻔했다. 게다가 **cupy 버전을 호스트 CUDA 에 맞춰야 한다** — `nvcc release 12` 호스트에 `cupy-cuda13x` 를 깔면 설치는 성공하고 import 도 되지만 실연산에서 `libnvrtc.so.13: cannot open shared object file` 로 죽는다(설치 성공 ≠ 작동). ⟹ 격리 venv 처방에 **2 단계 추가**: ① 그 호스트의 **작동하는** cupy 를 `python3 -m pip list | grep -i cupy` 로 읽어 **같은 패키지·같은 버전**을 venv 에 설치(추측 금지 · 이번엔 cupy-cuda12x==14.1.1) ② `is_available()` 이 아니라 **실 matmul** 로 검증(`x=cupy.random.rand(512,512); float((x@x).sum())`) 후 발사. 발사 후엔 `nvidia-smi` 로 **GPU 메모리 점유를 눈으로 확인**하라(2 job = ~5.7GB 실측) — 로그의 `[GPU-FIRED]` 한 줄이 최종 증거다. ⚠️ 이 사고는 **인프라 결함이지 과학 결과가 아니다**(infra-wall-noneval) — CPU-폴백 런의 수치는 폐기하고 재측정.",
+    "threshold": "재발조건: 공유 pool 호스트(summer·aiden)에 측정 엔진을 배포하고 장시간 수집/평가를 돌릴 때. 해결: ① **격리 venv 를 써라** — 'git archive origin/main | ssh host tar -x' → 'python3 -m venv ~/.venv-<H>' → '~/.venv-<H>/bin/pip install .' → 러너가 '~/.venv-<H>/bin/anima-py' 를 부르게. 공유 site-packages 는 병렬 세션의 것이지 내 것이 아니다. ② **수집물마다 계기가 살아있었는지 사후 검증하라** — 배포 sha 가 아니라 **trace 안의 값**으로(예: 고친 게이지의 고유값 > 1). ③ 오염분은 폐기하고 재수집(혼합 데이터로 verdict 금지 · verdict-integrity). ⑤ **격리 venv 는 GPU 를 상속하지 않는다**(H_9744): `pip install .` 후 반드시 그 호스트의 작동 cupy 와 **동일 패키지·버전**을 venv 에 설치하고(`pip list | grep -i cupy` 로 읽어라 · CUDA 12 호스트에 cuda13x 를 깔면 import 는 되고 실연산에서 libnvrtc.so.13 부재로 죽는다) **실 matmul 로 검증**한 뒤 발사하라. 발사 후 `nvidia-smi` 로 점유 확인 — `[GPU-WASTED]` 경고가 뜨면 8배 느린 CPU 폴백이다. ⑥ SIGTERM 이 안 먹는 CPU-폴백 워커가 있다 — bracket-trick 으로 PID 를 읽어 **그 PID 만 SIGKILL**(pkill -f 는 자기매치·자살).",
     "source": "cli/chat.py"
    },
    {
@@ -18144,6 +18156,47 @@
     "value": "계기↔주장 정렬을 물어라 — 4층 재발(2026-07-17 한 세션). ①판정층 H_9520: 사전등록 bar 를 기계적 적용해도 계기가 주장 proxy 인지는 별도 질문(ρ·form=고정5문항 coherence 는 teacher 사실저장 미조회 ⟹ '내용흡수' 주장 vs '일반reach' 측정). ②집필층 H_9677/9683: 계기·플래그를 실재확인 없이 명명(--interact-mi 는 H_9304 아닌 H_9328 계기·측정량도 역 / --entity-pool·예시커맨드 5개 부재). ③전제층 H_9683: 남의 카드 '🟢CRACK(잔여 seed-11)'을 기정사실로 깔았는데 seed-11 죽어 양성통제 소멸. ④계기경로층 H_9683: 내 카드가 evaluate --xbind 로 CLMS store 판독한다 적었으나 --xbind=G1 D-acc 경로·CLMS store=--store HELD.json --store-addr-audit(evaluate.py:4084·4215). 규칙: 판정/카드 쓰기 전 자문 4종 — '이 숫자 움직이면 주장 참인가?'·'내가 명명한 계기가 grep 으로 실재하나?'·'내 전제의 미결항목(~잔여)이 내 통제군인가?'·'위임모델의 착륙/등록 주장을 origin grep 으로 검증했나?'(headless Fable 이 'H_9734~9736 이미 등록' 환각 — 등록불가·Sol 은 안함=교차대조가 단일모델 환각 포착). 매번 위임이 잡았다(lab full·/bin/zsh 사전점검) ⟹ walls-delegate-to-fable 을 벽·판정·내가 방금 쓴 설계·계기명에 적용.",
     "threshold": "2",
     "source": "HYPOTHESES/cards/H_9683_natural_declaration_addr_transfer.md"
+   },
+   {
+    "id": "evaluate-py-22",
+    "state": "pos-conv",
+    "value": "🧩 **프롬프트-조건 dump 위 기하/분리도 census 는 공유 프롬프트-템플릿 성분이 지배한다 — raw 지표는 개체가 아니라 템플릿을 읽는다. 판정 전에 grand-mean 을 빼라(중심화).** H_9719 census(#3982→#3995 · 2026-07-17 · summer 303M): '개체 penultimate 이 random W_q 로 injective 하게 슬롯에 붙는가' 를 재려 했는데, 쿼리위치 penultimate 이 공유 프롬프트('is/not {e} =>')에 **지배**됐다 — base pretrained 는 템플릿이 hidden norm 의 **95%**, addr-학습 t3 는 57%. raw argmax-충돌은 개체가 아니라 **템플릿**을 재서 강한 가짜 KILL(base raw excess +0.41)을 냈다. grand-mean(공유 템플릿) 제거 후 개체-잔차로 재니 base +0.133(여전 KILL·확고)·t3 +0.058(경계선)로 **진짜 신호가 raw 의 1/3**. selftest 양성통제가 처음엔 못 잡았다(초기 COLLAPSED 통제='전부 동일'→중심화가 nullify → 'collinear 잔차붕괴'로 재설계해야 discriminate). 함의: raw census KILL 을 그대로 박았으면 template-domination 을 'geometry collapse'로 오독(#3982 가 그 직전).",
+    "threshold": "재발조건 = anima-py evaluate 에 dump(penultimate/hidden)-기반 분리도/충돌/클러스터 census 배선 + 그 dump 가 공유 프롬프트/컨텍스트 조건서 나옴(모든 prompt 이 같은 템플릿·캐리어 공유). 해결 = ① dump 공유성분 비중 먼저 재라: ||H.mean(0)||/rms_norm(H) — 크면(>~0.3) raw 는 공유성분 지표 ② 판정은 grand-mean-centered H(개체-잔차)로·raw 병기 ③ 양성통제(selftest)는 계기가 실제 재는 실패모드를 모델링('전부 동일'붕괴는 중심화가 nullify → 현실적 붕괴=구별템플릿+저차원 collinear 잔차로 통제 지어야 discriminate 인증·positive-control-before-reading-a-negative) ④ control-must-match-mediating-covariate 의 dump-census 판(공유템플릿=매개공변량).",
+    "source": "cli/evaluate.py"
+   },
+   {
+    "id": "chat-py-8",
+    "state": "pos-conv",
+    "value": "**load 게이트를 통과해도 호스트가 그 job 에 맞는 역할이 아니면 터진다 — free ≠ 적합.** 실측(2026-07-17 · H_9731): aiden load 2.62(=0.22/core · chat-py-2 임계 0.7 을 여유 PASS)를 보고 \"free 하니 발사\" 로 303M wm-dual chat 을 쐈다. 결과 load 2.62 → 12.05 → 13.32 → **ssh wedge → 호스트 REBOOT**(up 1day → up 1min), 60 tick 중 5 tick 만 수집(무용). **chat-py-2(load) 는 만족했는데도 터졌다** — 빠진 규칙은 load 가 아니라 **호스트 역할**: aiden 은 메모리에 `가벼운 det-CPU eval 한정 · 303M 무거운 job = OOM 재부팅 루프` 로 이미 박혀 있었고 나는 그 경고를 **인지하고도** load 신호로 덮어썼다. 기전: **문서화된 정성 학습(역할)을 실시간 정량 신호(load)가 덮어쓴다** — 신호가 초록이어도 그 호스트가 그 job 을 감당하는 계급인지가 먼저다. 대조: 역할 맞는 summer(load 0.03)로 옮기자 즉시 **68초/tick(CPU 폴백) → 8.5초/tick(GPU 87%)** 로 8배 개선·무사고.",
+    "threshold": "재발조건 = pool 호스트에 303M(heavy) job(chat decode·eval·train)을 발사할 때 · 특히 load 게이트를 통과했을 때. 해결 = ① load 확인(chat-py-2)에 더해 **호스트 역할**을 먼저 확인하라: summer=heavy-303M 전용 · aiden=가벼운 det-CPU eval 한정(303M=OOM/wedge/reboot). 역할은 메모리 aiden-stable-free-terminal-eval-host + heavy-anima-eval-pool-not-mini 를 **함께** 읽어야 나온다 — 'pool(summer/aiden)' 문구만 보면 aiden 이 heavy 가능해 보인다. ② free 한 호스트가 아니라 **역할 맞는 호스트**를 골라라. 역할 맞는 호스트가 바쁘면 **기다려라** — free 한 부적합 호스트로 대체 금지. ③ wedge/reboot 는 인프라 사고이지 과학결과 아님(infra-wall-noneval) — 그 런의 수집물은 폐기·재측정.",
+    "source": "cli/chat.py"
+   },
+   {
+    "id": "evaluate-py-23",
+    "state": "pos-conv",
+    "value": "**합성 양성통제를 통과한 계기가 실 분포에서는 죽어 있었다 — 통제와 실측의 분포가 다르면 통제는 아무것도 인증하지 못한다.** 실측(2026-07-17 · H_9731 · 303M): 후보 텍스트를 4-상태 주소로 양자화하는 서명을 **절대 char-class argmax** 로 짰다. 합성 oracle(digit-heavy vs punct-heavy)에서는 두 주소로 갈려 \"계기 live\" 로 읽혔다. 그런데 **실 303M 후보 60개(distinct 29)가 전부 주소 1개로 뭉갰다** — 자연영문은 예외 없이 소문자 우세(실측 lower med 0.688 vs dig 0.050·upper 0.050·pun 0.044 ⟹ argmax ≡ lower). 합성 통제는 **실 분포가 밟지 않는 축**에서만 계기를 시험했다. 수리 = 모집단-상대 분할(`_content_sig_factory` · 그 trace 자신의 후보 분포 중앙값으로 2축 분할 → 4상태 · 임계 튜닝 불가 · null 도 같은 binning). 수리 후 자연영문 8문장 → 4주소, 실 303M trace addr 1 → 3. **독립 확증**: 병렬 세션이 같은 H_9731 을 다른 호스트/seed 로 재며 **같은 결함계급**에 독립으로 빠졌다(byte-histogram 이 공통접두 'vault QX-7741 forever.' 에 붕괴 · s7 78% 한 class) — 두 세션·두 기전·같은 함정. **판정 영향 0**: 계기의 alphabet floor(distinct≥2)가 상수 데이터를 verdict 로 읽는 것을 막고 NOT-POWERED 를 세웠다(floor 없었으면 I=0 을 '기질에 채널 없음' 으로 오독).",
+    "threshold": "재발조건 = 텍스트/신호를 이산 주소로 양자화해 MI/TE 를 재는 모든 계기(서명·버킷·argmax·임계). 특히 **합성 양성통제만으로 계기를 인증**했을 때. 해결 = ① 양자화 임계는 **절대값 금지 · 모집단 상대**(중앙값/분위 분할) — 실 분포가 무엇이든 bin 이 균형잡히고 튜닝할 임계가 없다(DOF 0) ② **양성통제를 실 분포에서 뽑아라** — 합성 A/B 가 통과해도 실 데이터가 포화시키면 계기는 죽은 것이다 ③ **알파벳 floor**(source/target distinct ≥2)를 계기에 넣어라 — 이번에 이 floor 가 상수 데이터를 verdict 로 읽는 것을 실제로 막았다 ④ null/surrogate 는 실측과 **같은 binning** 을 써라.",
+    "source": "cli/evaluate.py"
+   },
+   {
+    "id": "pod-bootstrap-gpu-4",
+    "state": "pos-conv",
+    "value": "**GPU pod/host 에 decode 를 올릴 땐 cupy wheel 을 libnvrtc.so.<major> 실물에 맞춰라 — nvidia-smi 는 거짓말한다.** 실측 자연실험(2026-07-17 · H_9744 가 1152-tick 런을 여기서 잃음): summer·aiden 두 pool 호스트가 nvidia-smi 로 **똑같이 'CUDA Version: 13.0'** 을 보고하는데 **서로 다른 cupy wheel** 이 필요하다 — summer 는 libnvrtc.so.12(cupy-cuda12x 작동·cuda13x 는 libnvrtc.so.13 부재로 첫 op 사망) · aiden 은 libnvrtc.so.13(cupy-cuda13x). nvidia-smi 의 'CUDA Version' 은 **드라이버가 지원하는 최대치**이지 설치된 런타임이 아니다(예측 0/2). 진짜 결정자 = 호스트의 libnvrtc.so.<major> 실물(예측 2/2 · wheel 의 실 의존파일). 그리고 cupy 는 major-mismatch 여도 **import 는 되고 첫 실 op 에서만 죽는다**(설치 성공 ≠ 작동 · pod-bootstrap-gpu-3/train-py-6 재확인) — cuda_available() 은 import+device 만 봐서 못 잡는다. 결함의 다른 반쪽: pod_bootstrap.sh 는 --no-deps wheel 설치라 cupy 가 아예 없어 GPU pod 가 CPU-numpy decode(8배: 68s/tick vs 8.5s/tick)로 조용히 돌았고, 스테이지가 그걸 출력만 하고 BOOTSTRAP_OK 를 냈다. 추가 함정: unbounded `cupy>=13.0` 은 sm_120 서 broken 한 14.x(cu13 cuda_fp8.hpp nvrtc 파싱실패)를 조용히 깐다 → <14 핀이 load-bearing. 정직 뉘앙스: cupy 14.1.1-**cuda12x** 는 summer(sm_120)서 JIT 작동 실측 — broken 은 14.x-cuda13x 라 major 가 다르나, aiden(cuda13) 미검증이라 <14 유지가 안전(13.6.0 이 양 호스트 작동).",
+    "threshold": "재발조건 = GPU pod/host 에 anima decode(chat·evaluate)를 올릴 때 · 특히 격리 venv 나 --no-deps wheel 설치 후. 해결: ① cupy major 를 nvidia-smi 아닌 **libnvrtc.so.<major> 실물**로 정하라(`{ ldconfig -p; ls /usr/local/cuda*/lib64/libnvrtc.so.*; } | grep -oE 'libnvrtc\\.so\\.[0-9]+'`). ② `cupy-cuda<major>x>=13.0,<14` 로 설치(상한 필수 · broken 14.x 배제). ③ is_available() 이 아니라 **실 커널**(cupy matmul 또는 ElementwiseKernel JIT)로 검증한 뒤 발사. ④ 발사 후 nvidia-smi 로 GPU 메모리 점유 눈으로 확인(2 job = ~5.7GB 실측) · 로그의 [GPU-FIRED]/[GPU-WASTED] 한 줄이 최종 증거. canonical: `cli/pod_bootstrap.sh`(#4024)가 이걸 스테이지 ⑤(설치)+⑥(실 matmul FATAL 게이트)로 강제 — GPU pod 는 POD_GPU 기본 · CPU pod 는 POD_GPU=0. 격리 venv(chat-py-6)도 같은 2단계 필요(그 기록에 확장됨). CPU-폴백 런은 infra-wall-noneval — 폐기하고 GPU 재측정."
+   },
+   {
+    "id": "h-9734-nat-addr-split-md-1",
+    "state": "pos-conv",
+    "value": "known-good 결과가 재현 실패하면 landing 전에 '같은 환경'을 **정확한 dep 버전**까지 대조하라 — '같은 호스트' ≠ '같은 env'(다른 venv=다른 torch). H_9734 최종해결(3-flip 후): 내 seed-7 주소 일반화 실패(0.0078)를 ①환경회귀(#4065 방향맞음) ②철회(#4089 '병렬 같은env' 거짓전제) ③setup버그(#4102 틀림) 로 3번 flip 하다, 공유 summer 호스트 **학습 로그의 torch= 프리플라이트**를 대조해 확정: 모든 store-addr 성공(T3·rv3c13·fresh303)=torch 2.11.0+cu130 · 내 유일실패=torch 2.13.0+cu130(unpinned [train] torch>=2.1 이 fresh install 서 cu130 index 최신 2.13 당김). 코드·corpus(byte-id)·base·seed·recipe 전부 동일·torch 버전만 다르고 Blackwell sm_120 bf16 훈련 numerics 가 2.11→2.13 회귀. FIX=pyproject/pod_bootstrap torch<2.13 상한(#4116·cupy load-bearing 패턴). **규칙**: ①양성통제는 발사 환경서 known-good 재현해야 arm 읽기(게이트가 '자연어휘 실패' 오독 방어=이번 최대성과) ②known-good 재현실패시 root-cause 를 환경/버전에 귀속하기 전 **공유호스트 로그의 정확한 dep 버전**(torch= 프리플라이트)으로 성공 run 과 대조 — '같은 호스트라 같은 env' 가정 금지(venv마다 torch 다름) ③unpinned dep(torch>=2.1 무상한)은 fresh install 마다 최신을 당겨 훈련능력을 조용히 회귀시킨다=재현성 위기·load-bearing 상한 필수(cupy 선례) ④성급한 root-cause landing 을 반복하지 말고 결정적 대조(성공 run 의 정확 invocation/env) 확보 후 확정. reference-match 는 코드→eval→**환경 dep버전**까지 내려가야 완결. [[gpu-forward-not-bitexact-probes-device-pinned]]·[[positive-control-before-reading-a-negative]] 확장.",
+    "threshold": "2",
+    "source": "HYPOTHESES/cards/H_9734_nat_addr_split.md"
+   },
+   {
+    "id": "pod-bootstrap-sh-1",
+    "state": "pos-conv",
+    "value": "pod-bootstrap-gpu-5 — device HARD GATE 가 실제로 block 하지 않던 masking 결함. 원격 명령이 `python3 -c \"...sys.exit(1)...\" 2>&1 | tail -4` 형이라, 원격 로그인 셸엔 pipefail 이 없어 파이프라인 exit=tail(0) 로 python 의 sys.exit(1) 이 삼켜짐 → ssh 0 반환 → 로컬 `set -euo pipefail` 미포착 → GPU 있는데 engine 이 CPU-numpy 로 디코드(8x)하는 FATAL 조건서도 BOOTSTRAP_OK 출력. \"failure-that-looks-like-success\" = 이 스크립트 존재이유를 정면위반. FIX = 원격 출력을 temp 파일로 받고 `rc=$?` 캡처 후 `tail -4` + `exit $rc` (POSIX sh 호환·pipefail/PIPESTATUS 불요) → python rc 를 ssh 로 전달. 실증(H_9751 pod 45205949·libnvrtc 부재 FATAL 조건): PROPAGATED_RC=1 정상. 주의: 원격 명령서 파이프 뒤 exit-code 필요 시 항상 이 temp-capture 패턴(원격 셸 pipefail 가정 금지).",
+    "threshold": "",
+    "source": "cli/pod_bootstrap.sh"
    }
   ]
  }

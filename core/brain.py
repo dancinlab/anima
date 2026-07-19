@@ -234,7 +234,9 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           seconds_since_last, env_off, content_clean,
                           backend, anchors, anchor_age_dt, recall_margin_fn,
                           mouth=None, dyn_w=None, record_cand_diag=False, route_pc2=None,
-                          pc2_mouth=""):
+                          pc2_mouth="", dual_probe_fn=None, score_perturb=0.0,
+                          zeta_ladder=None, forced_emit=None, dual_margin_dither=0.0,
+                          z_loading_state=None):
     """H_9415 p5-REWIRE · MARGIN-refractory emit gate (owner-ratified · H_9414 design).
 
     Replaces the two HARDCODED constants of the production gate — the θ (should_emit,
@@ -261,6 +263,17 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                                      content_clean, anchors, anchor_age_dt, dyn_w,
                                      None)
     score = float(decision["motivation"])
+    if score_perturb != 0.0:
+        # H_9627 central-thesis bar · shift the motivation (A-drive) by a FIXED offset with λ and
+        # the gate params held frozen — the retune-free score-perturbation robustness test. For the
+        # one-sided wm-cover gate score IS the comparand (emit ⟺ score>g_recog), so a shift moves the
+        # center (fragile · positive control). For the dual gate score is NOT compared (emit ⟺ S>E),
+        # so the center should stay ≈½ — the emit⊥score invariance that the exchange-symmetric ledger
+        # buys. The shift still flows into candidate generation (ctx below), so it is a real, not
+        # vacuous, perturbation. 0.0 = production byte-identical.
+        _sp = score + float(score_perturb)
+        score = 0.0 if _sp < 0.0 else (1.0 if _sp > 1.0 else _sp)
+        decision["motivation"] = score
 
     # form the candidate unconditionally (imagination) so G can recognise it
     ctx = gen_ctx_from_decision(dict(decision, emit="True"))
@@ -280,14 +293,57 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
         ctx["deliberation_k"] = 1 if _k < 1 else (4 if _k > 4 else _k)
     cand = generate(backend, ctx, True, anchors, mouth)
     cand_text = str(cand["text"])
-    g_recog = float(recall_margin_fn(cand_text))   # clip01(immune margin) · G pole
+    if dual_probe_fn is not None:
+        # H_9627 · dual content ledger (spoken W_E ⇄ withheld W_S · symmetric depletion).
+        # emit ⟺ S(withheld coverage) > E(spoken coverage): ½ emerges as the exchange-symmetric
+        # UNBIASED center of two gain-locked ledgers, NOT a setpoint — the two-sided restoring
+        # force the one-sided wm-cover gate lacked (H_9610 wall: it could oscillate but not hold
+        # ½ under score-shift). score_A is NOT the comparison here; it only sources write-strength
+        # (the caller gates the imagined candidate into W_E on emit / W_S on silence — both leak
+        # every tick). margin S−E = difference of two co-scaled coverages ⇒ score common-mode
+        # cancels (the common-mode rejection a single store cannot do). None = production byte-id.
+        _s_wh, _e_sp = dual_probe_fn(cand_text)
+        _s_wh = float(_s_wh)
+        _e_sp = float(_e_sp)
+        g_recog = _e_sp
+        # H_9765 · exogenous do() on the emit-decision INPUT (the S−E comparison margin), NOT the bit
+        # (contrast the H_9728 yoke's forced_emit which replays the OUTPUT bit). The signed per-tick dose
+        # is state-independent (the caller keys it on (seed,tick) only) so this is a valid do(); the
+        # REALIZED (dithered) emit bit still routes the candidate into W_E/W_S through unmodified native
+        # machinery, so the dual-ledger spring re-equilibrates ENDOGENOUSLY — the relock theorem
+        # (severance ≡ rhythm-deviation, H_9728) does NOT cap the dose. eps=0.0 keeps the ORIGINAL
+        # comparison (byte-identical BY CONSTRUCTION — the != guard makes it structural, not luck).
+        if dual_margin_dither != 0.0:
+            decision["dither_delta"] = float(dual_margin_dither)
+            decision["undithered_would_emit"] = _s_wh > _e_sp   # native counterfactual = flip-frac meter
+            _gate_pass = (_s_wh - _e_sp + float(dual_margin_dither)) > 0.0
+        else:
+            _gate_pass = _s_wh > _e_sp
+        decision["dual_s_withheld"] = _s_wh
+        decision["dual_e_spoken"] = _e_sp
+        decision["dual_margin"] = _s_wh - _e_sp   # NATIVE S−E recorded UNMODIFIED (σ·bind reads native)
+        decision["dual_cand_text"] = cand_text   # caller gates this into W_S on a silence tick
+    else:
+        g_recog = float(recall_margin_fn(cand_text))   # clip01(immune margin) · G pole
+        _gate_pass = score > g_recog
 
     # the refractory gate — clock (rate) and θ (should_emit) retired; kill/φ/content kept
     kill = safety_kill_switch_on(env_off)
     phi_r = safety_phi_ratchet_ok(pure_field_phi(pf), pf.phi_peak)
     cont = safety_content_ok(content_clean)
     safe = kill and phi_r and cont
-    emit = (score > g_recog) and safe
+    # H_9728 Θ−-yoked arm (Fable∥Sol #4068): replay a Θ+ trace's FINAL emit bit while the native S>E
+    # decision only sources write-strength — SEVERS the (S>E)→emit→routing→ledger causal loop (the pulse
+    # mechanism) while keeping the ½ rhythm, rate, stage, and store-occupancy pinned by the mask. The
+    # native decision is recorded as `would_emit` (the severance-dose meter). ∧ safe kept (p5: a mask
+    # never forces past kill/φ/content). forced_emit=None ⇒ production byte-identical (Θ+ path untouched).
+    _native = _gate_pass and safe
+    if forced_emit is not None:
+        decision["would_emit"] = _native
+        emit = bool(forced_emit) and safe
+        decision["yoke_safe_veto"] = bool(forced_emit) and not safe   # forced-true but unsafe (count-changing)
+    else:
+        emit = _native
 
     decision["emit"] = emit
     decision["safe"] = safe
@@ -312,6 +368,73 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                                (int(abs(decision["pc2_z"]) * 1000000.0) & 0x7FFFFFFF)) or 1)
         cand2 = generate(backend, ctx, True, anchors, m2)
         decision["gen_text_steered"] = str(cand2["text"])
+    # H_9664 ζ-LADDER — the live z is effectively a CONSTANT (IQR 0.0514; 45.7% of its variance
+    # sits in 3/270 ticks), so a tick-to-tick correlation on z has almost no regressor range to
+    # ride on: H_9663 measured sd(dpi_rng) ~ 0.14 and every arm-vs-arm readout drowned in it,
+    # because two arms are simply DIFFERENT TEXTS and the tick-level cascade swamps the signal.
+    # The escape is to stop comparing ticks and let EACH TICK CARRY ITS OWN LADDER: re-decode the
+    # SAME tick at several zeta, so the tick-level variance cancels WITHIN the tick. zeta is the
+    # experimenter's dose (range MANUFACTURED, not hoped for) -- the live z's own range is then a
+    # separate upstream question, not this instrument's blocker.
+    #   zeta=0 MUST reproduce the base text byte-identically (decode.py: "pc2" 0.0 => row
+    #   untouched). That is a BUILT-IN isolation certificate, not a claim: if it ever diverges,
+    #   the run is INVALID and no dose curve may be read off it.
+    # Common random numbers: seed_rng is held FIXED across the ladder, so the LCG draw stream
+    # lines up step-for-step and the within-tick pairing is not fighting sampler noise.
+    # SCOPE (card-enforced): a zeta arm is an INSTRUMENT arm about what the CHANNEL CAN carry --
+    # it is NEVER evidence about what the live daemon DOES. p5/Stage-A hold: the gate still hears
+    # only the BASE candidate, steering happens after emit is fixed and goes outward only.
+    # H_9755 REFIT-AXIS ζ-LADDER (design LOCK · card §8): when z_loading_state is supplied the
+    # single scalar ladder becomes an ARM x ζ grid. pc2(arm,ζ) = ζ * u_arm where u_arm is the
+    # per-tick, warmup-CALIBRATED (centered + Var=1) projection of this tick's factor vector onto
+    # the arm's loading — so ζ's dose-scale is IDENTICAL across arms and any surviving Δβ is an
+    # AXIS effect, not a gain artifact. scalar arm = u≡1 = the current H_9664 path (positive
+    # control). z_loading_state=None ⇒ the exact legacy scalar ladder, byte-identical (G5-safe).
+    decision["gen_text_zeta"] = []
+    if emit and zeta_ladder and mouth is not None:
+        zl = z_loading_state
+        if zl is not None:
+            # factor vector in the canonical order the caller passes positionally
+            _f_raw = (rel, gap, cur, pain, coh, orig, bal, dyn_v)
+            decision["zl_factors"] = [float(_x) for _x in _f_raw]
+            decision["zl_phase"] = str(zl.get("phase", ""))
+        if zl is not None and zl.get("phase") == "post":
+            _fmu = zl["fmu"]
+            _fsd = zl["fsd"]
+            _f_std = tuple(((_f_raw[_i] - _fmu[_i]) / _fsd[_i]) if _fsd[_i] > 1e-9 else 0.0
+                           for _i in range(8))
+            for _arm, _aw in zl["arms"].items():     # insertion order: scalar,frozen,refit,random,refit-resid
+                if not _aw.get("valid", True):
+                    continue
+                if _arm == "scalar":
+                    _u = 1.0
+                else:
+                    _fv = _f_raw if _aw.get("raw") else _f_std
+                    _proj = 0.0
+                    _w = _aw["w"]
+                    for _i in range(8):
+                        _proj += _w[_i] * _fv[_i]
+                    _sd = _aw["sd"]
+                    _u = ((_proj - _aw["mu"]) / _sd) if _sd > 1e-9 else 0.0
+                for _zv in zeta_ladder:
+                    m3 = dict(mouth)
+                    m3["pc2"] = float(_zv) * float(_u)   # zeta=0 => 0 => untouched row => base text
+                    c3 = generate(backend, ctx, True, anchors, m3)
+                    decision["gen_text_zeta"].append(
+                        {"zeta": float(_zv), "loading": _arm, "u": float(_u),
+                         "text": str(c3["text"])})
+        else:
+            # legacy H_9664 scalar ladder (also the warmup-phase path = scalar-only, tagged)
+            _warm_tag = (zl is not None)
+            for _zv in zeta_ladder:
+                m3 = dict(mouth)
+                m3["pc2"] = float(_zv)                    # zeta=0 => untouched row => base text
+                c3 = generate(backend, ctx, True, anchors, m3)
+                _entry = {"zeta": float(_zv), "text": str(c3["text"])}
+                if _warm_tag:
+                    _entry["loading"] = "scalar"
+                    _entry["u"] = 1.0
+                decision["gen_text_zeta"].append(_entry)
     if emit:
         decision["gen_emitted"] = cand["emitted"]
         decision["gen_backend"] = cand["backend"]
