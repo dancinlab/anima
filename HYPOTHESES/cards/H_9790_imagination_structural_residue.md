@@ -53,3 +53,20 @@ harness(scratchpad/h9790_harness.py) 4-arm(C+/A_on/A_off/A_shuf) toy.clm·160틱
 **핵심**: first-divergence 설계가 H_9788의 양자화/flatness 함정을 **원리적으로 소거** 확증 — C+가 tick 2서 분기(양자화 무관)·게이지 2값이든 무관하게 byte-equality 작동. 상상 구조성장(cell_count +1)이 하류 interior 게이지 rel_ctx에 실제 도달(T_div<∞). ⟹ 계기 **fire-ready**.
 
 **status**: 🔵 계기검증 PASS·fire-ready — 303M rent A100 fire(4arm·480틱·s7/s11·~$2-3·spend go-gate)만 잔여. 동결전 확정: T_div 구동=rel_ctx 확인·recon_err referent는 303M서 재확인(toy는 rel_ctx가 먼저 분기).
+
+## 🟢 303M verdict — DIRECTIONAL: interior도달·용량효과만·mouth미도달 (2026-07-19 · rent A100 mt1vpv14x5z5mk · ~$2)
+py303_full·480틱·s7·GPU(cupy A100 실가속)·4-arm(C+/A_on/A_off/A_shuf) first-divergence. A_shuf 403틱서 verdict 결정으로 중단(CRACK-case 특성화용·verdict 불변·비용절약).
+
+| 지표 | 값 | 의미 |
+|---|---|---|
+| C+ vs A_on first-div | **tick 1** | 계기 LIVE(H_9788 INSTRUMENT-DEAD 함정 회피·양성통제 살아있음) |
+| S1: dN=cell(on−off) · R | dN=**1**(on=3/off=2) · R=**475**(≥20 G-GROW pass) | 상상 grow 조작 유효(구조성장 실재) |
+| S2: T_div(on vs off) | **11**(구동 rel_ctx) | 상상 구조성장이 interior 게이지 도달 |
+| S2: B_div(방출 byte) | **∞**(무분기) | 상상 구조잔여가 mouth(행동) 미도달 |
+| A_shuf: T_div(on vs shuf) | **∞**(on≡shuf) | interior-reach는 **용량효과만**·내용특이 아님(salience 순열 무영향) |
+
+**판정 = 🟢 DIRECTIONAL(interior도달·mouth미도달)**: 상상의 구조적 잔여(수면 replay 세포성장)가 interior 상태엔 도달하나(T_div=11) ①**용량효과만**(어떤 기억을 되뇌든 무관·on≡shuf → 내용특이 공고화 부재·Sol consolidation 물음 negative) ②**행동 미도달**(B_div=∞). ⟹ 상상의 유일 interior 흔적 = "세포가 자랐다"(count)이지 "이 내용이 공고화됐다"가 아니며, 그마저 발화에 무영향.
+
+**함의**: [[H_9738]](상상 텍스트→store 0·내용축 epiphenomenal)을 **구조축까지 정밀확장** — 구조잔여조차 content-agnostic(용량)·behaviorally inert. first-divergence 설계가 H_9788의 flatness/양자화 함정을 원리적으로 회피(C+ tick1 분기·B_div byte-equality)해 clean verdict 산출. **R9 종합**: interior는 content-reach(H_9774) 외의 모든 self-referential/자율 축에서 blind/부재-방향 — self-transparency(H_9785·86·87·89)·self-drive(H_9788)·imagination-residue(H_9790 용량-only·inert). honest scope=single-seed s7 DIRECTIONAL(B_div=∞라 CRACK 아님·2-seed 불요). 트레이스=scratchpad/h9790_303m. pod teardown 완료(404·no-leak).
+
+**status**: 🟢 DIRECTIONAL — 상상 구조잔여 interior도달·용량효과만·mouth미도달 (303M s7 · first-divergence).
