@@ -565,29 +565,42 @@ Negative results are first-class and not buried (`a_paper_negative_ok`).
 
 ## Quickstart
 
+anima ships as **two production twins** over one shared `core/` A ⇄ G engine, and the
+**`anima-py` pip CLI is the canonical, primary channel** — every engine op (`corpus` ·
+`train` · `evaluate` · `serialize` · `sweep` · `chat` · `study`) runs through it, and it is
+the **terminal verdict path** (`a_cli_single_entry`, `a_eval_py_canonical`). It needs no hexa
+toolchain, so it is the one path that works on *any* host (pi5, pods, CPU-only). The
+hexa-native `anima` twin (`hx install anima`) is byte-parity-proven against it and is the
+right channel on a hexa host — but a NEW manipulation is always **a flag on these commands**,
+never a script beside the engine (`a_experiment_engine_native`).
+
 ```bash
-# 1. Install hexa-lang (provides `hexa` + the `hx` package manager)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"
+# --- PRIMARY: the anima-py pip CLI (canonical · any host · no hexa needed) -----------
+pip install "anima-python[train]"     # base = evaluate/chat · [train] = trainer · [gpu] = CUDA fast-paths
+anima-py chat clm303.clm              # chat on a .clm byte mouth (bare form works too: `anima-py clm303.clm`)
 
-# 2. Install anima  — the ONE canonical setup path (a_install_canonical):
-#    hx install anima → install.hexa (pins the latest verified v* tag) → setup.hexa.
-#    Release flow (STABLE channel only — no test/edge prerelease): autotag.yml tags a NEW
-#    version only on release-worthy commits (feat/fix/perf/BREAKING) — docs/chore/ci-only
-#    pushes do NOT cut a release — then dispatches release.yml, which install-smokes the v*
-#    tag (ubuntu+macos) before publishing its GitHub Release. So the tag install.hexa pins
-#    is always a verified, meaningful version. No manual stage-build — cli/anima.hexa is the single entry.
-hx install anima
+# the full engine-op surface — a NEW manipulation is a FLAG on one of these, nothing else:
+anima-py corpus <fmt> --out c.txt …               # build a research corpus (--lang en · emits the budget floor)
+anima-py train --corpus c.txt --init base.clm …   # CLMConvMoE trainer → serializes a .clm v0.3 mouth
+anima-py evaluate <clm> [--xbind m.json] [--rho-axon]   # ← TERMINAL verdict path (ρ-AXON reach panel)
+anima-py serialize | serialize-bind | sweep | study     # emit weights · bind codec · param sweep · percept channel
 
-# 3. Run — the single production engine (conv / CLMConvMoE, the .clm byte mouth)
-anima                  # chat on the default .clm mouth
-anima --mitosis on     # + substrate growth lane live
-
-# 4. Train — the hexa-native CLMConvMoE trainer (a_train_flame_forge, NO .py)
-anima train --corpus ko.txt en.txt --out mouth.clm --steps 2000 --canon
+# quick train (toy scale) — 4-cell {ko·en}×{normal·SNS} register round-robin:
+anima-py train --corpus ko.txt en.txt --out mouth.clm --steps 2000 --canon
 #   --canon (L4·d3784 303M-class) · --savant/--no-savant (golden-zone inhibition) ·
-#   --mitosis/--no-mitosis (cell-division grow) · --d DIM · --L N · --corpus <paths..>
-#   (4-cell register round-robin) · --out <ckpt.clm> (CLM\x01 v0.3, core/clm_decode-loadable)
+#   --mitosis/--no-mitosis (cell-division grow) · --d DIM · --L N · --out <ckpt.clm> (CLM\x01 v0.3)
+
+# --- TWIN: the hexa-native `anima` command (byte-parity mirror · hexa hosts) ----------
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"  # hexa-lang + `hx`
+hx install anima     # install.hexa pins the latest install-smoked v* tag (STABLE channel · cli/anima.hexa single entry)
+anima chat clm303.clm       # same verbs as anima-py; `anima <verb>` ≡ `anima-py <verb>` (byte-identical decode)
 ```
+
+> **Which twin is canonical?** `anima-py` (pip) is the SSOT for verdicts and the one that
+> runs everywhere; the hexa `anima` twin is the parity mirror for hexa hosts. Cement a
+> result **only** on an engine-native `core/` number these commands produce — never on a
+> probe redoing a forward pass beside the engine (`a_engine_native_learning`). Heavy 303M
+> decode/eval runs on the pool, never on a mini host (`a_eval_py_canonical`).
 
 The production trainer for the real **303M** mouth is **`cli/train.hexa`**
 (hexa-native, `a_train_flame_forge`). It carries the full recipe
