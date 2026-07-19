@@ -349,6 +349,21 @@ _MBND_ON = False              # H_9698 --mouth-binder: the lane is opt-in even w
 _MBND_ORDER_SCRAMBLE = False  # H_9698 control: derange the causal bank (same multiset, order gone)
 _CLMS_QUERY = "qpos"          # H_9695 --store-query: "qpos" (H_9423 literal) | "every-token" (marker-free)
 _CLMS_FUSE = "overwrite"      # H_9695 --store-fuse: "overwrite" (store_only) | "gated-add" (perturbation)
+_IFAN_MODE = "off"            # H_9803 --fan-branch: "off" (parity) | "live" | "assignment-shuffle"
+_IFAN_BRANCH = 0              # H_9803 which of the K proposal latents drives this decode
+_IFAN_PERM_SEED = 9803        # H_9803 frozen permutation seed for the assignment-shuffle control
+
+
+def set_ifan_lane(mode="off", branch=0, perm_seed=9803):
+    """H_9803 branch-latent ideation-fan eval-time switch (cli/evaluate.py --fan-branch).
+
+    mode "off" is the DEFAULT and is a hard parity seal: ifan_apply returns the caller's logits
+    object unchanged (no copy, no arithmetic), so an IFAN-carrying .clm decodes byte-identically
+    to the same .clm without the trailer. The `--fan-branch off` eval arm asserts exactly that."""
+    global _IFAN_MODE, _IFAN_BRANCH, _IFAN_PERM_SEED
+    _IFAN_MODE = str(mode or "off")
+    _IFAN_BRANCH = int(branch)
+    _IFAN_PERM_SEED = int(perm_seed)
 
 
 def set_mouth_binder(on=False, order_scramble=False):
@@ -968,6 +983,8 @@ def clm_load_weights(path):
     W["clms"], off = read_clms(rb, off, W["d"], W["V"])
     from mbnd import read_mbnd                                   # H_9698 mouth-binder (absent ⇒ None)
     W["mbnd"], off = read_mbnd(rb, off, W["d"], W["V"])
+    from ifan import read_ifan                                   # H_9803 branch-latent fan (absent ⇒ None)
+    W["ifan"], off = read_ifan(rb, off, W["d"], W["V"])
 
     # ── GPU device residency (a_gpu_default_no_optin: DEFAULT-ON, no opt-in flag) ──
     # Upload the GEMM/elementwise weight tensors to the device ONCE here (a full
@@ -1333,7 +1350,7 @@ def _seed_to_tok(seed, T):
     return tok
 
 
-def _fwd_logits(W, tok, T, edits=None, mbnd_last=False):
+def _fwd_logits(W, tok, T, edits=None, mbnd_last=False, ifan_fork=None):
     """_clmd_fwd_logits_sc (host path) — full CLMConvMoE forward. tok:[T] ids.
     Returns logits:[T, V] as host numpy (to_host at the exit) — the SOLE
     device->host sync for a full-forward call when GPU-resident (see
@@ -1360,9 +1377,22 @@ def _fwd_logits(W, tok, T, edits=None, mbnd_last=False):
             _fresh_tap = {}
         else:
             _fresh_penult = True
+    # H_9803 IFAN branch-latent fan: the proposal latents read the PRESERVED early (route_L) tap.
+    # _fwd_trunk exposes ONE tap slot, so when the CLMS fresh lane already owns it at a DIFFERENT
+    # depth the fan falls back to the penultimate (`tap=None` ⇒ ifan_apply reads yn = the `penult`
+    # route). Reported honestly rather than silently mixing depths.
+    _ifan_w = W.get("ifan")
+    _ifan_on = (_ifan_w is not None and _IFAN_MODE != "off")
+    _ifan_tap = None
+    _tap_depth = int(_clms_w["fresh_L"]) if _fresh_tap is not None else None
+    _tap_out = _fresh_tap
+    if _ifan_on and int(_ifan_w.get("route_L", 0)) > 0:
+        if _tap_depth is None:
+            _tap_depth = int(_ifan_w["route_L"]); _ifan_tap = {}; _tap_out = _ifan_tap
+        elif _tap_depth == int(_ifan_w["route_L"]):
+            _ifan_tap = _fresh_tap                # same depth ⇒ one tap serves both lanes
     yn = _fwd_trunk(W, tok, T, edits=edits,       # [T, d] pre-readout, pre-slot penultimate (device-resident if GPU)
-                    tap_depth=(int(_clms_w["fresh_L"]) if _fresh_tap is not None else None),
-                    tap_out=_fresh_tap)
+                    tap_depth=_tap_depth, tap_out=_tap_out)
     yn_trunk = yn                                 # keep pre-slot trunk penultimate for the CLML read-side lane
     xp = get_xp(yn)
     # H_9200 E1 — gated-write forward-slot on the post-norm penultimate (before
@@ -1425,6 +1455,17 @@ def _fwd_logits(W, tok, T, edits=None, mbnd_last=False):
         from mbnd import mbnd_apply
         out_logits = mbnd_apply(to_host(out_logits), to_host(yn_trunk), W["mbnd"],
                                 order_scramble=_MBND_ORDER_SCRAMBLE, last_only=mbnd_last)
+    # H_9803 BRANCH-LATENT IDEATION FAN — additive, LAST in the chain
+    # (SLW → readout → CLML → CLMS → MBND → IFAN). Opt-in: `_IFAN_MODE == "off"` (the default)
+    # makes ifan_apply return the caller's object untouched, so an IFAN-carrying .clm decodes
+    # byte-identically to the base — that is the `--fan-branch off` parity arm's whole claim.
+    if _ifan_on:
+        from ifan import ifan_apply
+        out_logits = ifan_apply(to_host(out_logits), to_host(yn_trunk),
+                                (to_host(_ifan_tap["x"]) if _ifan_tap is not None else None),
+                                W["ifan"], branch=_IFAN_BRANCH, mode=_IFAN_MODE,
+                                perm_seed=_IFAN_PERM_SEED, last_only=mbnd_last,
+                                fork=ifan_fork)
     return to_host(out_logits)
 
 
@@ -1481,8 +1522,9 @@ def clm_decode_argmax(path, seed, gen):
         si = slen - T + p
         tok[p] = float(seed_b[si]) if si >= 0 else 32.0
     out = bytearray()
-    for _ in range(gen):
-        logits = _fwd_logits(W, tok, T, mbnd_last=True)   # H_9698 perf: gen reads only last row
+    for _i in range(gen):
+        logits = _fwd_logits(W, tok, T, mbnd_last=True,   # H_9698 perf: gen reads only last row
+                             ifan_fork=max(0, T - 1 - _i))   # H_9803 fork slides with the window
         row = logits[T - 1]
         besti = 0
         bestv = row[0]
@@ -1514,8 +1556,13 @@ def clm_decode_topk_sampled_W(W, seed, gen, top_k, temp, seed_rng):
         tok[p] = float(seed_b[si]) if si >= 0 else 32.0
     out = bytearray()
     rng = _mix32(seed_rng)
-    for _ in range(gen):
-        logits = _fwd_logits(W, tok, T, mbnd_last=True)   # H_9698 perf: gen reads only last row
+    for _i in range(gen):
+        # H_9803 fork index: the LAST SEED byte starts at T-1 and slides left one place per emitted
+        # byte (fixed-T window). Clamped at 0 once the seed has scrolled out — after that the branch
+        # latent is grounded on the oldest position still in the window, which is honest (the fork
+        # context is genuinely gone) rather than silently re-grounding on generated text.
+        logits = _fwd_logits(W, tok, T, mbnd_last=True,   # H_9698 perf: gen reads only last row
+                             ifan_fork=max(0, T - 1 - _i))
         nb, rng = _topk_sample(logits[T - 1], V, top_k, temp, rng)
         out.append(nb)
         tok[:T - 1] = tok[1:]

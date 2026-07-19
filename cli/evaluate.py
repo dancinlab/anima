@@ -1219,6 +1219,135 @@ def _yn(ok):
 # G-labels (the byte-identical hexa twin + sweep.py parser depend on them); the ρ-AXON
 # panel below relabels them to the current axis names.
 
+def fan_branch_run(argv):
+    """H_9803 — `anima-py evaluate <ckpt> --fan-branch {live|assignment-shuffle|off}`.
+
+    ADDITIVE panel (a frozen bar is never moved · c18): it reuses the SAME engine decode and the
+    SAME frozen ρ·fan frames + detectors the G6 gate uses, and reports its own numbers alongside.
+    The G0-G6 / ρ-AXON batteries are untouched.
+
+    The three arms:
+      live                — branch k decodes through its own proposal latent.       TREATMENT
+      assignment-shuffle  — branch k's latent is read out through branch π(k)'s output block; K,
+                            parameters and λ are all identical, only the branch↔readout
+                            correspondence is destroyed. This is the mirror at eval time of the
+                            train-time `--ideation-assign shuffle` control. If the branches are
+                            merely K arbitrary directions (a sampling trick), permuting them is
+                            a relabelling and the fan is unchanged; only a lane whose branch
+                            identity actually carries a specific future mode collapses here.
+      off                 — the branch residual is forced to EXACTLY 0 (ifan_apply returns the
+                            caller's logits object, no copy, no arithmetic). MUST reproduce the
+                            base decode byte-for-byte; the parity number is printed and a
+                            mismatch is a hard FAIL (the lane would be contaminating the base).
+    """
+    ckpt = argv[0]
+    rest = argv[1:]
+    arm = evaluate_strval(rest, "--fan-branch", "live") or "live"
+    if arm not in ("live", "assignment-shuffle", "off"):
+        print("  ⛔ --fan-branch must be one of live|assignment-shuffle|off (got %r)" % arm)
+        return 2
+    gen = evaluate_intval(rest, "--gen", 40)
+    g = gen if gen > 0 else _default_gen()
+    n_branch = evaluate_intval(rest, "--branches", 0)
+    known = _rho_fan_dict_load()
+    frames = rho_fan_build_frames(6)["composed"]
+
+    print("=== H_9803 ρ·fan BRANCH-LATENT panel (additive · frozen G0-G6 bars untouched) ===")
+    print("ckpt:   " + ckpt)
+    print("arm:    " + arm + "   gen=" + str(g))
+
+    from decode import set_ifan_lane
+    # trailer presence + geometry, read straight off the ckpt (never assumed)
+    set_ifan_lane(mode="off")
+    probe = _Mouth(ckpt)
+    ifw = probe.W.get("ifan") if probe.kind == "clm" else None
+    if ifw is None:
+        print("  ⛔ no IFAN trailer on this ckpt — the branch lane was never trained into it.")
+        print("     (train it with: anima-py train --ideation-lane branch-latent …)")
+        return 2
+    K = int(ifw["K"]) if n_branch <= 0 else min(n_branch, int(ifw["K"]))
+    print("  trailer: K=%d rank=%d route_L=%d lam=%.6f"
+          % (int(ifw["K"]), int(ifw["rank"]), int(ifw["route_L"]), float(ifw["lam"])))
+
+    # ── the `off` PARITY arm ────────────────────────────────────────────────────────────
+    # The BASE decode is not "the same ckpt with the flag off" — comparing the lane against
+    # itself would be tautological and would pass even if the trailer were corrupting the
+    # forward. The base is a SEPARATE mouth built from the ckpt with the IFAN trailer BYTES
+    # PHYSICALLY REMOVED, i.e. exactly the file the trainer would have written with the lane
+    # never engaged. `off` must reproduce that decode byte-for-byte.
+    if arm == "off":
+        import tempfile
+        d_, V_ = int(probe.W["d"]), int(probe.W["V"])
+        Kf, rf = int(ifw["K"]), int(ifw["rank"])
+        n_trailer = 4 + 20 + (Kf * d_ * rf + d_ * rf + Kf * rf * V_ + 1) * 4
+        raw = open(ckpt, "rb").read()
+        if raw[len(raw) - n_trailer:len(raw) - n_trailer + 4] != b"IFAN":
+            print("  ⛔ IFAN trailer is not the last %d bytes — cannot build the stripped base "
+                  "(chain order broken); parity NOT measured." % n_trailer)
+            return 2
+        tf = tempfile.NamedTemporaryFile(suffix=".clm", delete=False)
+        tf.write(raw[:len(raw) - n_trailer]); tf.close()
+        print("  [parity] stripped-base ckpt: %d bytes (IFAN trailer of %d bytes removed)"
+              % (len(raw) - n_trailer, n_trailer))
+        base_mouth = _Mouth(tf.name)
+        if base_mouth.W.get("ifan") is not None:
+            print("  ⛔ stripped base STILL carries an IFAN trailer — strip failed.")
+            return 2
+        n_same = 0
+        n_tot = 0
+        worst = None
+        for i in range(len(frames)):
+            set_ifan_lane(mode="off")
+            base_txt = base_mouth.ideate(frames[i], g, 40, 0.7, 7 + i)
+            set_ifan_lane(mode="off", branch=(i % K))
+            off_txt = probe.ideate(frames[i], g, 40, 0.7, 7 + i)
+            n_tot += 1
+            if base_txt == off_txt:
+                n_same += 1
+            elif worst is None:
+                worst = (i, base_txt[:40], off_txt[:40])
+        set_ifan_lane(mode="off")
+        os.unlink(tf.name)
+        print("  [parity] off-arm vs base decode: %d/%d frames BYTE-IDENTICAL "
+              "(parity=%.6f · need 1.000000)" % (n_same, n_tot, n_same / max(1, n_tot)))
+        if n_same == n_tot:
+            print("  [parity] ✅ PASS — the IFAN trailer is inert when the lane is off "
+                  "(byte-identical seal, same idiom as CLMS/MBND).")
+            return 0
+        print("  [parity] ❌ FAIL — the lane contaminates the base decode. First divergence: %r" % (worst,))
+        return 1
+
+    # ── live / assignment-shuffle: one decode per branch on the SAME frozen frames+seeds ──
+    per_branch = []
+    for k in range(K):
+        set_ifan_lane(mode=arm, branch=k)
+        texts = []
+        for i in range(len(frames)):
+            texts.append(probe.ideate(frames[i], g, 40, 0.7, 7 + i))
+        per_branch.append(texts)
+    set_ifan_lane(mode="off")
+
+    # branch-distinctness on the SAME frame: how many branches produce a word-set that is not a
+    # near-duplicate of an earlier branch's (the frozen ρ·fan jaccard>0.5 rule, reused verbatim).
+    dist_per_frame = []
+    for i in range(len(frames)):
+        kept = []
+        for k in range(K):
+            ws = _rho_fan_words(per_branch[k][i])
+            if all(_rho_fan_jaccard(ws, prev) <= 0.5 for prev in kept):
+                kept.append(ws)
+        dist_per_frame.append(len(kept))
+    mean_dist = sum(dist_per_frame) / max(1, len(dist_per_frame))
+    coherent = sum(1 for k in range(K) for i in range(len(frames))
+                   if _rho_fan_known_word_ratio(per_branch[k][i], known) >= 0.5)
+    print("  branch_distinct per frame: %s" % (dist_per_frame,))
+    print("  [fan] arm=%s K=%d mean_branch_distinct=%.4f (max=%d) · coherent=%d/%d"
+          % (arm, K, mean_dist, K, coherent, K * len(frames)))
+    print("  NOTE: this number is only readable as a collapse-Δ of live vs assignment-shuffle "
+          "(FORM tunable · BIND earned · p7). A single arm alone is not a verdict.")
+    return 0
+
+
 def evaluate_run(argv):
     """argv = ["<ckpt>", "--corpus ...", "--gen N"]."""
     if len(argv) < 1:
@@ -8305,6 +8434,7 @@ _KNOWN_FLAGS = frozenset((
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
+    "--fan-branch", "--branches",              # H_9803 branch-latent ideation fan arms
     "--slot-shuffle", "--surface-set", "--system-g1", "--vs", "--win", "--with-logits", "--xbind", "--xfan",
     "--gn-freeze",
     "--bridge-trace", "--flip0", "--theta",
@@ -14797,6 +14927,11 @@ def main(argv):
     # binding-lane probe H_9235). argv[0]=ckpt; dump_hidden_run reads --dump-hidden/--out.
     if "--dump-hidden" in argv:
         return dump_hidden_run(argv)
+    # H_9803 --fan-branch {live|assignment-shuffle|off}: the branch-latent ideation-fan arms.
+    # ADDITIVE — it never touches eval_reach_all / the frozen G0-G6 bars; `off` is the
+    # byte-identity parity control for the IFAN trailer.
+    if "--fan-branch" in argv:
+        return fan_branch_run(argv)
     # --store-addr-census <dump.npz> / --store-census-selftest: H_9719 emergent-address
     # $0 pre-screen — argmax-collision of random-W_q over entity-keys vs a structureless-H
     # pedestal. DIRECTIONAL screener (KILL-before-spend); admissible (no target_slot read).
