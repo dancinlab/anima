@@ -109,7 +109,19 @@ def _parse_args(argv):
             #   --held-out I,J          REINTERPRETED for this format ONLY: I = held-out (0-shot)
             #                           stem names, J = held-out operator names. Documented in the
             #                           format's own printout so the reinterpretation is never silent.
-            "stems_per_episode": 4, "eval_episodes": 16}
+            "stems_per_episode": 4, "eval_episodes": 16,
+            # H_9809 ngram-audit (--ngram-recoverable-audit · absorbs lab/v3 H_004's theorem
+            # "oracle-fusable <=> n-gram-recoverable" as a production audit flag):
+            #   --ngram-recoverable-audit  arm the audit (required by fmt `ngram-audit`)
+            #   --audit-train F            the training stream the model actually saw
+            #   --panel F                  the held-out eval panel under audit
+            #   --codec F                  optional MORPH-2B-style codec.json -> adds a token-space
+            #                              arm beside the always-present raw-utf8 byte arm
+            #   --audit-marker A,B         class-discriminating markers -> per-arm terminal reach
+            #   --audit-min-coverage X     below this key-coverage an order reads UNDECIDABLE,
+            #                              never CLOSED (a 0-coverage lookup IS the majority class)
+            "ngram_recoverable_audit": False, "audit_train": None, "panel": None,
+            "codec": None, "audit_marker": None, "audit_min_coverage": 0.10}
     i = 1
     while i < len(argv):
         a = argv[i]
@@ -215,6 +227,18 @@ def _parse_args(argv):
             opts["stems_per_episode"] = int(argv[i + 1]); i += 2   # H_9800 counterfactual-decl
         elif a == "--eval-episodes":
             opts["eval_episodes"] = int(argv[i + 1]); i += 2       # H_9800 counterfactual-decl
+        elif a == "--ngram-recoverable-audit":
+            opts["ngram_recoverable_audit"] = True; i += 1          # H_9809 ngram-audit
+        elif a == "--audit-train":
+            opts["audit_train"] = argv[i + 1]; i += 2               # H_9809
+        elif a == "--panel":
+            opts["panel"] = argv[i + 1]; i += 2                     # H_9809
+        elif a == "--codec":
+            opts["codec"] = argv[i + 1]; i += 2                     # H_9809
+        elif a == "--audit-marker":
+            opts["audit_marker"] = argv[i + 1]; i += 2              # H_9809
+        elif a == "--audit-min-coverage":
+            opts["audit_min_coverage"] = float(argv[i + 1]); i += 2  # H_9809
         elif a.startswith("--"):
             # fail closed. The old `else: i += 1` swallowed an unknown flag silently, so a typo
             # (--kctx for --k-ctx) would build the manifest at the DEFAULT power and report success
@@ -3759,9 +3783,323 @@ def build_studyreplay(transcript_path, corpus_paths, study_frac, reps, seed, scr
     return mix_text, c1_text, c2_text, stats
 
 
+# ---------------------------------------------------------------------------
+# ngram-audit — the N-GRAM-RECOVERABILITY audit (H_9809 · `--ngram-recoverable-audit`).
+#
+# WHY THIS SEAT (corpus.py, not evaluate.py). The audit is a property of
+# (panel x tokenization x training stream) and touches NO checkpoint. `anima-py evaluate`
+# requires a `.clm`, so seating it there would make the one thing this instrument is FOR —
+# a $0 gate fired BEFORE any training run — structurally impossible. corpus.py is the panel
+# builder; a panel defect must be catchable where the panel is made.
+#
+# WHAT IT ANSWERS. Lab v3 H_004 reached a verified theorem: for a FIXED morpheme,
+# **oracle-fusable <=> n-gram-recoverable**. If a morpheme is frequent enough for a codec to
+# fuse it into one atomic token, its terminal n-gram under the un-fused control ALSO recovers
+# the class. Their repaired rig closed order-1 (G-A 0.527) but order-2 read 0.9954 — a
+# transformer binds order-2 with one attention head, so the "no-atomicity" control was not a
+# control at all. Consequence: an "atomicity" effect can be an n-gram-recoverability effect
+# wearing a costume, and ONLY an explicit order-2 arm makes the difference visible.
+#
+# THE BATTERY (per tokenization arm, mirroring v3's G-A/G-B/G-C):
+#   order-0  majority-class baseline  -> the DERIVED chance floor for THIS realized panel
+#            split (`chance-level-must-be-derived-per-metric`: never assume 0.5).
+#   order-1  terminal-unigram Bayes lookup, fit on TRAIN only, scored on PANEL.
+#   order-2  terminal-bigram  Bayes lookup, fit on TRAIN only, scored on PANEL.
+#   perm     the same battery on label-PERMUTED train -> must collapse to order-0. This is
+#            the negative control; without it a high order-2 could be a harness artifact.
+#   reach    (optional `--audit-marker`) per-arm terminal DISTANCE of each class-discriminating
+#            marker. This is the quantity a codec arm and a raw-bytes arm do NOT share: the
+#            same morpheme sits 1 token from the decision point under a codec and ~18 bytes
+#            under raw utf-8. A cross-arm delta in reach is a confound with atomicity, not a
+#            measurement of it.
+#
+# COVERAGE IS LOAD-BEARING. A lookup whose panel keys were NEVER seen in train falls back to
+# the majority class and returns exactly order-0. Reading that as "the path is closed" is the
+# trap. So every order reports `coverage` = fraction of panel items whose key was seen in
+# train, and an order with coverage below --audit-min-coverage is reported
+# UNDECIDABLE-AT-ORDER-k, never CLOSED. An instrument that cannot tell "closed" from "never
+# asked" manufactures verdicts.
+#
+# VERDICT VOCABULARY (per arm, per order):
+#   CLOSED       acc - chance0 <= 0.05          no shortcut at this order
+#   MARGINAL     0.05 < acc - chance0, acc < 0.90
+#   OPEN         acc >= 0.90                    a trivial n-gram path exists at this order
+#   UNDECIDABLE  coverage < --audit-min-coverage
+#
+# This instrument reports. It does not overturn: a landed verdict falls only to an
+# engine-native `anima-py` measurement carrying its own positive control.
+# ---------------------------------------------------------------------------
+
+_NGA_CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ"
+_NGA_JUNG = "ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ"
+_NGA_JONG = "_ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ"
+_NGA_ARROW = " => "
+
+
+def _nga_to_jamo(s):
+    """Hangul -> jamo symbols with distinct C:/V:/J: markers. Byte-faithful to the MORPH-2B
+    codec's own decomposition (state/nbind_curriculum/morph2b.py) — reimplemented here rather
+    than imported because production never imports from the frozen research tree
+    (`a_no_archive_import`); the audit must stand alone in the installed wheel."""
+    out = []
+    for ch in s:
+        o = ord(ch)
+        if 0xAC00 <= o <= 0xD7A3:
+            i = o - 0xAC00
+            out.append("C:" + _NGA_CHO[i // 588])
+            out.append("V:" + _NGA_JUNG[(i % 588) // 28])
+            j = i % 28
+            if j:
+                out.append("J:" + _NGA_JONG[j])
+        else:
+            out.append("R:" + ch)
+    return out
+
+
+def _nga_eojeol_split(line):
+    parts = []
+    for j, w in enumerate(line.split(" ")):
+        if j:
+            parts.append(([" "], True))
+        if w:
+            parts.append((_nga_to_jamo(w), False))
+    return parts
+
+
+def _nga_apply_merges(syms, merge_rank):
+    w = list(syms)
+    while True:
+        best = None
+        for i in range(len(w) - 1):
+            r = merge_rank.get((w[i], w[i + 1]))
+            if r is not None and (best is None or r < best[0]):
+                best = (r, i)
+        if best is None:
+            return w
+        i = best[1]
+        w[i:i + 2] = [w[i] + "\x00" + w[i + 1]]
+
+
+def _nga_load_codec(path):
+    """Read a MORPH-2B-style codec.json: {"merges": ["a\\tb", ...], "tok2id": {...}}."""
+    d = json.load(open(path, encoding="utf-8"))
+    merges = [tuple(m.split("\t")) for m in d["merges"]]
+    merge_rank = {(a, b): r for r, (a, b) in enumerate(merges)}
+    tok2id = d.get("tok2id") or {}
+    return merge_rank, tok2id
+
+
+def _nga_tokenize(text, arm):
+    """arm = ('raw', None) -> utf-8 byte ids · ('codec', (merge_rank, tok2id)) -> codec token ids."""
+    kind, cx = arm
+    if kind == "raw":
+        return list(text.encode("utf-8", "replace"))
+    merge_rank, tok2id = cx
+    ids = []
+    for syms, sp in _nga_eojeol_split(text):
+        toks = [" "] if sp else _nga_apply_merges(syms, merge_rank)
+        for t in toks:
+            i = tok2id.get(t)
+            if i is None:
+                ids.extend(0 for _ in t.replace("\x00", "").encode("utf-8", "replace"))
+            else:
+                ids.append(i)
+    return ids
+
+
+def _nga_read_pairs(path):
+    """(text, label) pairs. Accepts, in order: morphatom-eval-v1 / any {"items":[...]} panel
+    JSON (seed+gold), a JSON list or JSONL of {"text","label"}, or plain `X => LABEL` arrow
+    lines (the corpus convention shared by ground/derivtrace/nbind)."""
+    raw = open(path, "rb").read().decode("utf-8", "replace")
+    st = raw.lstrip()
+    if st.startswith("{") or st.startswith("["):
+        try:
+            d = json.loads(raw)
+        except ValueError:
+            d = None
+        if d is not None:
+            items = d.get("items", d) if isinstance(d, dict) else d
+            out = []
+            for it in items:
+                if not isinstance(it, dict):
+                    continue
+                t = it.get("text", it.get("seed"))
+                lab = it.get("label", it.get("gold"))
+                if t is None or lab is None:
+                    continue
+                if t.endswith(_NGA_ARROW):
+                    t = t[: -len(_NGA_ARROW)]
+                out.append((t.strip(), str(lab).strip()))
+            if out:
+                return out
+    out = []
+    for line in raw.splitlines():
+        line = line.strip("\x00").strip()
+        if _NGA_ARROW not in line:
+            continue
+        body, lab = line.rsplit(_NGA_ARROW, 1)
+        if body.strip() and lab.strip():
+            out.append((body.strip(), lab.strip()))
+    return out
+
+
+def _nga_lookup(train_toks, order):
+    """Fit P(label | terminal `order`-gram) on train. Returns key -> majority label."""
+    cnt = collections.defaultdict(collections.Counter)
+    for toks, lab in train_toks:
+        if len(toks) < order:
+            continue
+        cnt[tuple(toks[-order:])][lab] += 1
+    return {k: c.most_common(1)[0][0] for k, c in cnt.items()}
+
+
+def _nga_score(table, panel_toks, order, majority):
+    hit = seen = 0
+    for toks, lab in panel_toks:
+        key = tuple(toks[-order:]) if len(toks) >= order else None
+        pred = table.get(key) if key is not None else None
+        if pred is None:
+            pred = majority
+        else:
+            seen += 1
+        if pred == lab:
+            hit += 1
+    n = max(len(panel_toks), 1)
+    return hit / n, seen / n
+
+
+def _nga_arm_report(train_pairs, panel_pairs, arm, seed, min_cov, orders=(1, 2)):
+    train_toks = [(_nga_tokenize(t, arm), l) for t, l in train_pairs]
+    panel_toks = [(_nga_tokenize(t, arm), l) for t, l in panel_pairs]
+    labs = collections.Counter(l for _, l in panel_pairs)
+    majority = collections.Counter(l for _, l in train_pairs).most_common(1)[0][0]
+    # DERIVED chance: the realized majority share of THIS panel, not an assumed 0.5.
+    chance0 = labs.most_common(1)[0][1] / max(len(panel_pairs), 1)
+    rep = {"n_train": len(train_pairs), "n_panel": len(panel_pairs),
+           "panel_label_split": dict(labs), "order0_chance": round(chance0, 4),
+           "mean_len": round(sum(len(t) for t, _ in panel_toks) / max(len(panel_toks), 1), 2),
+           "orders": {}}
+    rng = random.Random(seed)
+    perm_labels = [l for _, l in train_pairs]
+    rng.shuffle(perm_labels)
+    perm_toks = [(t, perm_labels[i]) for i, (t, _) in enumerate(train_toks)]
+    for k in orders:
+        acc, cov = _nga_score(_nga_lookup(train_toks, k), panel_toks, k, majority)
+        pacc, _ = _nga_score(_nga_lookup(perm_toks, k), panel_toks, k, majority)
+        if cov < min_cov:
+            verdict = "UNDECIDABLE"
+        elif acc >= 0.90:
+            verdict = "OPEN"
+        elif acc - chance0 <= 0.05:
+            verdict = "CLOSED"
+        else:
+            verdict = "MARGINAL"
+        rep["orders"][str(k)] = {"acc": round(acc, 4), "delta_vs_chance": round(acc - chance0, 4),
+                                 "coverage": round(cov, 4), "perm_control_acc": round(pacc, 4),
+                                 "verdict": verdict}
+    return rep
+
+
+def _nga_marker_reach(panel_pairs, arm, markers):
+    """Terminal distance (in this arm's units) from each marker's LAST token to the end of the
+    body. THE cross-arm confound quantity: a codec puts a fused morpheme ~1 unit from the
+    decision point where raw utf-8 puts it ~18 bytes away."""
+    out = {}
+    for m in markers:
+        mt = _nga_tokenize(m, arm)
+        if not mt:
+            continue
+        dists = []
+        for text, _ in panel_pairs:
+            toks = _nga_tokenize(text, arm)
+            pos = [i for i in range(len(toks) - len(mt) + 1) if toks[i:i + len(mt)] == mt]
+            if pos:
+                dists.append(len(toks) - (pos[-1] + len(mt)))
+        if dists:
+            dists.sort()
+            out[m] = {"n_hit": len(dists), "units": len(mt),
+                      "median_terminal_distance": dists[len(dists) // 2],
+                      "min_terminal_distance": dists[0]}
+        else:
+            out[m] = {"n_hit": 0, "units": len(mt)}
+    return out
+
+
+def run_ngram_audit(opts):
+    train_pairs = _nga_read_pairs(opts["audit_train"])
+    panel_pairs = _nga_read_pairs(opts["panel"])
+    if not train_pairs or not panel_pairs:
+        raise SystemExit("corpus ngram-audit: parsed %d train / %d panel labeled item(s) — "
+                         "need both. Expect `X => LABEL` lines or an {\"items\":[{seed,gold}]} panel."
+                         % (len(train_pairs), len(panel_pairs)))
+    arms = {"raw_utf8": ("raw", None)}
+    if opts.get("codec"):
+        arms["codec"] = ("codec", _nga_load_codec(opts["codec"]))
+    markers = [m for m in (opts.get("audit_marker") or "").split(",") if m.strip()]
+    res = {"instrument": "ngram-recoverable-audit", "hypothesis": "H_9809",
+           "theorem": "lab/v3 H_004: oracle-fusable <=> n-gram-recoverable (verified 12/12)",
+           "train": opts["audit_train"], "panel": opts["panel"],
+           "codec": opts.get("codec"), "seed": opts["seed"],
+           "min_coverage": opts["audit_min_coverage"], "arms": {}}
+    for name, arm in arms.items():
+        rep = _nga_arm_report(train_pairs, panel_pairs, arm, opts["seed"],
+                              opts["audit_min_coverage"])
+        if markers:
+            rep["marker_reach"] = _nga_marker_reach(panel_pairs, arm, markers)
+        res["arms"][name] = rep
+
+    print("=== anima-py corpus ngram-audit (--ngram-recoverable-audit · H_9809) ===")
+    print("  theorem under test: lab/v3 H_004 — oracle-fusable <=> n-gram-recoverable")
+    print("  train %s (%d labeled) · panel %s (%d labeled)"
+          % (opts["audit_train"], len(train_pairs), opts["panel"], len(panel_pairs)))
+    for name, rep in res["arms"].items():
+        print("\n  [arm %s]  order-0 derived chance = %.4f  (panel split %s · mean len %.1f)"
+              % (name, rep["order0_chance"], rep["panel_label_split"], rep["mean_len"]))
+        for k in sorted(rep["orders"]):
+            o = rep["orders"][k]
+            print("    order-%s acc %.4f (Δ%+.4f vs chance) · key-coverage %.4f · "
+                  "perm-control %.4f  -> %s"
+                  % (k, o["acc"], o["delta_vs_chance"], o["coverage"],
+                     o["perm_control_acc"], o["verdict"]))
+        for m, d in (rep.get("marker_reach") or {}).items():
+            if d["n_hit"]:
+                print("    marker %-6s %2d unit(s) · hits %3d · median terminal distance %d"
+                      % (repr(m), d["units"], d["n_hit"], d["median_terminal_distance"]))
+            else:
+                print("    marker %-6s %2d unit(s) · hits 0 (absent from panel bodies)" % (repr(m), d["units"]))
+    if len(res["arms"]) > 1:
+        print("\n  CROSS-ARM: a reach asymmetry between arms is a CONFOUND with atomicity, not a")
+        print("  measurement of it — the arms differ in how far the discriminating unit sits from")
+        print("  the decision point, which is an n-gram-reach variable, not an atomicity variable.")
+    print("\n  UNDECIDABLE = key-coverage below --audit-min-coverage: the lookup fell back to the")
+    print("  majority class, so its accuracy is order-0 by construction and says NOTHING about the")
+    print("  path. Never read UNDECIDABLE as CLOSED.")
+    print("\n  This instrument REPORTS. It does not overturn a landed verdict — that needs an")
+    print("  engine-native `anima-py` measurement carrying its own positive control.")
+    if opts["out"]:
+        _canon_dump(res, open(opts["out"], "w"))
+        print("\n  -> %s" % opts["out"])
+    return res
+
+
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
+    if fmt == "ngram-audit" or opts["ngram_recoverable_audit"]:
+        if not opts["ngram_recoverable_audit"] or not opts["audit_train"] or not opts["panel"]:
+            print("anima-py corpus ngram-audit --ngram-recoverable-audit "
+                  "--audit-train TRAIN --panel PANEL [--codec codec.json] "
+                  "[--audit-marker 안,않,못,아니] [--audit-min-coverage 0.10] [--out audit.json]")
+            print("      H_9809 — absorbs lab/v3 H_004's verified theorem (oracle-fusable <=>")
+            print("      n-gram-recoverable) as a production audit flag. Reports order-1 AND")
+            print("      order-2 recoverability of the panel label from a Bayes lookup fit on")
+            print("      TRAIN only, per tokenization arm, so a trivial bigram path is VISIBLE.")
+            print("      TRAIN/PANEL accept `X => LABEL` arrow lines or an {\"items\":[{seed,gold}]}")
+            print("      panel. Runs BEFORE any training — no checkpoint, $0.")
+            sys.exit(2)
+        run_ngram_audit(opts)
+        return
     if fmt == "study-replay":
         if not opts["transcript"] or not opts["corpus"] or not opts["out"]:
             print("anima-py corpus study-replay --transcript T.jsonl --corpus BASE.txt "
