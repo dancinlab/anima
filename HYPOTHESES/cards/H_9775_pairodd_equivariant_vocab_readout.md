@@ -1,6 +1,6 @@
 # H_9775 — g/b-쌍 Π-등변 사영(pairodd) + full-vocab argmax eval 게이트 (R10-1 · $0 · H_9760 INVALID 후속 설계)
 
-**status:** 🟢 in-vivo seed7 FULL PASS (main 0.8176≥.75 earned·통제 shuffle 0.38/nostore 0.00 붕괴·flip-coh=FORM) — WIRED 판정 in-progress(seed11 2/2 + value-permute 발사중·⑨) · 계기 착륙 #4119/4122/4125
+**status:** 🟢 **WIRED** (in-vivo 2/2 majority·seed7 main 0.8176+seed11 0.8933 earned·전 통제붕괴·value-permute 0.4446 붕괴=content-addressed 값운반 확증·flip-coh=FORM) — H_9744 NEARMISS·H_9760 INVALID 넘어 store-bridge를 데몬서 WIRE(303M py TERMINAL·⑩) · 계기 #4119/4122/4125
 **lane:** g1-interface-addressable-wall · H_9744 WIRED-STUDY-NEARMISS 갭 → H_9760 full-row odd in-vivo INVALID(#4103) 후속
 **related:** [[H_9744]] · [[H_9760]] · [[H_9773]] · [[H_9672]] · [[H_9695]] · [[H_9694]]
 
@@ -65,3 +65,21 @@ nostore 붕괴   (store off)     →   0.0000 (읽힘0/128) 🟢 붕괴 (답이 
 **value-permute 통제 추가 (lab 최강 판별자)**: 주소 고정·값(pols)만 derange = global 극성·주소집합 보존, per-address pairing만 파괴. gw2_build_vp.py(양seed src byte-identical 검증)→gw2/gw2_valperm.txt·gw2s11/gw2_valperm.txt. shuffle과 구별(주소 이동 없음). 붕괴 예측 시 content-addressed 값-운반 최종확증.
 
 **⏳ WIRED 판정 = in-progress**: seed7 FULL PASS 견고하나 **seed11 2/2 majority(H_9672 해리 전례상 load-bearing) + value-permute 붕괴** 발사 중(summer GPU async). 통과 시 H_9775 WIRED(main earned·통제붕괴·valperm·flip-coh=FORM 명기), acc≈.5면 ceiling genuine. no premature cementing.
+
+## ⑩ 🟢 WIRED — in-vivo 2/2 majority + value-permute 확증 (2026-07-20 · aiden GPU · $0 pool)
+
+summer 병렬-세션 CPU 포화로 seed11+valperm가 D-state stall → **aiden으로 이전**(GPU free·venv --system-site-packages로 작동 시스템 cupy-cuda13x 상속·toy PASS·OOM 없음) 완주.
+
+```
+              main P1-bal    flip-coh    shuffle    nostore    판정
+seed7    →    0.8176 🟢      1.0(FORM)   0.3848 🟢   0.0000 🟢   PASS
+seed11   →    0.8933 🟢      1.0(FORM)   0.5965 🟢   0.0000 🟢   PASS
+value-permute(seed7) → P1-bal 0.4446 · 읽힘 128/128 🟢 붕괴
+```
+
+- **2/2 majority PASS** — 양 seed main-balanced ≥.75 (0.8176·0.8933 · earned: op-leak floor 0.531/balanced-chance 0.5 위). 전 통제(shuffle·nostore) 양 seed 붕괴 = 주소-값 결합 실재 + 답이 store서 옴.
+- **★ value-permute 붕괴(0.4446·읽힘 128/128)** = 결정적. 주소·읽기 보존한 채 값만 재배열하니 main 0.82→0.44로 붕괴 → **값이 주소별로 실제 운반됨**(content-addressed value-carrying) 확증. shuffle(주소 이동)보다 깨끗한 판별자.
+- flip-coh 1.0 = FORM(산술 항등식·instrument-cert, 증거 아님·⑨). $0 census: op→gold=chance(무누출).
+- vs [[H_9744]] overwrite NEARMISS(flip-coh 0.898/0.828·<.90) · [[H_9760]] odd in-vivo INVALID(garbage·읽힘0) → **pairodd가 #4103 readability 완전수정 + store-bridge를 in-vivo 데몬서 WIRE**.
+
+**최종 등급: H_9775 = 🟢 WIRED (303M py engine-native · TERMINAL-eligible)** — store-bridge lane이 살아있는 데몬서 content-addressed 값을 실제로 조회·운반한다(output earned + wiring closed · a_verified_must_wire). H_9744 WIRED-STUDY-NEARMISS의 flip-coh 갭을 pairodd Π-등변 사영이 정직하게(FORM 분류) 닫고 earned 축(main-balanced+value-permute)으로 WIRE. 계기: --store-fuse pairodd + --store-readout vocab(#4119/4122/4125). 결과: .fire-recover/h9775_wired/gw2po11_result.json.
