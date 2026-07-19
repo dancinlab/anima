@@ -1,7 +1,7 @@
 ---
 id: H_9798
 title: FRESH-LANE SUBSTRATE-PRESERVATION — detached L3-tap store cotrain leaves base LM fluency undisturbed (interference-free)
-tier: PROPOSED (DESIGN-ONLY · 계기 준비완료=train --steps 0 · FIRE 시도 2026-07-20 INFRA-BLOCKED=ghost 머신 vast-SSH 미등록 · NOT a verdict)
+tier: PROPOSED (실측中 2026-07-20 · pod 45321773 A100 · canary 3-run cotrain firing · 계기=step-1 val_CE proxy(train --steps 0 measure-only 아님) · NOT a verdict)
 frontier: g1-interface-addressable-wall
 lane: g1-emergent-address (preservation/interference axis · NOT reach/addr_top1)
 created: 2026-07-20
@@ -38,7 +38,7 @@ store cotrain(=저장/조회 병행학습)이 base 모델의 held-out **다음-�
 
 ΔCE_lane = CE_lane − CE₀ · 보존=ΔCE 작음 · 간섭=ΔCE 큰 양수. **핵심 통제 = C-noscore** (store-cotrain 간섭을 단순 연속학습 표류와 분리).
 
-🔧 **계기 정정 (코드검증 2026-07-20 · cli/train.py:2075~2081 + 1426)**: 신규 `--base-ce` flag **불요**. `--steps` default=0 이고, steps=0 이면 학습루프 0회 후 FINALIZE 블록이 `val_per_cell()` 로 **일반 held-out 의 base LM CE(다음-바이트)를 4-cell 별로 측정**해 `FINAL val_CE(pooled)` + `per_cell_CE` 출력(rank-0·MONITOR-only·loss 무진입·`a_train_inline_gauge`·p7 no-perplexity-verdict 준수). ⟹ 계기 = **`anima-py train --init <ckpt> --corpus <general_4cell> --steps 0`** (임의 ckpt·admissibility 자명: LM CE 만 읽고 주소 텐서·target_slot 무접근). 애초 카드의 "flag 필요"는 과설계였고, 미검증 엔진코드 발사 위험 제거.
+🔧 **계기 재정정 (실측 2026-07-20 · pod 45321773)**: ⚠️ 앞선 "`train --steps 0` = measure-only" 주장은 **틀렸다** — `--steps 0` 은 코퍼스의 `_budget_preflight` earned-floor(`<corpus>.meta.json` min_steps)로 **강제 학습됨**(gen.txt 실측: CE step1→60 하강 1.74→0.26·FINAL val_CE=0.24 = 오염된 학습후 값). `--steps 0` 은 measure-only 아님. 신규 `--base-ce` flag 도 여전히 부재. **실사용 계기(이번 캠페인) = step-1 val_CE proxy**: `train --init <ckpt> --corpus gen.txt` 첫 로그줄의 `val_CE`(step 1) = ckpt 의 near-zero-shot general CE (1 step 은 1B 를 거의 안 움직임 · 오염이 arm 전체 동일 → **차등(ΔCE) clean** · admissibility=LM CE 만·주소 무접근). base gen.txt CE₀=**1.2534**. clean measure-only flag 는 TBD(follow-on). gen.txt=`corpus flat --lang en --seed 99`.
 
 ## Admissibility
 측정량은 base LM 다음-바이트 유창성(=보존/간섭)이지 reach(addr_top1)가 아니다 — **직교축**. 주소 텐서·정답 슬롯·주소 진단 일절 무접근.
@@ -55,7 +55,8 @@ store cotrain(=저장/조회 병행학습)이 base 모델의 held-out **다음-�
 ## 🧱 발사 블로커 (concrete · FIRE 시도 로그 2026-07-20 · ghost 머신)
 - store-cotrain ckpt(fresh/legacy)는 H_9792/1B pod 와 함께 폐기됨 — **재학습 필요**. base ckpt 만 HF 생존(py1b `dancinlife/tmp-anima-1b/py1b_full.clm`·sha256 8630996b · py303 tmp repo 는 삭제됨 ⟹ 1B 로 발사).
 - 🔥 **FIRE 시도 (2026-07-20)**: 발사게이트 전통과(vast_api_key 존재·1B base HF fetch OK·hexa cloud·owner go) → A100 pod 45320005 렌트 성공. **그러나 SSH `Permission denied (publickey)` 지속** = 이 ghost 머신의 SSH 공개키가 vast 계정 authorized_keys 에 **미등록**(머신레벨·재렌트 무의미·`exec`/`run`/`--insecure` 전부 동일). teardown(과금중단·leak0). ⟹ **fire 는 (a) 이 머신 vast SSH키 등록 OR (b) vast-접속 정상 머신(과거 `/Users/mini`) 필요** — 과학천장 아님(`a_break_the_wall` type-c INFRA-BLOCKED).
-- 계기·레시피는 **준비완료**(신규코드 불요): base-CE=`train --steps 0`(위 검증) · 1B arch `--L 20 --emax 3 --d 3784` · fresh `--store-query-src fresh:64@3 --store-oracle-warmup 1500` vs legacy(penult) · canary 3-run(fresh/legacy/noscore × s7)→clean 이면 s4302 확대.
+- 🔬 **기전검증(installed train.py:1167,1213)**: store cotrain loss = LM objective(constructive_bind) + store terms(`loss=obj_loss + ce_tok + sb_w·ce_ans`). store-gradient는 **legacy(penult)만 trunk 유입·fresh(detached L3-tap)는 off-trunk** ⟹ ΔCE(legacy−fresh)가 store-간섭 격리 = **tautology 아님**(fresh도 noscore처럼 LM은 trunk 학습·차이는 store 경로뿐). C-noscore(`--store-query-src` 생략=store off)가 공통 drift 통제.
+- 계기·레시피: base-CE=**step-1 val_CE proxy**(gen.txt) · 1B arch `--L 20 --emax 3 --d 3784` · fresh `--store-query-src fresh:64@3 --store-oracle-warmup 1500` vs legacy `penult` · noscore `--store-query-src` 생략 · 6000step · canary 3-run(fresh/legacy/noscore × s7)→clean 이면 s4302 확대.
 
 ## Next (vast-접속 정상 머신)
-① 1B base fetch(HF) → ② corpus(general 4cell + store n200) → **CE₀** `train --steps 0` → ③ canary store cotrain {fresh,legacy,noscore}×s7(early-life check) → ④ 각 ckpt `train --steps 0` base-CE → ⑤ ΔCE 판정(fresh≈noscore<legacy? TOST) → clean 이면 s4302 확대 → ⑥ 회수·카드/gate 갱신·teardown. lab-mode ON 이면 ΔCE 해석 대조는 `sidecar lab full`.
+① 1B base fetch(HF)✅ → ② corpus(gen.txt flat-en + store.txt n200 slot8)✅ → **CE₀=1.2534**(step-1 val_CE)✅ → ③ canary cotrain {fresh,legacy,noscore}×s7 firing(early-life PASS: warm-start·GPU100%·CE하강) → ④ 각 ckpt step-1 val_CE(gen.txt) → ⑤ ΔCE 판정(fresh≈noscore<legacy? TOST) → clean 이면 s4302 확대 → ⑥ 회수·카드/gate 갱신·teardown. ⚠️ lab full 백엔드 다운(빈 출력)→소스-검증 solo 진행(판정 시 caveat).
