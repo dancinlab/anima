@@ -986,6 +986,14 @@ def clm_load_weights(path):
     from ifan import read_ifan                                   # H_9803 branch-latent fan (absent ⇒ None)
     W["ifan"], off = read_ifan(rb, off, W["d"], W["V"])
 
+    # ── optional "TFLD" write-side tension-field trailer (H_9805 · chain END) ──
+    # Appended LAST by cli/train.py, so it is read last. Absent/short => tfld=None => the forward
+    # never evaluates the lane => byte-identical to today (the same passthrough seal every lane
+    # above uses). Unlike the read-side lanes this one fires PRE-TRUNK, on the embeddings, because
+    # the hypothesis IS that the trunk must compute OVER the field rather than read it off the top.
+    from tension_field import read_tfld
+    W["tfld"], off = read_tfld(rb, off, W["d"])
+
     # ── GPU device residency (a_gpu_default_no_optin: DEFAULT-ON, no opt-in flag) ──
     # Upload the GEMM/elementwise weight tensors to the device ONCE here (a full
     # eval/decode session loads weights once and reuses them for every token/
@@ -1108,6 +1116,21 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None, tap_depth=None, ta
     if xp is not np:
         ids = xp.asarray(ids)
     xe = W["embed"][ids]                          # [T, d]
+    # ── H_9805 TFLD: the WRITE-SIDE residual, added to the embeddings BEFORE embed_conv ──
+    # This mirrors core/model.py's training-time injection exactly (same place, same formula), so a
+    # ckpt trained with --tension-field decodes with the field it was trained under. No trailer =>
+    # W["tfld"] is None => this block is skipped entirely and the forward is byte-identical.
+    # The reduction is host-numpy (it is integer bucket work, not GEMM), so on the device path the
+    # embeddings make ONE host round-trip when the lane fires. That is deliberate: keeping the
+    # field's arithmetic on a single device removes the cuBLAS-vs-CPU accumulation-order confound
+    # that already bit a hidden-reading probe at 2.5e-14 (decode-py-4). Lane-off decodes never pay it.
+    _tfld = W.get("tfld")
+    if _tfld is not None:
+        from tension_field import ARM_NAME, tension_apply
+        _arm = ARM_NAME.get(int(_tfld.get("arm_code", 0)), "off")
+        if _arm != "off":
+            _xh = tension_apply(to_host(xe), tok, _tfld, arm=_arm)
+            xe = xp.asarray(_xh) if xp is not np else _xh
     # ec conv (K, dil=1)
     xt = _conv1d(xe, W["ecWt"], W["ecB"], T, d, d, K, 1, xp)
     if taps is not None:

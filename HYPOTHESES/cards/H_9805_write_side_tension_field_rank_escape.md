@@ -127,8 +127,28 @@ positive control 1.0 · unknown-flag 거부 유지 · 무플래그 evaluate rc=0
 새 모듈이 휠에 실제 포함.
 
 **가정/미측정**: ① 바이트-클래스 concord 가 의미를 나르는지 ② 303M 에서의 거동 ③ H_004 의
-honorific 결과가 이 치환 하에서 재현되는지 ④ decode 경로(`core/decode.py`)는 **아직 TFLD 를 읽지
-않는다** — 학습·직렬화·감사만 배선됐고 런타임 mouth 배선은 열린 항목이다(따라서 `wired: no`).
+honorific 결과가 이 치환 하에서 재현되는지.
+
+## 🔌 런타임 배선 CLOSED (2026-07-20 · 부모 세션)
+
+착륙 시점엔 `core/decode.py` 가 TFLD 를 읽지 않아 `wired: no` 였다(학습·직렬화·감사만 배선).
+이제 닫혔다 — 트레일러 사슬 말단(IFAN 다음)에서 `read_tfld` 로 읽고, `_fwd_trunk` 의 임베딩 직후
+`tension_apply` 로 **trunk 이전**에 더한다. `core/model.py` 의 학습시 주입과 같은 자리·같은 식이라
+`--tension-field` 로 학습한 ckpt 가 학습 때의 장 그대로 디코드된다. 장의 축약은 정수 버킷 연산이라
+host-numpy 로 두고, 레인이 켜질 때만 임베딩이 1회 host 왕복한다 — 장 연산을 한 장치에 몰아
+cuBLAS/CPU 누적순서 confound(`decode-py-4`, 2.5e-14)를 원천 차단하기 위함이며 레인-off 디코드는
+이 비용을 전혀 내지 않는다.
+
+**3-봉인 실측**(toy.clm d=32, `anima-py evaluate --gen 40`, 경로 줄 제외 sha 비교):
+
+| 조건 | 기대 | 실측 |
+|---|---|---|
+| 트레일러 無 (변경 전 코드 vs 후) | 바이트 동일 | ✅ sha `9d2a6a79…` 동일 |
+| 트레일러 有 · lam=0 | 통과(바이트 동일) | ✅ sha `c91604db…` 원본과 동일 |
+| 트레일러 有 · lam=1 | 디코드 변함 | ✅ sha `1b4b797b…` (coherence 5/5→4/5 · fab 0.2308→0.2619) |
+
+lam=1 팔의 하락은 **무작위 phi/W_up 을 붙인 합성 트레일러**여서 정상이다(학습된 장이 아님). 이
+표가 증명하는 것은 배선이 실제로 발화하고 off 경로가 무손상이라는 것뿐 — 장의 효용은 여전히 미측정.
 
 ## 종결 조건
 
