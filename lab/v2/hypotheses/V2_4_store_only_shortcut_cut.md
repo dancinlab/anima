@@ -1,4 +1,4 @@
-<!-- @hypothesis-ok @canonical-ok — anima-v2 rule-exempt zone; v2 hypotheses live here only. -->
+<!-- @hypothesis-ok @canonical-ok — v2 rule-exempt zone; v2 hypotheses live here only. -->
 
 # V2_4 — trunk shortcut 을 끊으면(store-only) COTRAIN 이 조회를 배우는가
 

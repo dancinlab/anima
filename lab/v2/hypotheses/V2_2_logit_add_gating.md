@@ -1,5 +1,5 @@
-<!-- @hypothesis-ok @canonical-ok — anima-v2 rule-exempt zone; v2 hypotheses live here only.
-     Owner: "anima-v2 가설도 v2 안에서만 생성". See ../CLAUDE.md. -->
+<!-- @hypothesis-ok @canonical-ok — v2 rule-exempt zone; v2 hypotheses live here only.
+     Owner: "v2 가설도 v2 안에서만 생성". See ../CLAUDE.md. -->
 
 # V2_2 — logit-add gating: 혼합-희석을 고치면 계기가 살아나 다리를 잴 수 있는가
 
@@ -30,7 +30,7 @@ p = λ·p_store + (1−λ)·p_trunk         logit = trunk_logit + λ·store_logi
 
 `../bars.json` 게이트 상수(C0-e ORACLE≥0.90 · C1 · C2 · P1) **그대로**. `--gate logit` 플래그로
 model/loss/train/evaluate 전부 전환(계기 하나, 두 실험). backward 손코딩이라 gradcheck 를 **두 모드
-다** 통과시킴(mix 7.4e-07 · logit 5.5e-07 · 오염 검출 5/5). ckpt = `/tmp/anima-v2-logit/`.
+다** 통과시킴(mix 7.4e-07 · logit 5.5e-07 · 오염 검출 5/5). ckpt = `/tmp/v2-logit/`.
 
 ## 게이트 · Arm · 통제군
 

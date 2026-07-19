@@ -1,4 +1,4 @@
-"""anima-v2/loss.py — the single forward/loss/backward path.
+"""v2/loss.py — the single forward/loss/backward path.
 
 @canonical-ok — see gen.py.
 

@@ -1,6 +1,6 @@
-"""anima-v2/gen.py — synthetic operator x store-fact stream.
+"""v2/gen.py — synthetic operator x store-fact stream.
 
-@canonical-ok — 'anima-v2' is not a version bump of anima/; it is a parallel toy research
+@canonical-ok — 'v2' is not a version bump of anima/; it is a parallel toy research
 substrate that coexists permanently with core/ (owner-named, 2026-07-16).
 
 The task is the minimal mirror of the BINDING wall (H_9327/H_9359): the FACT lives only in

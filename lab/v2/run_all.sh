@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# anima-v2 — deterministic full run: C0 -> train all arms x seeds -> SEQUENTIAL gates.
+# v2 — deterministic full run: C0 -> train all arms x seeds -> SEQUENTIAL gates.
 # Gate order is enforced by evaluate.py itself; this script just supplies the ckpts.
 set -euo pipefail
 cd "$(dirname "$0")"

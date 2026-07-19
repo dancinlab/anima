@@ -14,7 +14,7 @@
 **lane:** 재조합/BINDING · runtime lookup bridge (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9392]] (BRIDGE-BOLT 3-port 종결 — 볼트온 死 ⟹ 공학습이 유일 남은 경로 · 이 H 가 그 NEXT) · [[H_9359]] (벽=런타임 다리 부재) · [[H_9327]] (SEEN 극성 이미 학습 = ② shortcut 난점) · [[H_9353]] (컨텍스트-port EARNED)
 **id 정정:** 앞선 카드/메모리가 이 작업을 "H_9393" 로 forward-참조했으나 **H_9393 은 병렬 세션이 DYNAMIC-FLOOR 로 선점**(id 충돌) ⟹ canonical = **H_9423**.
-**source:** Fable 설계(`walls-delegate-to-fable`) — owner "go" · v2 toy(anima-v2 #3753/#3755)가 공학습 다리를 DIRECTIONAL 실증한 뒤 부모 core/ 이식.
+**source:** Fable 설계(`walls-delegate-to-fable`) — owner "go" · v2 toy(v2 #3753/#3755)가 공학습 다리를 DIRECTIONAL 실증한 뒤 부모 core/ 이식.
 **ckpt:** py303_full.clm (GROWTH warm-start 원본 · aiden `~/py303_full.clm`)
 
 ## 물음

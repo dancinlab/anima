@@ -1,4 +1,4 @@
-<!-- @hypothesis-ok @canonical-ok — anima-v2 rule-exempt zone; v2 hypotheses live here only. -->
+<!-- @hypothesis-ok @canonical-ok — v2 rule-exempt zone; v2 hypotheses live here only. -->
 
 # V2_7 — BOLT seed-split 은 동결 NOSTORE trunk 의 엔티티 인코딩 품질 교란인가 (DECODE-PROBE)
 
@@ -72,4 +72,4 @@ trunk 을 조회에 공적응**(조회 → ~1.0). 이는 부모 [[H_9392]] BRIDG
 - 동결 NOSTORE trunk 의 slot-retrieval 상한을 문턱 위(예 ≥0.75)로 올리는 개입에서 BOLT 이 양 seed 안정
   ⟹ knife-edge 서사 강화. 반대로 조회 상한을 올려도 BOLT 이 여전히 split ⟹ 원인이 조회 아닌 readout/연산자
   게이팅으로 이동(→ elsewhere 재개봉).
-- 프로브: `python3 probe_decode.py` (fk config · `/tmp/anima-v2-store_only-mlpfk`). raw decode · bar 무관.
+- 프로브: `python3 probe_decode.py` (fk config · `/tmp/v2-store_only-mlpfk`). raw decode · bar 무관.

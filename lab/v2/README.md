@@ -1,6 +1,6 @@
-# 🧪 anima-v2 — 규칙 면제 실험구역
+# 🧪 v2 — 규칙 면제 실험구역
 
-> **오너 지시**: "anima-v2 는 규칙 적용 하지 않는다 — 실험이니까."
+> **오너 지시**: "v2 는 규칙 적용 하지 않는다 — 실험이니까."
 > 이 폴더엔 `../CLAUDE.md` 의 거버넌스가 **적용되지 않는다**. `.canonical-ok` 마커가
 > 서브트리를 네이밍 canon 에서 면제한다. 자유롭게 실험하라.
 
@@ -15,7 +15,7 @@
 1. **v2 숫자를 production verdict 로 올리지 마라.** v2 는 `core/` 밖이라 영구
    **DIRECTIONAL 상한**(우회는 H_9303/H_9307 에서 전부 undecidable 로 사망).
    방향이 나오면 **`core/` + `anima-py` 플래그로 이식해야** TERMINAL 을 번다.
-2. **production 이 `anima-v2/` 를 import 하지 마라.**
+2. **production 이 `v2/` 를 import 하지 마라.**
 
 > 🔬 규칙은 면제지만 **자기기만 방지는 면제가 아니다** — 동결 bar(`bars.json`) · 통제군 ·
 > gradcheck 는 강제라서가 아니라 **그게 실험 그 자체**라서 있다. 빼면 v2 가 아무것도 못 가린다.
