@@ -97,7 +97,9 @@ def _default_gen():
 class _Mouth:
     _n_decode = 0
 
-    def __init__(self, ckpt):
+    def __init__(self, ckpt, grow_window=False):
+        # H_9804 Fix-W: default False = production T=24, byte-for-byte unchanged.
+        self.grow_window = bool(grow_window)
         if bg.bg_is_bytegpt(ckpt):
             self.kind = "bytegpt"
             self.W = bg.bg_load(ckpt)
@@ -119,12 +121,38 @@ class _Mouth:
         # the pipe live across the full G0-G6 battery. Heartbeat only — no scoring effect.
         _Mouth._n_decode += 1
         print("  [decode #" + str(_Mouth._n_decode) + "] " + self.kind
-              + " gen=" + str(gen) + " seed_rng=" + str(seed_rng), flush=True)
+              + " gen=" + str(gen) + " seed_rng=" + str(seed_rng)
+              + (" grow_window" if self.grow_window else ""), flush=True)
         if self.kind == "bytegpt":
             # seed string -> byte ids inside bytegpt_decode (_seed_to_ids); the
             # ByteGPT window grows up to block natively (no fixed-T right-align).
             return bg.bytegpt_decode_topk_sampled_W(
                 self.W, seed, gen, top_k, temp, seed_rng)["text"]
+        # H_9804 Fix-W (--grow-window) · H_6189 measurement-wall repair. The CLM mouth
+        # right-aligns the seed into a fixed T=24 window, so for a composed G1 seed the
+        # VISIBLE window is byte-identical to the corresponding single seed's window —
+        # composed_distinct > max_single is then structurally impossible, independent of
+        # the model (byte-math proof: state/gate_design_audit/window_math.json). The frozen
+        # bar (H_1129/H_1137 VERBATIM) was calibrated on the ByteGPT mouth at block=512,
+        # i.e. it PRESUPPOSES the whole composed seed is conditioned on. T=24 is a later
+        # CLM decode contract that leaked into the gate, not a gate spec. Fix-W restores
+        # the frozen bar's own semantics on the CLM mouth: T_win = min(len(seed)+gen, 512),
+        # matching what ByteGPT already does natively. The bar itself does NOT move — this
+        # un-truncates the seed (forward math untouched; conv trunk is causal-local with no
+        # positional encoding, trained seq_len=1024, and the scoring lane already runs T=64).
+        if self.grow_window:
+            t_prev = clm._CONSULT_DECODE_T
+            t_win = len(seed.encode('utf-8', 'surrogateescape')) + max(int(gen), 0)
+            if t_win > 512:
+                t_win = 512
+            if t_win < 24:
+                t_win = 24
+            clm.set_consult_decode_window(t_win)
+            try:
+                return clm.clm_decode_topk_sampled_W(
+                    self.W, seed, gen, top_k, temp, seed_rng)["text"]
+            finally:
+                clm.set_consult_decode_window(t_prev)
         return clm.clm_decode_topk_sampled_W(
             self.W, seed, gen, top_k, temp, seed_rng)["text"]
 
@@ -169,6 +197,43 @@ def _g_coverage(text):
     return covered
 
 
+def _echo_spans(seed, text, n=8):
+    """H_9804 echo-guard. Return `text` with every >=n-byte substring that also occurs in
+    `seed` blanked out. Widening the decode window (Fix-W) makes the whole composed seed
+    visible to the mouth, which creates a NEW false-GREEN route the T=24 regime did not
+    have: the model can simply re-emit the seed's concept words and score coverage without
+    recombining anything. H_6189 named this risk and made the guard mandatory."""
+    if not seed or not text:
+        return text
+    out = list(text)
+    ln = len(text)
+    i = 0
+    while i < ln:
+        j = ln
+        hit = -1
+        while j - i >= n:
+            if text[i:j] in seed:
+                hit = j
+                break
+            j -= 1
+        if hit > 0:
+            for p in range(i, hit):
+                out[p] = " "
+            i = hit
+        else:
+            i += 1
+    return "".join(out)
+
+
+def _echo_ratio(seed, text, n=8):
+    """Fraction of `text` that is a >=n-byte verbatim echo of `seed` (0.0 = no echo)."""
+    if not text:
+        return 0.0
+    blanked = _echo_spans(seed, text, n)
+    echoed = sum(1 for a, b in zip(text, blanked) if a != b)
+    return echoed / float(len(text))
+
+
 def eval_rho_weave(mouth, gen, known):
     cz = _rho_fan_concepts()
     n = len(cz)
@@ -182,6 +247,7 @@ def eval_rho_weave(mouth, gen, known):
         if cov > max_single:
             max_single = cov
     ks = []; passed = False; best_k = 0; best_distinct = 0
+    best_distinct_noecho = 0; echo_max = 0.0
     for k in range(2, n + 1):
         seed = ""
         for c in range(k):
@@ -194,13 +260,30 @@ def eval_rho_weave(mouth, gen, known):
         kwr = _rho_fan_known_word_ratio(o, known)
         coherent = kwr >= 0.5
         clears = cov >= 2 and cov > max_single and coherent
-        ks.append({"k": k, "distinct": cov, "kwr": kwr, "coherent": coherent, "clears": clears})
+        # H_9804 echo-guard (ADDITIVE — the frozen `_g_coverage(o)` above is called
+        # unmodified and the bar reads IT; these are validity telemetry, and by
+        # construction cov_noecho <= cov, so the guard can only ever withdraw a
+        # GREEN, never manufacture one).
+        er = _echo_ratio(seed, o)
+        cov_noecho = _g_coverage(_echo_spans(seed, o))
+        if er > echo_max:
+            echo_max = er
+        ks.append({"k": k, "distinct": cov, "kwr": kwr, "coherent": coherent, "clears": clears,
+                   "echo_ratio": er, "distinct_noecho": cov_noecho})
         if clears:
             passed = True
         if cov > best_distinct:
             best_distinct = cov; best_k = k
+        if cov_noecho > best_distinct_noecho:
+            best_distinct_noecho = cov_noecho
     return {"pass": passed, "max_single": max_single, "best_k": best_k,
-            "best_distinct": best_distinct, "ks": ks}
+            "best_distinct": best_distinct, "ks": ks,
+            "best_distinct_noecho": best_distinct_noecho, "echo_max": echo_max,
+            # ECHO-SUSPECT: the frozen bar passed, but stripping verbatim seed-echo
+            # takes it back below the bar ⟹ the pass rode on re-emission, not
+            # recombination. Read as INVALID, never as a G1 crack.
+            "echo_suspect": bool(passed and not (best_distinct_noecho >= 2
+                                                 and best_distinct_noecho > max_single))}
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -623,17 +706,9 @@ def eval_rho_tether(mouth, gen, known):
 # G6 — IDEATION ★
 # ════════════════════════════════════════════════════════════════════════
 
-def eval_rho_fan(mouth, gen, known):
-    frames = rho_fan_build_frames(6)["composed"]
-    leaks = rho_fan_frame_guard(frames, known)
-    texts = []; word_sets = []; fals = 0
-    for i in range(len(frames)):
-        o = mouth.ideate(frames[i], gen, 40, 0.7, 7 + i)
-        texts.append(o)
-        if _rho_fan_known_word_ratio(o, known) >= 0.5:
-            word_sets.append(_rho_fan_words(o))
-            if _rho_fan_is_falsifiable(o, known):
-                fals += 1
+def _fan_distinct(word_sets):
+    """Frozen distinctness rule (pairwise Jaccard <= 0.5), factored out VERBATIM so the
+    temperature-ladder instrument control scores on exactly the same rule as the bar."""
     kept = []
     for ws in word_sets:
         ok = True
@@ -642,19 +717,62 @@ def eval_rho_fan(mouth, gen, known):
                 ok = False
         if ok:
             kept.append(ws)
-    dist = len(kept)
+    return len(kept)
+
+
+def eval_rho_fan_temp_ladder(mouth, gen, known, frames, temp=1.3):
+    """H_9801 INSTRUMENT positive control. Before ANY G6 negative may be read, the meter must
+    be shown capable of registering diversity at all: sampling at high temperature has to clear
+    dist>=5 under the frozen rule EVEN IF the text is incoherent. Failure ⟹ INSTRUMENT-DEAD and
+    the whole 2x2 is unreadable (positive-control-before-reading-a-negative)."""
+    ws = []
+    for i in range(len(frames)):
+        o = mouth.ideate(frames[i], gen, 40, temp, 7 + i)
+        ws.append(_rho_fan_words(o))
+    d = _fan_distinct(ws)
+    return {"temp": temp, "dist": d, "alive": d >= 5}
+
+
+def eval_rho_fan(mouth, gen, known, seed_class="composed"):
+    # H_9801 seed-class axis. "composed" = the canonical `if cA, then cB: ` frame (default,
+    # byte-unchanged). "atomic" = the frozen builder's OWN `cA: ` single-concept frame — it
+    # already exists as frames["ablated"], so the axis costs no new frame construction and
+    # moves no bar. Contrast composed-vs-atomic answers whether G6 rides on recombination.
+    _fr = rho_fan_build_frames(6)
+    frames = _fr["ablated"] if seed_class == "atomic" else _fr["composed"]
+    leaks = rho_fan_frame_guard(frames, known)
+    texts = []; word_sets = []; fals = 0
+    echo_max = 0.0
+    for i in range(len(frames)):
+        o = mouth.ideate(frames[i], gen, 40, 0.7, 7 + i)
+        texts.append(o)
+        er = _echo_ratio(frames[i], o)          # H_9804 echo-guard telemetry (additive)
+        if er > echo_max:
+            echo_max = er
+        if _rho_fan_known_word_ratio(o, known) >= 0.5:
+            word_sets.append(_rho_fan_words(o))
+            if _rho_fan_is_falsifiable(o, known):
+                fals += 1
+    dist = _fan_distinct(word_sets)
     return {"pass": dist >= 5 and fals >= 1, "dist": dist, "fals": fals,
-            "coherent": len(word_sets), "frame_leaks": len(leaks)}
+            "coherent": len(word_sets), "frame_leaks": len(leaks),
+            "echo_max": echo_max, "seed_class": seed_class, "frames": frames}
 
 
 # ════════════════════════════════════════════════════════════════════════
 # eval_reach_all — the driver
 # ════════════════════════════════════════════════════════════════════════
 
-def eval_reach_all(ckpt, corpus_paths, gen):
+def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
+                   seed_class="composed", fan_temp_ladder=False):
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
-    mouth = _Mouth(ckpt)
+    mouth = _Mouth(ckpt, grow_window=grow_window)
+    if grow_window:
+        print("  [Fix-W] --grow-window ON (H_9804/H_6189): CLM decode window = "
+              "min(len(seed)+gen, 512) instead of the production T=24. The frozen bars do "
+              "NOT move; this restores the seed-conditioning the bars were calibrated under "
+              "(ByteGPT block=512). Echo-guard telemetry is reported alongside.", flush=True)
     print("  [gate] ρ·form COHERENCE …", flush=True)
     r0 = eval_rho_form(mouth, g, known)
     print("  [gate] ρ·weave RECOMBINATION …", flush=True)
@@ -666,7 +784,11 @@ def eval_reach_all(ckpt, corpus_paths, gen):
     print("  [gate] ρ·tether NON-FAB …", flush=True)
     r5 = eval_rho_tether(mouth, g, known)
     print("  [gate] ρ·fan IDEATION …", flush=True)
-    r6 = eval_rho_fan(mouth, g, known)
+    r6 = eval_rho_fan(mouth, g, known, seed_class=seed_class)
+    if fan_temp_ladder:
+        # H_9801: run the instrument control on the SAME frames the bar just used.
+        print("  [gate] ρ·fan TEMP-LADDER instrument control …", flush=True)
+        r6["temp_ladder"] = eval_rho_fan_temp_ladder(mouth, g, known, r6["frames"])
     closure = bool(r0["pass"]) and bool(r1["pass"]) and bool(r2["pass"])
     return {"g0": r0, "g1": r1, "g2": r2, "g3": r3, "g5": r5, "g6": r6,
             "closure": closure, "gen": g,
@@ -1097,6 +1219,135 @@ def _yn(ok):
 # G-labels (the byte-identical hexa twin + sweep.py parser depend on them); the ρ-AXON
 # panel below relabels them to the current axis names.
 
+def fan_branch_run(argv):
+    """H_9803 — `anima-py evaluate <ckpt> --fan-branch {live|assignment-shuffle|off}`.
+
+    ADDITIVE panel (a frozen bar is never moved · c18): it reuses the SAME engine decode and the
+    SAME frozen ρ·fan frames + detectors the G6 gate uses, and reports its own numbers alongside.
+    The G0-G6 / ρ-AXON batteries are untouched.
+
+    The three arms:
+      live                — branch k decodes through its own proposal latent.       TREATMENT
+      assignment-shuffle  — branch k's latent is read out through branch π(k)'s output block; K,
+                            parameters and λ are all identical, only the branch↔readout
+                            correspondence is destroyed. This is the mirror at eval time of the
+                            train-time `--ideation-assign shuffle` control. If the branches are
+                            merely K arbitrary directions (a sampling trick), permuting them is
+                            a relabelling and the fan is unchanged; only a lane whose branch
+                            identity actually carries a specific future mode collapses here.
+      off                 — the branch residual is forced to EXACTLY 0 (ifan_apply returns the
+                            caller's logits object, no copy, no arithmetic). MUST reproduce the
+                            base decode byte-for-byte; the parity number is printed and a
+                            mismatch is a hard FAIL (the lane would be contaminating the base).
+    """
+    ckpt = argv[0]
+    rest = argv[1:]
+    arm = evaluate_strval(rest, "--fan-branch", "live") or "live"
+    if arm not in ("live", "assignment-shuffle", "off"):
+        print("  ⛔ --fan-branch must be one of live|assignment-shuffle|off (got %r)" % arm)
+        return 2
+    gen = evaluate_intval(rest, "--gen", 40)
+    g = gen if gen > 0 else _default_gen()
+    n_branch = evaluate_intval(rest, "--branches", 0)
+    known = _rho_fan_dict_load()
+    frames = rho_fan_build_frames(6)["composed"]
+
+    print("=== H_9803 ρ·fan BRANCH-LATENT panel (additive · frozen G0-G6 bars untouched) ===")
+    print("ckpt:   " + ckpt)
+    print("arm:    " + arm + "   gen=" + str(g))
+
+    from decode import set_ifan_lane
+    # trailer presence + geometry, read straight off the ckpt (never assumed)
+    set_ifan_lane(mode="off")
+    probe = _Mouth(ckpt)
+    ifw = probe.W.get("ifan") if probe.kind == "clm" else None
+    if ifw is None:
+        print("  ⛔ no IFAN trailer on this ckpt — the branch lane was never trained into it.")
+        print("     (train it with: anima-py train --ideation-lane branch-latent …)")
+        return 2
+    K = int(ifw["K"]) if n_branch <= 0 else min(n_branch, int(ifw["K"]))
+    print("  trailer: K=%d rank=%d route_L=%d lam=%.6f"
+          % (int(ifw["K"]), int(ifw["rank"]), int(ifw["route_L"]), float(ifw["lam"])))
+
+    # ── the `off` PARITY arm ────────────────────────────────────────────────────────────
+    # The BASE decode is not "the same ckpt with the flag off" — comparing the lane against
+    # itself would be tautological and would pass even if the trailer were corrupting the
+    # forward. The base is a SEPARATE mouth built from the ckpt with the IFAN trailer BYTES
+    # PHYSICALLY REMOVED, i.e. exactly the file the trainer would have written with the lane
+    # never engaged. `off` must reproduce that decode byte-for-byte.
+    if arm == "off":
+        import tempfile
+        d_, V_ = int(probe.W["d"]), int(probe.W["V"])
+        Kf, rf = int(ifw["K"]), int(ifw["rank"])
+        n_trailer = 4 + 20 + (Kf * d_ * rf + d_ * rf + Kf * rf * V_ + 1) * 4
+        raw = open(ckpt, "rb").read()
+        if raw[len(raw) - n_trailer:len(raw) - n_trailer + 4] != b"IFAN":
+            print("  ⛔ IFAN trailer is not the last %d bytes — cannot build the stripped base "
+                  "(chain order broken); parity NOT measured." % n_trailer)
+            return 2
+        tf = tempfile.NamedTemporaryFile(suffix=".clm", delete=False)
+        tf.write(raw[:len(raw) - n_trailer]); tf.close()
+        print("  [parity] stripped-base ckpt: %d bytes (IFAN trailer of %d bytes removed)"
+              % (len(raw) - n_trailer, n_trailer))
+        base_mouth = _Mouth(tf.name)
+        if base_mouth.W.get("ifan") is not None:
+            print("  ⛔ stripped base STILL carries an IFAN trailer — strip failed.")
+            return 2
+        n_same = 0
+        n_tot = 0
+        worst = None
+        for i in range(len(frames)):
+            set_ifan_lane(mode="off")
+            base_txt = base_mouth.ideate(frames[i], g, 40, 0.7, 7 + i)
+            set_ifan_lane(mode="off", branch=(i % K))
+            off_txt = probe.ideate(frames[i], g, 40, 0.7, 7 + i)
+            n_tot += 1
+            if base_txt == off_txt:
+                n_same += 1
+            elif worst is None:
+                worst = (i, base_txt[:40], off_txt[:40])
+        set_ifan_lane(mode="off")
+        os.unlink(tf.name)
+        print("  [parity] off-arm vs base decode: %d/%d frames BYTE-IDENTICAL "
+              "(parity=%.6f · need 1.000000)" % (n_same, n_tot, n_same / max(1, n_tot)))
+        if n_same == n_tot:
+            print("  [parity] ✅ PASS — the IFAN trailer is inert when the lane is off "
+                  "(byte-identical seal, same idiom as CLMS/MBND).")
+            return 0
+        print("  [parity] ❌ FAIL — the lane contaminates the base decode. First divergence: %r" % (worst,))
+        return 1
+
+    # ── live / assignment-shuffle: one decode per branch on the SAME frozen frames+seeds ──
+    per_branch = []
+    for k in range(K):
+        set_ifan_lane(mode=arm, branch=k)
+        texts = []
+        for i in range(len(frames)):
+            texts.append(probe.ideate(frames[i], g, 40, 0.7, 7 + i))
+        per_branch.append(texts)
+    set_ifan_lane(mode="off")
+
+    # branch-distinctness on the SAME frame: how many branches produce a word-set that is not a
+    # near-duplicate of an earlier branch's (the frozen ρ·fan jaccard>0.5 rule, reused verbatim).
+    dist_per_frame = []
+    for i in range(len(frames)):
+        kept = []
+        for k in range(K):
+            ws = _rho_fan_words(per_branch[k][i])
+            if all(_rho_fan_jaccard(ws, prev) <= 0.5 for prev in kept):
+                kept.append(ws)
+        dist_per_frame.append(len(kept))
+    mean_dist = sum(dist_per_frame) / max(1, len(dist_per_frame))
+    coherent = sum(1 for k in range(K) for i in range(len(frames))
+                   if _rho_fan_known_word_ratio(per_branch[k][i], known) >= 0.5)
+    print("  branch_distinct per frame: %s" % (dist_per_frame,))
+    print("  [fan] arm=%s K=%d mean_branch_distinct=%.4f (max=%d) · coherent=%d/%d"
+          % (arm, K, mean_dist, K, coherent, K * len(frames)))
+    print("  NOTE: this number is only readable as a collapse-Δ of live vs assignment-shuffle "
+          "(FORM tunable · BIND earned · p7). A single arm alone is not a verdict.")
+    return 0
+
+
 def evaluate_run(argv):
     """argv = ["<ckpt>", "--corpus ...", "--gen N"]."""
     if len(argv) < 1:
@@ -1142,7 +1393,14 @@ def evaluate_run(argv):
         eval_rho_axon(ckpt, corpus, gen, kosmos_dir=evaluate_strval(argv[1:], "--kosmos", ""))
         return 0
 
-    r = eval_reach_all(ckpt, corpus, gen)
+    grow_window = "--grow-window" in argv[1:]
+    seed_class = evaluate_strval(argv[1:], "--seed-class", "composed")
+    if seed_class not in ("composed", "atomic"):
+        print("ERROR: --seed-class must be 'composed' (default) or 'atomic', got %r" % seed_class)
+        return 2
+    fan_temp_ladder = "--fan-temp-ladder" in argv[1:]
+    r = eval_reach_all(ckpt, corpus, gen, grow_window=grow_window,
+                       seed_class=seed_class, fan_temp_ladder=fan_temp_ladder)
     g0 = r["g0"]; g1 = r["g1"]; g2 = r["g2"]
     g3 = r["g3"]; g5 = r["g5"]; g6 = r["g6"]
 
@@ -1355,7 +1613,19 @@ def _psi_soma_panel(r):
     print("  ρ·form   " + pf(bool(g0["pass"]))  + "  [kwr " + str(g0["n_coherent"]) + "/5]  ← former G0 coherence")
     print("  ρ·leap   " + pf(bool(g2["pass"]))  + "  [novel=" + str(g2["n_novel"]) + " ctrl=" + str(g2["control_novel"]) + "]  ← former G2 novelty (+G3 balance)")
     print("  ρ·tether " + pf(bool(g5["l1_pass"]))+ "  [fab=" + ("%.3f" % g5["l1_rate"]) + "]  ← former G5 non-fabrication (L1)")
-    print("  ρ·weave  " + pf(bool(g1["pass"]))  + "  [bd=" + str(g1["best_distinct"]) + " max_s=" + str(g1["max_single"]) + "]  ← former G1 recombination (the WALL) [DPI wall = reach fact, NOT σ deficit]")
+    # verdict numerics INLINE (convergence evaluate-py-1: a tail-truncated arm made a
+    # prior KILL-vs-INVALID undecidable) — echo-guard numbers ride the same line.
+    _wecho = ("  [bd_noecho=" + str(g1.get("best_distinct_noecho", "-"))
+              + " echo=" + ("%.2f" % g1.get("echo_max", 0.0))
+              + ("  ⚠️ECHO-SUSPECT=INVALID" if g1.get("echo_suspect") else "") + "]") \
+        if ("best_distinct_noecho" in g1) else ""
+    print("  ρ·weave  " + pf(bool(g1["pass"]))  + "  [bd=" + str(g1["best_distinct"]) + " max_s=" + str(g1["max_single"]) + "]" + _wecho + "  ← former G1 recombination (the WALL) [DPI wall = reach fact, NOT σ deficit]")
+    _tl = g6.get("temp_ladder")
+    if _tl is not None:
+        print("  [instrument] temp-ladder T=%.1f dist=%d → %s"
+              % (_tl["temp"], _tl["dist"],
+                 "ALIVE (meter can register diversity)" if _tl["alive"]
+                 else "⚠️ INSTRUMENT-DEAD — read NOTHING from the G6 arms"))
     print("  ρ·fan    " + pf(bool(g6["pass"]))  + "  [dist=" + str(g6["dist"]) + " fals=" + str(g6["fals"]) + "]  ← former G6 ideation                [DPI wall = reach fact, NOT σ deficit]")
     print("  ρ·trace     —   ← former G4 provenance (no ρ-axis · H_9208 gate · rung-1 valid)")
     print("  ──────────────────────────────────────────────────────────────────")
@@ -2491,6 +2761,232 @@ def _store_mix_cont_nll(np, clm_mod, W, seed, cont, T, store_val, lam):
         lpm = float(np.logaddexp(lw_tr + logp_trunk, lw_st + logp_store))
         s += -lpm
     return s
+
+
+# ── H_9800 DECL-FLIP — ephemeral-declaration grounding, first-class ─────────
+# `anima-py evaluate <clm> --decl-flip <c.txt.decl.json>` promotes the H_9359 diagnostic
+# ("does the answer move when the in-context declaration moves?") from an ad-hoc probe to a
+# scored flag on the canonical measurement path.
+#
+# THE DV IS FLIP-SENSITIVITY, NOT ACCURACY. flip_sens = the fraction of items whose answer
+# CHANGES when the queried stem's declaration is flipped. Accuracy is also reported (against a
+# chance level DERIVED from the realized gold split), but the grounding question is the flip: a
+# model can be at chance on accuracy and still be reading the declaration, and — far more
+# dangerous — it can be ABOVE chance on accuracy from a stem prior while reading nothing.
+#
+# ARMS (all three run on the SAME items, so every number is a within-item collapse-Δ):
+#   live              both worlds carry the true declaration block; the flip moves exactly the
+#                     queried stem's 4 value bytes. The carrier is byte-identical across the
+#                     flip, so a declaration-independent DETERMINISTIC policy has flip_sens
+#                     exactly 0 — the structural chance level for this DV.
+#   declaration-drop  the queried stem's declaration line is removed in BOTH worlds ⇒ the two
+#                     contexts are byte-identical ⇒ flip_sens is 0 MECHANICALLY. This is the
+#                     instrument's own null: if it ever reads != 0 the harness is broken, and
+#                     the run is declared INSTRUMENT-DEAD rather than reported.
+#   value-shuffle     same keys, same value multiset, correspondence deranged (shuf[i] =
+#                     values[pi[i]], pi a derangement). Because pi[q] != q the QUERIED stem's
+#                     declaration is world-INVARIANT while some OTHER stem's declaration moves —
+#                     the same number of bytes change and every surface statistic is matched,
+#                     so this is the statistical floor (control-must-match-mediating-covariate).
+#
+# ORACLE PREFLIGHT (positive-control-before-reading-a-negative): before any forward pass the run
+# re-derives every gold from the manifest's structured fields (gold = sense_bit XOR role_bit),
+# re-audits that no carrier contains an answer token or a label name, and checks that live_a and
+# live_b differ ONLY in the queried declaration at equal byte length. Oracle flip_sens must be
+# exactly 1.0. Anything less ⇒ INSTRUMENT-DEAD and a held-out number must NOT be read.
+_DECL_FLIP_ARMS = ("live", "declaration-drop", "value-shuffle")
+
+
+def _decl_flip_answer(np, W, seed, answers, T):
+    """2AFC answer index by continuation NLL. Both answer tokens are the same byte length in the
+    corpus grammar, so there is no length confound to correct for (H_9327's readout, inherited)."""
+    nlls = [_xbind_cont_nll(np, clm, W, seed, a, T) for a in answers]
+    return int(min(range(len(nlls)), key=lambda i: nlls[i])), nlls
+
+
+def _decl_flip_cell(rows):
+    """Aggregate one (arm, stratum, polarity) cell. chance is DERIVED from the realized gold
+    split in THIS cell (the accuracy of the best constant predictor here), never assumed."""
+    n = len(rows)
+    if not n:
+        return {"n": 0}
+    golds = [r["gold_bit"] for r in rows]
+    c = {}
+    for g in golds:
+        c[g] = c.get(g, 0) + 1
+    return {
+        "n": n,
+        "flip_sens": sum(1 for r in rows if r["ans_a"] != r["ans_b"]) / float(n),
+        "acc_a": sum(1 for r in rows if r["ans_a"] == r["gold_bit"]) / float(n),
+        "acc_b": sum(1 for r in rows if r["ans_b"] == (1 - r["gold_bit"])) / float(n),
+        "gold_counts": {str(k): v for k, v in sorted(c.items())},
+        "chance_acc": max(c.values()) / float(n),
+        "chance_flip": 0.0,
+    }
+
+
+def decl_flip_run(argv):
+    """`anima-py evaluate <ckpt> --decl-flip <manifest.json> [--out f.json] [--win 256]
+    [--arms live,declaration-drop,value-shuffle] [--strata seen,heldout-stem,...]` — H_9800."""
+    import numpy as np
+    ckpt = argv[0]
+    man_path = evaluate_strval(argv[1:], "--decl-flip", "")
+    man = json.load(open(man_path, encoding="utf-8"))
+    if man.get("schema") != "anima-counterfactual-decl/v1":
+        print("ERROR: --decl-flip expects an `anima corpus counterfactual-decl` manifest "
+              "(schema anima-counterfactual-decl/v1), got %r" % man.get("schema"), file=sys.stderr)
+        return 2
+    T = evaluate_intval(argv[1:], "--win", 256)
+    out_path = evaluate_strval(argv[1:], "--out", "decl_flip.json")
+    arms = [a for a in evaluate_strval(argv[1:], "--arms", ",".join(_DECL_FLIP_ARMS)).split(",") if a]
+    bad_arm = [a for a in arms if a not in _DECL_FLIP_ARMS]
+    if bad_arm:
+        print("ERROR: unknown --decl-flip arm(s) %s (known: %s)"
+              % (bad_arm, ",".join(_DECL_FLIP_ARMS)), file=sys.stderr)
+        return 2
+    want_strata = [s for s in evaluate_strval(argv[1:], "--strata", "").split(",") if s]
+    entries = [e for e in man["entries"] if not want_strata or e["stratum"] in want_strata]
+    answers = man["answers"]                      # index == answer_bit
+    print("=== anima evaluate --decl-flip — H_9800 EPHEMERAL-DECLARATION GROUNDING ===")
+    print("  ckpt %s · manifest %s · %d items · win %dB · arms %s"
+          % (ckpt, man_path, len(entries), T, ",".join(arms)))
+    print("  regen: %s" % man.get("regen_cmd", "(absent — this manifest is not re-derivable)"))
+
+    # ---- ORACLE PREFLIGHT (no forward pass; plumbing + no-arbitrary-grounding audit) ----
+    banned = tuple(answers) + tuple(man.get("sense_labels", [])) + tuple(man.get("role_labels", []))
+    o_flip = o_gold = carrier_hits = shape_bad = 0
+    for e in entries:
+        if e["gold"] != answers[e["sense_bit"] ^ e["role_bit"]]:
+            o_gold += 1
+        if e["gold"] != e["gold_flip"]:
+            o_flip += 1
+        if any(b in e["carrier"] for b in banned):
+            carrier_hits += 1
+        a, b = e["ctx"]["live_a"], e["ctx"]["live_b"]
+        if len(a.encode()) != len(b.encode()) or sum(1 for x, y in zip(a, b) if x != y) == 0:
+            shape_bad += 1
+        if e["ctx"]["declaration-drop_a"] != e["ctx"]["declaration-drop_b"]:
+            shape_bad += 1
+    n = len(entries)
+    oracle_flip = o_flip / float(n) if n else 0.0
+    print("  ORACLE preflight: gold-recompose mismatches %d/%d · flip_sens %.4f · carrier "
+          "answer/label hits %d · context-shape violations %d" % (o_gold, n, oracle_flip,
+                                                                  carrier_hits, shape_bad))
+    if o_gold or carrier_hits or shape_bad or oracle_flip != 1.0:
+        print("  VERDICT: ⛔ INSTRUMENT-DEAD — the manifest itself cannot express a positive "
+              "(oracle flip must be exactly 1.0000, gold must recompose, no carrier may carry an "
+              "answer/label, and the flip must move only the queried declaration). Do NOT read a "
+              "held-out number from this run (positive-control-before-reading-a-negative).")
+        json.dump({"schema": "anima-decl-flip/v1", "ckpt": ckpt, "manifest": man_path,
+                   "verdict": "INSTRUMENT-DEAD",
+                   "oracle": {"gold_mismatch": o_gold, "flip_sens": oracle_flip,
+                              "carrier_hits": carrier_hits, "shape_bad": shape_bad}},
+                  open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        return 2
+
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable", file=sys.stderr)
+        return 2
+
+    scored, readout = {}, {}
+    for arm in arms:
+        rows, margins = [], []
+        for e in entries:
+            sa = e["ctx"][arm + "_a"] + e["carrier"]
+            sb = e["ctx"][arm + "_b"] + e["carrier"]
+            ia, na = _decl_flip_answer(np, W, sa, answers, T)
+            ib, _ = _decl_flip_answer(np, W, sb, answers, T)
+            margins.append(na[0] - na[1])          # signed 2AFC margin in world A
+            rows.append({"stratum": e["stratum"], "gold_bit": e["gold_bit"],
+                         "ans_a": ia, "ans_b": ib})
+        scored[arm] = rows
+        # READOUT TELEMETRY — flip_sens 0 with acc == chance is produced BOTH by an honest
+        # constant predictor and by a dead readout, and those are different findings. So the
+        # realized answer distribution and the margin spread are printed: sd == 0 means the 2AFC
+        # never moved at all (degenerate readout · report it, do not read a substrate claim off it),
+        # while a wide margin with a one-sided answer distribution is a genuine constant predictor.
+        mu = sum(margins) / float(len(margins)) if margins else 0.0
+        sd = (sum((m - mu) ** 2 for m in margins) / float(len(margins))) ** 0.5 if margins else 0.0
+        dist = {}
+        for r in rows:
+            dist[answers[r["ans_a"]]] = dist.get(answers[r["ans_a"]], 0) + 1
+        readout[arm] = {"answer_dist_A": dist, "margin_mean": mu, "margin_sd": sd,
+                        "margin_min": min(margins) if margins else None,
+                        "margin_max": max(margins) if margins else None,
+                        "degenerate": (sd == 0.0)}
+
+    # declaration-drop is a MECHANICAL null: its two contexts are byte-identical, so a non-zero
+    # flip here is a harness defect, not a result. Fail loud rather than publish it.
+    if "declaration-drop" in scored:
+        d = _decl_flip_cell(scored["declaration-drop"])["flip_sens"]
+        if d != 0.0:
+            print("  VERDICT: ⛔ INSTRUMENT-DEAD — declaration-drop flip_sens %.4f != 0. Its two "
+                  "contexts are byte-identical, so this is a harness bug (non-determinism in the "
+                  "forward, or a context that is not actually identical), never a substrate fact." % d)
+            return 2
+
+    report = {"schema": "anima-decl-flip/v1", "ckpt": ckpt, "manifest": man_path,
+              "regen_cmd": man.get("regen_cmd"), "win": T, "arms": arms, "n_items": n,
+              "oracle": {"flip_sens": oracle_flip, "gold_mismatch": 0, "carrier_hits": 0,
+                         "shape_bad": 0},
+              "overall": {}, "by_stratum": {}, "by_polarity": {}, "readout": readout}
+    print("  %-18s %8s %8s %8s %8s   %s" % ("arm", "flip", "acc_A", "acc_B", "chance", "n"))
+    for arm in arms:
+        cell = _decl_flip_cell(scored[arm])
+        report["overall"][arm] = cell
+        print("  %-18s %8.4f %8.4f %8.4f %8.4f   %d"
+              % (arm, cell["flip_sens"], cell["acc_a"], cell["acc_b"], cell["chance_acc"],
+                 cell["n"]))
+    print("  readout telemetry (tells an honest CONSTANT PREDICTOR apart from a DEAD 2AFC):")
+    for arm in arms:
+        r = readout[arm]
+        print("    %-18s answers_A=%s · margin mean %+.4f sd %.4f [%+.4f, %+.4f]%s"
+              % (arm, r["answer_dist_A"], r["margin_mean"], r["margin_sd"],
+                 r["margin_min"], r["margin_max"],
+                 "  ⚠️ DEGENERATE (sd=0: the 2AFC never moved)" if r["degenerate"] else ""))
+    ctrl = [a for a in arms if a != "live"]
+    if "live" in arms and ctrl:
+        worst = max(report["overall"][a]["flip_sens"] for a in ctrl)
+        delta = report["overall"]["live"]["flip_sens"] - worst
+        report["collapse_delta_flip"] = delta
+        report["control_max_flip"] = worst
+        print("  COLLAPSE-Δ(flip) = live %.4f − max(control) %.4f = %+.4f  "
+              "(the signal is the Δ vs >=2 controls, never the raw value · FORM tunable · BIND earned)"
+              % (report["overall"]["live"]["flip_sens"], worst, delta))
+    # per-stratum and per-polarity splits. A binary DV is NOT readable before the class split
+    # (polarity-split-before-headline), and a mapping-held-out stratum is where the cache-vs-lookup
+    # question actually lives — the aggregate hides both.
+    for arm in arms:
+        st = {}
+        for s in sorted({r["stratum"] for r in scored[arm]}):
+            st[s] = _decl_flip_cell([r for r in scored[arm] if r["stratum"] == s])
+        report["by_stratum"][arm] = st
+        pol = {}
+        for g in (0, 1):
+            pol[answers[g]] = _decl_flip_cell([r for r in scored[arm] if r["gold_bit"] == g])
+        report["by_polarity"][arm] = pol
+    print("  per-stratum flip-sensitivity (chance_flip = 0.0 structural · chance_acc DERIVED):")
+    for s in sorted(report["by_stratum"][arms[0]]):
+        line = "    %-18s" % s
+        for arm in arms:
+            c = report["by_stratum"][arm][s]
+            line += " %s=%.4f(acc %.4f/ch %.4f)" % (arm[:4], c["flip_sens"], c["acc_a"],
+                                                    c["chance_acc"])
+        print(line)
+    print("  per-polarity flip-sensitivity (binary DV is not readable before the class split):")
+    for lab in answers:
+        line = "    gold=%-6s" % lab
+        for arm in arms:
+            c = report["by_polarity"][arm][lab]
+            line += " %s=%.4f(n %d)" % (arm[:4], c["flip_sens"], c["n"])
+        print(line)
+    json.dump(report, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print("  -> %s" % out_path)
+    print("  NOTE: this flag SCORES; it does not judge. The pre-registered bars live in the H_ card "
+          "(SEEN flip >=0.90 AND oracle 1.0 before any held-out read; controls <=0.60). No bar is "
+          "moved here and no frozen panel is touched — --decl-flip is purely ADDITIVE.")
+    return 0
 
 
 def twin_screen_run(argv):
@@ -4595,6 +5091,11 @@ def store_run(argv):
         return "good" if float(row[g_id]) >= float(row[b_id]) else "bad"
 
     addr_audit = "--store-addr-audit" in argv          # H_9672: report addr_top1 (argmax==target) + addr_mass
+    # H_9802 pre-check ($0, MONITOR-ONLY): target-free address telemetry. Splits
+    # "natural text never addresses the store" (recruitment) from "addresses it but the
+    # values are garbage" (alignment) BEFORE any training spend is committed.
+    store_telemetry = "--store-telemetry" in argv
+    tel_n = 0; tel_amax = 0.0; tel_aent = 0.0
     addr_top1 = addr_mass = addr_n = 0                  # (mean a[target]) — soft-address diagnostic
 
     print("=== anima evaluate --store — H_9423 CLMS store-bridge lane (co-trained) ===")
@@ -4661,11 +5162,16 @@ def store_run(argv):
             key = (it.get("op"), 0 if gold == "good" else 1)
             rec = by.setdefault(key, [0, 0]); rec[0] += int(flip == gold_flip); rec[1] += 1
             continue
-        au = [] if addr_audit else None
+        au = [] if (addr_audit or store_telemetry) else None
         pred = _predict(store, audit=au)
         if pred is None:
             continue
-        if au:                                            # H_9672 addr-audit: last qpos entry
+        if au and store_telemetry:                        # H_9802 target-free telemetry (all rows)
+            for _e in au:
+                tel_n += 1
+                tel_amax += float(_e.get("a_max", 0.0))
+                tel_aent += float(_e.get("a_ent", 1.0))
+        if au and addr_audit:                             # H_9672 addr-audit: last qpos entry
             e = au[-1]
             addr_n += 1
             addr_top1 += int(e["argmax"] == e["target"])
@@ -4730,6 +5236,23 @@ def store_run(argv):
               "1.0=one-hot sharp · ~%.3f=uniform)" % (addr_top1 / addr_n, addr_n, addr_mass / addr_n, 1.0 / 8))
         print("    → addr_top1 high ∧ addr_mass low = argmax correct but softmax NOT peaked (v = Σaᵢ·valᵢ "
               "blurred → value-read starved despite correct pointer); addr_top1 low = W_q not pointing.")
+    if store_telemetry:
+        if tel_n:
+            n_slot_obs = int(store.get("n_slot", 8)) if isinstance(store, dict) else 8
+            unif = 1.0 / float(n_slot_obs)            # DERIVED baseline, never an assumed chance
+            amax = tel_amax / tel_n; aent = tel_aent / tel_n
+            print("  store-telemetry (MONITOR-ONLY · not in any loss/bar): rows=%d · a_max=%.4f "
+                  "(uniform=%.4f derived from n_slot=%d) · a_ent=%.4f (1.0=uniform, 0.0=one-hot)"
+                  % (tel_n, amax, unif, n_slot_obs, aent))
+            if amax <= unif * 1.5:
+                print("    → RECRUITMENT: address mass is at the uniform floor ⟹ this text never "
+                      "ADDRESSES the store. Fire the curriculum arm; an alignment fix would be wasted.")
+            else:
+                print("    → ADDRESSED (a_max above the uniform floor) ⟹ NOT a recruitment problem; "
+                      "if the values still read wrong the failure is ALIGNMENT (cheaper fix).")
+        else:
+            print("  store-telemetry: rows=0 — the store lane never fired ⟹ INSTRUMENT-DEAD, "
+                  "read nothing from this arm (check --store-fuse/--store-query wiring).")
     if oracle:
         print("  → C0-e ORACLE: ≥0.90 REQUIRED before any negative is read (mixing/value/MLP/λ paths die "
               "silently below this). oracle+shuffle→1.00 & oracle+flip→1.00(vs flipped gold) = control plumbing OK.")
@@ -8137,6 +8660,7 @@ _KNOWN_FLAGS = frozenset((
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
+    "--fan-branch", "--branches",              # H_9803 branch-latent ideation fan arms
     "--slot-shuffle", "--surface-set", "--system-g1", "--vs", "--win", "--with-logits", "--xbind", "--xfan",
     "--gn-freeze",
     "--bridge-trace", "--flip0", "--theta",
@@ -8144,7 +8668,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-component-swap", "--store-swap-from",
     "--store", "--store-oracle",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
-    "--store-addr-audit",
+    "--store-addr-audit", "--store-telemetry", "--grow-window", "--seed-class", "--fan-temp-ladder",
     "--store-query", "--store-fuse", "--store-readout",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--fan-bind", "--fan-smp",
@@ -8152,6 +8676,7 @@ _KNOWN_FLAGS = frozenset((
     "--fan-dump",
     "--cascade-null",
     "--state-census", "--kmax",
+    "--decl-flip", "--arms", "--strata",          # H_9800 ephemeral-declaration grounding
 ))
 
 
@@ -14611,6 +15136,11 @@ def main(argv):
         return route_audit_run(argv)
     if "--bind-locus" in argv:
         return bind_locus_run(argv)
+    # --decl-flip <c.txt.decl.json>: H_9800 EPHEMERAL-DECLARATION grounding — the H_9359
+    # declaration-flip diagnostic promoted to a first-class scored flag. ADDITIVE: it moves no
+    # frozen bar and touches no existing panel.
+    if "--decl-flip" in argv:
+        return decl_flip_run(argv)
     if "--twin-screen" in argv:
         return twin_screen_run(argv)
     if "--twin-necessity" in argv:
@@ -14629,6 +15159,11 @@ def main(argv):
     # binding-lane probe H_9235). argv[0]=ckpt; dump_hidden_run reads --dump-hidden/--out.
     if "--dump-hidden" in argv:
         return dump_hidden_run(argv)
+    # H_9803 --fan-branch {live|assignment-shuffle|off}: the branch-latent ideation-fan arms.
+    # ADDITIVE — it never touches eval_reach_all / the frozen G0-G6 bars; `off` is the
+    # byte-identity parity control for the IFAN trailer.
+    if "--fan-branch" in argv:
+        return fan_branch_run(argv)
     # --store-addr-census <dump.npz> / --store-census-selftest: H_9719 emergent-address
     # $0 pre-screen — argmax-collision of random-W_q over entity-keys vs a structureless-H
     # pedestal. DIRECTIONAL screener (KILL-before-spend); admissible (no target_slot read).

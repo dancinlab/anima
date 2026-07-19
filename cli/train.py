@@ -1132,7 +1132,34 @@ class TrainShell(nn.Module):
         hm = m.norm_out(hm)
         return hm                                   # (B, d, T) — pre-readout dictionary site
 
-    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0, sb_oracle=False, sb_addr_w=0.0, sb_oracle_aux=0.0, sb_tap_grad="detached"):
+    def ideation_forward(self, x, tap_L):
+        """H_9803 — one CLM forward that also returns the PRESERVED early (layer tap_L) tap.
+
+        Mirrors CLMConvMoE.forward's op order exactly (embed → embed_conv → trunk → faction
+        bridge → MoE → norm_out → SLW → readout); it does not touch model.forward, so the golden
+        path stays byte-identical. tap_L<=0 ⇒ the tap IS the penultimate (the `penult` route =
+        the tap-DEPTH control, H_9720-C1 idiom: same head, only the tap LOCATION differs)."""
+        m = self.model
+        h = m.embed(x).transpose(1, 2)
+        h = m.embed_conv(h)
+        tap = None
+        for i, layer in enumerate(m.trunk):
+            h = layer(h)
+            if tap_L > 0 and (i + 1) == tap_L:
+                tap = h
+        if getattr(m, "faction_bridge", None) is not None:
+            h = m.faction_bridge(h)
+        hm, stats = m.moe(h)
+        hm = m.norm_out(hm)
+        if tap is None:
+            tap = hm                                   # penult route (or tap_L deeper than the trunk)
+        xr = m.slw(hm) if getattr(m, "slw", None) is not None else hm
+        logits = m.readout(xr)                         # (B, V, T)
+        return logits, hm, tap, stats.aux_loss
+
+    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0, sb_oracle=False, sb_addr_w=0.0, sb_oracle_aux=0.0, sb_tap_grad="detached",
+                idl=None, idl_w=1.0, idl_assign="hungarian", idl_route="l3-disjoint",
+                idl_tap_L=3, idl_gen=None):
         # ── VERBATIM relocation of the per-step loss-composition block (bf16 + fp32). The
         #    autocast context stays wrapping ONLY the forward/compose (backward is at the
         #    callsite, outside autocast — DDP hooks fire there). Returns (loss, detached CE,
@@ -1239,6 +1266,42 @@ class TrainShell(nn.Module):
                 tr = logits_s[:, :, Ts - 1]                    # trunk row at qpos — leak early-warning
                 aux["sb_trunk_leak"] = float(((tr[:, g_id] >= tr[:, b_id]) == gold_g).float().mean())
                 aux["sb_lam"] = float(model.clms.lam)
+        # ── H_9803 BRANCH-LATENT IDEATION FAN — set-CE over SEVERAL REAL observed futures ──
+        # A SEPARATE fp32 forward on the document-aligned multi-mode batch (same idiom as the CLMS
+        # store lane above). Per document: one forward over the M observed continuations of ONE
+        # shared context, K branch latents read from the fork-point EARLY tap, then a min-cost
+        # (Hungarian) branch↔target assignment and the mean assigned CE.
+        #
+        # `l3-disjoint` DETACHES the tap, so the set-CE never pushes the trunk through the branch
+        # route — the branch lane must find its modes in what the trunk ALREADY preserved at layer L
+        # rather than reshaping the trunk to make the branches separable (which would be the
+        # diversity leaking back into a trick).
+        if idl is not None and getattr(model, "ifan", None) is not None:
+            from ifan import set_ce_loss
+            idl_loss_sum = None
+            idl_aux_acc = {}
+            n_doc = 0
+            for (x_i, y_i, m_i, fork_i) in idl:
+                logits_i, hm_i, tap_i, aux_i = self.ideation_forward(x_i, int(idl_tap_L) if idl_route == "l3-disjoint" else 0)
+                base_logits = logits_i.float().transpose(1, 2)         # (M, T, V)
+                yn_i = hm_i.float().transpose(1, 2)                    # (M, T, d)
+                tap_row = tap_i.float()[:, :, int(fork_i)]             # (M, d) fork-point tap
+                if idl_route == "l3-disjoint":
+                    tap_row = tap_row.detach()
+                # every branch reads the SAME context grounding: use document row 0's fork tap for
+                # all M rows so no branch can identify its target from the grounding it was handed.
+                tap_row = tap_row[0:1].expand_as(tap_row)
+                l_i, a_i = set_ce_loss(base_logits, model.ifan, tap_row, yn_i, y_i, m_i,
+                                       assign=idl_assign, shuffle_gen=idl_gen)
+                l_i = l_i + aux_i
+                idl_loss_sum = l_i if idl_loss_sum is None else (idl_loss_sum + l_i)
+                for k_, v_ in a_i.items():
+                    idl_aux_acc[k_] = idl_aux_acc.get(k_, 0.0) + v_
+                n_doc += 1
+            if n_doc:
+                loss = loss + idl_w * (idl_loss_sum / n_doc)
+                for k_, v_ in idl_aux_acc.items():
+                    aux[k_] = v_ / n_doc                               # MONITOR-ONLY (a_train_inline_gauge)
         aux.update(oaux)
         return loss, out["ce_loss"].detach(), aux
 
@@ -1283,6 +1346,63 @@ class StoreBindCell:
         n_blocks = len(self.ex) // n_slot
         vb = max(1, int(n_blocks * val_frac))
         self.train_n = max(n_slot, (n_blocks - vb) * n_slot)          # [0,train_n) train · rest val
+
+
+class IdeationFanCell:
+    """H_9803 — the MULTI-MODE future-set dataset (NOT a ByteCell).
+
+    File format (`--ideation-corpus`): blank-line-separated DOCUMENTS. Inside a document,
+    line 0 is the shared CONTEXT (the topic / fork prefix) and lines 1..M are M DIFFERENT
+    continuations that were actually OBSERVED after that context. Example:
+
+        the weather today is
+        sunny and warm outside
+        pouring rain since dawn
+        cold with a hard frost
+
+    That structure is the whole point: the branch lane never invents modes, it is handed
+    several REAL futures of one context and has to distribute itself over them. A document
+    with fewer than 2 continuations carries no set signal and is DROPPED (loudly counted),
+    because training on it would silently degrade the lane to ordinary single-target CE.
+
+    Each example is a fixed-T right-aligned window: the context is left-padded with spaces to
+    `ctx_len`, then the continuation fills the rest; `mask` is 1 only on continuation positions,
+    so the set-CE never scores the shared prefix (every branch would score it identically and
+    the assignment would be decided by prefix noise)."""
+
+    def __init__(self, path, T, ctx_len):
+        self.T = int(T)
+        self.ctx_len = int(ctx_len)
+        self.docs = []           # list of (x:(M,T), y:(M,T), mask:(M,T), fork:int)
+        self.n_dropped = 0
+        raw = open(path, "rb").read().decode("utf-8", "surrogateescape")
+        for block in raw.split("\n\n"):
+            lines = [ln for ln in block.split("\n") if ln.strip() != ""]
+            if len(lines) < 3:                    # need a context + at least 2 observed futures
+                if lines:
+                    self.n_dropped += 1
+                continue
+            ctx = lines[0].encode("utf-8", "surrogateescape")
+            conts = [ln.encode("utf-8", "surrogateescape") for ln in lines[1:]]
+            C = self.ctx_len
+            xs, ys, ms = [], [], []
+            for c in conts:
+                # window = [pad|ctx][cont|pad] ; targets are the next byte, mask on cont only.
+                left = ctx[-C:] if len(ctx) >= C else ctx
+                seq = bytearray(b" " * (C - len(left))) + bytearray(left)
+                body = c[:self.T - C] if len(c) > self.T - C else c
+                seq += bytearray(body)
+                mask = [0] * C + [1] * len(body)
+                while len(seq) < self.T + 1:      # +1 so the shifted target exists at T-1
+                    seq.append(32); mask.append(0)
+                x = torch.tensor(list(seq[:self.T]), dtype=torch.long)
+                y = torch.tensor(list(seq[1:self.T + 1]), dtype=torch.long)
+                xs.append(x); ys.append(y)
+                ms.append(torch.tensor(mask[:self.T], dtype=torch.long))
+            self.docs.append((torch.stack(xs), torch.stack(ys), torch.stack(ms), C - 1))
+        if not self.docs:
+            raise SystemExit(f"--ideation-corpus {path}: 0 usable documents "
+                             f"(need blank-line-separated blocks of >=3 lines: context + >=2 futures)")
 
 
 def _to_device_or_die(model, device):
@@ -1403,6 +1523,39 @@ def main():
                          "linear = the kill#7 DOA control (uniform address + additive combine)")
     ap.add_argument("--mouth-memory", choices=["causal-bank"], default="causal-bank",
                     help="H_9698: what the binder addresses (causal-bank = the frame's own hiddens)")
+    # ── H_9803 BRANCH-LATENT IDEATION FAN (ρ·fan / G6 lane) ──────────────────────────────────
+    # The lane is DEFAULT-OFF and every flag below is inert unless --ideation-lane branch-latent
+    # is passed ⇒ byte-identical golden path. See core/ifan.py for why this is not a sampling
+    # trick: the ONLY thing separating the K branches is a min-cost assignment onto SEVERAL REAL
+    # observed continuations. There is no repulsion term and no entropy bonus anywhere in the lane.
+    ap.add_argument("--ideation-lane", choices=["off", "branch-latent"], default="off",
+                    help="H_9803: 'branch-latent' builds K disjoint proposal latents from a preserved "
+                         "early tap, each responsible for a DIFFERENT observed future-continuation mode. "
+                         "'off' (default) ⇒ byte-identical.")
+    ap.add_argument("--ideation-branches", type=int, default=4,
+                    help="H_9803: K — number of disjoint proposal latents (branches).")
+    ap.add_argument("--ideation-objective", choices=["set-ce"], default="set-ce",
+                    help="H_9803: 'set-ce' = min-cost (Hungarian) branch↔target assignment over the SET "
+                         "of observed continuations, then mean assigned CE. The only objective that "
+                         "grounds diversity in real futures; a repulsion/entropy variant is DISQUALIFIED.")
+    ap.add_argument("--ideation-route", choices=["l3-disjoint", "penult"], default="l3-disjoint",
+                    help="H_9803: 'l3-disjoint' = the branch latents read the DETACHED trunk-layer-L tap "
+                         "(H_9720 tap-DEPTH; set-CE never pushes the trunk through this path) · "
+                         "'penult' = read the penultimate instead (tap-DEPTH control).")
+    ap.add_argument("--ideation-route-l", type=int, default=3,
+                    help="H_9803: L — tap depth for --ideation-route l3-disjoint (default 3).")
+    ap.add_argument("--ideation-assign", choices=["hungarian", "shuffle"], default="hungarian",
+                    help="H_9803: 'hungarian' = min-cost matching (treatment) · 'shuffle' = THE NEGATIVE "
+                         "CONTROL — same K, same targets, same CE mass, but the target↔branch assignment "
+                         "is re-drawn every batch, so only the correspondence is destroyed.")
+    ap.add_argument("--ideation-corpus", type=str, default="",
+                    help="H_9803: multi-mode future-set corpus. Blank-line-separated documents; line 0 = "
+                         "the shared context/topic, lines 1..M = M DIFFERENT observed continuations of it. "
+                         "REQUIRED when --ideation-lane branch-latent.")
+    ap.add_argument("--ideation-rank", type=int, default=64, help="H_9803: proposal-latent width r")
+    ap.add_argument("--ideation-lam0", type=float, default=1.0, help="H_9803: IFAN lam init (additive scale)")
+    ap.add_argument("--ideation-weight", type=float, default=1.0, help="H_9803: set-CE loss weight")
+    ap.add_argument("--ideation-docs", type=int, default=4, help="H_9803: documents per ideation sub-batch")
     ap.add_argument("--bind-rank", type=int, default=64, help="H_9698: MBND binder rank (q/k/v/u width)")
     ap.add_argument("--bind-lam0", type=float, default=1.0, help="H_9698: MBND lam init (additive scale)")
     ap.add_argument("--freeze-trunk", action="store_true",
@@ -1675,6 +1828,29 @@ def main():
         model.to(device)
         p0(f"  [--init] {report}", flush=True)
 
+    # ── H_9803 branch-latent ideation fan: attach the lane BEFORE the optimizer collects params
+    #    (registering it on `model` puts it in model.parameters(), which the shell/opt assertion
+    #    below requires). Lane off ⇒ the attribute is never set ⇒ byte-identical golden path.
+    idl_cell = None
+    if str(getattr(a, "ideation_lane", "off")) == "branch-latent":
+        if is_bytegpt:
+            raise SystemExit("--ideation-lane branch-latent is CLM-only "
+                             "(the early-tap route has no ByteGPT twin yet) — drop --arch bytegpt")
+        if not a.ideation_corpus:
+            raise SystemExit("--ideation-lane branch-latent requires --ideation-corpus "
+                             "(blank-line-separated documents: context line + >=2 observed futures)")
+        from ifan import BranchLatentFan
+        _ctx_len = max(1, seq_len // 2)
+        idl_cell = IdeationFanCell(a.ideation_corpus, seq_len, _ctx_len)
+        model.ifan = BranchLatentFan(d, V, K=a.ideation_branches, rank=a.ideation_rank,
+                                     lam0=a.ideation_lam0,
+                                     route_L=(a.ideation_route_l if a.ideation_route == "l3-disjoint" else 0)
+                                     ).to(device)
+        p0(f"  ideation-fan: K={a.ideation_branches} r={a.ideation_rank} "
+           f"objective={a.ideation_objective} route={a.ideation_route}@L{a.ideation_route_l} "
+           f"assign={a.ideation_assign} · docs={len(idl_cell.docs)} "
+           f"(dropped {idl_cell.n_dropped} single-future blocks) ctx_len={_ctx_len}", flush=True)
+
     params = (list(model.parameters())
               + (list(jamo_head.parameters()) if jamo_head else [])
               + (list(objfn.parameters()) if obj_is_module else []))   # H_1640 aux-head params
@@ -1794,6 +1970,21 @@ def main():
                 torch.stack(Ks).to(device), torch.stack(Ps).to(device),
                 torch.stack(Ts_).to(device))                          # H_9423 Stage1.5 target_slot
 
+    # H_9803 — deterministic document sampler for the ideation sub-batch. Its own generator so
+    # turning the lane on does not perturb the main batch draw (which would confound every
+    # lane-on/lane-off comparison with a different corpus stream).
+    idl_gen = torch.Generator(); idl_gen.manual_seed(int(a.seed) ^ 0x9803)
+
+    def get_ideation_batch():
+        n = len(idl_cell.docs)
+        take = min(int(a.ideation_docs), n)
+        idx = torch.randperm(n, generator=idl_gen)[:take].tolist()
+        out = []
+        for i in idx:
+            x_i, y_i, m_i, fork_i = idl_cell.docs[i]
+            out.append((x_i.to(device), y_i.to(device), m_i.to(device), fork_i))
+        return out
+
     def get_batch(step):
         if cells:
             # ── §3 SPEC phase (ALL ranks, IDENTICAL shared gen=42): draw the GLOBAL batch's
@@ -1911,6 +2102,12 @@ def main():
             nb = S.append_mbnd_trailer(out_path, model.mbnd)
             print(f"  MBND trailer appended {nb} bytes (rank={model.mbnd.rank} "
                   f"linear={model.mbnd.linear})", flush=True)
+        # H_9803 — append the "IFAN" branch-latent trailer if the ideation lane is engaged (AFTER
+        # MBND so the chain end stays IFAN, the order core/decode.py reads).
+        if getattr(model, "ifan", None) is not None:
+            nb = S.append_ifan_trailer(out_path, model.ifan)
+            print(f"  IFAN trailer appended {nb} bytes (K={model.ifan.K} "
+                  f"rank={model.ifan.rank} route_L={model.ifan.route_L})", flush=True)
         print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
         print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
 
@@ -2007,7 +2204,12 @@ def main():
         loss, ce_local, aux = train_module(x, y, obj_gen, a.dict_lambda, a.jamo_lambda,
                                            sb=_sb, sb_w=sb_w_now, sb_oracle=sb_oracle_now,
                                            sb_addr_w=a.store_addr_weight, sb_oracle_aux=a.store_oracle_aux,
-                                           sb_tap_grad=str(getattr(a, "store_query_tap_grad", "detached")))
+                                           sb_tap_grad=str(getattr(a, "store_query_tap_grad", "detached")),
+                                           # H_9803 branch-latent ideation fan (None ⇒ byte-identical)
+                                           idl=(get_ideation_batch() if idl_cell is not None else None),
+                                           idl_w=a.ideation_weight, idl_assign=a.ideation_assign,
+                                           idl_route=a.ideation_route, idl_tap_L=a.ideation_route_l,
+                                           idl_gen=idl_gen)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0)
         opt.step()

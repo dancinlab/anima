@@ -144,6 +144,24 @@ def append_mbnd_trailer(out_path: str, mb) -> int:
     return len(trailer)
 
 
+# ════════════════════════════════════════════════════════════════════════
+# H_9803 "IFAN" branch-latent ideation-fan trailer (CORE-owned codec in core/ifan.py).
+# Appended AFTER MBND so the chain end is CLMB→SLW→CLML→CLMS→MBND→IFAN, matching the
+# read order in core/decode.py. Absent => byte-identical (read_ifan passthroughs on a
+# short/absent/mismatched read, leaving the offset untouched).
+# ════════════════════════════════════════════════════════════════════════
+def append_ifan_trailer(out_path: str, fan) -> int:
+    """Append the IFAN branch-latent trailer to an already-written .clm. `fan` = a trained torch
+    BranchLatentFan OR a ready numpy weight dict (K,rank,d,V,route_L,W_in,W_h,W_out,lam). Returns
+    bytes written. Call ONLY after append_mbnd_trailer (if any) so the chain end stays IFAN."""
+    from ifan import pack_ifan, ifan_weights_from_torch    # core/ifan.py (same core/ dir)
+    w = fan if isinstance(fan, dict) else ifan_weights_from_torch(fan)
+    trailer = pack_ifan(w)
+    with open(out_path, "ab") as f:
+        f.write(trailer)
+    return len(trailer)
+
+
 # readout-type flag (CLMB byte[4]). 0 = additive Conv1d(d->V) (default, NO CLMB
 # section); 1 = bind/Hadamard  g=u*v ; 2 = bind_linear (param-matched add) g=u+v.
 RO_ADDITIVE = 0
