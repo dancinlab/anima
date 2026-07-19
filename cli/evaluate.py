@@ -97,7 +97,9 @@ def _default_gen():
 class _Mouth:
     _n_decode = 0
 
-    def __init__(self, ckpt):
+    def __init__(self, ckpt, grow_window=False):
+        # H_9804 Fix-W: default False = production T=24, byte-for-byte unchanged.
+        self.grow_window = bool(grow_window)
         if bg.bg_is_bytegpt(ckpt):
             self.kind = "bytegpt"
             self.W = bg.bg_load(ckpt)
@@ -119,12 +121,38 @@ class _Mouth:
         # the pipe live across the full G0-G6 battery. Heartbeat only — no scoring effect.
         _Mouth._n_decode += 1
         print("  [decode #" + str(_Mouth._n_decode) + "] " + self.kind
-              + " gen=" + str(gen) + " seed_rng=" + str(seed_rng), flush=True)
+              + " gen=" + str(gen) + " seed_rng=" + str(seed_rng)
+              + (" grow_window" if self.grow_window else ""), flush=True)
         if self.kind == "bytegpt":
             # seed string -> byte ids inside bytegpt_decode (_seed_to_ids); the
             # ByteGPT window grows up to block natively (no fixed-T right-align).
             return bg.bytegpt_decode_topk_sampled_W(
                 self.W, seed, gen, top_k, temp, seed_rng)["text"]
+        # H_9804 Fix-W (--grow-window) · H_6189 measurement-wall repair. The CLM mouth
+        # right-aligns the seed into a fixed T=24 window, so for a composed G1 seed the
+        # VISIBLE window is byte-identical to the corresponding single seed's window —
+        # composed_distinct > max_single is then structurally impossible, independent of
+        # the model (byte-math proof: state/gate_design_audit/window_math.json). The frozen
+        # bar (H_1129/H_1137 VERBATIM) was calibrated on the ByteGPT mouth at block=512,
+        # i.e. it PRESUPPOSES the whole composed seed is conditioned on. T=24 is a later
+        # CLM decode contract that leaked into the gate, not a gate spec. Fix-W restores
+        # the frozen bar's own semantics on the CLM mouth: T_win = min(len(seed)+gen, 512),
+        # matching what ByteGPT already does natively. The bar itself does NOT move — this
+        # un-truncates the seed (forward math untouched; conv trunk is causal-local with no
+        # positional encoding, trained seq_len=1024, and the scoring lane already runs T=64).
+        if self.grow_window:
+            t_prev = clm._CONSULT_DECODE_T
+            t_win = len(seed.encode('utf-8', 'surrogateescape')) + max(int(gen), 0)
+            if t_win > 512:
+                t_win = 512
+            if t_win < 24:
+                t_win = 24
+            clm.set_consult_decode_window(t_win)
+            try:
+                return clm.clm_decode_topk_sampled_W(
+                    self.W, seed, gen, top_k, temp, seed_rng)["text"]
+            finally:
+                clm.set_consult_decode_window(t_prev)
         return clm.clm_decode_topk_sampled_W(
             self.W, seed, gen, top_k, temp, seed_rng)["text"]
 
@@ -169,6 +197,43 @@ def _g_coverage(text):
     return covered
 
 
+def _echo_spans(seed, text, n=8):
+    """H_9804 echo-guard. Return `text` with every >=n-byte substring that also occurs in
+    `seed` blanked out. Widening the decode window (Fix-W) makes the whole composed seed
+    visible to the mouth, which creates a NEW false-GREEN route the T=24 regime did not
+    have: the model can simply re-emit the seed's concept words and score coverage without
+    recombining anything. H_6189 named this risk and made the guard mandatory."""
+    if not seed or not text:
+        return text
+    out = list(text)
+    ln = len(text)
+    i = 0
+    while i < ln:
+        j = ln
+        hit = -1
+        while j - i >= n:
+            if text[i:j] in seed:
+                hit = j
+                break
+            j -= 1
+        if hit > 0:
+            for p in range(i, hit):
+                out[p] = " "
+            i = hit
+        else:
+            i += 1
+    return "".join(out)
+
+
+def _echo_ratio(seed, text, n=8):
+    """Fraction of `text` that is a >=n-byte verbatim echo of `seed` (0.0 = no echo)."""
+    if not text:
+        return 0.0
+    blanked = _echo_spans(seed, text, n)
+    echoed = sum(1 for a, b in zip(text, blanked) if a != b)
+    return echoed / float(len(text))
+
+
 def eval_rho_weave(mouth, gen, known):
     cz = _rho_fan_concepts()
     n = len(cz)
@@ -182,6 +247,7 @@ def eval_rho_weave(mouth, gen, known):
         if cov > max_single:
             max_single = cov
     ks = []; passed = False; best_k = 0; best_distinct = 0
+    best_distinct_noecho = 0; echo_max = 0.0
     for k in range(2, n + 1):
         seed = ""
         for c in range(k):
@@ -194,13 +260,30 @@ def eval_rho_weave(mouth, gen, known):
         kwr = _rho_fan_known_word_ratio(o, known)
         coherent = kwr >= 0.5
         clears = cov >= 2 and cov > max_single and coherent
-        ks.append({"k": k, "distinct": cov, "kwr": kwr, "coherent": coherent, "clears": clears})
+        # H_9804 echo-guard (ADDITIVE — the frozen `_g_coverage(o)` above is called
+        # unmodified and the bar reads IT; these are validity telemetry, and by
+        # construction cov_noecho <= cov, so the guard can only ever withdraw a
+        # GREEN, never manufacture one).
+        er = _echo_ratio(seed, o)
+        cov_noecho = _g_coverage(_echo_spans(seed, o))
+        if er > echo_max:
+            echo_max = er
+        ks.append({"k": k, "distinct": cov, "kwr": kwr, "coherent": coherent, "clears": clears,
+                   "echo_ratio": er, "distinct_noecho": cov_noecho})
         if clears:
             passed = True
         if cov > best_distinct:
             best_distinct = cov; best_k = k
+        if cov_noecho > best_distinct_noecho:
+            best_distinct_noecho = cov_noecho
     return {"pass": passed, "max_single": max_single, "best_k": best_k,
-            "best_distinct": best_distinct, "ks": ks}
+            "best_distinct": best_distinct, "ks": ks,
+            "best_distinct_noecho": best_distinct_noecho, "echo_max": echo_max,
+            # ECHO-SUSPECT: the frozen bar passed, but stripping verbatim seed-echo
+            # takes it back below the bar ⟹ the pass rode on re-emission, not
+            # recombination. Read as INVALID, never as a G1 crack.
+            "echo_suspect": bool(passed and not (best_distinct_noecho >= 2
+                                                 and best_distinct_noecho > max_single))}
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -627,9 +710,13 @@ def eval_rho_fan(mouth, gen, known):
     frames = rho_fan_build_frames(6)["composed"]
     leaks = rho_fan_frame_guard(frames, known)
     texts = []; word_sets = []; fals = 0
+    echo_max = 0.0
     for i in range(len(frames)):
         o = mouth.ideate(frames[i], gen, 40, 0.7, 7 + i)
         texts.append(o)
+        er = _echo_ratio(frames[i], o)          # H_9804 echo-guard telemetry (additive)
+        if er > echo_max:
+            echo_max = er
         if _rho_fan_known_word_ratio(o, known) >= 0.5:
             word_sets.append(_rho_fan_words(o))
             if _rho_fan_is_falsifiable(o, known):
@@ -644,17 +731,23 @@ def eval_rho_fan(mouth, gen, known):
             kept.append(ws)
     dist = len(kept)
     return {"pass": dist >= 5 and fals >= 1, "dist": dist, "fals": fals,
-            "coherent": len(word_sets), "frame_leaks": len(leaks)}
+            "coherent": len(word_sets), "frame_leaks": len(leaks),
+            "echo_max": echo_max}
 
 
 # ════════════════════════════════════════════════════════════════════════
 # eval_reach_all — the driver
 # ════════════════════════════════════════════════════════════════════════
 
-def eval_reach_all(ckpt, corpus_paths, gen):
+def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False):
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
-    mouth = _Mouth(ckpt)
+    mouth = _Mouth(ckpt, grow_window=grow_window)
+    if grow_window:
+        print("  [Fix-W] --grow-window ON (H_9804/H_6189): CLM decode window = "
+              "min(len(seed)+gen, 512) instead of the production T=24. The frozen bars do "
+              "NOT move; this restores the seed-conditioning the bars were calibrated under "
+              "(ByteGPT block=512). Echo-guard telemetry is reported alongside.", flush=True)
     print("  [gate] ρ·form COHERENCE …", flush=True)
     r0 = eval_rho_form(mouth, g, known)
     print("  [gate] ρ·weave RECOMBINATION …", flush=True)
@@ -1142,7 +1235,8 @@ def evaluate_run(argv):
         eval_rho_axon(ckpt, corpus, gen, kosmos_dir=evaluate_strval(argv[1:], "--kosmos", ""))
         return 0
 
-    r = eval_reach_all(ckpt, corpus, gen)
+    grow_window = "--grow-window" in argv[1:]
+    r = eval_reach_all(ckpt, corpus, gen, grow_window=grow_window)
     g0 = r["g0"]; g1 = r["g1"]; g2 = r["g2"]
     g3 = r["g3"]; g5 = r["g5"]; g6 = r["g6"]
 
@@ -1355,7 +1449,13 @@ def _psi_soma_panel(r):
     print("  ρ·form   " + pf(bool(g0["pass"]))  + "  [kwr " + str(g0["n_coherent"]) + "/5]  ← former G0 coherence")
     print("  ρ·leap   " + pf(bool(g2["pass"]))  + "  [novel=" + str(g2["n_novel"]) + " ctrl=" + str(g2["control_novel"]) + "]  ← former G2 novelty (+G3 balance)")
     print("  ρ·tether " + pf(bool(g5["l1_pass"]))+ "  [fab=" + ("%.3f" % g5["l1_rate"]) + "]  ← former G5 non-fabrication (L1)")
-    print("  ρ·weave  " + pf(bool(g1["pass"]))  + "  [bd=" + str(g1["best_distinct"]) + " max_s=" + str(g1["max_single"]) + "]  ← former G1 recombination (the WALL) [DPI wall = reach fact, NOT σ deficit]")
+    # verdict numerics INLINE (convergence evaluate-py-1: a tail-truncated arm made a
+    # prior KILL-vs-INVALID undecidable) — echo-guard numbers ride the same line.
+    _wecho = ("  [bd_noecho=" + str(g1.get("best_distinct_noecho", "-"))
+              + " echo=" + ("%.2f" % g1.get("echo_max", 0.0))
+              + ("  ⚠️ECHO-SUSPECT=INVALID" if g1.get("echo_suspect") else "") + "]") \
+        if ("best_distinct_noecho" in g1) else ""
+    print("  ρ·weave  " + pf(bool(g1["pass"]))  + "  [bd=" + str(g1["best_distinct"]) + " max_s=" + str(g1["max_single"]) + "]" + _wecho + "  ← former G1 recombination (the WALL) [DPI wall = reach fact, NOT σ deficit]")
     print("  ρ·fan    " + pf(bool(g6["pass"]))  + "  [dist=" + str(g6["dist"]) + " fals=" + str(g6["fals"]) + "]  ← former G6 ideation                [DPI wall = reach fact, NOT σ deficit]")
     print("  ρ·trace     —   ← former G4 provenance (no ρ-axis · H_9208 gate · rung-1 valid)")
     print("  ──────────────────────────────────────────────────────────────────")
@@ -1396,7 +1496,7 @@ def dump_hidden_run(argv):
     check (are two obviously-different concepts' hiddens far apart) before any blind verdict."""
     import numpy as np
     ckpt = argv[0]
-    spec_path = evaluate_strval(argv[1:], "--dump-hidden", "")
+    spec_path = evaluate_strval(argv[1:], "--grow-window", "--dump-hidden", "")
     out_path = evaluate_strval(argv[1:], "--out", "hidden_dump.npz")
     T = evaluate_intval(argv[1:], "--win", 24)
     with_logits = "--with-logits" in argv   # also dump base (lane-OFF) full-forward last-pos logits (lane training)
