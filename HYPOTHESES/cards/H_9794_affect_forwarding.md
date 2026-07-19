@@ -21,8 +21,12 @@ H_9576은 **interior→mouth** 의미전달을 죽였다(PC2 채널 열림·의�
 - 통제 ≥2: ① random-gauge 클램프(`wm_active` 클램프 — 특이성) ② content-scramble 암 ③ pedestal.
 - **KILL**: af-클램프 Δ ≤ random-gauge Δ TOST · 2-seed.
 
+## 🔬 DV-grounding 실측 (2026-07-19 · toy.clm 6-tick · --af-clamp 0.1 vs 0.9 · #R10-dvground)
+af-clamp dose 가 downstream 필드에 **실제 dose-response**(max|Δ|): cur_indep 1.2 · rel_indep 0.8 · cur_f 0.18 · cur_ctx 0.067 · rel_f 0.042 · cur_ema 0.031 · score 0.027 · base_motiv 0.027 · rel_ctx 0.019 · idle 2.97. ⟹ **af 는 장식 아님** — curiosity(cur_*)·relatedness(rel_*) **grading lane** + emit propensity(score)를 움직인다. **H_9794 DV = cur_ctx/rel_ctx(또는 cur_f/rel_f)**(추측 아닌 실측 접지 · pending_gap 오접지 회피).
+> ⚠️ **HARD CONFOUND**: af 는 ci lane 에 **within-tick 직결**(chat.py:2595 `+af_val`·2606 `+af_aro`) → af(t)→cur(t) 직접경로 + cur_ema 자기상관 ⟹ naive cross-lag af(t)→grade(t+1)은 within-tick coupling 만으로 spurious positive. reader 는 cur(t)·rel(t)·clock·typicality partial-out 필수(H_9403 clock-confound·chat-py-5 mediation-capacity 계열). do()-clamp arm 은 exogenous 라 af←env backdoor 를 끊음(관찰편상관보다 우월 가능성). 추정기 설계=lab-full 위임 중.
+
 ## $0-first
-기존 trace에서 af_val(t) → grading-proxy(t+1) cross-lag 편상관(score·clock·typicality partial). 0이면 격하.
+기존 trace에서 af_val(t) → cur_ctx/rel_ctx(t+1) cross-lag 편상관(cur(t)·rel(t)·clock·typicality partial). 0이면 격하.
 
 ## 이견/충돌 (reconcile)
 - Fable 경고 확인함: **H_9630/H_9633(mouth/tension·PC2 계보)와 직교 판정** — P3는 amygdala af→grading(interior→interior)이고 H_9630/9633은 tension→mouth라 lane·readout 모두 상이 → 중복 아님.
