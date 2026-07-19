@@ -1,6 +1,6 @@
 # H_9775 — g/b-쌍 Π-등변 사영(pairodd) + full-vocab argmax eval 게이트 (R10-1 · $0 · H_9760 INVALID 후속 설계)
 
-**status:** 🔵 PROPOSED (lab full Fable 5 · DESIGN 위임 브리프 · 오너 구현/발사 · 사전등록)
+**status:** 🟢 in-vivo seed7 FULL PASS (main 0.8176≥.75 earned·통제 shuffle 0.38/nostore 0.00 붕괴·flip-coh=FORM) — WIRED 판정 in-progress(seed11 2/2 + value-permute 발사중·⑨) · 계기 착륙 #4119/4122/4125
 **lane:** g1-interface-addressable-wall · H_9744 WIRED-STUDY-NEARMISS 갭 → H_9760 full-row odd in-vivo INVALID(#4103) 후속
 **related:** [[H_9744]] · [[H_9760]] · [[H_9773]] · [[H_9672]] · [[H_9695]] · [[H_9694]]
 
@@ -43,3 +43,25 @@ $0 (fusion+W_out 1회 추가 패스·answer 위치만·로컬 CPU). 사전등록
 
 ## 🔀 reconcile (lab full Fable ∥ Sol · 2모델 독립 · a_lab_full_diverge)
 **AGREES(양모델)**: g/b-쌍 odd(마진 odd + argmax 보존) + full-vocab argmax eval readout(2-way 폐기·#4103 false-positive 재발방지). **채택 = Fable Π-등변 사영** — readability 를 **측정 DV**로 두어 정직(pair 수위 자연보존). **Sol dissent(기록)**: Sol 은 `q_G=M+ε+max(d,0)·q_B=M+ε+max(−d,0)`(비답 max+ε 위로 g/b 강제)로 readability 를 **구조적 보장**했으나 — 이는 argmax 를 인위 강제(K8: |m_odd| per-query gating 류)라 tune-to-green 위험. Fable 의 "readability=보장 아닌 측정" 이 정직축서 우세(측정으로 판별: 안 나오면 그게 결과). 발사 시 Sol 의 ε-guard 는 **monitor 컬럼**(강제했으면 argmax 몇 개나 달랐나)으로만 병행. **구현 = 내가 core/clms.py `--store-fuse pairodd`(Π-사영) + evaluate.py `--store-readout vocab`(PairSuccess) + 데몬-일치 인증**, 오너 GPU go 시 in-vivo(H_9744/H_9760 podstage 재사용).
+
+## ⑨ 계기 착륙 + in-vivo seed7 FULL VERDICT (2026-07-19 · summer GPU · $0 pool)
+
+**계기 착륙**: `--store-fuse pairodd`(core/clms.py Π-등변 사영·#4119)+`--store-readout vocab`(#4119)+whitelist(#4122)+in-vivo 배선(cli/chat.py `--store-fuse`→set_clms_store·#4125). eval GREEN gate: rv3c13.clm 128/128=1.0 무손상.
+
+**in-vivo seed7 (128 held-out 질의 × 4-arm · anima-py study 데몬 · vocab readout)**:
+```
+              bar(H_9672 동일)     결과              판정
+main P1-bal    ≥ .75          →   0.8176            🟢 PASS (earned)
+flip-coherence ≥ .90          →   1.0000 (128/128)  🟢 (但 FORM — 아래)
+shuffle 붕괴   (주소 derange) →   0.3848            🟢 붕괴 (chance 아래·주소-값 결합 실재)
+nostore 붕괴   (store off)     →   0.0000 (읽힘0/128) 🟢 붕괴 (답이 store서 옴·trunk 아님)
+```
+- vs [[H_9744]] overwrite NEARMISS(flip-coh 0.898/0.828) · [[H_9760]] odd in-vivo INVALID(argmax garbage·readable 0) → **pairodd가 #4103 readability 완전수정(읽힘 128/128) + 두 bar 통과 + 통제 붕괴**.
+
+**⚠️ flip-coh=FORM 재분류 (lab full Fable∥Sol 수렴 · confound 스트레스테스트)**: pairodd 산술상 flip arm 마진 m_flip≡−m_main(항등식)이라 flip-coh=1은 **주소 안정성조차 불요·무조건 1.0**. 증명하는 것=계기 배선 정확(antisym·#4103 수정·margin≠0)뿐, **값-운반은 증명 못 함** → verdict bar서 제외·instrument-cert 강등(FORM tunable·BIND earned·p7). **seed당 진짜 증거 = main-balanced 하나**.
+
+**$0 leak census (store-independent 예측 가능성)**: op(is/not)→gold = 0.531 = 정확히 우연 → query 자연특징으로 누출 없음. main 0.8176은 balanced-chance(0.5) 위 earned Δ0.29.
+
+**value-permute 통제 추가 (lab 최강 판별자)**: 주소 고정·값(pols)만 derange = global 극성·주소집합 보존, per-address pairing만 파괴. gw2_build_vp.py(양seed src byte-identical 검증)→gw2/gw2_valperm.txt·gw2s11/gw2_valperm.txt. shuffle과 구별(주소 이동 없음). 붕괴 예측 시 content-addressed 값-운반 최종확증.
+
+**⏳ WIRED 판정 = in-progress**: seed7 FULL PASS 견고하나 **seed11 2/2 majority(H_9672 해리 전례상 load-bearing) + value-permute 붕괴** 발사 중(summer GPU async). 통과 시 H_9775 WIRED(main earned·통제붕괴·valperm·flip-coh=FORM 명기), acc≈.5면 ceiling genuine. no premature cementing.
