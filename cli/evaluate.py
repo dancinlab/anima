@@ -8678,6 +8678,8 @@ _KNOWN_FLAGS = frozenset((
     "--state-census", "--kmax",
     "--decl-flip", "--arms", "--strata",          # H_9800 ephemeral-declaration grounding
     "--closure-ladder", "--closure-arm", "--closure-ticks", "--closure-seed",   # H_9807 interventional closure rung 1
+    "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
+    "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture
 ))
 
 
@@ -13910,6 +13912,279 @@ def _pc2_cascade_null(d, argv):
     return 0
 
 
+# ───────────────────────────────────────────────────────────────────────────
+# H_9806 — COMPRESSION-MI measurement lane (`core/mi_compress.py`).
+#
+# Production had NO compression-based MI estimator, so "does this stream carry information
+# across a boundary" could only ever be answered through a model forward pass — which mixes a
+# property of the STREAM with a property of the MODEL's reach. These two flags measure the
+# stream itself: $0, stdlib-only, no ckpt, no GPU, no numpy.
+#
+#   anima-py evaluate --stream-mi <path> [--shuffle-floor derived|off] [--win 4096]
+#                                        [--span 2048] [--out f.json] [--n-segments 30]
+#   anima-py evaluate --capture-anchor <path> [--k 8] [--out f.json] [--n-segments N]
+#
+# <path> may be omitted, in which case the run is a pure CERTIFICATION pass (the plants only).
+#
+# THE CERTIFICATION IS NOT DETACHABLE. Both handlers run their positive plant AND their
+# negative control BEFORE they will report a substrate number, and both refuse to print a
+# verdict if the plant does not fire. A null control alone proves only that an instrument is
+# not hallucinating; it never proves the instrument can see anything
+# (positive-control-before-reading-a-negative). Shipping the plant as a separate script is the
+# same defect one `rm` away, so it ships inside the flag.
+#
+# THE FLOOR IS DERIVED, NEVER ASSUMED. `--shuffle-floor derived` (the default) recomputes the
+# ceiling from the SAME realized segments with adjacency deterministically broken — identical
+# lengths, byte statistics and pair count, only the ORDER destroyed. `off` skips the control
+# arm for a fast raw pass, and the run then REFUSES a verdict, because a raw ceiling is a value
+# and the signal is collapse-Δ against a control (measurement-metalaw · p7).
+# ───────────────────────────────────────────────────────────────────────────
+
+def _mi_positional(argv, flag):
+    """The token after `flag` unless it is another flag — <path> is optional here."""
+    if flag in argv:
+        i = argv.index(flag)
+        if i + 1 < len(argv) and not argv[i + 1].startswith("--"):
+            return argv[i + 1]
+    return ""
+
+
+def stream_mi_run(argv):
+    """`anima-py evaluate --stream-mi [<path>] [--shuffle-floor derived|off] ...` — H_9806."""
+    import mi_compress as mi
+
+    path = _mi_positional(argv, "--stream-mi")
+    win = evaluate_intval(argv, "--win", mi.W_TAIL)
+    span = evaluate_intval(argv, "--span", mi.P_PRED)
+    nseg = evaluate_intval(argv, "--n-segments", 30)
+    floor_mode = evaluate_strval(argv, "--shuffle-floor", "derived")
+    out_path = evaluate_strval(argv, "--out", "stream_mi.json")
+    if floor_mode not in ("derived", "off"):
+        print("ERROR: --shuffle-floor takes 'derived' (default) or 'off', got %r" % floor_mode,
+              file=sys.stderr)
+        return 2
+
+    print("=== anima evaluate --stream-mi — H_9806 CROSS-BOUNDARY CONDITIONAL-bpb BATTERY ===")
+    print("  win %dB tail · span %dB predicted prefix · eps %.4f bpb · estimators %s"
+          % (win, span, mi.EPS_BPB, ",".join(n for n, _ in mi.ESTIMATORS)))
+    print("  floor: %s" % ("DERIVED from the realized split (adjacency broken, lengths kept)"
+                           if floor_mode == "derived" else
+                           "OFF — raw pass, no verdict will be emitted"))
+
+    # ---- CERTIFICATION (never optional) ----------------------------------------------
+    print("  [certify] running the shipped plant + null (n=%d segments each) …" % nseg)
+    cert = mi.battery_liveness(nseg, win, span)
+    for nm, _ in mi.ESTIMATORS:
+        print("    %-8s plant over_floor %+0.4f | null over_floor %+0.4f"
+              % (nm, cert["plant"][nm]["over_floor"], cert["null"][nm]["over_floor"]))
+    print("    plant_fires=%s (must clear %.3f on ALL estimators) · null_refuses=%s "
+          "(must clear on NONE) → certified=%s"
+          % (cert["plant_fires"], 5 * mi.EPS_BPB, cert["null_refuses"], cert["certified"]))
+
+    report = {"schema": "anima-stream-mi/v1", "path": path, "win": win, "span": span,
+              "eps": mi.EPS_BPB, "shuffle_floor": floor_mode, "certification": cert}
+
+    if not cert["certified"]:
+        print("  VERDICT: ⛔ INSTRUMENT-DEAD — the battery either cannot see a planted "
+              "cross-boundary signal or reports one where none exists. No reading taken with "
+              "it is interpretable; do NOT read the substrate numbers below.")
+        report["verdict"] = "INSTRUMENT-DEAD"
+        json.dump(report, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print("  wrote %s" % out_path)
+        return 2
+
+    if not path:
+        print("  VERDICT: ✅ INSTRUMENT-CERTIFIED (certification-only pass — no stream given). "
+              "This certifies the battery, and asserts NOTHING about any substrate.")
+        report["verdict"] = "INSTRUMENT-CERTIFIED"
+        json.dump(report, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print("  wrote %s" % out_path)
+        return 0
+
+    segs, how = mi.segments_from_path(path, win, span)
+    print("  [stream] %s · %s" % (path, how))
+    if len(segs) < 3:
+        print("  VERDICT: ⛔ NO-STREAM — %d usable segments. A segment must be >= win+span "
+              "bytes to have a body beyond its tail; padding one would manufacture the answer."
+              % len(segs))
+        report["verdict"] = "NO-STREAM"
+        json.dump(report, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        return 2
+
+    ests = mi.ESTIMATORS
+    if floor_mode == "off":
+        row = {"n_segments": len(segs)}
+        for nm, est in ests:
+            row[nm] = mi.measure_pairs(segs, est, win, span)
+        report["stream"] = row
+        report["verdict"] = "RAW-NO-CONTROL"
+        for nm, _ in ests:
+            print("    %-8s raw ceiling %+0.4f  specificity %+0.4f  base %.4f"
+                  % (nm, row[nm]["ceiling_med"], row[nm]["specificity_med"],
+                     row[nm]["base_bpb_med"]))
+        print("  VERDICT: ⚪ RAW-NO-CONTROL — a raw ceiling is a value, not a signal. Re-run "
+              "with --shuffle-floor derived to obtain a readable collapse-Δ.")
+        json.dump(report, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print("  wrote %s" % out_path)
+        return 0
+
+    row = mi.stream_mi(segs, win, span, mi.EPS_BPB, ests)
+    report["stream"] = row
+    for nm, _ in ests:
+        r = row[nm]
+        print("    %-8s ceiling %+0.4f  floor %+0.4f  OVER_FLOOR %+0.4f  specificity %+0.4f"
+              % (nm, r["ceiling"], r["shuffle_floor"], r["over_floor"], r["specificity"]))
+    print("    pairs=%d · strict(all 3 > eps)=%s · order-aware(ppm+markov6)=%s (sign-agree=%s)"
+          % (row[ests[0][0]]["n_pairs"], row["anchored_strict"],
+             row["anchored_order_aware"], row["order_aware_agree"]))
+    if row["underpowered"]:
+        print("    ⚠️ UNDER-POWERED: %d pairs < %d. A null here is uninformative, not a kill."
+              % (len(segs) - 1, mi.MIN_PAIRS))
+
+    if row["anchored_strict"]:
+        report["verdict"] = "ANCHORED"
+        print("  VERDICT: 🟢 ANCHORED — every estimator clears the derived floor by more than "
+              "eps. The stream carries segment-specific cross-boundary information beyond the "
+              "%dB tail. This bounds an UNBOUNDED summary; a k-byte extract still needs its "
+              "own measurement." % win)
+    elif row["anchored_order_aware"]:
+        report["verdict"] = "ORDER-AWARE-ONLY"
+        print("  VERDICT: 🟡 ORDER-AWARE-ONLY — ppm and markov6 clear the floor but gzip does "
+              "not. Expected where the carried information is a lone long-range token (gzip's "
+              "32KB LZ window is blind to it), but it is a WEAKER read than strict.")
+    elif row["underpowered"]:
+        report["verdict"] = "UNDER-POWERED"
+        print("  VERDICT: ⚪ UNDER-POWERED — no estimator clears the floor, but the stream is "
+              "too thin to read that as a kill (power-before-negative-verdict).")
+    else:
+        report["verdict"] = "AT-FLOOR"
+        print("  VERDICT: 🔴 AT-FLOOR — no estimator clears the derived floor. On this stream, "
+              "at this tail reach, there is no cross-boundary information beyond what the tail "
+              "already supplies. Scope: this stream, this W — not every possible stream.")
+    json.dump(report, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print("  wrote %s" % out_path)
+    return 0
+
+
+def capture_anchor_run(argv):
+    """`anima-py evaluate --capture-anchor [<path>] [--k 8] [--out f.json]` — H_9806.
+
+    Feature-space shift-null LOO capture: how much of the cross-boundary predictive
+    information survives a rank-k linear summary, above its own cyclic-misalignment floor,
+    and does it beat a topic-matched other-segment floor per pair."""
+    import mi_compress as mi
+
+    path = _mi_positional(argv, "--capture-anchor")
+    win = evaluate_intval(argv, "--win", mi.W_TAIL)
+    span = evaluate_intval(argv, "--span", mi.P_PRED)
+    pk = evaluate_intval(argv, "--k", mi.PRIMARY_K)
+    out_path = evaluate_strval(argv, "--out", "capture_anchor.json")
+
+    print("=== anima evaluate --capture-anchor — H_9806 SHIFT-NULL LOO CAPTURE ===")
+    print("  D=%d hashed n-gram (n=1,2,3) · K-NN=%d · primary k=%d · ceiling gate rank<=%d"
+          % (mi.D_FEAT, mi.KNN, pk, mi.RANK_GATE))
+
+    segs, how = ([], "(certification-only)")
+    feats = []
+    if path:
+        segs, how = mi.segments_from_path(path, win, span)
+        print("  [stream] %s · %s" % (path, how))
+        feats = [mi.hashed_ngram_features(b) for _, b in segs]
+    n_live = evaluate_intval(argv, "--n-segments", len(feats) if feats else 40)
+
+    # ---- CERTIFICATION at MATCHED n (never optional) ----------------------------------
+    print("  [certify] three-arm liveness at matched n=%d (HIGH must fire · FAIL must "
+          "refuse · LOW must stay <= %.2f) …" % (n_live, mi.LOW_CAP_MAX))
+    cert = mi.capture_liveness(n_live, pk)
+    hi, lo, fa = cert["high"], cert["low"], cert["fail"]
+    print("    HIGH (plant_weak)     gate=%s capture(%s)=%s → %s"
+          % (hi.get("gate_ok"), hi.get("primary_k"),
+             _fmt_opt(hi.get("capture_primary")), "PASS" if cert["high_ok"] else "FAIL"))
+    print("    LOW  (buried delay)   full_rank=%s capture(k<=8)=%s → %s%s"
+          % (lo.get("full", {}).get("rank"),
+             {k: _fmt_opt(v) for k, v in (lo.get("capture") or {}).items()},
+             "PASS" if cert["low_ok"] else "MISS",
+             "" if cert["low_is_gating"] else "  (INFORMATIONAL at n<%d)" % mi.LOW_CERT_N))
+    print("    FAIL (iid noise)      gate=%s → %s"
+          % (fa.get("gate_ok"), "PASS" if cert["fail_ok"] else "FAIL"))
+    print("    certified=%s · grade=%s" % (cert["certified"], cert["grade"]))
+
+    report = {"schema": "anima-capture-anchor/v1", "path": path, "primary_k": pk,
+              "n_liveness": n_live, "certification": cert}
+
+    if not cert["certified"]:
+        print("  VERDICT: ⛔ INSTRUMENT-DEAD — the capture rig failed its own liveness arms. "
+              "Any capture number it produces is void (an instrument that reads 1.0 on noise "
+              "or 0 on a planted ceiling is measuring itself).")
+        report["verdict"] = "INSTRUMENT-DEAD"
+        json.dump(report, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print("  wrote %s" % out_path)
+        return 2
+
+    if not feats:
+        print("  VERDICT: ✅ INSTRUMENT-CERTIFIED (certification-only pass — no stream given).")
+        report["verdict"] = "INSTRUMENT-CERTIFIED"
+        json.dump(report, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print("  wrote %s" % out_path)
+        return 0
+
+    res = mi.shift_null_loo_capture(feats, pk)
+    report["stream"] = res
+    if "error" in res:
+        print("  VERDICT: ⛔ NO-VALID-K — %s" % res["error"])
+        report["verdict"] = "NO-VALID-K"
+        json.dump(report, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        return 2
+
+    print("    pairs=%d shifts=%d numrank=%d valid_k=%s"
+          % (res["n_pairs"], res["n_shifts"], res["numrank"], res["valid_ks"]))
+    print("    ceiling arm: align=%+0.6f rank=%d/%d (gate rank<=%d → %s)"
+          % (res["full"]["align"], res["full"]["rank"], res["n_shifts"],
+             mi.RANK_GATE, res["gate_ok"]))
+    print("    capture: %s" % {k: _fmt_opt(v) for k, v in res["capture"].items()})
+    print("    topic floor: capture %s vs topic %s → margin %s (eps_f %.3f)"
+          % (_fmt_opt(res["capture_primary"]), _fmt_opt(res["topic_capture_primary"]),
+             _fmt_opt(res["capture_margin"]), mi.EPS_FRAC))
+    print("    per-pair sign(err_topic > err_s) = %d/%d · DERIVED bar %d "
+          "(exact binomial, alpha=%.2f, realized n) → %s"
+          % (res["sign_topic_gt_s"], res["n_pairs"], res["sign_needed"],
+             res["sign_alpha"], res["sign_ok"]))
+
+    marg = res["capture_margin"]
+    if not res["gate_ok"]:
+        report["verdict"] = "NO-FEATURE-CEILING"
+        print("  VERDICT: ⚪ NO-FEATURE-CEILING — the hashed n-gram basis carries no resolvable "
+              "cross-boundary signal on this stream, so capture is unmeasurable here. This "
+              "refutes the INSTRUMENT's power on this substrate, not the substrate.")
+    elif (res["capture_primary"] or 0.0) < mi.CAPTURE_ANCHOR:
+        report["verdict"] = "CAPTURE-REFUSED"
+        print("  VERDICT: 🔴 CAPTURE-REFUSED — the rank-%d code retains less than the %.2f "
+              "anchor of a live ceiling. A hindsight projection bounds a learned code of the "
+              "same rank, so this bounds the learned case too." % (pk, mi.CAPTURE_ANCHOR))
+    elif marg is None or marg <= mi.EPS_FRAC or not res["sign_ok"]:
+        report["verdict"] = "TOPIC-DECORATION"
+        print("  VERDICT: 🔴 TOPIC-DECORATION — the code clears the ceiling anchor but does not "
+              "beat a topic-matched OTHER segment per pair. It is carrying topic identity, not "
+              "a segment-specific self. The aggregate margin is not the test; the per-pair sign "
+              "count is, and its bar was derived from the realized %d pairs." % res["n_pairs"])
+    elif not res["monotonic_ok"]:
+        report["verdict"] = "PENDING-INSTRUMENT"
+        print("  VERDICT: 🟡 PENDING(instrument) — capture is non-monotonic in k, which is a "
+              "projection artifact signature. Do not read the magnitude.")
+    else:
+        report["verdict"] = "ANCHORED"
+        print("  VERDICT: 🟢 ANCHORED — a rank-%d continuous summary retains the ceiling AND "
+              "beats the topic floor per pair (grade %s). Hindsight ≥ learned, so this is a "
+              "CEILING on a learned code, never a demonstration of one." % (pk, cert["grade"]))
+    json.dump(report, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print("  wrote %s" % out_path)
+    return 0
+
+
+def _fmt_opt(v):
+    return "n/a" if v is None else "%.4f" % v
+
+
 def _reject_unknown_flags(argv):
     """Return an error string for the first unknown --flag in argv, else ''."""
     for a in argv:
@@ -15085,6 +15360,12 @@ def main(argv):
         return _pc2_direction(argv[1:])
     if len(argv) >= 1 and argv[0] == "--ag-criticality":
         return _ag_criticality(argv[1:])
+    # H_9806 COMPRESSION-MI — measures a property of the STREAM, so it takes no ckpt and
+    # dispatches on argv[0]. $0, stdlib-only, no GPU. Both carry their own certification.
+    if len(argv) >= 1 and argv[0] == "--stream-mi":
+        return stream_mi_run(argv)
+    if len(argv) >= 1 and argv[0] == "--capture-anchor":
+        return capture_anchor_run(argv)
     if len(argv) >= 1 and argv[0] == "--gen-percept-schedule":
         return _gen_percept_schedule(argv[1:])
     if len(argv) >= 1 and argv[0] == "--eval-historicity":
