@@ -8132,7 +8132,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--eval-historicity", "--schedule", "--dv", "--jitter", "--af-forward", "--impulse", "--side", "--kmax", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--eval-historicity", "--schedule", "--dv", "--jitter", "--af-forward", "--impulse", "--side", "--kmax", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--pos-control", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -11367,6 +11367,49 @@ def _pc2_atom_census(argv):
         contrast_sep = con_ci is not None and (con_ci[0] > 0 or con_ci[1] < 0) and abs(con_d or 0) >= _KILL_D
         all_equiv = all(_equiv0(armstats.get(a)) for a in _ARMS if a != "scalar" and armstats.get(a) is not None)
 
+        # ④ⓐ 양성통제(prefix-swap · --pos-control <dir>) — pos_dir 제공 시만 실검증.
+        # loading=="pswap" 항목(prefix 교체 디코드) vs base(gtext_b64) 의 within-tick paired atoms Δ.
+        # PASS = prefix-swap(실재 의미변화)이 atom-census 를 유의하게 옮김(CI 0 제외) = readout 민감 인증.
+        # FAIL/미실행 = readout 이 실재 변화조차 못 잡음(deaf) → 음성(PASS-BYTE-WALL) 판독 금지(§⑤ · VOID).
+        pos_pass = None
+        pos_stat = None
+        if pos_dir:
+            pos_deltas = []
+            for pf in sorted(_glob.glob(os.path.join(pos_dir, "*.jsonl"))):
+                for l in open(pf):
+                    l = l.strip()
+                    if not l:
+                        continue
+                    try:
+                        r = _pj.loads(l)
+                    except ValueError:
+                        continue
+                    if r.get("_meta") or not r.get("emit"):
+                        continue
+                    base_b = _b64(r.get("gtext_b64"))
+                    if not base_b:
+                        continue
+                    for e in (r.get("gtext_zeta") or []):
+                        if e.get("loading") == "pswap":
+                            sw = _b64(e.get("text_b64"))
+                            if sw:
+                                bc, _ = _count(base_b.decode("utf-8", "replace"))
+                                sc, _ = _count(sw.decode("utf-8", "replace"))
+                                pos_deltas.append(sc - bc)
+            pos_stat = _stats(pos_deltas)
+            print("")
+            if pos_stat is None:
+                pos_pass = False
+                print("  ④ⓐ 양성통제(prefix-swap): pswap 항목 없음/부족(n<2) → 미실행(FAIL · readout 감도 미인증)")
+            else:
+                pse = pos_stat["sd"] / (pos_stat["neff"] ** 0.5) if pos_stat["neff"] > 0 else float("inf")
+                pos_stat["ci"] = (pos_stat["md"] - _CI_Z * pse, pos_stat["md"] + _CI_Z * pse)
+                pos_stat["d"] = (pos_stat["md"] / pos_stat["sd"]) if pos_stat["sd"] > 0 else 0.0
+                pos_pass = (pos_stat["ci"][0] > 0 or pos_stat["ci"][1] < 0)   # CI 0 제외 = 유의 검출
+                print("  ④ⓐ 양성통제(prefix-swap): meanΔ=%+.3f · d=%+.3f · 95%%CI=[%+.3f,%+.3f] · n=%d → %s"
+                      % (pos_stat["md"], pos_stat["d"], pos_stat["ci"][0], pos_stat["ci"][1], pos_stat["n"],
+                         "🟢 PASS(readout 민감 — 실재 변화 검출)" if pos_pass else "🔴 FAIL(readout deaf)"))
+
         print("")
         print("  ⇒ VERDICT (DIRECTIONAL · 303M · terminal=이 출력 verbatim · byte-wall 판정표 §⑤):")
         if refit_moves and random_still and contrast_sep:
@@ -11375,8 +11418,13 @@ def _pc2_atom_census(argv):
         elif refit_moves and not contrast_sep:
             print("     🟠 AMBIG-GENERIC — refit 은 rng-null 밖이나 random 대비 분리 안 됨(generic loading 효과).")
         elif all_equiv:
-            if pos_dir:
-                print("     🟢 PASS-BYTE-WALL — 전 loading arm 이 atom-census 에서 TOST 등가(|d|<%.2f) · 양성통제 통과." % _TOST_D)
+            if pos_dir and pos_pass:
+                print("     🟢 PASS-BYTE-WALL — 전 loading arm 이 atom-census 에서 TOST 등가(|d|<%.2f) ∧ 양성통제 통과" % _TOST_D)
+                print("        (prefix-swap=실재 변화는 readout 이 검출). ⇒ 어떤 축도 content 입도 못 옮기나 readout 은")
+                print("        멀쩡 = 축-무관 content-벽 확정(π̄ 채널 H_9755 와 2-채널 정합).")
+            elif pos_dir and not pos_pass:
+                print("     ⚪ VOID — 전 arm 등가이나 양성통제 실패(prefix-swap 조차 readout 이 못 잡음=deaf).")
+                print("        readout 감도 미인증 → 음성(PASS-BYTE-WALL) 판독 금지(§⑤) · readout 재설계(span↑/atom↑) 후 재fire.")
             else:
                 print("     ⏳ PENDING-POSITIVE-CONTROL — 전 arm TOST 등가(|d|<%.2f · PASS-BYTE-WALL 방향)이나" % _TOST_D)
                 print("        음성 판독은 prefix-swap 양성통제 필요(card §⑤ readout 양성통제 없이 음성 금지).")
