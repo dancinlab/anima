@@ -110,6 +110,9 @@ def _parse_args(argv):
             #                           stem names, J = held-out operator names. Documented in the
             #                           format's own printout so the reinterpretation is never silent.
             "stems_per_episode": 4, "eval_episodes": 16,
+            # H_9810 bindpanel: --bind-k = stacked contested edges per sentence (K). K=1 collapses
+            # the field to rank 1 by construction, so the floor is 2 and the default is 6.
+            "bind_k": 6,
             # H_9809 ngram-audit (--ngram-recoverable-audit · absorbs lab/v3 H_004's theorem
             # "oracle-fusable <=> n-gram-recoverable" as a production audit flag):
             #   --ngram-recoverable-audit  arm the audit (required by fmt `ngram-audit`)
@@ -227,6 +230,8 @@ def _parse_args(argv):
             opts["stems_per_episode"] = int(argv[i + 1]); i += 2   # H_9800 counterfactual-decl
         elif a == "--eval-episodes":
             opts["eval_episodes"] = int(argv[i + 1]); i += 2       # H_9800 counterfactual-decl
+        elif a == "--bind-k":
+            opts["bind_k"] = int(argv[i + 1]); i += 2               # H_9810 bindpanel conjuncts
         elif a == "--ngram-recoverable-audit":
             opts["ngram_recoverable_audit"] = True; i += 1          # H_9809 ngram-audit
         elif a == "--audit-train":
@@ -2181,6 +2186,211 @@ _CD_ANSWER = {1: "aye", 0: "nay"}           # answer token (both 3B — no lengt
 # these contains) would make the leak/derangement audits ambiguous, so such names are dropped from
 # the pool at build time rather than filtered later.
 _CD_RESERVED = ("good", "harm", "same", "flip", "aye", "nay", "means", "acts", "ep")
+
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
+#  H_9810 · `anima corpus bindpanel` — the HELD-OUT BINDING PANEL the H_9805 tension-field arms
+#  are scored on (`anima-py evaluate <clm> --bind-panel <panel.json>`).
+#
+#  WHY IT LOOKS THE WAY IT DOES — read this before touching a lexeme.
+#  --------------------------------------------------------------------------------------------
+#  H_9805's field is `core/tension_field.py`. Read that file's `chunk_heads`/`byte_class` and one
+#  fact falls out that decides this entire design: the field T is a function of the WHITESPACE
+#  MASK and nothing else.
+#     · chunk starts (and therefore head_A / head_G) are determined by where the spaces are;
+#     · chi[i,j] = byte_class(i)==byte_class(j), and every head j is a letter (class 2), so chi
+#       reduces to "is position i a space or not".
+#  ⇒ T is blind to WHICH letters are present. It sees the sequence of word LENGTHS, full stop.
+#
+#  The consequence is not cosmetic. On a panel whose answer depends on lexical identity, the
+#  production field carries EXACTLY ZERO bits about the answer, `duel` and `rank1` both reduce a
+#  field that is answer-irrelevant, and F1 (Δd_acc(duel−rank1)) is not measurable — it would
+#  return ~0 for a reason that has nothing to do with rank. Such a panel does not test the
+#  hypothesis; it tests nothing.
+#
+#  So this panel is LENGTH-CODED on purpose, and says so out loud:
+#     verb   agreement-marked "walks"  (stem+s, 5B)   vs  participle "walking" (stem+ing, 7B)
+#     noun   singular         "doctor" (6B)           vs  plural     "doctors" (7B)
+#  Every stem is 4 letters and every singular noun is 6 letters, so the two binding features are
+#  carried by chunk LENGTH — the only channel the field has. `hp` (is the verb agreement-marked)
+#  and `pos` (is the singular noun the near one) are each balanced at exactly 0.5 against the
+#  gold, and the gold is their XOR, so no unary cue answers a single slot. That XOR-over-an-edge
+#  is H_004's construction transplanted to English (EN-FIRST directive) with honorific concord
+#  replaced by number concord — the same replacement H_9805 already made when it swapped
+#  honorific chi for byte-class chi.
+#
+#  K conjuncts are STACKED in one sentence because a single contested edge collapses the field to
+#  rank 1 by construction (H_004 measured off-top 0.000 on its single-bind frame and declared it
+#  F4-DEAD at $0). K slots ⇒ K independent contested edges ⇒ a field with rank to lose.
+#
+#  The gold codebook is the FULL 2^K factorial, which is why it is full GF(2) rank with no
+#  prefix-determined column: `--free-slot-score` recomputes the free-slot set from it and must
+#  return ALL K slots free with a field-blind ceiling equal to chance. H_004 shipped a rank-4
+#  K=6 codebook, teacher-forcing completed its 2 parity slots for free, and every arm was
+#  inflated to a 0.667 ceiling that reached held-out — the defect this codebook cannot have.
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+# 4-letter stems: +"s" => 5B agreement-marked · +"ing" => 7B participle. Length is the channel.
+_BP_VERB_SEEN = ["call", "help", "jump", "look", "talk", "walk", "want", "work"]
+_BP_VERB_HELD = ["wait", "pull", "push", "kick", "hold", "lead", "feed", "send"]
+# 6-letter nouns: +"s" => 7B plural.
+_BP_NOUN_SEEN = ["doctor", "artist", "banker", "driver", "farmer", "hunter", "keeper", "lawyer"]
+_BP_NOUN_HELD = ["mentor", "singer", "tailor", "writer", "dancer", "porter", "sailor", "editor"]
+_BP_ANS = ("up", "dn")                      # 2B each — length parity, checked by --free-slot-score
+_BP_TAIL = "waited"
+_BP_ARROW = " => "
+
+
+def _bp_hp_patterns(K):
+    """4 hp (agreement-marked) patterns whose per-slot values are exactly balanced 2:2.
+
+    Balance is what makes the presence heuristic exactly 0.5 with no sampling noise: for every
+    slot k the four patterns supply {0, 1, k%2, 1-k%2} = two 0s and two 1s."""
+    return [[0] * K, [1] * K, [k % 2 for k in range(K)], [1 - k % 2 for k in range(K)]]
+
+
+def _bp_conjunct(hp, pos, verb, sg, pl):
+    """One contested edge. `pos` 0 = the SINGULAR noun is the near (N1) noun.
+
+    gold = hp XOR pos. Neither term alone predicts it (both are balanced against gold across the
+    panel), and reading it requires binding the verb's agreement marker to the correct head across
+    the `of` edge — the operation the tension field claims to carry."""
+    vf = verb + ("s" if hp else "ing")
+    n1, n2 = (sg, pl) if pos == 0 else (pl, sg)
+    return {"surface": "%s %s of %s and" % (vf, n1, n2),
+            "hp": hp, "pos": pos, "verb": verb, "verb_form": vf,
+            "sg_lexeme": sg, "pl_lexeme": pl, "n1": n1, "n2": n2,
+            "gold_bit": hp ^ pos, "gold_token": _BP_ANS[hp ^ pos]}
+
+
+def _bp_items(K, verbs, nouns, rot):
+    """The full factorial panel: 2^K gold patterns x 4 hp patterns = 4*2^K items.
+
+    LEXEME ASSIGNMENT DEPENDS ON THE SLOT AND THE ROTATION ONLY — NEVER ON THE hp BLOCK. The
+    first draft keyed it to (block, slot) and the build gate refused it with n1_lexeme = 1.000:
+    hp is constant inside a block, so a block-keyed lexeme IDENTIFIES hp, and the noun's own
+    singular/plural form gives pos ⇒ a pure lookup table on the N1 word form solved every slot
+    while `presence` and `position` each still read a blameless 0.5. That is a conjunction leak of
+    exactly H_004's family, and it was invisible in the two unary numbers. With the block dropped
+    from the key, every lexeme group spans all four hp blocks and all 2^K gold patterns, so it is
+    exactly 50/50 — zero sampling slack, unlike an RNG assignment that is only 0.5 in expectation."""
+    nv, nn = len(verbs), len(nouns)
+    items = []
+    for b, hp_pat in enumerate(_bp_hp_patterns(K)):
+        for g in range(1 << K):
+            gold = [(g >> k) & 1 for k in range(K)]
+            conjs = []
+            for k in range(K):
+                j = (k + rot) % nv
+                jn = (k + rot) % nn
+                conjs.append(_bp_conjunct(hp_pat[k], gold[k] ^ hp_pat[k],
+                                          verbs[j], nouns[jn], nouns[(jn + 3) % nn] + "s"))
+            surface = " ".join(c["surface"] for c in conjs) + " " + _BP_TAIL + _BP_ARROW
+            items.append({"block": b, "gold_index": g, "conjuncts": conjs, "surface": surface,
+                          "gold_bits": gold,
+                          "gold_pattern": "".join(c["gold_token"] for c in conjs)})
+    return items
+
+
+def _bp_majority(rows, keyfn):
+    """Best-constant-predictor accuracy under a grouping = what a reader with ONLY that cue scores.
+    This is the heuristic audit; 0.5 means the cue is worthless on this panel."""
+    by = {}
+    for gold, r in rows:
+        by.setdefault(keyfn(r), []).append(gold)
+    ok = 0
+    for v in by.values():
+        ones = sum(v)
+        ok += max(ones, len(v) - ones)
+    return ok / float(len(rows))
+
+
+def _bp_audit(items, K):
+    """Per-slot heuristic audit + pairwise slot independence. Every number must be exactly 0.5."""
+    per_slot = []
+    for k in range(K):
+        rows = [(it["gold_bits"][k], it["conjuncts"][k]) for it in items]
+        per_slot.append({
+            "presence": round(_bp_majority(rows, lambda c: c["hp"]), 6),
+            "position": round(_bp_majority(rows, lambda c: c["pos"]), 6),
+            "locality": round(_bp_majority(rows, lambda c: 0), 6),
+            "verb_lexeme": round(_bp_majority(rows, lambda c: c["verb"]), 6),
+            "verb_form": round(_bp_majority(rows, lambda c: c["verb_form"]), 6),
+            "n1_lexeme": round(_bp_majority(rows, lambda c: c["n1"]), 6),
+            "n2_lexeme": round(_bp_majority(rows, lambda c: c["n2"]), 6),
+            "balance": round(sum(g for g, _ in rows) / float(len(rows)), 6),
+        })
+    worst_pair, worst = None, 0.0
+    n = float(len(items))
+    for a in range(K):
+        for b in range(a + 1, K):
+            same = sum(1 for it in items if it["gold_bits"][a] == it["gold_bits"][b]) / n
+            if abs(same - 0.5) > worst:
+                worst, worst_pair = abs(same - 0.5), (a, b)
+    in_band = all(abs(v - 0.5) <= 1e-9 for s in per_slot for v in s.values())
+    lens = set(len(it["surface"].encode()) for it in items)
+    return {"per_slot": per_slot, "worst_pairwise_dev": round(worst, 6), "worst_pair": worst_pair,
+            "heuristics_exactly_half": in_band, "pairwise_independent": worst <= 1e-9,
+            "surface_byte_lengths": sorted(lens),
+            "max_seq_bytes": max(lens) + 2 * K}
+
+
+def build_bindpanel(K, n_blocks, seed, lang, rot=0):
+    """Returns (drill_corpus_text, panel_items, codebook, stats).
+
+    The DRILL corpus teaches the binding operation on the SEEN lexeme pool; the PANEL asks it on
+    the HELD pool. The two pools are string-disjoint and neither nests in the other, so the 0-shot
+    claim is checkable by word-boundary count (corpus-py-1 (G)) and is checked below."""
+    if lang != "en":
+        raise SystemExit("anima corpus bindpanel: --lang en only — the length-coded number-concord "
+                         "frame is English (EN-FIRST directive); a ko port needs its own panel and "
+                         "its own heuristic audit, not a translation.")
+    if K < 2:
+        raise SystemExit("anima corpus bindpanel: --bind-k must be >= 2 (K=1 has a single contested "
+                         "edge and collapses the field to rank 1 by construction — H_004 F4-DEAD)")
+    panel = _bp_items(K, _BP_VERB_HELD, _BP_NOUN_HELD, rot)
+    # The drill sweeps EVERY rotation so all 8 seen verbs and all 8 seen nouns are exercised in
+    # every slot. One rotation would teach the rule at 6 lexemes and leave "it memorised those six"
+    # as a live alternative to "it learned the operation" (corpus-py-1 (E): count the axis).
+    seen = []
+    for r in range(len(_BP_VERB_SEEN)):
+        seen.extend(_bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, rot + r))
+    rng = random.Random(seed)
+    order = list(range(len(seen)))
+    lines = []
+    while len(lines) < n_blocks:
+        rng.shuffle(order)
+        for i in order:
+            if len(lines) >= n_blocks:
+                break
+            it = seen[i]
+            lines.append(it["surface"] + it["gold_pattern"])
+    text = "\n".join(lines) + "\n"
+
+    # 0-SHOT audit, word-boundary (never substring — `art` nests in `start`; corpus-py-1 (G)).
+    words = set()
+    for tok in re.split(r"\s+", text):
+        if tok:
+            words.add(tok)
+    held_forms = set()
+    for v in _BP_VERB_HELD:
+        held_forms.add(v + "s"); held_forms.add(v + "ing")
+    for nn_ in _BP_NOUN_HELD:
+        held_forms.add(nn_); held_forms.add(nn_ + "s")
+    leaks = sorted(held_forms & words)
+
+    codebook = {"panel": "bindpanel-K%d" % K,
+                "slots": ["s%d" % k for k in range(K)],
+                "codewords": [it["gold_bits"] for it in panel]}
+    aud = _bp_audit(panel, K)
+    aud_seen = _bp_audit(seen, K)
+    st = {"K": K, "lang": lang, "seed": seed, "rot": rot,
+          "n_panel": len(panel), "n_drill_lines": len(lines),
+          "bytes": len(text.encode()), "leaks": leaks,
+          "audit_panel": aud, "audit_drill": aud_seen,
+          "held_lexemes": {"verbs": _BP_VERB_HELD, "nouns": _BP_NOUN_HELD},
+          "seen_lexemes": {"verbs": _BP_VERB_SEEN, "nouns": _BP_NOUN_SEEN}}
+    return text, panel, codebook, st
 
 
 def _cd_name_pool(n_total):
@@ -4509,8 +4719,17 @@ def main():
 
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
                    "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "consult-variants",
-                   "routeaudit", "atoms", "c34", "storebind", "g6bind", "counterfactual-decl"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind|counterfactual-decl|ngram-audit> --out PATH")
+                   "routeaudit", "atoms", "c34", "storebind", "g6bind", "counterfactual-decl",
+                   "bindpanel"):
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind|counterfactual-decl|bindpanel|ngram-audit> --out PATH")
+        print("      bindpanel --lang en --out c.txt [--bind-k 6] [--n-blocks 4000] [--seed 7]")
+        print("             H_9810 — the HELD-OUT BINDING PANEL for the H_9805 tension-field arms.")
+        print("             K stacked number-concord edges per sentence; gold = agreement-marker XOR")
+        print("             singular-noun position, both balanced at 0.5. LENGTH-CODED on purpose:")
+        print("             core/tension_field.py derives the field from the WHITESPACE MASK alone,")
+        print("             so a lexically-keyed panel would hand the field 0 bits. Emits the drill")
+        print("             corpus + <out>.panel.json (score: evaluate --bind-panel) +")
+        print("             <out>.codebook.json (verify: evaluate --free-slot-score).")
         print("      counterfactual-decl --lang en --out c.txt [--seed 7] [--held-out 32,8]")
         print("             [--n-blocks 4000] [--stems-per-episode 4] [--eval-episodes 16]")
         print("             H_9800 — every episode RE-ASSIGNS stem->sense and operator->role, so a")
@@ -4873,6 +5092,86 @@ def main():
         print("  answer = polarity XOR operator (is/not × good/bad) — store holds the FACT, text the "
               "OPERATOR; binding both needs the CLMS lane's nonlinear (GELU-MLP) readout.")
         print("  score:  anima-py evaluate <clm> --store %s" % hj)
+        return 0
+
+    if fmt == "bindpanel":
+        # H_9810 — the held-out binding panel + its drill corpus for the H_9805 tension-field arms.
+        if not opts["out"]:
+            print("anima corpus bindpanel: --out c.txt is required", file=sys.stderr)
+            sys.exit(2)
+        K = int(opts["bind_k"])
+        text, panel, codebook, st = build_bindpanel(K, opts["n_blocks"], opts["seed"], opts["lang"])
+        regen = "anima-py corpus " + " ".join(argv)
+        if st["leaks"]:
+            # A held-out lexeme in the drill corpus makes the panel a memorization test, and the
+            # generalization axis this panel claims (LEXEME) would be measured at 0 exposure only
+            # in name (corpus-py-1 (F)). Refuse rather than ship it.
+            print("anima corpus bindpanel: 0-SHOT LEAK — held-out word form(s) %s occur in the "
+                  "drill corpus" % st["leaks"][:8], file=sys.stderr)
+            sys.exit(2)
+        ap = st["audit_panel"]
+        if not (ap["heuristics_exactly_half"] and ap["pairwise_independent"]):
+            print("anima corpus bindpanel: HEURISTIC LEAK — a unary cue or a slot pair is not at "
+                  "0.5 on the panel; the d_acc floor would not be chance. audit=%s"
+                  % json.dumps(ap), file=sys.stderr)
+            sys.exit(2)
+        with open(opts["out"], "w", encoding="ascii") as fh:
+            fh.write(text)
+        pj = opts["out"] + ".panel.json"
+        json.dump({"schema": "anima-bindpanel/v1", "K": K, "lang": st["lang"], "seed": st["seed"],
+                   "answers": list(_BP_ANS), "tail": _BP_TAIL, "arrow": _BP_ARROW,
+                   "regen_cmd": regen, "codebook": codebook, "audit": ap,
+                   "held_lexemes": st["held_lexemes"], "seen_lexemes": st["seen_lexemes"],
+                   "items": panel},
+                  open(pj, "w", encoding="utf-8"), ensure_ascii=False)
+        # .seen_panel.json — the SAME frame on the DRILLED lexemes. This is H_9805's F2 liveness
+        # face: if an arm cannot do the operation on lexemes it was trained on, the held-out number
+        # is measuring a dead model and must not be read at all. Without it F2 has no instrument
+        # either, and a floor-level held-out d_acc is unattributable.
+        sj = opts["out"] + ".seen_panel.json"
+        seen_panel = _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0)
+        json.dump({"schema": "anima-bindpanel/v1", "K": K, "lang": st["lang"], "seed": st["seed"],
+                   "answers": list(_BP_ANS), "tail": _BP_TAIL, "arrow": _BP_ARROW,
+                   "regen_cmd": regen, "codebook": codebook,
+                   "face": "liveness (DRILLED lexemes — NOT held-out, never a generalization claim)",
+                   "items": seen_panel},
+                  open(sj, "w", encoding="utf-8"), ensure_ascii=False)
+        cj = opts["out"] + ".codebook.json"
+        json.dump(codebook, open(cj, "w", encoding="utf-8"), ensure_ascii=False)
+        mj = opts["out"] + ".meta.json"
+        json.dump({"fmt": "bindpanel", "lang": st["lang"], "K": K, "seed": st["seed"],
+                   "bytes": st["bytes"], "lines": st["n_drill_lines"], "regen_cmd": regen,
+                   "min_steps": None, "min_lr": None,
+                   "note": ("no MEASURED budget floor for this format yet. It is a FROM-SCRATCH "
+                            "drill corpus, NOT a CPT mix — continuing a pretrained ckpt on it "
+                            "would destroy every stratum absent from it (corpus-py-1 ⑥), and this "
+                            "corpus contains exactly one carrier, so nothing else survives."),
+                   "forget_strata": []},
+                  open(mj, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print("anima corpus bindpanel [%s]: K=%d panel=%d items drill=%d lines bytes=%d seed=%d -> %s"
+              % (st["lang"], K, st["n_panel"], st["n_drill_lines"], st["bytes"], st["seed"],
+                 opts["out"]))
+        print("  surface bytes %s · max scored seq = %d B (choose --seq-len/--win at or above it, "
+              "or the right-aligned window truncates the early conjuncts and the panel measures a "
+              "different question)" % (ap["surface_byte_lengths"], ap["max_seq_bytes"]))
+        print("  ⚠️ THE FIELD SEES WORD LENGTHS, NOTHING ELSE. core/tension_field.py derives every "
+              "chunk head and every chi sign from the WHITESPACE MASK, so T is blind to which "
+              "letters are present. This panel is length-coded (verb +s=5B vs +ing=7B · noun "
+              "6B vs +s=7B) SO THAT the field can carry the answer at all. On any panel keyed to "
+              "lexical identity the field carries 0 bits and Δd_acc(duel−rank1) is not measurable.")
+        print("  HEURISTIC AUDIT (all must be exactly 0.500000): " + " · ".join(
+            "%s=%s" % (k, ap["per_slot"][0][k]) for k in sorted(ap["per_slot"][0])))
+        print("  slot independence: worst pairwise |P(gold_a=gold_b)-0.5| = %s (pair %s)"
+              % (ap["worst_pairwise_dev"], ap["worst_pair"]))
+        print("  0-SHOT ✅ every held-out word form occurs 0x in the drill corpus "
+              "(word-boundary split, never substring — corpus-py-1 (G))")
+        print("  codebook = the FULL 2^%d factorial ⇒ GF(2) rank %d, no prefix-determined column. "
+              "VERIFY IT, do not assume it:" % (K, K))
+        print("    anima-py evaluate --free-slot-score %s --pregate-bar 0.15" % cj)
+        print("  score:  anima-py evaluate <clm> --bind-panel %s" % pj)
+        print("  F2 liveness (DRILLED lexemes — read it FIRST; a floor-level held-out number on a "
+              "model that cannot do the drilled cells is unattributable):")
+        print("          anima-py evaluate <clm> --bind-panel %s" % sj)
         return 0
 
     if fmt == "counterfactual-decl":

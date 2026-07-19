@@ -1381,6 +1381,310 @@ def tension_rank_audit_run(argv):
                         "rank1_collapse": bool(collapsed)}, fh, indent=2)
         print("  wrote " + out_path)
     return 0
+_BIND_PANEL_SCHEMA = "anima-bindpanel/v1"
+
+
+def _bind_free_slots(panel_obj):
+    """Recompute the free-slot set FROM THIS PANEL's codebook (G3 · never inherited).
+
+    lab/v5 G3 exists because H_004 inherited a free-slot set across a codebook change and scored
+    slots the new codebook handed over for free. `core/pregates.free_slot_audit` owns the GF(2)
+    rank + length-parity arithmetic; this function only refuses to proceed when it says the
+    codebook is redundant, because on a redundant codebook every arm is inflated equally and the
+    duel-vs-rank1 difference stops being about the field."""
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "core"))
+    import pregates
+    res = pregates.free_slot_audit(panel_obj["codebook"])
+    return res
+
+
+def _bind_dacc(np, W, item, T, free_slots, answers):
+    """Per-item d_acc: a teacher-forced 2AFC at each FREE slot.
+
+    The prefix handed to the model is the surface plus the TRUE answers of the earlier slots, so
+    slot k is scored on its own and never on the model's own earlier mistakes. Both answer tokens
+    are the same byte length (asserted in the preflight), so there is no length confound to correct.
+
+    A tie scores 0.5 and is COUNTED. A tie is the signature of a readout that never moved, and
+    silently rounding it to `correct` is how a dead readout reads as chance-plus (H_9800's
+    degenerate-readout telemetry, same defect family)."""
+    surf, gold = item["surface"], item["gold_pattern"]
+    L = len(answers[0])
+    hits, ties, chosen, margins = [], 0, [], []
+    for k in free_slots:
+        prefix = surf + gold[:L * k]
+        g = gold[L * k:L * (k + 1)]
+        a = answers[0] if g == answers[1] else answers[1]
+        ng = _xbind_cont_nll(np, clm, W, prefix, g, T)
+        na = _xbind_cont_nll(np, clm, W, prefix, a, T)
+        # The CHOSEN token is reported in answer space, not gold space: a model that always emits
+        # the same token sits at exactly 0.5 on a balanced panel and is indistinguishable from an
+        # honest chance reader by d_acc alone (H_9800's readout telemetry, same defect family).
+        chosen.append(g if ng < na else (a if na < ng else None))
+        margins.append(na - ng)
+        if ng < na:
+            hits.append(1.0)
+        elif ng == na:
+            hits.append(0.5)
+            ties += 1
+        else:
+            hits.append(0.0)
+    return hits, ties, chosen, margins
+
+
+def _bind_arms_for(W, np):
+    """The arms this ONE ckpt can supply, all sharing byte-identical trunk weights.
+
+    as-trained    the ckpt exactly as it decodes in production (its TFLD arm, or none).
+    field-blind   the SAME weights with the TFLD trailer dropped, i.e. the residual the lane adds
+                  pre-trunk is identically zero. THIS IS THE CEILING CONTROL, and it must be read
+                  before any treatment number: it is what a model that cannot see the field scores
+                  on this panel. If it is already high there is no headroom and F1 is inadmissible
+                  no matter what the treatment arm does (v4 H_007's inadmissibility).
+    field-rank1   the SAME weights with the arm code forced to rank1, so the identical phi/W_up
+                  read a rank-1 compression of the same field. This is a WITHIN-CKPT probe of the
+                  rank variable and is NOT the same measurement as a separately TRAINED rank1 arm
+                  (the weights here were fitted against the full field). Read it as a diagnostic;
+                  F1 proper is Δ between two ckpts, which is what `--vs` computes.
+    """
+    arms = {}
+    t = W.get("tfld")
+    arms["as-trained"] = (W, ("no-field (no TFLD trailer)" if t is None
+                              else "TFLD arm=%s lam=%.6f" % (t.get("arm"), t.get("lam"))))
+    Wb = dict(W)
+    Wb["tfld"] = None
+    arms["field-blind"] = (Wb, "TFLD dropped — the pre-trunk residual is identically 0")
+    if t is not None and t.get("arm") != "off":
+        tr = dict(t)
+        tr["arm_code"] = 2
+        tr["arm"] = "rank1"
+        Wr = dict(W)
+        Wr["tfld"] = tr
+        arms["field-rank1"] = (Wr, "same weights, field replaced by its rank-1 approximation")
+    return arms
+
+
+def _bind_score_ckpt(np, ckpt, panel, T, free_slots, answers, max_items):
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("  ⛔ ckpt not decodable: %r" % ckpt)
+        return None
+    items = panel[:max_items] if max_items else panel
+    out = {}
+    for name, (Wx, note) in _bind_arms_for(W, np).items():
+        accs, ties = [], 0
+        per_slot = [[] for _ in free_slots]
+        dist, marg = {}, []
+        for it in items:
+            hits, t_, chosen, margins = _bind_dacc(np, Wx, it, T, free_slots, answers)
+            accs.append(sum(hits) / float(len(hits)))
+            ties += t_
+            marg.extend(margins)
+            for c in chosen:
+                dist[c if c is not None else "(tie)"] = dist.get(c if c is not None
+                                                                 else "(tie)", 0) + 1
+            for j, h in enumerate(hits):
+                per_slot[j].append(h)
+        top = max(dist.values()) / float(sum(dist.values())) if dist else 0.0
+        out[name] = {"note": note, "n": len(accs), "d_acc": float(np.mean(accs)),
+                     "sd": float(np.std(accs)), "ties": ties, "accs": accs,
+                     "answer_dist": dist, "answer_top_share": top,
+                     "margin_mean": float(np.mean(marg)), "margin_sd": float(np.std(marg)),
+                     "per_slot": {str(free_slots[j]): float(np.mean(v))
+                                  for j, v in enumerate(per_slot)}}
+    return out
+
+
+def _bind_arm_separation(res_one):
+    """Did the arms actually DIFFER item-by-item?
+
+    Δ(as-trained − field-blind) == 0 has two completely different causes: the field is used and
+    contributes nothing, or the lane never fired and the two arms are the same forward pass. Equal
+    means are compatible with both; IDENTICAL PER-ITEM VECTORS are only compatible with the second.
+    Checking this is the same discipline that made H_9805's toy e2e compare the duel and rank1 ckpt
+    bytes instead of trusting that the flag had been read."""
+    base = res_one.get("as-trained", {}).get("accs")
+    if base is None:
+        return None
+    same = {}
+    for name, a in res_one.items():
+        if name == "as-trained":
+            continue
+        same[name] = (a.get("accs") == base)
+    return same
+
+
+def bind_panel_run(argv):
+    """H_9810 — `anima-py evaluate <ckpt> --bind-panel <panel.json> [--vs <ckpt2>] [--win N]
+    [--max-items N] [--out f.json]`.
+
+    THE INSTRUMENT H_9805's F1 HAD NO SCORER FOR. F1 is
+        Δ = d_acc(duel) − d_acc(rank1)  on a held-out binding panel, both seeds,
+    and without this flag a `--tension-field duel/rank1` spend produces two checkpoints that
+    nobody can score. `--vs` computes that Δ directly across two ckpts; scoring one ckpt alone
+    reports its arms and, above all, its FIELD-BLIND CEILING.
+
+    READ THE CEILING FIRST. `field-blind` is the same weights with the TFLD trailer dropped — what
+    a reader that cannot see the field scores on this panel. If that number is already near 1.0
+    there is no room for any field to help and F1 is INADMISSIBLE on this panel regardless of what
+    the treatment arm does. That is v4 H_007's failure mode, it costs $0 to detect here, and this
+    run prints it before it prints anything else.
+
+    ADDITIVE (c18): it never touches eval_reach_all or the frozen G0-G6 / ρ-AXON bars.
+    """
+    import json as _json
+    import numpy as np
+    ckpt = argv[0] if argv and not argv[0].startswith("--") else ""
+    rest = argv[1:] if ckpt else argv
+    man_path = evaluate_strval(rest, "--bind-panel", "")
+    vs_ckpt = evaluate_strval(rest, "--vs", "")
+    out_path = evaluate_strval(rest, "--out", "")
+    max_items = evaluate_intval(rest, "--max-items", 0)
+
+    print("=== anima evaluate --bind-panel — H_9810 HELD-OUT BINDING d_acc (additive) ===")
+    if not ckpt:
+        print("  ⛔ a ckpt path is required: anima-py evaluate <clm> --bind-panel <panel.json>")
+        return 2
+    try:
+        man = _json.load(open(man_path, encoding="utf-8"))
+    except Exception as e:
+        print("  ⛔ cannot read --bind-panel manifest %r — %s" % (man_path, e))
+        return 2
+    if man.get("schema") != _BIND_PANEL_SCHEMA:
+        print("  ⛔ --bind-panel expects an `anima corpus bindpanel` manifest (schema %s), got %r"
+              % (_BIND_PANEL_SCHEMA, man.get("schema")))
+        return 2
+    panel, answers = man["items"], man["answers"]
+    K = int(man["K"])
+    T = evaluate_intval(rest, "--win", 256)
+    print("  ckpt %s · panel %s · %d items · K=%d · win %dB" % (ckpt, man_path, len(panel), K, T))
+    print("  regen: %s" % man.get("regen_cmd", "(absent — this panel is not re-derivable)"))
+
+    # ── ORACLE PREFLIGHT (no forward pass) ────────────────────────────────────────────────────
+    # A panel that cannot express a positive must never be read as a negative
+    # (positive-control-before-reading-a-negative). Everything here is re-derived from the
+    # manifest's structured fields, not trusted from its summary.
+    bad_gold = sum(1 for it in panel for k, c in enumerate(it["conjuncts"])
+                   if (c["hp"] ^ c["pos"]) != it["gold_bits"][k]
+                   or answers[c["hp"] ^ c["pos"]] != c["gold_token"])
+    len_bad = len(set(len(a.encode()) for a in answers)) != 1
+    fit_win = max(len(it["surface"].encode()) for it in panel) + len(answers[0].encode()) * K
+    print("  ORACLE preflight: gold-recompose mismatches %d/%d · answer length parity %s · "
+          "max scored sequence %d B" % (bad_gold, len(panel) * K, "OK" if not len_bad else "BROKEN",
+                                        fit_win))
+    if bad_gold or len_bad:
+        print("  VERDICT: ⛔ INSTRUMENT-DEAD — the panel's own gold does not recompose from its "
+              "structured fields, or the two answer tokens differ in byte length (a length "
+              "confound the 2AFC cannot correct). No number may be read from this run.")
+        return 2
+    if fit_win > T:
+        # A right-aligned window shorter than the sentence silently deletes the early conjuncts.
+        # The run would still print numbers — for a different question than the one asked.
+        print("  VERDICT: ⛔ WINDOW TOO SHORT — --win %d < %d B. The right-aligned window would "
+              "truncate the leading conjuncts, so the early slots would be scored on a sentence "
+              "the model never saw. Raise --win (and train at that --seq-len)." % (T, fit_win))
+        return 2
+
+    # ── G3 free-slot recompute (never inherited) ──────────────────────────────────────────────
+    fs = _bind_free_slots(man)
+    print("  FREE-SLOT (recomputed from THIS codebook · G3): free=%s · GF(2) rank=%s · "
+          "FIELD-BLIND ceiling %.4f · chance %.4f"
+          % (fs["free_slots"], fs["gf2_rank"], fs["field_blind_ceiling"], fs["chance"]))
+    if not fs["ok"]:
+        for r in fs["reasons"]:
+            print("    ⛔ " + r)
+        print("  VERDICT: ⛔ INSTRUMENT-DEAD — a redundant codebook inflates EVERY arm equally, so "
+              "Δd_acc stops being about the field (H_004's 0.667 parity ceiling).")
+        return 2
+    free_slots = fs["free_slots"]
+    chance = fs["chance"]
+
+    # ── score ─────────────────────────────────────────────────────────────────────────────────
+    res = {ckpt: _bind_score_ckpt(np, ckpt, panel, T, free_slots, answers, max_items)}
+    if res[ckpt] is None:
+        return 2
+    if vs_ckpt:
+        res[vs_ckpt] = _bind_score_ckpt(np, vs_ckpt, panel, T, free_slots, answers, max_items)
+        if res[vs_ckpt] is None:
+            return 2
+
+    print("\n  %-28s %-13s %8s %8s %6s %8s %10s  %s"
+          % ("ckpt", "arm", "d_acc", "sd", "ties", "top_ans", "margin_sd", "note"))
+    for c, arms in res.items():
+        for name, a in arms.items():
+            print("  %-28s %-13s %8.4f %8.4f %6d %8.4f %10.4f  %s"
+                  % (os.path.basename(c)[:28], name, a["d_acc"], a["sd"], a["ties"],
+                     a["answer_top_share"], a["margin_sd"], a["note"]))
+    # DEGENERATE-READOUT CHECK. d_acc == chance is produced by an honest chance reader AND by a
+    # model that always emits the same answer token, and those are different findings — the second
+    # makes the panel unable to express ANY treatment effect on this ckpt, because a constant
+    # predictor's 2AFC margin is far too wide for a pre-trunk residual to flip.
+    for c, arms in res.items():
+        for name, a in arms.items():
+            if a["answer_top_share"] >= 0.75:
+                print("  ⚠️ DEGENERATE READOUT — %s/%s emits ONE answer token on %.1f%% of scored "
+                      "slots. The panel's gold is balanced, so a reader should emit each token "
+                      "about half the time; this arm's d_acc is the gold balance reflected back, "
+                      "not a reading. No treatment effect is expressible on this ckpt — fix the "
+                      "arm (v4's A1: the answer bytes are ~6%% of the sequence, so a plain "
+                      "next-byte CE optimises the surface and leaves the answer at chance) before "
+                      "reading any Δ." % (os.path.basename(c), name,
+                                          100.0 * a["answer_top_share"]))
+
+    # ── readings ──────────────────────────────────────────────────────────────────────────────
+    blind = res[ckpt]["field-blind"]["d_acc"]
+    trained = res[ckpt]["as-trained"]["d_acc"]
+    print("\n  [chance]   %.4f, DERIVED from the realized per-slot partition of this codebook, "
+          "not assumed (chance-level-must-be-derived-per-metric)." % chance)
+    print("  [CEILING]  field-blind d_acc = %.4f on %d free slots. Headroom above it = %.4f."
+          % (blind, len(free_slots), 1.0 - blind))
+    if 1.0 - blind < 2 * 0.15:
+        print("  ⚠️ CEILING WARNING — less than 2x the pre-registered F1 bar (0.15) of room exists "
+              "above the FIELD-BLIND arm. On this panel a duel-vs-rank1 difference is measuring "
+              "how little room is left, not the field. F1 is INADMISSIBLE here; fix the panel "
+              "BEFORE any 303M spend (v4 H_007).")
+    else:
+        print("  ✅ headroom above the field-blind ceiling is at least 2x the 0.15 F1 bar — F1 is "
+              "ADMISSIBLE on this panel on the headroom axis (necessary, NOT sufficient: it says "
+              "nothing about whether the field carries anything).")
+    sep = _bind_arm_separation(res[ckpt])
+    if sep and any(sep.values()):
+        print("  ⛔ ARM SEPARATION FAILED: %s produced a per-item vector IDENTICAL to as-trained, "
+              "so every Δ below is a plumbing null and not a measurement. TWO causes, and the "
+              "top_ans column tells them apart: (a) the lane never fired (no TFLD trailer, or "
+              "lam == 0), or (b) the readout is saturated — a constant-answer predictor's 2AFC "
+              "margin is far wider than any pre-trunk residual can move."
+              % [k for k, v in sep.items() if v])
+    else:
+        print("  ✅ arm separation: every control arm differs from as-trained item-by-item, so a "
+              "Δ of 0 below would be a real null and not a lane that never fired.")
+    print("  [Δ field]  as-trained − field-blind = %+.4f  (a within-ckpt read of whether the "
+          "lane's residual is used at all; NOT F1)" % (trained - blind))
+    if "field-rank1" in res[ckpt]:
+        print("  [Δ rank]   as-trained − field-rank1 = %+.4f  (within-ckpt rank probe with weights "
+              "fitted on the FULL field — a diagnostic, NOT F1)"
+              % (trained - res[ckpt]["field-rank1"]["d_acc"]))
+    if vs_ckpt:
+        d = trained - res[vs_ckpt]["as-trained"]["d_acc"]
+        print("\n  [F1]  Δd_acc(%s − %s) = %+.4f   (H_9805 bar: >= 0.15 on BOTH seeds = SUPPORTED · "
+              "|Δ| < 0.05 both = DEAD · Δ <= -0.05 = DEAD + instrument suspicion)"
+              % (os.path.basename(ckpt), os.path.basename(vs_ckpt), d))
+        print("  ONE SEED IS NOT A VERDICT. H_9805's table requires both seeds and F2/F3/F4/F5/F7 "
+              "clean; this flag supplies the d_acc terms only.")
+    print("\n  This is an INSTRUMENT reading, never a consciousness or capability verdict, and a "
+          "toy-scale number stays DIRECTIONAL no matter how often it is rerun (a_toy_scale_recheck).")
+
+    if out_path:
+        with open(out_path, "w") as fh:
+            _json.dump({"schema": "anima-bind-panel/v1", "panel": man_path,
+                        "regen_cmd": man.get("regen_cmd"), "win": T, "K": K,
+                        "free_slots": free_slots, "chance": chance,
+                        "field_blind_ceiling_codebook": fs["field_blind_ceiling"],
+                        "n_items_scored": (max_items or len(panel)), "ckpts": res}, fh, indent=2)
+        print("  wrote " + out_path)
+    return 0
+
+
 def _pregate_load(path, what):
     """Read a gate spec file. A missing/malformed spec is an ERROR (exit 2), never a PASS."""
     import json
@@ -9007,6 +9311,7 @@ _KNOWN_FLAGS = frozenset((
     "--slot-off",
     "--fan-branch", "--branches",              # H_9803 branch-latent ideation fan arms
     "--tension-rank-audit", "--ctrl-seed",     # H_9805 write-side tension-field rank audit
+    "--bind-panel", "--max-items",             # H_9810 held-out binding panel d_acc scorer
     "--slot-shuffle", "--surface-set", "--system-g1", "--vs", "--win", "--with-logits", "--xbind", "--xfan",
     "--gn-freeze",
     "--bridge-trace", "--flip0", "--theta",
@@ -15882,6 +16187,11 @@ def main(argv):
     # G0-G6 bars; exists so a rank-1 collapse (= the old scalar seam) can never hide.
     if "--tension-rank-audit" in argv:
         return tension_rank_audit_run(argv)
+    # H_9810 --bind-panel <panel.json>: held-out binding d_acc on the `anima corpus bindpanel`
+    # panel — the scorer H_9805's F1 (Δd_acc(duel − rank1)) had no instrument for. Prints the
+    # FIELD-BLIND ceiling before any treatment number. ADDITIVE — frozen bars untouched.
+    if "--bind-panel" in argv:
+        return bind_panel_run(argv)
     # --store-addr-census <dump.npz> / --store-census-selftest: H_9719 emergent-address
     # $0 pre-screen — argmax-collision of random-W_q over entity-keys vs a structureless-H
     # pedestal. DIRECTIONAL screener (KILL-before-spend); admissible (no target_slot read).
