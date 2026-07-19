@@ -45,12 +45,20 @@ engine_g.motivation_score 8인자는 대화 런타임 특징. 정적 학습샘�
 ⑤ 그 후에만 303M fire ─────── 양성도 codex+sealion 양쪽 재현 전 DIRECTIONAL
 ```
 
+## ① 프로브 실측 (2026-07-20 · $0 SCREENING · anima-py study codex teacher · 로컬 d768 archive ckpt)
+실행됨(3런·rounds3·window2): e2l1 ckpt ×2(within=teacher노이즈 기저선) + gen ckpt ×1(across=θ대비). difflib 거리(1−ratio):
+```
+기질 emit (θ-구동 신호)    : within d=0.202 · across d=0.714 (3.5×) → θ가 emit을 강하게 구동 ✅
+teacher percept (θ→데이터) : within d=0.836 · across d=0.930 (겨우 1.11×)                 ⚠️
+```
+🟡 **판정 = WEAK/약신호(SCREENING)**: θ가 기질 emit을 강하게 바꾸나(3.5×), codex teacher 무작위성이 극심(within 노이즈 0.836 포화)해 **θ신호가 teacher 데이터로 거의 미전달**(across/within 1.11×). = lab CV1(θ채널 ≤480자 극소)·CV3(결정적 teacher 부재→manipulation-check 교란) **실측 확증**. 축 사살도 통과도 아님 — **재배열 순서가 옳음을 입증**(②seeded teacher로 노이즈 바닥 낮춰야 θ신호 측정가능). 부수: study.py surrogate 크래시 실버그 수정(byte-LM teacher 경로·VERSION 0.20.24).
+
 ## Falsify (①$0 프로브 기준)
 base ckpt vs 먼(대-θ) ckpt에 동일 teacher/topic → transcript 텍스트거리(발산)가 큰 θ-대비에도 ≈0 ⟹ 폐루프 신호채널 사망 = 생성축 KILL(API 몇 푼). 발산이 유의미 ⟹ ②~⑤ 진행 자격. EN-first·SCREENER·TERMINAL은 303M engine-native+scale-bounded.
 
 ## 상태 / 블로커
 - ① LOSS·② 정적점수 = **KILL 확정**(재발사 금지).
-- ③ 생성축 = **NO-GO(as-specified)** · 다음=**①$0 transcript-발산 프로브**(컴퓨트 0·teacher API만·base+먼 ckpt 필요). 303M fire는 ①~④ 통과 後(fleet rent=owner go-gate).
+- ③ 생성축 = **NO-GO(as-specified)** · ①$0 프로브 **실행완료=🟡약신호**(θ→데이터 SNR 나쁨·위 실측). 다음=**②반응형-결정적 teacher**(seeded/script-emit조건화로 노이즈 바닥 낮추기) → 재프로브 → ③H_9520 바 복구 → ④4-arm smoke → ⑤303M fire(fleet rent=owner go-gate).
 
 ## Divergence 보고 (a_lab_full_diverge · a_parallel_session_compare)
 - **AGREES(4R)**: CV1 부분반증·CV2 YOKED 비결정적 **+ CROSS-YOKED 통제 양모델 독립 동일도출**·CV3 probe-first·CV4 NO-GO. 진짜 CONFLICT 없음.
