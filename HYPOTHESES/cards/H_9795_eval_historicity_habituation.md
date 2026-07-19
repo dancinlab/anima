@@ -45,6 +45,12 @@ repeat/shuffle/novel percept 에 대한 grading 반응(mean, n=3/arm · toy DIRE
 🎯 **핵심**: 정확반복=인식(recon 0.013)·**byte-multiset 동일 shuffle=미인식(recon 2.051)** ⟹ 인식채널이 **item-identity 를 byte-stats 와 분리**(순서/item-trace 실측 · shuffle=바이트동일이라 byte-stats 반응이면 repeat 와 같아야 하나 크게 다름). **H_9795 DV=recon_err**(+rel_lane 보조), **load-bearing shuffle 통제가 toy 서 작동 확증**.
 > ⚠️ **recon_err liveness 재확인 필수**: chat-py-4 는 production 경로서 recon_err≡0 퇴화(session-seed keying)를 경고 — 여기선 percept 가 afield 도달해 varies(0.013 vs 2.051)나, **303M fire 시 reader VOID gate 로 recon_err 살아있는지 재확인**(죽으면 VOID·거짓 KILL 금지). toy≠303M(48K vs 303M·n=3·무통계) = DV-grounding 시연이지 verdict 아님.
 
+## 🔧 reader WIRED (2026-07-19 · v0.20.15 · #R10-histreader · lab-full 설계)
+`anima-py evaluate --eval-historicity <trace> --schedule <sched.jsonl> [--dv recon_err] [--perm][--seed]` 구현. DV=**recon_err**(#4168 접지). 통계량 S(lag)=mean(shuffle)−mean(repeat) · null=kind 라벨 순열(lag,stage strata) · **판정**: 🟢 ITEM-MEMORY(S>null ∧ perm-p<.05 ∧ **lag-decay ≥25% 상대감쇠**) / ⚠️ CONTRAST-NO-DECAY(S>null 이나 무감쇠=decode-artifact 위험·Fable Q5) / 🧱 NULL(byte-stats) / 🕳️ VOID(recon_err 무동적범위·chat-py-4 퇴화).
+- **lab-full 정정 반영**: ① `hab_ctx` 는 **죽은 채널**(상수 자극 id 0·in-loop 미스텝·trace 부재) → DV 부적격(Fable F3) · recon_err 채택 옳음. ② **lag-decay 가 load-bearing**(Fable Q5): repeat−shuffle 만으론 seed-order decode-artifact 와 구분 불가 · item-memory 는 감쇠, artifact 는 무감쇠.
+- **🐛 generator 결함 수정(#4166→jitter)**: 원 생성기가 arm 을 결정적 tick 간격 배치 → kind⊥stage 위반(repeat 전부 stage1·shuffle 전부 stage0)로 (lag,stage) 순열 퇴화. **`--jitter`**(arm 앞 랜덤 filler) 추가로 kind⊥stage 회복(토이서 확증).
+- **토이 4-PLANT ALL PASS**: ITEM-MEMORY(planted+decay)·NULL(repeat≈shuffle)·VOID(무동적범위)·CONTRAST-NO-DECAY(무감쇠 artifact) 전부 정확판정. 다음=owner-go 303M fire(recon_err liveness=VOID gate 재확인).
+
 ## $0-first (제한적)
 session_seed 앵커가 상수에 가까워 자연반복이 confound → 순수 $0 관측 취약. 사실상 cheap CPU chat run(--percept-file 스케줄) 필요 — pod 아님·저비용.
 
