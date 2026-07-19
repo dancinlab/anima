@@ -32,6 +32,12 @@ af-clamp dose 가 downstream 필드에 **실제 dose-response**(max|Δ|): cur_in
 - **VOID gate**: h_0(within-tick) 비영 ∧ `af_native≉af_alien`(af_alien_val H_9411)∧ H(af_native)>0 이어야 살아있음(else VOID). Sol 이견: two-run static high/low 가 total effect 는 회수(cement 가치)—Fable 반론: 그건 SHIFT 판정이지 FORWARDING 아님·카드 분리 권고(반영).
 - **다음**: `--af-clamp` impulse 확장(producer) + `--af-forward` reader(impulse matched-filter h_k) + synthetic 토이.
 
+## 🔧 계기 pair 완성 (2026-07-19 · v0.20.16 · #R10-afimpulse · lab-full Fable 설계)
+lab-full 정정대로 impulse producer + forwarding reader 구현·토이검증:
+- **producer** `anima-py chat --af-impulse <f.jsonl>` ({tick,v,a} per-tick af clamp·impulse tick 만 clamp·native 나머지 → af(t)≠af(t+1) 탈공선). static --af-clamp 은 SHIFT 계기로 병존(양성통제). **토이 PASS**(t1만 clamp·나머지 native·af_impulse arm-label).
+- **reader** `anima-py evaluate --af-forward <trace> --impulse <f.jsonl> [--side arousal|valence]`. DV=**envelope-free phasic** `cur_f/(0.1+0.9·stage_env)`(clock 해석제거·Fable F1). matched-filter **h_k=mean(DV @impulse+k)−mean(DV @baseline+k)**. **판정**: 🟢 FORWARDED(h_0 유의 ∧ h_{k≥1}>null=상태 forward) / 🧱 SHIFT-ONLY(h_0 유의·h_{k≥1} TOST-0=same-tick shift·forward 부재·earned negative) / 🕳️ VOID(h_0 null=af→ci 배선 단절·not KILL).
+- **토이 3-PLANT ALL PASS**: FORWARDED(h0∧h1 planted)·SHIFT-ONLY(h0만·핵심 forwarding≠shift 구분)·VOID(효과無). 다음=owner-go 303M fire(--af-impulse+matched --percept-file rollout→--af-forward·h_0 양성통제 재확인).
+
 ## $0-first
 기존 trace에서 af_val(t) → cur_phasic(t+1) cross-lag(단 static clamp 은 forwarding 미식별 → impulse schedule 필요). 0이면 격하.
 

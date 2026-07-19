@@ -1726,6 +1726,22 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         if len(_acp) != 2:
             raise SystemExit("--af-clamp: expects 'v,a' (two floats in [0,1]), got %r" % _af_clamp_raw)
         _af_clamp = (_afs_clip01(float(_acp[0])), _afs_clip01(float(_acp[1])))
+    # H_9794 AFFECT-FORWARDING (--af-impulse <f.jsonl>) · a PER-TICK af clamp schedule {tick,v,a}.
+    # The static --af-clamp cannot identify FORWARDING (af(t)≡af(t+1) collinear = a SHIFT verdict only);
+    # an IMPULSE (clamp at listed ticks, native elsewhere) decorrelates af(t) from af(t+1) so the
+    # cross-lag h_{k>=1} carryover onto the NEXT percept's grade is identifiable (lab-full Fable Q1).
+    _af_impulse_raw = anima_flag_value(_cargv, "--af-impulse", "ANIMA_AF_IMPULSE", "")
+    _af_impulse = None
+    if _af_impulse_raw:
+        import json as _afj
+        _af_impulse = {}
+        with open(_af_impulse_raw, "r", encoding="utf-8", errors="surrogateescape") as _afh:
+            for _aln in _afh:
+                _aln = _aln.strip()
+                if not _aln:
+                    continue
+                _ar = _afj.loads(_aln)
+                _af_impulse[int(_ar["tick"])] = (_afs_clip01(float(_ar["v"])), _afs_clip01(float(_ar["a"])))
     _wm_dual_read = anima_flag_value(_cargv, "--wm-dual-read", "ANIMA_WM_DUAL_READ", "off")
     if _wm_dual_read not in ("off", "content"):
         raise SystemExit("--wm-dual-read: only 'off' (default) or 'content' (got %r)" % _wm_dual_read)
@@ -2371,7 +2387,11 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         # native read so every downstream consumer (emoreg :2519 · ci lanes :2595/2606) sees the
         # clamped value — that is the interior→interior intervention. The arm label lands in its own
         # trace field (never a production-branched field · chat-py swap-label lesson).
-        if _af_clamp is not None:
+        _af_imp = _af_impulse.get(int(tick)) if _af_impulse is not None else None
+        if _af_imp is not None:              # impulse (per-tick) wins over the static clamp
+            af_val = _af_imp[0]
+            af_aro = _af_imp[1]
+        elif _af_clamp is not None:
             af_val = _af_clamp[0]
             af_aro = _af_clamp[1]
 
@@ -3203,8 +3223,9 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 # valence/arousal · ca3=hippocampus replay · wm=working-memory. (Fable D2 spec.)
                 "cb_surprise": float(cb_surprise), "af_val": float(af_val),
                 "af_aro": float(af_aro), "ca3_ctx": float(ca3_ctx),
-                # H_9794 --af-clamp arm label (trace-only · null when OFF · never a branch key)
+                # H_9794 --af-clamp / --af-impulse arm labels (trace-only · null when OFF · never a branch key)
                 "af_clamp": (list(_af_clamp) if _af_clamp is not None else None),
+                "af_impulse": (list(_af_imp) if _af_imp is not None else None),
                 "wm_active": float(wm_active),
                 # H_9411 dead-gauge control arms (trace-only null/pedestal · never a branch key)
                 # — the collapse-Δ vs these is the liveness verdict, not the raw value (Ψ-SOMA/p7).
