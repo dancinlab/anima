@@ -1648,12 +1648,118 @@ def main():
                     help="DDP debug: every --val-every steps all-reduce a param-checksum and "
                          "assert cross-rank agreement (catches a mitosis/optimizer desync at "
                          "the split). Off by default (costs one collective per val).")
+    # ── H_9808 TRAINED-CONTROL CEILING — the ABORT-BEFORE-SPEND gate (core/pregates.py) ────────
+    # lab/v4 H_007 spent ~7h of GPU on a falsifier that could not return a bit: its pre-registered
+    # F1 bar was 0.15, but the compute-matched control measured 0.8073/1.0000 at target scale, so
+    # the band above the control was narrower than the bar and Δ≈0 was FORCED whether the mechanism
+    # worked or not. Its E-anchor (0.62) had been INHERITED from another experiment's band, and its
+    # own d=64 smoke INVERTED at d=384 (+0.073 → −0.010).
+    #
+    # This gate refuses the run BEFORE any CUDA allocation, data load, or DDP re-exec. It is
+    # DEFAULT-OFF (bar 0.0) ⇒ the golden path is byte-identical.
+    ap.add_argument("--trained-control-ceiling", type=float, default=0.0,
+                    help="H_9808: pre-registered falsifier bar b. When > 0 this ABORTS THE RUN "
+                         "BEFORE SPEND unless --control-anchor carries a control MEASURED on THIS "
+                         "panel at THIS scale that sits inside (chance+margin, 1−2b]. A saturated "
+                         "control (lab/v4 H_007: 0.8073 vs cap 0.70) and a control at chance "
+                         "(H_008: 0.5104) are both refusals.")
+    ap.add_argument("--control-anchor", type=str, default="",
+                    help="H_9808: JSON file with the controls-first reading — {measured:true, "
+                         "panel, arm, scale:{d,L,steps}, seeds:{s:score}, source}. REQUIRED when "
+                         "--trained-control-ceiling > 0. An anchor whose panel or scale differs "
+                         "from this run's is INHERITED and refused (no exceptions, no override).")
+    ap.add_argument("--pregate-panel", type=str, default="",
+                    help="H_9808: the panel identifier this run will be scored on. Must equal the "
+                         "anchor's panel. REQUIRED when --trained-control-ceiling > 0.")
     ap.add_argument("--ddp-find-unused", action="store_true",
                     help="DDP debug/escape-hatch: pass find_unused_parameters=True to DDP. Off "
                          "by default — the current objective set fires every head every step "
                          "(§4). Flip ON only if a FUTURE per-step-gated head makes DDP error on "
                          "an unused param.")
     a = ap.parse_args()
+
+    # ══ H_9808 — TRAINED-CONTROL CEILING: the ABORT-BEFORE-SPEND gate ═══════════════════════════
+    #
+    # Runs FIRST — before the DDP re-exec, before any CUDA allocation, before a single corpus byte
+    # is read. That placement is the whole point: lab/v4 H_007 discovered its falsifier was
+    # inadmissible AFTER ~7h of GPU, from the collected verdict. This refuses at t=0.
+    #
+    # DEFAULT-OFF: --trained-control-ceiling 0.0 (the default) skips every line below, so the
+    # golden path is byte-identical.
+    #
+    # What makes it able to REFUSE (all four demonstrated in the H_9808 toy e2e):
+    #   SATURATED      control > 1 − 2×bar          (H_007 C-scaf 0.8073 vs cap 0.70)
+    #   DEAD-CONTROL   control < chance + margin    (H_008 G-1.5a C-dup 0.5104)
+    #   SCALE-MISMATCH anchor measured at another scale  (H_007's d=64 smoke for a d=384 run)
+    #   PANEL-MISMATCH / NOT-MEASURED  an inherited or estimated anchor (H_007's E[C-dup]=0.62)
+    if a.trained_control_ceiling > 0.0:
+        import json as _json
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
+            os.path.abspath(__file__))), "core"))
+        import pregates as _pg
+
+        def _refuse(msg):
+            print("=" * 78)
+            print("H_9808 GATE — TRAINED-CONTROL CEILING (abort-before-spend · lab/v4 H_007)")
+            print("=" * 78)
+            print("\n  ⛔ GATE REFUSE — NOT STARTING THIS RUN. " + msg)
+            print("\nVERDICT: REFUSE")
+            sys.exit(_pg.REFUSE)
+
+        if not a.control_anchor:
+            _refuse("--trained-control-ceiling %.4f was passed without --control-anchor. The bar "
+                    "cannot be certified against a control that was never measured — that is "
+                    "exactly H_007's failure (its anchor was an inherited guess)."
+                    % a.trained_control_ceiling)
+        if not a.pregate_panel:
+            _refuse("--trained-control-ceiling requires --pregate-panel <id>: the gate must know "
+                    "which panel this run will be scored on in order to refuse an anchor measured "
+                    "on a different one.")
+        # The target scale must be EXPLICIT. A recipe default resolved downstream cannot be
+        # compared against the anchor here, and 'it probably matched' is how H_007's d=64 smoke
+        # became a d=384 anchor.
+        _missing = [n for n, v in (("--d", a.d), ("--L", a.L), ("--steps", a.steps)) if not v]
+        if _missing:
+            _refuse("--trained-control-ceiling requires an EXPLICIT target scale; %s left at the "
+                    "recipe default. The gate certifies that the control was measured at THIS "
+                    "scale, and it cannot do that against a scale it has to guess (H_007: a d=64 "
+                    "smoke read +0.073 and INVERTED to −0.010 at d=384)." % ", ".join(_missing))
+        try:
+            with open(a.control_anchor, "r", encoding="utf-8") as _f:
+                _anchor = _json.load(_f)
+        except Exception as _e:
+            _refuse("cannot read --control-anchor %r — %s  (a missing anchor is a refusal, never "
+                    "a pass)" % (a.control_anchor, _e))
+        _scale = {"arch": a.arch, "d": a.d, "L": a.L, "steps": a.steps,
+                  "seq_len": a.seq_len, "batch_size": a.batch_size}
+        try:
+            _res = _pg.trained_control_gate(a.trained_control_ceiling, _anchor,
+                                            a.pregate_panel, _scale)
+        except _pg.GateError as _e:
+            _refuse(str(_e))
+        _notes = ["bar b        = %.4f   ⇒ control must sit in (%.4f, %.4f]"
+                  % (a.trained_control_ceiling,
+                     _pg.CHANCE_DEFAULT + _pg.CONTROL_FLOOR_MARGIN,
+                     1.0 - 2.0 * a.trained_control_ceiling),
+                  "panel        = %s" % a.pregate_panel,
+                  "this run     = %s" % _json.dumps(_scale, sort_keys=True),
+                  "anchor arm   = %s   src: %s"
+                  % (_anchor.get("arm"), _anchor.get("source")),
+                  "anchor scale = %s" % _json.dumps(_anchor.get("scale"), sort_keys=True),
+                  ""]
+        for _r in _res["per_seed"]:
+            _notes.append("  seed %-6s control=%.4f  cap=%.4f  floor=%.4f  headroom=%.4f "
+                          "(need %.4f)" % (_r["seed"], _r["control"], _r["cap"], _r["floor"],
+                                           _r["headroom"], _r["headroom_required"]))
+        _rc = _pg.render(
+            "H_9808 GATE — TRAINED-CONTROL CEILING (abort-before-spend · lab/v4 H_007)",
+            _res, _notes)
+        if _rc != _pg.PASS:
+            print("\n  NOT STARTING THIS RUN. Re-run the compute-matched control alone at target "
+                  "scale and re-freeze the bar against what it actually measures.")
+            sys.exit(_rc)
+        print("\n  (gate PASS is an ADMISSIBILITY statement only — it does not predict the run "
+              "will be green, and it is not a result.)\n")
 
     # ══ §7 DDP launch: torchrun self-re-exec + worker init + N==1 short-circuit ══
     #   Runs FIRST (before any CUDA allocation). os.execvpe replaces the process, so the

@@ -1381,6 +1381,176 @@ def tension_rank_audit_run(argv):
                         "rank1_collapse": bool(collapsed)}, fh, indent=2)
         print("  wrote " + out_path)
     return 0
+def _pregate_load(path, what):
+    """Read a gate spec file. A missing/malformed spec is an ERROR (exit 2), never a PASS."""
+    import json
+    if not path:
+        print("  ⛔ %s needs a spec file path" % what)
+        return None
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print("  ⛔ %s: cannot read spec %r — %s" % (what, path, e))
+        return None
+
+
+def _pregate_floatval(argv, flag, dflt):
+    v = evaluate_strval(argv, flag, None)
+    return dflt if v is None else float(v)
+
+
+def _pregate_dump(argv, res):
+    """Optional `--pregate-out <f>`: write the gate's full result dict as JSON."""
+    import json
+    out = evaluate_strval(argv, "--pregate-out", "")
+    if out:
+        with open(out, "w", encoding="utf-8") as f:
+            json.dump(res, f, ensure_ascii=False, indent=2, sort_keys=True)
+        print("\n  wrote " + out)
+
+
+def falsifier_headroom_run(argv):
+    """H_9808 GATE 2 — `anima-py evaluate --falsifier-headroom <spec.json>`.
+
+    Closed-form ($0) reachability arithmetic: a pre-registered bar that exceeds the maximum
+    ATTAINABLE Δ over the control it will be scored against returns its verdict unconditionally,
+    before the experiment exists. lab/v4 H_001: mech-3's clause (2) ablated to a codec already
+    scoring 0.9083–0.9167 against a 0.1 bar — max Δ 0.0917 < 0.1, so DEAD was fixed in advance.
+
+    REFUSES when: max Δ = ceiling − control < bar (VACUOUS), or < 2×bar (NO-HEADROOM), or when no
+    supplied negative control comes back reachable (AUDIT-VOID — H_001's own F-001-4: an audit that
+    condemns every comparison is condemning arithmetic, not detecting vacuity).
+    """
+    import pregates
+    spec = _pregate_load(evaluate_strval(argv, "--falsifier-headroom", ""), "--falsifier-headroom")
+    if spec is None:
+        return pregates.ERROR
+    try:
+        res = pregates.falsifier_headroom_gate(spec)
+    except pregates.GateError as e:
+        print("  ⛔ --falsifier-headroom: " + str(e))
+        return pregates.ERROR
+    notes = ["bar=%.4f  ceiling=%.4f  headroom required = %.1f×bar = %.4f"
+             % (res["bar"], res["ceiling"], res["headroom_mult"], res["headroom_mult"] * res["bar"]),
+             ""]
+    notes.append("controls the falsifier will be scored against:")
+    for r in res["controls"]:
+        notes.append("  %-12s score=%.4f  max attainable Δ = %.4f − %.4f = %.4f   reachable=%s"
+                     % (r["arm"], r["control"], r["ceiling"], r["control"],
+                        r["max_attainable_delta"], r["reachable"]))
+        notes.append("               src: " + str(r["source"]))
+    notes.append("")
+    notes.append("NEGATIVE CONTROLS (H_001 F-001-4 — at least one MUST be reachable):")
+    for r in res["negative_controls"]:
+        notes.append("  %-12s score=%.4f  max attainable Δ = %.4f   reachable=%s"
+                     % (r["arm"], r["control"], r["max_attainable_delta"], r["reachable"]))
+    rc = pregates.render(
+        "H_9808 GATE — FALSIFIER HEADROOM (closed-form · $0 · lab/v4 H_001)", res, notes)
+    _pregate_dump(argv, res)
+    return rc
+
+
+def free_slot_score_run(argv):
+    """H_9808 GATE 3 — `anima-py evaluate --free-slot-score <codebook.json>`.
+
+    Recomputes the free-slot set FROM THIS PANEL'S CODEBOOK (GF(2)-rank + prefix-determinism +
+    length-parity) and derives the FIELD-BLIND ceiling — the score a reader that cannot see the
+    field already gets, because teacher-forcing hands it the redundant slots. lab/v4 H_004's K=6
+    codebook was GF(2) rank-4 ⇒ 2 parity slots completed for free ⇒ a 0.667 ceiling that reached
+    held-out and inflated EVERY arm equally.
+
+    REFUSES when: any slot is field-blind determinable · length parity is violated · a supplied
+    inherited free-slot set disagrees with the recomputed one · a pre-registered bar does not clear
+    the recomputed ceiling with 2× headroom.
+    """
+    import pregates
+    cb = _pregate_load(evaluate_strval(argv, "--free-slot-score", ""), "--free-slot-score")
+    if cb is None:
+        return pregates.ERROR
+    bar = evaluate_strval(argv, "--pregate-bar", None)
+    try:
+        res = pregates.free_slot_audit(cb, bar=(float(bar) if bar is not None else None))
+    except pregates.GateError as e:
+        print("  ⛔ --free-slot-score: " + str(e))
+        return pregates.ERROR
+    notes = ["panel: %s   codewords=%d  slots=%d  binary=%s  GF(2) rank=%s"
+             % (cb.get("panel", "(unnamed)"), res["n_codewords"], res["n_slots"],
+                res["binary"], res["gf2_rank"]),
+             "length parity: %s" % ("OK" if res["length_parity"] else "VIOLATED"),
+             "per-slot choices: %s" % (res["choices"],),
+             "",
+             "prefix-determined slots: %s" % (res["prefix_determined"] or "none"),
+             "GF(2)-dependent slots:   %s" % (res["gf2_dependent"] or "none"),
+             "FREE slots (recomputed, never inherited): %s" % (res["free_slots"],),
+             "",
+             "FIELD-BLIND ceiling = %.4f   (derived chance = %.4f)"
+             % (res["field_blind_ceiling"], res["chance"])]
+    rc = pregates.render(
+        "H_9808 GATE — FREE-SLOT SCORE (closed-form · $0 · lab/v4 H_004/H_008)", res, notes)
+    _pregate_dump(argv, res)
+    return rc
+
+
+def register_leak_probe_run(argv):
+    """H_9808 GATE 4 — `anima-py evaluate --register-leak-probe <items.json>`.
+
+    A held-out surface→target probe, by EXACT COUNT over byte n-grams (n ≤ --leak-nmax). If the
+    register reads the answer off the surface, the drill loss admits EVERY field that fits the
+    surface, and any "learned" claim on that panel is void — it falsified only the LEAKY VARIANT of
+    the question. That is exactly what invalidated lab/v4 H_005's K3: the φ→hon probe read 1.0
+    held-out (lab/v5 H5_001).
+
+    REFUSES when: held-out probe accuracy > surface-blind chance + --leak-eps. A read at or above
+    --leak-bar is additionally labelled a CERTAIN leak.
+    """
+    import pregates
+    spec = _pregate_load(evaluate_strval(argv, "--register-leak-probe", ""), "--register-leak-probe")
+    if spec is None:
+        return pregates.ERROR
+    items = spec.get("items") if isinstance(spec, dict) else spec
+    nmax = evaluate_intval(argv, "--leak-nmax", int((spec or {}).get("nmax", 4))
+                           if isinstance(spec, dict) else 4)
+    bar = _pregate_floatval(argv, "--leak-bar",
+                            float(spec.get("bar", pregates.LEAK_BAR_DEFAULT))
+                            if isinstance(spec, dict) else pregates.LEAK_BAR_DEFAULT)
+    eps = _pregate_floatval(argv, "--leak-eps",
+                            float(spec.get("eps", pregates.LEAK_EPS_DEFAULT))
+                            if isinstance(spec, dict) else pregates.LEAK_EPS_DEFAULT)
+    try:
+        res = pregates.leak_probe(items, nmax=nmax, bar=bar, eps=eps)
+    except pregates.GateError as e:
+        print("  ⛔ --register-leak-probe: " + str(e))
+        return pregates.ERROR
+    notes = ["panel: %s   fit n=%d   held-out n=%d   n-gram order ≤ %d"
+             % ((spec.get("panel", "(unnamed)") if isinstance(spec, dict) else "(unnamed)"),
+                res["n_fit"], res["n_heldout"], res["nmax"]),
+             "",
+             "held-out probe accuracy  = %.4f   %s" % (res["leak"],
+                                                       "⚠ CERTAIN LEAK" if res["certain_leak"] else ""),
+             "surface-blind chance     = %.4f   (held-out majority-class rate, derived per metric)"
+             % res["chance"],
+             "eps = %.4f   certain-leak bar = %.4f" % (res["eps"], res["bar"]),
+             "worst n-gram: %r ⇒ predicts %r" % (res["worst_ngram"], res["worst_ngram_predicts"])]
+    rc = pregates.render(
+        "H_9808 GATE — REGISTER-LEAK PROBE (closed-form · $0 · lab/v5 H5_001)", res, notes)
+    _pregate_dump(argv, res)
+    return rc
+
+
+def pregate_selftest_run():
+    """`anima-py evaluate --pregate-selftest` — every gate on BOTH a passing and a refusing input.
+
+    The refusing inputs are the REAL measured numbers from the lab/v4 + lab/v5 failures, so this is
+    also a regression test that each gate would have caught the spend it was paid for.
+    """
+    import pregates
+    ok = True
+    for name, v in pregates.selftest():
+        print(("  PASS " if v else "  FAIL ") + name)
+        ok = ok and v
+    print("SELFTEST pregates: " + ("OK" if ok else "FAIL"))
+    return 0 if ok else 1
 
 
 def fan_branch_run(argv):
@@ -8845,6 +9015,11 @@ _KNOWN_FLAGS = frozenset((
     "--closure-ladder", "--closure-arm", "--closure-ticks", "--closure-seed",   # H_9807 interventional closure rung 1
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
     "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture
+    # H_9808 $0 PRE-REGISTRATION GATES (core/pregates.py) — closed-form referees that ABORT
+    # BEFORE SPEND. Each returns exit 3 on REFUSE, 0 on PASS, 2 on a malformed spec.
+    "--falsifier-headroom", "--free-slot-score", "--register-leak-probe",
+    "--pregate-bar", "--pregate-out", "--pregate-selftest",
+    "--leak-bar", "--leak-eps", "--leak-nmax",
 ))
 
 
@@ -15494,6 +15669,18 @@ def main(argv):
     # flag PRESENCE, not on argv[0]. ADDITIVE — it moves no frozen bar and touches no panel.
     if "--closure-ladder" in argv:
         return closure_ladder_run(argv)
+    # ── H_9808 $0 PRE-REGISTRATION GATES ────────────────────────────────────────────────────
+    # Ckpt-FREE, closed-form referees dispatched on the leading flag: they read a spec file and
+    # decide ADMISSIBILITY, never a verdict. Exit 3 = REFUSE (abort before spend), 0 = PASS,
+    # 2 = malformed spec (never silently a PASS). ADDITIVE — no frozen bar is touched.
+    if len(argv) >= 1 and argv[0] == "--pregate-selftest":
+        return pregate_selftest_run()
+    if len(argv) >= 2 and argv[0] == "--falsifier-headroom":
+        return falsifier_headroom_run(argv)
+    if len(argv) >= 2 and argv[0] == "--free-slot-score":
+        return free_slot_score_run(argv)
+    if len(argv) >= 2 and argv[0] == "--register-leak-probe":
+        return register_leak_probe_run(argv)
     if len(argv) >= 1 and argv[0] == "--refractory-preview":
         return _refractory_preview(argv[1:])
     if len(argv) >= 1 and argv[0] == "--emit-gate-census":
