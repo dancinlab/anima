@@ -1,0 +1,28 @@
+# H_9794 — AFFECT-FORWARDING — af_val/af_aro는 상태인가 장식인가 (interior→interior) (lab-full R10 · Fable P3 · PROPOSED)
+
+**status:** 🔵 PROPOSED (미실행 · lab full R10 발산 · 사전등록 필요 · toy=DIRECTIONAL 상한) — source=Fable 5 P3
+**lane:** amygdala affect gauge × grading (interior→interior · not mouth)
+**related:** [[H_9576]] · [[H_9787]] · [[H_9765]] · [[H_9411]]
+
+## Faculty question
+H_9576은 **interior→mouth** 의미전달을 죽였다(PC2 채널 열림·의미 미전달). 이 안은 경로를 바꾼다: **interior→interior**. trace에 이미 있는 1-D 연속 amygdala 축(`af_val`/`af_aro` · cli/anima.hexa·cli/chat.py 검증됨)이 **다음 percept의 grading**(H_9765/9767이 살아있음을 증명한 유일 채널)을 조건화하는가. 존재양식 주장: 정서가 interior의 지속 *상태*(다음 처리의 모드)인가, score 합산의 장식인가.
+
+## 벽 회피 (구조적)
+- **feat8 회피**: af는 1-D 연속 gauge — 2-bit 주소 아님, degeneracy 무관.
+- **자기지시 회피**: af 물질화(gauge + 자체 alien/pedestal 통제암 `af_alien_val` trace 존재 · H_9411)와 readout(grading 반응)이 분리.
+- **H_9787 typicality-trap 차단(사전등록)**: byte-CE/typicality를 af에서 partial-out + **content-scramble 암에서 효과가 살아야만** 인정 — 원안 valence-scalar 시드가 H_9787을 죽인 typicality-in-disguise 함정을 이 재설계로 회피.
+
+## Instrument (engine-native anima-py)
+- 신규 flag `anima-py chat --af-clamp v,a` (do() 클램프) × content-matched percept 스케줄.
+- 추정량: grading Δ의 클램프 dose-response.
+- **양성통제/liveness(선행)**: af gauge 자체의 alien/pedestal 대비 collapse-Δ — 죽은 gauge면 verdict=**VOID**(Ψ-SOMA 규율·KILL 아님).
+- 통제 ≥2: ① random-gauge 클램프(`wm_active` 클램프 — 특이성) ② content-scramble 암 ③ pedestal.
+- **KILL**: af-클램프 Δ ≤ random-gauge Δ TOST · 2-seed.
+
+## $0-first
+기존 trace에서 af_val(t) → grading-proxy(t+1) cross-lag 편상관(score·clock·typicality partial). 0이면 격하.
+
+## 이견/충돌 (reconcile)
+- Fable 경고 확인함: **H_9630/H_9633(mouth/tension·PC2 계보)와 직교 판정** — P3는 amygdala af→grading(interior→interior)이고 H_9630/9633은 tension→mouth라 lane·readout 모두 상이 → 중복 아님.
+- Sol: 고유 제안 없음 → Fable P3 채택.
+- fire 전 rent=spend owner go 필요. 등록=DIRECTIONAL 설계, verdict 아님.
