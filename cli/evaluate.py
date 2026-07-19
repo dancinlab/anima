@@ -161,12 +161,12 @@ class _Mouth:
 # G0 — COHERENCE
 # ════════════════════════════════════════════════════════════════════════
 
-def eval_rho_form(mouth, gen, known):
+def eval_rho_form(mouth, gen, known, seed_off=0):
     cz = _rho_fan_concepts()
     ratios = []; texts = []; n_coherent = 0
     for i in range(len(cz)):
         seed = cz[i] + ": "
-        o = mouth.ideate(seed, gen, 40, 0.7, 7 + i)
+        o = mouth.ideate(seed, gen, 40, 0.7, 7 + i + seed_off)
         kwr = _rho_fan_known_word_ratio(o, known)
         ratios.append(kwr); texts.append(o)
         if kwr >= 0.5:
@@ -234,7 +234,7 @@ def _echo_ratio(seed, text, n=8):
     return echoed / float(len(text))
 
 
-def eval_rho_weave(mouth, gen, known):
+def eval_rho_weave(mouth, gen, known, seed_off=0):
     cz = _rho_fan_concepts()
     n = len(cz)
     g_single = gen if (gen > 0 and gen < 80) else 80
@@ -242,7 +242,7 @@ def eval_rho_weave(mouth, gen, known):
     max_single = 0
     for s in range(n):
         seed = cz[s] + ". "
-        o = mouth.ideate(seed, g_single, 40, 0.7, 7 + s)
+        o = mouth.ideate(seed, g_single, 40, 0.7, 7 + s + seed_off)
         cov = _g_coverage(o)
         if cov > max_single:
             max_single = cov
@@ -255,7 +255,7 @@ def eval_rho_weave(mouth, gen, known):
                 seed += ". "
             seed += cz[c]
         seed += ". "
-        o = mouth.ideate(seed, g_comp, 40, 0.7, 7)
+        o = mouth.ideate(seed, g_comp, 40, 0.7, 7 + seed_off)
         cov = _g_coverage(o)
         kwr = _rho_fan_known_word_ratio(o, known)
         coherent = kwr >= 0.5
@@ -733,7 +733,7 @@ def eval_rho_fan_temp_ladder(mouth, gen, known, frames, temp=1.3):
     return {"temp": temp, "dist": d, "alive": d >= 5}
 
 
-def eval_rho_fan(mouth, gen, known, seed_class="composed"):
+def eval_rho_fan(mouth, gen, known, seed_class="composed", seed_off=0):
     # H_9801 seed-class axis. "composed" = the canonical `if cA, then cB: ` frame (default,
     # byte-unchanged). "atomic" = the frozen builder's OWN `cA: ` single-concept frame — it
     # already exists as frames["ablated"], so the axis costs no new frame construction and
@@ -744,7 +744,7 @@ def eval_rho_fan(mouth, gen, known, seed_class="composed"):
     texts = []; word_sets = []; fals = 0
     echo_max = 0.0
     for i in range(len(frames)):
-        o = mouth.ideate(frames[i], gen, 40, 0.7, 7 + i)
+        o = mouth.ideate(frames[i], gen, 40, 0.7, 7 + i + seed_off)
         texts.append(o)
         er = _echo_ratio(frames[i], o)          # H_9804 echo-guard telemetry (additive)
         if er > echo_max:
@@ -764,7 +764,7 @@ def eval_rho_fan(mouth, gen, known, seed_class="composed"):
 # ════════════════════════════════════════════════════════════════════════
 
 def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
-                   seed_class="composed", fan_temp_ladder=False):
+                   seed_class="composed", fan_temp_ladder=False, seed_off=0):
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
     mouth = _Mouth(ckpt, grow_window=grow_window)
@@ -774,9 +774,9 @@ def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
               "NOT move; this restores the seed-conditioning the bars were calibrated under "
               "(ByteGPT block=512). Echo-guard telemetry is reported alongside.", flush=True)
     print("  [gate] ρ·form COHERENCE …", flush=True)
-    r0 = eval_rho_form(mouth, g, known)
+    r0 = eval_rho_form(mouth, g, known, seed_off=seed_off)
     print("  [gate] ρ·weave RECOMBINATION …", flush=True)
-    r1 = eval_rho_weave(mouth, g, known)
+    r1 = eval_rho_weave(mouth, g, known, seed_off=seed_off)
     print("  [gate] ρ·leap NOVELTY (corpus load + decode) …", flush=True)
     r2 = eval_rho_leap(mouth, g, known, corpus_paths)
     print("  [gate] ρ·self PHILOSOPHY …", flush=True)
@@ -784,7 +784,7 @@ def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
     print("  [gate] ρ·tether NON-FAB …", flush=True)
     r5 = eval_rho_tether(mouth, g, known)
     print("  [gate] ρ·fan IDEATION …", flush=True)
-    r6 = eval_rho_fan(mouth, g, known, seed_class=seed_class)
+    r6 = eval_rho_fan(mouth, g, known, seed_class=seed_class, seed_off=seed_off)
     if fan_temp_ladder:
         # H_9801: run the instrument control on the SAME frames the bar just used.
         print("  [gate] ρ·fan TEMP-LADDER instrument control …", flush=True)
@@ -1733,8 +1733,19 @@ def evaluate_run(argv):
         print("ERROR: --seed-class must be 'composed' (default) or 'atomic', got %r" % seed_class)
         return 2
     fan_temp_ladder = "--fan-temp-ladder" in argv[1:]
+    # H_9804 재개① — decode-seed replication. The G1/G6 decode seeds were HARDCODED
+    # (7+s single · 7 composed · 7+i frames), so a "repeat with another seed" run was
+    # impossible from the CLI and every past verdict rested on ONE draw. Decode here is
+    # top-k SAMPLED (top_k=40, temp=0.7), so shifting the seed is a genuine re-draw, not a
+    # no-op re-run of a deterministic path. The frozen bars do NOT move; only which sample
+    # is drawn changes. 0 = byte-identical to every prior run.
+    seed_off = evaluate_intval(argv[1:], "--seed-offset", 0)
+    if seed_off:
+        print("  [seed-offset] decode seeds shifted by %+d (bars unchanged; this is a RE-DRAW "
+              "of the sampled decode, for n>1 replication)" % seed_off, flush=True)
     r = eval_reach_all(ckpt, corpus, gen, grow_window=grow_window,
-                       seed_class=seed_class, fan_temp_ladder=fan_temp_ladder)
+                       seed_class=seed_class, fan_temp_ladder=fan_temp_ladder,
+                       seed_off=seed_off)
     g0 = r["g0"]; g1 = r["g1"]; g2 = r["g2"]
     g3 = r["g3"]; g5 = r["g5"]; g6 = r["g6"]
 
@@ -9003,7 +9014,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-component-swap", "--store-swap-from",
     "--store", "--store-oracle",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
-    "--store-addr-audit", "--store-telemetry", "--grow-window", "--seed-class", "--fan-temp-ladder",
+    "--store-addr-audit", "--store-telemetry", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
     "--store-query", "--store-fuse", "--store-readout",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--fan-bind", "--fan-smp",
