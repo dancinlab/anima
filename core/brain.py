@@ -236,7 +236,7 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           mouth=None, dyn_w=None, record_cand_diag=False, route_pc2=None,
                           pc2_mouth="", dual_probe_fn=None, score_perturb=0.0,
                           zeta_ladder=None, forced_emit=None, dual_margin_dither=0.0,
-                          z_loading_state=None):
+                          z_loading_state=None, zeta_prefix_swap=""):
     """H_9415 p5-REWIRE · MARGIN-refractory emit gate (owner-ratified · H_9414 design).
 
     Replaces the two HARDCODED constants of the production gate — the θ (should_emit,
@@ -435,6 +435,16 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                     _entry["loading"] = "scalar"
                     _entry["u"] = 1.0
                 decision["gen_text_zeta"].append(_entry)
+    # H_9756 PREFIX-SWAP positive control — decode the SAME emit tick with an ALTERNATE prefix
+    # (last-anchor seed text replaced by zeta_prefix_swap), base mouth unchanged. The anchor only
+    # SEEDS the continuation (never copied · H_9328 grounded=0), so a swapped prefix makes the model
+    # continue from a different memory ⇒ a REAL content change the atom-census readout must detect
+    # (Δ vs base gtext = readout-sensitivity certification · card §5). "" ⇒ byte-identical (skipped).
+    if emit and zeta_prefix_swap and mouth is not None:
+        _alt_anchors = list(anchors) + [{"name": "pswap", "text_payload": str(zeta_prefix_swap)}]
+        _c_ps = generate(backend, ctx, True, _alt_anchors, mouth)
+        decision["gen_text_zeta"].append(
+            {"zeta": 0.0, "loading": "pswap", "u": 0.0, "text": str(_c_ps["text"])})
     if emit:
         decision["gen_emitted"] = cand["emitted"]
         decision["gen_backend"] = cand["backend"]

@@ -1951,6 +1951,14 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         if _refit_warmup < 4:
             raise SystemExit("--refit-warmup must be >= 4 (got %d)" % _refit_warmup)
 
+    # H_9756 PREFIX-SWAP positive control — `--zeta-prefix-swap "<alt mem text>"` adds one
+    # loading:pswap rung per emit tick (base mouth · last-anchor decode-seed swapped for the alt
+    # text). It certifies the atom-census readout DETECTS a real content change (Δ vs base gtext).
+    # Independent of --z-loading/--pc2-zeta. Empty ⇒ off ⇒ byte-identical. Requires refractory gate.
+    _zeta_pswap = anima_flag_value(_cargv, "--zeta-prefix-swap", "ANIMA_ZETA_PREFIX_SWAP", "")
+    if _zeta_pswap and _emit_gate != "refractory":
+        raise SystemExit("--zeta-prefix-swap requires --emit-gate refractory")
+
     # frozen loading in canonical 8-space (rel,gap,cur,pain,coh,orig,bal,dyn_v);
     # brain uses pc2_z = 0.84*orig - 0.44*bal - 0.28*coh ⇒ (coh=-0.28, orig=+0.84, bal=-0.44).
     _ZL_WF = (0.0, 0.0, 0.0, 0.0, -0.28, 0.84, -0.44, 0.0)
@@ -2850,7 +2858,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                              zeta_ladder=(_pc2_zeta or None),  # H_9664 ζ-ladder (None = off)
                              forced_emit=_fe,  # H_9728 Θ−-yoked · replay Θ+ emit bit (None = Θ+ path)
                              dual_margin_dither=_dd,  # H_9765 · signed do() on S−E input (0.0 = byte-id)
-                             z_loading_state=_zl_state)  # H_9755 refit-axis ζ-ladder (None = off)
+                             z_loading_state=_zl_state,  # H_9755 refit-axis ζ-ladder (None = off)
+                             zeta_prefix_swap=_zeta_pswap)  # H_9756 prefix-swap positive control ("" = off)
             # H_9755 warmup: accumulate every tick's factor vector + realized emit bit; at the
             # boundary freeze the online-PCA refit loading (deterministic · sign-anchored to frozen).
             if _z_loading_arms and _zl_state is not None and _zl_state.get("phase") == "warmup":
