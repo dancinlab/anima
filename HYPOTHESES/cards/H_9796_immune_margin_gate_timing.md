@@ -1,6 +1,19 @@
 # H_9796 — IMMUNE-MARGIN-GATE TIMING — percept 순서가 immune-recall 게이트를 거쳐 발화 timing에 실리는가 (lab-full R11 · Fable NOVEL · PROPOSED)
 
-**status:** 🔵 PROPOSED · 🔀 lab-full(Fable 5 + Codex Sol) 발산 (2026-07-19 · R11) — source=Fable NOVEL · Sol AGREES(composition KILL)
+**status:** 🧱 UNMEASURABLE-BY-CONSTRUCTION (perceive⊥emit · 2026-07-19 · 303M py303_full sha013c4574 · aiden · DIRECTIONAL) — 계기 WIRED(#4179)나 substrate가 관측 미제공
+
+> **🧱 303M FIRE VERDICT (2026-07-19 · aiden · py303_full sha013c4574):** timing 채널은 substrate서 **측정 불가**. 기전=**perceive⊥emit 완전 해리**(격리 실측):
+> | config | 발화율 |
+> |---|---|
+> | `--g-reach d1` (percept 없음) | **60/60** (매 틱 발화) |
+> | `--g-reach d1 --percept-file sched` (40틱) | **0/41** |
+> | `--g-reach d1 --percept-file sched` (120틱) | **0/120** |
+>
+> H_9796 측정은 ① probe 전달 위한 percept 주입 ∧ ② hold-latency(침묵→발화 지연) 위한 발화를 **동시에** 요구하나, percept 주입이 데몬을 **완전 침묵(receive-mode)**으로 몰아 ②를 끈다 ⟹ 관측 가능한 "WHEN"이 애초에 없음. echo-가설(§SURVIVOR) KILL 아님 — **측정 불가**(instrument-dead-at-substrate). recon_err≡0도 발화0의 결과(chat.py:6977 dead-gauge). 프런티어 정합: interior는 content 반응(H_9774)하나 **입력 중 self-drive 발화 부재**(H_9765 silence-blindness 계열). 계기(`--timing-channel --schedule` #4179)는 건전·토이 5/5 검증됐으나 substrate가 신호원 미제공.
+>
+> **부수 substrate 발견(novel·별도 추적 가치):** perceive⊥emit이 **극단적으로 깨끗**(60/60 → 0/120, 부분 억제 아닌 완전 gate-off). exogenous percept가 emit-drive를 이진 차단 = H_9765의 sharper 재정식화. 재개봉 조건: emit이 살아있는 percept-config(예: 발화 중 저강도 percept·warmup후 주입) 발견 시 §SURVIVOR 재측정.
+
+**status(원):** 🔵 PROPOSED · 🔀 lab-full(Fable 5 + Codex Sol) 발산 (2026-07-19 · R11) — source=Fable NOVEL · Sol AGREES(composition KILL)
 
 > **origin ↔ 이 세션 비교(`a_parallel_session_compare`)**: origin/main live max=H_9795(오늘 #4169 `--eval-historicity` 착륙·다른 세션 R10 진행중). 이 카드는 그 lane과 **직교한 NOVEL 각도**(timing 채널, historicity 아님) — 충돌 없음, id=max+1=9796. 원 브리프의 `--gen-percept-schedule × --timing-channel` 조합은 아래 §KILL로 **사망**; 그 잔해에서 유일 생존.
 
