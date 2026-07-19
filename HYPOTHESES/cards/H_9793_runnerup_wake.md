@@ -1,6 +1,9 @@
 # H_9793 — RUNNER-UP WAKE — 후보 경쟁은 깊이가 있는가 (rank-2는 소멸하는가, 지속하는가) (lab-full R10 · Fable P2 · PROPOSED)
 
-**status:** 🔵 PROPOSED (미실행 · lab full R10 발산 · 사전등록 필요 · toy=DIRECTIONAL 상한) — source=Fable 5 P2
+**status:** 🧱 INSTRUMENT-WALL (구현 착수 중 발견 · 2026-07-19 · #R10-flags) — source=Fable 5 P2
+
+> **🧱 INSTRUMENT-WALL (구현 전 포착 · a_experiment_engine_native):** Fable P2 접지 2건이 코드와 불일치 —
+> ① `pending_gap`은 FM K=8 rerank rank-2 gap 이 **아니라** afield/immune **store-recall top-2 gap**((d2²−d1²)/2 · chat.py:2914/2924) = 다른 기전. ② 실제 best-of-K 딜리버레이션(`gen_clm_decode_deliberated` · generator.py:518)은 **live 데몬서 죽은 경로** — anchors 항상 존재 ⟹ `clm_decode_grounded`/argmax fallthrough 로 `dk>1` 미도달(generator.py:518 주석 "anchor-copy never fires... SAME argmax rounding"). ⟹ `--fm-lesion-rank`는 live 미측정 경로를 lesion 하게 됨 = 사전-fire 계기-벽. **후속 재설계 필요**(딜리버레이션을 live 로 만들면 p5 substrate 변형 위험 · 별도 각도). H_9729 alphabet-degeneracy 와 같은 '창발-주소 계기 부재' 계열.
 **lane:** mouth/emit-policy — cerebellar FM best-of-K=8 rerank (`core/emit_policy.py`)
 **related:** [[H_9729]] · [[H_9269]] · [[H_9510]] · [[H_9786]]
 
