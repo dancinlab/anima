@@ -8132,7 +8132,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -8721,6 +8721,76 @@ def _timing_channel(argv):
           " 벽 H_9576 timing 재개봉 · DIRECTIONAL until H_9627 303M traces)"
           % ("≥1 trace: timing carries content" if any_pass else "no timing-content channel this batch"))
     return 0 if est_ok else 3
+
+
+def _gen_percept_schedule(argv):
+    """`anima-py evaluate --gen-percept-schedule --out <f.jsonl> [--lags 1,4,16] [--reps 8] [--seed 12345]`
+
+    H_9795 EVALUATION-HISTORICITY producer-side helper. Builds a repeat/shuffle/novel PERCEPT schedule
+    played into the daemon through the EXISTING `--percept-file` producer (H_9767) — no new chat flag
+    (a_experiment_engine_native minimality). Each row {tick,text,kind,lag,prime}: `--percept-file` reads
+    ONLY tick/text (extra keys ignored), while the `--eval-historicity` reader keys off kind/lag/prime to
+    compute Delta grade(repeat) - Delta grade(shuffle) with lag-dose. DETERMINISTIC (seeded).
+
+    Structure per (rep, lag, arm in {repeat,shuffle,novel}): a PRIME novel percept at tick t, `lag-1`
+    novel fillers, then at t+lag the PROBE = exact-repeat(prime) | byte-multiset-matched shuffle(prime) |
+    a fresh novel. The shuffle arm is the load-bearing control: identical unigram byte statistics, order
+    destroyed — a grading Delta that survives repeat-vs-shuffle is item-trace, not byte-stats."""
+    import json as _json
+    import random as _random
+    out = evaluate_strval(argv, "--out", "")
+    if not out:
+        print("--gen-percept-schedule requires --out <path>", file=sys.stderr, flush=True)
+        return 2
+    lags = [int(x) for x in evaluate_strval(argv, "--lags", "1,4,16").split(",") if x.strip()]
+    reps = evaluate_intval(argv, "--reps", 8)
+    seed = evaluate_intval(argv, "--seed", 12345)
+    rng = _random.Random(seed)
+    _alpha = list("abcdefghijklmnopqrstuvwxyz0123456789")
+
+    def _novel(i):
+        b = list(_alpha)
+        rng.shuffle(b)
+        return "".join(b[:12]) + "_" + str(i)
+
+    def _shuffle_bytes(s):
+        cs = list(s)
+        rng.shuffle(cs)
+        t = "".join(cs)
+        if t == s and len(set(cs)) > 1:      # guarantee order differs (multiset identical)
+            cs[0], cs[1] = cs[1], cs[0]
+            t = "".join(cs)
+        return t
+
+    rows = []
+    tick = 0
+    for _rep in range(reps):
+        for lag in lags:
+            for arm in ("repeat", "shuffle", "novel"):
+                prime_text = _novel(len(rows))
+                prime_tick = tick
+                rows.append({"tick": tick, "text": prime_text, "kind": "prime", "lag": lag, "prime": prime_tick})
+                tick += 1
+                for _f in range(lag - 1):    # fillers so the probe lands exactly at prime_tick+lag
+                    rows.append({"tick": tick, "text": _novel(len(rows)), "kind": "filler", "lag": lag, "prime": prime_tick})
+                    tick += 1
+                if arm == "repeat":
+                    ptext = prime_text
+                elif arm == "shuffle":
+                    ptext = _shuffle_bytes(prime_text)
+                else:
+                    ptext = _novel(len(rows))
+                rows.append({"tick": tick, "text": ptext, "kind": arm, "lag": lag, "prime": prime_tick})
+                tick += 1
+
+    with open(out, "w", encoding="utf-8") as _fh:
+        for r in rows:
+            _fh.write(_json.dumps(r, ensure_ascii=False) + "\n")
+    from collections import Counter as _Counter
+    kc = _Counter(r["kind"] for r in rows)
+    print("--gen-percept-schedule: wrote %d rows -> %s | kinds=%s | lags=%s reps=%d seed=%d"
+          % (len(rows), out, dict(kc), lags, reps, seed))
+    return 0
 
 
 def _silence_content_te(argv):
@@ -13827,6 +13897,8 @@ def main(argv):
         return _pc2_direction(argv[1:])
     if len(argv) >= 1 and argv[0] == "--ag-criticality":
         return _ag_criticality(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--gen-percept-schedule":
+        return _gen_percept_schedule(argv[1:])
     if len(argv) >= 1 and argv[0] == "--silence-content-te":
         return _silence_content_te(argv[1:])
     if len(argv) >= 1 and argv[0] == "--timing-channel":
