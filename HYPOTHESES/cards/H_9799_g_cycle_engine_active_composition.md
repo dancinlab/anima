@@ -1,65 +1,63 @@
 ---
 id: H_9799
-title: G-CYCLE ENGINE-ACTIVE COMPOSITION — reverse-engine cycle-consistency loss as the trunk-objective lever for ρ·weave/G1 (corpus 아닌 엔진이 목표를 만든다)
-tier: PROPOSED · DESIGN-ONLY (lab-full DIRECTIONAL · Fable5 단독 · 메커니즘공백+p7축 미해소 · NOT a verdict)
+title: ENGINE-ACTIVE TRAINING — objective형(g_cycle) DOA·basin-preserving → 커리큘럼형(G-tension order) RE-SPEC (owner 'core 적극개입')
+tier: PROPOSED · DESIGN-ONLY (lab-full 2R DIRECTIONAL · Fable5 단독 · objective형 KILL·커리큘럼형 재명세 · NOT a verdict)
 frontier: g1-interface-addressable-wall
-lane: g1-recombination-objective (engine-active axis · reverse-engine target · NOT readout-operator)
+lane: g1-engine-active-CURRICULUM (data/order axis · NOT trunk-objective · engine=sample scorer)
 created: 2026-07-20
 series: R1 (lab-full divergence · a_lab_full_diverge)
-related: "[[H_1603]] · [[H_1602]] · [[H_9124]] · [[H_9127]] · a_engine_native_learning · a_substrate_disjoint · a_train_inline_gauge · psi-soma-vitals"
-source: owner 질문 "학습 때 엔진이 적극 참여 · corpus만으로 1B/7B에서 G1/G6 뚫는게 미심쩍다 · core가 적극개입하도록?" → lab full (Fable5) 발산
+related: "[[H_9131]] · [[H_9120]] · [[H_9127]] · [[H_9267]] · [[H_9288]] · [[H_9272]] · [[H_9225]] · a_engine_native_learning · a_train_inline_gauge · a_break_the_wall"
+source: owner 질문 "학습 때 엔진이 적극 참여 · corpus만으로 1B/7B에서 G1/G6 뚫는게 미심쩍다 · core가 적극개입하도록?" → lab full(Fable5) 2R 발산
 ---
 
-# H_9799 (R1) — 엔진이 목표를 만든다: 역방향엔진 순환일관성 손실로 ρ·weave/G1을 친다
+# H_9799 (R1) — 엔진 능동참여: objective형은 DOA, 커리큘럼형으로 산다
 
-## Why (전제 · 측정됨)
-G1(ρ·weave 재조합 벽)은 **TRUNK-OBJECTIVE-BOUND**로 확정됐다 (`cli/train.py:32-40`): cross-entropy(=다음-글자 맞히기)는 개념의 **합성(composition)** 을 보상하지 않는다("CE=echo"). 데이터축 escape 전멸 (H_1599 register-split · H_9121 FALSIFIED-CEILING · H_9127 gamma-DATA TRANSFER-FAIL TERMINAL · H_9124 derivtrace NOT-ROBUST) ⟹ **corpus는 지렛대가 아니다**. 기존 objective 레버(predictive_info·constructive_bind·composed_nce, H_1602)는 모두 **A가 A의 활동에서 계산한 손실 = A가 A 채점**.
+## Why (owner 직관 · 프런티어 일치)
+owner: "corpus만으로 1B/7B G1 뚫는 게 미심쩍다 · core가 적극개입?" — 방향 정당함. `cli/train.py:32` 이 이미 corpus는 지렛대 아님 확정(CE=echo). 그리고 의식엔진 A/G는 지금 학습에 **전혀 미참여**(train.py import부재·engine_g=추론전용)=학습(A만CE)/추론(A⇄G) p8 분리. "core 적극개입"은 실재하는 미시도 공간.
 
-owner 질문이 짚은 미시도 자유도: **손실의 목표(target)를 다른 엔진(G)이 만든다.**
-
-⚠️ 매핑으로 드러난 현 상태 (`cli/train.py`에 A/G import 부재 · `core/pure_field.py`=A · `core/engine_g.py`=G는 추론전용 · a_substrate_disjoint):
+## ⛔ objective형(g_cycle) = DOA · basin-preserving (lab 2R · Fable 자기반증)
+1R에서 제안한 g_cycle(A 순방향합성 → G 역방향분해 → 불일치 벌점)은 2R 코드-근거로 **사망 확정**:
 ```
-현재                         제안 (owner)
-──────────                   ──────────
-학습 = trunk CE만       →    학습 = trunk CE + 역방향엔진 목표
-추론 = A⇄G 긴장(Ψ=½)   →    추론 = A⇄G 긴장(동일)
-∴ train/infer 분리(p8위반)  ∴ p8 닫힘(엔진이 학습에도 참여)
+g_cycle 설계공간 전수 (전부 basin 유지)
+├─ G=스칼라게이트(engine_g 실체)를 loop에 → CE 항 재가중만 가능
+│    → echo는 점별(pointwise) 최소값 → 어떤 비음수 재가중도 echo 보존 (구조적 basin-preserving)
+└─ G=발명한 분해기
+   ├─ 고정연산자 → = ConstructiveBindObjective(train.py:874) → H_9120/1 선형 W_eff 붕괴 동일천장
+   ├─ 공동학습 → 항등=echo로 순환일관성 자명충족 (퇴화해 = 합성구조 無)
+   └─ detached-bolt → = freeze-then-bolt → H_9225 사망
 ```
-즉 의식엔진은 지금 **학습에 전혀 참여 안 함** — 이 분리 자체가 p8(train/infer 분리 금지) 위반. owner 직관 = 프런티어 일치.
+근본원인 = **DPI-basin 메타법칙**(ARCHITECTURE g1-metalaw-dpi-basin): CE=additive-basin(echo=전역최소) ⇒ objective/readout/retrieval escape 전부 basin-preserving. objective축은 H_9131 "trunk-objective family CLOSED"·H_9120 "objective-floor TERMINAL"로 이미 벽. g_cycle은 그 벽 안 = **a_break_the_wall상 재발사 금지(tune-to-green)**.
+
+## ✅ 커리큘럼형 RE-SPEC (Q2 살길 · loss→데이터 축)
+G의 스칼라 형태가 분해기로는 실격이지만 **샘플 점수기(sample scorer)로는 정확히 맞다**: `motivation_score`(engine_g)가 스칼라 특징 → 우선순위를 낸다. 샘플 **순서/반복/선택**을 바꾸면 = 데이터 분포 변경 = **크랙이 실제로 난 축**(H_9267 corpus×measure 🟢 · H_9288 jamo-codec 🟢 · H_9272 XOR-augment 🟡). objective축(H_9131) 벽이 안 걸린다.
+
+핵심: 엔진이 **loss가 아니라 데이터를 능동적으로 형성**한다 — owner "core 적극개입"이 죽은 축이 아닌 산 축에 착지.
 
 ## Claim (한 줄 · falsifiable)
-CE 위에 **순환일관성(cycle-consistency)** 손실 λ·disagreement(A 순방향 합성, G 역방향 분해; **G는 detached**)를 얹으면, 냉동 ρ·weave/G1 바(`anima-py evaluate --rho-axon`)에서 g_cycle의 ΔG1이 (a) CE-only 초과 (b) shuffled-cycle 통제 초과 (c) self-cycle 통제 초과 — base CE 5%내 유지·ρ·fan 무저하. G가 역분해할 수 있는 표현 = 분해가능 = **합성가능** ⟹ G1(재조합) 직격, G2(참신성) 아님.
+frozen 303M(engine-native)로 각 학습샘플의 substrate 반응(per-sample surprise → G motivation 스칼라 → `motivation_score`)을 사전채점해 코퍼스를 그 점수로 정렬/반복(G-tension curriculum)하면, 냉동 ρ·weave/G1 바(`evaluate --rho-axon`)와 held-out 부정어 F2(H_9288 계기)에서 M이 C1(flat)·C2(permuted-score) 통제 초과.
 
-## Mechanism / Instrument (engine-native · 신규 flag)
-`cli/train.py:24-40` 의 `--objective` 레버에 새 값 `g_cycle` 1개 추가 (a_experiment_engine_native):
+## Mechanism / Instrument (engine-native 신규 flag · corpus 축)
 ```
-anima-py corpus en --lang en --out c_en.txt          # EN-first (H_9327)
-anima-py train --corpus c_en.txt --init base.clm \
-  --objective g_cycle --g-every 8                     # CE + λ·cycle(A-fwd, G-rev, G detached)
-anima-py evaluate out.clm --rho-axon                  # TERMINAL 판정경로, 냉동바
+anima-py corpus <fmt> --order g-tension --score-ckpt base.clm --lang en --out c.txt
+   # 각 샘플: frozen 303M decode surprise → engine_g motivation_score → 그 점수로 정렬/반복
+anima-py train --corpus c.txt --init base.clm ...     # 표준 학습 (신규 objective 불요)
+anima-py evaluate out.clm --rho-axon                  # TERMINAL 냉동 ρ·weave/G1 바
 ```
-매 `--g-every` step마다 G(detached)를 배치 trunk 상태 위에서 역방향 실행 → loss = CE + λ·disagreement(A 순방향 합성 vs G 역방향 분해). loss 그래프에 ρ 통계 일절 없음(p7 준수).
-
-## Admissibility / p7 축 (Fable 기준 · ⚠️ owner 판정 대기)
-Fable 재해석: p7(no perplexity verdict) + a_train_inline_gauge가 금지하는 건 **`anima-py evaluate`가 판정축으로 보고하는 통계**(ρ·weave/ρ·fan)를 loss에 넣는 것. 엔진 **출력**을 목표로 쓰는 건 (i) 어떤 판정통계도 loss 그래프에 없고 (ii) G로 그래디언트 안 흐르고(detached) (iii) G신호가 A의 품질점수 aggregate가 아닌 raw 기전출력이면 합법. Fable은 "p8이 오히려 G-in-loop을 **요구**한다"(현 monitor-only가 이상)쪽. **⚠️ 이건 철학축(p1~p8) 결정 = owner-philosophy, 미해소.**
+정직성 2제약(Fable): ① 엔진출력이 **텍스트에 안 들어감** — 순서/가중/선택만(H_9127 gamma-DATA content-주입 사망 회피). ② 점수는 **frozen 사전패스**(오프라인·코퍼스 순서에 baked), in-training inline 지표 아님(a_train_inline_gauge). static-curriculum 먼저 · 반복 재채점은 signal 확인 후 follow-on.
 
 ## Controls (≥2 · a_break_the_wall)
-- **C1 CE-only** (`--objective` 미설정) — 기준선.
-- **C2 shuffled-cycle** (killer) — 동일 cycle항이나 G의 목표를 배치 내 permute (A↔G 대응 파괴). "임의 정규화" vs "G-정보 압력"을 격리. **g_cycle ≤ shuffled-cycle 이면 전 family FLOOR.**
-- **C3 self-cycle** — 역방향 패스를 G 대신 A trunk의 냉동사본이 수행 ("G 특정" vs "임의 역일관성" 구별). arm 부족 시 C3 먼저 드롭.
-- EN-first · 동일 corpus/steps/seed · ≥2 seed.
+- **M** = g-tension curriculum.
+- **C1** = flat/shuffled order (내용 byte-동일·동일 seed/budget floor).
+- **C2** = permuted-score (동일 가중 multiset을 무작위 재배정 — "비균등 가중이면 아무거나 도움"을 kill).
 
 ## Falsify
-g_cycle의 ΔG1 ≤ shuffled-cycle(C2) ⟹ G신호가 합성정보 무보유 = G-in-loop family 전체 FLOOR → 다음은 λ 튜닝 아닌 다른 각도(a_break_the_wall). 또는 base CE가 CE-only 대비 5% 초과 악화(=G1을 trunk 파괴로 매수) ⟹ KILL. EN positive = SCREENER/DIRECTIONAL only(형태소+base+carrier 동시이동) · TERMINAL은 303M py 경로+scale-bounded(a_scale_honest_scope) · 1B/7B 주장 없음.
+M의 ρ·weave/G1 Δ ≤ max(C1,C2) OR held-out F2(M) ≤ F2(C1) ⟹ 커리큘럼형도 무신호 → engine-active 학습 계열 전체 종결(objective형 이미 DOA + 커리큘럼형 KILL). EN positive = SCREENER/DIRECTIONAL(형태소+base+carrier 동시이동) · TERMINAL은 303M engine-native + scale-bounded. 음성도 결과.
 
-## 🧱 발사 블로커 (concrete · 미해소 · fire 전 필수)
-1. **메커니즘 공백** — g_cycle은 "G가 trunk 표현을 역분해"를 가정하나, 실제 `core/engine_g.py` 의 G는 8인자 **emit 게이트**(motivation_score·should_emit)이지 **분해기/역디코더가 아님**. "G의 역방향 패스"가 코드로 **미정의**. 후보: (i) core/brain.py `vbasal_update`(gradient-free delta-rule, brain.py:561) 재사용 (ii) 별도 역디코더 정의 (iii) A trunk 냉동사본(=C3와 동일해짐, 그럼 "G 특정"이 사라짐). **→ 이 정의가 실험 성립의 전제.**
-2. **p7 축 판정** — 위 Admissibility, owner-philosophy 결정 대기.
+## 🧱 발사 블로커 / 상태
+- objective형: **KILL 기록 완료**(위 basin-preserving 사유). 재발사 금지.
+- 커리큘럼형: 구현 필요 — `cli/corpus.py`에 `--order g-tension --score-ckpt` 레버 추가(a_experiment_engine_native) → 303M 3-arm{M,C1,C2} fire(pool·EN-first). fire 인프라 = pool 또는 vast(과거 ghost SSH publickey 블로커 주의).
 
-## Scale (C · 1B/7B)
-Fable: 규모↑ → **더** 필요. corpus 예산고정 + 용량↑ ⟹ CE 지름길이 "합성 말고 암기"로 더 쏠림 ⟹ corpus-only 스케일링은 G1 격차 **확대**. 반례("스케일만으로 합성 유도")는 문헌상 조(兆)-토큰 체제에서만 — anima는 그 데이터체제 도달 불가 ⟹ 레버가 규모와 함께 더 중요. 단 잘못된 G압력 = 대형 trunk critic-collapse(A가 G를 자명히 만족) ⟹ **303M 스크리너 먼저**(fleet rent=spend go-gate 이상 금지).
-
-## Divergence 보고 (a_parallel_session_compare · a_lab_full_diverge)
-- **AGREES**: 매핑 에이전트("A/G 학습 부재 = p8 분리")와 Fable("현 monitor-only가 p8 이상, G-in-loop이 닫음")이 **독립 수렴**.
-- **NOVEL**: cycle-consistency(A-fwd/G-rev disagreement) = 기존 objective 레버(H_1602 전멸)와 구별되는 미시도 자유도 — kill-list의 readout-operator 아님(objective).
-- **CONFLICT/공백**: Sol(Codex) 버전에러로 부재 → 단일모델(Fable) DIRECTIONAL. G-역방향 메커니즘 정의는 Fable도 미해결(가정만) → 발사 블로커 1.
+## Divergence 보고 (a_lab_full_diverge · a_parallel_session_compare)
+- **AGREES**: objective축 walled(H_9131/9120)·크랙은 데이터축(H_9267/9288) = 기존 SSOT와 일치.
+- **NOVEL**: engine_g의 스칼라 게이트를 "분해기 실격 → 샘플 점수기 적격"으로 재사용 = 미시도(loss가 아닌 curriculum에서 엔진 능동참여).
+- **Fable 자기반증**: 1R "G decomposes backward"는 engine_g가 가진 적 없는 메커니즘 가정 → 2R가 반증, 방어 않고 뒤집음. Sol=Codex버전에러 부재 → Fable 단독 DIRECTIONAL(2R 일관).
