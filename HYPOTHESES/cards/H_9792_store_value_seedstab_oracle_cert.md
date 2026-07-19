@@ -119,3 +119,17 @@ number here is DIRECTIONAL until produced by `anima-py evaluate` on the 303M py 
 **verdict-integrity 단서(과잉주장 금지·lab-full 수렴)**: (1) oracle-valid **2 seed**만(s7 양쪽 oracle<0.90 판독불가·warmup은 값 신뢰수리 아님). (2) **코퍼스가 H_9720과 다를 수 있음**(n-blocks 200 재구성) → cross-run 절대비교 confound → **historical H_9720 기전 반증은 INCONCLUSIVE**(내부 legacy-vs-fresh 대비만 clean). (3) DIRECTIONAL(torch 303M·py numpy). (4) Sol 단서: lookup/oracle≈주소정확도지 순수 binding-주소 우위 증명 아님(캘리브레이션/인터페이스 가능). **⟹ REFUTED 아님·INCONCLUSIVE도 아님 = CHALLENGE/REFUTE-CANDIDATE**. H_9720 status→DISPUTED(아키텍처-필연성 무너짐·기전반증 미결).
 
 **최저비용 firm-up(미발사)**: 직접 addr-argmax 감사(correct-slot top-1)+양 arm을 **H_9720의 정확한 코퍼스**로 재측정 → 주소-vs-인터페이스 분리 + historical 반증 확정/부정. (2모델 수렴 추천.)
+
+## 🔬 FIRM-UP — direct address-vs-value via --store-addr-audit (2026-07-19 · 303M · seeds{11,4302})
+lab full의 최저비용 disambiguation(직접 주소 top-1 감사) 실행. `--store-addr-audit`(H_9672 addr_top1=argmax==target_slot). 로그=`~/anima-weights/h9792_gate/firmup.log`.
+
+| seed | arm | oracle(값) | addr_top1(주소) | addr_mass |
+|---|---|---|---|---|
+| s11 | fresh | 0.484❌ | 0.125(우연·판독불가) | 0.124 |
+| s11 | legacy | 1.000✅ | 0.820 | 0.628 |
+| **s4302** | **fresh** | **0.992✅** | **0.414** | 0.279 |
+| **s4302** | **legacy** | **1.000✅** | **0.977** | 0.791 |
+
+**결정(사전등록 판별기준 충족)**: oracle-valid 양쪽인 s4302 clean 비교 — 값 통제(oracle≈1.0 둘 다)에도 **legacy 주소 top-1 0.977 ≫ fresh 0.414**(+addr_mass 0.79 vs 0.28 = legacy 선명·fresh 흐림). Sol 사전기준 "legacy near-perfect ∧ fresh not = 격차 주소側" 충족 ⟹ **fresh-vs-legacy lookup 격차는 값이 아니라 주소側 직접확증**. H_9720 "penult 주소붕괴" 정면반박: **penult 주소가 최고(0.98)**·fresh L3-tap이 약자(0.41). ⟹ REFUTE-CANDIDATE **강화**(ratio 추정→직접측정).
+
+**단서(REFUTED 아님·정직)**: (1) clean 비교 **1 seed(s4302)** — s11 fresh는 oracle 0.484 붕괴(gate선 0.930)=**fresh arm run-variance 큼**(재현불안정 자체가 fresh 불리·2번째 clean seed 부재). (2) historical corpus-confound 잔존(H_9720 정확코퍼스 미복원). (3) DIRECTIONAL(torch 303M py). ⟹ 아키텍처-필연성+기전 **직접 반박**·historical 완전 REFUTED는 exact-corpus 재현만 잔여. H_9720=DISPUTED 유지(강화).
