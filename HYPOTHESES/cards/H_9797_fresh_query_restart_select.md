@@ -46,3 +46,39 @@ $0 pre-screen ✅ done → pool-GPU: 4× one training run (+3× incremental; seq
 
 ## Verdict-integrity
 Any number here is DIRECTIONAL until produced by `anima-py train --store-query-fresh-restarts` + `anima-py evaluate` on the 303M py channel. A PASS reads "the good emergent-address basin is store-CE-selectable", NOT "the address was supervised".
+
+---
+
+## ⛔ REPRODUCTION BLOCKER (2026-07-20 · ghost·vast 4090 pod 45320375 · owner-approved fleet-rent) — NOT a verdict
+
+The owner-approved 303M cement fire could **NOT reproduce the H_9720/H_9792 store-cotrain baseline**
+(oracle=1.0) on a fresh 4090 pod, so the fresh-restart-select lever was never actually tested. Honest
+negative — recorded, no tune-to-green.
+
+**Symptom** — the co-trained store lane stalls at the `op⊕majority` shortcut and never learns the value
+map: `sb_ans_ce` flat ~0.65–0.75 (should → ~0), `sb_store_acc` ~0.5 (should → 1.0), and the **C0-e ORACLE
+positive control = 0.54–0.60** (value-read given the correct slot handed free; H_9720/H_9792/1B all got
+**1.0**). `addr_top1` ≈ uniform 0.125. lookup ≈ 0.55–0.63 ≈ the 0.637 shortcut ceiling. The value path
+itself fails, so the address question is moot.
+
+**Ruled OUT (each verified BY OUTPUT on-pod):**
+- engine version — `git diff 31abff6c(1B/H_9792 source)→origin/main tip` on core/clms.py·model.py·decode.py·cli/train.py·corpus.py = **empty** (identical store/fresh engine).
+- base ckpt — pod `py303_full.clm` sha256 = **013c4574e0ce71ae**, size 176584498 = the confirmed H_9720 base.
+- warmup freeze/thaw (lab-full Fable #1 hypothesis) — **REFUTED by control**: NO-warmup `fresh:64@3 --seed 7 --steps 6000` also gave oracle 0.60 / addr uniform. The failure is deeper than the warmup address-starve mechanism.
+- precision — `--bf16` is `action="store_true"` (default OFF) and was never passed ⟹ runs were **fp32**; Fable #2 (bf16 rounding) N/A.
+- store loss inactive — `sb_lam` ≈ 0.97 throughout (the CLMS lane IS receiving gradient; it just doesn't converge).
+- torch version (H_9734 pin `<2.13`) — retested with **torch 2.11.0** (the H_9734 known-good) AND 2.12.1: **both** stall (oracle 0.54 / 0.60). H_9734's documented regression is Blackwell sm_120 + bf16-specific; this pod is 4090 (Ada sm_89) + fp32, so that mechanism doesn't apply and swapping torch didn't help.
+
+**Corpus** — `anima-py corpus storebind --n-blocks 200 --store-slots 8 --lang en --seed 7` → train=384
+held=128 leak=0 (matches the prior H_9720 384/128 structure); the builder is deterministic and its diff is
+empty. Not independently confirmed byte-identical to the original summer `sbv.txt` (summer unreachable from ghost).
+
+**What's needed to unblock** (owner / original environment): the EXACT original H_9720 303M store-cotrain
+recipe — the torch version that produced oracle=1.0, the corpus seed / `--entity-pool`, and the full train
+flags (lr / steps / any store-λ) — OR access to an original H_9720 fresh ckpt (summer) to re-eval on a
+matched corpus. Without it, the 303M store baseline can't be reproduced on rented infra.
+
+**Provenance** — pod 45320375 (RTX 4090 · torch 2.11.0/2.12.1 · fp32 · ~4h · ~$1.4 · torn down · leak 0) ·
+diag logs `~/anima-weights/h9797_diag/{diag2,diag3}_train.log`, `h9797.log`. Instrument (`run_h9797.sh`
+no-warmup + inline oracle) and judge (`judge_h9797.py`, validated on a synthetic log) are ready for a
+re-fire once the baseline reproduces. Status unchanged: **PROPOSED · pool-gated** (the lever remains untested).
