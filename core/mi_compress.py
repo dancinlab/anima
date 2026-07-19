@@ -104,6 +104,7 @@ import math
 import os
 
 # ── frozen defaults (an instrument's constants are part of its identity) ───────────────────
+MARKOV_ESCAPE = 1.0  # order-k escape mass, backed off to the unigram (see cond_bpb_markov)
 W_TAIL = 4096        # in-context reach proxy: the summary must beat what the tail already gives
 P_PRED = 2048        # predicted prefix of the next segment
 EPS_BPB = 0.02       # decoration guard in bpb — below this an over-floor lift is not read
@@ -206,10 +207,22 @@ def cond_bpb_markov(x: bytes, y: bytes, order: int = 6) -> float:
     for b in x:
         key = bytes(hist[-order:]) if len(hist) >= order else None
         d = ctx.get(key) if key is not None else None
+        p_uni = (uni[b] + 1) / (uni_tot + 256)
         if d:
-            p = (d.get(b, 0) + 1) / (sum(d.values()) + 256)
+            # Interpolated backoff, NOT add-256. The earlier form was `(count+1)/(sum+256)`,
+            # which adds 256 to the DENOMINATOR without adding the matching mass to the
+            # numerator, so a sparse context is penalised for existing: a 6-gram seen ONCE
+            # with the correct successor scored 2/257 = 7.0 bits, WORSE than the ~6.6-bit
+            # unigram backoff on a 94-symbol alphabet. A correct order-6 hit therefore cost
+            # bits, the conditioning body made the code longer, and the plant's ceiling went
+            # NEGATIVE (measured: over_floor -0.0382 at span 2048 → INSTRUMENT-DEAD, while
+            # span 256 still read +1.3543 — the defect scaled with span, so a small-span
+            # smoke could not see it). Here the escape mass BACKS OFF to the unigram it came
+            # from, so an unseen successor degrades to ~p_uni instead of to a cliff.
+            tot = sum(d.values())
+            p = (d.get(b, 0) + MARKOV_ESCAPE * p_uni) / (tot + MARKOV_ESCAPE)
         else:
-            p = (uni[b] + 1) / (uni_tot + 256)
+            p = p_uni
         bits += -math.log(p, 2)
         if key is not None:
             dd = ctx.setdefault(key, {})

@@ -97,6 +97,13 @@ FEAT_DIM = 256             # hashed n-gram feature dim
 SIGN = 0.55                # LV-W per-pair sign threshold
 CLOSURE_SIGN = 0.60        # LV-C per-block closure threshold (the anchor gate)
 NULL_CLOSURE_MAX = 0.05    # H_013 REPAIR GUARD: an INERT env must read ~0 closure.
+# Measured power floor (parent session, seed 7): at T=600 the battery certifies on 12 blocks
+# (P-LIVE 0.750 · P-OPEN 0.417 · P-DEAD 0.000); at T=400 it has 8 blocks and P-OPEN's channel
+# arm falls to sign_base_full 0.537 < SIGN, so the battery reads a FAILURE that is really a
+# sample-size artefact. A failure below this floor is therefore reported as UNDER-POWERED, not
+# as INSTRUMENT-INVALID — conflating "too few blocks" with "broken" is how a power problem gets
+# recorded as a substrate fact (power-before-negative-verdict).
+MIN_BLOCKS = 12
                            # The pre-repair (frame-misaligned) estimator read 0.667 here,
                            # i.e. above CLOSURE_SIGN. If this trips, the frame alignment
                            # regressed — do not read any closure number until it is fixed.
@@ -575,6 +582,8 @@ def certify(seed: int = 7, T: int = 600) -> dict:
             "echo_guard": echo, "frame_alignment": frame,
             "P-LIVE": live, "P-OPEN": openp, "P-DEAD": dead,
             "LV-P": {"reading_brain": lvp_live, "blind_brain": lvp_blind, "ok": bool(lvp_ok)},
+            "blocks": int(min(live["blocks"], openp["blocks"], dead["blocks"])),
+            "under_powered": bool(min(live["blocks"], openp["blocks"], dead["blocks"]) < MIN_BLOCKS),
             "certified": bool(live_anchor and open_channel and dead_refused
                               and echo["ok"] and frame["ok"] and lvp_ok)}
 
@@ -608,8 +617,16 @@ def format_report(res: dict) -> str:
         add("  LV-P policy edge     %s [CR_reading=%.3f replay_agree=%.3f CR_blind=%.3f]"
             % ("PASS" if p["ok"] else "FAIL", p["reading_brain"]["CR"],
                p["reading_brain"]["replay_agree"], p["blind_brain"]["CR"]))
-    add("  VERDICT: %s" % ("CERTIFIED — the instrument separates CHANNEL from CLOSURE"
-                           if res.get("certified") else "INSTRUMENT-INVALID"))
+    if res.get("certified"):
+        verdict = "CERTIFIED — the instrument separates CHANNEL from CLOSURE"
+    elif res.get("under_powered"):
+        verdict = ("INSTRUMENT-UNDER-POWERED — %d blocks < %d (measured floor). This is NOT a "
+                   "broken-instrument reading and NOT a substrate fact; re-run with "
+                   "--closure-ticks >= %d before concluding anything."
+                   % (res.get("blocks", 0), MIN_BLOCKS, MIN_BLOCKS * BLOCK))
+    else:
+        verdict = "INSTRUMENT-INVALID"
+    add("  VERDICT: %s" % verdict)
     add("  ⚠️ rung 1 is NOT aliveness — a thermostat (the P-LIVE plant) clears it by design.")
     return "\n".join(L)
 

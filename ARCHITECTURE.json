@@ -5733,9 +5733,9 @@
                 "detail": "v3 H_005/H_009 흡수. gzip·PPM·order-6 Markov 3중 conditional-bpb + shift-null LOO capture. 바닥은 realized 분할서 유도(원시 천장 단독 판독 금지). 플래그 evaluate --stream-mi/--shuffle-floor/--capture-anchor/--n-segments."
               },
               {
-                "name": "⚠️ H_9806 기본설정 자기인증 실패",
+                "name": "🟢 H_9806 기본설정 plant 미발화 = 평활화 결함, 수리됨",
                 "type": "gate",
-                "detail": "부모 독립검증: --stream-mi 기본 파라미터로 core 스트림 측정시 markov6 plant over_floor −0.0305 < 0.100 ⟹ ⛔ INSTRUMENT-DEAD 자기거부(거짓양성 아님·안전측 실패). --capture-anchor 는 인증 통과. 배터리 기본값의 plant 감도 = OPEN 과제."
+                "detail": "근본원인: cond_bpb_markov 이 문맥 적중시에도 p=(count+1)/(sum+256) 로 채점 — 분모에만 256 을 더해 1회 관측된 정확한 6-gram 이 7.0 bit, unigram 되돌림 6.6 bit 보다 비쌌다. 몸통을 줄수록 손해 ⟹ plant ceiling 음수. 수리=unigram 으로 backing off 하는 보간(MARKOV_ESCAPE). 기본값 markov6 over_floor −0.0382 → +5.9726, null 은 여전히 거부(+0.0036)."
               },
               {
                 "name": "core/closure_ladder.py (H_9807)",
@@ -5756,9 +5756,9 @@
                 "detail": "지목된 order-2 bigram 경로는 H_9288 F2 에서 닫힘(raw 0.5000 cov 1.0 · codec cov 0.0 UNDECIDABLE) — F2 는 전량 부정문이라 끝 접사가 상수, 판별정보는 문장중간. H_9288 철회·강등 없음. OPEN = atomicity 와 n-gram reach 완전 공선(축 가짓수 1) ⟹ C4-pad/C5-reach 미발사."
               },
               {
-                "name": "⚠️ H_9807 인증은 tick 예산 민감 (부모 실측)",
+                "name": "🟢 H_9807 tick 민감 = 검정력 문제로 분리 표기됨",
                 "type": "gate",
-                "detail": "ticks=600 CERTIFIED(P-LIVE 0.750·P-OPEN 0.417·P-DEAD 0.000) 이나 ticks=400 은 P-OPEN 채널팔 base_full 0.537<0.55 로 ⛔ INSTRUMENT-INVALID 자기선언. 600 은 가장자리 ⟹ 이 계기로 무엇을 재든 tick 예산을 먼저 고정·보고할 것. 병합 회귀 아님(600 수치 이전과 동일)."
+                "detail": "측정된 바닥: T=600 은 12 블록으로 인증, T=400 은 8 블록서 P-OPEN 채널팔 0.537<0.55 로 실패. 고장과 표본부족이 같은 INSTRUMENT-INVALID 로 읽히던 것을 MIN_BLOCKS=12 기준 3갈래로 분리 — 블록 부족시 INSTRUMENT-UNDER-POWERED 로 '기질 사실 아님·ticks≥600 재실행' 을 명시. 12 블록 이상서의 실패는 여전히 INVALID(은폐 아님)."
               },
               {
                 "name": "H_9808 사전등록 게이트 4종 (core/pregates.py)",
