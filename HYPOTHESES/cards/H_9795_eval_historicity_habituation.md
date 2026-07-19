@@ -8,7 +8,14 @@
 > 로 tick별 재생하므로 repeat/shuffle/novel 스케줄은 **그냥 데이터**로 주입 가능(새 producer flag=DRY 위반). ⟹
 > H_9795 진짜 신규 = ① schedule-generator(lag 1/4/16 정확반복+통계-matched shuffle+novel jsonl 빌더) ② reader-side
 > estimator(Δgrade(repeat)−Δgrade(shuffle) lag-dose · store-sealed · hab_ctx liveness=VOID gate). 둘 다 chat producer
-> flag 아님. 다음=generator 헬퍼 + `anima-py evaluate --eval-historicity` reader.
+> flag 아님.
+>
+> **🔧 ① generator WIRED (2026-07-19 · v0.20.14 · #R10-gen):** `anima-py evaluate --gen-percept-schedule --out f.jsonl
+> [--lags 1,4,16] [--reps 8] [--seed N]` 구현. 행 {tick,text,kind,lag,prime} — --percept-file 은 tick/text 만 읽고
+> reader 는 kind/lag/prime 사용(self-describing). shuffle arm=byte-multiset 동일·순서 파괴(load-bearing 통제). 결정적.
+> **토이 PASS**: probe@prime+lag 12/12 · repeat=prime · shuffle(multiset==,order!=) · novel!=prime · --percept-file 호환
+> · byte-identical 재현 · whitelist 통과. **② reader 는 owner-go fire 대기**(post-fire 트레이스의 percept-grading DV
+> 필드를 실데이터로 접지해야 pending_gap 식 오접지 회피 · synthetic-only 검증은 DV 자정의라 거짓완성).
 **lane:** grading × habituation lane (`hab_ctx` · cli/anima.hexa·cli/chat.py)
 **related:** [[H_9765]] · [[H_9767]] · [[H_9790]] · [[H_9738]]
 
