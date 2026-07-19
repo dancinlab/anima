@@ -1,6 +1,14 @@
 # H_9795 — EVALUATION HISTORICITY — grading 채널에 store 없는 기억(item habituation)이 있는가 (lab-full R10 · Fable P4 · PROPOSED)
 
-**status:** 🔵 PROPOSED (미실행 · lab full R10 발산 · 사전등록 필요 · toy=DIRECTIONAL 상한) — source=Fable 5 P4
+**status:** 🔵 PROPOSED · 🔧 producer 기존 인프라 커버 (2026-07-19 · #R10-flags) — source=Fable 5 P4
+
+> **🔧 producer 재검토 (2026-07-19 · a_experiment_engine_native 최소성):** Fable P4 가 제안한 신규 flag
+> `--percept-schedule f.jsonl` 는 **불필요** — 기존 **`--percept-file`(H_9767)** 이 `{"tick":int,"text":str}`
+> jsonl 을 perception route(emit gate 아님·p5 STRUCTURE-safe · `_build_percept_source_from_file` cli/anima.py:246)
+> 로 tick별 재생하므로 repeat/shuffle/novel 스케줄은 **그냥 데이터**로 주입 가능(새 producer flag=DRY 위반). ⟹
+> H_9795 진짜 신규 = ① schedule-generator(lag 1/4/16 정확반복+통계-matched shuffle+novel jsonl 빌더) ② reader-side
+> estimator(Δgrade(repeat)−Δgrade(shuffle) lag-dose · store-sealed · hab_ctx liveness=VOID gate). 둘 다 chat producer
+> flag 아님. 다음=generator 헬퍼 + `anima-py evaluate --eval-historicity` reader.
 **lane:** grading × habituation lane (`hab_ctx` · cli/anima.hexa·cli/chat.py)
 **related:** [[H_9765]] · [[H_9767]] · [[H_9790]] · [[H_9738]]
 
