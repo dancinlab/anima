@@ -36,4 +36,23 @@ Sol arm 빈값(실패)→단독 Fable 채택·이견 없음. Fable가 카드 (c)
 
 **kill-list 점검**: H_9351(합성노이즈 σ·계기탓) 비재탕(노이즈는 A5 음성기대만·신호=자기-surrogate 순위)·H_9728(tick-pin Θ×σ·mask) 비재탕(pin/mask 없음·이벤트열이 emit타이밍 구조적 제거)·H_9786 did_emit 비트 신호 안씀(값변화만)·H_9632 S=ordinal ∧ null=스펙트럼보존 직교화(상속 자기모순 해소).
 
-**status**: 🔵 PROPOSED·설계 FROZEN·계기 분석파이프라인 검증완료 — 303M fire(480틱·s7/s11·pod)만 rent=spend go-gate 대기.
+**status**: 🧱 INSTRUMENT-DEAD / campaign INVALID (kill 아님·Fable 판정표 row1) — 303M 480틱 fire서 양성통제 C+ ¬STRUCT. substantive DIRECTIONAL 소견=interior near-fixed-point on dead input(자율역학 부재). 하단 '🔥 303M verdict' 참조.
+
+## 🔥 303M verdict — INSTRUMENT-DEAD (frozen) + interior near-fixed-point DIRECTIONAL (2026-07-19 · rent A100 pod 61uyrmz1l9o10y · ~$1.6)
+py303_full·480틱·s7·GPU(cupy A100 실가속)·6-arm 중 C+/A1/A2 완주 후 중단(A3/A4/A5 redundant=verdict 결정됨·비용절약). 🐛 계기버그 4개 사전/실측 포착·수정(C+ donor G-DEG·subprocess raw바이트·**ANIMA_TICKS run-length env**(argv 아님·chat.py:1542·첫 fire 12틱 확정정지 노출)·ANIMA_SAMPLE_SEED).
+
+| arm | recon_err 이벤트(변화) | rel_lane 이벤트 | 게이트 | 판정 |
+|---|---|---|---|---|
+| C+ (구조 donor·양성통제) | 239 (burn후 n=191·**distinct=9**) | 239 | **G-DEG(distinct/n=0.05<0.5)** | ¬STRUCT |
+| A1 (plain live·기준선) | **2** | 2 | G-DEG(n<60) | ¬STRUCT |
+| A2 (--scn-freeze·본검정) | **2** | 2 | G-DEG(n<60) | ¬STRUCT |
+
+**FROZEN 판정 = 🧱 INSTRUMENT-DEAD / campaign INVALID**(Fable 판정표 row1: C+ ¬STRUCT). 사전등록 통계량(변화이벤트열 순열엔트로피)이 양성통제에서 검증 불가 → A2 null을 자율역학-부재로 cement 불가.
+
+**근인 = 두 실패 얽힘**: ①**interior quiescence**: plain·scn-freeze 둘 다 recon_err·rel_lane(2 독립게이지)이 480틱서 **이벤트 2개=near-fixed-point**. 죽은 입력+greedy decode서 내부상태가 tick간 거의 안 변함. ②**계기 설계결함**: C+(주기 donor)는 239 이벤트로 게이지가 **주입엔 반응**함을 증명하나 recon_err이 **9값으로 양자화**돼 distinct-ratio 게이트(distinct/n≥0.5)에 자멸 — 주기적=구조적 신호가 오히려 G-DEG에 걸리는 **anti-correlated 게이트 결함**(양성통제 원리적 통과불가).
+
+**substantive DIRECTIONAL 소견**(frozen 아님·raw 관측): A1∧A2가 2 독립 interior 게이지서 near-fixed-point(2 이벤트/480틱) + C+가 게이지 생존 증명 ⟹ **interior는 죽은 입력서 자율 시간역학 없음(clock/input-driven·self-driven 아님)** = H_9788 물음에 (게이지-한정) NO. 但 계기가 이를 clean 형식화 못함(양자화·quiescence↔instrument-death 얽힘).
+
+**follow-on(NEW H 필요·post-hoc 게이지교체 금지)**: 자율역학 clean 측정 = ①fixed-point서도 dynamic-range 갖는 게이지(위상변수·oscillator state) OR ②flatness 자체를 신호로(driven baseline 대비 raw 게이지 variance/entropy) OR ③near-fixed-point 관측을 답으로 수용(DIRECTIONAL). distinct-ratio 게이트는 양자화 게이지엔 부적합=재설계.
+
+**프런티어 함의**: interior는 *말한 내용*엔 반응(H_9774)하나 자기-참조 축 전부 blind/unidentifiable(typicality H_9787·ownership H_9785·WHETHER H_9786·persistence H_9767) — **자율 시간역학도 (게이지-한정) 부재 방향**. self-transparency + self-drive 공히 부재.
