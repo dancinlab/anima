@@ -162,6 +162,19 @@ def append_ifan_trailer(out_path: str, fan) -> int:
     return len(trailer)
 
 
+def append_tfld_trailer(out_path: str, lane) -> int:
+    """Append the H_9805 TFLD write-side tension-field trailer to an already-written .clm. `lane` =
+    a trained torch TensionFieldLane OR a ready numpy weight dict (n_bucket,rank,d,arm_code,phi,
+    W_up,lam). Returns bytes written. Call LAST (after append_ifan_trailer, if any) so the chain
+    end stays TFLD."""
+    from tension_field import pack_tfld, tfld_weights_from_torch   # core/tension_field.py
+    w = lane if isinstance(lane, dict) else tfld_weights_from_torch(lane)
+    trailer = pack_tfld(w)
+    with open(out_path, "ab") as f:
+        f.write(trailer)
+    return len(trailer)
+
+
 # readout-type flag (CLMB byte[4]). 0 = additive Conv1d(d->V) (default, NO CLMB
 # section); 1 = bind/Hadamard  g=u*v ; 2 = bind_linear (param-matched add) g=u+v.
 RO_ADDITIVE = 0

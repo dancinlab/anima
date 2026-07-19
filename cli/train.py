@@ -1556,6 +1556,22 @@ def main():
     ap.add_argument("--ideation-lam0", type=float, default=1.0, help="H_9803: IFAN lam init (additive scale)")
     ap.add_argument("--ideation-weight", type=float, default=1.0, help="H_9803: set-CE loss weight")
     ap.add_argument("--ideation-docs", type=int, default=4, help="H_9803: documents per ideation sub-batch")
+    # ── H_9805 WRITE-SIDE TENSION FIELD (TFLD lane) ──────────────────────────────────────────
+    # Production's tension is a SCALAR on the READOUT side (`conflict_scalar`, rank ~2.66 per
+    # H_9714) — the rank-1 seam v1 died on. This lane injects the per-edge parse-disagreement
+    # FIELD pre-trunk instead. The lane is DEFAULT-OFF ⇒ byte-identical golden path.
+    # `rank1` is NOT a lesser treatment: it is the control that decides whether the field is a
+    # field at all, and it is parameter-, lam- and shape-matched to `duel`. See core/tension_field.py.
+    ap.add_argument("--tension-field", choices=["off", "duel", "rank1"], default="off",
+                    help="H_9805: 'duel' = the full per-edge L→R/R→L parse-disagreement field, added "
+                         "to the embeddings BEFORE the trunk · 'rank1' = THE CONTROL — the same "
+                         "reduction fed the best rank-1 approximation of that same field (identical "
+                         "params/lam/shape; the ONE variable is field-vs-its-own-scalar-summary) · "
+                         "'off' (default) ⇒ byte-identical, no trailer.")
+    ap.add_argument("--tension-field-rank", type=int, default=32,
+                    help="H_9805: TFLD inner width r for phi (n_bucket, r) and W_up (r, d).")
+    ap.add_argument("--tension-field-lam0", type=float, default=1.0,
+                    help="H_9805: TFLD lam init (additive pre-trunk scale).")
     ap.add_argument("--bind-rank", type=int, default=64, help="H_9698: MBND binder rank (q/k/v/u width)")
     ap.add_argument("--bind-lam0", type=float, default=1.0, help="H_9698: MBND lam init (additive scale)")
     ap.add_argument("--freeze-trunk", action="store_true",
@@ -1804,6 +1820,8 @@ def main():
                         clms_key_seed=a.clms_key_seed, clms_lam0=a.clms_lam0,
                         mbnd=bool(a.mouth_binder), mbnd_rank=a.bind_rank,
                         mbnd_linear=(a.mouth_binder == "linear"), mbnd_lam0=a.bind_lam0,
+                        tfld_arm=("" if a.tension_field == "off" else a.tension_field),
+                        tfld_rank=a.tension_field_rank, tfld_lam0=a.tension_field_lam0,
                         n_factions=a.n_factions, faction_bridge_lam0=a.faction_bridge_lam0)
         model = _to_device_or_die(CLMConvMoE(cfg), device)   # production additive readout (all arms)
         if tlora_on:
@@ -1850,6 +1868,13 @@ def main():
            f"objective={a.ideation_objective} route={a.ideation_route}@L{a.ideation_route_l} "
            f"assign={a.ideation_assign} · docs={len(idl_cell.docs)} "
            f"(dropped {idl_cell.n_dropped} single-future blocks) ctx_len={_ctx_len}", flush=True)
+
+    # H_9805 — announce the write-side tension arm. A silent arm is how a control run gets read as
+    # a treatment run; the banner and the trailer must agree with the flag or the contrast is void.
+    if getattr(model, "tfld", None) is not None:
+        p0(f"  tension-field: arm={model.tfld.arm} r={model.tfld.rank} "
+           f"n_bucket={model.tfld.n_bucket} lam0={float(model.tfld.lam.detach()):.4f} "
+           f"· WRITE-SIDE (pre-trunk embedding residual)", flush=True)
 
     params = (list(model.parameters())
               + (list(jamo_head.parameters()) if jamo_head else [])
@@ -2108,6 +2133,13 @@ def main():
             nb = S.append_ifan_trailer(out_path, model.ifan)
             print(f"  IFAN trailer appended {nb} bytes (K={model.ifan.K} "
                   f"rank={model.ifan.rank} route_L={model.ifan.route_L})", flush=True)
+        # H_9805 — append the "TFLD" write-side tension-field trailer if the lane is engaged (LAST,
+        # after IFAN, so the chain end stays TFLD). The arm is written INTO the trailer so a ckpt can
+        # never be mistaken for the other arm's — a duel/rank1 mix-up would silently void the contrast.
+        if getattr(model, "tfld", None) is not None:
+            nb = S.append_tfld_trailer(out_path, model.tfld)
+            print(f"  TFLD trailer appended {nb} bytes (arm={model.tfld.arm} "
+                  f"rank={model.tfld.rank} n_bucket={model.tfld.n_bucket})", flush=True)
         print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
         print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
 

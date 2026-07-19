@@ -1219,6 +1219,170 @@ def _yn(ok):
 # G-labels (the byte-identical hexa twin + sweep.py parser depend on them); the ρ-AXON
 # panel below relabels them to the current axis names.
 
+def tension_rank_audit_run(argv):
+    """H_9805 — `anima-py evaluate <ckpt> --tension-rank-audit [--corpus f] [--win N] [--out j]`.
+
+    Makes H_004's F4 a STANDING instrument instead of a one-campaign check. The claim this lane
+    rests on is that the write-side tension is a FIELD; the way that claim dies quietly is the field
+    collapsing to rank 1, at which point the lane is production's existing `conflict_scalar` seam
+    with extra machinery. This panel prints the effective rank so that collapse cannot hide.
+
+    ADDITIVE (c18): it never touches eval_reach_all or the frozen G0-G6 / ρ-AXON bars.
+
+    WHAT IS AND IS NOT MEASURED HERE — read this before quoting a number:
+      · The field is a DETERMINISTIC function of the corpus bytes. So this audit characterises the
+        INSTRUMENT on that text, not the model's use of it. A high rank here is a necessary
+        condition for the lane to be interesting, never sufficient, and never a verdict.
+      · The ckpt is read only for TFLD trailer geometry (arm/rank/lam). A ckpt with no trailer is
+        fine and is reported as such — the audit still runs.
+
+    The three reference arms, so a bare number is never read alone (FORM tunable · BIND earned):
+      live      the real field on real windows                                       TREATMENT
+      rank1     the same windows' field replaced by its rank-1 approximation. This is the
+                instrument's POSITIVE CONTROL for collapse: it MUST come back eff_rank == 1.0.
+                If it does not, the rank estimator is broken and every other number here is VOID
+                (positive-control-before-reading-a-negative).
+      shuffled  the same bytes, permuted, so the chunk skeleton the two parsers read is destroyed
+                while the byte MULTISET (and hence every unigram statistic) is held fixed. This is
+                the pedestal that says whether the rank reflects structure or just alphabet size.
+    """
+    import json as _json
+    import numpy as np
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "core"))
+    import tension_field as TF
+
+    ckpt = argv[0] if argv and not argv[0].startswith("--") else ""
+    rest = argv[1:] if ckpt else argv
+    win = evaluate_intval(rest, "--win", 256)
+    out_path = evaluate_strval(rest, "--out", "")
+    corpus = evaluate_strval(rest, "--corpus", "")
+    seed = evaluate_intval(rest, "--ctrl-seed", 9805)
+
+    print("=== H_9805 WRITE-SIDE TENSION-FIELD RANK AUDIT (additive · frozen bars untouched) ===")
+    print("ckpt:   " + (ckpt or "(none — field audit is ckpt-independent)"))
+
+    # ── TFLD trailer geometry, read straight off the ckpt, never assumed ────────────────────
+    if ckpt and os.path.exists(ckpt):
+        raw = open(ckpt, "rb").read()
+        found = None
+        idx = raw.rfind(TF.TFLD_MAGIC)
+        if idx >= 0:
+            # `d` is not recoverable from the trailer alone (read_tfld validates it), so try the
+            # widths production actually ships. A miss is reported, never guessed past.
+            for d_try in (64, 128, 256, 384, 512, 768, 1024, 1536, 2048, 3784, 6208):
+                t, _ = TF.read_tfld(raw, idx, d_try)
+                if t is not None:
+                    found = t
+                    break
+        if found is not None:
+            print("  trailer: arm=%s rank=%d n_bucket=%d d=%d lam=%.6f"
+                  % (found["arm"], found["rank"], found["n_bucket"], found["d"], found["lam"]))
+        else:
+            print("  trailer: no TFLD on this ckpt (lane never trained in) — auditing the FIELD only.")
+    elif ckpt:
+        print("  ⛔ ckpt path does not exist: %r" % ckpt)
+        return 2
+
+    # ── windows ────────────────────────────────────────────────────────────────────────────
+    if corpus:
+        if not os.path.exists(corpus):
+            print("  ⛔ --corpus not found: %r" % corpus)
+            return 2
+        blob = open(corpus, "rb").read()
+        if len(blob) < win:
+            print("  ⛔ corpus is %d bytes, shorter than --win %d" % (len(blob), win))
+            return 2
+        n_win = min(32, len(blob) // win)
+        wins = [np.frombuffer(blob[i * win:(i + 1) * win], dtype=np.uint8).astype(np.int64)
+                for i in range(n_win)]
+        src = "%s (%d windows x %d B)" % (corpus, n_win, win)
+    else:
+        frames = rho_fan_build_frames(6)["composed"]
+        wins = [np.frombuffer(f.encode("utf-8"), dtype=np.uint8).astype(np.int64) for f in frames]
+        src = "built-in ρ·fan composed frames (%d)" % len(wins)
+    print("corpus: " + src)
+
+    rng = np.random.default_rng(int(seed))
+
+    def _agg(reports):
+        live = [r for r in reports if not r["void"]]
+        if not live:
+            return None
+        return {"n": len(live), "n_void": len(reports) - len(live),
+                "off_top": float(np.mean([r["off_top"] for r in live])),
+                "eff_rank": float(np.mean([r["eff_rank"] for r in live])),
+                "stable_rank": float(np.mean([r["stable_rank"] for r in live])),
+                "n_edge": float(np.mean([r["n_edge"] for r in live]))}
+
+    rep_live = [TF.rank_report(w) for w in wins]
+    rep_shuf = [TF.rank_report(rng.permutation(w)) for w in wins]
+
+    # rank-1 positive control: audit the rank-1 PROJECTION of the same field. The estimator must
+    # return exactly 1.0 here or it cannot detect the collapse it exists to detect.
+    rep_r1 = []
+    for w in wins:
+        M1 = TF.rank1_tiebreak(TF.tension_matrix(w))
+        if not np.any(M1):
+            rep_r1.append({"n_edge": 0, "void": True, "off_top": None, "eff_rank": None,
+                           "stable_rank": None, "fro2": 0.0})
+            continue
+        s = TF.svdvals(M1)          # robust to the gesdd NaN (see core/tension_field.svdvals)
+        s2 = s ** 2
+        tot = float(np.sum(s2))
+        if not np.isfinite(tot) or tot <= 0.0:
+            rep_r1.append({"n_edge": 0, "void": True, "off_top": None, "eff_rank": None,
+                           "stable_rank": None, "fro2": 0.0})
+            continue
+        rep_r1.append({"n_edge": 1, "void": False, "off_top": float(1.0 - s2[0] / tot),
+                       "eff_rank": float((tot ** 2) / float(np.sum(s2 ** 2))),
+                       "stable_rank": float(tot / s2[0]), "fro2": tot})
+
+    A = {"live": _agg(rep_live), "rank1_control": _agg(rep_r1), "shuffled_pedestal": _agg(rep_shuf)}
+    print("\narm                 n   n_edge    off_top   eff_rank   stable_rank")
+    for nm in ("live", "rank1_control", "shuffled_pedestal"):
+        a = A[nm]
+        if a is None:
+            print("  %-18s  ALL VOID (no window produced a single disagreeing edge)" % nm)
+            continue
+        print("  %-18s %2d   %6.1f   %8.4f   %8.4f   %8.4f"
+              % (nm, a["n"], a["n_edge"], a["off_top"], a["eff_rank"], a["stable_rank"]))
+
+    # ── readings ───────────────────────────────────────────────────────────────────────────
+    ok_ctrl = (A["rank1_control"] is not None
+               and abs(A["rank1_control"]["eff_rank"] - 1.0) < 1e-6)
+    print("\n  [positive control] rank-1 projection eff_rank == 1.0 ? %s"
+          % ("YES — the estimator can see a collapse" if ok_ctrl else
+             "NO — ESTIMATOR BROKEN, every number above is VOID"))
+    if not ok_ctrl:
+        print("  VERDICT: INVALID (instrument, not substrate). No rank claim may be read.")
+        return 2
+    if A["live"] is None:
+        print("  VERDICT: VOID — the two parses never disagreed on this text (no field to rank).")
+        return 2
+    collapsed = A["live"]["eff_rank"] < 1.05 or A["live"]["off_top"] < 0.20
+    print("  [F4 analog]  live off_top = %.4f (>= 0.20 ?  %s) · eff_rank = %.4f"
+          % (A["live"]["off_top"], A["live"]["off_top"] >= 0.20, A["live"]["eff_rank"]))
+    if A["shuffled_pedestal"] is None:
+        print("  [pedestal]   shuffled ALL VOID — no structure-vs-alphabet reading available")
+    else:
+        print("  [pedestal]   live - shuffled eff_rank = %+.4f  (live %.4f · shuffled %.4f)"
+              % (A["live"]["eff_rank"] - A["shuffled_pedestal"]["eff_rank"],
+                 A["live"]["eff_rank"], A["shuffled_pedestal"]["eff_rank"]))
+    print("\n  VERDICT: %s" % (
+        "RANK-1 COLLAPSE — this lane is the old scalar seam; the field claim is DEAD here"
+        if collapsed else
+        "field is high-rank on this text (NECESSARY, NOT SUFFICIENT — this is an instrument "
+        "characterisation, never a consciousness or capability verdict)"))
+
+    if out_path:
+        with open(out_path, "w") as fh:
+            _json.dump({"schema": "anima-tension-rank-audit/v1", "ckpt": ckpt, "corpus": src,
+                        "win": win, "arms": A, "positive_control_ok": ok_ctrl,
+                        "rank1_collapse": bool(collapsed)}, fh, indent=2)
+        print("  wrote " + out_path)
+    return 0
+
+
 def fan_branch_run(argv):
     """H_9803 — `anima-py evaluate <ckpt> --fan-branch {live|assignment-shuffle|off}`.
 
@@ -8661,6 +8825,7 @@ _KNOWN_FLAGS = frozenset((
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
     "--fan-branch", "--branches",              # H_9803 branch-latent ideation fan arms
+    "--tension-rank-audit", "--ctrl-seed",     # H_9805 write-side tension-field rank audit
     "--slot-shuffle", "--surface-set", "--system-g1", "--vs", "--win", "--with-logits", "--xbind", "--xfan",
     "--gn-freeze",
     "--bridge-trace", "--flip0", "--theta",
@@ -15514,6 +15679,11 @@ def main(argv):
     # byte-identity parity control for the IFAN trailer.
     if "--fan-branch" in argv:
         return fan_branch_run(argv)
+    # H_9805 --tension-rank-audit: effective rank of the write-side parse-disagreement field, with
+    # a rank-1 positive control and a byte-shuffled pedestal. ADDITIVE — never touches the frozen
+    # G0-G6 bars; exists so a rank-1 collapse (= the old scalar seam) can never hide.
+    if "--tension-rank-audit" in argv:
+        return tension_rank_audit_run(argv)
     # --store-addr-census <dump.npz> / --store-census-selftest: H_9719 emergent-address
     # $0 pre-screen — argmax-collision of random-W_q over entity-keys vs a structureless-H
     # pedestal. DIRECTIONAL screener (KILL-before-spend); admissible (no target_slot read).

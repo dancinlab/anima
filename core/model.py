@@ -148,6 +148,14 @@ class CLMConfig:
     mbnd_linear: bool = False      # INTERNAL CONTROL: uniform address + additive combine = kill#7 DOA
     mbnd_lam0: float = 1.0         # MBND lam init (additive perturbation scale)
 
+    # H_9805 TFLD write-side parse-disagreement tension field. The ONE production lane that puts
+    # tension on the WRITE side of the trunk instead of the readout side (where it is the rank-1
+    # `conflict_scalar` seam). arm "" = OFF = byte-identical; "duel" = the field; "rank1" = its
+    # rank-1 summary (the control that makes the field claim readable). See core/tension_field.py.
+    tfld_arm: str = ""             # "" (off) | "duel" | "rank1"
+    tfld_rank: int = 32            # phi/W_up inner width (--tension-field-rank)
+    tfld_lam0: float = 1.0         # TFLD lam init (additive pre-trunk scale)
+
     def router_config(self) -> "RouterConfig":
         v = self.variant.upper()
         if v not in ("A", "B", "AB"):
@@ -420,6 +428,15 @@ class CLMConvMoE(nn.Module):
             from mbnd import MouthBinder         # core/mbnd.py (on sys.path via cli/train.py)
             self.mbnd = MouthBinder(cfg.d_model, cfg.vocab_size, rank=cfg.mbnd_rank,
                                     linear=cfg.mbnd_linear, lam0=cfg.mbnd_lam0)
+        # H_9805 TFLD write-side tension-field lane. None => byte-identical (no lane). CORE-owned
+        # (core/tension_field.py); lazily imported. This is the ONLY lane applied BEFORE the trunk —
+        # that placement is the hypothesis, not an implementation detail (see the module docstring:
+        # readout-side is where the rank-1 scalar seam died).
+        self.tfld = None
+        if str(getattr(cfg, "tfld_arm", "") or "") in ("duel", "rank1"):
+            from tension_field import TensionFieldLane   # core/tension_field.py
+            self.tfld = TensionFieldLane(cfg.d_model, rank=cfg.tfld_rank,
+                                         lam0=cfg.tfld_lam0, arm=cfg.tfld_arm)
 
     def faction_oracle_mask(self, domain_ids: torch.Tensor) -> Optional[torch.Tensor]:
         """H_9643 ORACLE routing mask [B, d] — 1 where faction f is allowed for that row's domain.
@@ -447,6 +464,12 @@ class CLMConvMoE(nn.Module):
     ) -> dict:
         # tokens: (B, T) long
         x = self.embed(tokens)                  # (B, T, C)
+        # H_9805 — the WRITE-SIDE injection, and the only lane that fires here. The residual is
+        # added to the embeddings BEFORE embed_conv and before every trunk layer, so the tension
+        # field is something the trunk COMPUTES OVER rather than something read off its output.
+        # Lane off => the attribute is None => this is not even evaluated (byte-identical).
+        if self.tfld is not None:
+            x = x + self.tfld.residual(tokens).to(x.dtype)
         x = x.transpose(1, 2)                   # (B, C, T)
         x = self.embed_conv(x)
         # Gradient checkpointing (runtime-only, byte-eq-neutral): when enabled and
