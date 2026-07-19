@@ -1,7 +1,7 @@
 ---
 id: H_9798
 title: FRESH-LANE SUBSTRATE-PRESERVATION — detached L3-tap store cotrain leaves base LM fluency undisturbed (interference-free)
-tier: PROPOSED (실측中 2026-07-20 · pod 45321773 A100 · canary 3-run cotrain firing · 계기=step-1 val_CE proxy(train --steps 0 measure-only 아님) · NOT a verdict)
+tier: PROPOSED (실측 진행中 2026-07-20 mini 재발사 · pod 45328766 A100-40GB · fresh arm 가동(early-life PASS) · 계기 CE₀=1.25336 독립재현 · NOT a verdict)
 frontier: g1-interface-addressable-wall
 lane: g1-emergent-address (preservation/interference axis · NOT reach/addr_top1)
 created: 2026-07-20
@@ -45,6 +45,7 @@ store cotrain(=저장/조회 병행학습)이 base 모델의 held-out **다음-�
 
 ## Controls
 - **C-noscore**: 동일 base + 동일 step, store objective OFF → 표류 기준(연속학습만의 ΔCE).
+  🚨 **OFF 스위치 정정 (코드확인 2026-07-20 · installed train.py:1765,1996)**: store lane 은 **`--store-bridge <store.txt>` 가 있을 때만** 켜진다(`sb_cell = StoreBindCell(...) if a.store_bridge or a.freeze_trunk` → `_sb = get_store_batch() if sb_cell is not None else None` → loss 의 store 항은 `if sb is not None:` 안). ⟹ noscore = **`--store-bridge` 생략**. ⚠️ 앞서 카드가 적었던 "`--store-query-src` 생략 = store OFF" 는 **틀렸다** — 이 flag 의 **default 가 `penult`**(train.py:1369)이라 생략하면 오히려 **legacy arm 과 동일**해져 통제군이 실험군으로 붕괴한다(발사 전 포착).
 - **C-corpus**: 일반 held-out ⟂ store 코퍼스(byte-parity·leak=0).
 - byte-parity base ckpt(py303_full 또는 py1b) · ≥2 seed {7,4302}.
 - TOST 등가대역 사전등록(fresh vs C-noscore CE비).
@@ -55,8 +56,16 @@ store cotrain(=저장/조회 병행학습)이 base 모델의 held-out **다음-�
 ## 🧱 발사 블로커 (concrete · FIRE 시도 로그 2026-07-20 · ghost 머신)
 - store-cotrain ckpt(fresh/legacy)는 H_9792/1B pod 와 함께 폐기됨 — **재학습 필요**. base ckpt 만 HF 생존(py1b `dancinlife/tmp-anima-1b/py1b_full.clm`·sha256 8630996b · py303 tmp repo 는 삭제됨 ⟹ 1B 로 발사).
 - 🔥 **FIRE 시도 (2026-07-20)**: 발사게이트 전통과(vast_api_key 존재·1B base HF fetch OK·hexa cloud·owner go) → A100 pod 45320005 렌트 성공. **그러나 SSH `Permission denied (publickey)` 지속** = 이 ghost 머신의 SSH 공개키가 vast 계정 authorized_keys 에 **미등록**(머신레벨·재렌트 무의미·`exec`/`run`/`--insecure` 전부 동일). teardown(과금중단·leak0). ⟹ **fire 는 (a) 이 머신 vast SSH키 등록 OR (b) vast-접속 정상 머신(과거 `/Users/mini`) 필요** — 과학천장 아님(`a_break_the_wall` type-c INFRA-BLOCKED).
-- 🔬 **기전검증(installed train.py:1167,1213)**: store cotrain loss = LM objective(constructive_bind) + store terms(`loss=obj_loss + ce_tok + sb_w·ce_ans`). store-gradient는 **legacy(penult)만 trunk 유입·fresh(detached L3-tap)는 off-trunk** ⟹ ΔCE(legacy−fresh)가 store-간섭 격리 = **tautology 아님**(fresh도 noscore처럼 LM은 trunk 학습·차이는 store 경로뿐). C-noscore(`--store-query-src` 생략=store off)가 공통 drift 통제.
-- 계기·레시피: base-CE=**step-1 val_CE proxy**(gen.txt) · 1B arch `--L 20 --emax 3 --d 3784` · fresh `--store-query-src fresh:64@3 --store-oracle-warmup 1500` vs legacy `penult` · noscore `--store-query-src` 생략 · 6000step · canary 3-run(fresh/legacy/noscore × s7)→clean 이면 s4302 확대.
+- 🔬 **기전검증(installed train.py:1167,1213)**: store cotrain loss = LM objective(constructive_bind) + store terms(`loss=obj_loss + ce_tok + sb_w·ce_ans`). store-gradient는 **legacy(penult)만 trunk 유입·fresh(detached L3-tap)는 off-trunk** ⟹ ΔCE(legacy−fresh)가 store-간섭 격리 = **tautology 아님**(fresh도 noscore처럼 LM은 trunk 학습·차이는 store 경로뿐). C-noscore(**`--store-bridge` 생략**=store lane 미생성 · 위 Controls 정정 참조)가 공통 drift 통제.
+- 계기·레시피 **(2026-07-20 mini 재발사서 실측 확정)**: base-CE=**step-1 val_CE proxy**(gen.txt) · 1B arch `--L 20 --emax 3 --d 3784` · 6000step · `--ckpt-every 1500 --out <arm>.clm`(중도사망 복구지점). 세 arm 은 **`--corpus store.txt` 공통**, 차이는 store 경로뿐:
+  | arm | flags |
+  |---|---|
+  | fresh | `--store-bridge store.txt --store-query-src fresh:64@3 --store-oracle-warmup 1500` |
+  | legacy | `--store-bridge store.txt --store-query-src penult --store-oracle-warmup 1500` |
+  | **C-noscore** | **`--store-bridge` 생략** (store lane 미생성 = LM-only 표류) |
+  gen.txt 는 **어느 arm 도 학습하지 않는다** ⟹ held-out 자격 유지(측정 admissible). corpus: `gen.txt=corpus flat --lang en --seed 99`(798,220 B) · `store.txt=corpus storebind --n-blocks 200 --store-slots 8 --seed 7 --lang en`(leak0: `C0-a 0-shot ✅ held-out entities appear 0x`).
+- ✅ **CE₀ 독립 재현 (계기 검증)**: 별 머신·별 pod(mini→vast 45328766 A100-40GB)서 base gen.txt step-1 `val_CE=1.25336` — ghost 측정 **1.2534 와 일치**. 기준점이 머신을 건너 재현되므로 ΔCE 판정의 기준선 성립.
+- 🕳️ **인프라 함정 (발사 前 포착)**: `pip install "anima-python[train]"` 기본 torch=**2.12.1+cu130** vs vast pod 드라이버 **12080(CUDA 12.8)** → `torch.cuda.is_available()==False` 로 **예외 없이 CPU 폴백**(1B CPU 학습=사실상 무한·GPU 요금만 소모). 대응 = `pip install --force-reinstall --index-url https://download.pytorch.org/whl/cu128 "torch<2.13"`(→2.11.0+cu128 CUDA True) + bootstrap 에 **CUDA boolean 하드게이트**(False 면 학습 발사 자체 차단).
 
 ## Next (vast-접속 정상 머신)
 ① 1B base fetch(HF)✅ → ② corpus(gen.txt flat-en + store.txt n200 slot8)✅ → **CE₀=1.2534**(step-1 val_CE)✅ → ③ canary cotrain {fresh,legacy,noscore}×s7 firing(early-life PASS: warm-start·GPU100%·CE하강) → ④ 각 ckpt step-1 val_CE(gen.txt) → ⑤ ΔCE 판정(fresh≈noscore<legacy? TOST) → clean 이면 s4302 확대 → ⑥ 회수·카드/gate 갱신·teardown. ⚠️ lab full 백엔드 다운(빈 출력)→소스-검증 solo 진행(판정 시 caveat).
