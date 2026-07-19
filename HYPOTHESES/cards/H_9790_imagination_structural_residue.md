@@ -39,3 +39,17 @@ Sol arm 빈값→단독 Fable. H_9788이 within-run 시간역학·distinct-ratio
 **발사계획**: C+(240)·A_on(480)·A_off(480)·A_shuf(480)·plain chat·s7+s11(CRACK 2/2·불일치 s13). **toy e2e 선행필수**(exit0+R census+C+분기+off byte-id·instrument-never-run 방어). rent A100 ~$2-3. toy 동결전 2확정: ①recon_err referent(:2201 vs :2944) ②wake_mem ctx cell_count 포함여부.
 
 **status**: 🔵 PROPOSED·계기 first-divergence FROZEN후보(Fable) — 신규 flag 2개 엔진구현+harness+toy(자율)→rent fire(spend go-gate). H_9791=이 결과가 양성통제 원료(후행).
+
+## 🔧 toy-e2e 계기검증 PASS (2026-07-19 · instrument-never-run 방어 · engine flags v0.20.18 착륙 #4180 CI GREEN)
+harness(scratchpad/h9790_harness.py) 4-arm(C+/A_on/A_off/A_shuf) toy.clm·160틱·s7·rc=0:
+
+| 검증 | 결과 | 판정 |
+|---|---|---|
+| C+ 양성통제 분기(Cplus_T_div) | **tick 2** 분기 | ✅ 계기 LIVE(H_9788 INSTRUMENT-DEAD 함정 회피) |
+| flag 작동(A_off grow lesion) | cell_count A_on=3 vs A_off=2·dN=1·R=155(≥20) | ✅ --imag-growth off 실동작·G-GROW pass |
+| T_div 구동 게이지 | **rel_ctx** tick 11(on 0.7839 vs off 0.7779) | ✅ 진짜 interior 게이지(grow-파생물 아님·subset 정직) |
+| S2 예비판정(toy) | T_div=11<∞ ∧ B_div=∞ | interior도달·mouth미도달(DIRECTIONAL·toy 한정) |
+
+**핵심**: first-divergence 설계가 H_9788의 양자화/flatness 함정을 **원리적으로 소거** 확증 — C+가 tick 2서 분기(양자화 무관)·게이지 2값이든 무관하게 byte-equality 작동. 상상 구조성장(cell_count +1)이 하류 interior 게이지 rel_ctx에 실제 도달(T_div<∞). ⟹ 계기 **fire-ready**.
+
+**status**: 🔵 계기검증 PASS·fire-ready — 303M rent A100 fire(4arm·480틱·s7/s11·~$2-3·spend go-gate)만 잔여. 동결전 확정: T_div 구동=rel_ctx 확인·recon_err referent는 303M서 재확인(toy는 rel_ctx가 먼저 분기).
