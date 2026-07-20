@@ -155,6 +155,7 @@ class CLMConfig:
     tfld_arm: str = ""             # "" (off) | "duel" | "rank1"
     tfld_rank: int = 32            # phi/W_up inner width (--tension-field-rank)
     tfld_lam0: float = 1.0         # TFLD lam init (additive pre-trunk scale)
+    tfld_concord: str = "class"      # H_9812 concord: "lex" (word-sensitive) | "class" (layout-only control)
 
     def router_config(self) -> "RouterConfig":
         v = self.variant.upper()
@@ -436,7 +437,8 @@ class CLMConvMoE(nn.Module):
         if str(getattr(cfg, "tfld_arm", "") or "") in ("duel", "rank1"):
             from tension_field import TensionFieldLane   # core/tension_field.py
             self.tfld = TensionFieldLane(cfg.d_model, rank=cfg.tfld_rank,
-                                         lam0=cfg.tfld_lam0, arm=cfg.tfld_arm)
+                                         lam0=cfg.tfld_lam0, arm=cfg.tfld_arm,
+                                         concord=str(getattr(cfg, "tfld_concord", "class")))
 
     def faction_oracle_mask(self, domain_ids: torch.Tensor) -> Optional[torch.Tensor]:
         """H_9643 ORACLE routing mask [B, d] — 1 where faction f is allowed for that row's domain.

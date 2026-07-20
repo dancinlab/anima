@@ -1625,6 +1625,15 @@ def main():
                     help="H_9805: TFLD inner width r for phi (n_bucket, r) and W_up (r, d).")
     ap.add_argument("--tension-field-lam0", type=float, default=1.0,
                     help="H_9805: TFLD lam init (additive pre-trunk scale).")
+    ap.add_argument("--tension-concord", choices=["class", "lex", "morph"], default="class",
+                    help="H_9812: what the TFLD concord term compares. lex = the CHUNK SIGNATURE "
+                         "(the field sees WHICH words agree). morph = the chunk's FINAL BYTE, the "
+                         "closest analogue of v4's honorific concord and the one English agreement "
+                         "morphology actually lives in (verb +s/+ing, noun +s). "
+                         "class = byte_class, the LEGACY/CONTROL mode, measured to be a function of "
+                         "the whitespace+punct layout ALONE (swap every letter, or letters for "
+                         "digits, and the field is BIT-IDENTICAL). Keep `class` as the layout-only "
+                         "pedestal arm; do not build a claim on it.")
     ap.add_argument("--answer-ce-weight", type=float, default=0.0,
                     help="H_9811: extra CE weight on the ANSWER span of ` => ` arrow lines "
                          "(loss = obj + w*ce_answer). 0 = OFF, byte-identical to today. The "
@@ -1988,6 +1997,7 @@ def main():
                         mbnd_linear=(a.mouth_binder == "linear"), mbnd_lam0=a.bind_lam0,
                         tfld_arm=("" if a.tension_field == "off" else a.tension_field),
                         tfld_rank=a.tension_field_rank, tfld_lam0=a.tension_field_lam0,
+                        tfld_concord=a.tension_concord,
                         n_factions=a.n_factions, faction_bridge_lam0=a.faction_bridge_lam0)
         model = _to_device_or_die(CLMConvMoE(cfg), device)   # production additive readout (all arms)
         if tlora_on:

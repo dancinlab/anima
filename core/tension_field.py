@@ -100,6 +100,84 @@ def byte_class(b):
     return cls
 
 
+# ── H_9812 LEXICAL CONCORD (the fix for the letter-blind field) ───────────────────────────
+# Measured defect: with concord="class" the field is a function of the WHITESPACE/PUNCT LAYOUT
+# ALONE. Verified by construction, not by argument — hold the whitespace positions fixed and
+# replace every letter (or swap letters for digits, or upper-case everything) and the (T,T) field
+# comes back BIT-IDENTICAL (max |Δ| = 0.000000); only punctuation moves it (2.0). The cause is
+# right here: every chunk head is a word-initial letter, so `cls[head]` is the constant 2 and the
+# concord term collapses to "is position i a letter". lab/v4's field came from two directional
+# parsers over real tokens with an honorific-concord chi — a LEXICAL feature — so the port did not
+# reproduce the mechanism it claims to port; on any panel keyed to word identity it carries 0 bits
+# and a Δ of 0 means NO CHANNEL, not rank collapse.
+#
+# The old docstring called the coarseness deliberate ("so the concord term cannot smuggle in
+# lexical identity"). That worry is real and is why this is a MODE, not a replacement: `class`
+# survives as the layout-only control arm, and the leak it guards against is now excluded by a
+# measurement (the field-alone readout must sit at chance) instead of by blindness.
+N_SIG = 64                      # concord classes for the chunk signature (coarse ⇒ not an identity)
+FNV_OFFSET = 0xCBF29CE484222325
+FNV_PRIME = 0x100000001B3
+
+
+def chunk_morph(b):
+    """(T,) int — the MORPHOLOGICAL marker of each position's chunk: its FINAL byte.
+
+    This is the closest byte-substrate analogue of what lab/v4's chi actually compared. v4's concord
+    was HONORIFIC CONCORD — a grammatical feature of the two competing heads — not word identity.
+    In English the agreement-bearing morphology sits at the word END (verb `+s`/`+ing`, noun `+s`),
+    so the final byte is where a concord test has to look.
+
+    Is exposing it a leak? That question is settled by MEASUREMENT, not by argument: a single
+    agreement feature does not determine a gold that is an XOR over K conjuncts, and H_9810's panel
+    builder already audits every single heuristic to exactly 0.500000. The deciding control is a
+    field-alone readout — if the field by itself predicts the answer above chance, this mode is
+    disqualified and the audit says so. Whitespace positions get -1 and never agree.
+    """
+    b = np.asarray(b, dtype=np.int64)
+    T = int(b.shape[0])
+    ws = (b == 32) | (b == 9) | (b == 10) | (b == 13)
+    out = np.full(T, -1, dtype=np.int64)
+    i = 0
+    while i < T:
+        if ws[i]:
+            i += 1
+            continue
+        j = i
+        while j < T and not ws[j]:
+            j += 1
+        out[i:j] = int(b[j - 1])          # the chunk's final byte
+        i = j
+    return out
+
+
+def chunk_signature(b, n_sig=N_SIG):
+    """(T,) int — a coarse content signature of the CHUNK (word) each position belongs to.
+
+    FNV-1a over the chunk's bytes, folded to `n_sig` classes. Coarse ON PURPOSE: two different
+    words collide with probability ~1/n_sig, so the signature is a cheap agreement test between
+    words, not a word ID the trunk could read the answer off. Whitespace positions get -1 and
+    never agree with anything.
+    """
+    b = np.asarray(b, dtype=np.int64)
+    T = int(b.shape[0])
+    ws = (b == 32) | (b == 9) | (b == 10) | (b == 13)
+    sig = np.full(T, -1, dtype=np.int64)
+    i = 0
+    while i < T:
+        if ws[i]:
+            i += 1
+            continue
+        j = i
+        h = FNV_OFFSET
+        while j < T and not ws[j]:
+            h = ((h ^ int(b[j])) * FNV_PRIME) & 0xFFFFFFFFFFFFFFFF
+            j += 1
+        sig[i:j] = int(h % int(n_sig))
+        i = j
+    return sig
+
+
 def chunk_heads(b):
     """The two directional parses. Returns (head_a, head_g), int arrays of length T; -1 = no head.
 
@@ -145,15 +223,23 @@ def offset_bucket(off):
     return sign_hi * N_MAG + lg
 
 
-def tension_edges(tokens):
+def tension_edges(tokens, concord="class"):
     """The write-side field in its native SPARSE form — the honest representation of what P_A/P_G
     actually produce (at most two signed edges per position).
 
     Returns (rows, cols, vals) int/int/float arrays. Only positions where the two parses DISAGREE
     contribute. `vals` already carries the concord sign chi.
+
+    concord="class" — LEGACY/CONTROL. chi compares `byte_class`, which makes the whole field a
+                      function of the whitespace+punct layout and blind to word identity (H_9812).
+                      Kept as the layout-only pedestal arm, not as a default to build on.
+    concord="lex"   — chi compares the CHUNK SIGNATURE, so the field depends on WHICH words sit at
+                      the two competing heads. This is the arm that has a channel at all.
     """
     b = np.asarray(tokens, dtype=np.int64)
-    cls = byte_class(b)
+    if concord not in CONCORD_CODE:
+        raise ValueError("concord must be one of class|lex|morph (got %r)" % (concord,))
+    cls = {"class": byte_class, "lex": chunk_signature, "morph": chunk_morph}[concord](b)
     head_a, head_g = chunk_heads(b)
     live = (head_a >= 0) & (head_g >= 0) & (head_a != head_g)
     idx = np.nonzero(live)[0]
@@ -168,13 +254,13 @@ def tension_edges(tokens):
     return rows, cols, vals
 
 
-def tension_matrix(tokens):
+def tension_matrix(tokens, concord="class"):
     """Dense (T, T) field. Needed by the `rank1` arm and by the rank audit; the `duel` arm never
     builds it."""
     b = np.asarray(tokens, dtype=np.int64)
     T = int(b.shape[0])
     M = np.zeros((T, T), dtype=np.float64)
-    rows, cols, vals = tension_edges(b)
+    rows, cols, vals = tension_edges(b, concord=concord)
     if rows.size:
         np.add.at(M, (rows, cols), vals)
     return M
@@ -243,7 +329,7 @@ def rank1_tiebreak(T, tol=1e-9):
 # H_004's F4 made permanent: a lane whose field has collapsed to rank 1 IS the old scalar seam,
 # and that has to be visible without re-running the campaign.
 # --------------------------------------------------------------------------- #
-def rank_report(tokens):
+def rank_report(tokens, concord="class"):
     """Effective-rank diagnostics for one window. All three numbers are derived from the realized
     singular spectrum, not assumed (chance-level-must-be-derived-per-metric):
 
@@ -254,8 +340,8 @@ def rank_report(tokens):
       n_edge      how many signed edges the two parses actually disagreed on. 0 => the window is
                   structurally silent and every rank number above is VOID, not "rank 1".
     """
-    M = tension_matrix(tokens)
-    rows, _, _ = tension_edges(tokens)
+    M = tension_matrix(tokens, concord=concord)
+    rows, _, _ = tension_edges(tokens, concord=concord)
     n_edge = int(rows.size)
     if n_edge == 0 or not np.any(M):
         return {"n_edge": n_edge, "off_top": None, "eff_rank": None, "stable_rank": None,
@@ -278,7 +364,7 @@ def rank_report(tokens):
 # --------------------------------------------------------------------------- #
 # numpy reduction / apply (engine-native, torch-free)
 # --------------------------------------------------------------------------- #
-def reduce_field(tokens, phi, arm="duel"):
+def reduce_field(tokens, phi, arm="duel", concord="class"):
     """r_i = SUM_j T[i,j] * phi[bucket(j-i)]  ->  (T, rank).
 
     arm "duel"  — walks the sparse edges, no dense matrix, no SVD.
@@ -294,7 +380,7 @@ def reduce_field(tokens, phi, arm="duel"):
     if arm == "off":
         return r
     if arm == "duel":
-        rows, cols, vals = tension_edges(b)
+        rows, cols, vals = tension_edges(b, concord=concord)
         if rows.size == 0:
             return r
         buck = offset_bucket(cols - rows)
@@ -313,7 +399,7 @@ def reduce_field(tokens, phi, arm="duel"):
     raise ValueError("arm must be one of duel|rank1|off (got %r)" % (arm,))
 
 
-def tension_apply(x, tokens, tfld, arm="duel"):
+def tension_apply(x, tokens, tfld, arm="duel", concord=None):
     """Add the write-side residual to a (T, d) embedding block.
 
     x     : (T, d) embeddings, NOT mutated (a copy is returned when the lane fires)
@@ -325,7 +411,9 @@ def tension_apply(x, tokens, tfld, arm="duel"):
     lam = float(np.asarray(tfld["lam"]).reshape(-1)[0])
     if lam == 0.0:
         return x
-    r = reduce_field(tokens, tfld["phi"], arm=arm)
+    if concord is None:
+        concord = tfld.get("concord", "class")     # trailer remembers what it was TRAINED with
+    r = reduce_field(tokens, tfld["phi"], arm=arm, concord=concord)
     if not np.any(r):
         return x
     dt = x.dtype
@@ -336,6 +424,24 @@ def tension_apply(x, tokens, tfld, arm="duel"):
 # ── "TFLD" trailer codec — LE f32, same idiom as IFAN/MBND/CLMS ──────────────
 ARM_CODE = {"off": 0, "duel": 1, "rank1": 2}
 ARM_NAME = {0: "off", 1: "duel", 2: "rank1"}
+
+# H_9812 — the concord mode rides the HIGH bits of arm_code so the trailer layout is unchanged and
+# every ckpt written before this flag existed keeps decoding exactly as it was trained (those have
+# bit 8 clear ⇒ "class", which is what they actually used). A new field means a new byte grammar;
+# a spare bit does not.
+CONCORD_CODE = {"class": 0x000, "lex": 0x100, "morph": 0x200}
+CONCORD_NAME = {v: k for k, v in CONCORD_CODE.items()}
+CONCORD_MASK = 0x300
+
+
+def arm_code_of(arm, concord="class"):
+    return ARM_CODE[arm] | CONCORD_CODE[concord]
+
+
+def split_arm_code(code):
+    """(arm_name, concord_name) from a packed arm_code."""
+    code = int(code)
+    return ARM_NAME.get(code & 0xFF, "?"), CONCORD_NAME.get(code & CONCORD_MASK, "class")
 
 
 def pack_tfld(w: dict) -> bytes:
@@ -371,7 +477,8 @@ def read_tfld(buf: bytes, off: int, d: int):
         return arr
 
     tfld = {"n_bucket": int(n_bucket), "rank": int(rank), "d": int(d),
-            "arm_code": int(arm_code), "arm": ARM_NAME.get(int(arm_code), "?")}
+            "arm_code": int(arm_code)}
+    tfld["arm"], tfld["concord"] = split_arm_code(arm_code)
     tfld["phi"] = take(n_bucket * rank, (n_bucket, rank))
     tfld["W_up"] = take(rank * d, (rank, d))
     tfld["lam"] = float(take(1, (1,))[0])
@@ -400,11 +507,14 @@ if _HAS_TORCH:
         the field it is given. That is what keeps `duel` vs `rank1` a one-variable contrast.
         """
 
-        def __init__(self, d, rank=32, lam0=1.0, arm="duel"):
+        def __init__(self, d, rank=32, lam0=1.0, arm="duel", concord="class"):
             super().__init__()
             if arm not in ARM_CODE:
                 raise ValueError("arm must be one of duel|rank1|off (got %r)" % (arm,))
+            if concord not in CONCORD_CODE:
+                raise ValueError("concord must be class|lex (got %r)" % (concord,))
             self.d, self.rank, self.arm = int(d), int(rank), str(arm)
+            self.concord = str(concord)
             self.n_bucket = N_BUCKET
             self.phi = _nn.Parameter(_torch.randn(N_BUCKET, rank) * (rank ** -0.5))
             self.W_up = _nn.Parameter(_torch.randn(rank, d) * (rank ** -0.5))
@@ -422,12 +532,12 @@ if _HAS_TORCH:
             rowsout = []
             for bi in range(B):
                 if self.arm == "duel":
-                    rows, cols, vals = tension_edges(toks[bi])
+                    rows, cols, vals = tension_edges(toks[bi], concord=self.concord)
                     if rows.size == 0:
                         rowsout.append(None)
                         continue
                 else:                                    # rank1 control
-                    M = rank1_tiebreak(tension_matrix(toks[bi]))
+                    M = rank1_tiebreak(tension_matrix(toks[bi], concord=self.concord))
                     nzr, nzc = np.nonzero(M)
                     if nzr.size == 0:
                         rowsout.append(None)
@@ -452,7 +562,7 @@ if _HAS_TORCH:
         with _torch.no_grad():
             return {
                 "n_bucket": int(mod.n_bucket), "rank": int(mod.rank), "d": int(mod.d),
-                "arm_code": int(ARM_CODE[mod.arm]),
+                "arm_code": int(arm_code_of(mod.arm, getattr(mod, "concord", "class"))),
                 "phi": mod.phi.detach().float().cpu().numpy(),
                 "W_up": mod.W_up.detach().float().cpu().numpy(),
                 "lam": np.asarray([float(mod.lam.detach())], dtype=np.float32),

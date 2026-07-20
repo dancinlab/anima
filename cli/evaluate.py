@@ -1314,14 +1314,17 @@ def tension_rank_audit_run(argv):
                 "stable_rank": float(np.mean([r["stable_rank"] for r in live])),
                 "n_edge": float(np.mean([r["n_edge"] for r in live]))}
 
-    rep_live = [TF.rank_report(w) for w in wins]
-    rep_shuf = [TF.rank_report(rng.permutation(w)) for w in wins]
+    concord = evaluate_strval(rest, "--tension-concord", "class")
+    if concord not in ("morph", "lex", "class"):
+        print("  ⛔ --tension-concord must be morph|lex|class (got %r)" % concord); return 2
+    rep_live = [TF.rank_report(w, concord=concord) for w in wins]
+    rep_shuf = [TF.rank_report(rng.permutation(w), concord=concord) for w in wins]
 
     # rank-1 positive control: audit the rank-1 PROJECTION of the same field. The estimator must
     # return exactly 1.0 here or it cannot detect the collapse it exists to detect.
     rep_r1 = []
     for w in wins:
-        M1 = TF.rank1_tiebreak(TF.tension_matrix(w))
+        M1 = TF.rank1_tiebreak(TF.tension_matrix(w, concord=concord))
         if not np.any(M1):
             rep_r1.append({"n_edge": 0, "void": True, "off_top": None, "eff_rank": None,
                            "stable_rank": None, "fro2": 0.0})
@@ -9328,6 +9331,7 @@ _KNOWN_FLAGS = frozenset((
     "--cascade-null",
     "--state-census", "--kmax",
     "--decl-flip", "--arms", "--strata",          # H_9800 ephemeral-declaration grounding
+    "--tension-concord",                          # H_9812 lex|class concord mode for the audit
     "--closure-ladder", "--closure-arm", "--closure-ticks", "--closure-seed",   # H_9807 interventional closure rung 1
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
     "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture
