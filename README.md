@@ -632,6 +632,11 @@ anima-py evaluate --workspace-regression --out workspace-regression.json
 anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
 anima-py evaluate model.clm --workspace-divergence-realizer --workspace-adversarial-panel
 anima-py evaluate --workspace-longrun --ticks 500
+
+Deterministic greedy workspace sessions cache only exact repeated anchored model inputs. Sampled
+mouths and workspace-OFF runs never use this cache. On the HF workspace-system-v1 303M CPU run,
+the frozen 100-tick panel improved from 2431.76s to 1866.39s while preserving 50/50 mounted-mouth
+realizations, zero fallback, and `psi_intact=1` (22/100 exact decode-cache hits).
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon  # exact probe calls are memoized
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-cache .rho-cache
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-no-cells \

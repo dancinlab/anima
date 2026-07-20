@@ -1,6 +1,7 @@
 import hashlib
 import tempfile
 import unittest
+from unittest import mock
 
 from core.cognitive_workspace import (
     ClaimStatus,
@@ -100,6 +101,55 @@ class CognitiveWorkspaceTest(unittest.TestCase):
             report = run_workspace_longrun(ticks)
             self.assertTrue(report["ok"], report)
             self.assertEqual(report["ticks"], ticks)
+
+    def test_greedy_decode_cache_requires_exact_model_input(self) -> None:
+        from core import generator
+        backend = {
+            "kind": "clm", "loaded": True, "decodable": True, "ckpt": "fake.clm",
+            "_decode_cache": {}, "_decode_cache_enabled": True,
+        }
+        ctx = {"phase": "REM", "deliberation_k": 1}
+        anchors = [{"name": "percept", "text_payload": "same input"}]
+        with mock.patch.object(generator, "_gen_clm_decode", return_value="same bytes") as decode:
+            first = generator.generate(backend, ctx, True, anchors)
+            # Anchored decode does not consume deliberation_k; changing that
+            # non-input must still reuse the exact grounded model result.
+            second = generator.generate(
+                backend, {"phase": "REM", "deliberation_k": 4}, True, list(anchors))
+            changed = generator.generate(
+                backend, ctx, True,
+                [{"name": "percept", "text_payload": "different input"}],
+            )
+        self.assertEqual(first, second)
+        self.assertEqual(changed["text"], "same bytes")
+        self.assertEqual(decode.call_count, 2)
+        self.assertEqual(backend["_decode_cache_hits"], 1)
+        self.assertEqual(backend["_decode_cache_misses"], 2)
+
+    def test_decode_cache_never_reuses_sampled_mouth(self) -> None:
+        from core import generator
+        backend = {
+            "kind": "clm", "loaded": True, "decodable": True, "ckpt": "fake.clm",
+            "_decode_cache": {}, "_decode_cache_enabled": True,
+        }
+        mouth = {"temp": 1.0, "top_k": 40, "seed_rng": 7}
+        with mock.patch.object(generator, "_gen_clm_decode", side_effect=("a", "b")) as decode:
+            one = generator.generate(backend, {"phase": "REM"}, True, [], mouth)
+            two = generator.generate(backend, {"phase": "REM"}, True, [], mouth)
+        self.assertEqual((one["text"], two["text"]), ("a", "b"))
+        self.assertEqual(decode.call_count, 2)
+
+    def test_decode_cache_disabled_keeps_greedy_path_uncached(self) -> None:
+        from core import generator
+        backend = {
+            "kind": "clm", "loaded": True, "decodable": True, "ckpt": "fake.clm",
+            "_decode_cache": {}, "_decode_cache_enabled": False,
+        }
+        with mock.patch.object(generator, "_gen_clm_decode", side_effect=("a", "b")) as decode:
+            one = generator.generate(backend, {"phase": "REM"}, True, [])
+            two = generator.generate(backend, {"phase": "REM"}, True, [])
+        self.assertEqual((one["text"], two["text"]), ("a", "b"))
+        self.assertEqual(decode.call_count, 2)
 
     def test_g1_composition_requires_both_operands_and_records_provenance(self) -> None:
         workspace = CognitiveWorkspace()

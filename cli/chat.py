@@ -448,6 +448,10 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
 
     # ── mount the model at the SINGLE generator L3 slot (a_core_engine_map) ───
     backend = gen_auto_backend(ckpt)
+    # Populated lazily on a live workspace tick. The generator accepts hits only
+    # for exact deterministic model inputs; ordinary OFF sessions never enable it.
+    backend["_decode_cache"] = {}
+    backend["_decode_cache_enabled"] = False
     _pln("L3 mount        : mouth=" + gen_mouth_kind(ckpt)
          + " loaded=" + _ts(backend["loaded"]) + "  ckpt=" + ckpt)
 
@@ -2221,6 +2225,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 percept_text = str(percept_text).strip() or None
         _workspace_tick_mode, _workspace_tick_seed = resolve_workspace_input(
             _workspace_mode, _workspace_seed, percept_text)
+        backend["_decode_cache_enabled"] = (
+            _workspace_tick_mode != "off" and _mouth_at(tick) is None)
         if _workspace_persist_dir and percept_text is not None:
             from workspace_runtime import persist_workspace_fact
             if persist_workspace_fact(_workspace_persist_dir, percept_text) is not None:
@@ -3727,7 +3733,10 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
              + " percept-routes=" + _ts(_workspace_percept_routes)
              + " persisted=" + _ts(_workspace_persisted)
              + " score-cache=" + _ts(_workspace_ranker.hits) + "/"
-             + _ts(_workspace_ranker.hits + _workspace_ranker.misses))
+             + _ts(_workspace_ranker.hits + _workspace_ranker.misses)
+             + " decode-cache=" + _ts(int(backend.get("_decode_cache_hits", 0))) + "/"
+             + _ts(int(backend.get("_decode_cache_hits", 0))
+                   + int(backend.get("_decode_cache_misses", 0))))
 
     all_live = (emitted_any and grounded_ok and grew and remembered2 and slept
                 and psi_intact and lanes_read)
