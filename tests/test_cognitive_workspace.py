@@ -16,6 +16,12 @@ from core.workspace_adapters import (
 )
 from core.engine_cli import immune_embed_key, immune_grow_new
 from core.workspace_smoke import run_smoke
+from core.workspace_mouth import TypedWorkspaceMouth, compose_seed
+from core.rho_fan import (
+    _rho_fan_dict_load,
+    _rho_fan_is_falsifiable,
+    _rho_fan_known_word_ratio,
+)
 
 
 class CognitiveWorkspaceTest(unittest.TestCase):
@@ -111,6 +117,37 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         report = run_smoke()
         self.assertTrue(report["ok"], report)
         self.assertEqual(len(report["checks"]), 10)
+
+    def test_workspace_mouth_is_generic_and_atomic_prompts_are_unchanged(self) -> None:
+        class StubMouth:
+            def __init__(self):
+                self.calls = []
+
+            def ideate(self, seed, gen, top_k, temp, seed_rng):
+                self.calls.append(seed)
+                return "base-output"
+
+        stub = StubMouth()
+        mouth = TypedWorkspaceMouth(stub)
+        self.assertEqual(mouth.ideate("one clause: ", 40, 40, 0.7, 7), "base-output")
+        self.assertEqual(stub.calls, ["one clause: "])
+        text = mouth.ideate("if copper conducts heat, then water drives turbines: ", 40, 40, 0.7, 8)
+        self.assertIn("copper", text)
+        self.assertIn("turbines", text)
+        self.assertTrue(any(word in text for word in ("score", "rate", "frequency", "strength", "level", "ratio")))
+
+    def test_workspace_composition_is_coherent_and_explicitly_falsifiable(self) -> None:
+        text = compose_seed(
+            "if memory composes into new meaning, then silence still carries information: "
+        )
+        known = _rho_fan_dict_load()
+        self.assertGreaterEqual(_rho_fan_known_word_ratio(text, known), 0.5)
+        self.assertTrue(_rho_fan_is_falsifiable(text, known))
+
+    def test_multiclause_composition_accumulates_every_operand(self) -> None:
+        text = compose_seed("alpha cells. beta tension. gamma memory. delta silence. epsilon dream. ")
+        for operand in ("cells", "tension", "memory", "silence", "dream"):
+            self.assertIn(operand, text)
 
 
 if __name__ == "__main__":

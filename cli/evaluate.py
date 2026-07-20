@@ -817,10 +817,15 @@ def eval_rho_fan(mouth, gen, known, seed_class="composed", seed_off=0):
 
 def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
                    seed_class="composed", fan_temp_ladder=False, seed_off=0,
-                   weave_null="off"):
+                   weave_null="off", workspace_reach=False):
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
     mouth = _Mouth(ckpt, grow_window=grow_window)
+    if workspace_reach:
+        from workspace_mouth import TypedWorkspaceMouth
+        mouth = TypedWorkspaceMouth(mouth)
+        print("  [workspace] typed compose/falsify wrapper ON — SYSTEM reach; "
+              "bare-model bars unchanged", flush=True)
     if grow_window:
         print("  [Fix-W] --grow-window ON (H_9804/H_6189): CLM decode window = "
               "min(len(seed)+gen, 512) instead of the production T=24. The frozen bars do "
@@ -846,6 +851,34 @@ def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
     return {"g0": r0, "g1": r1, "g2": r2, "g3": r3, "g5": r5, "g6": r6,
             "closure": closure, "gen": g,
             "calibration": rho_fan_detector_calibration(known)}
+
+
+def workspace_reach_only_run(argv):
+    """Run the unchanged frozen G1/G6 scorers on the typed system mouth only."""
+    positional = [arg for arg in argv if not arg.startswith("--")]
+    if not positional:
+        print("ERROR: --workspace-reach-only requires <ckpt>", file=sys.stderr)
+        return 2
+    ckpt = positional[0]
+    gen = evaluate_intval(argv, "--gen", _default_gen())
+    grow = "--grow-window" in argv
+    seed_off = evaluate_intval(argv, "--seed-offset", 0)
+    from workspace_mouth import TypedWorkspaceMouth
+    known = _rho_fan_dict_load()
+    mouth = TypedWorkspaceMouth(_Mouth(ckpt, grow_window=grow))
+    print("=== anima evaluate --workspace-reach-only — frozen G1/G6 system panel ===", flush=True)
+    print("ckpt: " + ckpt, flush=True)
+    print("scope: typed SYSTEM reach; bare model claim = unchanged", flush=True)
+    g1 = eval_rho_weave(mouth, gen, known, seed_off=seed_off)
+    g6 = eval_rho_fan(mouth, gen, known, seed_off=seed_off)
+    print("G1 pass=%s best_distinct=%d max_single=%d noecho=%d echo_suspect=%s"
+          % (g1["pass"], g1["best_distinct"], g1["max_single"],
+             g1["best_distinct_noecho"], g1["echo_suspect"]))
+    print("G6 pass=%s dist=%d fals=%d coherent=%d frame_leaks=%d"
+          % (g6["pass"], g6["dist"], g6["fals"], g6["coherent"], g6["frame_leaks"]))
+    ok = bool(g1["pass"]) and not bool(g1["echo_suspect"]) and bool(g6["pass"])
+    print("WORKSPACE_REACH: " + ("PASS" if ok else "FAIL"))
+    return 0 if ok else 1
 
 
 def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir=""):
@@ -1194,6 +1227,10 @@ def evaluate_usage():
     print("  stays INVALID (p3: never hand-curate a persona · default unchanged).")
     print("  --workspace-smoke: ckpt-free typed G1 compose + G6 contradiction/select causal")
     print("  smoke with unary, pairing-shuffle, and comparator-OFF collapse controls.")
+    print("  --workspace-reach: wrap compound prompts in the typed compose/falsify workspace;")
+    print("  atomic mouth calls stay byte-identical. Reports system reach, not bare-model reach.")
+    print("  --workspace-reach-only: run only the frozen G1/G6 functions through that wrapper")
+    print("  (same bars, reduced 303M decode cost; exits 0 only when both pass).")
     print("")
     print("  H_9200 E1 SLW controls (a .clm carrying an SLW\\x01 trailer applies the")
     print("  gated-write forward-slot by default): --slot-off forces γ=0 (bit-exact base")
@@ -2118,7 +2155,8 @@ def evaluate_run(argv):
               "of the sampled decode, for n>1 replication)" % seed_off, flush=True)
     r = eval_reach_all(ckpt, corpus, gen, grow_window=grow_window,
                        seed_class=seed_class, fan_temp_ladder=fan_temp_ladder,
-                       seed_off=seed_off, weave_null=weave_null)
+                       seed_off=seed_off, weave_null=weave_null,
+                       workspace_reach="--workspace-reach" in argv[1:])
     g0 = r["g0"]; g1 = r["g1"]; g2 = r["g2"]
     g3 = r["g3"]; g5 = r["g5"]; g6 = r["g6"]
 
@@ -9408,6 +9446,8 @@ _KNOWN_FLAGS = frozenset((
     "--tension-concord",                          # H_9812 lex|class concord mode for the audit
     "--closure-ladder", "--closure-arm", "--closure-ticks", "--closure-seed",   # H_9807 interventional closure rung 1
     "--workspace-smoke",                          # typed G1/G6 workspace causal smoke
+    "--workspace-reach",                          # typed workspace around compound mouth calls
+    "--workspace-reach-only",                     # frozen G1/G6 only through workspace wrapper
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
     "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture
     # H_9808 $0 PRE-REGISTRATION GATES (core/pregates.py) — closed-form referees that ABORT
@@ -16069,6 +16109,8 @@ def main(argv):
         report = run_smoke()
         print(format_report(report))
         return 0 if report["ok"] else 1
+    if "--workspace-reach-only" in argv:
+        return workspace_reach_only_run([a for a in argv if a != "--workspace-reach-only"])
     # ── H_9808 $0 PRE-REGISTRATION GATES ────────────────────────────────────────────────────
     # Ckpt-FREE, closed-form referees dispatched on the leading flag: they read a spec file and
     # decide ADMISSIBILITY, never a verdict. Exit 3 = REFUSE (abort before spend), 0 = PASS,

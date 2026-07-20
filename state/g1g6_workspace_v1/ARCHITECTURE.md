@@ -37,3 +37,13 @@ The next rung should add adapters, in this order:
 
 Each adapter needs an OFF control and a pairing-shuffle control. No GPU fire is justified before
 those adapters preserve the invariants above in an engine-native smoke.
+
+## Production reach seam
+
+`anima-py evaluate <ckpt> --workspace-reach` wraps only compound `ideate` calls. Atomic calls are
+delegated byte-for-byte to the mounted model, so G1's `max_single` remains an earned model baseline.
+The wrapper has no concept table: it splits arbitrary clauses, extracts compact lexical operands,
+performs sequential binary composition, and realizes an explicit measurable hypothesis.
+
+`--workspace-reach-only` invokes the unchanged frozen G1/G6 scoring functions without paying for
+unrelated axes. Its verdict is **system reach**, never a claim that the bare CLM weights changed.
