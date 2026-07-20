@@ -620,6 +620,7 @@ conv decoder to regenerate distant semantic slots. Explicit modes remain availab
 ```bash
 anima-py evaluate --workspace-semantic
 anima-py evaluate --workspace-deep
+anima-py evaluate --workspace-deeper
 anima-py evaluate --workspace-divergence --seed "if copper conducts heat, then water drives turbines"
 anima-py evaluate model.clm --workspace-divergence-realizer --workspace-realizer-panel \
   --out workspace-realizer-verdict.json
@@ -640,6 +641,22 @@ quantifier controls, typed homonyms, irrelevant insertion, and wrong-rule collap
 measurement → source/time-bearing typed evidence → rejection → distinguishable alternative selection,
 with OFF and claim-ID shuffle controls. Conflicting support/contradiction is always `UNGROUNDED` and
 remains so after typed `.kosmos` persistence and process restart.
+
+`--workspace-deeper` adds a separate, non-frozen second-stage certificate. G1 distinguishes
+necessary/sufficient direction, AND/OR/XOR, explicit exception clearance, universal versus
+existential quantifiers, double-negation scope, and temporal order. Every derived fact carries a
+replayable proof DAG; missing parents, changed rules, and late exceptions invalidate it. G6 uses an
+append-only JSONL evidence ledger: weak or missing measurements become `INCONCLUSIVE`, tied or
+incomparable conflicts become `UNGROUNDED`, and conflict resolution requires independent replicated
+experiments rather than recency. Corrections and retractions preserve history, observational evidence
+cannot ground a causal claim, and proposed experiments are ranked by expected candidate separation.
+This is a structural gate, not source authentication or a statistical package: callers must supply
+trustworthy experiment IDs and quality metadata, and domain-specific effect estimation remains outside
+the workspace.
+
+The unchanged HF workspace-system-v1 303M model was rerun against the adversarial mounted-mouth panel
+after this change: 42/42 hypotheses were model-reranked with zero fallback and all 126/126
+meaning-locked candidates passed (model SHA-256 `f64a4afb43f5ba2911b836a066a6ef16f2f9678b95c2efa4824a022181d4b8fc`).
 
 Deterministic greedy workspace sessions cache only exact repeated anchored model inputs. Sampled
 mouths and workspace-OFF runs never use this cache. On the HF workspace-system-v1 303M CPU run,

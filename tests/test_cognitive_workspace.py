@@ -9,6 +9,7 @@ from core.cognitive_workspace import (
     CognitiveWorkspace,
     CompositionRule,
     Fact,
+    ProofStep,
 )
 from core.workspace_adapters import (
     contradiction_evidence,
@@ -28,15 +29,18 @@ from core.workspace_mouth import (
     select_divergence,
 )
 from core.workspace_runtime import (
-    Measurement, TypedFactStore, auto_workspace_mode, collect_measurement_evidence, grounded_answer,
+    EvidenceLedger, EvidenceRecord, Measurement, TypedFactStore,
+    auto_workspace_mode, collect_measurement_evidence, grounded_answer,
     grounded_query_step, identity_control, parse_persistable_fact, persist_workspace_fact,
-    measurement_falsification_step, persist_measurement_evidence, resolve_evidence_verdicts,
+    measurement_falsification_step, persist_measurement_evidence,
+    resolve_evidence_verdicts,
     resolve_workspace_input, spoken_divergence_step,
     spoken_workspace_step,
 )
 from core.workspace_semantic import realizer_adversarial_panel, realizer_heldout_panel, run_semantic_certification
 from core.workspace_longrun import run_workspace_longrun
 from core.workspace_deep import run_workspace_deep_certification
+from core.workspace_deeper import run_workspace_deeper_certification
 from core.workspace_regression import run_workspace_regression
 from core.workspace_system_rho import run_workspace_system_rho, store_report_passes
 from core.workspace_release_verify import verify_workspace_release
@@ -111,6 +115,57 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         self.assertEqual([row["case"] for row in report["g1"]["cases"]],
                          ["chain_6", "chain_8", "chain_10", "branch_merge",
                           "cycle", "typed_homonym"])
+
+    def test_g1_g6_deeper_certification(self) -> None:
+        report = run_workspace_deeper_certification()
+        self.assertTrue(report["ok"], report)
+        self.assertEqual([row["case"] for row in report["g1"]["cases"]], [
+            "necessary_sufficient", "conjunction", "inclusive_or", "exclusive_or", "exception",
+            "quantifier", "negation_scope", "temporal_order", "proof_object",
+        ])
+
+    def test_proof_object_replays_and_detects_rule_tampering(self) -> None:
+        workspace = CognitiveWorkspace()
+        workspace.add_facts([self.left, self.right])
+        target = workspace.compose(self.rule)[0]
+        proof = workspace.proof_for(target)
+        self.assertEqual([step.rule_name for step in proof],
+                         ["axiom", "axiom", "power-chain"])
+        self.assertTrue(workspace.verify_proof(target))
+        step = workspace.proofs[target.key]
+        workspace.proofs[target.key] = ProofStep(step.conclusion, "wrong-rule", step.premises)
+        self.assertFalse(workspace.verify_proof(target))
+
+    def test_evidence_ledger_quality_conflict_and_latest_controls(self) -> None:
+        seed = "if catalyst increases yield, then reactor reduces waste"
+        claim_id = claim_ids(seed)[0]
+
+        def record(name, verdict, source, hour, sample_size=100):
+            return EvidenceRecord(
+                name, claim_id, verdict, source,
+                "2026-07-21T%02d:00:00Z" % hour, name, "reactor-v1",
+                sample_size, .05,
+            )
+
+        weak = EvidenceLedger([record("weak", "supported", "lab-a", 1, 5)])
+        self.assertEqual(weak.resolve(claim_id).status, "INCONCLUSIVE")
+        tied = EvidenceLedger([
+            record("tie-a", "supported", "lab-a", 1),
+            record("tie-b", "contradicted", "lab-b", 2),
+        ])
+        self.assertEqual(tied.resolve(claim_id).reason, "tied_cross_experiment_conflict")
+        majority = EvidenceLedger([
+            record("old-a", "contradicted", "lab-a", 1),
+            record("old-b", "contradicted", "lab-b", 2),
+            record("latest", "supported", "lab-c", 23),
+        ])
+        self.assertEqual(majority.resolve(claim_id).status, "contradicted")
+        self.assertEqual(majority.resolve(claim_id).reason, "replicated_majority")
+        with self.assertRaises(ValueError):
+            EvidenceRecord(
+                "bad", claim_id, "supported", "lab", "2026-07-21T01:00:00Z",
+                "bad-exp", sample_size=100, uncertainty=.05, control_valid="false",
+            )
 
     def test_conjunctive_merge_requires_both_typed_relations(self) -> None:
         workspace = CognitiveWorkspace()
