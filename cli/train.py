@@ -850,6 +850,44 @@ def serialize_parity(model, out_path, panel_path, device, max_items=32):
     print("    agreement    %.4f  %s" % (r["agreement"],
           "✅ 두 경로 일치 — 직렬화는 답 예측을 보존한다" if r["agreement"] >= 0.95 else
           "⛔ 두 경로 불일치 — .clm 이 학습된 답 예측을 잃는다(이 span 이 범인)"))
+
+    # ── GN NON-CAUSAL LEAK ARM (H_9813) ────────────────────────────────────────────────────
+    # Why: `ans_ce` fell to 0.0001 while the SAME model scores at chance on isolated sentences,
+    # and the drill is epoch-shuffled + windows are independent — so the predictability must
+    # live INSIDE the teacher-forced window. GroupNorm(1,C) here reduces over (C,T): SEQUENCE-
+    # GLOBAL statistics, i.e. NON-CAUSAL (the documented GN bus, H_9560/H_9611 lineage). Under
+    # teacher forcing the answer bytes sit in the window, so every position can read them
+    # through the normalization statistics.
+    # The probe: the FIRST answer byte's prediction cannot causally depend on the answer bytes.
+    # Forward the same stream-style window twice — answers present in the INPUT vs masked to
+    # 'q' (targets unchanged) — and compare NLL at that first-answer-byte position. Any drop
+    # from masked -> present is pure non-causal leak.
+    q = ord("q")
+    pres = mask = 0.0
+    m = 0
+    for j, it in enumerate(items):
+        line = it["surface"] + it["gold_pattern"]
+        prev = items[(j + 1) % len(items)]["surface"] + items[(j + 1) % len(items)]["gold_pattern"]
+        window = (prev + "\n" + line).encode()[-96:]
+        ids = torch.tensor([list(window)], dtype=torch.long, device=device)
+        ans_len = len(it["gold_pattern"].encode())
+        first_ans = len(window) - ans_len          # index in window of the first answer byte
+        x_true, y = ids[:, :-1], ids[:, 1:]
+        x_msk = x_true.clone()
+        x_msk[0, first_ans:] = q                   # mask answer bytes in the INPUT only
+        with torch.no_grad():
+            lp_t = torch.log_softmax(model(x_true, y)["logits"].float(), dim=1)[0]
+            lp_m = torch.log_softmax(model(x_msk, y)["logits"].float(), dim=1)[0]
+        pos = first_ans - 1                        # logits at pos predict the first answer byte
+        tgt = int(y[0, pos])
+        pres += float(-lp_t[tgt, pos]); mask += float(-lp_m[tgt, pos]); m += 1
+    r["gn_present"] = pres / m; r["gn_masked"] = mask / m
+    r["gn_leak"] = r["gn_masked"] - r["gn_present"]
+    print("  GN NON-CAUSAL LEAK (first answer byte · answers present vs masked in INPUT · n=%d)" % m)
+    print("    NLL present %.4f · masked %.4f · Δ %.4f  %s" % (
+        r["gn_present"], r["gn_masked"], r["gn_leak"],
+        "⛔ 비인과 누출 — 답이 GN 통계로 자기 자신을 알린다(ans_ce 는 이 채널로 부풀려짐)"
+        if r["gn_leak"] > 0.1 else "✅ 누출 없음 — ans_ce 의 예측력은 인과 경로에서 온다"))
     return r
 
 
