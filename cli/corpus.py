@@ -4236,6 +4236,57 @@ def _nga_marker_reach(panel_pairs, arm, markers):
     return out
 
 
+
+# ── H_9812 FIELD-ALONE LEAK GATE ──────────────────────────────────────────────────────────
+# The deciding control for "does the tension field see content, or does the core?". A concord
+# mode that lets the FIELD ALONE predict the answer above chance has not given the trunk a
+# channel — it has handed it the answer, and any Δ measured under that mode is unreadable.
+# This is settled by measurement, never by the argument that "agreement is not the answer".
+#
+# Method mirrors the H_9809 n-gram audit deliberately (fit on TRAIN, score on PANEL, chance
+# DERIVED from the realized split, coverage guard ⇒ UNDECIDABLE rather than a false CLOSED):
+# the field's signature for one conjunct is the tuple of chi signs its live edges carry, which
+# is exactly what a downstream reader could exploit and nothing more.
+def _field_signature(surface, concord):
+    import numpy as _np
+    from tension_field import tension_edges          # core/tension_field.py
+    toks = _np.frombuffer(surface.encode(), dtype=_np.uint8).astype(_np.int64)
+    rows, cols, vals = tension_edges(toks, concord=concord)
+    if rows.size == 0:
+        return ("void",)
+    order = _np.lexsort((cols, rows))
+    return tuple(int(v) for v in _np.sign(vals[order]).astype(_np.int64))
+
+
+def field_alone_leak(train_conj, panel_conj, concord, min_coverage=0.10):
+    """Can the FIELD ALONE call gold_bit? Returns a dict; `leaks` True ⇒ the mode is disqualified."""
+    from collections import Counter, defaultdict
+    table = defaultdict(Counter)
+    for c in train_conj:
+        table[_field_signature(c["surface"], concord)][int(c["gold_bit"])] += 1
+    gold = [int(c["gold_bit"]) for c in panel_conj]
+    n = len(gold) or 1
+    maj = Counter(gold).most_common(1)[0][1]
+    chance = maj / n                                  # DERIVED from the realized panel split
+    seen = hit = 0
+    for c, g in zip(panel_conj, gold):
+        sig = _field_signature(c["surface"], concord)
+        row = table.get(sig)
+        if row:
+            seen += 1
+            pred = row.most_common(1)[0][0]
+        else:
+            pred = Counter(gold).most_common(1)[0][0]   # majority fallback = order-0 by construction
+        hit += int(pred == g)
+    cov = seen / n
+    acc = hit / n
+    undecidable = cov < min_coverage
+    return {"concord": concord, "acc": round(acc, 4), "chance": round(chance, 4),
+            "coverage": round(cov, 4), "n": n,
+            "undecidable": bool(undecidable),
+            "leaks": bool((not undecidable) and acc > chance + 1e-9)}
+
+
 def run_ngram_audit(opts):
     train_pairs = _nga_read_pairs(opts["audit_train"])
     panel_pairs = _nga_read_pairs(opts["panel"])
@@ -5118,9 +5169,17 @@ def main():
         with open(opts["out"], "w", encoding="ascii") as fh:
             fh.write(text)
         pj = opts["out"] + ".panel.json"
+        # H_9812 FIELD-ALONE LEAK GATE — per concord mode, fit on the DRILLED conjuncts and score
+        # on the held-out ones. A mode that calls gold above the derived chance is DISQUALIFIED:
+        # under it the field hands the reader the answer, so no Δ measured with it is readable.
+        _train_conj = [c for it in _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0) for c in it["conjuncts"]]
+        _panel_conj = [c for it in panel for c in it["conjuncts"]]
+        leak = {m: field_alone_leak(_train_conj, _panel_conj, m) for m in ("class", "lex", "morph")}
         json.dump({"schema": "anima-bindpanel/v1", "K": K, "lang": st["lang"], "seed": st["seed"],
                    "answers": list(_BP_ANS), "tail": _BP_TAIL, "arrow": _BP_ARROW,
                    "regen_cmd": regen, "codebook": codebook, "audit": ap,
+                   "field_alone_leak": leak,
+                   "disqualified_concord": sorted(m for m, r in leak.items() if r["leaks"]),
                    "held_lexemes": st["held_lexemes"], "seen_lexemes": st["seen_lexemes"],
                    "items": panel},
                   open(pj, "w", encoding="utf-8"), ensure_ascii=False)
@@ -5154,11 +5213,19 @@ def main():
         print("  surface bytes %s · max scored seq = %d B (choose --seq-len/--win at or above it, "
               "or the right-aligned window truncates the early conjuncts and the panel measures a "
               "different question)" % (ap["surface_byte_lengths"], ap["max_seq_bytes"]))
-        print("  ⚠️ THE FIELD SEES WORD LENGTHS, NOTHING ELSE. core/tension_field.py derives every "
-              "chunk head and every chi sign from the WHITESPACE MASK, so T is blind to which "
-              "letters are present. This panel is length-coded (verb +s=5B vs +ing=7B · noun "
-              "6B vs +s=7B) SO THAT the field can carry the answer at all. On any panel keyed to "
-              "lexical identity the field carries 0 bits and Δd_acc(duel−rank1) is not measurable.")
+        print("  ⚠️ WHAT THE FIELD CAN SEE DEPENDS ON --tension-concord (H_9812). `class` (the "
+              "default) derives every chi sign from the WHITESPACE MASK and is blind to which "
+              "letters are present — on a lexically-keyed panel it carries 0 bits, so a Δ of 0 "
+              "means NO CHANNEL, not rank collapse. This panel is length-coded (verb +s=5B vs "
+              "+ing=7B · noun 6B vs +s=7B) so `class` has a channel at all. `lex`/`morph` let the "
+              "field see word identity/morphology — that is the ①field-sees-content fork, and it "
+              "is gated below, not assumed safe.")
+        for _m in ("class", "lex", "morph"):
+            _r = leak[_m]
+            _tag = ("⛔ DISQUALIFIED — the field alone calls gold" if _r["leaks"] else
+                    "⚠️ UNDECIDABLE (coverage below floor)" if _r["undecidable"] else "✅ no leak")
+            print("  FIELD-ALONE LEAK GATE [%-5s] acc %.4f vs derived chance %.4f · coverage %.4f  %s"
+                  % (_m, _r["acc"], _r["chance"], _r["coverage"], _tag))
         print("  HEURISTIC AUDIT (all must be exactly 0.500000): " + " · ".join(
             "%s=%s" % (k, ap["per_slot"][0][k]) for k in sorted(ap["per_slot"][0])))
         print("  slot independence: worst pairwise |P(gold_a=gold_b)-0.5| = %s (pair %s)"
