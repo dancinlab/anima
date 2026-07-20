@@ -596,6 +596,12 @@ hx install anima     # install.hexa pins the latest install-smoked v* tag (STABL
 anima chat clm303.clm       # same verbs as anima-py; `anima <verb>` ≡ `anima-py <verb>` (byte-identical decode)
 ```
 
+Apple Silicon automatically uses the Metal/MPS backend when available. Override device
+selection with `--device {auto,cpu,cuda,mps}`. When a warm-start `.clm` contains an SLW
+trailer, pass matching `--slw`, `--slw-n-slot`, and `--slw-k` arguments: the trainer restores
+the learned memory lane and refuses to silently discard it. `--skip-inline-rho` skips only the
+slow directional torch probe at shutdown; promotion still requires the engine-native evaluation.
+
 ### Typed workspace (opt-in)
 
 The workspace composes compound premises into a measurable hypothesis, checks typed `.kosmos`

@@ -1184,7 +1184,42 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
                 f"the deserializer and this model's (L,E) disagree. Refusing to warm-start from a "
                 f"checkpoint we cannot reproduce: a silent mis-parse would arrive looking exactly "
                 f"like a training result.")
-        sd = {k: torch.from_numpy(v) for k, v in S.deserialize_v3(init_path, L, E).items()}
+        np_sd = S.deserialize_v3(init_path, L, E)
+        sd = {k: torch.from_numpy(v) for k, v in np_sd.items()}
+        with open(init_path, "rb") as init_file:
+            raw = init_file.read()
+        main_n = len(S._pack_main_blob(np_sd, L, E))
+        next_magic = raw[main_n:main_n + 4]
+        slw_loaded = False
+        if next_magic == bytes([83, 76, 87, 1]):
+            if getattr(model, "slw", None) is None:
+                raise ValueError(
+                    f"--init {init_path}: checkpoint carries an SLW trailer but the built model "
+                    "does not. Pass --slw with matching --slw-n-slot/--slw-k; silently dropping "
+                    "a trained memory lane would not be a valid warm-start.")
+            from slw import read_slw
+            sw, sw_end = read_slw(raw, main_n)
+            if sw is None:
+                raise ValueError(f"--init {init_path}: malformed SLW trailer")
+            mod = model.slw
+            if (int(sw["n_slot"]), int(sw["k"]), int(sw["d_s"])) != \
+                    (int(mod.n_slot), int(mod.k), int(mod.d_s)):
+                raise ValueError(
+                    f"--init {init_path}: SLW shape {(sw['n_slot'], sw['k'], sw['d_s'])} "
+                    f"!= built {(mod.n_slot, mod.k, mod.d_s)}")
+            slw_sd = {
+                "K_slots": sw["K_slots"],
+                "W_r.weight": sw["W_r"], "W_r.bias": sw["b_r"],
+                "W_q.weight": sw["W_q"], "W_q.bias": sw["b_q"],
+                "W_v.weight": sw["W_v"], "W_v.bias": sw["b_v"],
+                "W_o.weight": sw["W_o"], "W_o.bias": sw["b_o"],
+                "w_g.weight": sw["w_g"].reshape(1, -1),
+                "w_g.bias": [sw["b_g"]], "gamma": sw["gamma"],
+            }
+            target = mod.state_dict()
+            converted = {k: torch.as_tensor(v, dtype=target[k].dtype) for k, v in slw_sd.items()}
+            mod.load_state_dict(converted, strict=True)
+            slw_loaded = True
         model_sd = model.state_dict()
         loadable, shape_bad = {}, []
         for k, v in sd.items():                     # same H_247 hard guard as the .pt path
@@ -1201,7 +1236,8 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
                              f"(ckpt keys e.g. {list(sd)[:4]})")
         missing, unexpected = model.load_state_dict(loadable, strict=False)
         return (f"warm-start ✓ .clm int4-dequant loaded {len(loadable)}/{len(model_sd)} keys "
-                f"(L={L} E={E} · round-trip BYTE-IDENTICAL · untouched={len(missing)})")
+                f"(L={L} E={E} · round-trip BYTE-IDENTICAL · untouched={len(missing)}"
+                f" · SLW={'restored' if slw_loaded else 'absent'})")
 
     if low.endswith(".bin"):
         if not is_bytegpt:
@@ -1817,6 +1853,10 @@ def main():
     ap.add_argument("--val-batches", type=int, default=4)
     ap.add_argument("--log-every", type=int, default=50)
     ap.add_argument("--dbes-every", type=int, default=0, help="0=final only; N=also every N steps")
+    ap.add_argument("--skip-inline-rho", action="store_true",
+                    help="skip the slow directional torch-side rho probe at shutdown; the "
+                         "serialized checkpoint must still receive its terminal engine-native "
+                         "evaluation")
     ap.add_argument("--ckpt-every", type=int, default=0,
                     help="0=final .clm only; N=every N steps dump <out>.step<N>.clm "
                          "(step-window multiplex — 1 run yields 2000/4000/… checkpoints, "
@@ -1846,6 +1886,10 @@ def main():
                          "change). --batch-size MUST be divisible by N (hard error otherwise "
                          "— no silent effective-batch change). 0 or 1 id => single-GPU path, "
                          "byte-identical to today (every DDP branch skipped).")
+    ap.add_argument("--device", choices=["auto", "cpu", "cuda", "mps"], default="auto",
+                    help="training device (default: auto selects CUDA, then Apple MPS, then CPU; "
+                         "multi-GPU --gpus always uses CUDA and cannot be combined with an "
+                         "explicit non-CUDA device)")
     ap.add_argument("--ddp-verify-sync", action="store_true",
                     help="DDP debug: every --val-every steps all-reduce a param-checksum and "
                          "assert cross-rank agreement (catches a mitosis/optimizer desync at "
@@ -1967,6 +2011,8 @@ def main():
     #   Runs FIRST (before any CUDA allocation). os.execvpe replaces the process, so the
     #   launcher's `> rf 2>&1` redirect is inherited and only rank 0 prints via p0().
     gpu_ids = [g for g in a.gpus.split(",") if g.strip() != ""]
+    if gpu_ids and a.device not in ("auto", "cuda"):
+        sys.exit(f"[device] --gpus requires CUDA; it cannot be combined with --device {a.device}")
     under_torchrun = "RANK" in os.environ
     # (1) RE-EXEC branch — >1 GPU requested and not yet under torchrun.
     if len(gpu_ids) > 1 and not under_torchrun:
@@ -2050,8 +2096,20 @@ def main():
     # §7 device: under DDP each rank pins its own cuda:local_rank; N==1 = today's path.
     if ddp_on:
         device = f"cuda:{local_rank}"
+    elif a.device == "auto":
+        if torch.cuda.is_available():
+            device = "cuda"
+        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            device = "mps"
+        else:
+            device = "cpu"
     else:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
+        device = a.device
+        if device == "cuda" and not torch.cuda.is_available():
+            sys.exit("[device] --device cuda requested but CUDA is unavailable")
+        if device == "mps" and not (hasattr(torch.backends, "mps") and
+                                    torch.backends.mps.is_available()):
+            sys.exit("[device] --device mps requested but Apple MPS is unavailable")
     _gpu_preflight(device, a.steps or 0)
     _budget_preflight(a.corpus, a.steps or 0, a.lr)
     objfn = OBJECTIVE_BUILDERS[a.objective](d, V, device)   # aux-head objectives allocate params
@@ -2094,6 +2152,8 @@ def main():
                 f"Install an sm_{sm}-capable build — for Blackwell (sm_120) use the cu128 index:\n"
                 f"  pip install --upgrade torch --index-url https://download.pytorch.org/whl/cu128"
             )
+    elif device == "mps":
+        p0(f"  mps: Apple Metal backend torch={torch.__version__}", flush=True)
 
     torch.manual_seed(a.seed)
 
@@ -2652,7 +2712,7 @@ def main():
         #   skip for bytegpt (the terminal verdict is `anima-py evaluate <.bin>` engine-native
         #   through the bytegpt mouth anyway — this torch probe is DIRECTIONAL only).
         gauges = None
-        if not is_bytegpt:
+        if not is_bytegpt and not a.skip_inline_rho:
             try:
                 import gauge_lib
                 was = model.training; model.eval()
