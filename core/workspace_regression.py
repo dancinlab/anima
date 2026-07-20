@@ -12,7 +12,7 @@ except ImportError:
     from workspace_runtime import auto_workspace_mode, TypedFactStore, grounded_answer, identity_control
 
 
-def _realizer_report_passes(report: dict[str, object] | None) -> bool:
+def realizer_report_passes(report: dict[str, object] | None) -> bool:
     if not isinstance(report, dict):
         return False
     cases = report.get("cases")
@@ -86,7 +86,7 @@ def run_workspace_regression(realizer_report: dict[str, object] | None = None) -
         "bare_fan": False,
         "bare_tether": False,
         "bare_self": False,
-        "model_realizer_semantic_accept": _realizer_report_passes(realizer_report),
+        "model_realizer_semantic_accept": realizer_report_passes(realizer_report),
     }
     return {
         "schema": "anima.workspace.regression/1",

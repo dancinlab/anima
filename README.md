@@ -622,10 +622,14 @@ anima-py evaluate --workspace-semantic
 anima-py evaluate --workspace-divergence --seed "if copper conducts heat, then water drives turbines"
 anima-py evaluate model.clm --workspace-divergence-realizer --workspace-realizer-panel \
   --out workspace-realizer-verdict.json
+anima-py evaluate --workspace-system-rho --store-report store-verdict.json \
+  --realizer-report workspace-realizer-verdict.json --out system-rho.json
 anima-py evaluate --workspace-regression --out workspace-regression.json
 anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon  # exact probe calls are memoized
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-cache .rho-cache
+anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-no-cells \
+  --rho-out bare-rho.json
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-axes self --kosmos self-dir
 
 # User path: compound seed automatically activates the divergent spoken-text seam.

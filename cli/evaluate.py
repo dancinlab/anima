@@ -1121,7 +1121,7 @@ def workspace_divergence_realizer_run(argv):
 
 
 def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_dir="",
-                  axes=""):
+                  axes="", include_cells=True):
     """ρ-AXON reach panel (`anima-py evaluate <clm> --rho-axon`) — the redesigned reach
     layer (cli/rho_axon.py; G0-G6 → ρ-AXON, design SSOT state/rho_axon_measurement/). Reuses
     the SAME engine decode (_Mouth.ideate) + g6 detectors the G-battery uses (no side-harness),
@@ -1153,7 +1153,7 @@ def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_
         _self = "\n".join(str(a.get("text_payload", "")) for a in _anchors if a.get("text_payload"))
         if _self:
             dets["kosmos_anchor"] = _self
-    cell_dets = _build_cell_dets(known, en_corpus_tokens, corpus_paths)
+    cell_dets = _build_cell_dets(known, en_corpus_tokens, corpus_paths) if include_cells else None
     aliases = {
         "form": "ρ·form", "store": "ρ·store", "weave": "ρ·weave",
         "leap": "ρ·leap", "fan": "ρ·fan", "tether": "ρ·tether", "self": "ρ·self",
@@ -1475,7 +1475,8 @@ def evaluate_usage():
     print("      donor==host auto-labels ⚠️ SHAM as the positive-validity control.")
     print("  --rho-axon: render the ρ-AXON reach panel (Ψ-SOMA ρ layer · redesign of G0-G6,")
     print("  cli/rho_axon.py) instead of the G-battery — HILLOCK gate + ρ·form/store/weave/leap/")
-    print("  fan/tether/self, each Δ-vs-controls (no raw score) + INVALID/PENDING first-class.")
+    print("  fan/tether/self, each Δ-vs-controls (no raw score) + INVALID/PENDING first-class;")
+    print("  add --rho-no-cells for aggregate-only and --rho-out panel.json for a machine verdict.")
     print("")
     print("  --kosmos <dir>: (with --rho-axon) supply the substrate's OWN .kosmos self-anchor")
     print("  dir (a chat session's kosmos, generator_read_anchors → joined memory) so ρ·self")
@@ -1502,6 +1503,8 @@ def evaluate_usage():
     print("  preservation per lens and fail closed to the structured rendering.")
     print("  --workspace-regression [--realizer-report verdict.json] [--out manifest.json]: system gates")
     print("  plus an explicit default-promotion blocker audit.")
+    print("  --workspace-system-rho --store-report store.json --realizer-report verdict.json")
+    print("      evidence-bound seven-axis production-system closure; bare-mouth claim stays separate")
     print("")
     print("  H_9200 E1 SLW controls (a .clm carrying an SLW\\x01 trailer applies the")
     print("  gated-write forward-slot by default): --slot-off forces γ=0 (bit-exact base")
@@ -2394,13 +2397,20 @@ def evaluate_run(argv):
     # H_9200 ρ-AXON — the redesigned reach layer (G0-G6 → ρ-AXON). Same engine decode,
     # a different panel; branch early so the G0-G6 summary below is skipped.
     if _RHO_AXON:
-        eval_rho_axon(
+        rho_panel = eval_rho_axon(
             ckpt, corpus, gen,
             kosmos_dir=evaluate_strval(argv[1:], "--kosmos", ""),
             isolated="--rho-axon-isolated" in argv[1:],
             cache_dir=evaluate_strval(argv[1:], "--rho-cache", ""),
             axes=evaluate_strval(argv[1:], "--rho-axes", ""),
+            include_cells="--rho-no-cells" not in argv[1:],
         )
+        rho_out = evaluate_strval(argv[1:], "--rho-out", "")
+        if rho_out:
+            with open(rho_out, "w", encoding="utf-8") as handle:
+                json.dump(rho_panel, handle, ensure_ascii=False, indent=2, sort_keys=True)
+                handle.write("\n")
+            print("wrote: " + rho_out)
         return 0
 
     grow_window = "--grow-window" in argv[1:]
@@ -9708,7 +9718,7 @@ _KNOWN_FLAGS = frozenset((
     "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--eval-historicity", "--schedule", "--dv", "--jitter", "--af-forward", "--impulse", "--side", "--kmax", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--pos-control", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
-    "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--rho-axon-isolated", "--rho-cache", "--rho-axes", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
+    "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--rho-axon-isolated", "--rho-cache", "--rho-axes", "--rho-no-cells", "--rho-out", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
     "--fan-branch", "--branches",              # H_9803 branch-latent ideation fan arms
     "--tension-rank-audit", "--ctrl-seed",     # H_9805 write-side tension-field rank audit
@@ -9742,6 +9752,8 @@ _KNOWN_FLAGS = frozenset((
     "--workspace-divergence-realizer",            # mounted mouth semantic preservation/fallback
     "--workspace-realizer-panel",                 # frozen cross-domain mounted-mouth panel
     "--workspace-regression",                     # combined system + promotion blocker manifest
+    "--workspace-system-rho",                     # evidence-bound typed-system ρ-AXON panel
+    "--store-report",                             # measured frozen-trunk CLMS verdict
     "--realizer-report",                          # measured held-out mouth-realizer verdict
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
     "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture
@@ -16426,6 +16438,27 @@ def main(argv):
                 json.dump(report, handle, ensure_ascii=False, indent=2, sort_keys=True)
             print("wrote: " + out_path)
         return 0 if report["system_pass"] else 1
+    if len(argv) >= 1 and argv[0] == "--workspace-system-rho":
+        from workspace_system_rho import format_workspace_system_rho, run_workspace_system_rho
+        store_path = evaluate_strval(argv[1:], "--store-report", "")
+        realizer_path = evaluate_strval(argv[1:], "--realizer-report", "")
+        if not store_path or not realizer_path:
+            print("ERROR: --workspace-system-rho requires --store-report and --realizer-report",
+                  file=sys.stderr)
+            return 2
+        with open(store_path, "r", encoding="utf-8") as handle:
+            store_report = json.load(handle)
+        with open(realizer_path, "r", encoding="utf-8") as handle:
+            realizer_report = json.load(handle)
+        report = run_workspace_system_rho(store_report, realizer_report)
+        print(format_workspace_system_rho(report))
+        out_path = evaluate_strval(argv[1:], "--out", "")
+        if out_path:
+            with open(out_path, "w", encoding="utf-8") as handle:
+                json.dump(report, handle, ensure_ascii=False, indent=2, sort_keys=True)
+                handle.write("\n")
+            print("wrote: " + out_path)
+        return 0 if report["reach_closed"] else 1
     if "--workspace-divergence-realizer" in argv:
         return workspace_divergence_realizer_run(
             [a for a in argv if a != "--workspace-divergence-realizer"])

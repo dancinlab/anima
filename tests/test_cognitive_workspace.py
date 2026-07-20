@@ -30,6 +30,7 @@ from core.workspace_runtime import (
 )
 from core.workspace_semantic import run_semantic_certification
 from core.workspace_regression import run_workspace_regression
+from core.workspace_system_rho import run_workspace_system_rho, store_report_passes
 from core.rho_fan import (
     _rho_fan_dict_load,
     _rho_fan_is_falsifiable,
@@ -455,6 +456,37 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         evidence["fallback"] = 1
         rejected = run_workspace_regression(evidence)
         self.assertFalse(rejected["promotion_blockers"]["model_realizer_semantic_accept"])
+
+    def test_workspace_system_rho_requires_measured_store_and_realizer_controls(self) -> None:
+        realizer_results = [
+            {"valid": True, "realized_by": "model_rerank"} for _ in range(36)]
+        realizer = {
+            "schema": "anima.workspace-divergence-realizer/v1", "panel": "heldout",
+            "ckpt_sha256": "b" * 64,
+            "safe": True, "hypotheses": 36, "model_semantic_accept": 36, "fallback": 0,
+            "meaning_locked_candidates": 108, "meaning_locked_candidate_total": 108,
+            "cases": [{"results": realizer_results}],
+        }
+        store = {
+            "schema": "anima.model-candidate.v1", "candidate_sha256": "a" * 64,
+            "base_sha256": "b" * 64, "base_plus_slw_byte_parity": True,
+            "training": {"freeze_trunk": True, "slw_restored": True,
+                         "final_store_accuracy": 1.0, "final_address_accuracy": 1.0},
+            "heldout_store": {"verdict": "PASS", "live": .96, "oracle": 1.0,
+                              "shuffle": .40, "shuffle_balance_floor": .43,
+                              "shuffle_fixed_points": 0,
+                              "flip_coherence_baseline_correct": .98,
+                              "lambda_zero": .47, "seen_heldout_gap": 0.0},
+        }
+        self.assertTrue(store_report_passes(store))
+        report = run_workspace_system_rho(store, realizer)
+        self.assertTrue(report["reach_closed"], report)
+        self.assertFalse(report["bare_model_promoted"])
+        store["heldout_store"]["shuffle"] = .50
+        self.assertFalse(run_workspace_system_rho(store, realizer)["reach_closed"])
+        store["heldout_store"]["shuffle"] = .40
+        realizer["ckpt_sha256"] = "c" * 64
+        self.assertFalse(run_workspace_system_rho(store, realizer)["reach_closed"])
 
 
 if __name__ == "__main__":
