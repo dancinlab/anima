@@ -5789,9 +5789,9 @@
         "detail": "場의 어휘 블라인드는 버그가 아니라 ②를 택한 설계선택이었다(원 주석이 '어휘 밀수 방지' 로 명시). v4 는 honorific concord = 문법자질 = ① 이라 이식본은 메커니즘 미재현. concord 3모드 착륙(class 기본·lex·morph)로 갈래를 코드에 노출. 기본값은 class — ①은 a_substrate_disjoint(겹침=충돌)와 A⇄G=입의정책 을 뒤집는 아키텍처 결정이라 기본값으로 밀수 금지(오너 지적으로 morph→class 복원). 선결=field-alone 누수게이트."
        },
        {
-        "name": "🔴 H_9812 누수게이트 실행 — 세 concord 전부 실격 + H_9810 패널 사용불가",
+        "name": "✅ H_9812 누수게이트 + 길이-매칭 패널 — 양방향 인증 완료",
         "type": "gate",
-        "detail": "corpus bindpanel 빌드에 field-alone 누수게이트 착륙 후 즉시 실행: class acc 1.0000 · lex 0.9583 · morph 1.0000 (전부 유도우연 0.5000 초과 ⟹ 실격). 원인=H_9810 이 場에 채널을 주려 패널을 길이-부호화(동사+s 5B vs +ing 7B)했는데 class 場이 공백마스크서 길이를 그대로 읽어 답을 통째로 얻는다. ⟹ 이 패널 위 Δ 는 '場이 결합을 돕나' 가 아니라 'readout 이 답을 베끼나' 를 잰다 = F1 측정 불가. 다음 패널 필수조건 = 정답이 레이아웃서 복원 불가(길이-매칭)."
+        "detail": "게이트 착륙 직후 옛 패널을 실격시킴(class 1.0000·lex 0.9583·morph 1.0000 vs 유도우연 0.5000): H_9810 이 場에 채널을 주려 길이-부호화했는데 class 場이 공백마스크서 길이를 읽어 답을 통째로 얻었다. 수리=형태소 길이-매칭(동사 +es/+ed · 명사 +us/+is 전부 2B) ⟹ 표면 [178,184,190]→[202] 단일. 비대칭 의도적으로 morph 는 hp 만 보고 pos 는 못 봄 ⟹ 場 단독 gold 불가·trunk 는 u/i 로 가능 = 갈래② 시험가능. 양방향 인증: 새 패널 3모드 전부 0.5000 ✅ · --bind-legacy-lengths 대조군 여전히 실격 ⛔."
        }
       ]
      }
@@ -18337,6 +18337,13 @@
     "value": "liveness readout RUNNING=0 while provider API shows 3 running",
     "threshold": "래퍼 CLI의 liveness 요약을 신뢰하지 말고 provider API(vastai show instances)+ssh 실측으로 재확인 — 오탐이면 살아있는 유료 연산을 유휴로 오인해 teardown 위험",
     "source": "hexa cloud pods"
+   },
+   {
+    "id": "serialize-py-2",
+    "state": "pos-conv",
+    "value": "파리티 게이트가 main blob 재포장을 파일 전체와 비교 → 트레일러 달린 ckpt warm-start 구조적 불가",
+    "threshold": "ckpt 를 '열 수 없다'고 나올 때 ckpt 손상을 의심하기 전에 게이트의 비교 SPAN 을 먼저 봐라 — prefix_eq 한 줄이면 갈린다(파리티 성질 정상 vs 비교범위 오류). 트레일러 검증을 magic-only 로 하지 마라(잘림·위장 통과) — 전체 파싱+EOF 정확소진.",
+    "source": "core/serialize.py"
    }
   ]
  }

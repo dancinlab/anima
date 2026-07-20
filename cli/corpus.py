@@ -123,6 +123,10 @@ def _parse_args(argv):
             #   --audit-marker A,B         class-discriminating markers -> per-arm terminal reach
             #   --audit-min-coverage X     below this key-coverage an order reads UNDECIDABLE,
             #                              never CLOSED (a 0-coverage lookup IS the majority class)
+            # H_9812 --bind-legacy-lengths: rebuild the DISQUALIFIED length-coded panel as a
+            # control (field-alone acc 1.0000). Default = length-matched, where the surface byte
+            # length is identical whatever the gold is.
+            "bind_legacy_lengths": False,
             "ngram_recoverable_audit": False, "audit_train": None, "panel": None,
             "codec": None, "audit_marker": None, "audit_min_coverage": 0.10}
     i = 1
@@ -234,6 +238,8 @@ def _parse_args(argv):
             opts["bind_k"] = int(argv[i + 1]); i += 2               # H_9810 bindpanel conjuncts
         elif a == "--ngram-recoverable-audit":
             opts["ngram_recoverable_audit"] = True; i += 1          # H_9809 ngram-audit
+        elif a == "--bind-legacy-lengths":
+            opts["bind_legacy_lengths"] = True; i += 1              # H_9812 disqualified control
         elif a == "--audit-train":
             opts["audit_train"] = argv[i + 1]; i += 2               # H_9809
         elif a == "--panel":
@@ -2249,13 +2255,35 @@ def _bp_hp_patterns(K):
     return [[0] * K, [1] * K, [k % 2 for k in range(K)], [1 - k % 2 for k in range(K)]]
 
 
-def _bp_conjunct(hp, pos, verb, sg, pl):
+# H_9812 — LENGTH-MATCHED morphology (the repair the field-alone leak gate forced).
+# The legacy forms were `+s`(1 B) vs `+ing`(3 B) and noun vs noun+`s`(+1 B), so the SURFACE BYTE
+# LENGTH encoded both hp and pos. The layout-only `class` field reads word lengths straight off the
+# whitespace mask ⇒ the gate measured field-alone acc 1.0000 vs chance 0.5000: the panel did not
+# give the field a channel, it handed over the answer, and no Δ on it was readable.
+#
+# Matched forms fix that BY CONSTRUCTION:
+#   verb  hp=1 -> `+es`   hp=0 -> `+ed`    both 2 B · final byte differs (s|d)
+#   noun  sg   -> `+us`   pl   -> `+is`    both 2 B · final byte IDENTICAL (s)
+# Every surface is now byte-length-identical whatever the gold is, so the layout carries nothing.
+# The asymmetry is deliberate and load-bearing: `morph` (final byte) can see hp but NOT pos, and
+# gold = hp XOR pos needs both — so a concord field still cannot call gold alone, while the TRUNK,
+# which reads the actual bytes (`u` vs `i`), can. That is the ②core-sees-content fork made testable
+# instead of asserted.
+_BP_VF = {"matched": lambda v, hp: v + ("es" if hp else "ed"),
+          "legacy":  lambda v, hp: v + ("s" if hp else "ing")}
+_BP_NF = {"matched": (lambda n: n + "us", lambda n: n + "is"),
+          "legacy":  (lambda n: n, lambda n: n + "s")}
+
+
+def _bp_conjunct(hp, pos, verb, sg, pl, lengths="matched"):
     """One contested edge. `pos` 0 = the SINGULAR noun is the near (N1) noun.
 
     gold = hp XOR pos. Neither term alone predicts it (both are balanced against gold across the
     panel), and reading it requires binding the verb's agreement marker to the correct head across
     the `of` edge — the operation the tension field claims to carry."""
-    vf = verb + ("s" if hp else "ing")
+    vf = _BP_VF[lengths](verb, hp)
+    sgf, plf = _BP_NF[lengths]
+    sg, pl = sgf(sg), plf(pl)
     n1, n2 = (sg, pl) if pos == 0 else (pl, sg)
     return {"surface": "%s %s of %s and" % (vf, n1, n2),
             "hp": hp, "pos": pos, "verb": verb, "verb_form": vf,
@@ -2263,7 +2291,7 @@ def _bp_conjunct(hp, pos, verb, sg, pl):
             "gold_bit": hp ^ pos, "gold_token": _BP_ANS[hp ^ pos]}
 
 
-def _bp_items(K, verbs, nouns, rot):
+def _bp_items(K, verbs, nouns, rot, lengths="matched"):
     """The full factorial panel: 2^K gold patterns x 4 hp patterns = 4*2^K items.
 
     LEXEME ASSIGNMENT DEPENDS ON THE SLOT AND THE ROTATION ONLY — NEVER ON THE hp BLOCK. The
@@ -2284,7 +2312,8 @@ def _bp_items(K, verbs, nouns, rot):
                 j = (k + rot) % nv
                 jn = (k + rot) % nn
                 conjs.append(_bp_conjunct(hp_pat[k], gold[k] ^ hp_pat[k],
-                                          verbs[j], nouns[jn], nouns[(jn + 3) % nn] + "s"))
+                                          verbs[j], nouns[jn], nouns[(jn + 3) % nn],
+                                          lengths=lengths))
             surface = " ".join(c["surface"] for c in conjs) + " " + _BP_TAIL + _BP_ARROW
             items.append({"block": b, "gold_index": g, "conjuncts": conjs, "surface": surface,
                           "gold_bits": gold,
@@ -2335,7 +2364,7 @@ def _bp_audit(items, K):
             "max_seq_bytes": max(lens) + 2 * K}
 
 
-def build_bindpanel(K, n_blocks, seed, lang, rot=0):
+def build_bindpanel(K, n_blocks, seed, lang, rot=0, lengths="matched"):
     """Returns (drill_corpus_text, panel_items, codebook, stats).
 
     The DRILL corpus teaches the binding operation on the SEEN lexeme pool; the PANEL asks it on
@@ -2348,13 +2377,13 @@ def build_bindpanel(K, n_blocks, seed, lang, rot=0):
     if K < 2:
         raise SystemExit("anima corpus bindpanel: --bind-k must be >= 2 (K=1 has a single contested "
                          "edge and collapses the field to rank 1 by construction — H_004 F4-DEAD)")
-    panel = _bp_items(K, _BP_VERB_HELD, _BP_NOUN_HELD, rot)
+    panel = _bp_items(K, _BP_VERB_HELD, _BP_NOUN_HELD, rot, lengths=lengths)
     # The drill sweeps EVERY rotation so all 8 seen verbs and all 8 seen nouns are exercised in
     # every slot. One rotation would teach the rule at 6 lexemes and leave "it memorised those six"
     # as a live alternative to "it learned the operation" (corpus-py-1 (E): count the axis).
     seen = []
     for r in range(len(_BP_VERB_SEEN)):
-        seen.extend(_bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, rot + r))
+        seen.extend(_bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, rot + r, lengths=lengths))
     rng = random.Random(seed)
     order = list(range(len(seen)))
     lines = []
@@ -5151,7 +5180,9 @@ def main():
             print("anima corpus bindpanel: --out c.txt is required", file=sys.stderr)
             sys.exit(2)
         K = int(opts["bind_k"])
-        text, panel, codebook, st = build_bindpanel(K, opts["n_blocks"], opts["seed"], opts["lang"])
+        _bp_len = "legacy" if opts.get("bind_legacy_lengths") else "matched"
+        text, panel, codebook, st = build_bindpanel(K, opts["n_blocks"], opts["seed"], opts["lang"],
+                                                    lengths=_bp_len)
         regen = "anima-py corpus " + " ".join(argv)
         if st["leaks"]:
             # A held-out lexeme in the drill corpus makes the panel a memorization test, and the
@@ -5172,7 +5203,8 @@ def main():
         # H_9812 FIELD-ALONE LEAK GATE — per concord mode, fit on the DRILLED conjuncts and score
         # on the held-out ones. A mode that calls gold above the derived chance is DISQUALIFIED:
         # under it the field hands the reader the answer, so no Δ measured with it is readable.
-        _train_conj = [c for it in _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0) for c in it["conjuncts"]]
+        _train_conj = [c for it in _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0, lengths=_bp_len)
+                       for c in it["conjuncts"]]
         _panel_conj = [c for it in panel for c in it["conjuncts"]]
         leak = {m: field_alone_leak(_train_conj, _panel_conj, m) for m in ("class", "lex", "morph")}
         json.dump({"schema": "anima-bindpanel/v1", "K": K, "lang": st["lang"], "seed": st["seed"],
@@ -5188,7 +5220,7 @@ def main():
         # is measuring a dead model and must not be read at all. Without it F2 has no instrument
         # either, and a floor-level held-out d_acc is unattributable.
         sj = opts["out"] + ".seen_panel.json"
-        seen_panel = _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0)
+        seen_panel = _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0, lengths=_bp_len)
         json.dump({"schema": "anima-bindpanel/v1", "K": K, "lang": st["lang"], "seed": st["seed"],
                    "answers": list(_BP_ANS), "tail": _BP_TAIL, "arrow": _BP_ARROW,
                    "regen_cmd": regen, "codebook": codebook,
