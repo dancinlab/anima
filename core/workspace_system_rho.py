@@ -20,7 +20,7 @@ except ImportError:
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
 
-def store_report_passes(report: dict | None) -> bool:
+def _store_report_passes(report: dict | None) -> bool:
     if not isinstance(report, dict):
         return False
     held = report.get("heldout_store") or {}
@@ -44,6 +44,14 @@ def store_report_passes(report: dict | None) -> bool:
         and float(held.get("lambda_zero", 1.0)) <= 0.60
         and abs(float(held.get("seen_heldout_gap", 1.0))) <= 0.10
     )
+
+
+def store_report_passes(report: dict | None) -> bool:
+    """Validate untrusted measurement JSON; malformed values fail closed."""
+    try:
+        return _store_report_passes(report)
+    except (AttributeError, TypeError, ValueError):
+        return False
 
 
 def run_workspace_system_rho(store_report: dict | None = None,

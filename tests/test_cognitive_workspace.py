@@ -534,6 +534,22 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         report = run_workspace_regression(evidence)
         self.assertFalse(report["promotion_blockers"]["model_realizer_semantic_accept"])
 
+    def test_malformed_release_reports_fail_closed(self) -> None:
+        realizer = _valid_realizer_evidence()
+        realizer["hypotheses"] = "not-a-number"
+        self.assertFalse(
+            run_workspace_regression(realizer)["promotion_blockers"]
+            ["model_realizer_semantic_accept"])
+        malformed_store = {
+            "schema": "anima.model-candidate.v1", "candidate_sha256": "a" * 64,
+            "base_sha256": "b" * 64, "base_plus_slw_byte_parity": True,
+            "training": {"freeze_trunk": True, "slw_restored": True,
+                         "final_store_accuracy": "not-a-number",
+                         "final_address_accuracy": 1.0},
+            "heldout_store": {},
+        }
+        self.assertFalse(store_report_passes(malformed_store))
+
 
 if __name__ == "__main__":
     unittest.main()

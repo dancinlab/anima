@@ -14,7 +14,7 @@ except ImportError:
     from workspace_semantic import realizer_heldout_panel
 
 
-def realizer_report_passes(report: dict[str, object] | None) -> bool:
+def _realizer_report_passes(report: dict[str, object] | None) -> bool:
     if not isinstance(report, dict):
         return False
     cases = report.get("cases")
@@ -58,6 +58,14 @@ def realizer_report_passes(report: dict[str, object] | None) -> bool:
                 and int(result.get("candidate_count", 0)) >= 2
                 for result in semantic_results)
     )
+
+
+def realizer_report_passes(report: dict[str, object] | None) -> bool:
+    """Validate untrusted measurement JSON; malformed values fail closed."""
+    try:
+        return _realizer_report_passes(report)
+    except (AttributeError, TypeError, ValueError):
+        return False
 
 
 def run_workspace_regression(realizer_report: dict[str, object] | None = None) -> dict[str, object]:
