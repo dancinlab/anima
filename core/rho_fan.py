@@ -321,7 +321,8 @@ def _rho_fan_dict_load():
         for w in _rho_fan_words(c):
             known.add(w)
     try:
-        raw = open("/usr/share/dict/words", "rb").read()
+        with open("/usr/share/dict/words", "rb") as dictionary:
+            raw = dictionary.read()
     except Exception:
         raw = b""
     if len(raw) > 0:
