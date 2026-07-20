@@ -607,11 +607,12 @@ Build a source-derived workspace curriculum without copying the frozen evaluatio
 source lines before expansion, writes `workspace.txt.heldout.txt`, and records source/record
 SHA-256 sets plus zero-overlap verdicts in `workspace.txt.workspace.json`.
 
-### Typed workspace (opt-in)
+### Typed workspace
 
 The workspace composes compound premises into a measurable hypothesis, checks typed `.kosmos`
-evidence, rejects contradicted candidates, and can abstain when grounding is absent. Existing
-evaluation and chat behavior is unchanged unless a workspace flag is supplied.
+evidence, rejects contradicted candidates, and can abstain when grounding is absent. Chat defaults
+to `--workspace auto`: a genuine compound `--workspace-seed` uses the six-lens divergent path,
+while an empty or atomic seed reduces exactly to `off`. Explicit modes remain available.
 
 ```bash
 anima-py evaluate --workspace-semantic
@@ -622,9 +623,12 @@ anima-py evaluate model.clm --corpus corpus.txt --rho-axon  # exact probe calls 
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-cache .rho-cache
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-axes self --kosmos self-dir
 
-# User path: spoken-text seam only; default remains off.
-ANIMA_TICKS=1 anima-py chat model.clm --workspace structured \
+# User path: compound seed automatically activates the divergent spoken-text seam.
+ANIMA_TICKS=1 anima-py chat model.clm \
   --workspace-seed "if rain increases, then streets become wet"
+
+# Exact legacy behavior remains explicitly selectable.
+ANIMA_TICKS=1 anima-py chat model.clm --workspace off
 
 # Strict G6: absent evidence becomes UNGROUNDED/abstain.
 anima-py chat model.clm --workspace structured --workspace-require-evidence \

@@ -5,11 +5,11 @@ from __future__ import annotations
 try:
     from .cognitive_workspace import Fact
     from .workspace_mouth import certify_divergence
-    from .workspace_runtime import TypedFactStore, grounded_answer, identity_control
+    from .workspace_runtime import auto_workspace_mode, TypedFactStore, grounded_answer, identity_control
 except ImportError:
     from cognitive_workspace import Fact
     from workspace_mouth import certify_divergence
-    from workspace_runtime import TypedFactStore, grounded_answer, identity_control
+    from workspace_runtime import auto_workspace_mode, TypedFactStore, grounded_answer, identity_control
 
 
 def run_workspace_regression() -> dict[str, object]:
@@ -48,8 +48,16 @@ def run_workspace_regression() -> dict[str, object]:
         "anchor_off_collapse": not self_result["off"],
         "anchor_shuffle_collapse": not self_result["shuffle"],
     }
+    auto_checks = {
+        "empty_off": auto_workspace_mode("") == "off",
+        "atomic_off": auto_workspace_mode("copper conducts heat") == "off",
+        "english_compound_divergent": auto_workspace_mode(
+            "if copper conducts heat, then water drives turbines") == "divergent",
+        "korean_compound_divergent": auto_workspace_mode(
+            "만약 비가 오지 않으면, 그러면 도로는 젖지 않는다") == "divergent",
+    }
     groups = {"store": store_checks, "fan": fan_checks,
-              "tether": tether_checks, "self": self_checks}
+              "tether": tether_checks, "self": self_checks, "auto": auto_checks}
     system_pass = all(all(checks.values()) for checks in groups.values())
     # Promotion includes external canonical-mouth evidence. These remain false until a
     # measured model run changes them; system fixtures cannot silently overwrite them.

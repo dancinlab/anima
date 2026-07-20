@@ -128,6 +128,15 @@ def identity_control(store: TypedFactStore, self_id: str, expected: str,
     }
 
 
+def auto_workspace_mode(seed: str) -> str:
+    """Route only genuine compound inputs; atomic/empty inputs stay exactly off."""
+    try:
+        from .workspace_mouth import split_compound
+    except ImportError:
+        from workspace_mouth import split_compound
+    return "divergent" if seed.strip() and split_compound(seed) is not None else "off"
+
+
 def spoken_workspace_step(out_text: str, seed: str, evidence: Iterable[Fact] = (),
                           require_evidence: bool = False):
     """Pure spoken seam used by chat; callers retain all substrate state unchanged."""

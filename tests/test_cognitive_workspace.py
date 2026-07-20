@@ -24,7 +24,7 @@ from core.workspace_mouth import (
     diverge_seed, realization_training_rows, realize_divergence, select_divergence,
 )
 from core.workspace_runtime import (
-    Measurement, TypedFactStore, collect_measurement_evidence, grounded_answer,
+    Measurement, TypedFactStore, auto_workspace_mode, collect_measurement_evidence, grounded_answer,
     grounded_query_step, identity_control, spoken_divergence_step, spoken_workspace_step,
 )
 from core.workspace_semantic import run_semantic_certification
@@ -343,6 +343,18 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         self.assertEqual(decision.selected_claim_id, hypotheses[1].spec.claim_id)
         self.assertEqual(text, hypotheses[1].text)
         self.assertEqual(repr(substrate), before)
+
+    def test_auto_workspace_routes_only_compound_inputs(self) -> None:
+        self.assertEqual(auto_workspace_mode(""), "off")
+        self.assertEqual(auto_workspace_mode("copper conducts heat"), "off")
+        self.assertEqual(
+            auto_workspace_mode("if copper conducts heat, then water drives turbines"),
+            "divergent",
+        )
+        self.assertEqual(
+            auto_workspace_mode("만약 비가 오지 않으면, 그러면 도로는 젖지 않는다"),
+            "divergent",
+        )
 
     def test_grounded_query_requires_unique_store_hit_and_controls_collapse(self) -> None:
         facts = [Fact("library", "opens_at", "09:00", ("sign",))]

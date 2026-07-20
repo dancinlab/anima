@@ -1551,12 +1551,18 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     #   so every emit still stands on real tension (p5). ANIMA_EMIT_TEMP=1.0 is the ONE
     #   non-arbitrary temperature (= the posterior itself); any other value OVERWRITES it.
     _cargv = argv if argv is not None else []
-    # Typed cognitive workspace: user-path integration is deliberately opt-in.
-    # OFF performs no imports, reads, or text substitutions, preserving the old daemon bytes.
-    _workspace_mode = anima_flag_value(_cargv, "--workspace", "ANIMA_WORKSPACE", "off")
-    if _workspace_mode not in ("off", "structured", "divergent", "grounded"):
-        raise SystemExit("--workspace: only 'off' (default), 'structured', 'divergent', or 'grounded'")
+    # AUTO is the production-safe default: only an explicit compound workspace seed activates
+    # the divergent typed path. Empty/atomic seeds reduce to OFF before any evidence is loaded or
+    # spoken text is substituted, preserving the legacy mouth byte-for-byte.
+    _workspace_mode = anima_flag_value(_cargv, "--workspace", "ANIMA_WORKSPACE", "auto")
+    if _workspace_mode not in ("auto", "off", "structured", "divergent", "grounded"):
+        raise SystemExit("--workspace: only 'auto' (default), 'off', 'structured', 'divergent', or 'grounded'")
     _workspace_seed = anima_flag_value(_cargv, "--workspace-seed", "ANIMA_WORKSPACE_SEED", "")
+    if _workspace_mode == "auto":
+        from workspace_runtime import auto_workspace_mode
+        _workspace_effective_mode = auto_workspace_mode(_workspace_seed)
+    else:
+        _workspace_effective_mode = _workspace_mode
     _workspace_query = anima_flag_value(_cargv, "--workspace-query", "ANIMA_WORKSPACE_QUERY", "")
     if _workspace_mode == "grounded" and "|" not in _workspace_query:
         raise SystemExit("--workspace grounded requires --workspace-query subject|relation")
@@ -1572,7 +1578,7 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     _workspace_decisions = 0
     _workspace_rejections = 0
     _workspace_abstentions = 0
-    if _workspace_mode != "off":
+    if _workspace_effective_mode != "off":
         from workspace_adapters import load_fact_anchors
         if _workspace_evidence_dir:
             _workspace_evidence = tuple(load_fact_anchors(_workspace_evidence_dir))
@@ -3100,14 +3106,14 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
 
         # The workspace owns only the spoken rendering. All substrate roots above and below
         # continue consuming g_text, so enabling this seam cannot rewrite memory or gate state.
-        if _workspace_mode != "off" and did_emit and g_emit:
+        if _workspace_effective_mode != "off" and did_emit and g_emit:
             from workspace_runtime import (grounded_query_step, spoken_divergence_step,
                                            spoken_workspace_step)
-            if _workspace_mode == "grounded":
+            if _workspace_effective_mode == "grounded":
                 out_text, _workspace_decision = grounded_query_step(
                     out_text, _workspace_query, _workspace_evidence)
             else:
-                _workspace_step = (spoken_divergence_step if _workspace_mode == "divergent"
+                _workspace_step = (spoken_divergence_step if _workspace_effective_mode == "divergent"
                                    else spoken_workspace_step)
                 out_text, _workspace_decision = _workspace_step(
                     out_text, _workspace_seed, _workspace_evidence,
@@ -3637,8 +3643,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
          + " emit-free replay(s) · " + _ts(imagination_mitosis_ticks) + " mitosis tick(s) · emit-free="
          + anima_yn(imagination_emit_violations == 0)
          + " (core/imagination_replay ir_replay_session total_emits≡0 · p5 NO SPEAK · emit-drive-disjoint)")
-    if _workspace_mode != "off":
-        _pln("  WORKSPACE (spoken-only, " + _workspace_mode + ")          : decisions="
+    if _workspace_effective_mode != "off":
+        _pln("  WORKSPACE (spoken-only, " + _workspace_effective_mode + ")          : decisions="
              + _ts(_workspace_decisions) + " rejected=" + _ts(_workspace_rejections)
              + " abstained=" + _ts(_workspace_abstentions))
 
