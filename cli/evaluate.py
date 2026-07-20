@@ -1192,6 +1192,8 @@ def evaluate_usage():
     print("  dir (a chat session's kosmos, generator_read_anchors → joined memory) so ρ·self")
     print("  measures a real identity trace instead of INVALID (H_1471/H_9256). Absent → ρ·self")
     print("  stays INVALID (p3: never hand-curate a persona · default unchanged).")
+    print("  --workspace-smoke: ckpt-free typed G1 compose + G6 contradiction/select causal")
+    print("  smoke with unary, pairing-shuffle, and comparator-OFF collapse controls.")
     print("")
     print("  H_9200 E1 SLW controls (a .clm carrying an SLW\\x01 trailer applies the")
     print("  gated-write forward-slot by default): --slot-off forces γ=0 (bit-exact base")
@@ -9405,6 +9407,7 @@ _KNOWN_FLAGS = frozenset((
     "--decl-flip", "--arms", "--strata",          # H_9800 ephemeral-declaration grounding
     "--tension-concord",                          # H_9812 lex|class concord mode for the audit
     "--closure-ladder", "--closure-arm", "--closure-ticks", "--closure-seed",   # H_9807 interventional closure rung 1
+    "--workspace-smoke",                          # typed G1/G6 workspace causal smoke
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
     "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture
     # H_9808 $0 PRE-REGISTRATION GATES (core/pregates.py) — closed-form referees that ABORT
@@ -16061,6 +16064,11 @@ def main(argv):
     # flag PRESENCE, not on argv[0]. ADDITIVE — it moves no frozen bar and touches no panel.
     if "--closure-ladder" in argv:
         return closure_ladder_run(argv)
+    if len(argv) >= 1 and argv[0] == "--workspace-smoke":
+        from workspace_smoke import format_report, run_smoke
+        report = run_smoke()
+        print(format_report(report))
+        return 0 if report["ok"] else 1
     # ── H_9808 $0 PRE-REGISTRATION GATES ────────────────────────────────────────────────────
     # Ckpt-FREE, closed-form referees dispatched on the leading flag: they read a spec file and
     # decide ADMISSIBILITY, never a verdict. Exit 3 = REFUSE (abort before spend), 0 = PASS,

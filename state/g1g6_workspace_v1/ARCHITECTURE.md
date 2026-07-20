@@ -11,8 +11,9 @@ extract/retrieve -> facts -> compose -> propose -> falsify -> select -> mouth
                             G1                    G6
 ```
 
-`core/cognitive_workspace.py` is the first vertical slice. It is deliberately deterministic and
-dependency-free so its causal contract can be tested before any 303M training or decode wiring.
+`core/cognitive_workspace.py` is the state machine. `core/workspace_adapters.py` persists typed facts
+through the canonical `.kosmos` writer/reader and exposes only the selected result as grounded decode
+context. It never guesses facts from prose anchors.
 
 ## Invariants
 
@@ -30,10 +31,9 @@ language, learn rules, retrieve `.kosmos` facts, call a CLM, or claim a G1/G6 li
 
 The next rung should add adapters, in this order:
 
-1. `.kosmos`/hippocampus anchors -> `Fact` with source provenance.
-2. H_9124 derivation traces -> `CompositionRule` inputs.
-3. grounded contradiction output -> falsifier facts.
-4. selected fact -> existing grounded decode context.
+1. H_9124 derivation traces -> `CompositionRule` inputs.
+2. grounded contradiction output -> falsifier facts (adapter exists; live-memory smoke pending).
+3. selected fact -> existing grounded decoder invocation (context adapter exists; CLI wiring pending).
 
 Each adapter needs an OFF control and a pairing-shuffle control. No GPU fire is justified before
 those adapters preserve the invariants above in an engine-native smoke.
