@@ -126,7 +126,7 @@ def _parse_args(argv):
             # H_9812 --bind-legacy-lengths: rebuild the DISQUALIFIED length-coded panel as a
             # control (field-alone acc 1.0000). Default = length-matched, where the surface byte
             # length is identical whatever the gold is.
-            "bind_legacy_lengths": False,
+            "bind_legacy_lengths": False, "bind_task": "xor",   # H_9815 xor | hp(positive control)
             "ngram_recoverable_audit": False, "audit_train": None, "panel": None,
             "codec": None, "audit_marker": None, "audit_min_coverage": 0.10}
     i = 1
@@ -240,6 +240,8 @@ def _parse_args(argv):
             opts["ngram_recoverable_audit"] = True; i += 1          # H_9809 ngram-audit
         elif a == "--bind-legacy-lengths":
             opts["bind_legacy_lengths"] = True; i += 1              # H_9812 disqualified control
+        elif a == "--bind-task":
+            opts["bind_task"] = argv[i + 1]; i += 2                 # H_9815 xor | hp
         elif a == "--audit-train":
             opts["audit_train"] = argv[i + 1]; i += 2               # H_9809
         elif a == "--panel":
@@ -2275,7 +2277,17 @@ _BP_NF = {"matched": (lambda n: n + "us", lambda n: n + "is"),
           "legacy":  (lambda n: n, lambda n: n + "s")}
 
 
-def _bp_conjunct(hp, pos, verb, sg, pl, lengths="matched"):
+# H_9815 — TASK axis. `xor` is the measurement panel (gold = hp XOR pos: neither term alone
+# predicts it, and reading it needs the two heads BOUND across the `of` edge). `hp` is the
+# POSITIVE CONTROL: gold = hp alone, so the answer is a single local feature with no composition
+# at all. Why it exists: H_9814 closed every plumbing axis (complexity/RF/objective-weight/
+# normalisation) and the toy STILL sits at chance on `xor` — even where the exact line, answer
+# included, occurs 31x in the drill. A negative with no positive control is unreadable
+# (`positive-control-before-reading-a-negative`): if `hp` also floors, the wall is plumbing and
+# nothing measured on this substrate means anything; if `hp` is learned and `xor` is not, this toy
+# reproduces the repo's standing RECOMBINATION wall at 4 kB scale — a cheap, local instance of the
+# thing 303M keeps failing.
+def _bp_conjunct(hp, pos, verb, sg, pl, lengths="matched", task="xor"):
     """One contested edge. `pos` 0 = the SINGULAR noun is the near (N1) noun.
 
     gold = hp XOR pos. Neither term alone predicts it (both are balanced against gold across the
@@ -2288,10 +2300,11 @@ def _bp_conjunct(hp, pos, verb, sg, pl, lengths="matched"):
     return {"surface": "%s %s of %s and" % (vf, n1, n2),
             "hp": hp, "pos": pos, "verb": verb, "verb_form": vf,
             "sg_lexeme": sg, "pl_lexeme": pl, "n1": n1, "n2": n2,
-            "gold_bit": hp ^ pos, "gold_token": _BP_ANS[hp ^ pos]}
+            "gold_bit": (hp ^ pos) if task == "xor" else hp,
+            "gold_token": _BP_ANS[(hp ^ pos) if task == "xor" else hp]}
 
 
-def _bp_items(K, verbs, nouns, rot, lengths="matched"):
+def _bp_items(K, verbs, nouns, rot, lengths="matched", task="xor"):
     """The full factorial panel: 2^K gold patterns x 4 hp patterns = 4*2^K items.
 
     LEXEME ASSIGNMENT DEPENDS ON THE SLOT AND THE ROTATION ONLY — NEVER ON THE hp BLOCK. The
@@ -2311,9 +2324,13 @@ def _bp_items(K, verbs, nouns, rot, lengths="matched"):
             for k in range(K):
                 j = (k + rot) % nv
                 jn = (k + rot) % nn
-                conjs.append(_bp_conjunct(hp_pat[k], gold[k] ^ hp_pat[k],
+                # xor: pos is CHOSEN so gold comes out as the enumerated pattern.
+                # hp:  gold IS hp, so pos is free — enumerate it instead, keeping it balanced.
+                _pos = (gold[k] ^ hp_pat[k]) if task == "xor" else gold[k]
+                conjs.append(_bp_conjunct(hp_pat[k], _pos,
                                           verbs[j], nouns[jn], nouns[(jn + 3) % nn],
-                                          lengths=lengths))
+                                          lengths=lengths, task=task))
+            gold = [c["gold_bit"] for c in conjs]          # hp task: gold is hp, not the enum
             surface = " ".join(c["surface"] for c in conjs) + " " + _BP_TAIL + _BP_ARROW
             items.append({"block": b, "gold_index": g, "conjuncts": conjs, "surface": surface,
                           "gold_bits": gold,
@@ -2364,7 +2381,7 @@ def _bp_audit(items, K):
             "max_seq_bytes": max(lens) + 2 * K}
 
 
-def build_bindpanel(K, n_blocks, seed, lang, rot=0, lengths="matched"):
+def build_bindpanel(K, n_blocks, seed, lang, rot=0, lengths="matched", task="xor"):
     """Returns (drill_corpus_text, panel_items, codebook, stats).
 
     The DRILL corpus teaches the binding operation on the SEEN lexeme pool; the PANEL asks it on
@@ -2377,13 +2394,13 @@ def build_bindpanel(K, n_blocks, seed, lang, rot=0, lengths="matched"):
     if K < 2:
         raise SystemExit("anima corpus bindpanel: --bind-k must be >= 2 (K=1 has a single contested "
                          "edge and collapses the field to rank 1 by construction — H_004 F4-DEAD)")
-    panel = _bp_items(K, _BP_VERB_HELD, _BP_NOUN_HELD, rot, lengths=lengths)
+    panel = _bp_items(K, _BP_VERB_HELD, _BP_NOUN_HELD, rot, lengths=lengths, task=task)
     # The drill sweeps EVERY rotation so all 8 seen verbs and all 8 seen nouns are exercised in
     # every slot. One rotation would teach the rule at 6 lexemes and leave "it memorised those six"
     # as a live alternative to "it learned the operation" (corpus-py-1 (E): count the axis).
     seen = []
     for r in range(len(_BP_VERB_SEEN)):
-        seen.extend(_bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, rot + r, lengths=lengths))
+        seen.extend(_bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, rot + r, lengths=lengths, task=task))
     rng = random.Random(seed)
     order = list(range(len(seen)))
     lines = []
@@ -5181,8 +5198,9 @@ def main():
             sys.exit(2)
         K = int(opts["bind_k"])
         _bp_len = "legacy" if opts.get("bind_legacy_lengths") else "matched"
+        _bp_task = opts.get("bind_task") or "xor"
         text, panel, codebook, st = build_bindpanel(K, opts["n_blocks"], opts["seed"], opts["lang"],
-                                                    lengths=_bp_len)
+                                                    lengths=_bp_len, task=_bp_task)
         regen = "anima-py corpus " + " ".join(argv)
         if st["leaks"]:
             # A held-out lexeme in the drill corpus makes the panel a memorization test, and the
@@ -5192,7 +5210,15 @@ def main():
                   "drill corpus" % st["leaks"][:8], file=sys.stderr)
             sys.exit(2)
         ap = st["audit_panel"]
-        if not (ap["heuristics_exactly_half"] and ap["pairwise_independent"]):
+        if _bp_task == "hp":
+            # A positive control is DEFINED by carrying a learnable single-feature signal, so the
+            # measurement-panel gate (every heuristic exactly 0.5) would refuse it by construction.
+            # It is exempted and LOUDLY relabelled — it is a plumbing probe, never a measurement.
+            print("  ⚠️ POSITIVE CONTROL (--bind-task hp) — gold = hp ALONE, no composition. The "
+                  "exactly-0.5 heuristic gate is INTENTIONALLY not applied (presence IS the answer "
+                  "here). This panel measures whether the substrate can learn a LOCAL feature at "
+                  "all; it can never be read as a binding/recombination result.")
+        elif not (ap["heuristics_exactly_half"] and ap["pairwise_independent"]):
             print("anima corpus bindpanel: HEURISTIC LEAK — a unary cue or a slot pair is not at "
                   "0.5 on the panel; the d_acc floor would not be chance. audit=%s"
                   % json.dumps(ap), file=sys.stderr)
@@ -5203,7 +5229,8 @@ def main():
         # H_9812 FIELD-ALONE LEAK GATE — per concord mode, fit on the DRILLED conjuncts and score
         # on the held-out ones. A mode that calls gold above the derived chance is DISQUALIFIED:
         # under it the field hands the reader the answer, so no Δ measured with it is readable.
-        _train_conj = [c for it in _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0, lengths=_bp_len)
+        _train_conj = [c for it in _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0, lengths=_bp_len,
+                                             task=_bp_task)
                        for c in it["conjuncts"]]
         _panel_conj = [c for it in panel for c in it["conjuncts"]]
         leak = {m: field_alone_leak(_train_conj, _panel_conj, m) for m in ("class", "lex", "morph")}
@@ -5220,7 +5247,7 @@ def main():
         # is measuring a dead model and must not be read at all. Without it F2 has no instrument
         # either, and a floor-level held-out d_acc is unattributable.
         sj = opts["out"] + ".seen_panel.json"
-        seen_panel = _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0, lengths=_bp_len)
+        seen_panel = _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0, lengths=_bp_len, task=_bp_task)
         json.dump({"schema": "anima-bindpanel/v1", "K": K, "lang": st["lang"], "seed": st["seed"],
                    "answers": list(_BP_ANS), "tail": _BP_TAIL, "arrow": _BP_ARROW,
                    "regen_cmd": regen, "codebook": codebook,
