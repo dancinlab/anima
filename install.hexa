@@ -78,7 +78,15 @@ fn main() {
             exec("export HEXA='" + hx + "'")
         }
     }
-    let hexa_bin = to_string(exec("command -v hexa 2>/dev/null")).trim()
+    // CI/package managers may expose hexa to the parent process while the
+    // runtime's nested /bin/sh has a narrower PATH.  Preserve the absolute
+    // launcher supplied by hx install instead of resolving it a second time.
+    let hexa_from_env = env("HEXA").trim()
+    let hexa_bin = if hexa_from_env != "" {
+        hexa_from_env
+    } else {
+        to_string(exec("command -v hexa 2>/dev/null")).trim()
+    }
     let hexa_run = if hexa_bin != "" { hexa_bin } else { "hexa" }
     println("🧠 anima: running setup.hexa (presence verify + checkpoint download)")
     let hx_env = if hexa_bin != "" { "HEXA='" + hexa_bin + "' " } else { "" }
