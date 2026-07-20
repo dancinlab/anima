@@ -19,6 +19,7 @@ from core.workspace_adapters import (
 from core.engine_cli import immune_embed_key, immune_grow_new
 from core.workspace_smoke import run_smoke
 from core.workspace_mouth import TypedWorkspaceMouth, claim_ids, compose_seed, decide_seed
+from core.workspace_semantic import run_semantic_certification
 from core.rho_fan import (
     _rho_fan_dict_load,
     _rho_fan_is_falsifiable,
@@ -182,6 +183,11 @@ class CognitiveWorkspaceTest(unittest.TestCase):
             text = mouth.ideate(seed, 40, 40, 0.7, 7)
             self.assertIn("decreases", text)
             self.assertEqual(mouth.decisions[0].rejected_claim_ids, (claim_ids(seed)[0],))
+
+    def test_heldout_semantic_certification(self) -> None:
+        report = run_semantic_certification()
+        self.assertTrue(report["ok"], report)
+        self.assertEqual(len(report["cases"]), 5)
 
 
 if __name__ == "__main__":

@@ -60,3 +60,10 @@ Each compound decision now carries two stable candidate IDs. A typed `.kosmos` f
 `--workspace-evidence <dir>` loads these facts through the canonical `.kosmos` reader. Evidence
 with a shuffled/non-matching claim ID has no effect. Evaluation prints every candidate, selection,
 rejection, and abstention so the loop cannot fire invisibly.
+
+## Semantic certification
+
+`--workspace-semantic` runs exact-triple held-out cases through the same workspace core. It uses no
+checkpoint and no keyword detector. Direction reversal, pair shuffle, and missing-middle controls must
+collapse; storage-order reversal and irrelevant facts must preserve the exact conclusion. Each case
+also repeats the OFF/ON/shuffle/all-falsified verifier controls.

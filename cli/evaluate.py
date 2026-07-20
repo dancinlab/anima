@@ -1249,6 +1249,8 @@ def evaluate_usage():
     print("  (same bars, reduced 303M decode cost; exits 0 only when both pass).")
     print("  --workspace-evidence <kosmos-dir>: load typed contradiction facts; rejected")
     print("  candidates are replaced, and all-candidates-rejected causes explicit abstention.")
+    print("  --workspace-semantic: ckpt-free exact-triple certification across held-out domains")
+    print("  with direction, pairing, missing-middle, irrelevant-fact, and falsification controls.")
     print("")
     print("  H_9200 E1 SLW controls (a .clm carrying an SLW\\x01 trailer applies the")
     print("  gated-write forward-slot by default): --slot-off forces γ=0 (bit-exact base")
@@ -9473,6 +9475,7 @@ _KNOWN_FLAGS = frozenset((
     "--workspace-reach",                          # typed workspace around compound mouth calls
     "--workspace-reach-only",                     # frozen G1/G6 only through workspace wrapper
     "--workspace-evidence",                       # typed contradiction .kosmos directory
+    "--workspace-semantic",                       # exact held-out semantic certification
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
     "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture
     # H_9808 $0 PRE-REGISTRATION GATES (core/pregates.py) — closed-form referees that ABORT
@@ -16132,6 +16135,11 @@ def main(argv):
     if len(argv) >= 1 and argv[0] == "--workspace-smoke":
         from workspace_smoke import format_report, run_smoke
         report = run_smoke()
+        print(format_report(report))
+        return 0 if report["ok"] else 1
+    if len(argv) >= 1 and argv[0] == "--workspace-semantic":
+        from workspace_semantic import format_report, run_semantic_certification
+        report = run_semantic_certification()
         print(format_report(report))
         return 0 if report["ok"] else 1
     if "--workspace-reach-only" in argv:
