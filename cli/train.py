@@ -1794,6 +1794,15 @@ def main():
                          "the trained torch model and the serialized .clm and report agreement. "
                          "The trainer is the only place that holds both ends at once. Comparison "
                          "only — it never says the model is good or bad.")
+    ap.add_argument("--parity-items", type=int, default=32,
+                    help="H_9821: how many panel items --serialize-parity scores. The scored "
+                         "slot count is items x K, and that count IS the measurement's power: "
+                         "the default 32 items x K=2 gives n=32, i.e. sd~0.077 at p=0.75 — wide "
+                         "enough that a 2-item wobble crosses a 0.75 bar and moves a threshold "
+                         "statistic a whole rung (measured, H_9820 -> convergence evaluate-py-24). "
+                         "Raising this is the ONLY way to score a panel wider than 32 items, "
+                         "since the cap silently truncated them before. Default 32 keeps every "
+                         "existing run byte-identical.")
     ap.add_argument("--tension-concord", choices=["class", "lex", "morph"], default="class",
                     help="H_9812: what the TFLD concord term compares. lex = the CHUNK SIGNATURE "
                          "(the field sees WHICH words agree). morph = the chunk's FINAL BYTE, the "
@@ -2518,7 +2527,8 @@ def main():
                   "exists. torch-side numbers are DIRECTIONAL screens only.", flush=True)
         if getattr(a, "serialize_parity", ""):
             try:
-                serialize_parity(model, out_path, a.serialize_parity, device)
+                serialize_parity(model, out_path, a.serialize_parity, device,
+                                 max_items=a.parity_items)
             except Exception as e:                      # a diagnostic must never kill a finished run
                 print(f"  SERIALIZE-PARITY skipped: {type(e).__name__}: {e}", flush=True)
 
