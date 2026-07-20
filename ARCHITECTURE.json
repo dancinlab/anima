@@ -16322,10 +16322,10 @@
        },
        {
         "id": "gate-preservation-fresh-lane-h9798",
-        "title": "🔴 H_9798 보존축 반증 — 조건① 2/2 seed 재현",
+        "title": "🔴 H_9798 보존축 반증 2-seed — 분리는 정도차일 뿐 무간섭 아님",
         "type": "gate",
-        "detail": "H_9720 OPEN(a) 회수. fresh−noscore(step-1 val_CE·동일계기): s7 +3.12 · s4302 +4.12 ⟹ 분리 lane 도 base 유창성 간섭 = 'reach=legacy·보존=fresh' 이중구조 KILL. 수치·경계=H_9798 card.",
-        "verdict": "🔴 조건①(fresh≢C-noscore) 2/2 seed 충족 — seed 우연 배제. 조건②(fresh<legacy)는 legacy_s4302 완주 대기. 잔여경계: CE0 1.399 vs 1.25336 불일치(GPU/CPU 유력·미규명) · main-only warm-start(lane-off CE) · MITOSIS 공통교란 · 형식 TOST 미실시."
+        "detail": "보존서열 C-noscore < fresh < legacy 가 2/2 seed 단조. fresh−noscore = +3.12(s7)/+4.12(s4302) ⟹ '분리 lane=무간섭 보존' KILL. fresh−legacy = −0.169/−0.534 ⟹ 분리의 상대우위는 실재. 수치=H_9798 card.",
+        "verdict": "🔴 조건①(fresh≢C-noscore) 2/2 충족 = KILL · 조건②(fresh≥legacy) 2/2 미충족. a_substrate_disjoint 는 정도차로만 성립, 절대보존 아님. ⛔TERMINAL 보류: 형식 TOST 미실시(등가대역 수치 부재) · lane-off CE · CE0 잔여 0.078. 6 ckpt HF 보존 ⟹ 재학습 없이 TOST 재판정 가능."
        },
        {
         "id": "serialize-trailer-aware-parity-gate",
