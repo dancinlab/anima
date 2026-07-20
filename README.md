@@ -605,6 +605,7 @@ evaluation and chat behavior is unchanged unless a workspace flag is supplied.
 ```bash
 anima-py evaluate --workspace-semantic
 anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
+anima-py evaluate model.clm --corpus corpus.txt --rho-axon  # exact probe calls are memoized
 
 # User path: spoken-text seam only; default remains off.
 ANIMA_TICKS=1 anima-py chat model.clm --workspace structured \

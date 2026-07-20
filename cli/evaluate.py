@@ -157,6 +157,61 @@ class _Mouth:
             self.W, seed, gen, top_k, temp, seed_rng)["text"]
 
 
+def _isolated_ideate_worker(conn, ckpt, seed, gen, top_k, temp, seed_rng):
+    """One decode in a disposable process so NumPy's large CPU arenas are returned."""
+    try:
+        conn.send((True, _Mouth(ckpt).ideate(seed, gen, top_k, temp, seed_rng)))
+    except BaseException as exc:
+        conn.send((False, repr(exc)))
+    finally:
+        conn.close()
+
+
+class _IsolatedMouth:
+    """ρ-AXON CPU fallback; identical decoder, process-scoped allocation lifetime."""
+
+    def __init__(self, ckpt):
+        self.ckpt = ckpt
+
+    def ideate(self, seed, gen, top_k, temp, seed_rng):
+        import multiprocessing as mp
+        ctx = mp.get_context("spawn")
+        parent, child = ctx.Pipe(duplex=False)
+        proc = ctx.Process(
+            target=_isolated_ideate_worker,
+            args=(child, self.ckpt, seed, gen, top_k, temp, seed_rng),
+        )
+        proc.start()
+        child.close()
+        try:
+            ok, payload = parent.recv()
+        except EOFError as exc:
+            proc.join()
+            raise RuntimeError("isolated decode exited without a result: %s" % proc.exitcode) from exc
+        finally:
+            parent.close()
+        proc.join()
+        if proc.exitcode != 0:
+            raise RuntimeError("isolated decode failed with exit code %s" % proc.exitcode)
+        if not ok:
+            raise RuntimeError("isolated decode failed: " + payload)
+        return payload
+
+
+class _MemoMouth:
+    """Reuse exact deterministic probe calls shared across ρ axes/cells."""
+
+    def __init__(self, mouth):
+        self.mouth = mouth
+        self.cache = {}
+
+    def ideate(self, seed, gen, top_k, temp, seed_rng):
+        key = (seed, int(gen), int(top_k), float(temp), int(seed_rng))
+        if key not in self.cache:
+            self.cache[key] = self.mouth.ideate(seed, gen, top_k, temp, seed_rng)
+        return self.cache[key]
+
+
 # ════════════════════════════════════════════════════════════════════════
 # G0 — COHERENCE
 # ════════════════════════════════════════════════════════════════════════
@@ -909,7 +964,7 @@ def workspace_reach_only_run(argv):
     return 0 if ok else 1
 
 
-def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir=""):
+def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False):
     """ρ-AXON reach panel (`anima-py evaluate <clm> --rho-axon`) — the redesigned reach
     layer (cli/rho_axon.py; G0-G6 → ρ-AXON, design SSOT state/rho_axon_measurement/). Reuses
     the SAME engine decode (_Mouth.ideate) + g6 detectors the G-battery uses (no side-harness),
@@ -919,7 +974,7 @@ def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir=""):
     import rho_axon
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
-    mouth = _Mouth(ckpt)
+    mouth = _MemoMouth(_IsolatedMouth(ckpt) if isolated else _Mouth(ckpt))
     en_corpus_tokens = _g_load_corpus_tokens(corpus_paths)
     # aggregate dets = the FROZEN en bar (UNTOUCHED — en byte-identity guaranteed structurally)
     dets = {"known": known, "concepts": _rho_fan_concepts(),
@@ -2159,7 +2214,11 @@ def evaluate_run(argv):
     # H_9200 ρ-AXON — the redesigned reach layer (G0-G6 → ρ-AXON). Same engine decode,
     # a different panel; branch early so the G0-G6 summary below is skipped.
     if _RHO_AXON:
-        eval_rho_axon(ckpt, corpus, gen, kosmos_dir=evaluate_strval(argv[1:], "--kosmos", ""))
+        eval_rho_axon(
+            ckpt, corpus, gen,
+            kosmos_dir=evaluate_strval(argv[1:], "--kosmos", ""),
+            isolated="--rho-axon-isolated" in argv[1:],
+        )
         return 0
 
     grow_window = "--grow-window" in argv[1:]
@@ -9467,7 +9526,7 @@ _KNOWN_FLAGS = frozenset((
     "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--eval-historicity", "--schedule", "--dv", "--jitter", "--af-forward", "--impulse", "--side", "--kmax", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--pos-control", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
-    "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
+    "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--rho-axon-isolated", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
     "--fan-branch", "--branches",              # H_9803 branch-latent ideation fan arms
     "--tension-rank-audit", "--ctrl-seed",     # H_9805 write-side tension-field rank audit
