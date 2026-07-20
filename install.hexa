@@ -82,8 +82,14 @@ fn main() {
     // runtime's nested /bin/sh has a narrower PATH.  Preserve the absolute
     // launcher supplied by hx install instead of resolving it a second time.
     let hexa_from_env = env("HEXA").trim()
+    // hexa v0.759.0 on Linux can expose environment variables to /bin/sh
+    // while env() itself returns empty.  Ask the shell as a compatibility
+    // fallback, then try the toolchain's canonical per-user install path.
+    let hexa_from_shell = to_string(exec("if [ -n \"$HEXA\" ] && [ -x \"$HEXA\" ]; then printf '%s' \"$HEXA\"; elif [ -x \"$HOME/.hx/bin/hexa\" ]; then printf '%s' \"$HOME/.hx/bin/hexa\"; fi")).trim()
     let hexa_bin = if hexa_from_env != "" {
         hexa_from_env
+    } else if hexa_from_shell != "" {
+        hexa_from_shell
     } else {
         to_string(exec("command -v hexa 2>/dev/null")).trim()
     }
