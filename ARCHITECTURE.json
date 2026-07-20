@@ -17750,7 +17750,7 @@
     "id": "evaluate-py-8",
     "state": "pos-conv",
     "value": "evaluate가 미지 --flag를 **조용히 무시**했다(rc=0 성공인데 요청한 결과파일 미생성) — argv를 '아는 플래그만 스캔'하는 방식이라 오타나 서브모드 전용 플래그를 주면 흘려보낸다. 유료 GPU 배터리에서 치명: NBIND-G N2 사다리(13.3h × 4런 · rent · 53 GPU-h)가 --out 오타 하나로 **rc=0인 채 수확 0**이 될 수 있었다. 실측: 존재하지 않는 --out-json을 주니 rc=0 완주 + 파일 미생성이었고, 프런티어 노트는 이를 'anima-py stale(evaluate-py-11) 탓'으로 오진 기록해 두고 있었다(실제 stale도 있었으나 파일 미생성의 원인은 아니었다). FIX: main() 진입부 _KNOWN_FLAGS(22개) 화이트리스트 + _reject_unknown_flags → 미지 플래그면 rc=2 hard-error + 오타 힌트(did you mean --out?). fail-closed.",
-    "threshold": "재발조건 = cli/evaluate.py에 새 플래그 추가 시 _KNOWN_FLAGS 갱신 누락(정상 플래그가 거부됨) · 또는 cli/train.py·serialize가 같은 '스캔' 방식이라 동일 결함 보유. 해결 = (1) 플래그 추가는 _KNOWN_FLAGS 등록과 한 세트(help-lockstep의 짝) (2) 회귀 스모크: 정상 플래그 전수 통과 + 미지 플래그 rc=2 (3) train/serialize에도 같은 가드 필요한지 점검. ⚠️ 진단 함정: '결과파일이 없다'를 설치 stale/크래시로 오진하지 말 것 — 먼저 그 플래그가 실제 존재하는지 --help로 확인.",
+    "threshold": "재발조건 = cli/evaluate.py에 새 플래그 추가 시 _KNOWN_FLAGS 갱신 누락(정상 플래그가 거부됨) · 또는 cli/train.py·serialize가 같은 '스캔' 방식이라 동일 결함 보유. 해결 = (1) 플래그 추가는 _KNOWN_FLAGS 등록과 한 세트(help-lockstep의 짝) (2) 회귀 스모크: 정상 플래그 전수 통과 + 미지 플래그 rc=2 (3) train/serialize에도 같은 가드 필요한지 점검. ⚠️ 진단 함정: '결과파일이 없다'를 설치 stale/크래시로 오진하지 말 것 — 먼저 그 플래그가 실제 존재하는지 --help로 확인. 【2026-07-20 재발 ×2 · 구체 기전 확정】 이 세션서 --grow-window(1회)·--weave-null(2회) 가 같은 방식으로 거부됐다. 원인은 '갱신을 잊었다'가 아니라 **치환 앵커 오매칭**이다: 권위 known-flag 목록과 파싱 호출부가 **같은 문자열**을 공유한다(예 '\"--seed-offset\",' 가 목록에도, evaluate_intval(argv[1:], \"--seed-offset\", 0) 에도 있다). 그 문자열을 앵커로 sed/replace 하면 목록이 아니라 **호출부**에 삽입돼 ①새 플래그는 unknown 으로 rc=2 거부 ②원래 호출부의 인자가 깨진다(--dump-hidden 이 실제로 파손됐다). ⟹ 추가 처방: (4) 플래그 등록 앵커는 **목록에만 존재하는 유일 문자열**을 쓸 것(예 '\"--store-addr-audit\", \"--store-telemetry\",') (5) 등록 직후 `grep -n '\"--<flag>\"'` 로 **라인번호가 목록 위치인지** 눈으로 확인(호출부 라인이면 오삽입) (6) toy e2e 에서 rc=0 뿐 아니라 **그 플래그가 실제 발화한 증거**(배너·통제값 출력)를 확인. ⚠️ 이 가드가 fail-closed 라 두 번 다 rc=2 로 잡혔다 — 만약 조용히 무시되는 옛 동작이었다면 '통제 플래그가 안 걸린 채 통제 통과' 로 오독해 null 통제 전체가 무효인 줄 모르고 판정했을 것.",
     "source": "cli/evaluate.py"
    },
    {
@@ -18343,13 +18343,6 @@
     "value": "liveness readout RUNNING=0 while provider API shows 3 running",
     "threshold": "래퍼 CLI의 liveness 요약을 신뢰하지 말고 provider API(vastai show instances)+ssh 실측으로 재확인 — 오탐이면 살아있는 유료 연산을 유휴로 오인해 teardown 위험",
     "source": "hexa cloud pods"
-   },
-   {
-    "id": "evaluate-py-flag-allowlist-1",
-    "state": "pos-conv",
-    "title": "새 CLI 플래그를 권위 known-flag 목록이 아니라 evaluate_strval/intval 호출부에 삽입",
-    "detail": "cli/evaluate.py 는 known-flag 목록과 파싱 호출부가 같은 문자열(예 '\"--seed-offset\",')을 공유한다. 치환 앵커로 그 문자열을 쓰면 목록이 아니라 **호출부**에 삽입돼 ①그 플래그가 unknown 으로 거부되고 ②원래 호출부 인자가 깨진다. 이 세션서 2회 재발(--grow-window · --weave-null). 두 번 다 하네스의 'unknown flag 는 무시가 아니라 거부' 설계가 rc=2 로 포착 — 조용히 무시됐다면 '플래그 안 걸린 채 통제 통과' 로 오독했을 것.",
-    "fix": "플래그 등록은 목록에만 존재하는 유일 앵커(예 '\"--store-addr-audit\", \"--store-telemetry\",')로 지목하고, 등록 후 `grep -n '\"--<flag>\"'` 로 **라인번호가 목록 위치인지** 검증할 것. toy e2e 에서 rc=0 과 플래그 실제 발화(배너/통제값)를 함께 확인."
    }
   ]
  }
