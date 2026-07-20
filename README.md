@@ -630,6 +630,8 @@ anima-py evaluate --workspace-release-verify \
   --out release-verified.json
 anima-py evaluate --workspace-regression --out workspace-regression.json
 anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
+anima-py evaluate model.clm --workspace-divergence-realizer --workspace-adversarial-panel
+anima-py evaluate --workspace-longrun --ticks 500
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon  # exact probe calls are memoized
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-cache .rho-cache
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-no-cells \
@@ -658,6 +660,11 @@ anima-py chat model.clm --workspace divergent --workspace-measurements measureme
 # Unique typed lookup only; missing, shuffled, or conflicting records abstain.
 anima-py chat model.clm --workspace grounded --workspace-evidence facts-dir \
   --workspace-query "library|opens_at"
+
+# Session A: only this explicit typed form is persisted; ordinary prose is ignored.
+anima-py chat model.clm --workspace-persist facts-dir
+# percept: FACT library | opens_at | 09:00
+# Session B: load the same typed anchors through --workspace-evidence facts-dir.
 ```
 
 > **Which twin is canonical?** `anima-py` (pip) is the SSOT for verdicts and the one that

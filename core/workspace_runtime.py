@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import json
+import re
 from typing import Iterable
 
 try:
@@ -39,6 +41,35 @@ class TypedFactStore:
 
     def exact(self, subject: str, relation: str, object_: str) -> Fact | None:
         return self._facts.get((subject, relation, object_))
+
+
+_PERSISTABLE_FACT = re.compile(
+    r"^FACT\s+([^|\r\n]+?)\s*\|\s*([^|\r\n]+?)\s*\|\s*([^|\r\n]+?)\s*$",
+    re.IGNORECASE,
+)
+
+
+def parse_persistable_fact(text: str, source: str = "external-percept") -> Fact | None:
+    """Parse an explicitly typed declaration; ordinary prose always stays inert."""
+    match = _PERSISTABLE_FACT.match(str(text).strip())
+    if match is None:
+        return None
+    subject, relation, object_ = (part.strip() for part in match.groups())
+    if not all((subject, relation, object_)):
+        return None
+    return Fact(subject, relation, object_, (source,))
+
+
+def persist_workspace_fact(directory: str, text: str,
+                           source: str = "external-percept") -> str | None:
+    """Persist one explicit FACT declaration under a content-derived stable name."""
+    if not directory:
+        return None
+    fact = parse_persistable_fact(text, source)
+    if fact is None:
+        return None
+    digest = hashlib.sha256("\0".join(fact.key).encode("utf-8")).hexdigest()[:20]
+    return TypedFactStore().persist(directory, "workspace-fact-" + digest, fact)
 
 
 @dataclass(frozen=True)
@@ -135,6 +166,22 @@ def auto_workspace_mode(seed: str) -> str:
     except ImportError:
         from workspace_mouth import split_compound
     return "divergent" if seed.strip() and split_compound(seed) is not None else "off"
+
+
+def resolve_workspace_input(requested_mode: str, explicit_seed: str,
+                            percept_text: str | None = None) -> tuple[str, str]:
+    """Resolve one tick without letting atomic percepts activate the workspace.
+
+    An explicit seed always wins. In ``auto`` mode only, the current external
+    percept becomes the seed when no explicit seed was supplied. This keeps the
+    no-percept and atomic-percept paths exactly OFF while allowing real user text
+    to enter without a duplicate ``--workspace-seed`` flag.
+    """
+    seed = explicit_seed.strip()
+    if not seed and requested_mode == "auto" and percept_text:
+        seed = str(percept_text).strip()
+    mode = auto_workspace_mode(seed) if requested_mode == "auto" else requested_mode
+    return mode, seed
 
 
 def spoken_workspace_step(out_text: str, seed: str, evidence: Iterable[Fact] = (),

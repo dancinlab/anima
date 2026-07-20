@@ -337,6 +337,17 @@ def divergence_preserves(hypothesis: DivergentHypothesis, text: str) -> bool:
             and hypothesis.comparator in words)
 
 
+def realization_surface_quality(text: str) -> bool:
+    """Small deterministic hygiene gate layered beneath semantic preservation."""
+    clean = text.strip()
+    if not clean or "  " in clean or clean.count("“") != clean.count("”"):
+        return False
+    if clean.count("‘") != clean.count("’"):
+        return False
+    tokens = _words(clean)
+    return not any(left == right for left, right in zip(tokens, tokens[1:]))
+
+
 def divergence_realization_candidates(
         hypothesis: DivergentHypothesis) -> tuple[str, ...]:
     """Meaning-locked surfaces a mouth may rank without regenerating semantic slots."""
@@ -369,7 +380,8 @@ def divergence_realization_candidates(
             f"the recorded measure is {hypothesis.spec.measure}",
         )
     # This assertion makes template edits fail closed at construction time.
-    if not all(divergence_preserves(hypothesis, candidate) for candidate in candidates):
+    if not all(divergence_preserves(hypothesis, candidate)
+               and realization_surface_quality(candidate) for candidate in candidates):
         raise RuntimeError("realization candidate lost a semantic slot")
     return candidates
 
@@ -383,17 +395,26 @@ def realize_divergence(mouth, hypothesis: DivergentHypothesis, gen: int, top_k: 
     # fields remain immutable while the real model supplies the fluency decision.
     if mouth is not None and callable(getattr(mouth, "score", None)):
         candidates = divergence_realization_candidates(hypothesis)
-        scored = [(float(mouth.score(candidate)), index, candidate)
-                  for index, candidate in enumerate(candidates)]
+        score_many = getattr(mouth, "score_many", None)
+        if callable(score_many):
+            values = tuple(score_many(candidates))
+            if len(values) != len(candidates):
+                raise ValueError("mouth.score_many returned the wrong number of scores")
+        else:
+            values = tuple(mouth.score(candidate) for candidate in candidates)
+        scored = [(float(value), index, candidate)
+                  for index, (candidate, value) in enumerate(zip(candidates, values))]
         finite = [row for row in scored if row[0] == row[0]]
         if finite:
             candidate = min(finite, key=lambda row: (row[0], row[1]))[2]
-            if divergence_preserves(hypothesis, candidate):
+            if (divergence_preserves(hypothesis, candidate)
+                    and realization_surface_quality(candidate)):
                 return DivergenceRealization(candidate, True, "model_rerank", len(candidates))
     prompt = ("Structured falsifiable hypothesis: " + hypothesis.text
               + ". Restate it while preserving operands, direction, measure, and lens: ")
     candidate = mouth.ideate(prompt, gen, top_k, temp, seed_rng)
-    if divergence_preserves(hypothesis, candidate):
+    if (divergence_preserves(hypothesis, candidate)
+            and realization_surface_quality(candidate)):
         return DivergenceRealization(candidate, True, "model", 1)
     return DivergenceRealization(hypothesis.text, False, "workspace_fallback", 1)
 

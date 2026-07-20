@@ -102,6 +102,7 @@ class _Mouth:
         # H_9804 Fix-W: default False = production T=24, byte-for-byte unchanged.
         self.grow_window = bool(grow_window)
         self.ckpt = ckpt
+        self._score_cache = {}
         if bg.bg_is_bytegpt(ckpt):
             self.kind = "bytegpt"
             self.W = bg.bg_load(ckpt)
@@ -160,13 +161,21 @@ class _Mouth:
 
     def score(self, text):
         """Mean next-byte CE used to rank meaning-locked workspace surfaces."""
+        if text in self._score_cache:
+            return self._score_cache[text]
         ids = list(text.encode("utf-8", "surrogateescape"))
         if len(ids) < 2:
             return float("nan")
         if self.kind == "bytegpt":
             result = bg.bytegpt_ce_ranged(self.ckpt, ids)
-            return float(result["ce_mean"]) if result.get("ok") else float("nan")
-        return float(clm.clm_ce_seq_W(self.W, None, ids))
+            value = float(result["ce_mean"]) if result.get("ok") else float("nan")
+        else:
+            value = float(clm.clm_ce_seq_W(self.W, None, ids))
+        self._score_cache[text] = value
+        return value
+
+    def score_many(self, texts):
+        return tuple(self.score(text) for text in texts)
 
 
 def _isolated_ideate_worker(conn, ckpt, seed, gen, top_k, temp, seed_rng):
@@ -1041,7 +1050,10 @@ def workspace_divergence_realizer_run(argv):
     ckpt = positional[0]
     seed = evaluate_strval(
         argv, "--seed", "if copper conducts heat, then water drives turbines")
-    if "--workspace-realizer-panel" in argv:
+    if "--workspace-adversarial-panel" in argv:
+        from workspace_semantic import realizer_adversarial_panel
+        panel = realizer_adversarial_panel()
+    elif "--workspace-realizer-panel" in argv:
         from workspace_semantic import realizer_heldout_panel
         panel = realizer_heldout_panel()
     else:
@@ -1097,7 +1109,8 @@ def workspace_divergence_realizer_run(argv):
             "schema": "anima.workspace-divergence-realizer/v1",
             "ckpt": os.path.abspath(ckpt),
             "ckpt_sha256": digest.hexdigest(),
-            "panel": "heldout" if "--workspace-realizer-panel" in argv else "custom",
+            "panel": ("adversarial" if "--workspace-adversarial-panel" in argv else
+                      "heldout" if "--workspace-realizer-panel" in argv else "custom"),
             "grow_window": grow,
             "model_semantic_accept": accepted,
             "hypotheses": result_total,
@@ -1500,6 +1513,8 @@ def evaluate_usage():
     print("  missing-operand and lens-shuffle collapse controls; ckpt-free system certificate.")
     print("  --workspace-divergence-realizer <ckpt> [--seed compound]: measure model semantic")
     print("    add --workspace-realizer-panel for frozen physics/biology/everyday/Korean/negation/5-step cases")
+    print("    or --workspace-adversarial-panel for negation/quantifier/homonym/code-mix/6-step stress")
+    print("  --workspace-longrun [--ticks 100|500]: ckpt-free logic/state soak; no model forward")
     print("  preservation per lens and fail closed to the structured rendering.")
     print("  --workspace-regression [--realizer-report verdict.json] [--out manifest.json]: system gates")
     print("  plus an explicit default-promotion blocker audit.")
@@ -9754,6 +9769,9 @@ _KNOWN_FLAGS = frozenset((
     "--workspace-divergence",                     # content-distinct falsifiable fan certificate
     "--workspace-divergence-realizer",            # mounted mouth semantic preservation/fallback
     "--workspace-realizer-panel",                 # frozen cross-domain mounted-mouth panel
+    "--workspace-adversarial-panel",              # extra semantic stress panel
+    "--workspace-longrun",                        # ckpt-free 100/500 tick state soak
+    "--ticks",                                    # workspace longrun tick count
     "--workspace-regression",                     # combined system + promotion blocker manifest
     "--workspace-system-rho",                     # evidence-bound typed-system ρ-AXON panel
     "--workspace-release-verify",                 # strict on-disk promoted-artifact verification
@@ -16425,6 +16443,12 @@ def main(argv):
         from workspace_semantic import format_report, run_semantic_certification
         report = run_semantic_certification()
         print(format_report(report))
+        return 0 if report["ok"] else 1
+    if len(argv) >= 1 and argv[0] == "--workspace-longrun":
+        from workspace_longrun import run_workspace_longrun
+        report = run_workspace_longrun(evaluate_intval(argv[1:], "--ticks", 500))
+        print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
+        print("WORKSPACE_LONGRUN: " + ("PASS" if report["ok"] else "FAIL"))
         return 0 if report["ok"] else 1
     if len(argv) >= 1 and argv[0] == "--workspace-divergence":
         return workspace_divergence_run(argv[1:])

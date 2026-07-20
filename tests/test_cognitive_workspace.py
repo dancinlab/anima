@@ -22,14 +22,17 @@ from core.engine_cli import immune_embed_key, immune_grow_new
 from core.workspace_smoke import run_smoke
 from core.workspace_mouth import (
     TypedWorkspaceMouth, certify_divergence, claim_ids, compose_seed, decide_seed,
-    divergence_preserves, diverge_seed, realization_training_rows, realize_divergence,
+    divergence_preserves, diverge_seed, realization_surface_quality, realization_training_rows, realize_divergence,
     select_divergence,
 )
 from core.workspace_runtime import (
     Measurement, TypedFactStore, auto_workspace_mode, collect_measurement_evidence, grounded_answer,
-    grounded_query_step, identity_control, spoken_divergence_step, spoken_workspace_step,
+    grounded_query_step, identity_control, parse_persistable_fact, persist_workspace_fact,
+    resolve_workspace_input, spoken_divergence_step,
+    spoken_workspace_step,
 )
-from core.workspace_semantic import realizer_heldout_panel, run_semantic_certification
+from core.workspace_semantic import realizer_adversarial_panel, realizer_heldout_panel, run_semantic_certification
+from core.workspace_longrun import run_workspace_longrun
 from core.workspace_regression import run_workspace_regression
 from core.workspace_system_rho import run_workspace_system_rho, store_report_passes
 from core.workspace_release_verify import verify_workspace_release
@@ -65,6 +68,38 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         self.rule = CompositionRule("power-chain", "generates", "powers", "can_power")
         self.left = Fact("solar_panel", "generates", "electricity", ("sensor:a",))
         self.right = Fact("electricity", "powers", "pump", ("manual:b",))
+
+    def test_explicit_fact_declaration_persists_across_sessions(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            path = persist_workspace_fact(td, "FACT pump | powered_by | solar panel", "session-a")
+            self.assertIsNotNone(path)
+            session_b = TypedFactStore.load(td)
+            self.assertEqual(grounded_answer(session_b, "pump", "powered_by"), "solar panel")
+            self.assertEqual(grounded_answer(session_b, "solar panel", "powered_by"), "UNGROUNDED")
+            self.assertIsNone(persist_workspace_fact(td, "pump is powered by solar", "session-a"))
+
+    def test_fact_declaration_parser_fails_closed(self) -> None:
+        fact = parse_persistable_fact("FACT 온도 | exceeds | 기준값")
+        self.assertEqual(fact.key, ("온도", "exceeds", "기준값"))
+        for malformed in ("", "FACT only two | fields", "FACT a | b | c | d", "ordinary prose"):
+            self.assertIsNone(parse_persistable_fact(malformed))
+
+    def test_adversarial_realizer_panel_preserves_all_semantic_slots(self) -> None:
+        for name, seed in realizer_adversarial_panel():
+            report = certify_divergence(seed)
+            self.assertTrue(report["ok"], name)
+            for hypothesis in report["hypotheses"]:
+                for candidate in __import__(
+                        "core.workspace_mouth", fromlist=["divergence_realization_candidates"]
+                ).divergence_realization_candidates(hypothesis):
+                    self.assertTrue(divergence_preserves(hypothesis, candidate), name)
+                    self.assertTrue(realization_surface_quality(candidate), name)
+
+    def test_workspace_longrun_100_and_500_ticks(self) -> None:
+        for ticks in (100, 500):
+            report = run_workspace_longrun(ticks)
+            self.assertTrue(report["ok"], report)
+            self.assertEqual(report["ticks"], ticks)
 
     def test_g1_composition_requires_both_operands_and_records_provenance(self) -> None:
         workspace = CognitiveWorkspace()
@@ -395,6 +430,16 @@ class CognitiveWorkspaceTest(unittest.TestCase):
             auto_workspace_mode("if copper conducts heat, then water drives turbines"),
             "divergent",
         )
+
+    def test_auto_workspace_uses_compound_percept_only_without_explicit_seed(self) -> None:
+        compound = "if rain increases, then streets become wet"
+        self.assertEqual(resolve_workspace_input("auto", "", compound),
+                         ("divergent", compound))
+        self.assertEqual(resolve_workspace_input("auto", "", "atomic percept"),
+                         ("off", "atomic percept"))
+        self.assertEqual(resolve_workspace_input("auto", "explicit atomic", compound),
+                         ("off", "explicit atomic"))
+        self.assertEqual(resolve_workspace_input("off", "", compound), ("off", ""))
         self.assertEqual(
             auto_workspace_mode("만약 비가 오지 않으면, 그러면 도로는 젖지 않는다"),
             "divergent",
@@ -453,6 +498,27 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         self.assertEqual(result.realized_by, "model_rerank")
         self.assertEqual(result.candidate_count, 3)
         self.assertTrue(result.text.startswith("Under the"))
+        self.assertTrue(divergence_preserves(hypothesis, result.text))
+
+    def test_divergent_realizer_uses_score_many_once(self) -> None:
+        hypothesis = diverge_seed("if copper conducts heat, then water drives turbines")[0]
+
+        class BatchScoringMouth:
+            def __init__(self):
+                self.calls = 0
+
+            def score(self, text):
+                raise AssertionError("score_many must own the batch")
+
+            def score_many(self, texts):
+                self.calls += 1
+                return [2.0, 0.0, 1.0]
+
+        mouth = BatchScoringMouth()
+        result = realize_divergence(mouth, hypothesis, 40, 40, 0.7, 1)
+        self.assertEqual(mouth.calls, 1)
+        self.assertEqual(result.realized_by, "model_rerank")
+        self.assertTrue(result.text.startswith("Hypothesis"))
         self.assertTrue(divergence_preserves(hypothesis, result.text))
 
     def test_workspace_regression_passes_system_but_blocks_default_promotion(self) -> None:

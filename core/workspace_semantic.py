@@ -97,6 +97,20 @@ def realizer_heldout_panel() -> tuple[tuple[str, str], ...]:
     )
 
 
+def realizer_adversarial_panel() -> tuple[tuple[str, str], ...]:
+    """Extra stress surfaces; deliberately separate from the frozen release panel."""
+    return (
+        ("double_negation", "if cooling does not fail to prevent overheating, then server does not avoid shutdown"),
+        ("quantifiers", "if every sensor detects some anomaly, then no controller ignores any alert"),
+        ("contradictory_condition", "if valve is open and valve is not open, then pressure alarm rings"),
+        ("homonym", "if bank stores money near river bank, then clerk marks bank record"),
+        ("code_mix", "if 센서 detects packet loss, then 서버가 triggers 복구 mode"),
+        ("korean_ellipsis", "만약 냉각 실패 아니면, 서버 종료 피한다"),
+        ("six_step", "one starts two. two enables three. three activates four. four stabilizes five. "
+         "five preserves six. six protects seven."),
+    )
+
+
 def _derive(case: SemanticCase, facts: list[Fact]) -> list[Fact]:
     workspace = CognitiveWorkspace()
     workspace.add_facts(facts)
