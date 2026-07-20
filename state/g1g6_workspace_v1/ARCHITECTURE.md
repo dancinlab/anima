@@ -47,3 +47,16 @@ performs sequential binary composition, and realizes an explicit measurable hypo
 
 `--workspace-reach-only` invokes the unchanged frozen G1/G6 scoring functions without paying for
 unrelated axes. Its verdict is **system reach**, never a claim that the bare CLM weights changed.
+
+## Falsification loop
+
+Each compound decision now carries two stable candidate IDs. A typed `.kosmos` fact with
+`(claim_id, has_verdict, contradicted)` rejects only the matching candidate. The selector then:
+
+1. chooses the primary hypothesis when no contradiction is present;
+2. chooses the counter-hypothesis when the primary is contradicted;
+3. abstains with `insufficient grounded evidence` when both are contradicted.
+
+`--workspace-evidence <dir>` loads these facts through the canonical `.kosmos` reader. Evidence
+with a shuffled/non-matching claim ID has no effect. Evaluation prints every candidate, selection,
+rejection, and abstention so the loop cannot fire invisibly.

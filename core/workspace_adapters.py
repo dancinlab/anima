@@ -124,6 +124,19 @@ def contradiction_evidence(mem, key, expected: str, claim_id: str) -> Fact | Non
     return Fact(claim_id, "has_verdict", "contradicted", ("affect_substrate",))
 
 
+def falsifier_fact(claim_id: str, source: str = "measurement") -> Fact:
+    """Canonical evidence spelling consumed by the production workspace mouth."""
+
+    if not claim_id.startswith("workspace-claim-"):
+        raise ValueError("claim_id is not a workspace claim")
+    return Fact(claim_id, "has_verdict", "contradicted", (source,))
+
+
+def write_falsifier_anchor(out_dir: str, name: str, claim_id: str,
+                           source: str = "measurement") -> str:
+    return write_fact_anchor(out_dir, name, falsifier_fact(claim_id, source))
+
+
 def selected_grounded_texts(workspace: CognitiveWorkspace) -> list[str]:
     """The sole adapter from verified workspace state to grounded decode context."""
 

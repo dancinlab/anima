@@ -8,6 +8,8 @@ explicit measurable hypothesis. No benchmark concept table is embedded here.
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
+from typing import Iterable
 
 try:
     from .cognitive_workspace import CognitiveWorkspace, CompositionRule, Fact
@@ -55,7 +57,29 @@ def _realizer_axes(left: str, right: str) -> tuple[str, str]:
     return comparators[h % len(comparators)], measures[(h // len(comparators)) % len(measures)]
 
 
-def compose_seed(seed: str) -> str | None:
+def _claim_id(seed: str, candidate: int) -> str:
+    raw = (seed.strip() + "|" + str(candidate)).encode("utf-8", "surrogateescape")
+    h = 2166136261
+    for byte in raw:
+        h = ((h ^ byte) * 16777619) & 0xFFFFFFFF
+    return "workspace-claim-%08x-%d" % (h, candidate)
+
+
+def claim_ids(seed: str) -> tuple[str, str]:
+    """Stable public IDs used by typed evidence anchors."""
+    return _claim_id(seed, 0), _claim_id(seed, 1)
+
+
+@dataclass(frozen=True)
+class WorkspaceDecision:
+    text: str
+    candidate_claim_ids: tuple[str, str]
+    selected_claim_id: str | None
+    rejected_claim_ids: tuple[str, ...]
+    abstained: bool
+
+
+def decide_seed(seed: str, evidence: Iterable[Fact] = ()) -> WorkspaceDecision | None:
     clauses = split_compound(seed)
     if clauses is None:
         return None
@@ -80,26 +104,56 @@ def compose_seed(seed: str) -> str | None:
         provenance = proposition.provenance
     if proposition is None:
         raise RuntimeError("compound requires at least two operands")
-    falsifier = Fact(
-        proposition.subject + " + " + proposition.object,
-        "measured_interaction",
-        "not_higher_than_control",
-        ("preregistered:falsifier",),
+    ids = claim_ids(seed)
+    primary = proposition
+    alternative = Fact(
+        proposition.subject,
+        "does_not_interact_with",
+        proposition.object,
+        proposition.provenance + ("counter-hypothesis",),
     )
-    claim = workspace.propose(proposition, [falsifier])
-    workspace.select([claim])
+    workspace.add_facts([alternative])
+    workspace.add_facts(evidence)
+    claims = []
+    for index, candidate in enumerate((primary, alternative)):
+        falsifier = Fact(ids[index], "has_verdict", "contradicted")
+        claims.append(workspace.propose(candidate, [falsifier]))
+    try:
+        selected = workspace.select(claims)
+    except RuntimeError:
+        return WorkspaceDecision(
+            text="insufficient grounded evidence",
+            candidate_claim_ids=ids,
+            selected_claim_id=None,
+            rejected_claim_ids=ids,
+            abstained=True,
+        )
     comparator, measure = _realizer_axes(proposition.subject, proposition.object)
-    return proposition.subject + " " + comparator + " " + proposition.object + " " + measure
+    selected_index = 0 if selected is claims[0] else 1
+    if selected_index == 0:
+        text = proposition.subject + " " + comparator + " " + proposition.object + " " + measure
+    else:
+        text = proposition.subject + " decreases " + proposition.object + " " + measure
+    rejected = tuple(ids[i] for i, claim in enumerate(claims) if claim.status.value == "falsified")
+    return WorkspaceDecision(text, ids, ids[selected_index], rejected, False)
+
+
+def compose_seed(seed: str, evidence: Iterable[Fact] = ()) -> str | None:
+    decision = decide_seed(seed, evidence)
+    return None if decision is None else decision.text
 
 
 class TypedWorkspaceMouth:
     """Drop-in ``ideate`` wrapper; atomic calls delegate without alteration."""
 
-    def __init__(self, mouth):
+    def __init__(self, mouth, evidence: Iterable[Fact] = ()):
         self.mouth = mouth
+        self.evidence = tuple(evidence)
+        self.decisions: list[WorkspaceDecision] = []
 
     def ideate(self, seed, gen, top_k, temp, seed_rng):
-        composed = compose_seed(seed)
-        if composed is None:
+        decision = decide_seed(seed, self.evidence)
+        if decision is None:
             return self.mouth.ideate(seed, gen, top_k, temp, seed_rng)
-        return composed
+        self.decisions.append(decision)
+        return decision.text

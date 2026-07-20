@@ -12,11 +12,13 @@ from core.workspace_adapters import (
     ingest_fact_anchors,
     load_fact_anchors,
     selected_grounded_texts,
+    falsifier_fact,
     write_fact_anchor,
+    write_falsifier_anchor,
 )
 from core.engine_cli import immune_embed_key, immune_grow_new
 from core.workspace_smoke import run_smoke
-from core.workspace_mouth import TypedWorkspaceMouth, compose_seed
+from core.workspace_mouth import TypedWorkspaceMouth, claim_ids, compose_seed, decide_seed
 from core.rho_fan import (
     _rho_fan_dict_load,
     _rho_fan_is_falsifiable,
@@ -148,6 +150,38 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         text = compose_seed("alpha cells. beta tension. gamma memory. delta silence. epsilon dream. ")
         for operand in ("cells", "tension", "memory", "silence", "dream"):
             self.assertIn(operand, text)
+
+    def test_production_decision_rejects_primary_and_selects_alternative(self) -> None:
+        seed = "if copper conducts heat, then water drives turbines: "
+        primary_id, alternative_id = claim_ids(seed)
+        off = decide_seed(seed)
+        on = decide_seed(seed, [falsifier_fact(primary_id, "meter")])
+        shuffled = decide_seed(seed, [falsifier_fact(alternative_id + "-shuffle", "meter")])
+
+        self.assertEqual(off.selected_claim_id, primary_id)
+        self.assertEqual(on.selected_claim_id, alternative_id)
+        self.assertEqual(on.rejected_claim_ids, (primary_id,))
+        self.assertNotEqual(on.text, off.text)
+        self.assertEqual(shuffled.text, off.text)
+
+    def test_all_candidates_falsified_abstains(self) -> None:
+        seed = "if copper conducts heat, then water drives turbines: "
+        ids = claim_ids(seed)
+        decision = decide_seed(seed, [falsifier_fact(x, "meter") for x in ids])
+        self.assertTrue(decision.abstained)
+        self.assertIsNone(decision.selected_claim_id)
+        self.assertEqual(decision.rejected_claim_ids, ids)
+        self.assertEqual(decision.text, "insufficient grounded evidence")
+
+    def test_kosmos_falsifier_changes_live_mouth_selection(self) -> None:
+        seed = "if copper conducts heat, then water drives turbines: "
+        with tempfile.TemporaryDirectory() as directory:
+            write_falsifier_anchor(directory, "reject_primary", claim_ids(seed)[0], "lab")
+            evidence = load_fact_anchors(directory)
+            mouth = TypedWorkspaceMouth(None, evidence)
+            text = mouth.ideate(seed, 40, 40, 0.7, 7)
+            self.assertIn("decreases", text)
+            self.assertEqual(mouth.decisions[0].rejected_claim_ids, (claim_ids(seed)[0],))
 
 
 if __name__ == "__main__":

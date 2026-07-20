@@ -817,13 +817,13 @@ def eval_rho_fan(mouth, gen, known, seed_class="composed", seed_off=0):
 
 def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
                    seed_class="composed", fan_temp_ladder=False, seed_off=0,
-                   weave_null="off", workspace_reach=False):
+                   weave_null="off", workspace_reach=False, workspace_evidence=()):
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
     mouth = _Mouth(ckpt, grow_window=grow_window)
     if workspace_reach:
         from workspace_mouth import TypedWorkspaceMouth
-        mouth = TypedWorkspaceMouth(mouth)
+        mouth = TypedWorkspaceMouth(mouth, workspace_evidence)
         print("  [workspace] typed compose/falsify wrapper ON — SYSTEM reach; "
               "bare-model bars unchanged", flush=True)
     if grow_window:
@@ -864,11 +864,18 @@ def workspace_reach_only_run(argv):
     grow = "--grow-window" in argv
     seed_off = evaluate_intval(argv, "--seed-offset", 0)
     from workspace_mouth import TypedWorkspaceMouth
+    evidence_dir = evaluate_strval(argv, "--workspace-evidence", "")
+    evidence = []
+    if evidence_dir:
+        from workspace_adapters import load_fact_anchors
+        evidence = load_fact_anchors(evidence_dir)
     known = _rho_fan_dict_load()
-    mouth = TypedWorkspaceMouth(_Mouth(ckpt, grow_window=grow))
+    mouth = TypedWorkspaceMouth(_Mouth(ckpt, grow_window=grow), evidence)
     print("=== anima evaluate --workspace-reach-only — frozen G1/G6 system panel ===", flush=True)
     print("ckpt: " + ckpt, flush=True)
     print("scope: typed SYSTEM reach; bare model claim = unchanged", flush=True)
+    print("evidence: %d typed fact(s)%s" %
+          (len(evidence), (" from " + evidence_dir) if evidence_dir else " (none)"), flush=True)
     g1 = eval_rho_weave(mouth, gen, known, seed_off=seed_off)
     g6 = eval_rho_fan(mouth, gen, known, seed_off=seed_off)
     print("G1 pass=%s best_distinct=%d max_single=%d noecho=%d echo_suspect=%s"
@@ -876,6 +883,15 @@ def workspace_reach_only_run(argv):
              g1["best_distinct_noecho"], g1["echo_suspect"]))
     print("G6 pass=%s dist=%d fals=%d coherent=%d frame_leaks=%d"
           % (g6["pass"], g6["dist"], g6["fals"], g6["coherent"], g6["frame_leaks"]))
+    rejected = sum(len(decision.rejected_claim_ids) for decision in mouth.decisions)
+    abstained = sum(1 for decision in mouth.decisions if decision.abstained)
+    print("FALSIFY rejected=%d abstained=%d decisions=%d" %
+          (rejected, abstained, len(mouth.decisions)))
+    for index, decision in enumerate(mouth.decisions):
+        print("  decision[%d] candidates=%s selected=%s rejected=%s abstained=%s" %
+              (index, ",".join(decision.candidate_claim_ids),
+               decision.selected_claim_id or "none",
+               ",".join(decision.rejected_claim_ids) or "none", decision.abstained))
     ok = bool(g1["pass"]) and not bool(g1["echo_suspect"]) and bool(g6["pass"])
     print("WORKSPACE_REACH: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
@@ -1231,6 +1247,8 @@ def evaluate_usage():
     print("  atomic mouth calls stay byte-identical. Reports system reach, not bare-model reach.")
     print("  --workspace-reach-only: run only the frozen G1/G6 functions through that wrapper")
     print("  (same bars, reduced 303M decode cost; exits 0 only when both pass).")
+    print("  --workspace-evidence <kosmos-dir>: load typed contradiction facts; rejected")
+    print("  candidates are replaced, and all-candidates-rejected causes explicit abstention.")
     print("")
     print("  H_9200 E1 SLW controls (a .clm carrying an SLW\\x01 trailer applies the")
     print("  gated-write forward-slot by default): --slot-off forces γ=0 (bit-exact base")
@@ -2153,10 +2171,16 @@ def evaluate_run(argv):
     if seed_off:
         print("  [seed-offset] decode seeds shifted by %+d (bars unchanged; this is a RE-DRAW "
               "of the sampled decode, for n>1 replication)" % seed_off, flush=True)
+    workspace_evidence = []
+    workspace_evidence_dir = evaluate_strval(argv[1:], "--workspace-evidence", "")
+    if workspace_evidence_dir:
+        from workspace_adapters import load_fact_anchors
+        workspace_evidence = load_fact_anchors(workspace_evidence_dir)
     r = eval_reach_all(ckpt, corpus, gen, grow_window=grow_window,
                        seed_class=seed_class, fan_temp_ladder=fan_temp_ladder,
                        seed_off=seed_off, weave_null=weave_null,
-                       workspace_reach="--workspace-reach" in argv[1:])
+                       workspace_reach="--workspace-reach" in argv[1:],
+                       workspace_evidence=workspace_evidence)
     g0 = r["g0"]; g1 = r["g1"]; g2 = r["g2"]
     g3 = r["g3"]; g5 = r["g5"]; g6 = r["g6"]
 
@@ -9448,6 +9472,7 @@ _KNOWN_FLAGS = frozenset((
     "--workspace-smoke",                          # typed G1/G6 workspace causal smoke
     "--workspace-reach",                          # typed workspace around compound mouth calls
     "--workspace-reach-only",                     # frozen G1/G6 only through workspace wrapper
+    "--workspace-evidence",                       # typed contradiction .kosmos directory
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
     "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture
     # H_9808 $0 PRE-REGISTRATION GATES (core/pregates.py) — closed-form referees that ABORT
