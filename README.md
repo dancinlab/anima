@@ -607,6 +607,7 @@ anima-py evaluate --workspace-semantic
 anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon  # exact probe calls are memoized
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-cache .rho-cache
+anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-axes self --kosmos self-dir
 
 # User path: spoken-text seam only; default remains off.
 ANIMA_TICKS=1 anima-py chat model.clm --workspace structured \

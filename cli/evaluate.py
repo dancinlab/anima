@@ -985,7 +985,8 @@ def workspace_reach_only_run(argv):
     return 0 if ok else 1
 
 
-def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_dir=""):
+def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_dir="",
+                  axes=""):
     """ρ-AXON reach panel (`anima-py evaluate <clm> --rho-axon`) — the redesigned reach
     layer (cli/rho_axon.py; G0-G6 → ρ-AXON, design SSOT state/rho_axon_measurement/). Reuses
     the SAME engine decode (_Mouth.ideate) + g6 detectors the G-battery uses (no side-harness),
@@ -1018,7 +1019,20 @@ def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_
         if _self:
             dets["kosmos_anchor"] = _self
     cell_dets = _build_cell_dets(known, en_corpus_tokens, corpus_paths)
-    panel = rho_axon.run_panel(mouth, corpus_paths, g, dets, cell_dets=cell_dets)
+    aliases = {
+        "form": "ρ·form", "store": "ρ·store", "weave": "ρ·weave",
+        "leap": "ρ·leap", "fan": "ρ·fan", "tether": "ρ·tether", "self": "ρ·self",
+    }
+    selected_axes = None
+    if axes:
+        requested = [item.strip().lower().removeprefix("rho-")
+                     for item in axes.split(",") if item.strip()]
+        unknown = [item for item in requested if item not in aliases]
+        if unknown:
+            raise ValueError("unknown --rho-axes: " + ",".join(unknown))
+        selected_axes = {aliases[item] for item in requested}
+    panel = rho_axon.run_panel(
+        mouth, corpus_paths, g, dets, cell_dets=cell_dets, selected_axes=selected_axes)
     print(rho_axon.render_panel(panel), flush=True)
     breakout = rho_axon.render_cells(panel)
     if breakout:
@@ -2243,6 +2257,7 @@ def evaluate_run(argv):
             kosmos_dir=evaluate_strval(argv[1:], "--kosmos", ""),
             isolated="--rho-axon-isolated" in argv[1:],
             cache_dir=evaluate_strval(argv[1:], "--rho-cache", ""),
+            axes=evaluate_strval(argv[1:], "--rho-axes", ""),
         )
         return 0
 
@@ -9551,7 +9566,7 @@ _KNOWN_FLAGS = frozenset((
     "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--eval-historicity", "--schedule", "--dv", "--jitter", "--af-forward", "--impulse", "--side", "--kmax", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--pos-control", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
-    "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--rho-axon-isolated", "--rho-cache", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
+    "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--rho-axon-isolated", "--rho-cache", "--rho-axes", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
     "--fan-branch", "--branches",              # H_9803 branch-latent ideation fan arms
     "--tension-rank-audit", "--ctrl-seed",     # H_9805 write-side tension-field rank audit

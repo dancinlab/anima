@@ -619,7 +619,7 @@ _STRATA = [
 # vector, forbidden), so a ko cell scores kwr_ko + reach Δ (its ρ·fan may FAIL the falsi
 # sub-check — an honest documented scope, negative=result, not tuned away).
 # ════════════════════════════════════════════════════════════════════════
-def _run_cell(mouth, gen, cd):
+def _run_cell(mouth, gen, cd, selected=None):
     """One register cell's concept-driven reach axes under that cell's dispatched dets.
     `cd` = {concepts, known, kwr_fn, kwr_gate, words_fn, falsi_fn, jaccard_fn, ngram_fn,
     corpus_tokens, lang}. Returns {lang, hillock, axes:{ρ·form/leap/fan}, invalid}."""
@@ -630,16 +630,21 @@ def _run_cell(mouth, gen, cd):
                 for nm in ("ρ·form", "ρ·leap", "ρ·fan")}
         return {"lang": cd["lang"], "hillock": hk, "axes": axes, "invalid": True}
     g = cd["kwr_gate"]
-    axes = {}
-    axes["ρ·form"] = rho_form(mouth, gen, cd["known"], cd["kwr_fn"], concepts, gate=g)
-    axes["ρ·leap"] = rho_leap(mouth, gen, cd["known"], cd["kwr_fn"], cd["ngram_fn"],
-                              cd["corpus_tokens"], concepts, cgate=g)
-    axes["ρ·fan"] = rho_fan(mouth, gen, cd["known"], cd["kwr_fn"], cd["jaccard_fn"],
-                            cd["words_fn"], cd["falsi_fn"], concepts, cgate=g)
+    selected = set(("ρ·form", "ρ·leap", "ρ·fan") if selected is None else selected)
+    axes = {nm: _axis(nm, PENDING, detail="not selected by --rho-axes")
+            for nm in ("ρ·form", "ρ·leap", "ρ·fan")}
+    if "ρ·form" in selected:
+        axes["ρ·form"] = rho_form(mouth, gen, cd["known"], cd["kwr_fn"], concepts, gate=g)
+    if "ρ·leap" in selected:
+        axes["ρ·leap"] = rho_leap(mouth, gen, cd["known"], cd["kwr_fn"], cd["ngram_fn"],
+                                  cd["corpus_tokens"], concepts, cgate=g)
+    if "ρ·fan" in selected:
+        axes["ρ·fan"] = rho_fan(mouth, gen, cd["known"], cd["kwr_fn"], cd["jaccard_fn"],
+                                cd["words_fn"], cd["falsi_fn"], concepts, cgate=g)
     return {"lang": cd["lang"], "hillock": hk, "axes": axes, "invalid": False}
 
 
-def run_panel(mouth, corpus_paths, gen, dets, cell_dets=None):
+def run_panel(mouth, corpus_paths, gen, dets, cell_dets=None, selected_axes=None):
     """Run the ρ-AXON reach panel. `dets` bundles the reused detectors from
     cli/evaluate.py: kwr_fn, jaccard_fn, words_fn, falsi_fn, ngram_fn, corpus_tokens,
     concepts. When `cell_dets` (lang-keyed {cell_key: cd}) is given, ALSO computes a
@@ -656,16 +661,28 @@ def run_panel(mouth, corpus_paths, gen, dets, cell_dets=None):
                 axes[nm] = _axis(nm, INVALID, detail="HILLOCK not LIVE (V-gate)")
         return {"hillock": hk, "axes": axes, "reach_grade": "—",
                 "reach_closed": False, "invalid": True}
-    axes["ρ·form"] = rho_form(mouth, gen, dets["known"], dets["kwr_fn"], concepts)
-    axes["ρ·store"] = rho_store(mouth, gen)
-    axes["ρ·weave"] = rho_weave(mouth, gen)
-    axes["ρ·leap"] = rho_leap(mouth, gen, dets["known"], dets["kwr_fn"],
-                              dets["ngram_fn"], dets["corpus_tokens"], concepts)
-    axes["ρ·fan"] = rho_fan(mouth, gen, dets["known"], dets["kwr_fn"],
-                            dets["jaccard_fn"], dets["words_fn"], dets["falsi_fn"], concepts)
-    axes["ρ·tether"] = rho_tether(mouth, gen)
-    axes["ρ·self"] = rho_self(mouth, gen, dets["jaccard_fn"], dets["words_fn"],
-                              anchor=dets.get("kosmos_anchor"))
+    selected = {nm for _, names in _STRATA for nm in names}
+    if selected_axes is not None:
+        selected = set(selected_axes)
+    axes = {nm: _axis(nm, PENDING, detail="not selected by --rho-axes")
+            for _, names in _STRATA for nm in names}
+    if "ρ·form" in selected:
+        axes["ρ·form"] = rho_form(mouth, gen, dets["known"], dets["kwr_fn"], concepts)
+    if "ρ·store" in selected:
+        axes["ρ·store"] = rho_store(mouth, gen)
+    if "ρ·weave" in selected:
+        axes["ρ·weave"] = rho_weave(mouth, gen)
+    if "ρ·leap" in selected:
+        axes["ρ·leap"] = rho_leap(mouth, gen, dets["known"], dets["kwr_fn"],
+                                  dets["ngram_fn"], dets["corpus_tokens"], concepts)
+    if "ρ·fan" in selected:
+        axes["ρ·fan"] = rho_fan(mouth, gen, dets["known"], dets["kwr_fn"],
+                                dets["jaccard_fn"], dets["words_fn"], dets["falsi_fn"], concepts)
+    if "ρ·tether" in selected:
+        axes["ρ·tether"] = rho_tether(mouth, gen)
+    if "ρ·self" in selected:
+        axes["ρ·self"] = rho_self(mouth, gen, dets["jaccard_fn"], dets["words_fn"],
+                                  anchor=dets.get("kosmos_anchor"))
     # reach grade = deepest stratum with all axes PASS given all lower strata PASS
     grade = "HILLOCK"; ok_so_far = True
     for stratum, names in _STRATA:
@@ -682,8 +699,9 @@ def run_panel(mouth, corpus_paths, gen, dets, cell_dets=None):
                     and not any(a["verdict"] == INVALID for a in axes.values()))
     result = {"hillock": hk, "axes": axes, "reach_grade": grade,
               "reach_closed": reach_closed, "invalid": False}
-    if cell_dets:
-        result["cells"] = {ck: _run_cell(mouth, gen, cell_dets[ck])
+    cell_selected = selected & {"ρ·form", "ρ·leap", "ρ·fan"}
+    if cell_dets and cell_selected:
+        result["cells"] = {ck: _run_cell(mouth, gen, cell_dets[ck], cell_selected)
                            for ck in _CELL_ORDER if ck in cell_dets}
     return result
 

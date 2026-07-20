@@ -55,6 +55,13 @@ result and remains deployment-relevant.
 Deployment decision remains **default-off**: canonical mouth store/weave/fan/tether failures and the
 Korean panel failures block default promotion.
 
+### Incremental self result
+
+`--rho-axes self` runs HILLOCK plus only the selected axis and marks the rest PENDING. With the
+substrate's persisted `self_live.kosmos`, canonical 303M changed `ρ·self` from INVALID to a valid
+FAIL: loaded consistency `0.015`, anchor-ablated `0.015`, shuffled-anchor `0.015`, Δ `0.0` versus the
+registered `0.30` bar. The supplied identity trace therefore had no measurable effect on the mouth.
+
 ## Installed chat E2E
 
 An installed 0.20.63 wheel ran four deterministic 12-tick sessions on the smoke mouth. OFF and ON
