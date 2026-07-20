@@ -11048,6 +11048,12 @@
           "type": "gate",
           "verdict": "존재증명 성립 · seed-취약 1/8 · null 통제 미실행으로 크랙 주장 불가",
           "detail": "디코드 seed 하드코딩(composed 항상 7) 해제 후 ByteGPT h1129 8 seed 스윕: off100 에서 bd_noecho=2>max_single=0 으로 동결 bar 실제 통과(echo-guard 무회수). 나머지 7 미달 (bd_noecho {0,2,0,0,1,1,0,0}). CLM+Fix-W 3 seed 최대 1. ⟹ composed>max_single 은 구조적 불가능이 아니며 창 정상 mouth 서 실제 발생하나 12.5% 로 seed-취약. null 통제(개념 derangement 8-seed) 미실행이라 우연바닥 미분리 = 판정 보류. 메타: 직전 '6/6 음성'도 seed 미변주 산물이었음 — 단일 draw 위 판정 금지."
+         },
+         {
+          "name": "🟢 G1 null 통제 clean — 신호 실재(Δ=+2) · bar 통과 1/8 (H_9804 · 2026-07-20)",
+          "type": "gate",
+          "verdict": "DIRECTIONAL POSITIVE · 통제 2종 8/8 셀 0 · collapse-Δ=+2 · 단 bar 1/8 seed-취약 · 비율 미확정",
+          "detail": "ByteGPT h1129 8 seed × null 통제 2종. null_a(임의 키워드집합 재추첨=우연바닥) 와 null_b(개념없는 filler 씨앗=인과귀속) 가 **8/8 셀 전부 0** ⟹ 우연바닥이 realized 분포서 0 으로 측정되고 커버리지는 복합씨앗에 causally 귀속. off100 bd_noecho=2 → collapse-Δ=+2 = 잡음 아님(measurement-metalaw 충족). 그러나 동결 bar 통과 1/8 이고 그 셀의 max_single=0 이 저-검정력 의심 ⟹ 크랙 아님. ⚠️ 통제설계 자수정: derangement 는 적중-집합-개수 지표에 항등연산이라 무효였음(실패 못하는 통제=검정력 0)."
          }
         ],
         "type": "gate",
@@ -18337,6 +18343,13 @@
     "value": "liveness readout RUNNING=0 while provider API shows 3 running",
     "threshold": "래퍼 CLI의 liveness 요약을 신뢰하지 말고 provider API(vastai show instances)+ssh 실측으로 재확인 — 오탐이면 살아있는 유료 연산을 유휴로 오인해 teardown 위험",
     "source": "hexa cloud pods"
+   },
+   {
+    "id": "evaluate-py-flag-allowlist-1",
+    "state": "pos-conv",
+    "title": "새 CLI 플래그를 권위 known-flag 목록이 아니라 evaluate_strval/intval 호출부에 삽입",
+    "detail": "cli/evaluate.py 는 known-flag 목록과 파싱 호출부가 같은 문자열(예 '\"--seed-offset\",')을 공유한다. 치환 앵커로 그 문자열을 쓰면 목록이 아니라 **호출부**에 삽입돼 ①그 플래그가 unknown 으로 거부되고 ②원래 호출부 인자가 깨진다. 이 세션서 2회 재발(--grow-window · --weave-null). 두 번 다 하네스의 'unknown flag 는 무시가 아니라 거부' 설계가 rc=2 로 포착 — 조용히 무시됐다면 '플래그 안 걸린 채 통제 통과' 로 오독했을 것.",
+    "fix": "플래그 등록은 목록에만 존재하는 유일 앵커(예 '\"--store-addr-audit\", \"--store-telemetry\",')로 지목하고, 등록 후 `grep -n '\"--<flag>\"'` 로 **라인번호가 목록 위치인지** 검증할 것. toy e2e 에서 rc=0 과 플래그 실제 발화(배너/통제값)를 함께 확인."
    }
   ]
  }
