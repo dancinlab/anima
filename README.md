@@ -612,11 +612,16 @@ SHA-256 sets plus zero-overlap verdicts in `workspace.txt.workspace.json`.
 The workspace composes compound premises into a measurable hypothesis, checks typed `.kosmos`
 evidence, rejects contradicted candidates, and can abstain when grounding is absent. Chat defaults
 to `--workspace auto`: a genuine compound `--workspace-seed` uses the six-lens divergent path,
-while an empty or atomic seed reduces exactly to `off`. Explicit modes remain available.
+while an empty or atomic seed reduces exactly to `off`. For a selected divergent hypothesis the
+workspace locks every operand, direction, measure, and lens; the mounted mouth then ranks three
+meaning-preserving English/Korean surfaces by next-byte likelihood. This avoids asking a local
+conv decoder to regenerate distant semantic slots. Explicit modes remain available.
 
 ```bash
 anima-py evaluate --workspace-semantic
 anima-py evaluate --workspace-divergence --seed "if copper conducts heat, then water drives turbines"
+anima-py evaluate model.clm --workspace-divergence-realizer --workspace-realizer-panel \
+  --out workspace-realizer-verdict.json
 anima-py evaluate --workspace-regression --out workspace-regression.json
 anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon  # exact probe calls are memoized

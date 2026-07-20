@@ -12,7 +12,27 @@ except ImportError:
     from workspace_runtime import auto_workspace_mode, TypedFactStore, grounded_answer, identity_control
 
 
-def run_workspace_regression() -> dict[str, object]:
+def _realizer_report_passes(report: dict[str, object] | None) -> bool:
+    if not isinstance(report, dict):
+        return False
+    cases = report.get("cases")
+    results = [result for case in cases or () for result in case.get("results", ())]
+    return bool(
+        report.get("schema") == "anima.workspace-divergence-realizer/v1"
+        and report.get("panel") == "heldout"
+        and report.get("safe") is True
+        and int(report.get("hypotheses", 0)) >= 36
+        and int(report.get("model_semantic_accept", -1)) == int(report.get("hypotheses", 0))
+        and int(report.get("fallback", -1)) == 0
+        and int(report.get("meaning_locked_candidates", -1))
+        == int(report.get("meaning_locked_candidate_total", 0))
+        and len(results) == int(report.get("hypotheses", 0))
+        and all(result.get("valid") is True
+                and result.get("realized_by") == "model_rerank" for result in results)
+    )
+
+
+def run_workspace_regression(realizer_report: dict[str, object] | None = None) -> dict[str, object]:
     store = TypedFactStore([
         Fact("library", "opens_at", "09:00", ("sign",)),
         Fact("anima", "has_identity_anchor", "anchor-a", ("self",)),
@@ -66,7 +86,7 @@ def run_workspace_regression() -> dict[str, object]:
         "bare_fan": False,
         "bare_tether": False,
         "bare_self": False,
-        "model_realizer_semantic_accept": False,
+        "model_realizer_semantic_accept": _realizer_report_passes(realizer_report),
     }
     return {
         "schema": "anima.workspace.regression/1",

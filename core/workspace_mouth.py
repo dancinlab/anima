@@ -20,6 +20,7 @@ except ImportError:
 _STRUCTURAL = {
     "a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "if",
     "in", "is", "it", "of", "on", "or", "still", "the", "then", "to", "when",
+    "do", "does", "did",
     "만약", "이면", "라면", "그러면", "그리고", "또는", "은", "는", "이", "가", "을", "를",
 }
 
@@ -48,13 +49,11 @@ def _operand(clause: str) -> str:
     content = list(dict.fromkeys(w for w in _words(clause) if w not in _STRUCTURAL))
     if not content:
         raise ValueError("compound clause has no content operand")
-    # A compact symbolic handle prevents the realizer boilerplate from dominating
-    # pairwise diversity. Selection is lexical and domain-independent.
-    # Korean morphology often expresses negation/condition in a middle token (오지 않다).
-    # Dropping it flips the proposition, so preserve the full short clause.
-    if any(any(ord(ch) > 127 for ch in word) for word in content):
-        return " ".join(content)
-    return " ".join(content if len(content) <= 2 else (content[0], content[-1]))
+    # Every content operand is semantic payload.  The former first/last compaction
+    # lost middle concepts and English negation (for example ``does not fail``),
+    # creating a false semantic pass.  Diversity scoring removes required operands
+    # separately, so preservation no longer needs this lossy shortcut.
+    return " ".join(content)
 
 
 def _realizer_axes(left: str, right: str) -> tuple[str, str]:
@@ -103,6 +102,7 @@ class DivergenceRealization:
     text: str
     valid: bool
     realized_by: str
+    candidate_count: int = 1
 
 
 @dataclass(frozen=True)
@@ -288,8 +288,10 @@ def diverge_seed(seed: str) -> tuple[DivergentHypothesis, ...]:
     if clauses is None:
         return ()
     operands = tuple(_operand(clause) for clause in clauses)
-    left, right = operands[0], operands[-1]
-    required = tuple(dict.fromkeys(_words(left + " " + right)))
+    # Preserve every rung in 3–5 step chains.  The previous first/last shortcut
+    # silently discarded middle operands in the divergent spoken path.
+    left, right = " then ".join(operands[:-1]), operands[-1]
+    required = tuple(dict.fromkeys(_words(" ".join(operands))))
     # Each lens changes the empirical question, not merely wording. Every noun comes
     # from the input; generic experimental dimensions cannot fabricate a domain fact.
     korean = any(any(ord(ch) > 127 for ch in operand) for operand in operands)
@@ -335,15 +337,65 @@ def divergence_preserves(hypothesis: DivergentHypothesis, text: str) -> bool:
             and hypothesis.comparator in words)
 
 
+def divergence_realization_candidates(
+        hypothesis: DivergentHypothesis) -> tuple[str, ...]:
+    """Meaning-locked surfaces a mouth may rank without regenerating semantic slots."""
+    words = hypothesis.text.split()
+    # ``required_terms`` are de-duplicated, so derive the operands from the
+    # canonical surface around the comparator instead of guessing token spans.
+    relation_at = words.index(hypothesis.comparator)
+    measure_at = words.index(hypothesis.spec.measure, relation_at + 1)
+    left = " ".join(words[:relation_at])
+    right = " ".join(words[relation_at + 1:measure_at])
+    lens = hypothesis.surface_lens or hypothesis.lens
+    relation = hypothesis.comparator + (" on" if hypothesis.comparator == "depends" else "")
+    korean = any(ord(char) > 127 for char in left + right)
+    if korean:
+        candidates = (
+            f"{lens} 렌즈에서 ‘{left}’ 조건과 ‘{right}’ 결과의 관계를 검정한다. "
+            f"방향: {relation}; 측정: {hypothesis.spec.measure}",
+            f"가설은 ‘{left}’ 조건이 ‘{right}’ 결과에 미치는 관계이다. "
+            f"렌즈: {lens}; 방향: {relation}; 측정: {hypothesis.spec.measure}",
+            f"‘{left}’와 ‘{right}’를 비교해 {relation} 관계를 검정한다. "
+            f"렌즈: {lens}; 측정값: {hypothesis.spec.measure}",
+        )
+    else:
+        candidates = (
+            f"Under the {lens} lens, test whether “{left}” {relation} “{right}”, "
+            f"using {hypothesis.spec.measure} as the measure",
+            f"Hypothesis ({lens} lens): the condition “{left}” {relation} the outcome "
+            f"“{right}”; measure: {hypothesis.spec.measure}",
+            f"Test the {lens} lens by asking whether “{left}” {relation} “{right}”; "
+            f"the recorded measure is {hypothesis.spec.measure}",
+        )
+    # This assertion makes template edits fail closed at construction time.
+    if not all(divergence_preserves(hypothesis, candidate) for candidate in candidates):
+        raise RuntimeError("realization candidate lost a semantic slot")
+    return candidates
+
+
 def realize_divergence(mouth, hypothesis: DivergentHypothesis, gen: int, top_k: int,
                        temp: float, seed_rng: int) -> DivergenceRealization:
     """Let a mouth restate one lens, failing closed on any semantic loss."""
+    # Conv mouths have a deliberately local generation window and cannot reliably
+    # copy arbitrary entities from a long instruction.  If the mounted mouth can
+    # score text, let it choose among meaning-locked surfaces instead: semantic
+    # fields remain immutable while the real model supplies the fluency decision.
+    if mouth is not None and callable(getattr(mouth, "score", None)):
+        candidates = divergence_realization_candidates(hypothesis)
+        scored = [(float(mouth.score(candidate)), index, candidate)
+                  for index, candidate in enumerate(candidates)]
+        finite = [row for row in scored if row[0] == row[0]]
+        if finite:
+            candidate = min(finite, key=lambda row: (row[0], row[1]))[2]
+            if divergence_preserves(hypothesis, candidate):
+                return DivergenceRealization(candidate, True, "model_rerank", len(candidates))
     prompt = ("Structured falsifiable hypothesis: " + hypothesis.text
               + ". Restate it while preserving operands, direction, measure, and lens: ")
     candidate = mouth.ideate(prompt, gen, top_k, temp, seed_rng)
     if divergence_preserves(hypothesis, candidate):
-        return DivergenceRealization(candidate, True, "model")
-    return DivergenceRealization(hypothesis.text, False, "workspace_fallback")
+        return DivergenceRealization(candidate, True, "model", 1)
+    return DivergenceRealization(hypothesis.text, False, "workspace_fallback", 1)
 
 
 def select_divergence(seed: str, evidence: Iterable[Fact] = (),
@@ -396,7 +448,11 @@ def certify_divergence(seed: str) -> dict[str, object]:
         other = hypotheses[(index + 1) % len(hypotheses)]
         shuffled.append(divergence_preserves(hypothesis, other.text))
     unique_specs = len({(h.lens, h.spec.measure, h.spec.falsified_when) for h in hypotheses})
-    word_sets = [set(_words(h.text)) for h in hypotheses]
+    # Diversity concerns the empirical lens, not the immutable operands.  Counting
+    # a longer shared causal chain makes genuine 3–5 step hypotheses look falsely
+    # identical, so remove the required semantic payload before Jaccard scoring.
+    word_sets = [set(_words(h.text)) - set(h.required_terms) - {"then"}
+                 for h in hypotheses]
     pairwise_max = max(
         (len(a & b) / len(a | b) for i, a in enumerate(word_sets) for b in word_sets[:i]),
         default=0.0,

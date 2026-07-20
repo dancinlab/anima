@@ -21,7 +21,8 @@ from core.engine_cli import immune_embed_key, immune_grow_new
 from core.workspace_smoke import run_smoke
 from core.workspace_mouth import (
     TypedWorkspaceMouth, certify_divergence, claim_ids, compose_seed, decide_seed,
-    diverge_seed, realization_training_rows, realize_divergence, select_divergence,
+    divergence_preserves, diverge_seed, realization_training_rows, realize_divergence,
+    select_divergence,
 )
 from core.workspace_runtime import (
     Measurement, TypedFactStore, auto_workspace_mode, collect_measurement_evidence, grounded_answer,
@@ -264,6 +265,17 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         for term in ("비가", "오지", "도로는", "젖지"):
             self.assertIn(term, text)
 
+    def test_english_middle_concepts_and_negation_are_preserved(self) -> None:
+        physical = compose_seed(
+            "if magnetic flux changes rapidly, then copper coil induces current")
+        negative = compose_seed(
+            "if cooling does not fail, then server avoids shutdown")
+        for term in ("magnetic", "flux", "changes", "rapidly", "copper", "coil",
+                     "induces", "current"):
+            self.assertIn(term, physical)
+        for term in ("cooling", "not", "fail", "server", "avoids", "shutdown"):
+            self.assertIn(term, negative)
+
     def test_tether_abstains_and_self_controls_collapse(self) -> None:
         store = TypedFactStore([
             Fact("library", "opens_at", "09:00", ("sign",)),
@@ -308,6 +320,15 @@ class CognitiveWorkspaceTest(unittest.TestCase):
             self.assertTrue(any(lens in text for text in texts))
         self.assertEqual(report["missing_admit"], 0)
         self.assertEqual(report["shuffle_admit"], 0)
+
+    def test_multistep_divergence_preserves_middle_operands(self) -> None:
+        seed = ("alpha starts beta. beta enables gamma. gamma activates delta. "
+                "delta stabilizes epsilon. epsilon preserves zeta.")
+        report = certify_divergence(seed)
+        self.assertTrue(report["ok"], report)
+        for hypothesis in report["hypotheses"]:
+            for term in ("alpha", "beta", "gamma", "delta", "epsilon", "zeta"):
+                self.assertIn(term, hypothesis.text)
 
     def test_divergent_evidence_rejects_reranks_and_abstains(self) -> None:
         seed = "if copper conducts heat, then water drives turbines"
@@ -394,6 +415,23 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         self.assertEqual(bad.text, hypothesis.text)
         self.assertEqual(bad.realized_by, "workspace_fallback")
 
+    def test_divergent_realizer_can_use_model_score_without_mutating_semantics(self) -> None:
+        hypothesis = diverge_seed("if copper conducts heat, then water drives turbines")[0]
+
+        class ScoringMouth:
+            def score(self, text):
+                return 0.0 if text.startswith("Under the") else 1.0
+
+            def ideate(self, *args):
+                raise AssertionError("ranking path must not regenerate semantic slots")
+
+        result = realize_divergence(ScoringMouth(), hypothesis, 40, 40, 0.7, 1)
+        self.assertTrue(result.valid)
+        self.assertEqual(result.realized_by, "model_rerank")
+        self.assertEqual(result.candidate_count, 3)
+        self.assertTrue(result.text.startswith("Under the"))
+        self.assertTrue(divergence_preserves(hypothesis, result.text))
+
     def test_workspace_regression_passes_system_but_blocks_default_promotion(self) -> None:
         report = run_workspace_regression()
         self.assertTrue(report["system_pass"], report)
@@ -403,6 +441,20 @@ class CognitiveWorkspaceTest(unittest.TestCase):
             {"bare_store", "bare_fan", "bare_tether", "bare_self",
              "model_realizer_semantic_accept"},
         )
+
+    def test_workspace_regression_accepts_only_complete_heldout_realizer_evidence(self) -> None:
+        results = [{"valid": True, "realized_by": "model_rerank"} for _ in range(36)]
+        evidence = {
+            "schema": "anima.workspace-divergence-realizer/v1", "panel": "heldout",
+            "safe": True, "hypotheses": 36, "model_semantic_accept": 36, "fallback": 0,
+            "meaning_locked_candidates": 108, "meaning_locked_candidate_total": 108,
+            "cases": [{"results": results}],
+        }
+        accepted = run_workspace_regression(evidence)
+        self.assertTrue(accepted["promotion_blockers"]["model_realizer_semantic_accept"])
+        evidence["fallback"] = 1
+        rejected = run_workspace_regression(evidence)
+        self.assertFalse(rejected["promotion_blockers"]["model_realizer_semantic_accept"])
 
 
 if __name__ == "__main__":

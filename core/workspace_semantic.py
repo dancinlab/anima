@@ -84,6 +84,19 @@ def _cases() -> tuple[SemanticCase, ...]:
     )
 
 
+def realizer_heldout_panel() -> tuple[tuple[str, str], ...]:
+    """Frozen cross-domain surfaces for mounted-mouth semantic realization."""
+    return (
+        ("physics", "if magnetic flux changes rapidly, then copper coil induces current"),
+        ("biology", "if enzyme activates receptor, then cell expresses protein"),
+        ("everyday", "if morning alarm rings, then shop owner opens doors"),
+        ("korean_negation", "만약 비가 오지 않으면, 그러면 도로는 젖지 않는다"),
+        ("negative_conditional", "if cooling does not fail, then server avoids shutdown"),
+        ("five_step", "alpha starts beta. beta enables gamma. gamma activates delta. "
+         "delta stabilizes epsilon. epsilon preserves zeta."),
+    )
+
+
 def _derive(case: SemanticCase, facts: list[Fact]) -> list[Fact]:
     workspace = CognitiveWorkspace()
     workspace.add_facts(facts)

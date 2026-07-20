@@ -41,7 +41,7 @@ from pure_field import (pure_field_warmup, pure_field_phi, pure_field_phase,
 from brain import (brain_emit, brain_emit_refractory, vbasal_new, vbasal_update,
                    vbasal_go_value, vbasal_select)
 from generator import (gen_auto_backend, gen_mouth_kind, gen_auto_chat,
-                       generator_read_anchors, gen_penult_pooled_W,
+                       generator_read_anchors, gen_penult_pooled_W, gen_auto_ce_W,
                        _gen_anchor_field, _gen_g_string)  # H_1058 Part A1: SSOT anchor+phase→seed-byte extractors (side-channel only)
 from kosmos_io import create_anchor, emit_anchor_from_v3, load_anchors
 from decode import clm_load_weights, clm_decodable, penult_fold8, set_clms_store
@@ -1524,6 +1524,24 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     self_g_on = bool(backend["loaded"]) and gen_mouth_kind(ckpt) == "clm" and clm_decodable(ckpt)
     self_gW = clm_load_weights(ckpt) if self_g_on else {"ok": False}
     self_gW_ok = self_g_on and bool(self_gW.get("ok"))
+    _workspace_rank_handle = {
+        "kind": gen_mouth_kind(ckpt), "ckpt": ckpt,
+        "W": self_gW if self_gW_ok else {"ok": False},
+    }
+
+    class _WorkspaceMouthRanker:
+        def score(self, text):
+            if _workspace_rank_handle["kind"] not in ("clm", "bytegpt"):
+                return float("nan")
+            if (_workspace_rank_handle["kind"] == "clm"
+                    and not _workspace_rank_handle["W"].get("ok")):
+                return float("nan")
+            return gen_auto_ce_W(_workspace_rank_handle, text)
+
+        def ideate(self, *args):
+            return ""
+
+    _workspace_ranker = _WorkspaceMouthRanker()
     _sg_restored = _selfg_restore(self_g_kdir, self_g_name)
     self_g_boot_restored = len(_sg_restored) == 8
     self_live_g = self_from_vec(_sg_restored, 8) if self_g_boot_restored else self_new(8, 0)
@@ -1578,6 +1596,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     _workspace_decisions = 0
     _workspace_rejections = 0
     _workspace_abstentions = 0
+    _workspace_model_realizations = 0
+    _workspace_realizer_fallbacks = 0
     if _workspace_effective_mode != "off":
         from workspace_adapters import load_fact_anchors
         if _workspace_evidence_dir:
@@ -3122,6 +3142,20 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 _workspace_decisions += 1
                 _workspace_rejections += len(_workspace_decision.rejected_claim_ids)
                 _workspace_abstentions += int(_workspace_decision.abstained)
+                if (_workspace_effective_mode == "divergent"
+                        and not _workspace_decision.abstained
+                        and _workspace_decision.selected_claim_id is not None):
+                    from workspace_mouth import realize_divergence
+                    _selected = next(
+                        (candidate for candidate in _workspace_decision.candidates
+                         if candidate.spec.claim_id == _workspace_decision.selected_claim_id), None)
+                    if _selected is not None:
+                        _realized = realize_divergence(
+                            _workspace_ranker, _selected, 40, 40, 0.7,
+                            _sample_seed + _workspace_decisions)
+                        out_text = _realized.text
+                        _workspace_model_realizations += int(_realized.valid)
+                        _workspace_realizer_fallbacks += int(not _realized.valid)
 
         if did_emit and g_emit:
             emitted_any = True
@@ -3646,7 +3680,9 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     if _workspace_effective_mode != "off":
         _pln("  WORKSPACE (spoken-only, " + _workspace_effective_mode + ")          : decisions="
              + _ts(_workspace_decisions) + " rejected=" + _ts(_workspace_rejections)
-             + " abstained=" + _ts(_workspace_abstentions))
+             + " abstained=" + _ts(_workspace_abstentions)
+             + " model-realized=" + _ts(_workspace_model_realizations)
+             + " fallback=" + _ts(_workspace_realizer_fallbacks))
 
     all_live = (emitted_any and grounded_ok and grew and remembered2 and slept
                 and psi_intact and lanes_read)

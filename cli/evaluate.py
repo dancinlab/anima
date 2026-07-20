@@ -101,6 +101,7 @@ class _Mouth:
     def __init__(self, ckpt, grow_window=False):
         # H_9804 Fix-W: default False = production T=24, byte-for-byte unchanged.
         self.grow_window = bool(grow_window)
+        self.ckpt = ckpt
         if bg.bg_is_bytegpt(ckpt):
             self.kind = "bytegpt"
             self.W = bg.bg_load(ckpt)
@@ -156,6 +157,16 @@ class _Mouth:
                 clm.set_consult_decode_window(t_prev)
         return clm.clm_decode_topk_sampled_W(
             self.W, seed, gen, top_k, temp, seed_rng)["text"]
+
+    def score(self, text):
+        """Mean next-byte CE used to rank meaning-locked workspace surfaces."""
+        ids = list(text.encode("utf-8", "surrogateescape"))
+        if len(ids) < 2:
+            return float("nan")
+        if self.kind == "bytegpt":
+            result = bg.bytegpt_ce_ranged(self.ckpt, ids)
+            return float(result["ce_mean"]) if result.get("ok") else float("nan")
+        return float(clm.clm_ce_seq_W(self.W, None, ids))
 
 
 def _isolated_ideate_worker(conn, ckpt, seed, gen, top_k, temp, seed_rng):
@@ -1023,29 +1034,89 @@ def workspace_divergence_realizer_run(argv):
     if not positional:
         print("ERROR: --workspace-divergence-realizer requires <ckpt>", file=sys.stderr)
         return 2
-    from workspace_mouth import diverge_seed, divergence_preserves, realize_divergence
+    from workspace_mouth import (
+        diverge_seed, divergence_preserves, divergence_realization_candidates,
+        realize_divergence,
+    )
     ckpt = positional[0]
     seed = evaluate_strval(
         argv, "--seed", "if copper conducts heat, then water drives turbines")
+    if "--workspace-realizer-panel" in argv:
+        from workspace_semantic import realizer_heldout_panel
+        panel = realizer_heldout_panel()
+    else:
+        panel = (("custom", seed),)
     gen = evaluate_intval(argv, "--gen", _default_gen())
-    mouth = _Mouth(ckpt)
-    hypotheses = diverge_seed(seed)
-    if not hypotheses:
-        print("ERROR: divergence seed is not compound", file=sys.stderr)
-        return 2
-    results = [realize_divergence(mouth, hypothesis, gen, 40, 0.7, 700 + index)
-               for index, hypothesis in enumerate(hypotheses)]
-    accepted = sum(result.valid for result in results)
+    # Match the canonical reach evaluator: a CLM's production T=24 window cannot
+    # see the operands once the realizer instruction is appended.  `--grow-window`
+    # restores the full-seed measurement semantics without changing the default
+    # production decode contract.
+    grow = "--grow-window" in argv
+    mouth = _Mouth(ckpt, grow_window=grow)
+    cases = []
+    for case_index, (name, case_seed) in enumerate(panel):
+        hypotheses = diverge_seed(case_seed)
+        if not hypotheses:
+            print("ERROR: divergence seed is not compound: " + name, file=sys.stderr)
+            return 2
+        results = [realize_divergence(mouth, hypothesis, gen, 40, 0.7,
+                                      700 + case_index * 10 + index)
+                   for index, hypothesis in enumerate(hypotheses)]
+        cases.append((name, case_seed, hypotheses, results))
+    accepted = sum(result.valid for _, _, _, results in cases for result in results)
+    result_total = sum(len(results) for _, _, _, results in cases)
     safe = all(divergence_preserves(hypothesis, result.text)
+               for _, _, hypotheses, results in cases
                for hypothesis, result in zip(hypotheses, results))
+    candidate_live = sum(
+        divergence_preserves(hypothesis, candidate)
+        for _, _, hypotheses, _ in cases for hypothesis in hypotheses
+        for candidate in divergence_realization_candidates(hypothesis))
+    candidate_total = sum(
+        len(divergence_realization_candidates(hypothesis))
+        for _, _, hypotheses, _ in cases for hypothesis in hypotheses)
     print("=== anima workspace divergence realizer ===")
+    print("grow_window=%s" % grow)
     print("model_semantic_accept=%d/%d fallback=%d/%d" %
-          (accepted, len(results), len(results) - accepted, len(results)))
-    for hypothesis, result in zip(hypotheses, results):
-        print("  lens=%s by=%s valid=%s" %
-              (hypothesis.lens, result.realized_by, result.valid))
-        print("    " + result.text)
+          (accepted, result_total, result_total - accepted, result_total))
+    print("meaning_locked_candidates=%d/%d" % (candidate_live, candidate_total))
+    for name, case_seed, hypotheses, results in cases:
+        print("case=%s seed=%s" % (name, case_seed))
+        for hypothesis, result in zip(hypotheses, results):
+            print("  lens=%s by=%s valid=%s candidates=%d" %
+                  (hypothesis.lens, result.realized_by, result.valid, result.candidate_count))
+            print("    " + result.text)
     print("WORKSPACE_DIVERGENCE_REALIZER: " + ("SAFE" if safe else "UNSAFE"))
+    out_path = evaluate_strval(argv, "--out", "")
+    if out_path:
+        digest = hashlib.sha256()
+        with open(ckpt, "rb") as checkpoint:
+            for chunk in iter(lambda: checkpoint.read(1024 * 1024), b""):
+                digest.update(chunk)
+        report = {
+            "schema": "anima.workspace-divergence-realizer/v1",
+            "ckpt": os.path.abspath(ckpt),
+            "ckpt_sha256": digest.hexdigest(),
+            "panel": "heldout" if "--workspace-realizer-panel" in argv else "custom",
+            "grow_window": grow,
+            "model_semantic_accept": accepted,
+            "hypotheses": result_total,
+            "fallback": result_total - accepted,
+            "meaning_locked_candidates": candidate_live,
+            "meaning_locked_candidate_total": candidate_total,
+            "safe": safe,
+            "cases": [
+                {"name": name, "seed": case_seed, "results": [
+                    {"lens": hypothesis.lens, "text": result.text,
+                     "realized_by": result.realized_by, "valid": result.valid,
+                     "candidate_count": result.candidate_count}
+                    for hypothesis, result in zip(hypotheses, results)]}
+                for name, case_seed, hypotheses, results in cases],
+        }
+        with open(out_path, "w", encoding="utf-8") as output:
+            json.dump(report, output, ensure_ascii=False, indent=2, sort_keys=True)
+            output.write("\n")
+        print("report: " + out_path)
     return 0 if safe else 1
 
 
@@ -1427,8 +1498,9 @@ def evaluate_usage():
     print("  --workspace-divergence [--seed compound]: six content-distinct hypotheses with")
     print("  missing-operand and lens-shuffle collapse controls; ckpt-free system certificate.")
     print("  --workspace-divergence-realizer <ckpt> [--seed compound]: measure model semantic")
+    print("    add --workspace-realizer-panel for frozen physics/biology/everyday/Korean/negation/5-step cases")
     print("  preservation per lens and fail closed to the structured rendering.")
-    print("  --workspace-regression [--out manifest.json]: store/fan/tether/self system gates")
+    print("  --workspace-regression [--realizer-report verdict.json] [--out manifest.json]: system gates")
     print("  plus an explicit default-promotion blocker audit.")
     print("")
     print("  H_9200 E1 SLW controls (a .clm carrying an SLW\\x01 trailer applies the")
@@ -9668,7 +9740,9 @@ _KNOWN_FLAGS = frozenset((
     "--workspace-semantic",                       # exact held-out semantic certification
     "--workspace-divergence",                     # content-distinct falsifiable fan certificate
     "--workspace-divergence-realizer",            # mounted mouth semantic preservation/fallback
+    "--workspace-realizer-panel",                 # frozen cross-domain mounted-mouth panel
     "--workspace-regression",                     # combined system + promotion blocker manifest
+    "--realizer-report",                          # measured held-out mouth-realizer verdict
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
     "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture
     # H_9808 $0 PRE-REGISTRATION GATES (core/pregates.py) — closed-form referees that ABORT
@@ -16339,7 +16413,12 @@ def main(argv):
         return workspace_divergence_run(argv[1:])
     if len(argv) >= 1 and argv[0] == "--workspace-regression":
         from workspace_regression import format_workspace_regression, run_workspace_regression
-        report = run_workspace_regression()
+        realizer_path = evaluate_strval(argv[1:], "--realizer-report", "")
+        realizer_report = None
+        if realizer_path:
+            with open(realizer_path, "r", encoding="utf-8") as handle:
+                realizer_report = json.load(handle)
+        report = run_workspace_regression(realizer_report)
         print(format_workspace_regression(report))
         out_path = evaluate_strval(argv[1:], "--out", "")
         if out_path:
