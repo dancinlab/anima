@@ -111,3 +111,14 @@ def spoken_workspace_step(out_text: str, seed: str, evidence: Iterable[Fact] = (
         from workspace_mouth import decide_seed
     decision = decide_seed(seed or out_text, evidence, require_evidence)
     return (out_text, None) if decision is None else (decision.text, decision)
+
+
+def spoken_divergence_step(out_text: str, seed: str, evidence: Iterable[Fact] = (),
+                           require_evidence: bool = False):
+    """Pure six-lens select/reject seam for the opt-in divergent chat mode."""
+    try:
+        from .workspace_mouth import select_divergence
+    except ImportError:
+        from workspace_mouth import select_divergence
+    decision = select_divergence(seed or out_text, evidence, require_evidence)
+    return (out_text, None) if decision is None else (decision.text, decision)

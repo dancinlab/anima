@@ -21,11 +21,11 @@ from core.engine_cli import immune_embed_key, immune_grow_new
 from core.workspace_smoke import run_smoke
 from core.workspace_mouth import (
     TypedWorkspaceMouth, certify_divergence, claim_ids, compose_seed, decide_seed,
-    realization_training_rows,
+    diverge_seed, realization_training_rows, select_divergence,
 )
 from core.workspace_runtime import (
     Measurement, TypedFactStore, collect_measurement_evidence, grounded_answer,
-    identity_control, spoken_workspace_step,
+    identity_control, spoken_divergence_step, spoken_workspace_step,
 )
 from core.workspace_semantic import run_semantic_certification
 from core.rho_fan import (
@@ -294,6 +294,41 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         self.assertLessEqual(report["pairwise_max"], 0.5)
         self.assertEqual(report["missing_admit"], 0)
         self.assertEqual(report["shuffle_admit"], 0)
+
+    def test_divergent_evidence_rejects_reranks_and_abstains(self) -> None:
+        seed = "if copper conducts heat, then water drives turbines"
+        hypotheses = diverge_seed(seed)
+        ids = tuple(h.spec.claim_id for h in hypotheses)
+        off = select_divergence(seed)
+        on = select_divergence(seed, [falsifier_fact(ids[0])])
+        shuffled = select_divergence(seed, [falsifier_fact("workspace-claim-deadbeef-0")])
+        grounded = select_divergence(seed, [support_fact(ids[2])], require_evidence=True)
+        all_off = select_divergence(seed, [falsifier_fact(x) for x in ids])
+        strict = select_divergence(seed, require_evidence=True)
+
+        self.assertEqual(off.selected_claim_id, ids[0])
+        self.assertEqual(on.selected_claim_id, ids[1])
+        self.assertEqual(on.rejected_claim_ids, (ids[0],))
+        self.assertEqual(shuffled.selected_claim_id, ids[0])
+        self.assertEqual(grounded.selected_claim_id, ids[2])
+        self.assertEqual(grounded.selection_reason, "supported_evidence")
+        self.assertTrue(all_off.abstained)
+        self.assertEqual(all_off.rejected_claim_ids, ids)
+        self.assertTrue(strict.abstained)
+        self.assertEqual(strict.selection_reason, "no_supported_candidate")
+
+    def test_divergent_spoken_seam_preserves_substrate_and_uses_numeric_evidence(self) -> None:
+        seed = "if copper conducts heat, then water drives turbines"
+        hypotheses = diverge_seed(seed)
+        substrate = {"psi": 0.5, "memory": b"same"}
+        before = repr(substrate)
+        evidence = collect_measurement_evidence([
+            Measurement(hypotheses[0].spec.claim_id, 0.1, 0.5, "above")
+        ])
+        text, decision = spoken_divergence_step("base", seed, evidence)
+        self.assertEqual(decision.selected_claim_id, hypotheses[1].spec.claim_id)
+        self.assertEqual(text, hypotheses[1].text)
+        self.assertEqual(repr(substrate), before)
 
 
 if __name__ == "__main__":

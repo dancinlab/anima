@@ -621,6 +621,10 @@ anima-py chat model.clm --workspace structured --workspace-require-evidence \
 # Numeric JSONL rows {claim_id, observed, control, direction} become typed verdict evidence.
 anima-py chat model.clm --workspace structured --workspace-measurements measurements.jsonl \
   --workspace-seed "premise one. premise two"
+
+# Six-lens evidence rejection/reranking; all candidates contradicted => abstain.
+anima-py chat model.clm --workspace divergent --workspace-measurements measurements.jsonl \
+  --workspace-seed "if copper conducts heat, then water drives turbines"
 ```
 
 > **Which twin is canonical?** `anima-py` (pip) is the SSOT for verdicts and the one that

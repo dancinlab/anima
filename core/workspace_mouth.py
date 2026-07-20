@@ -97,6 +97,17 @@ class DivergentHypothesis:
 
 
 @dataclass(frozen=True)
+class DivergenceDecision:
+    text: str
+    candidates: tuple[DivergentHypothesis, ...]
+    selected_claim_id: str | None
+    rejected_claim_ids: tuple[str, ...]
+    supported_claim_ids: tuple[str, ...]
+    abstained: bool
+    selection_reason: str
+
+
+@dataclass(frozen=True)
 class WorkspaceDecision:
     text: str
     candidate_claim_ids: tuple[str, ...]
@@ -298,6 +309,43 @@ def divergence_preserves(hypothesis: DivergentHypothesis, text: str) -> bool:
     return (set(hypothesis.required_terms).issubset(words)
             and hypothesis.spec.measure in words
             and hypothesis.lens in words)
+
+
+def select_divergence(seed: str, evidence: Iterable[Fact] = (),
+                      require_evidence: bool = False) -> DivergenceDecision | None:
+    """Reject contradicted lenses and select the cheapest grounded surviving test."""
+    hypotheses = diverge_seed(seed)
+    if not hypotheses:
+        return None
+    evidence_keys = {fact.key for fact in evidence}
+    rejected = tuple(
+        h.spec.claim_id for h in hypotheses
+        if (h.spec.claim_id, "has_verdict", "contradicted") in evidence_keys
+    )
+    supported = tuple(
+        h.spec.claim_id for h in hypotheses
+        if (h.spec.claim_id, "has_verdict", "supported") in evidence_keys
+        and h.spec.claim_id not in rejected
+    )
+    viable = [h for h in hypotheses if h.spec.claim_id not in rejected]
+    grounded = [h for h in viable if h.spec.claim_id in supported]
+    pool = grounded if grounded else ([] if require_evidence else viable)
+    if not pool:
+        return DivergenceDecision(
+            "insufficient grounded divergent evidence", hypotheses, None,
+            rejected, supported, True,
+            "all_candidates_rejected" if not viable else "no_supported_candidate",
+        )
+    # Frozen testing-cost order: direct directional/null comparisons require one
+    # measurement; threshold/delay/context require an additional intervention axis.
+    cost = {"positive": 1, "negative": 1, "null": 1,
+            "threshold": 2, "delay": 2, "context": 2}
+    index = {h.spec.claim_id: i for i, h in enumerate(hypotheses)}
+    selected = min(pool, key=lambda h: (cost[h.lens], index[h.spec.claim_id]))
+    reason = "supported_evidence" if grounded else "lowest_preregistered_test_cost"
+    return DivergenceDecision(
+        selected.text, hypotheses, selected.spec.claim_id, rejected, supported, False, reason
+    )
 
 
 def certify_divergence(seed: str) -> dict[str, object]:

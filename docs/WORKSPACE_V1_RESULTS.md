@@ -71,6 +71,14 @@ maximum pairwise Jaccard `0.444`, frozen-detector falsifiable `6/6`, missing-ope
 lens-shuffle admits `0/6`. This is a typed system-level fan result; the bare 303M `ρ·fan` FAIL remains
 unchanged and is not relabeled as a model improvement.
 
+The divergent selector now consumes the same typed verdict evidence as the main workspace. Matching
+contradiction removes the positive lens and selects negative; shuffled IDs are inert; explicit support
+outranks the frozen test-cost order; all six contradicted causes abstention. Installed 12-tick chat E2E
+produced positive for evidence-OFF, negative for matching contradiction, positive for shuffled evidence,
+and `insufficient grounded divergent evidence` when all candidates were contradicted. Counts were
+respectively rejected `0`, `6`, `0`, and `36` across six emissions; the all-rejected arm abstained 6/6.
+Every arm retained `psi_intact=1`.
+
 ## Installed chat E2E
 
 An installed 0.20.63 wheel ran four deterministic 12-tick sessions on the smoke mouth. OFF and ON

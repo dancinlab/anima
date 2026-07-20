@@ -1554,8 +1554,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # Typed cognitive workspace: user-path integration is deliberately opt-in.
     # OFF performs no imports, reads, or text substitutions, preserving the old daemon bytes.
     _workspace_mode = anima_flag_value(_cargv, "--workspace", "ANIMA_WORKSPACE", "off")
-    if _workspace_mode not in ("off", "structured"):
-        raise SystemExit("--workspace: only 'off' (default) or 'structured'")
+    if _workspace_mode not in ("off", "structured", "divergent"):
+        raise SystemExit("--workspace: only 'off' (default), 'structured', or 'divergent'")
     _workspace_seed = anima_flag_value(_cargv, "--workspace-seed", "ANIMA_WORKSPACE_SEED", "")
     _workspace_evidence_dir = anima_flag_value(
         _cargv, "--workspace-evidence", "ANIMA_WORKSPACE_EVIDENCE", "")
@@ -3098,8 +3098,10 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         # The workspace owns only the spoken rendering. All substrate roots above and below
         # continue consuming g_text, so enabling this seam cannot rewrite memory or gate state.
         if _workspace_mode != "off" and did_emit and g_emit:
-            from workspace_runtime import spoken_workspace_step
-            out_text, _workspace_decision = spoken_workspace_step(
+            from workspace_runtime import spoken_divergence_step, spoken_workspace_step
+            _workspace_step = (spoken_divergence_step if _workspace_mode == "divergent"
+                               else spoken_workspace_step)
+            out_text, _workspace_decision = _workspace_step(
                 out_text, _workspace_seed, _workspace_evidence,
                 _workspace_require_evidence)
             if _workspace_decision is not None:
@@ -3628,7 +3630,7 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
          + anima_yn(imagination_emit_violations == 0)
          + " (core/imagination_replay ir_replay_session total_emits≡0 · p5 NO SPEAK · emit-drive-disjoint)")
     if _workspace_mode != "off":
-        _pln("  WORKSPACE (spoken-only, structured)          : decisions="
+        _pln("  WORKSPACE (spoken-only, " + _workspace_mode + ")          : decisions="
              + _ts(_workspace_decisions) + " rejected=" + _ts(_workspace_rejections)
              + " abstained=" + _ts(_workspace_abstentions))
 
