@@ -5799,9 +5799,9 @@
         "detail": "마스크 오조준 수리 후 2×2(K=2·seed7·1200step·d64·top_ans): [L=2 RF7B] w=0 0.7500 · w=5 0.7500 / [L=6 RF127B] w=0 0.7500 · w=5 0.5000 경고소멸. 둘 다 켜진 칸에서만 readout 포화가 풀린다 — RF 가 증거를 덮어야 볼 수 있고 답-가중이 있어야 맞히려 든다. 앞선 census 의 '축별 전부 음성' 은 단독효과 없음이지 무관함이 아니었다(상호작용 미관측). d_acc 는 네 칸 모두 0.5000 = 결합은 여전히 미학습."
        },
        {
-        "name": "🔑 H_9813 — forward 비인과 0.60nat 실측 · ans_ce=오염지표 · d_acc=정직 DV",
+        "name": "🏁 H_9813/H_9814 — 비인과 GN 누출은 손실 항이 유도 · 채널을 닫아도 결합 미학습(SCREEN-NEGATIVE)",
         "type": "gate",
-        "detail": "parity(torch 0.5312·clm 0.5000·일치 0.9688=직렬화 무죄)에 GN 누출 팔 추가. 첫 답 바이트(인과적으로 답 의존 불가) NLL: 입력-답-존재 0.6545 vs 마스킹 1.2508, Δ=0.5964 ⟹ forward 비인과(GN (C,T) 전역 정규화 =GN 버스). 셔플 통제는 무의미(빌더가 이미 매 에폭 셔플·코드 반증). 귀결: teacher-forcing 답-CE(ans_ce)는 구조적 오염·--answer-ce-weight 는 오염 목적 최적화(a_train_inline_gauge 재연)·d_acc 는 대칭 상쇄로 정직 DV. 미증명: 하락 전부가 누출(q 마스크 분포-밖·기하 상이). 사다리 🔴=이 구성 결합 미학습, 일반화 금지."
+        "detail": "H_9814 동결표 실행: position 팔(PerPositionGroupNorm·w=0) GN누출 0.0152 ✅ 기전통과·d_acc 0.5312<0.55 ⟹ 🔴 SCREEN-NEGATIVE — 비인과 채널을 닫아도 결합 미학습, 벽은 목적/구조 축(기존 수렴 정합). 부수확정: ①마스크 교란 몫 0.0152 실측 ⟹ H_9813 Δ 0.5964 의 ~97% 진짜 누출 ②같은 global 서 w=0 Δ −0.0146 vs w=5 Δ 0.5964 ⟹ 누출은 --answer-ce-weight 가 유도(a_train_inline_gauge 의 기질-조향 실증) ③position ckpt clm 일치 0.1562 = 디코드 GLOBAL 의미론 경고 실증. torch 스크린=영구 DIRECTIONAL."
        }
       ]
      }
