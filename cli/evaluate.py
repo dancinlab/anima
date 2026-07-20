@@ -187,14 +187,53 @@ def _g_concept_keywords():
             ["dream", "engine", "alone", "sleep"]]
 
 
-def _g_coverage(text):
-    kwsets = _g_concept_keywords()
+def _g_coverage_with(text, kwsets):
+    """Frozen coverage rule, VERBATIM, parameterised by the keyword table so a control arm
+    scores on byte-identical logic (H_9804 null controls). _g_coverage is unchanged."""
     wm = set(_rho_fan_words(text))
     covered = 0
     for kw in kwsets:
         if any(k in wm for k in kw):
             covered += 1
     return covered
+
+
+def _g_coverage(text):
+    return _g_coverage_with(text, _g_concept_keywords())
+
+
+def _g_random_keywords(known, rng_seed=20260720):
+    """H_9804 NULL-A (chance floor). Five size-matched keyword sets drawn from the model's own
+    known-word dictionary, EXCLUDING every real concept keyword. Answers: how often does free
+    text hit 5 arbitrary 4-word sets? `_g_coverage` counts HOW MANY of the five sets are hit, so
+    permuting the real sets is an IDENTITY on this metric — a derangement control would test
+    nothing. Re-drawing the words is the control that actually has a null."""
+    real = set()
+    for kw in _g_concept_keywords():
+        real.update(kw)
+    pool = sorted(w for w in known if w not in real and len(w) >= 4)
+    if len(pool) < 20:
+        return None                                   # dictionary too small ⇒ control unavailable
+    st = rng_seed & 0xFFFFFFFF
+    picked, out = [], []
+    for _ in range(len(_g_concept_keywords())):
+        cell = []
+        for _ in range(len(_g_concept_keywords()[0])):
+            st = (1103515245 * st + 12345) & 0x7FFFFFFF
+            cell.append(pool[st % len(pool)])
+        out.append(cell); picked.extend(cell)
+    return out
+
+
+def _g_neutral_seed(nbytes):
+    """H_9804 NULL-B (causal ablation). A concept-free seed of matched byte length: if a
+    concept-free prompt scores the same coverage, the composed seed contributed nothing and the
+    'recombination' reading is unattributable."""
+    filler = "the of and to in that it is was for on with as by at from "
+    out = []
+    while sum(len(x) for x in out) < nbytes:
+        out.append(filler)
+    return "".join(out)[:max(nbytes, 1)]
 
 
 def _echo_spans(seed, text, n=8):
@@ -234,7 +273,7 @@ def _echo_ratio(seed, text, n=8):
     return echoed / float(len(text))
 
 
-def eval_rho_weave(mouth, gen, known, seed_off=0):
+def eval_rho_weave(mouth, gen, known, seed_off=0, null_mode="off"):
     cz = _rho_fan_concepts()
     n = len(cz)
     g_single = gen if (gen > 0 and gen < 80) else 80
@@ -248,6 +287,8 @@ def eval_rho_weave(mouth, gen, known, seed_off=0):
             max_single = cov
     ks = []; passed = False; best_k = 0; best_distinct = 0
     best_distinct_noecho = 0; echo_max = 0.0
+    best_null_a = -1; best_null_b = -1
+    null_kw = _g_random_keywords(known) if null_mode in ("random-kw", "neutral-seed") else None
     for k in range(2, n + 1):
         seed = ""
         for c in range(k):
@@ -266,6 +307,16 @@ def eval_rho_weave(mouth, gen, known, seed_off=0):
         # GREEN, never manufacture one).
         er = _echo_ratio(seed, o)
         cov_noecho = _g_coverage(_echo_spans(seed, o))
+        if null_kw is not None:                        # NULL-A: same text, random keyword table
+            c = _g_coverage_with(_echo_spans(seed, o), null_kw)
+            if c > best_null_a:
+                best_null_a = c
+        if null_mode == "neutral-seed":                # NULL-B: concept-free seed, same budget
+            ns = _g_neutral_seed(len(seed.encode("utf-8", "surrogateescape")))
+            on = mouth.ideate(ns, g_comp, 40, 0.7, 7 + seed_off)
+            c = _g_coverage(_echo_spans(ns, on))
+            if c > best_null_b:
+                best_null_b = c
         if er > echo_max:
             echo_max = er
         ks.append({"k": k, "distinct": cov, "kwr": kwr, "coherent": coherent, "clears": clears,
@@ -282,6 +333,7 @@ def eval_rho_weave(mouth, gen, known, seed_off=0):
             # ECHO-SUSPECT: the frozen bar passed, but stripping verbatim seed-echo
             # takes it back below the bar ⟹ the pass rode on re-emission, not
             # recombination. Read as INVALID, never as a G1 crack.
+            "null_a": best_null_a, "null_b": best_null_b, "null_mode": null_mode,
             "echo_suspect": bool(passed and not (best_distinct_noecho >= 2
                                                  and best_distinct_noecho > max_single))}
 
@@ -764,7 +816,8 @@ def eval_rho_fan(mouth, gen, known, seed_class="composed", seed_off=0):
 # ════════════════════════════════════════════════════════════════════════
 
 def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
-                   seed_class="composed", fan_temp_ladder=False, seed_off=0):
+                   seed_class="composed", fan_temp_ladder=False, seed_off=0,
+                   weave_null="off"):
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
     mouth = _Mouth(ckpt, grow_window=grow_window)
@@ -776,7 +829,7 @@ def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
     print("  [gate] ρ·form COHERENCE …", flush=True)
     r0 = eval_rho_form(mouth, g, known, seed_off=seed_off)
     print("  [gate] ρ·weave RECOMBINATION …", flush=True)
-    r1 = eval_rho_weave(mouth, g, known, seed_off=seed_off)
+    r1 = eval_rho_weave(mouth, g, known, seed_off=seed_off, null_mode=weave_null)
     print("  [gate] ρ·leap NOVELTY (corpus load + decode) …", flush=True)
     r2 = eval_rho_leap(mouth, g, known, corpus_paths)
     print("  [gate] ρ·self PHILOSOPHY …", flush=True)
@@ -2047,12 +2100,23 @@ def evaluate_run(argv):
     # no-op re-run of a deterministic path. The frozen bars do NOT move; only which sample
     # is drawn changes. 0 = byte-identical to every prior run.
     seed_off = evaluate_intval(argv[1:], "--seed-offset", 0)
+    # H_9804 재개① — null controls for ρ·weave. NOTE a derangement of the concept→keyword-set
+    # assignment is an IDENTITY on this metric (_g_coverage counts HOW MANY of the five sets are
+    # hit; permuting them cannot change that count), so the obvious "shuffle" control tests
+    # nothing. These two do have a null: random-kw re-draws the keyword table from the model's own
+    # dictionary (chance floor), neutral-seed decodes from a concept-free seed of matched length
+    # (causal attribution). Both score through the SAME frozen coverage rule; the main bar is
+    # untouched and the controls are reported alongside as a collapse-Δ.
+    weave_null = evaluate_strval(argv[1:], "--weave-null", "off")
+    if weave_null not in ("off", "random-kw", "neutral-seed"):
+        print("ERROR: --weave-null must be 'off' (default), 'random-kw' or 'neutral-seed', got %r" % weave_null)
+        return 2
     if seed_off:
         print("  [seed-offset] decode seeds shifted by %+d (bars unchanged; this is a RE-DRAW "
               "of the sampled decode, for n>1 replication)" % seed_off, flush=True)
     r = eval_reach_all(ckpt, corpus, gen, grow_window=grow_window,
                        seed_class=seed_class, fan_temp_ladder=fan_temp_ladder,
-                       seed_off=seed_off)
+                       seed_off=seed_off, weave_null=weave_null)
     g0 = r["g0"]; g1 = r["g1"]; g2 = r["g2"]
     g3 = r["g3"]; g5 = r["g5"]; g6 = r["g6"]
 
@@ -2267,9 +2331,17 @@ def _psi_soma_panel(r):
     print("  ρ·tether " + pf(bool(g5["l1_pass"]))+ "  [fab=" + ("%.3f" % g5["l1_rate"]) + "]  ← former G5 non-fabrication (L1)")
     # verdict numerics INLINE (convergence evaluate-py-1: a tail-truncated arm made a
     # prior KILL-vs-INVALID undecidable) — echo-guard numbers ride the same line.
+    _wnull = ""
+    if g1.get("null_mode", "off") != "off":
+        _na, _nb = g1.get("null_a", -1), g1.get("null_b", -1)
+        _bd = g1.get("best_distinct_noecho", 0)
+        _worst = max(_na, _nb)
+        _wnull = ("  [NULL " + g1["null_mode"] + " a=" + str(_na) + " b=" + str(_nb)
+                  + " · collapse-Δ=" + str(_bd - _worst)
+                  + ("  ⚠️Δ<=0 = 통제와 미분리 = NOT-A-SIGNAL" if (_bd - _worst) <= 0 else "") + "]")
     _wecho = ("  [bd_noecho=" + str(g1.get("best_distinct_noecho", "-"))
               + " echo=" + ("%.2f" % g1.get("echo_max", 0.0))
-              + ("  ⚠️ECHO-SUSPECT=INVALID" if g1.get("echo_suspect") else "") + "]") \
+              + ("  ⚠️ECHO-SUSPECT=INVALID" if g1.get("echo_suspect") else "") + "]" + _wnull) \
         if ("best_distinct_noecho" in g1) else ""
     print("  ρ·weave  " + pf(bool(g1["pass"]))  + "  [bd=" + str(g1["best_distinct"]) + " max_s=" + str(g1["max_single"]) + "]" + _wecho + "  ← former G1 recombination (the WALL) [DPI wall = reach fact, NOT σ deficit]")
     _tl = g6.get("temp_ladder")
@@ -9322,7 +9394,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-component-swap", "--store-swap-from",
     "--store", "--store-oracle",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
-    "--store-addr-audit", "--store-telemetry", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
+    "--store-addr-audit", "--store-telemetry", "--weave-null", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
     "--store-query", "--store-fuse", "--store-readout",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--fan-bind", "--fan-smp",
