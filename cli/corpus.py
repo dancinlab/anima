@@ -241,7 +241,7 @@ def _parse_args(argv):
         elif a == "--bind-legacy-lengths":
             opts["bind_legacy_lengths"] = True; i += 1              # H_9812 disqualified control
         elif a == "--bind-task":
-            opts["bind_task"] = argv[i + 1]; i += 2                 # H_9815 xor | hp
+            opts["bind_task"] = argv[i + 1]; i += 2                 # H_9815 xor|hp · H_9818 xmark
         elif a == "--audit-train":
             opts["audit_train"] = argv[i + 1]; i += 2               # H_9809
         elif a == "--panel":
@@ -2297,14 +2297,37 @@ def _bp_conjunct(hp, pos, verb, sg, pl, lengths="matched", task="xor"):
     sgf, plf = _BP_NF[lengths]
     sg, pl = sgf(sg), plf(pl)
     n1, n2 = (sg, pl) if pos == 0 else (pl, sg)
+    # R11 stair: at the conjunct level only three PRIMITIVE tasks exist — xor (composition),
+    # hp / pos (the two unary sub-features). "stair"/"xmark" are DRILL-mixture modes resolved
+    # in build_bindpanel; they never reach here.
+    _gb = {"hp": hp, "pos": pos}.get(task, hp ^ pos)
     return {"surface": "%s %s of %s and" % (vf, n1, n2),
             "hp": hp, "pos": pos, "verb": verb, "verb_form": vf,
             "sg_lexeme": sg, "pl_lexeme": pl, "n1": n1, "n2": n2,
-            "gold_bit": (hp ^ pos) if task == "xor" else hp,
-            "gold_token": _BP_ANS[(hp ^ pos) if task == "xor" else hp]}
+            "gold_bit": _gb, "gold_token": _BP_ANS[_gb]}
 
 
-def _bp_items(K, verbs, nouns, rot, lengths="matched", task="xor"):
+# H_9818 — CURRICULUM axis (`xmark`). The gradient argument, not a structural one: the panel audit
+# FORCES every unary cue to exactly 0.5, so under `xor` neither `hp` nor `pos` has any marginal
+# correlation with gold ⇒ descent gets NO signal on either feature until it holds BOTH at once.
+# That is the flat-parity landscape, and it is a claim about the OBJECTIVE, not the architecture
+# (H_9816 tests the same diagnosis on the optimizer's budget/regularization axis instead).
+#
+# `xmark` supplies that missing gradient directly: the SAME sentence is drilled under three
+# 2-byte TASK MARKERS — `h ` (gold = hp), `p ` (gold = pos), `x ` (gold = hp XOR pos). The h/p
+# lines make each sub-feature individually predictable, so descent can find them from a signal
+# that actually exists; the x lines then only have to COMBINE two features the trunk already
+# computes. The markers are equal-length and CONSTANT within any one panel, so they add nothing
+# a heuristic could read (the exactly-0.5 audit still runs on the x panel and still must pass).
+#
+# ⚠️ SCOPE: this is a DATA-side lever (the corpus teaches sub-features), which makes it a weaker
+# claim than an architectural one — it shows the composition is LEARNABLE given sub-feature
+# supervision, NOT that it emerges unaided. That distinction is the whole verdict and must be
+# stated in the card, never softened.
+_BP_MARK = {"hp": "h ", "pos": "p ", "xor": "x "}
+
+
+def _bp_items(K, verbs, nouns, rot, lengths="matched", task="xor", mark=""):
     """The full factorial panel: 2^K gold patterns x 4 hp patterns = 4*2^K items.
 
     LEXEME ASSIGNMENT DEPENDS ON THE SLOT AND THE ROTATION ONLY — NEVER ON THE hp BLOCK. The
@@ -2326,14 +2349,18 @@ def _bp_items(K, verbs, nouns, rot, lengths="matched", task="xor"):
                 jn = (k + rot) % nn
                 # xor: pos is CHOSEN so gold comes out as the enumerated pattern.
                 # hp:  gold IS hp, so pos is free — enumerate it instead, keeping it balanced.
+                # pos: gold IS pos, so pos takes the enumerated pattern (hp stays hp_pat-balanced).
                 _pos = (gold[k] ^ hp_pat[k]) if task == "xor" else gold[k]
                 conjs.append(_bp_conjunct(hp_pat[k], _pos,
                                           verbs[j], nouns[jn], nouns[(jn + 3) % nn],
                                           lengths=lengths, task=task))
             gold = [c["gold_bit"] for c in conjs]          # hp task: gold is hp, not the enum
-            surface = " ".join(c["surface"] for c in conjs) + " " + _BP_TAIL + _BP_ARROW
+            # `mark` (H_9818 xmark) is a 2-byte task selector. It is CONSTANT within any one
+            # panel, so it shifts every surface by the same bytes and can carry no cue a
+            # heuristic could exploit — the exactly-0.5 audit below still runs and still gates.
+            surface = mark + " ".join(c["surface"] for c in conjs) + " " + _BP_TAIL + _BP_ARROW
             items.append({"block": b, "gold_index": g, "conjuncts": conjs, "surface": surface,
-                          "gold_bits": gold,
+                          "task": task, "mark": mark, "gold_bits": gold,
                           "gold_pattern": "".join(c["gold_token"] for c in conjs)})
     return items
 
@@ -2394,13 +2421,29 @@ def build_bindpanel(K, n_blocks, seed, lang, rot=0, lengths="matched", task="xor
     if K < 2:
         raise SystemExit("anima corpus bindpanel: --bind-k must be >= 2 (K=1 has a single contested "
                          "edge and collapses the field to rank 1 by construction — H_004 F4-DEAD)")
-    panel = _bp_items(K, _BP_VERB_HELD, _BP_NOUN_HELD, rot, lengths=lengths, task=task)
+    if task not in ("xor", "hp", "pos", "xmark"):
+        # Fail LOUD. A typo must never fall through to a silently different gold rule — that would
+        # ship a corpus whose answers are not the ones the card claims, and no downstream gate
+        # could see it (the panel would audit clean because it is internally consistent).
+        raise SystemExit("anima corpus bindpanel: --bind-task must be xor|hp|pos|xmark, got %r"
+                         % (task,))
+    # H_9818 xmark: the JUDGED task is still xor; the h/p lines are SUB-FEATURE SUPERVISION added
+    # to the drill only. The panel therefore carries the `x ` marker and nothing else.
+    xmark = (task == "xmark")
+    judged = "xor" if xmark else task
+    mark = _BP_MARK[judged] if xmark else ""
+    panel = _bp_items(K, _BP_VERB_HELD, _BP_NOUN_HELD, rot, lengths=lengths, task=judged, mark=mark)
     # The drill sweeps EVERY rotation so all 8 seen verbs and all 8 seen nouns are exercised in
     # every slot. One rotation would teach the rule at 6 lexemes and leave "it memorised those six"
     # as a live alternative to "it learned the operation" (corpus-py-1 (E): count the axis).
+    # Under xmark the SAME sweep runs once per marked sub-task, so the h/p supervision covers
+    # exactly the lexemes/slots the x lines do — never a different distribution.
+    drill_tasks = ("hp", "pos", "xor") if xmark else (task,)
     seen = []
-    for r in range(len(_BP_VERB_SEEN)):
-        seen.extend(_bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, rot + r, lengths=lengths, task=task))
+    for t in drill_tasks:
+        for r in range(len(_BP_VERB_SEEN)):
+            seen.extend(_bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, rot + r, lengths=lengths,
+                                  task=t, mark=(_BP_MARK[t] if xmark else "")))
     rng = random.Random(seed)
     order = list(range(len(seen)))
     lines = []
@@ -2429,8 +2472,20 @@ def build_bindpanel(K, n_blocks, seed, lang, rot=0, lengths="matched", task="xor
                 "slots": ["s%d" % k for k in range(K)],
                 "codewords": [it["gold_bits"] for it in panel]}
     aud = _bp_audit(panel, K)
-    aud_seen = _bp_audit(seen, K)
+    # Under xmark the drill INTENTIONALLY mixes three tasks, so a pooled drill audit reads
+    # presence=1.0 on the h lines etc. That is the design, not a leak — auditing the pooled mix
+    # would print an alarming number for a corpus that is behaving exactly as specified. Audit the
+    # JUDGED stratum (the x lines) instead, which is the one comparable to the panel, and record
+    # the mix explicitly so nobody later reads this field as if it covered the whole drill.
+    _judged_seen = [it for it in seen if it.get("task", "xor") == judged]
+    aud_seen = _bp_audit(_judged_seen, K)
     st = {"K": K, "lang": lang, "seed": seed, "rot": rot,
+          "task": task, "judged_task": judged, "panel_mark": mark,
+          # H_9818 census — the drill's task mix, counted not assumed (corpus-py-1 (E)/(F)):
+          # `audit_drill` above covers ONLY the judged stratum, so this is where a reader sees
+          # that h/p supervision lines exist and how many distinct source items each task got.
+          "drill_task_mix": {t: sum(1 for it in seen if it.get("task", "xor") == t)
+                             for t in drill_tasks},
           "n_panel": len(panel), "n_drill_lines": len(lines),
           "bytes": len(text.encode()), "leaks": leaks,
           "audit_panel": aud, "audit_drill": aud_seen,
@@ -5199,6 +5254,12 @@ def main():
         K = int(opts["bind_k"])
         _bp_len = "legacy" if opts.get("bind_legacy_lengths") else "matched"
         _bp_task = opts.get("bind_task") or "xor"
+        # H_9818: under `xmark` the JUDGED task is xor and every panel line carries the `x ` marker.
+        # Both must be threaded into the direct _bp_items() calls below — a panel built without the
+        # marker would be scored on a carrier the model NEVER trained on, which is not a clean
+        # baseline but an out-of-distribution basin (convergence corpus-py-1 ⑫, measured on H_9397).
+        _bp_judged = "xor" if _bp_task == "xmark" else _bp_task
+        _bp_mark = _BP_MARK[_bp_judged] if _bp_task == "xmark" else ""
         text, panel, codebook, st = build_bindpanel(K, opts["n_blocks"], opts["seed"], opts["lang"],
                                                     lengths=_bp_len, task=_bp_task)
         regen = "anima-py corpus " + " ".join(argv)
@@ -5230,7 +5291,7 @@ def main():
         # on the held-out ones. A mode that calls gold above the derived chance is DISQUALIFIED:
         # under it the field hands the reader the answer, so no Δ measured with it is readable.
         _train_conj = [c for it in _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0, lengths=_bp_len,
-                                             task=_bp_task)
+                                             task=_bp_judged, mark=_bp_mark)
                        for c in it["conjuncts"]]
         _panel_conj = [c for it in panel for c in it["conjuncts"]]
         leak = {m: field_alone_leak(_train_conj, _panel_conj, m) for m in ("class", "lex", "morph")}
@@ -5247,7 +5308,8 @@ def main():
         # is measuring a dead model and must not be read at all. Without it F2 has no instrument
         # either, and a floor-level held-out d_acc is unattributable.
         sj = opts["out"] + ".seen_panel.json"
-        seen_panel = _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0, lengths=_bp_len, task=_bp_task)
+        seen_panel = _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0, lengths=_bp_len,
+                               task=_bp_judged, mark=_bp_mark)
         json.dump({"schema": "anima-bindpanel/v1", "K": K, "lang": st["lang"], "seed": st["seed"],
                    "answers": list(_BP_ANS), "tail": _BP_TAIL, "arrow": _BP_ARROW,
                    "regen_cmd": regen, "codebook": codebook,
