@@ -1606,6 +1606,25 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         _cargv, "--workspace-measurements", "ANIMA_WORKSPACE_MEASUREMENTS", "")
     _workspace_persist_dir = anima_flag_value(
         _cargv, "--workspace-persist", "ANIMA_WORKSPACE_PERSIST", "")
+    # New proof/ledger production path is separately opt-in. Merely installing
+    # 0.20.87 cannot touch the legacy auto/OFF byte path.
+    _workspace_production_dir = anima_flag_value(
+        _cargv, "--workspace-production", "ANIMA_WORKSPACE_PRODUCTION", "")
+    _workspace_trust_registry = anima_flag_value(
+        _cargv, "--workspace-trust-registry", "ANIMA_WORKSPACE_TRUST_REGISTRY", "")
+    _workspace_target_inference = anima_flag_value(
+        _cargv, "--workspace-target-inference", "ANIMA_WORKSPACE_TARGET_INFERENCE",
+        "associational")
+    if _workspace_target_inference not in ("associational", "causal"):
+        raise SystemExit("--workspace-target-inference: associational or causal")
+    _workspace_production = None
+    if _workspace_production_dir:
+        from workspace_evidence import EvidenceAuthorityRegistry
+        from workspace_production import WorkspaceProductionSession
+        _workspace_registry = (EvidenceAuthorityRegistry.from_json(_workspace_trust_registry)
+                               if _workspace_trust_registry else None)
+        _workspace_production = WorkspaceProductionSession(
+            _workspace_production_dir, _workspace_registry, _workspace_target_inference)
     _workspace_require_evidence = (
         anima_has_flag(_cargv, "--workspace-require-evidence")
         or anima_flag_value(_cargv, "--workspace-require-evidence",
@@ -2234,6 +2253,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         if (_workspace_tick_mode != "off" and not _workspace_seed
                 and percept_text is not None):
             _workspace_percept_routes += 1
+        if _workspace_production is not None and percept_text is not None:
+            _workspace_production.ingest(percept_text)
         # Evidence loading stays lazy: auto+atomic/no-percept remains the exact OFF
         # path and does not even touch evidence files.
         if _workspace_tick_mode != "off" and not _workspace_evidence_loaded:
@@ -2245,6 +2266,16 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 _workspace_evidence = tuple(_workspace_evidence) + load_measurement_evidence(
                     _workspace_measurements)
             _workspace_evidence_loaded = True
+        _workspace_tick_evidence = _workspace_evidence
+        if _workspace_production is not None and _workspace_tick_mode != "off":
+            _workspace_tick_evidence = tuple(_workspace_evidence) + tuple(
+                _workspace_production.evidence_for(
+                    _workspace_tick_seed,
+                    divergent=_workspace_tick_mode == "divergent"))
+            if _workspace_tick_mode in ("structured", "divergent"):
+                _workspace_production.observe_active_state(
+                    _workspace_tick_seed,
+                    divergent=_workspace_tick_mode == "divergent")
         # ── H_9744 STORE-EPISODIC (S3) · perception writes the store ──
         # The transducer knows GRAMMAR ONLY, never content: it matches one fixed shape and copies
         # the bytes through. No entity whitelist, no fact dictionary, no polarity re-interpretation
@@ -3175,17 +3206,25 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                                            spoken_workspace_step)
             if _workspace_tick_mode == "grounded":
                 out_text, _workspace_decision = grounded_query_step(
-                    out_text, _workspace_query, _workspace_evidence)
+                    out_text, _workspace_query, _workspace_tick_evidence)
             else:
                 _workspace_step = (spoken_divergence_step if _workspace_tick_mode == "divergent"
                                    else spoken_workspace_step)
                 out_text, _workspace_decision = _workspace_step(
-                    out_text, _workspace_tick_seed, _workspace_evidence,
+                    out_text, _workspace_tick_seed, _workspace_tick_evidence,
                     _workspace_require_evidence)
             if _workspace_decision is not None:
                 _workspace_decisions += 1
                 _workspace_rejections += len(_workspace_decision.rejected_claim_ids)
                 _workspace_abstentions += int(_workspace_decision.abstained)
+                if (_workspace_production is not None
+                        and _workspace_tick_mode in ("structured", "divergent")):
+                    _workspace_production.record_decision(
+                        _workspace_tick_seed,
+                        _workspace_tick_mode == "divergent",
+                        _workspace_require_evidence,
+                        _workspace_tick_evidence,
+                        _workspace_decision)
                 if (_workspace_tick_mode == "divergent"
                         and not _workspace_decision.abstained
                         and _workspace_decision.selected_claim_id is not None):
@@ -3722,7 +3761,7 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
          + anima_yn(imagination_emit_violations == 0)
          + " (core/imagination_replay ir_replay_session total_emits≡0 · p5 NO SPEAK · emit-drive-disjoint)")
     if (_workspace_effective_mode != "off" or _workspace_percept_routes > 0
-            or _workspace_persisted > 0):
+            or _workspace_persisted > 0 or _workspace_production is not None):
         _workspace_report_mode = (_workspace_effective_mode if _workspace_effective_mode != "off"
                                   else "auto-percept")
         _pln("  WORKSPACE (spoken-only, " + _workspace_report_mode + ")          : decisions="
@@ -3737,6 +3776,24 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
              + " decode-cache=" + _ts(int(backend.get("_decode_cache_hits", 0))) + "/"
              + _ts(int(backend.get("_decode_cache_hits", 0))
                    + int(backend.get("_decode_cache_misses", 0))))
+        if _workspace_production is not None:
+            _workspace_production.checkpoint()
+            _prod = _workspace_production.summary()
+            _pln("  WORKSPACE-PRODUCTION (opt-in)              : logic="
+                 + _ts(_prod["logic_accepted"]) + " ambiguous="
+                 + _ts(_prod["logic_ambiguous"]) + " proofs=" + _ts(_prod["proofs"])
+                 + " invalidated=" + _ts(_prod["proofs_invalidated"])
+                 + " evidence=" + _ts(_prod["evidence_accepted"])
+                 + " rejected=" + _ts(_prod["evidence_rejected"])
+                 + " inconclusive=" + _ts(_prod["stat_inconclusive"])
+                 + " active-updates=" + _ts(_prod["active_updates"])
+                 + " decision-proofs=" + _ts(_prod["decisions"]))
+            _active = _workspace_production.latest_active_state
+            if _active is not None:
+                _pln("    active falsification                         : viable="
+                     + _ts(len(_active.viable_claim_ids)) + " rejected="
+                     + _ts(len(_active.rejected_claim_ids)) + " next="
+                     + (_active.next_experiment or "none") + " reason=" + _active.reason)
 
     all_live = (emitted_any and grounded_ok and grew and remembered2 and slept
                 and psi_intact and lanes_read)

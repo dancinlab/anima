@@ -41,6 +41,7 @@ from core.workspace_semantic import realizer_adversarial_panel, realizer_heldout
 from core.workspace_longrun import run_workspace_longrun
 from core.workspace_deep import run_workspace_deep_certification
 from core.workspace_deeper import run_workspace_deeper_certification
+from core.workspace_production_cert import run_workspace_production_certification
 from core.workspace_regression import run_workspace_regression
 from core.workspace_system_rho import run_workspace_system_rho, store_report_passes
 from core.workspace_release_verify import verify_workspace_release
@@ -123,6 +124,11 @@ class CognitiveWorkspaceTest(unittest.TestCase):
             "necessary_sufficient", "conjunction", "inclusive_or", "exclusive_or", "exception",
             "quantifier", "negation_scope", "temporal_order", "proof_object",
         ])
+
+    def test_workspace_production_certification(self) -> None:
+        report = run_workspace_production_certification()
+        self.assertTrue(report["ok"], report)
+        self.assertEqual(set(report["groups"]), {"logic", "evidence", "durability", "active"})
 
     def test_proof_object_replays_and_detects_rule_tampering(self) -> None:
         workspace = CognitiveWorkspace()

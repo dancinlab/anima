@@ -261,6 +261,8 @@ class EvidenceLedger:
             if (record.claim_id, record.experiment_id, record.context) != (
                     target.claim_id, target.experiment_id, target.context):
                 raise ValueError("correction/retraction cannot cross claim, experiment, or context")
+            if _parse_observed_at(record.observed_at) <= _parse_observed_at(target.observed_at):
+                raise ValueError("correction/retraction must be recorded after its target")
         self.records.append(record)
 
     def active_records(self) -> tuple[EvidenceRecord, ...]:

@@ -621,6 +621,7 @@ conv decoder to regenerate distant semantic slots. Explicit modes remain availab
 anima-py evaluate --workspace-semantic
 anima-py evaluate --workspace-deep
 anima-py evaluate --workspace-deeper
+anima-py evaluate --workspace-production-cert
 anima-py evaluate --workspace-divergence --seed "if copper conducts heat, then water drives turbines"
 anima-py evaluate model.clm --workspace-divergence-realizer --workspace-realizer-panel \
   --out workspace-realizer-verdict.json
@@ -634,6 +635,7 @@ anima-py evaluate --workspace-regression --out workspace-regression.json
 anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
 anima-py evaluate model.clm --workspace-divergence-realizer --workspace-adversarial-panel
 anima-py evaluate --workspace-longrun --ticks 500
+```
 
 `--workspace-deep` extends the frozen panel without changing its release bars. G1 certifies exact
 6/8/10-hop closure, conjunctive branch/merge, finite cycles, relation-pair shuffles, negation and
@@ -654,6 +656,54 @@ This is a structural gate, not source authentication or a statistical package: c
 trustworthy experiment IDs and quality metadata, and domain-specific effect estimation remains outside
 the workspace.
 
+`--workspace-production DIR` is the separate, default-off user path. Controlled English/Korean
+statements are converted to typed facts, and derived conclusions are stored with replayable proof
+artifacts. Signed evidence is resolved before contradicted candidates are removed; if several
+candidates remain, the ledger records the next experiment with the highest expected separation.
+Logic, evidence history, proof invalidations, decision proofs, checkpoints, and state-transition
+telemetry survive process restart. A torn final JSONL write is repaired; checksum damage in the
+middle is rejected.
+
+```json
+{
+  "sources": {"lab-a": {"key_env": "ANIMA_LAB_A_KEY"}},
+  "experiments": [{
+    "experiment_id": "exp-a",
+    "claim_id": "workspace-claim-...",
+    "source": "lab-a",
+    "context": "reactor-v1",
+    "target_inference": "associational",
+    "intervention": "catalyst dose",
+    "outcome": "yield"
+  }]
+}
+```
+
+Use the exact claim IDs printed by `--workspace-divergence` when preregistering experiments. A
+`MEASUREMENT` percept has `{"measurement": {...}, "signature": "..."}` after the prefix. The
+signature is HMAC-SHA256 over the measurement object serialized as UTF-8 canonical JSON
+(`sort_keys=true`, compact separators); unsigned, altered, shuffled-claim, or unregistered inputs
+are rejected before statistical assessment.
+
+```bash
+export ANIMA_LAB_A_KEY='source-held-secret'
+ANIMA_TICKS=1 anima-py chat model.clm --workspace divergent \
+  --workspace-seed "if catalyst increases yield, then reactor reduces waste" \
+  --workspace-production workspace-state \
+  --workspace-trust-registry registry.json \
+  --workspace-target-inference associational \
+  --percept-file signed-percepts.jsonl
+```
+
+The production certificate tests controlled-language ambiguity, proof tampering and late
+exceptions, signed measurement and claim substitution, confidence-interval decisions, direct
+common-cause adjustment, randomized causal evidence, Simpson reversal, selective reporting,
+concurrent append, torn-write recovery, candidate elimination, and decision replay. Its boundaries
+are deliberate: the extractor is a controlled grammar rather than general NLP; HMAC assumes the
+verifier and source share a protected secret; intervals use a normal approximation rather than a
+domain statistical model; and causal checks cover randomized evidence or explicitly adjusted direct
+common causes, not arbitrary causal identification.
+
 The unchanged HF workspace-system-v1 303M model was rerun against the adversarial mounted-mouth panel
 after this change: 42/42 hypotheses were model-reranked with zero fallback and all 126/126
 meaning-locked candidates passed (model SHA-256 `f64a4afb43f5ba2911b836a066a6ef16f2f9678b95c2efa4824a022181d4b8fc`).
@@ -662,6 +712,8 @@ Deterministic greedy workspace sessions cache only exact repeated anchored model
 mouths and workspace-OFF runs never use this cache. On the HF workspace-system-v1 303M CPU run,
 the frozen 100-tick panel improved from 2431.76s to 1866.39s while preserving 50/50 mounted-mouth
 realizations, zero fallback, and `psi_intact=1` (22/100 exact decode-cache hits).
+
+```bash
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon  # exact probe calls are memoized
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-cache .rho-cache
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-no-cells \
