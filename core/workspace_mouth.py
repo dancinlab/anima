@@ -94,6 +94,15 @@ class DivergentHypothesis:
     spec: HypothesisSpec
     required_terms: tuple[str, ...]
     lens: str
+    surface_lens: str = ""
+    comparator: str = ""
+
+
+@dataclass(frozen=True)
+class DivergenceRealization:
+    text: str
+    valid: bool
+    realized_by: str
 
 
 @dataclass(frozen=True)
@@ -283,23 +292,37 @@ def diverge_seed(seed: str) -> tuple[DivergentHypothesis, ...]:
     required = tuple(dict.fromkeys(_words(left + " " + right)))
     # Each lens changes the empirical question, not merely wording. Every noun comes
     # from the input; generic experimental dimensions cannot fabricate a domain fact.
-    rows = (
-        ("positive", "increases", "rate", "interaction_not_above_each_operand_control"),
-        ("negative", "decreases", "level", "interaction_not_below_each_operand_control"),
-        ("threshold", "predicts", "threshold", "effect_present_below_preregistered_threshold"),
-        ("delay", "causes", "duration", "effect_absent_after_preregistered_delay"),
-        ("context", "depends", "ratio", "same_effect_across_preregistered_contexts"),
-        ("null", "correlates", "frequency", "difference_outside_equivalence_interval"),
-    )
+    korean = any(any(ord(ch) > 127 for ch in operand) for operand in operands)
+    if korean:
+        rows = (
+            ("positive", "증가시킨다", "비율", "양의", "직접 상승 단조", "interaction_not_above_each_operand_control"),
+            ("negative", "감소시킨다", "수준", "음의", "직접 하강 반대", "interaction_not_below_each_operand_control"),
+            ("threshold", "예측한다", "임계값", "문턱", "경계 초과 비선형", "effect_present_below_preregistered_threshold"),
+            ("delay", "유발한다", "지속시간", "지연", "시간 이후 후행", "effect_absent_after_preregistered_delay"),
+            ("context", "의존한다", "비율", "맥락", "조건 변화 상호작용", "same_effect_across_preregistered_contexts"),
+            ("null", "상관한다", "빈도", "영가설", "동등 구간 무차이", "difference_outside_equivalence_interval"),
+        )
+    else:
+        rows = (
+            ("positive", "increases", "rate", "positive", "", "interaction_not_above_each_operand_control"),
+            ("negative", "decreases", "level", "negative", "", "interaction_not_below_each_operand_control"),
+            ("threshold", "predicts", "threshold", "threshold", "", "effect_present_below_preregistered_threshold"),
+            ("delay", "causes", "duration", "delay", "", "effect_absent_after_preregistered_delay"),
+            ("context", "depends", "ratio", "context", "", "same_effect_across_preregistered_contexts"),
+            ("null", "correlates", "frequency", "null", "", "difference_outside_equivalence_interval"),
+        )
     out = []
-    for index, (lens, comparator, measure, falsified) in enumerate(rows):
+    for index, (lens, comparator, measure, surface_lens, detail, falsified) in enumerate(rows):
         claim_id = _claim_id(seed + "|fan|" + lens, index)
-        text = "%s %s %s %s %s" % (left, comparator, right, measure, lens)
+        text = " ".join(part for part in
+                        (left, comparator, right, measure, surface_lens, detail) if part)
         out.append(DivergentHypothesis(
             text=text,
             spec=HypothesisSpec(claim_id, measure, "each_operand_alone", falsified),
             required_terms=required,
             lens=lens,
+            surface_lens=surface_lens,
+            comparator=comparator,
         ))
     return tuple(out)
 
@@ -308,7 +331,19 @@ def divergence_preserves(hypothesis: DivergentHypothesis, text: str) -> bool:
     words = set(_words(text))
     return (set(hypothesis.required_terms).issubset(words)
             and hypothesis.spec.measure in words
-            and hypothesis.lens in words)
+            and (hypothesis.surface_lens or hypothesis.lens) in words
+            and hypothesis.comparator in words)
+
+
+def realize_divergence(mouth, hypothesis: DivergentHypothesis, gen: int, top_k: int,
+                       temp: float, seed_rng: int) -> DivergenceRealization:
+    """Let a mouth restate one lens, failing closed on any semantic loss."""
+    prompt = ("Structured falsifiable hypothesis: " + hypothesis.text
+              + ". Restate it while preserving operands, direction, measure, and lens: ")
+    candidate = mouth.ideate(prompt, gen, top_k, temp, seed_rng)
+    if divergence_preserves(hypothesis, candidate):
+        return DivergenceRealization(candidate, True, "model")
+    return DivergenceRealization(hypothesis.text, False, "workspace_fallback")
 
 
 def select_divergence(seed: str, evidence: Iterable[Fact] = (),

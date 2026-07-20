@@ -605,6 +605,7 @@ evaluation and chat behavior is unchanged unless a workspace flag is supplied.
 ```bash
 anima-py evaluate --workspace-semantic
 anima-py evaluate --workspace-divergence --seed "if copper conducts heat, then water drives turbines"
+anima-py evaluate --workspace-regression --out workspace-regression.json
 anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon  # exact probe calls are memoized
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-cache .rho-cache
@@ -625,6 +626,10 @@ anima-py chat model.clm --workspace structured --workspace-measurements measurem
 # Six-lens evidence rejection/reranking; all candidates contradicted => abstain.
 anima-py chat model.clm --workspace divergent --workspace-measurements measurements.jsonl \
   --workspace-seed "if copper conducts heat, then water drives turbines"
+
+# Unique typed lookup only; missing, shuffled, or conflicting records abstain.
+anima-py chat model.clm --workspace grounded --workspace-evidence facts-dir \
+  --workspace-query "library|opens_at"
 ```
 
 > **Which twin is canonical?** `anima-py` (pip) is the SSOT for verdicts and the one that

@@ -21,13 +21,14 @@ from core.engine_cli import immune_embed_key, immune_grow_new
 from core.workspace_smoke import run_smoke
 from core.workspace_mouth import (
     TypedWorkspaceMouth, certify_divergence, claim_ids, compose_seed, decide_seed,
-    diverge_seed, realization_training_rows, select_divergence,
+    diverge_seed, realization_training_rows, realize_divergence, select_divergence,
 )
 from core.workspace_runtime import (
     Measurement, TypedFactStore, collect_measurement_evidence, grounded_answer,
-    identity_control, spoken_divergence_step, spoken_workspace_step,
+    grounded_query_step, identity_control, spoken_divergence_step, spoken_workspace_step,
 )
 from core.workspace_semantic import run_semantic_certification
+from core.workspace_regression import run_workspace_regression
 from core.rho_fan import (
     _rho_fan_dict_load,
     _rho_fan_is_falsifiable,
@@ -295,6 +296,19 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         self.assertEqual(report["missing_admit"], 0)
         self.assertEqual(report["shuffle_admit"], 0)
 
+    def test_korean_divergence_preserves_negation_and_six_localized_lenses(self) -> None:
+        seed = "만약 비가 오지 않으면, 그러면 도로는 젖지 않는다"
+        report = certify_divergence(seed)
+        self.assertTrue(report["ok"], report)
+        texts = [hypothesis.text for hypothesis in report["hypotheses"]]
+        for text in texts:
+            for term in ("비가", "오지", "않", "도로는", "젖지", "않는다"):
+                self.assertIn(term, text)
+        for lens in ("양의", "음의", "문턱", "지연", "맥락", "영가설"):
+            self.assertTrue(any(lens in text for text in texts))
+        self.assertEqual(report["missing_admit"], 0)
+        self.assertEqual(report["shuffle_admit"], 0)
+
     def test_divergent_evidence_rejects_reranks_and_abstains(self) -> None:
         seed = "if copper conducts heat, then water drives turbines"
         hypotheses = diverge_seed(seed)
@@ -329,6 +343,54 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         self.assertEqual(decision.selected_claim_id, hypotheses[1].spec.claim_id)
         self.assertEqual(text, hypotheses[1].text)
         self.assertEqual(repr(substrate), before)
+
+    def test_grounded_query_requires_unique_store_hit_and_controls_collapse(self) -> None:
+        facts = [Fact("library", "opens_at", "09:00", ("sign",))]
+        live, live_decision = grounded_query_step("model fabrication", "library|opens_at", facts)
+        absent, absent_decision = grounded_query_step("model fabrication", "library|closes_at", facts)
+        shuffled, shuffled_decision = grounded_query_step(
+            "model fabrication", "other_library|opens_at", facts)
+        ambiguous, ambiguous_decision = grounded_query_step(
+            "model fabrication", "library|opens_at",
+            facts + [Fact("library", "opens_at", "10:00", ("conflict",))],
+        )
+        self.assertEqual(live, "09:00")
+        self.assertFalse(live_decision.abstained)
+        for text, decision in ((absent, absent_decision), (shuffled, shuffled_decision),
+                               (ambiguous, ambiguous_decision)):
+            self.assertEqual(text, "UNGROUNDED")
+            self.assertTrue(decision.abstained)
+        with self.assertRaises(ValueError):
+            grounded_query_step("base", "malformed", facts)
+
+    def test_divergent_realizer_fails_closed_on_direction_or_lens_loss(self) -> None:
+        hypothesis = diverge_seed("if copper conducts heat, then water drives turbines")[0]
+
+        class Preserving:
+            def ideate(self, *args):
+                return hypothesis.text
+
+        class Dropping:
+            def ideate(self, *args):
+                return "copper heat and water turbines may have a relationship"
+
+        good = realize_divergence(Preserving(), hypothesis, 40, 40, 0.7, 1)
+        bad = realize_divergence(Dropping(), hypothesis, 40, 40, 0.7, 1)
+        self.assertTrue(good.valid)
+        self.assertEqual(good.realized_by, "model")
+        self.assertFalse(bad.valid)
+        self.assertEqual(bad.text, hypothesis.text)
+        self.assertEqual(bad.realized_by, "workspace_fallback")
+
+    def test_workspace_regression_passes_system_but_blocks_default_promotion(self) -> None:
+        report = run_workspace_regression()
+        self.assertTrue(report["system_pass"], report)
+        self.assertFalse(report["default_promotable"])
+        self.assertEqual(
+            set(report["promotion_blockers"]),
+            {"bare_store", "bare_fan", "bare_tether", "bare_self",
+             "model_realizer_semantic_accept"},
+        )
 
 
 if __name__ == "__main__":

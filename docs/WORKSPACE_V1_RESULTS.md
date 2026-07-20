@@ -79,6 +79,21 @@ and `insufficient grounded divergent evidence` when all candidates were contradi
 respectively rejected `0`, `6`, `0`, and `36` across six emissions; the all-rejected arm abstained 6/6.
 Every arm retained `psi_intact=1`.
 
+### Store/tether user path and promotion manifest
+
+Installed chat `--workspace grounded` returned `09:00` for the unique typed
+`library|opens_at` record. Relation shuffle, key shuffle, and two-value conflict each returned
+`UNGROUNDED` on all six emissions; every arm retained `psi_intact=1`.
+
+Korean divergence now uses localized comparators, measures, and lens labels while preserving both
+negations. It passes 6/6 live with maximum Jaccard `0.412` and missing/lens-shuffle admits `0/6`.
+The English-only frozen falsifiability detector is explicitly N/A rather than misused as Korean proof.
+
+Canonical 303M six-lens realization accepted `0/6`; structured fallback preserved meaning `6/6`, so
+the path is safe but the model itself is not improved. `--workspace-regression` combines store, fan,
+tether, and typed self controls: every system group PASS. Default promotion remains false because
+bare store/fan/tether/self and model-realizer semantic acceptance remain explicit blockers.
+
 ## Installed chat E2E
 
 An installed 0.20.63 wheel ran four deterministic 12-tick sessions on the smoke mouth. OFF and ON

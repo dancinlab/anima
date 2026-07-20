@@ -992,18 +992,22 @@ def workspace_divergence_run(argv):
         argv, "--seed", "if copper conducts heat, then water drives turbines")
     report = certify_divergence(seed)
     known = _rho_fan_dict_load()
+    frozen_applicable = not any(ord(ch) > 127 for ch in seed)
     frozen_fals = sum(
         1 for hypothesis in report["hypotheses"]
         if _rho_fan_known_word_ratio(hypothesis.text, known) >= 0.5
         and _rho_fan_is_falsifiable(hypothesis.text, known)
     )
-    ok = bool(report["ok"]) and frozen_fals == report["count"]
+    ok = bool(report["ok"]) and (not frozen_applicable or frozen_fals == report["count"])
     print("=== anima workspace divergence certification ===")
     print("seed: " + seed)
     print("live=%d/%d unique_specs=%d pairwise_max=%.3f missing_admit=%d shuffle_admit=%d" %
           (report["live"], report["count"], report["unique_specs"],
            report["pairwise_max"], report["missing_admit"], report["shuffle_admit"]))
-    print("frozen_detector_falsifiable=%d/%d" % (frozen_fals, report["count"]))
+    if frozen_applicable:
+        print("frozen_detector_falsifiable=%d/%d" % (frozen_fals, report["count"]))
+    else:
+        print("frozen_detector_falsifiable=N/A (English/ASCII detector; typed content spec used)")
     for hypothesis in report["hypotheses"]:
         print("  lens=%s id=%s measure=%s falsified_when=%s" %
               (hypothesis.lens, hypothesis.spec.claim_id, hypothesis.spec.measure,
@@ -1011,6 +1015,38 @@ def workspace_divergence_run(argv):
         print("    " + hypothesis.text)
     print("WORKSPACE_DIVERGENCE: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
+
+
+def workspace_divergence_realizer_run(argv):
+    """Measure model restatement and the fail-closed structured fallback."""
+    positional = [arg for arg in argv if not arg.startswith("--")]
+    if not positional:
+        print("ERROR: --workspace-divergence-realizer requires <ckpt>", file=sys.stderr)
+        return 2
+    from workspace_mouth import diverge_seed, divergence_preserves, realize_divergence
+    ckpt = positional[0]
+    seed = evaluate_strval(
+        argv, "--seed", "if copper conducts heat, then water drives turbines")
+    gen = evaluate_intval(argv, "--gen", _default_gen())
+    mouth = _Mouth(ckpt)
+    hypotheses = diverge_seed(seed)
+    if not hypotheses:
+        print("ERROR: divergence seed is not compound", file=sys.stderr)
+        return 2
+    results = [realize_divergence(mouth, hypothesis, gen, 40, 0.7, 700 + index)
+               for index, hypothesis in enumerate(hypotheses)]
+    accepted = sum(result.valid for result in results)
+    safe = all(divergence_preserves(hypothesis, result.text)
+               for hypothesis, result in zip(hypotheses, results))
+    print("=== anima workspace divergence realizer ===")
+    print("model_semantic_accept=%d/%d fallback=%d/%d" %
+          (accepted, len(results), len(results) - accepted, len(results)))
+    for hypothesis, result in zip(hypotheses, results):
+        print("  lens=%s by=%s valid=%s" %
+              (hypothesis.lens, result.realized_by, result.valid))
+        print("    " + result.text)
+    print("WORKSPACE_DIVERGENCE_REALIZER: " + ("SAFE" if safe else "UNSAFE"))
+    return 0 if safe else 1
 
 
 def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_dir="",
@@ -1390,6 +1426,10 @@ def evaluate_usage():
     print("  with direction, pairing, missing-middle, irrelevant-fact, and falsification controls.")
     print("  --workspace-divergence [--seed compound]: six content-distinct hypotheses with")
     print("  missing-operand and lens-shuffle collapse controls; ckpt-free system certificate.")
+    print("  --workspace-divergence-realizer <ckpt> [--seed compound]: measure model semantic")
+    print("  preservation per lens and fail closed to the structured rendering.")
+    print("  --workspace-regression [--out manifest.json]: store/fan/tether/self system gates")
+    print("  plus an explicit default-promotion blocker audit.")
     print("")
     print("  H_9200 E1 SLW controls (a .clm carrying an SLW\\x01 trailer applies the")
     print("  gated-write forward-slot by default): --slot-off forces γ=0 (bit-exact base")
@@ -9627,6 +9667,8 @@ _KNOWN_FLAGS = frozenset((
     "--workspace-realizer",                       # structured|model with semantic fail-closed
     "--workspace-semantic",                       # exact held-out semantic certification
     "--workspace-divergence",                     # content-distinct falsifiable fan certificate
+    "--workspace-divergence-realizer",            # mounted mouth semantic preservation/fallback
+    "--workspace-regression",                     # combined system + promotion blocker manifest
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
     "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture
     # H_9808 $0 PRE-REGISTRATION GATES (core/pregates.py) — closed-form referees that ABORT
@@ -16295,6 +16337,19 @@ def main(argv):
         return 0 if report["ok"] else 1
     if len(argv) >= 1 and argv[0] == "--workspace-divergence":
         return workspace_divergence_run(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--workspace-regression":
+        from workspace_regression import format_workspace_regression, run_workspace_regression
+        report = run_workspace_regression()
+        print(format_workspace_regression(report))
+        out_path = evaluate_strval(argv[1:], "--out", "")
+        if out_path:
+            with open(out_path, "w", encoding="utf-8") as handle:
+                json.dump(report, handle, ensure_ascii=False, indent=2, sort_keys=True)
+            print("wrote: " + out_path)
+        return 0 if report["system_pass"] else 1
+    if "--workspace-divergence-realizer" in argv:
+        return workspace_divergence_realizer_run(
+            [a for a in argv if a != "--workspace-divergence-realizer"])
     if "--workspace-reach-only" in argv:
         return workspace_reach_only_run([a for a in argv if a != "--workspace-reach-only"])
     # ── H_9808 $0 PRE-REGISTRATION GATES ────────────────────────────────────────────────────

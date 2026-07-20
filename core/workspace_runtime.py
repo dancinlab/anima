@@ -91,6 +91,32 @@ def grounded_answer(store: TypedFactStore, subject: str, relation: str) -> str:
     return values[0] if len(values) == 1 else "UNGROUNDED"
 
 
+@dataclass(frozen=True)
+class GroundedDecision:
+    text: str
+    selected_claim_id: str | None
+    rejected_claim_ids: tuple[str, ...] = ()
+    abstained: bool = False
+    subject: str = ""
+    relation: str = ""
+
+
+def grounded_query_step(out_text: str, query: str, facts: Iterable[Fact] = ()):
+    """Answer `subject|relation` only from a unique typed store record."""
+    if "|" not in query:
+        raise ValueError("--workspace-query must be subject|relation")
+    subject, relation = (part.strip() for part in query.split("|", 1))
+    if not subject or not relation:
+        raise ValueError("--workspace-query requires non-empty subject and relation")
+    answer = grounded_answer(TypedFactStore(facts), subject, relation)
+    abstained = answer == "UNGROUNDED"
+    decision = GroundedDecision(
+        answer, None if abstained else "%s|%s" % (subject, relation),
+        (), abstained, subject, relation,
+    )
+    return decision.text, decision
+
+
 def identity_control(store: TypedFactStore, self_id: str, expected: str,
                      shuffled_id: str) -> dict[str, bool]:
     """ON/OFF/shuffle identity measurement without persona inference."""

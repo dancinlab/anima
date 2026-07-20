@@ -1554,9 +1554,12 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # Typed cognitive workspace: user-path integration is deliberately opt-in.
     # OFF performs no imports, reads, or text substitutions, preserving the old daemon bytes.
     _workspace_mode = anima_flag_value(_cargv, "--workspace", "ANIMA_WORKSPACE", "off")
-    if _workspace_mode not in ("off", "structured", "divergent"):
-        raise SystemExit("--workspace: only 'off' (default), 'structured', or 'divergent'")
+    if _workspace_mode not in ("off", "structured", "divergent", "grounded"):
+        raise SystemExit("--workspace: only 'off' (default), 'structured', 'divergent', or 'grounded'")
     _workspace_seed = anima_flag_value(_cargv, "--workspace-seed", "ANIMA_WORKSPACE_SEED", "")
+    _workspace_query = anima_flag_value(_cargv, "--workspace-query", "ANIMA_WORKSPACE_QUERY", "")
+    if _workspace_mode == "grounded" and "|" not in _workspace_query:
+        raise SystemExit("--workspace grounded requires --workspace-query subject|relation")
     _workspace_evidence_dir = anima_flag_value(
         _cargv, "--workspace-evidence", "ANIMA_WORKSPACE_EVIDENCE", "")
     _workspace_measurements = anima_flag_value(
@@ -3098,12 +3101,17 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         # The workspace owns only the spoken rendering. All substrate roots above and below
         # continue consuming g_text, so enabling this seam cannot rewrite memory or gate state.
         if _workspace_mode != "off" and did_emit and g_emit:
-            from workspace_runtime import spoken_divergence_step, spoken_workspace_step
-            _workspace_step = (spoken_divergence_step if _workspace_mode == "divergent"
-                               else spoken_workspace_step)
-            out_text, _workspace_decision = _workspace_step(
-                out_text, _workspace_seed, _workspace_evidence,
-                _workspace_require_evidence)
+            from workspace_runtime import (grounded_query_step, spoken_divergence_step,
+                                           spoken_workspace_step)
+            if _workspace_mode == "grounded":
+                out_text, _workspace_decision = grounded_query_step(
+                    out_text, _workspace_query, _workspace_evidence)
+            else:
+                _workspace_step = (spoken_divergence_step if _workspace_mode == "divergent"
+                                   else spoken_workspace_step)
+                out_text, _workspace_decision = _workspace_step(
+                    out_text, _workspace_seed, _workspace_evidence,
+                    _workspace_require_evidence)
             if _workspace_decision is not None:
                 _workspace_decisions += 1
                 _workspace_rejections += len(_workspace_decision.rejected_claim_ids)
