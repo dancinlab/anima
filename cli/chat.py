@@ -1551,6 +1551,26 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     #   so every emit still stands on real tension (p5). ANIMA_EMIT_TEMP=1.0 is the ONE
     #   non-arbitrary temperature (= the posterior itself); any other value OVERWRITES it.
     _cargv = argv if argv is not None else []
+    # Typed cognitive workspace: user-path integration is deliberately opt-in.
+    # OFF performs no imports, reads, or text substitutions, preserving the old daemon bytes.
+    _workspace_mode = anima_flag_value(_cargv, "--workspace", "ANIMA_WORKSPACE", "off")
+    if _workspace_mode not in ("off", "structured"):
+        raise SystemExit("--workspace: only 'off' (default) or 'structured'")
+    _workspace_seed = anima_flag_value(_cargv, "--workspace-seed", "ANIMA_WORKSPACE_SEED", "")
+    _workspace_evidence_dir = anima_flag_value(
+        _cargv, "--workspace-evidence", "ANIMA_WORKSPACE_EVIDENCE", "")
+    _workspace_require_evidence = (
+        anima_has_flag(_cargv, "--workspace-require-evidence")
+        or anima_flag_value(_cargv, "--workspace-require-evidence",
+                            "ANIMA_WORKSPACE_REQUIRE_EVIDENCE", "0") == "1")
+    _workspace_evidence = ()
+    _workspace_decisions = 0
+    _workspace_rejections = 0
+    _workspace_abstentions = 0
+    if _workspace_mode != "off":
+        from workspace_adapters import load_fact_anchors
+        if _workspace_evidence_dir:
+            _workspace_evidence = tuple(load_fact_anchors(_workspace_evidence_dir))
     _emit_temp = float(anima_flag_value(_cargv, "--emit-temp", "ANIMA_EMIT_TEMP", "0"))
     _emit_topk = int(anima_flag_value(_cargv, "--emit-topk", "ANIMA_EMIT_TOPK", "256"))
     _sample_seed = int(anima_flag_value(_cargv, "--sample-seed", "ANIMA_SAMPLE_SEED", "0"))
@@ -3069,6 +3089,19 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         if _steered != "" and did_emit and g_emit:
             out_text = _steered
 
+        # The workspace owns only the spoken rendering. All substrate roots above and below
+        # continue consuming g_text, so enabling this seam cannot rewrite memory or gate state.
+        if _workspace_mode != "off" and did_emit and g_emit:
+            from workspace_mouth import decide_seed
+            _workspace_input = _workspace_seed or out_text
+            _workspace_decision = decide_seed(
+                _workspace_input, _workspace_evidence, _workspace_require_evidence)
+            if _workspace_decision is not None:
+                out_text = _workspace_decision.text
+                _workspace_decisions += 1
+                _workspace_rejections += len(_workspace_decision.rejected_claim_ids)
+                _workspace_abstentions += int(_workspace_decision.abstained)
+
         if did_emit and g_emit:
             emitted_any = True
             emit_text = out_text
@@ -3589,6 +3622,10 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
          + " emit-free replay(s) · " + _ts(imagination_mitosis_ticks) + " mitosis tick(s) · emit-free="
          + anima_yn(imagination_emit_violations == 0)
          + " (core/imagination_replay ir_replay_session total_emits≡0 · p5 NO SPEAK · emit-drive-disjoint)")
+    if _workspace_mode != "off":
+        _pln("  WORKSPACE (spoken-only, structured)          : decisions="
+             + _ts(_workspace_decisions) + " rejected=" + _ts(_workspace_rejections)
+             + " abstained=" + _ts(_workspace_abstentions))
 
     all_live = (emitted_any and grounded_ok and grew and remembered2 and slept
                 and psi_intact and lanes_read)

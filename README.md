@@ -596,6 +596,25 @@ hx install anima     # install.hexa pins the latest install-smoked v* tag (STABL
 anima chat clm303.clm       # same verbs as anima-py; `anima <verb>` ≡ `anima-py <verb>` (byte-identical decode)
 ```
 
+### Typed workspace (opt-in)
+
+The workspace composes compound premises into a measurable hypothesis, checks typed `.kosmos`
+evidence, rejects contradicted candidates, and can abstain when grounding is absent. Existing
+evaluation and chat behavior is unchanged unless a workspace flag is supplied.
+
+```bash
+anima-py evaluate --workspace-semantic
+anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
+
+# User path: spoken-text seam only; default remains off.
+ANIMA_TICKS=1 anima-py chat model.clm --workspace structured \
+  --workspace-seed "if rain increases, then streets become wet"
+
+# Strict G6: absent evidence becomes UNGROUNDED/abstain.
+anima-py chat model.clm --workspace structured --workspace-require-evidence \
+  --workspace-evidence evidence-dir --workspace-seed "premise one. premise two"
+```
+
 > **Which twin is canonical?** `anima-py` (pip) is the SSOT for verdicts and the one that
 > runs everywhere; the hexa `anima` twin is the parity mirror for hexa hosts. Cement a
 > result **only** on an engine-native `core/` number these commands produce — never on a
