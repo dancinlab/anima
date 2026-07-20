@@ -30,6 +30,7 @@ import sys
 import math
 import json
 import random
+import hashlib
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _REPO = os.path.dirname(_HERE)
@@ -201,14 +202,34 @@ class _IsolatedMouth:
 class _MemoMouth:
     """Reuse exact deterministic probe calls shared across ρ axes/cells."""
 
-    def __init__(self, mouth):
+    def __init__(self, mouth, cache_dir="", namespace=""):
         self.mouth = mouth
         self.cache = {}
+        self.cache_dir = cache_dir
+        self.namespace = namespace
+        if cache_dir:
+            os.makedirs(cache_dir, exist_ok=True)
 
     def ideate(self, seed, gen, top_k, temp, seed_rng):
         key = (seed, int(gen), int(top_k), float(temp), int(seed_rng))
         if key not in self.cache:
-            self.cache[key] = self.mouth.ideate(seed, gen, top_k, temp, seed_rng)
+            disk = ""
+            if self.cache_dir:
+                digest = hashlib.sha256(
+                    json.dumps((self.namespace, key), ensure_ascii=False,
+                               separators=(",", ":")).encode("utf-8")
+                ).hexdigest()
+                disk = os.path.join(self.cache_dir, digest + ".json")
+                if os.path.exists(disk):
+                    with open(disk, "r", encoding="utf-8") as handle:
+                        self.cache[key] = json.load(handle)["text"]
+            if key not in self.cache:
+                self.cache[key] = self.mouth.ideate(seed, gen, top_k, temp, seed_rng)
+                if disk:
+                    tmp = disk + ".tmp.%d" % os.getpid()
+                    with open(tmp, "w", encoding="utf-8") as handle:
+                        json.dump({"text": self.cache[key]}, handle, ensure_ascii=True)
+                    os.replace(tmp, disk)
         return self.cache[key]
 
 
@@ -964,7 +985,7 @@ def workspace_reach_only_run(argv):
     return 0 if ok else 1
 
 
-def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False):
+def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_dir=""):
     """ρ-AXON reach panel (`anima-py evaluate <clm> --rho-axon`) — the redesigned reach
     layer (cli/rho_axon.py; G0-G6 → ρ-AXON, design SSOT state/rho_axon_measurement/). Reuses
     the SAME engine decode (_Mouth.ideate) + g6 detectors the G-battery uses (no side-harness),
@@ -974,7 +995,10 @@ def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False):
     import rho_axon
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
-    mouth = _MemoMouth(_IsolatedMouth(ckpt) if isolated else _Mouth(ckpt))
+    stat = os.stat(ckpt)
+    namespace = "%s:%d:%d" % (os.path.abspath(ckpt), stat.st_size, stat.st_mtime_ns)
+    mouth = _MemoMouth(
+        _IsolatedMouth(ckpt) if isolated else _Mouth(ckpt), cache_dir, namespace)
     en_corpus_tokens = _g_load_corpus_tokens(corpus_paths)
     # aggregate dets = the FROZEN en bar (UNTOUCHED — en byte-identity guaranteed structurally)
     dets = {"known": known, "concepts": _rho_fan_concepts(),
@@ -2218,6 +2242,7 @@ def evaluate_run(argv):
             ckpt, corpus, gen,
             kosmos_dir=evaluate_strval(argv[1:], "--kosmos", ""),
             isolated="--rho-axon-isolated" in argv[1:],
+            cache_dir=evaluate_strval(argv[1:], "--rho-cache", ""),
         )
         return 0
 
@@ -9526,7 +9551,7 @@ _KNOWN_FLAGS = frozenset((
     "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--eval-historicity", "--schedule", "--dv", "--jitter", "--af-forward", "--impulse", "--side", "--kmax", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--pos-control", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
-    "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--rho-axon-isolated", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
+    "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--rho-axon-isolated", "--rho-cache", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
     "--fan-branch", "--branches",              # H_9803 branch-latent ideation fan arms
     "--tension-rank-audit", "--ctrl-seed",     # H_9805 write-side tension-field rank audit

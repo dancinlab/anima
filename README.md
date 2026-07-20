@@ -606,6 +606,7 @@ evaluation and chat behavior is unchanged unless a workspace flag is supplied.
 anima-py evaluate --workspace-semantic
 anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon  # exact probe calls are memoized
+anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-cache .rho-cache
 
 # User path: spoken-text seam only; default remains off.
 ANIMA_TICKS=1 anima-py chat model.clm --workspace structured \
@@ -614,6 +615,10 @@ ANIMA_TICKS=1 anima-py chat model.clm --workspace structured \
 # Strict G6: absent evidence becomes UNGROUNDED/abstain.
 anima-py chat model.clm --workspace structured --workspace-require-evidence \
   --workspace-evidence evidence-dir --workspace-seed "premise one. premise two"
+
+# Numeric JSONL rows {claim_id, observed, control, direction} become typed verdict evidence.
+anima-py chat model.clm --workspace structured --workspace-measurements measurements.jsonl \
+  --workspace-seed "premise one. premise two"
 ```
 
 > **Which twin is canonical?** `anima-py` (pip) is the SSOT for verdicts and the one that

@@ -19,7 +19,13 @@ from core.workspace_adapters import (
 )
 from core.engine_cli import immune_embed_key, immune_grow_new
 from core.workspace_smoke import run_smoke
-from core.workspace_mouth import TypedWorkspaceMouth, claim_ids, compose_seed, decide_seed
+from core.workspace_mouth import (
+    TypedWorkspaceMouth, claim_ids, compose_seed, decide_seed, realization_training_rows,
+)
+from core.workspace_runtime import (
+    Measurement, TypedFactStore, collect_measurement_evidence, grounded_answer,
+    identity_control, spoken_workspace_step,
+)
 from core.workspace_semantic import run_semantic_certification
 from core.rho_fan import (
     _rho_fan_dict_load,
@@ -142,8 +148,8 @@ class CognitiveWorkspaceTest(unittest.TestCase):
 
     def test_model_realizer_is_accepted_only_when_semantics_survive(self) -> None:
         class PreservingMouth:
-            def ideate(self, *args):
-                return "copper heat predicts water turbines score"
+            def ideate(self, prompt, *args):
+                return prompt.split("Structured hypothesis: ", 1)[1].split(". Restate", 1)[0]
 
         class DroppingMouth:
             def ideate(self, *args):
@@ -152,8 +158,7 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         seed = "if copper conducts heat, then water drives turbines: "
         good = TypedWorkspaceMouth(PreservingMouth(), realizer="model")
         bad = TypedWorkspaceMouth(DroppingMouth(), realizer="model")
-        self.assertEqual(good.ideate(seed, 40, 40, 0.7, 7),
-                         "copper heat predicts water turbines score")
+        self.assertEqual(good.ideate(seed, 40, 40, 0.7, 7), compose_seed(seed))
         fallback = bad.ideate(seed, 40, 40, 0.7, 7)
         self.assertIn("copper", fallback)
         self.assertEqual(good.decisions[0].realized_by, "model")
@@ -175,7 +180,7 @@ class CognitiveWorkspaceTest(unittest.TestCase):
 
     def test_production_decision_rejects_primary_and_selects_alternative(self) -> None:
         seed = "if copper conducts heat, then water drives turbines: "
-        primary_id, alternative_id = claim_ids(seed)
+        primary_id, alternative_id = claim_ids(seed)[:2]
         off = decide_seed(seed)
         on = decide_seed(seed, [falsifier_fact(primary_id, "meter")])
         shuffled = decide_seed(seed, [falsifier_fact(alternative_id + "-shuffle", "meter")])
@@ -224,6 +229,61 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         report = run_semantic_certification()
         self.assertTrue(report["ok"], report)
         self.assertEqual(len(report["cases"]), 11)
+
+    def test_store_retrieval_persistence_and_controls(self) -> None:
+        fact = Fact("pump", "has_state", "ready", ("meter",))
+        with tempfile.TemporaryDirectory() as directory:
+            store = TypedFactStore()
+            store.persist(directory, "pump_ready", fact)
+            loaded = TypedFactStore.load(directory)
+            self.assertEqual(loaded.query("pump", "has_state")[0].key, fact.key)
+            self.assertIn("pump_ready", loaded.query("pump", "has_state")[0].provenance)
+            self.assertEqual(loaded.query("other", "has_state"), ())
+            self.assertIsNone(loaded.exact("pump", "wrong_relation", "ready"))
+
+    def test_numeric_measurement_collects_content_verdicts(self) -> None:
+        ids = claim_ids("alpha rises. beta responds.")
+        evidence = collect_measurement_evidence([
+            Measurement(ids[0], 0.2, 0.5, "above", "trial"),
+            Measurement(ids[1], 0.2, 0.5, "not_above", "trial"),
+        ])
+        self.assertEqual(evidence[0].object, "contradicted")
+        self.assertEqual(evidence[1].object, "supported")
+
+    def test_three_candidates_can_fall_through_to_uncertain(self) -> None:
+        seed = "alpha rises. beta responds."
+        ids = claim_ids(seed)
+        decision = decide_seed(seed, [falsifier_fact(ids[0]), falsifier_fact(ids[1])])
+        self.assertEqual(decision.selected_claim_id, ids[2])
+        self.assertIn("uncertain", decision.text)
+
+    def test_korean_conditional_and_negation_are_preserved(self) -> None:
+        text = compose_seed("만약 비가 오지 않으면, 그러면 도로는 젖지 않는다")
+        for term in ("비가", "오지", "도로는", "젖지"):
+            self.assertIn(term, text)
+
+    def test_tether_abstains_and_self_controls_collapse(self) -> None:
+        store = TypedFactStore([
+            Fact("library", "opens_at", "09:00", ("sign",)),
+            Fact("anima", "has_identity_anchor", "anchor-a", ("self",)),
+        ])
+        self.assertEqual(grounded_answer(store, "library", "opens_at"), "09:00")
+        self.assertEqual(grounded_answer(store, "library", "closes_at"), "UNGROUNDED")
+        self.assertEqual(identity_control(store, "anima", "anchor-a", "other"),
+                         {"on": True, "off": False, "shuffle": False})
+
+    def test_spoken_seam_changes_only_output_and_training_rows_are_complete(self) -> None:
+        substrate = {"psi": b"unchanged", "memory": [1, 2, 3]}
+        before = repr(substrate)
+        seed = "alpha rises. beta responds."
+        text, decision = spoken_workspace_step("base", seed)
+        self.assertNotEqual(text, "base")
+        self.assertIsNotNone(decision)
+        self.assertEqual(repr(substrate), before)
+        rows = realization_training_rows([seed, "atomic"])
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["target"], decision.text)
+        self.assertEqual(len(rows[0]["candidate_specs"]), 3)
 
 
 if __name__ == "__main__":

@@ -33,3 +33,32 @@ restricted to the spoken-text seam when explicitly enabled.
 Per-cell: English general and SNS pass form/leap but fail fan; Korean general fails form/leap/fan;
 Korean SNS passes its form gate but fails leap/fan. This is a negative multilingual generalization
 result and remains deployment-relevant.
+
+## Runtime follow-on
+
+- `TypedFactStore` now persists and retrieves exact typed facts. Wrong keys, shuffled relations, and
+  absent records collapse to no result; prose is never reinterpreted as a fact.
+- Numeric measurements are converted to support/contradiction evidence by comparing observed and
+  control values. Malformed JSONL fails closed.
+- Selection now has positive, negative, and unresolved candidates. If both directional candidates
+  are contradicted, the unresolved alternative is selected; if all three are contradicted, it abstains.
+- Korean `만약 …(으)면 …` clauses and middle-token negation are retained by the operand parser.
+- Truth tether returns `UNGROUNDED` for absent or ambiguous records. Identity checks expose explicit
+  ON/OFF/shuffled-anchor controls.
+- Model realization now must preserve the exact selected comparator as well as operands and measure.
+  Verified structured prompt/target rows can be exported for later mouth training; no unmeasured
+  claim of 303M weight improvement is made.
+- Chat uses a pure spoken-output function; substrate state is not an argument and remains unchanged.
+- `--rho-cache` persists exact deterministic decode results under a checkpoint size/mtime namespace.
+  Tiny-checkpoint validation measured first run 5 decodes, second run 0, with identical verdict output.
+
+Deployment decision remains **default-off**: canonical mouth store/weave/fan/tether failures and the
+Korean panel failures block default promotion.
+
+## Installed chat E2E
+
+An installed 0.20.63 wheel ran four deterministic 12-tick sessions on the smoke mouth. OFF and ON
+both reached session PASS with `psi_intact=1`. Workspace ON made 6 spoken decisions; numeric
+contradiction evidence rejected the primary on all 6 emissions, while a shuffled claim ID rejected
+0/6. Every arm reported the same ON==OFF Ψ checksum. This validates the production chat seam without
+claiming that the smoke mouth's emitted language quality represents the 303M mouth.

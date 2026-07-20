@@ -20,11 +20,12 @@ except ImportError:
 _STRUCTURAL = {
     "a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "if",
     "in", "is", "it", "of", "on", "or", "still", "the", "then", "to", "when",
+    "만약", "이면", "라면", "그러면", "그리고", "또는", "은", "는", "이", "가", "을", "를",
 }
 
 
 def _words(text: str) -> list[str]:
-    return re.findall(r"[a-z0-9]+", text.lower())
+    return re.findall(r"[^\W_]+", text.lower(), flags=re.UNICODE)
 
 
 def split_compound(seed: str) -> tuple[str, ...] | None:
@@ -32,6 +33,11 @@ def split_compound(seed: str) -> tuple[str, ...] | None:
     match = re.match(r"^if\s+(.+?),\s*then\s+(.+)$", clean, flags=re.IGNORECASE)
     if match:
         return match.group(1).strip(), match.group(2).strip()
+    ko = re.match(
+        r"^만약\s+(.+?)(?:이면|라면|으면|면)\s*[,，]?\s*(?:그러면\s+)?(.+)$", clean
+    )
+    if ko:
+        return ko.group(1).strip(), ko.group(2).strip()
     clauses = [part.strip() for part in re.split(r"\.\s+", clean) if part.strip()]
     if len(clauses) >= 2:
         return tuple(clauses)
@@ -44,6 +50,10 @@ def _operand(clause: str) -> str:
         raise ValueError("compound clause has no content operand")
     # A compact symbolic handle prevents the realizer boilerplate from dominating
     # pairwise diversity. Selection is lexical and domain-independent.
+    # Korean morphology often expresses negation/condition in a middle token (오지 않다).
+    # Dropping it flips the proposition, so preserve the full short clause.
+    if any(any(ord(ch) > 127 for ch in word) for word in content):
+        return " ".join(content)
     return " ".join(content if len(content) <= 2 else (content[0], content[-1]))
 
 
@@ -65,9 +75,9 @@ def _claim_id(seed: str, candidate: int) -> str:
     return "workspace-claim-%08x-%d" % (h, candidate)
 
 
-def claim_ids(seed: str) -> tuple[str, str]:
+def claim_ids(seed: str) -> tuple[str, str, str]:
     """Stable public IDs used by typed evidence anchors."""
-    return _claim_id(seed, 0), _claim_id(seed, 1)
+    return _claim_id(seed, 0), _claim_id(seed, 1), _claim_id(seed, 2)
 
 
 @dataclass(frozen=True)
@@ -81,8 +91,8 @@ class HypothesisSpec:
 @dataclass(frozen=True)
 class WorkspaceDecision:
     text: str
-    candidate_claim_ids: tuple[str, str]
-    candidate_specs: tuple[HypothesisSpec, HypothesisSpec]
+    candidate_claim_ids: tuple[str, ...]
+    candidate_specs: tuple[HypothesisSpec, ...]
     selected_claim_id: str | None
     rejected_claim_ids: tuple[str, ...]
     abstained: bool
@@ -124,8 +134,9 @@ def decide_seed(seed: str, evidence: Iterable[Fact] = (),
             claim_id=claim_id,
             measure=measure,
             control="each_operand_alone",
-            falsified_when=("interaction_not_above_control" if index == 0
-                            else "interaction_above_control"),
+            falsified_when=("interaction_not_above_control" if index == 0 else
+                            "interaction_above_control" if index == 1 else
+                            "measurement_resolves_direction"),
         )
         for index, claim_id in enumerate(ids)
     )
@@ -136,7 +147,13 @@ def decide_seed(seed: str, evidence: Iterable[Fact] = (),
         proposition.object,
         proposition.provenance + ("counter-hypothesis",),
     )
-    workspace.add_facts([alternative])
+    uncertain = Fact(
+        proposition.subject,
+        "interaction_direction_unresolved",
+        proposition.object,
+        proposition.provenance + ("uncertainty-hypothesis",),
+    )
+    workspace.add_facts([alternative, uncertain])
     evidence = tuple(evidence)
     workspace.add_facts(evidence)
     # The two candidates are an exhaustive positive/non-positive split. A measured
@@ -147,7 +164,7 @@ def decide_seed(seed: str, evidence: Iterable[Fact] = (),
     if Fact(ids[1], "has_verdict", "contradicted").key in workspace.facts:
         workspace.add_facts([Fact(ids[0], "has_verdict", "supported", ("binary-complement",))])
     claims = []
-    for index, candidate in enumerate((primary, alternative)):
+    for index, candidate in enumerate((primary, alternative, uncertain)):
         falsifier = Fact(ids[index], "has_verdict", "contradicted")
         grounds = [Fact(ids[index], "has_verdict", "supported")] if require_evidence else []
         claims.append(workspace.propose(candidate, [falsifier], grounds))
@@ -163,11 +180,13 @@ def decide_seed(seed: str, evidence: Iterable[Fact] = (),
             abstained=True,
             required_terms=tuple(_words(proposition.subject + " " + proposition.object)),
         )
-    selected_index = 0 if selected is claims[0] else 1
+    selected_index = claims.index(selected)
     if selected_index == 0:
         text = proposition.subject + " " + comparator + " " + proposition.object + " " + measure
-    else:
+    elif selected_index == 1:
         text = proposition.subject + " decreases " + proposition.object + " " + measure
+    else:
+        text = proposition.subject + " relationship with " + proposition.object + " remains uncertain " + measure
     rejected = tuple(ids[i] for i, claim in enumerate(claims) if claim.status.value == "falsified")
     required = tuple(dict.fromkeys(_words(proposition.subject + " " + proposition.object)))
     return WorkspaceDecision(text, ids, specs, ids[selected_index], rejected, False, required)
@@ -214,4 +233,22 @@ def realization_preserves(decision: WorkspaceDecision, text: str) -> bool:
     required = set(decision.required_terms)
     comparator = {"predicts", "correlates", "causes", "increases", "decreases", "depends"}
     measurable = {"score", "rate", "frequency", "strength", "level", "ratio"}
-    return required.issubset(words) and bool(words & comparator) and bool(words & measurable)
+    expected_relation = set(_words(decision.text)) & comparator
+    return (required.issubset(words) and bool(words & measurable)
+            and bool(expected_relation) and expected_relation.issubset(words))
+
+
+def realization_training_rows(seeds: Iterable[str]) -> tuple[dict[str, object], ...]:
+    """Supervision rows for the mouth; targets are verified structured renderings."""
+    rows = []
+    for seed in seeds:
+        decision = decide_seed(seed)
+        if decision is None or decision.abstained:
+            continue
+        rows.append({
+            "prompt": "Structured hypothesis: " + decision.text,
+            "target": decision.text,
+            "required_terms": list(decision.required_terms),
+            "candidate_specs": [spec.__dict__ for spec in decision.candidate_specs],
+        })
+    return tuple(rows)

@@ -1559,6 +1559,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     _workspace_seed = anima_flag_value(_cargv, "--workspace-seed", "ANIMA_WORKSPACE_SEED", "")
     _workspace_evidence_dir = anima_flag_value(
         _cargv, "--workspace-evidence", "ANIMA_WORKSPACE_EVIDENCE", "")
+    _workspace_measurements = anima_flag_value(
+        _cargv, "--workspace-measurements", "ANIMA_WORKSPACE_MEASUREMENTS", "")
     _workspace_require_evidence = (
         anima_has_flag(_cargv, "--workspace-require-evidence")
         or anima_flag_value(_cargv, "--workspace-require-evidence",
@@ -1571,6 +1573,10 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         from workspace_adapters import load_fact_anchors
         if _workspace_evidence_dir:
             _workspace_evidence = tuple(load_fact_anchors(_workspace_evidence_dir))
+        if _workspace_measurements:
+            from workspace_runtime import load_measurement_evidence
+            _workspace_evidence = tuple(_workspace_evidence) + load_measurement_evidence(
+                _workspace_measurements)
     _emit_temp = float(anima_flag_value(_cargv, "--emit-temp", "ANIMA_EMIT_TEMP", "0"))
     _emit_topk = int(anima_flag_value(_cargv, "--emit-topk", "ANIMA_EMIT_TOPK", "256"))
     _sample_seed = int(anima_flag_value(_cargv, "--sample-seed", "ANIMA_SAMPLE_SEED", "0"))
@@ -3092,12 +3098,11 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         # The workspace owns only the spoken rendering. All substrate roots above and below
         # continue consuming g_text, so enabling this seam cannot rewrite memory or gate state.
         if _workspace_mode != "off" and did_emit and g_emit:
-            from workspace_mouth import decide_seed
-            _workspace_input = _workspace_seed or out_text
-            _workspace_decision = decide_seed(
-                _workspace_input, _workspace_evidence, _workspace_require_evidence)
+            from workspace_runtime import spoken_workspace_step
+            out_text, _workspace_decision = spoken_workspace_step(
+                out_text, _workspace_seed, _workspace_evidence,
+                _workspace_require_evidence)
             if _workspace_decision is not None:
-                out_text = _workspace_decision.text
                 _workspace_decisions += 1
                 _workspace_rejections += len(_workspace_decision.rejected_claim_ids)
                 _workspace_abstentions += int(_workspace_decision.abstained)
