@@ -69,6 +69,20 @@ CLMX = bytes([67, 76, 77, 88])      # "CLMX"
 CLMB = bytes([67, 76, 77, 66])      # "CLMB" — bind-readout (Hadamard) extension
 INT4_SYM_MAX = 7
 
+# Every appended-trailer magic, in chain order CLMB→SLW→CLML→CLMS→MBND→IFAN→TFLD. A lane-carrying
+# model is "a normal .clm + trailer chain", so the main-blob parity gate (clm_roundtrip_is_identity)
+# has to know which trailing bytes are a legitimate lane and which are corruption. Keep in lockstep
+# with the append_*_trailer functions below and their <lane>_MAGIC constants in core/<lane>.py.
+_TRAILER_MAGICS = (
+    CLMB,                            # "CLMB" — bind-readout (Hadamard)
+    bytes([83, 76, 87, 1]),          # "SLW\x01" — gated-write forward slots (core/slw.py)
+    bytes([67, 76, 77, 76]),         # "CLML"   — core/clml.py
+    bytes([67, 76, 77, 83]),         # "CLMS"   — store-bridge lane (core/clms.py)
+    bytes([77, 66, 78, 68]),         # "MBND"   — mouth binder (core/mbnd.py)
+    bytes([73, 70, 65, 78]),         # "IFAN"   — core/ifan.py
+    bytes([84, 70, 76, 68]),         # "TFLD"   — tension field (core/tension_field.py)
+)
+
 
 # ════════════════════════════════════════════════════════════════════════
 # H_9200 E1 — "SLW\x01" gated-write forward-slot trailer (CORE-owned codec in
@@ -1009,4 +1023,59 @@ def clm_roundtrip_is_identity(clm_path: str, n_trunk_layers: int, n_experts: int
     so a post-CPT delta cannot be a dequantization artifact.
     """
     sd = deserialize_v3(clm_path, n_trunk_layers, n_experts)
-    return bytes(_pack_main_blob(sd, int(n_trunk_layers), int(n_experts))) == open(clm_path, "rb").read()
+    repacked = bytes(_pack_main_blob(sd, int(n_trunk_layers), int(n_experts)))
+    raw = open(clm_path, "rb").read()
+    if repacked == raw:
+        return True
+    # A lane-carrying model IS "a normal .clm + trailer chain" (CLMB→SLW→CLML→CLMS→MBND→IFAN→TFLD,
+    # see the trailer sections above), and _pack_main_blob packs only the MAIN blob. Comparing it to
+    # the WHOLE file therefore rejected every store-bridge / mouth-binder checkpoint that ever
+    # trained — not because the inverse was inexact, but because the gate measured the wrong span.
+    # The property a warm-start actually rests on is about the main blob: deserialize_v3 ->
+    # _pack_main_blob must reproduce it byte for byte. Assert exactly that, on the file's PREFIX.
+    # The excess must be a real trailer (known magic) — arbitrary trailing bytes stay a refusal, so
+    # a truncated/corrupt/foreign file cannot sneak through as "just a trailer".
+    # NOTE for callers: deserialize_v3 reads the main blob ONLY, so the returned state_dict carries
+    # NO lane weights. Warm-starting from a lane-carrying ckpt restores the trunk, not the lane.
+    if not (len(raw) > len(repacked) and raw.startswith(repacked)):
+        return False
+    if raw[len(repacked):len(repacked) + 4] not in _TRAILER_MAGICS:
+        return False
+    # Magic alone is NOT enough: a truncated/corrupt lane, or arbitrary bytes glued after a valid
+    # magic, would both sail through and the lane would go silently missing. Walk the chain with the
+    # CORE-owned readers (no second parser to drift) and demand it consume EXACTLY to EOF.
+    try:
+        emb = sd.get("embed.weight")
+        V, d = (int(emb.shape[0]), int(emb.shape[1])) if emb is not None else (0, 0)
+        return _trailer_chain_end(raw, len(repacked), d, V) == len(raw)
+    except Exception:
+        return False        # an unparseable trailer is a refusal, never a pass
+
+
+def _trailer_chain_end(raw: bytes, off: int, d: int, V: int) -> int:
+    """Offset after walking the appended-trailer chain at `off`, in the ONE legal chain order
+    SLW→CLML→CLMS→MBND→IFAN→TFLD. Each reader passthroughs (returns `off` unchanged) when its magic
+    is absent, so a partial chain walks fine; a trailer out of order simply stops the walk and the
+    caller's `== len(raw)` fails. Deliberately syntactic — it proves the bytes are a well-formed
+    chain that ends where the file ends, and says NOTHING about whether the lane weights are sane
+    (that belongs to whoever runs the lane, not to a warm-start parity gate)."""
+    # Two live layouts: vendored `core/` straight on sys.path, and the installed `anima_py.core`
+    # package. Import must resolve in BOTH — a bare `from slw import …` raises ModuleNotFoundError
+    # inside the wheel, and the caller's except-clause would turn that into "checkpoint refused".
+    def _rd(mod, name):
+        try:
+            m = __import__(mod, fromlist=[name])            # vendored core/ on sys.path
+        except ModuleNotFoundError:
+            m = __import__("anima_py.core." + mod, fromlist=[name])   # installed wheel
+        return getattr(m, name)
+    read_slw = _rd("slw", "read_slw")
+    read_clml = _rd("clml", "read_clml")
+    read_clms = _rd("clms", "read_clms")
+    read_mbnd = _rd("mbnd", "read_mbnd")
+    read_ifan = _rd("ifan", "read_ifan")
+    read_tfld = _rd("tension_field", "read_tfld")
+    _, off = read_slw(raw, off)
+    for rd in (read_clml, read_clms, read_mbnd, read_ifan):
+        _, off = rd(raw, off, d, V)
+    _, off = read_tfld(raw, off, d)
+    return off

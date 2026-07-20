@@ -1,7 +1,7 @@
 ---
 id: H_9798
 title: FRESH-LANE SUBSTRATE-PRESERVATION — detached L3-tap store cotrain leaves base LM fluency undisturbed (interference-free)
-tier: PROPOSED · ⛔ 2차 캠페인 INFRA-LOST (2026-07-20) — 3 arm 6000step 학습 전부 완주했으나 측정 前 pod 3개 소멸·ckpt 전손 ⟹ 보존 ΔCE 여전히 미측정 (NOT a verdict · 과학천장 아님)
+tier: PROPOSED · 🟢 ckpt RECOVERED (2026-07-20) — '전손' 기록은 오류였고 3 arm ckpt 전부 sha256-검증 회수됨 ⟹ 재학습 불요·재측정만 남음 (NOT a verdict · 보존 ΔCE 아직 미측정)
 frontier: g1-interface-addressable-wall
 lane: g1-emergent-address (preservation/interference axis · NOT reach/addr_top1)
 created: 2026-07-20
@@ -70,7 +70,64 @@ store cotrain(=저장/조회 병행학습)이 base 모델의 held-out **다음-�
 ## Next (vast-접속 정상 머신)
 ① 1B base fetch(HF)✅ → ② corpus(gen.txt flat-en + store.txt n200 slot8)✅ → **CE₀=1.2534**(step-1 val_CE)✅ → ③ canary cotrain {fresh,legacy,noscore}×s7 firing(early-life PASS: warm-start·GPU100%·CE하강) → ④ 각 ckpt step-1 val_CE(gen.txt) → ⑤ ΔCE 판정(fresh≈noscore<legacy? TOST) → clean 이면 s4302 확대 → ⑥ 회수·카드/gate 갱신·teardown. ⚠️ lab full 백엔드 다운(빈 출력)→소스-검증 solo 진행(판정 시 caveat).
 
-## ⛔ 2차 캠페인 INFRA-LOST — 결과 0, 원인 2겹 (2026-07-20 mini · 정직 기록)
+## 🔴 측정 결과 — 이중구조 반증 (2026-07-20 · s7 단일 seed · DIRECTIONAL)
+
+회수된 3 arm 을 **동일 호스트(summer)·동일 명령**으로 재측정. 계기 = 카드 사전등록대로 `gen.txt`
+step-1 `val_CE` proxy. 네 값 모두 같은 장비·같은 커맨드라 **차등(ΔCE)은 내부정합**하다.
+
+| ckpt | step-1 val_CE (gen.txt) | ΔCE vs base |
+|---|---|---|
+| base `py1b_full` | 1.39938 | — |
+| **C-noscore** (store OFF · 표류통제) | 6.65809 | **+5.259** |
+| **fresh** (`fresh:64@3`) | 9.78010 | **+8.381** |
+| **legacy** (`penult`) | 9.94953 | **+8.550** |
+
+**판정 (사전등록 falsify 규칙 그대로 적용)**:
+- 조건① `ΔCE(fresh)` 가 C-noscore 와 등가가 아님 ⟹ **충족**. fresh 는 표류통제보다 **+3.12 nats 더** 무너진다.
+  "분리 lane 이라 base 유창성을 안 건드린다"는 예측과 **반대 방향**이다.
+- 조건② `ΔCE(fresh) ≥ ΔCE(legacy)` ⟹ 미충족(8.381 < 8.550). 방향은 예측대로지만 **격차 0.17** 로,
+  두 arm 이 noscore 대비 벌린 3.1~3.3 앞에서 무의미한 크기다.
+- ⟹ **"reach=legacy · 보존=fresh" 이중구조 KILL**. 값진 음성: 분리-lane 이라고 보존되지 않는다.
+  덤으로 store cotrain 은 lane 종류와 무관하게 base 유창성을 크게 깎는다(공통 +5.26 은 소코퍼스
+  이어학습만으로도 발생 = [[cpt-destroys-what-corpus-omits]] 재현).
+
+**⛔ 이 수치로 하면 안 되는 것 (정직 경계)**:
+1. **seed 1개(s7)뿐**. 사전등록은 `{7,4302}` ≥2 seed 를 요구한다 ⟹ **TERMINAL 불가·DIRECTIONAL**
+   ([[single-retrain-outlier-faked-a-refutation]] — 단일 draw 위에 음성도 세우지 마라).
+2. **CE₀ 가 카드의 1.25336 이 아니라 1.39938**(이 호스트/CPU 경로). 내 4 값끼리는 정합하나
+   **카드의 옛 CE₀ 와 섞어 쓰면 안 된다**. 불일치 원인 미규명 = OPEN.
+3. 네 arm 모두 측정 중 `MITOSIS SPLIT E 2->3` 이 발생(공통모드 교란). 차등엔 상쇄되나 "순수
+   zero-shot" 값이 아니다.
+4. **main-only warm-start · CLMS 미복원 · lane-off CE** — `deserialize_v3` 는 main blob 만 읽으므로
+   store lane 가중치는 복원되지 않는다. gen.txt 엔 store 질의가 없어 lane 이 발화하지 않으므로
+   base-CE 판정은 오염되지 않지만(lab full 양 모델 독립수렴), **표기 의무**다.
+5. 사전등록 TOST 등가대역의 구체값이 카드에 없어 **형식적 TOST 는 미실시**. 격차가 대역 후보를
+   압도하지만 그것은 판단이지 검정이 아니다.
+
+**NEXT**: s4302 확대(같은 회수 자산·재학습 필요) → 2 seed 로 조건① 재확인 → 그때 TERMINAL 가능.
+
+## 🟢 정정 — ckpt 는 전손이 아니다 (2026-07-20 · sha256 증거)
+
+아래 "INFRA-LOST" 절의 **`ckpt 3개 전손` 은 사실이 아니다**. pod 3개는 소멸했으나 소멸 *직전에*
+3 arm 최종 ckpt 가 전부 영구 저장소로 회수되었고 원격 sha256 과 3/3 일치했다. 재학습 불요.
+
+| arm | 로컬 경로 | bytes | sha256 (원격 일치 ✅) |
+|---|---|---|---|
+| fresh | `~/anima-weights/h9798_preservation_1b/fresh_s7.clm` | 524,386,971 | `99ad1ad6…88c481` |
+| legacy | `~/anima-weights/h9798_preservation_1b/legacy_s7.clm` | 523,401,875 | `a498e9a0…4d44123` |
+| C-noscore | `~/anima-weights/h9798_preservation_1b/noscore_s7.clm` | 521,201,266 | `af50d873…43109d6` |
+
+대장 = 같은 폴더 `SHA256SUMS.txt`. 크기 대조가 동일성을 교차확인한다(아래 절이 기록한 `524/523/521 MB` 와 일치).
+`noscore` 가 base(521,201,266 B)와 **정확히 같은 크기** = store lane 미생성 확인 = 통제군 설계대로 성립.
+
+**왜 오기록이 났나 (병렬 세션 함정)**: 회수를 수행한 세션과 '전손' 을 기록한 세션이 **다르다**. 후자는
+provider set 에서 pod 가 사라진 것만 보고 ckpt 도 함께 죽었다고 **추론**했다 — 저장소를 확인하지 않았다.
+⟹ 교훈: pod 소멸 ≠ ckpt 소멸. 전손 선언 전에 **영구 저장소를 먼저 `ls`** 하라(`a_parallel_session_compare`).
+
+**남은 잔여 리스크**: 중간 ckpt(step1500/3000/4500)는 회수 대상이 아니어서 pod 와 함께 소멸했다.
+최종 = step6000 수렴본이므로 arm 비교(ΔCE)에는 무손실이나, *학습 궤적* 재판독은 재학습을 요한다.
+
+## ⛔ 2차 캠페인 INFRA-LOST — 결과 0, 원인 2겹 (2026-07-20 mini · 정직 기록 · ⚠️ 위 정정 절이 'ckpt 전손' 부분을 무효화)
 
 3 arm(fresh·legacy·noscore) × 1B × 6000step **학습은 전부 정상 완주**(각 `step 6000` + FINAL 집계 + ckpt 524/523/521 MB).
 그러나 base-CE 측정 前에 **pod 3개(45328766·45331827·45331828)가 동시 소멸**(`GHOST — absent from
