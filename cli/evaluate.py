@@ -1505,6 +1505,9 @@ def evaluate_usage():
     print("  plus an explicit default-promotion blocker audit.")
     print("  --workspace-system-rho --store-report store.json --realizer-report verdict.json")
     print("      evidence-bound seven-axis production-system closure; bare-mouth claim stays separate")
+    print("  --workspace-release-verify --candidate-model system.clm --base-model base.clm")
+    print("      --store-report store.json --realizer-report verdict.json [--out verified.json]")
+    print("      recomputes both model SHA-256 values and the candidate's exact base prefix")
     print("")
     print("  H_9200 E1 SLW controls (a .clm carrying an SLW\\x01 trailer applies the")
     print("  gated-write forward-slot by default): --slot-off forces γ=0 (bit-exact base")
@@ -9753,8 +9756,10 @@ _KNOWN_FLAGS = frozenset((
     "--workspace-realizer-panel",                 # frozen cross-domain mounted-mouth panel
     "--workspace-regression",                     # combined system + promotion blocker manifest
     "--workspace-system-rho",                     # evidence-bound typed-system ρ-AXON panel
+    "--workspace-release-verify",                 # strict on-disk promoted-artifact verification
     "--store-report",                             # measured frozen-trunk CLMS verdict
     "--realizer-report",                          # measured held-out mouth-realizer verdict
+    "--candidate-model", "--base-model",          # strict release verifier artifact paths
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
     "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture
     # H_9808 $0 PRE-REGISTRATION GATES (core/pregates.py) — closed-form referees that ABORT
@@ -16459,6 +16464,32 @@ def main(argv):
                 handle.write("\n")
             print("wrote: " + out_path)
         return 0 if report["reach_closed"] else 1
+    if len(argv) >= 1 and argv[0] == "--workspace-release-verify":
+        from workspace_release_verify import (
+            format_workspace_release_verification, verify_workspace_release,
+        )
+        candidate_path = evaluate_strval(argv[1:], "--candidate-model", "")
+        base_path = evaluate_strval(argv[1:], "--base-model", "")
+        store_path = evaluate_strval(argv[1:], "--store-report", "")
+        realizer_path = evaluate_strval(argv[1:], "--realizer-report", "")
+        if not all((candidate_path, base_path, store_path, realizer_path)):
+            print("ERROR: --workspace-release-verify requires candidate/base models and both reports",
+                  file=sys.stderr)
+            return 2
+        with open(store_path, "r", encoding="utf-8") as handle:
+            store_report = json.load(handle)
+        with open(realizer_path, "r", encoding="utf-8") as handle:
+            realizer_report = json.load(handle)
+        report = verify_workspace_release(
+            candidate_path, base_path, store_report, realizer_report)
+        print(format_workspace_release_verification(report))
+        out_path = evaluate_strval(argv[1:], "--out", "")
+        if out_path:
+            with open(out_path, "w", encoding="utf-8") as handle:
+                json.dump(report, handle, ensure_ascii=False, indent=2, sort_keys=True)
+                handle.write("\n")
+            print("wrote: " + out_path)
+        return 0 if report["release_verified"] else 1
     if "--workspace-divergence-realizer" in argv:
         return workspace_divergence_realizer_run(
             [a for a in argv if a != "--workspace-divergence-realizer"])

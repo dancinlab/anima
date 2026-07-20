@@ -624,6 +624,10 @@ anima-py evaluate model.clm --workspace-divergence-realizer --workspace-realizer
   --out workspace-realizer-verdict.json
 anima-py evaluate --workspace-system-rho --store-report store-verdict.json \
   --realizer-report workspace-realizer-verdict.json --out system-rho.json
+anima-py evaluate --workspace-release-verify \
+  --candidate-model anima_workspace_system_v1.clm --base-model e1_slw_303m.final.clm \
+  --store-report store-verdict.json --realizer-report workspace-realizer-verdict.json \
+  --out release-verified.json
 anima-py evaluate --workspace-regression --out workspace-regression.json
 anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon  # exact probe calls are memoized

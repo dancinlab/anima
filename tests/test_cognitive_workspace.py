@@ -1,3 +1,4 @@
+import hashlib
 import tempfile
 import unittest
 
@@ -28,14 +29,35 @@ from core.workspace_runtime import (
     Measurement, TypedFactStore, auto_workspace_mode, collect_measurement_evidence, grounded_answer,
     grounded_query_step, identity_control, spoken_divergence_step, spoken_workspace_step,
 )
-from core.workspace_semantic import run_semantic_certification
+from core.workspace_semantic import realizer_heldout_panel, run_semantic_certification
 from core.workspace_regression import run_workspace_regression
 from core.workspace_system_rho import run_workspace_system_rho, store_report_passes
+from core.workspace_release_verify import verify_workspace_release
 from core.rho_fan import (
     _rho_fan_dict_load,
     _rho_fan_is_falsifiable,
     _rho_fan_known_word_ratio,
 )
+
+
+def _valid_realizer_evidence(ckpt_sha="b" * 64):
+    cases = []
+    for name, seed in realizer_heldout_panel():
+        cases.append({
+            "name": name, "seed": seed,
+            "results": [
+                {"lens": hypothesis.lens, "text": hypothesis.text, "valid": True,
+                 "realized_by": "model_rerank", "candidate_count": 3}
+                for hypothesis in diverge_seed(seed)
+            ],
+        })
+    return {
+        "schema": "anima.workspace-divergence-realizer/v1", "panel": "heldout",
+        "ckpt_sha256": ckpt_sha, "safe": True, "hypotheses": 36,
+        "model_semantic_accept": 36, "fallback": 0,
+        "meaning_locked_candidates": 108, "meaning_locked_candidate_total": 108,
+        "cases": cases,
+    }
 
 
 class CognitiveWorkspaceTest(unittest.TestCase):
@@ -444,13 +466,7 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         )
 
     def test_workspace_regression_accepts_only_complete_heldout_realizer_evidence(self) -> None:
-        results = [{"valid": True, "realized_by": "model_rerank"} for _ in range(36)]
-        evidence = {
-            "schema": "anima.workspace-divergence-realizer/v1", "panel": "heldout",
-            "safe": True, "hypotheses": 36, "model_semantic_accept": 36, "fallback": 0,
-            "meaning_locked_candidates": 108, "meaning_locked_candidate_total": 108,
-            "cases": [{"results": results}],
-        }
+        evidence = _valid_realizer_evidence()
         accepted = run_workspace_regression(evidence)
         self.assertTrue(accepted["promotion_blockers"]["model_realizer_semantic_accept"])
         evidence["fallback"] = 1
@@ -458,15 +474,7 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         self.assertFalse(rejected["promotion_blockers"]["model_realizer_semantic_accept"])
 
     def test_workspace_system_rho_requires_measured_store_and_realizer_controls(self) -> None:
-        realizer_results = [
-            {"valid": True, "realized_by": "model_rerank"} for _ in range(36)]
-        realizer = {
-            "schema": "anima.workspace-divergence-realizer/v1", "panel": "heldout",
-            "ckpt_sha256": "b" * 64,
-            "safe": True, "hypotheses": 36, "model_semantic_accept": 36, "fallback": 0,
-            "meaning_locked_candidates": 108, "meaning_locked_candidate_total": 108,
-            "cases": [{"results": realizer_results}],
-        }
+        realizer = _valid_realizer_evidence()
         store = {
             "schema": "anima.model-candidate.v1", "candidate_sha256": "a" * 64,
             "base_sha256": "b" * 64, "base_plus_slw_byte_parity": True,
@@ -487,6 +495,44 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         store["heldout_store"]["shuffle"] = .40
         realizer["ckpt_sha256"] = "c" * 64
         self.assertFalse(run_workspace_system_rho(store, realizer)["reach_closed"])
+
+    def test_release_verifier_rehashes_files_and_rejects_tampering(self) -> None:
+        base = b"frozen-base-mouth"
+        candidate = base + b"CLMS-trailer"
+        base_sha = hashlib.sha256(base).hexdigest()
+        candidate_sha = hashlib.sha256(candidate).hexdigest()
+        realizer = _valid_realizer_evidence(base_sha)
+        store = {
+            "schema": "anima.model-candidate.v1", "candidate_sha256": candidate_sha,
+            "base_sha256": base_sha, "base_plus_slw_prefix_sha256": base_sha,
+            "base_plus_slw_byte_parity": True,
+            "training": {"freeze_trunk": True, "slw_restored": True,
+                         "final_store_accuracy": 1.0, "final_address_accuracy": 1.0},
+            "heldout_store": {"verdict": "PASS", "live": .96, "oracle": 1.0,
+                              "shuffle": .40, "shuffle_balance_floor": .43,
+                              "shuffle_fixed_points": 0,
+                              "flip_coherence_baseline_correct": .98,
+                              "lambda_zero": .47, "seen_heldout_gap": 0.0},
+        }
+        with tempfile.TemporaryDirectory() as td:
+            base_path, candidate_path = td + "/base.clm", td + "/candidate.clm"
+            with open(base_path, "wb") as handle:
+                handle.write(base)
+            with open(candidate_path, "wb") as handle:
+                handle.write(candidate)
+            verified = verify_workspace_release(candidate_path, base_path, store, realizer)
+            self.assertTrue(verified["release_verified"], verified)
+            with open(candidate_path, "ab") as handle:
+                handle.write(b"tamper")
+            rejected = verify_workspace_release(candidate_path, base_path, store, realizer)
+            self.assertFalse(rejected["release_verified"])
+            self.assertFalse(rejected["checks"]["candidate_sha_matches_report"])
+
+    def test_realizer_report_recomputes_text_semantics(self) -> None:
+        evidence = _valid_realizer_evidence()
+        evidence["cases"][0]["results"][0]["text"] = "valid true but operands missing"
+        report = run_workspace_regression(evidence)
+        self.assertFalse(report["promotion_blockers"]["model_realizer_semantic_accept"])
 
 
 if __name__ == "__main__":

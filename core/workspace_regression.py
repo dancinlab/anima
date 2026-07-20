@@ -4,19 +4,45 @@ from __future__ import annotations
 
 try:
     from .cognitive_workspace import Fact
-    from .workspace_mouth import certify_divergence
+    from .workspace_mouth import certify_divergence, diverge_seed, divergence_preserves
     from .workspace_runtime import auto_workspace_mode, TypedFactStore, grounded_answer, identity_control
+    from .workspace_semantic import realizer_heldout_panel
 except ImportError:
     from cognitive_workspace import Fact
-    from workspace_mouth import certify_divergence
+    from workspace_mouth import certify_divergence, diverge_seed, divergence_preserves
     from workspace_runtime import auto_workspace_mode, TypedFactStore, grounded_answer, identity_control
+    from workspace_semantic import realizer_heldout_panel
 
 
 def realizer_report_passes(report: dict[str, object] | None) -> bool:
     if not isinstance(report, dict):
         return False
     cases = report.get("cases")
-    results = [result for case in cases or () for result in case.get("results", ())]
+    if not isinstance(cases, list):
+        return False
+    expected_panel = dict(realizer_heldout_panel())
+    if len(cases) != len(expected_panel):
+        return False
+    semantic_results = []
+    for case in cases:
+        if not isinstance(case, dict):
+            return False
+        name, seed = case.get("name"), case.get("seed")
+        if expected_panel.get(name) != seed:
+            return False
+        hypotheses = diverge_seed(seed)
+        results = case.get("results")
+        if not isinstance(results, list) or len(results) != len(hypotheses):
+            return False
+        by_lens = {result.get("lens"): result for result in results
+                   if isinstance(result, dict)}
+        if len(by_lens) != len(hypotheses):
+            return False
+        for hypothesis in hypotheses:
+            result = by_lens.get(hypothesis.lens)
+            if result is None or not divergence_preserves(hypothesis, str(result.get("text", ""))):
+                return False
+            semantic_results.append(result)
     return bool(
         report.get("schema") == "anima.workspace-divergence-realizer/v1"
         and report.get("panel") == "heldout"
@@ -26,9 +52,11 @@ def realizer_report_passes(report: dict[str, object] | None) -> bool:
         and int(report.get("fallback", -1)) == 0
         and int(report.get("meaning_locked_candidates", -1))
         == int(report.get("meaning_locked_candidate_total", 0))
-        and len(results) == int(report.get("hypotheses", 0))
+        and len(semantic_results) == int(report.get("hypotheses", 0))
         and all(result.get("valid") is True
-                and result.get("realized_by") == "model_rerank" for result in results)
+                and result.get("realized_by") == "model_rerank"
+                and int(result.get("candidate_count", 0)) >= 2
+                for result in semantic_results)
     )
 
 
