@@ -787,9 +787,17 @@ def answer_position_mask(targets, marker=ANSWER_MARKER):
     """(B, T) bool — True on target positions that lie in the ANSWER span of an arrow line.
 
     The arrow-line corpora (`corpus flat|bindpanel|derivtrace|…`) put the answer after a literal
-    ` => `, so the span is 'everything after the LAST marker occurrence in this row'. Rows with no
-    marker contribute no weighted positions (mask all False) — a corpus without arrow lines is
-    therefore a no-op rather than a silent mis-weighting.
+    ` => ` and end the line at a newline, so the span is 'after the LAST marker, UP TO the next
+    newline'. Rows with no marker contribute no weighted positions (mask all False) — a corpus
+    without arrow lines is therefore a no-op rather than a silent mis-weighting.
+
+    ⚠️ THE NEWLINE BOUND IS THE WHOLE POINT, and its absence was a measured bug. The first version
+    ran the span to the END OF THE WINDOW. Training windows are cut from the CONCATENATED corpus,
+    so 'after the marker' swept the answer AND the entire next line's surface: on a K=2 bindpanel
+    at seq_len 96 x batch 8 (= 768 target positions) the mask marked ans_n = 365 of them for a
+    4-BYTE answer — ~99% of the weighted mass was next-line surface. That is why
+    `--answer-ce-weight 5.0` and even 20.0 moved nothing (H_9811): the term was real, fired every
+    step, and weighted almost everything except the answer.
     """
     B, T = targets.shape
     mk = torch.tensor(list(marker), dtype=targets.dtype, device=targets.device)
@@ -803,7 +811,13 @@ def answer_position_mask(targets, marker=ANSWER_MARKER):
     last = torch.where(hit, idx, torch.full_like(idx, -1)).max(dim=1).values   # -1 ⇒ no marker
     pos = torch.arange(T, device=targets.device).view(1, -1)
     start = (last + n).view(-1, 1)
-    return (pos >= start) & (last.view(-1, 1) >= 0)
+    after = (pos >= start) & (last.view(-1, 1) >= 0)
+    # right bound: the first newline at or after `start` closes the answer span
+    nl = targets == 10
+    nl_after = nl & after
+    big = torch.full_like(pos.expand(B, T), T)
+    first_nl = torch.where(nl_after, pos.expand(B, T), big).min(dim=1).values.view(-1, 1)
+    return after & (pos < first_nl)
 
 
 def answer_ce(logits, targets, V, marker=ANSWER_MARKER):
