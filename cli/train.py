@@ -783,6 +783,76 @@ def _ce(logits, targets, V):
 ANSWER_MARKER = b" => "
 
 
+
+# ── H_9813 SERIALIZE-PARITY (does the .clm preserve what the model learned?) ──────────────
+# Why this exists, measured not assumed: H_9811's pre-registered budget ladder produced two
+# numbers from the SAME command that refute each other. Training-side answer CE fell to
+# ans_ce = 0.0001 (chance ~0.347) — the model predicts the answer bytes essentially perfectly —
+# while scoring the .clm that same run wrote read d_acc 0.5000 with top_ans 1.0000 and a
+# margin_sd of 8.867 (confidently WRONG). Window alignment (--win 78/80/96/128), the 2AFC scorer
+# and the budget were each excluded, which left exactly one span: the trained torch model ↔ the
+# serialized (int4-quantised) .clm. Nothing in the repo measured that span, so the ladder had to
+# close as INSTRUMENT-INVALID rather than as a substrate fact.
+#
+# The trainer is the ONLY place that holds BOTH ends at once, so the check lives here. It is a
+# comparison, not a verdict: it reports where the two paths disagree and never says the model is
+# good or bad.
+def serialize_parity(model, out_path, panel_path, device, max_items=32):
+    """2AFC on the same panel through BOTH paths. Returns a dict; prints a compact report."""
+    import json as _json
+    import math as _math
+    import numpy as _np
+    with open(panel_path, encoding="utf-8") as fh:
+        man = _json.load(fh)
+    items = man["items"][:max_items]
+    answers = man["answers"]
+    L = len(answers[0])
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "core"))
+    import decode as D                                   # core/decode.py — the numpy .clm path
+    W = D.clm_load_weights(out_path)
+    T = max(len(it["surface"].encode()) for it in items) + L * len(items[0]["conjuncts"]) + 2
+
+    def nll_torch(prefix, cont):
+        ids = torch.tensor([list((prefix + cont).encode())], dtype=torch.long, device=device)
+        with torch.no_grad():
+            lg = model(ids[:, :-1], ids[:, 1:])["logits"].float()      # (1, V, T-1)
+        lp = torch.log_softmax(lg, dim=1)[0]
+        k = len(cont.encode())
+        tgt = ids[0, 1:]
+        return float(-sum(lp[int(tgt[i]), i] for i in range(lp.shape[1] - k, lp.shape[1])))
+
+    def nll_clm(prefix, cont):
+        tok = D._seed_to_tok(prefix + cont, T)
+        lg = D._fwd_logits(W, tok, T)
+        k = len(cont.encode())
+        tot = 0.0
+        for i in range(max(0, T - 1 - k), T - 1):
+            row = lg[i]
+            m = float(_np.max(row))
+            tot += m + _math.log(float(_np.sum(_np.exp(row - m))) + 1e-30) - float(row[int(tok[i + 1])])
+        return tot
+
+    agree = t_hit = c_hit = n = 0
+    for it in items:
+        gold = it["gold_pattern"]
+        for k in range(len(it["conjuncts"])):
+            prefix = it["surface"] + gold[:L * k]
+            g = gold[L * k:L * (k + 1)]
+            a = answers[0] if g == answers[1] else answers[1]
+            tg, ta = nll_torch(prefix, g), nll_torch(prefix, a)
+            cg, ca = nll_clm(prefix, g), nll_clm(prefix, a)
+            t_ok, c_ok = tg < ta, cg < ca
+            t_hit += int(t_ok); c_hit += int(c_ok); agree += int(t_ok == c_ok); n += 1
+    r = {"n": n, "torch_d_acc": t_hit / n, "clm_d_acc": c_hit / n, "agreement": agree / n}
+    print("  SERIALIZE-PARITY (H_9813 · n=%d 2AFC slots · same prefixes both paths)" % n)
+    print("    torch model  d_acc %.4f" % r["torch_d_acc"])
+    print("    .clm decode  d_acc %.4f" % r["clm_d_acc"])
+    print("    agreement    %.4f  %s" % (r["agreement"],
+          "✅ 두 경로 일치 — 직렬화는 답 예측을 보존한다" if r["agreement"] >= 0.95 else
+          "⛔ 두 경로 불일치 — .clm 이 학습된 답 예측을 잃는다(이 span 이 범인)"))
+    return r
+
+
 def answer_position_mask(targets, marker=ANSWER_MARKER):
     """(B, T) bool — True on target positions that lie in the ANSWER span of an arrow line.
 
@@ -1639,6 +1709,11 @@ def main():
                     help="H_9805: TFLD inner width r for phi (n_bucket, r) and W_up (r, d).")
     ap.add_argument("--tension-field-lam0", type=float, default=1.0,
                     help="H_9805: TFLD lam init (additive pre-trunk scale).")
+    ap.add_argument("--serialize-parity", default="",
+                    help="H_9813: after writing the .clm, re-score this bind-panel through BOTH "
+                         "the trained torch model and the serialized .clm and report agreement. "
+                         "The trainer is the only place that holds both ends at once. Comparison "
+                         "only — it never says the model is good or bad.")
     ap.add_argument("--tension-concord", choices=["class", "lex", "morph"], default="class",
                     help="H_9812: what the TFLD concord term compares. lex = the CHUNK SIGNATURE "
                          "(the field sees WHICH words agree). morph = the chunk's FINAL BYTE, the "
@@ -2332,6 +2407,11 @@ def main():
                   f"rank={model.tfld.rank} n_bucket={model.tfld.n_bucket})", flush=True)
         print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
         print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
+        if getattr(a, "serialize_parity", ""):
+            try:
+                serialize_parity(model, out_path, a.serialize_parity, device)
+            except Exception as e:                      # a diagnostic must never kill a finished run
+                print(f"  SERIALIZE-PARITY skipped: {type(e).__name__}: {e}", flush=True)
 
     # ── torch .pt writer (RESUMABLE — the .clm is quantized and --init refuses it) ──
     #   --ckpt-every writes BOTH: the .clm (evaluatable) and this .pt (warm-startable).
