@@ -985,6 +985,34 @@ def workspace_reach_only_run(argv):
     return 0 if ok else 1
 
 
+def workspace_divergence_run(argv):
+    """Ckpt-free content-divergence certificate with causal corruption controls."""
+    from workspace_mouth import certify_divergence
+    seed = evaluate_strval(
+        argv, "--seed", "if copper conducts heat, then water drives turbines")
+    report = certify_divergence(seed)
+    known = _rho_fan_dict_load()
+    frozen_fals = sum(
+        1 for hypothesis in report["hypotheses"]
+        if _rho_fan_known_word_ratio(hypothesis.text, known) >= 0.5
+        and _rho_fan_is_falsifiable(hypothesis.text, known)
+    )
+    ok = bool(report["ok"]) and frozen_fals == report["count"]
+    print("=== anima workspace divergence certification ===")
+    print("seed: " + seed)
+    print("live=%d/%d unique_specs=%d pairwise_max=%.3f missing_admit=%d shuffle_admit=%d" %
+          (report["live"], report["count"], report["unique_specs"],
+           report["pairwise_max"], report["missing_admit"], report["shuffle_admit"]))
+    print("frozen_detector_falsifiable=%d/%d" % (frozen_fals, report["count"]))
+    for hypothesis in report["hypotheses"]:
+        print("  lens=%s id=%s measure=%s falsified_when=%s" %
+              (hypothesis.lens, hypothesis.spec.claim_id, hypothesis.spec.measure,
+               hypothesis.spec.falsified_when))
+        print("    " + hypothesis.text)
+    print("WORKSPACE_DIVERGENCE: " + ("PASS" if ok else "FAIL"))
+    return 0 if ok else 1
+
+
 def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_dir="",
                   axes=""):
     """ρ-AXON reach panel (`anima-py evaluate <clm> --rho-axon`) — the redesigned reach
@@ -1360,6 +1388,8 @@ def evaluate_usage():
     print("  fact; operand/falsifiability loss fails closed to the structured realization.")
     print("  --workspace-semantic: ckpt-free exact-triple certification across held-out domains")
     print("  with direction, pairing, missing-middle, irrelevant-fact, and falsification controls.")
+    print("  --workspace-divergence [--seed compound]: six content-distinct hypotheses with")
+    print("  missing-operand and lens-shuffle collapse controls; ckpt-free system certificate.")
     print("")
     print("  H_9200 E1 SLW controls (a .clm carrying an SLW\\x01 trailer applies the")
     print("  gated-write forward-slot by default): --slot-off forces γ=0 (bit-exact base")
@@ -9596,6 +9626,7 @@ _KNOWN_FLAGS = frozenset((
     "--workspace-require-evidence",               # strict UNGROUNDED without measurement
     "--workspace-realizer",                       # structured|model with semantic fail-closed
     "--workspace-semantic",                       # exact held-out semantic certification
+    "--workspace-divergence",                     # content-distinct falsifiable fan certificate
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
     "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture
     # H_9808 $0 PRE-REGISTRATION GATES (core/pregates.py) — closed-form referees that ABORT
@@ -16262,6 +16293,8 @@ def main(argv):
         report = run_semantic_certification()
         print(format_report(report))
         return 0 if report["ok"] else 1
+    if len(argv) >= 1 and argv[0] == "--workspace-divergence":
+        return workspace_divergence_run(argv[1:])
     if "--workspace-reach-only" in argv:
         return workspace_reach_only_run([a for a in argv if a != "--workspace-reach-only"])
     # ── H_9808 $0 PRE-REGISTRATION GATES ────────────────────────────────────────────────────

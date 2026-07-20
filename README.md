@@ -604,6 +604,7 @@ evaluation and chat behavior is unchanged unless a workspace flag is supplied.
 
 ```bash
 anima-py evaluate --workspace-semantic
+anima-py evaluate --workspace-divergence --seed "if copper conducts heat, then water drives turbines"
 anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon  # exact probe calls are memoized
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-cache .rho-cache

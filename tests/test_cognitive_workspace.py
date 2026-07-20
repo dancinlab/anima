@@ -20,7 +20,8 @@ from core.workspace_adapters import (
 from core.engine_cli import immune_embed_key, immune_grow_new
 from core.workspace_smoke import run_smoke
 from core.workspace_mouth import (
-    TypedWorkspaceMouth, claim_ids, compose_seed, decide_seed, realization_training_rows,
+    TypedWorkspaceMouth, certify_divergence, claim_ids, compose_seed, decide_seed,
+    realization_training_rows,
 )
 from core.workspace_runtime import (
     Measurement, TypedFactStore, collect_measurement_evidence, grounded_answer,
@@ -284,6 +285,15 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["target"], decision.text)
         self.assertEqual(len(rows[0]["candidate_specs"]), 3)
+
+    def test_divergence_is_content_distinct_and_controls_collapse(self) -> None:
+        report = certify_divergence("if copper conducts heat, then water drives turbines")
+        self.assertTrue(report["ok"], report)
+        self.assertEqual(report["live"], 6)
+        self.assertEqual(report["unique_specs"], 6)
+        self.assertLessEqual(report["pairwise_max"], 0.5)
+        self.assertEqual(report["missing_admit"], 0)
+        self.assertEqual(report["shuffle_admit"], 0)
 
 
 if __name__ == "__main__":

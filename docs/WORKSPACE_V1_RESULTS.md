@@ -62,6 +62,15 @@ substrate's persisted `self_live.kosmos`, canonical 303M changed `ρ·self` from
 FAIL: loaded consistency `0.015`, anchor-ablated `0.015`, shuffled-anchor `0.015`, Δ `0.0` versus the
 registered `0.30` bar. The supplied identity trace therefore had no measurable effect on the mouth.
 
+### System divergence improvement
+
+`--workspace-divergence` produces six empirical lenses from only the supplied operands: positive,
+negative, threshold, delay, context, and equivalence-null. Each has a distinct measure and
+preregistered falsification condition. Certification measured 6/6 live, 6 unique specifications,
+maximum pairwise Jaccard `0.444`, frozen-detector falsifiable `6/6`, missing-operand admits `0/6`, and
+lens-shuffle admits `0/6`. This is a typed system-level fan result; the bare 303M `ρ·fan` FAIL remains
+unchanged and is not relabeled as a model improvement.
+
 ## Installed chat E2E
 
 An installed 0.20.63 wheel ran four deterministic 12-tick sessions on the smoke mouth. OFF and ON

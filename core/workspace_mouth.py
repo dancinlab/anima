@@ -89,6 +89,14 @@ class HypothesisSpec:
 
 
 @dataclass(frozen=True)
+class DivergentHypothesis:
+    text: str
+    spec: HypothesisSpec
+    required_terms: tuple[str, ...]
+    lens: str
+
+
+@dataclass(frozen=True)
 class WorkspaceDecision:
     text: str
     candidate_claim_ids: tuple[str, ...]
@@ -252,3 +260,67 @@ def realization_training_rows(seeds: Iterable[str]) -> tuple[dict[str, object], 
             "candidate_specs": [spec.__dict__ for spec in decision.candidate_specs],
         })
     return tuple(rows)
+
+
+def diverge_seed(seed: str) -> tuple[DivergentHypothesis, ...]:
+    """Produce six content-distinct, preregistered tests without new entities."""
+    clauses = split_compound(seed)
+    if clauses is None:
+        return ()
+    operands = tuple(_operand(clause) for clause in clauses)
+    left, right = operands[0], operands[-1]
+    required = tuple(dict.fromkeys(_words(left + " " + right)))
+    # Each lens changes the empirical question, not merely wording. Every noun comes
+    # from the input; generic experimental dimensions cannot fabricate a domain fact.
+    rows = (
+        ("positive", "increases", "rate", "interaction_not_above_each_operand_control"),
+        ("negative", "decreases", "level", "interaction_not_below_each_operand_control"),
+        ("threshold", "predicts", "threshold", "effect_present_below_preregistered_threshold"),
+        ("delay", "causes", "duration", "effect_absent_after_preregistered_delay"),
+        ("context", "depends", "ratio", "same_effect_across_preregistered_contexts"),
+        ("null", "correlates", "frequency", "difference_outside_equivalence_interval"),
+    )
+    out = []
+    for index, (lens, comparator, measure, falsified) in enumerate(rows):
+        claim_id = _claim_id(seed + "|fan|" + lens, index)
+        text = "%s %s %s %s %s" % (left, comparator, right, measure, lens)
+        out.append(DivergentHypothesis(
+            text=text,
+            spec=HypothesisSpec(claim_id, measure, "each_operand_alone", falsified),
+            required_terms=required,
+            lens=lens,
+        ))
+    return tuple(out)
+
+
+def divergence_preserves(hypothesis: DivergentHypothesis, text: str) -> bool:
+    words = set(_words(text))
+    return (set(hypothesis.required_terms).issubset(words)
+            and hypothesis.spec.measure in words
+            and hypothesis.lens in words)
+
+
+def certify_divergence(seed: str) -> dict[str, object]:
+    """Live hypotheses pass; missing-operand and lens-shuffle controls collapse."""
+    hypotheses = diverge_seed(seed)
+    live = [divergence_preserves(h, h.text) for h in hypotheses]
+    missing = []
+    shuffled = []
+    for index, hypothesis in enumerate(hypotheses):
+        words = hypothesis.text.split()
+        missing_text = " ".join(w for w in words if w not in hypothesis.required_terms[-1:])
+        missing.append(divergence_preserves(hypothesis, missing_text))
+        other = hypotheses[(index + 1) % len(hypotheses)]
+        shuffled.append(divergence_preserves(hypothesis, other.text))
+    unique_specs = len({(h.lens, h.spec.measure, h.spec.falsified_when) for h in hypotheses})
+    word_sets = [set(_words(h.text)) for h in hypotheses]
+    pairwise_max = max(
+        (len(a & b) / len(a | b) for i, a in enumerate(word_sets) for b in word_sets[:i]),
+        default=0.0,
+    )
+    ok = (len(hypotheses) == 6 and all(live) and not any(missing)
+          and not any(shuffled) and unique_specs == 6 and pairwise_max <= 0.5)
+    return {"ok": ok, "count": len(hypotheses), "live": sum(live),
+            "missing_admit": sum(missing), "shuffle_admit": sum(shuffled),
+            "unique_specs": unique_specs, "pairwise_max": pairwise_max,
+            "hypotheses": hypotheses}
