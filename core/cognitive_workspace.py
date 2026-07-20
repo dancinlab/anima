@@ -46,6 +46,25 @@ class CompositionRule:
         return Fact(left.subject, self.output_relation, right.object, sources)
 
 
+@dataclass(frozen=True)
+class ConjunctiveRule:
+    """Require two distinct incoming relations to the same typed object."""
+
+    name: str
+    left_relation: str
+    right_relation: str
+    output_relation: str
+
+    def apply(self, left: Fact, right: Fact) -> Fact | None:
+        if left.relation != self.left_relation or right.relation != self.right_relation:
+            return None
+        if left.object != right.object or left.subject == right.subject:
+            return None
+        sources = tuple(dict.fromkeys((*left.provenance, *right.provenance, self.name)))
+        subject = left.subject + " & " + right.subject
+        return Fact(subject, self.output_relation, left.object, sources)
+
+
 class ClaimStatus(str, Enum):
     PROPOSED = "proposed"
     SUPPORTED = "supported"
@@ -78,7 +97,12 @@ class CognitiveWorkspace:
 
     def add_facts(self, facts: Iterable[Fact]) -> None:
         for fact in facts:
-            self.facts[fact.key] = fact
+            existing = self.facts.get(fact.key)
+            if existing is None:
+                self.facts[fact.key] = fact
+            else:
+                provenance = tuple(dict.fromkeys((*existing.provenance, *fact.provenance)))
+                self.facts[fact.key] = Fact(*fact.key, provenance)
 
     def compose(self, rule: CompositionRule) -> list[Fact]:
         """Run a two-operand join; unary echo cannot create a derivation."""
@@ -95,6 +119,28 @@ class CognitiveWorkspace:
                 produced.append(result)
         return produced
 
+    def compose_until_stable(self, rules: Sequence[CompositionRule | ConjunctiveRule],
+                             max_rounds: int = 64) -> tuple[Fact, ...]:
+        """Apply a rule set to closure, terminating even for cyclic graphs.
+
+        Facts are keyed triples, so a cycle can derive self-reachability but can
+        never grow the store indefinitely. ``max_rounds`` is a fail-closed guard
+        against a future rule type that violates that finite-closure invariant.
+        """
+        if not rules:
+            raise ValueError("composition closure requires at least one rule")
+        if max_rounds <= 0:
+            raise ValueError("max_rounds must be positive")
+        produced: list[Fact] = []
+        for _ in range(max_rounds):
+            round_facts = []
+            for rule in rules:
+                round_facts.extend(self.compose(rule))
+            if not round_facts:
+                return tuple(produced)
+            produced.extend(round_facts)
+        raise RuntimeError("composition closure did not stabilize")
+
     def propose(self, proposition: Fact, falsifiers: Sequence[Fact],
                 grounds: Sequence[Fact] = ()) -> Claim:
         claim = Claim(proposition, tuple(falsifiers), tuple(grounds))
@@ -107,7 +153,9 @@ class CognitiveWorkspace:
         hits = tuple(self.facts[f.key] for f in claim.falsifiers if f.key in self.facts)
         grounding = tuple(self.facts[f.key] for f in claim.grounds if f.key in self.facts)
         claim.evidence = hits + grounding
-        if hits:
+        if hits and grounding:
+            claim.status = ClaimStatus.UNGROUNDED
+        elif hits:
             claim.status = ClaimStatus.FALSIFIED
         elif claim.grounds and not grounding:
             claim.status = ClaimStatus.UNGROUNDED

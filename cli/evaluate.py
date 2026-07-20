@@ -1509,6 +1509,8 @@ def evaluate_usage():
     print("  fact; operand/falsifiability loss fails closed to the structured realization.")
     print("  --workspace-semantic: ckpt-free exact-triple certification across held-out domains")
     print("  with direction, pairing, missing-middle, irrelevant-fact, and falsification controls.")
+    print("  --workspace-deep: G1 6/8/10-hop + branch/merge/cycle semantic controls and")
+    print("  G6 measured evidence/conflict/source/time/session-persistence certification.")
     print("  --workspace-divergence [--seed compound]: six content-distinct hypotheses with")
     print("  missing-operand and lens-shuffle collapse controls; ckpt-free system certificate.")
     print("  --workspace-divergence-realizer <ckpt> [--seed compound]: measure model semantic")
@@ -9766,6 +9768,7 @@ _KNOWN_FLAGS = frozenset((
     "--workspace-require-evidence",               # strict UNGROUNDED without measurement
     "--workspace-realizer",                       # structured|model with semantic fail-closed
     "--workspace-semantic",                       # exact held-out semantic certification
+    "--workspace-deep",                           # deep G1 graph + measured G6 certification
     "--workspace-divergence",                     # content-distinct falsifiable fan certificate
     "--workspace-divergence-realizer",            # mounted mouth semantic preservation/fallback
     "--workspace-realizer-panel",                 # frozen cross-domain mounted-mouth panel
@@ -16443,6 +16446,11 @@ def main(argv):
         from workspace_semantic import format_report, run_semantic_certification
         report = run_semantic_certification()
         print(format_report(report))
+        return 0 if report["ok"] else 1
+    if len(argv) >= 1 and argv[0] == "--workspace-deep":
+        from workspace_deep import format_deep_report, run_workspace_deep_certification
+        report = run_workspace_deep_certification()
+        print(format_deep_report(report))
         return 0 if report["ok"] else 1
     if len(argv) >= 1 and argv[0] == "--workspace-longrun":
         from workspace_longrun import run_workspace_longrun

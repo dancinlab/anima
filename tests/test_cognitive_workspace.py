@@ -5,6 +5,7 @@ from unittest import mock
 
 from core.cognitive_workspace import (
     ClaimStatus,
+    ConjunctiveRule,
     CognitiveWorkspace,
     CompositionRule,
     Fact,
@@ -29,11 +30,13 @@ from core.workspace_mouth import (
 from core.workspace_runtime import (
     Measurement, TypedFactStore, auto_workspace_mode, collect_measurement_evidence, grounded_answer,
     grounded_query_step, identity_control, parse_persistable_fact, persist_workspace_fact,
+    measurement_falsification_step, persist_measurement_evidence, resolve_evidence_verdicts,
     resolve_workspace_input, spoken_divergence_step,
     spoken_workspace_step,
 )
 from core.workspace_semantic import realizer_adversarial_panel, realizer_heldout_panel, run_semantic_certification
 from core.workspace_longrun import run_workspace_longrun
+from core.workspace_deep import run_workspace_deep_certification
 from core.workspace_regression import run_workspace_regression
 from core.workspace_system_rho import run_workspace_system_rho, store_report_passes
 from core.workspace_release_verify import verify_workspace_release
@@ -101,6 +104,72 @@ class CognitiveWorkspaceTest(unittest.TestCase):
             report = run_workspace_longrun(ticks)
             self.assertTrue(report["ok"], report)
             self.assertEqual(report["ticks"], ticks)
+
+    def test_g1_g6_deep_certification(self) -> None:
+        report = run_workspace_deep_certification()
+        self.assertTrue(report["ok"], report)
+        self.assertEqual([row["case"] for row in report["g1"]["cases"]],
+                         ["chain_6", "chain_8", "chain_10", "branch_merge",
+                          "cycle", "typed_homonym"])
+
+    def test_conjunctive_merge_requires_both_typed_relations(self) -> None:
+        workspace = CognitiveWorkspace()
+        workspace.add_facts([
+            Fact("left", "enables", "hub", ("left-source",)),
+            Fact("right", "permits", "hub", ("right-source",)),
+        ])
+        made = workspace.compose(ConjunctiveRule(
+            "join", "enables", "permits", "jointly_enables"))
+        self.assertEqual(made[0].key, ("left & right", "jointly_enables", "hub"))
+        missing = CognitiveWorkspace()
+        missing.add_facts([Fact("left", "enables", "hub")])
+        self.assertEqual(missing.compose(ConjunctiveRule(
+            "join", "enables", "permits", "jointly_enables")), [])
+
+    def test_support_contradiction_conflict_always_abstains(self) -> None:
+        seed = "if catalyst increases yield, then reactor reduces waste"
+        claim_id = claim_ids(seed)[0]
+        evidence = [support_fact(claim_id, "lab-a"), falsifier_fact(claim_id, "lab-b")]
+        decision = decide_seed(seed, evidence, require_evidence=False)
+        fan_id = diverge_seed(seed)[0].spec.claim_id
+        fan_evidence = [support_fact(fan_id, "lab-a"), falsifier_fact(fan_id, "lab-b")]
+        divergent = select_divergence(seed, fan_evidence, require_evidence=False)
+        self.assertTrue(decision.abstained)
+        self.assertEqual(decision.rejected_claim_ids, ())
+        self.assertTrue(divergent.abstained)
+        self.assertEqual(divergent.selection_reason, "conflicting_evidence")
+
+    def test_measurement_loop_persists_source_time_and_conflict(self) -> None:
+        seed = "if catalyst increases yield, then reactor reduces waste"
+        claim_id = claim_ids(seed)[0]
+        measurements = [
+            Measurement(claim_id, .8, .5, "above", "lab-a", "2026-07-21T01:00:00Z"),
+            Measurement(claim_id, .2, .5, "above", "lab-b", "2026-07-21T02:00:00Z"),
+        ]
+        result = measurement_falsification_step(seed, measurements,
+                                                require_evidence=False)
+        self.assertEqual(result.verdicts[claim_id], "UNGROUNDED")
+        self.assertTrue(result.decision.abstained)
+        with tempfile.TemporaryDirectory() as directory:
+            persist_measurement_evidence(directory, measurements)
+            reloaded = load_fact_anchors(directory)
+        self.assertEqual(resolve_evidence_verdicts(reloaded)[claim_id], "UNGROUNDED")
+        provenance = {item for fact in reloaded for item in fact.provenance}
+        self.assertIn("lab-a", provenance)
+        self.assertIn("observed_at=2026-07-21T02:00:00Z", provenance)
+
+    def test_duplicate_typed_fact_merges_provenance_instead_of_losing_source(self) -> None:
+        facts = [
+            Fact("claim", "has_verdict", "supported", ("lab-a", "observed_at=t1")),
+            Fact("claim", "has_verdict", "supported", ("lab-b", "observed_at=t2")),
+        ]
+        store = TypedFactStore(facts)
+        merged = store.exact("claim", "has_verdict", "supported")
+        self.assertEqual(merged.provenance,
+                         ("lab-a", "observed_at=t1", "lab-b", "observed_at=t2"))
+        workspace = CognitiveWorkspace()
+        workspace.add_facts(facts)
+        self.assertEqual(workspace.facts[merged.key].provenance, merged.provenance)
 
     def test_greedy_decode_cache_requires_exact_model_input(self) -> None:
         from core import generator

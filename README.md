@@ -619,6 +619,7 @@ conv decoder to regenerate distant semantic slots. Explicit modes remain availab
 
 ```bash
 anima-py evaluate --workspace-semantic
+anima-py evaluate --workspace-deep
 anima-py evaluate --workspace-divergence --seed "if copper conducts heat, then water drives turbines"
 anima-py evaluate model.clm --workspace-divergence-realizer --workspace-realizer-panel \
   --out workspace-realizer-verdict.json
@@ -632,6 +633,13 @@ anima-py evaluate --workspace-regression --out workspace-regression.json
 anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
 anima-py evaluate model.clm --workspace-divergence-realizer --workspace-adversarial-panel
 anima-py evaluate --workspace-longrun --ticks 500
+
+`--workspace-deep` extends the frozen panel without changing its release bars. G1 certifies exact
+6/8/10-hop closure, conjunctive branch/merge, finite cycles, relation-pair shuffles, negation and
+quantifier controls, typed homonyms, irrelevant insertion, and wrong-rule collapse. G6 runs numeric
+measurement → source/time-bearing typed evidence → rejection → distinguishable alternative selection,
+with OFF and claim-ID shuffle controls. Conflicting support/contradiction is always `UNGROUNDED` and
+remains so after typed `.kosmos` persistence and process restart.
 
 Deterministic greedy workspace sessions cache only exact repeated anchored model inputs. Sampled
 mouths and workspace-OFF runs never use this cache. On the HF workspace-system-v1 303M CPU run,

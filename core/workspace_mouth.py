@@ -182,7 +182,23 @@ def decide_seed(seed: str, evidence: Iterable[Fact] = (),
         proposition.provenance + ("uncertainty-hypothesis",),
     )
     workspace.add_facts([alternative, uncertain])
-    evidence = tuple(evidence)
+    try:
+        from .workspace_runtime import effective_evidence, resolve_evidence_verdicts
+    except ImportError:
+        from workspace_runtime import effective_evidence, resolve_evidence_verdicts
+    raw_evidence = tuple(evidence)
+    verdicts = resolve_evidence_verdicts(raw_evidence)
+    if any(verdicts.get(claim_id) == "UNGROUNDED" for claim_id in ids):
+        return WorkspaceDecision(
+            text="insufficient grounded evidence",
+            candidate_claim_ids=ids,
+            candidate_specs=specs,
+            selected_claim_id=None,
+            rejected_claim_ids=(),
+            abstained=True,
+            required_terms=tuple(_words(proposition.subject + " " + proposition.object)),
+        )
+    evidence = effective_evidence(raw_evidence)
     workspace.add_facts(evidence)
     # The two candidates are an exhaustive positive/non-positive split. A measured
     # contradiction of one side grounds the other side unless it is independently
@@ -425,7 +441,20 @@ def select_divergence(seed: str, evidence: Iterable[Fact] = (),
     hypotheses = diverge_seed(seed)
     if not hypotheses:
         return None
-    evidence_keys = {fact.key for fact in evidence}
+    try:
+        from .workspace_runtime import effective_evidence, resolve_evidence_verdicts
+    except ImportError:
+        from workspace_runtime import effective_evidence, resolve_evidence_verdicts
+    raw_evidence = tuple(evidence)
+    verdicts = resolve_evidence_verdicts(raw_evidence)
+    conflicted = tuple(h.spec.claim_id for h in hypotheses
+                       if verdicts.get(h.spec.claim_id) == "UNGROUNDED")
+    if conflicted:
+        return DivergenceDecision(
+            "insufficient grounded divergent evidence", hypotheses, None, (), (), True,
+            "conflicting_evidence",
+        )
+    evidence_keys = {fact.key for fact in effective_evidence(raw_evidence)}
     rejected = tuple(
         h.spec.claim_id for h in hypotheses
         if (h.spec.claim_id, "has_verdict", "contradicted") in evidence_keys

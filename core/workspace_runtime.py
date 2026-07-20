@@ -20,14 +20,19 @@ class TypedFactStore:
     """Exact typed retrieval; no prose reinterpretation or benchmark pair table."""
 
     def __init__(self, facts: Iterable[Fact] = ()):
-        self._facts = {fact.key: fact for fact in facts}
+        self._facts: dict[tuple[str, str, str], Fact] = {}
+        for fact in facts:
+            self.put(fact)
 
     @classmethod
     def load(cls, directory: str) -> "TypedFactStore":
         return cls(load_fact_anchors(directory))
 
     def put(self, fact: Fact) -> None:
-        self._facts[fact.key] = fact
+        existing = self._facts.get(fact.key)
+        provenance = (fact.provenance if existing is None else
+                      tuple(dict.fromkeys((*existing.provenance, *fact.provenance))))
+        self._facts[fact.key] = Fact(*fact.key, provenance)
 
     def persist(self, directory: str, name: str, fact: Fact) -> str:
         self.put(fact)
@@ -79,6 +84,7 @@ class Measurement:
     control: float
     direction: str = "above"
     source: str = "measurement"
+    observed_at: str = ""
 
     def evidence(self) -> Fact:
         if self.direction not in ("above", "not_above"):
@@ -86,12 +92,82 @@ class Measurement:
         above = self.observed > self.control
         supported = above if self.direction == "above" else not above
         verdict = "supported" if supported else "contradicted"
-        return Fact(self.claim_id, "has_verdict", verdict, (self.source,))
+        provenance = (self.source,) + (("observed_at=" + self.observed_at,)
+                                       if self.observed_at else ())
+        return Fact(self.claim_id, "has_verdict", verdict, provenance)
 
 
 def collect_measurement_evidence(measurements: Iterable[Measurement]) -> tuple[Fact, ...]:
     """Convert actual numeric comparisons to the sole accepted verdict spelling."""
     return tuple(measurement.evidence() for measurement in measurements)
+
+
+def resolve_evidence_verdicts(evidence: Iterable[Fact]) -> dict[str, str]:
+    """Resolve typed claim verdicts; any support/contradiction conflict abstains."""
+    grouped: dict[str, set[str]] = {}
+    for fact in evidence:
+        if fact.relation != "has_verdict" or fact.object not in ("supported", "contradicted"):
+            continue
+        grouped.setdefault(fact.subject, set()).add(fact.object)
+    return {
+        claim_id: (next(iter(verdicts)) if len(verdicts) == 1 else "UNGROUNDED")
+        for claim_id, verdicts in grouped.items()
+    }
+
+
+def effective_evidence(evidence: Iterable[Fact]) -> tuple[Fact, ...]:
+    """Return only non-conflicting typed verdicts while retaining provenance."""
+    facts = tuple(evidence)
+    verdicts = resolve_evidence_verdicts(facts)
+    out = []
+    for claim_id, verdict in verdicts.items():
+        if verdict == "UNGROUNDED":
+            continue
+        matching = [fact for fact in facts if fact.subject == claim_id
+                    and fact.relation == "has_verdict" and fact.object == verdict]
+        provenance = tuple(dict.fromkeys(
+            source for fact in matching for source in fact.provenance
+        ))
+        out.append(Fact(claim_id, "has_verdict", verdict, provenance))
+    return tuple(out)
+
+
+def persist_measurement_evidence(directory: str,
+                                 measurements: Iterable[Measurement]) -> tuple[str, ...]:
+    """Persist source/time-bearing measurement verdicts for a later process."""
+    paths = []
+    for fact in collect_measurement_evidence(measurements):
+        raw = "\0".join((*fact.key, *fact.provenance)).encode("utf-8")
+        name = "workspace-evidence-" + hashlib.sha256(raw).hexdigest()[:20]
+        paths.append(write_fact_anchor(directory, name, fact))
+    return tuple(paths)
+
+
+@dataclass(frozen=True)
+class MeasurementDecision:
+    decision: object
+    evidence: tuple[Fact, ...]
+    verdicts: dict[str, str]
+
+
+def measurement_falsification_step(seed: str, measurements: Iterable[Measurement],
+                                   *, divergent: bool = False,
+                                   require_evidence: bool = True) -> MeasurementDecision:
+    """Complete measured G6 loop: compare, type evidence, reject, select alternative."""
+    evidence = collect_measurement_evidence(measurements)
+    if divergent:
+        try:
+            from .workspace_mouth import select_divergence
+        except ImportError:
+            from workspace_mouth import select_divergence
+        decision = select_divergence(seed, evidence, require_evidence)
+    else:
+        try:
+            from .workspace_mouth import decide_seed
+        except ImportError:
+            from workspace_mouth import decide_seed
+        decision = decide_seed(seed, evidence, require_evidence)
+    return MeasurementDecision(decision, evidence, resolve_evidence_verdicts(evidence))
 
 
 def load_measurement_evidence(path: str) -> tuple[Fact, ...]:
@@ -109,6 +185,7 @@ def load_measurement_evidence(path: str) -> tuple[Fact, ...]:
                     control=float(row["control"]),
                     direction=str(row.get("direction", "above")),
                     source=str(row.get("source", "%s:%d" % (path, line_no))),
+                    observed_at=str(row.get("observed_at", "")),
                 ))
             except (KeyError, TypeError, ValueError) as exc:
                 raise ValueError("invalid measurement row %d in %s" % (line_no, path)) from exc
