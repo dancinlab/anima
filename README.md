@@ -602,6 +602,11 @@ trailer, pass matching `--slw`, `--slw-n-slot`, and `--slw-k` arguments: the tra
 the learned memory lane and refuses to silently discard it. `--skip-inline-rho` skips only the
 slow directional torch probe at shutdown; promotion still requires the engine-native evaluation.
 
+Build a source-derived workspace curriculum without copying the frozen evaluation panel:
+`anima-py corpus workspace-struct --corpus SOURCE --out workspace.txt`. The command splits
+source lines before expansion, writes `workspace.txt.heldout.txt`, and records source/record
+SHA-256 sets plus zero-overlap verdicts in `workspace.txt.workspace.json`.
+
 ### Typed workspace (opt-in)
 
 The workspace composes compound premises into a measurable hypothesis, checks typed `.kosmos`

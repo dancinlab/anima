@@ -80,6 +80,8 @@ def anima_usage():
     print("  anima-py corpus <derivtrace|flat> --out F [--held-out I,J] [--seed S] [--concepts FILE]")
     print("  anima-py corpus <ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap> --atoms gt_atoms.json --out F [--reps N] [--replay N]")
     print("                                                  procedural training-corpus builder (ρ·weave data-format lever)")
+    print("  anima-py corpus workspace-struct --corpus SOURCE --out TRAIN [--held-out-frac .2]")
+    print("                                                  source-derived store/tether/falsification curriculum + sealed held-out manifest")
     print("  anima-py train <args>                           ([train] extra) LEARNING → .pt + auto .clm (+DESCENT)")
     print("  anima-py serialize <ckpt.pt> <out.clm>          ([train] extra) re-export a torch .pt → .clm v0.3")
     print("  anima-py serialize-bind <base.bin> <inj.pt> <out.bin>  ([train] extra) splice BindAttn → BGB .bin")
