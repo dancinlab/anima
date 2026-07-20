@@ -155,7 +155,8 @@ class CLMConfig:
     tfld_arm: str = ""             # "" (off) | "duel" | "rank1"
     tfld_rank: int = 32            # phi/W_up inner width (--tension-field-rank)
     tfld_lam0: float = 1.0         # TFLD lam init (additive pre-trunk scale)
-    tfld_concord: str = "class"      # H_9812 concord: "lex" (word-sensitive) | "class" (layout-only control)
+    tfld_concord: str = "class"
+    trunk_norm: str = "global"     # H_9814: "global" (legacy GN, non-causal bus) | "position" (per-position, causal-safe)      # H_9812 concord: "lex" (word-sensitive) | "class" (layout-only control)
 
     def router_config(self) -> "RouterConfig":
         v = self.variant.upper()
@@ -208,6 +209,24 @@ class CausalDilatedConv1d(nn.Module):
         return self.conv(x)
 
 
+
+# ── H_9814 PER-POSITION NORM (removes the non-causal GN bus for a contrast arm) ────────────
+# GroupNorm(1, C) on (B, C, T) reduces over (C, T): sequence-global statistics, measurably
+# NON-CAUSAL — H_9813 showed that masking input bytes AFTER position t moves the prediction AT t
+# by 0.5964 nats (the answer announces itself through the normalizer; the GN bus, H_9560
+# lineage). This subclass normalizes each position independently (same affine params, same
+# state_dict shape ⇒ serialization layout unchanged), so the channel is closed BY CONSTRUCTION.
+# ⚠️ The .clm decode path (core/decode.py nn_groupnorm_fwd) implements the GLOBAL semantics —
+# a position-norm ckpt decoded engine-native is semantically WRONG until a decode lane exists.
+# Until then, position-norm results are torch-side DIRECTIONAL screens only, never verdicts.
+class PerPositionGroupNorm(nn.GroupNorm):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        B, C, T = x.shape
+        h = x.transpose(1, 2).reshape(B * T, C, 1)
+        h = super().forward(h)
+        return h.reshape(B, T, C).transpose(1, 2)
+
+
 class TrunkLayer(nn.Module):
     """Residual gated dilated-conv trunk layer (no attention)."""
 
@@ -225,7 +244,8 @@ class TrunkLayer(nn.Module):
         # channels, which is a HIDDEN cross-faction channel: faction A's activity would move
         # faction B's normalizer even though the conv is grouped. GN(K, d) closes that leak so
         # "faction" means what it says. G=1 when OFF ⟹ byte-identical.
-        self.norm = nn.GroupNorm(g, cfg.d_model)
+        _NormCls = PerPositionGroupNorm if getattr(cfg, "trunk_norm", "global") == "position" else nn.GroupNorm
+        self.norm = _NormCls(g, cfg.d_model)
         self.act = nn.GELU()
         self.drop = nn.Dropout(cfg.dropout)
 
@@ -398,7 +418,8 @@ class CLMConvMoE(nn.Module):
         self.faction_bridge = (
             FactionBridge(cfg.d_model, cfg.n_factions, cfg.faction_bridge_lam0)
             if cfg.n_factions > 0 else None)
-        self.norm_out = nn.GroupNorm(_g, cfg.d_model)
+        _NormCls = PerPositionGroupNorm if getattr(cfg, "trunk_norm", "global") == "position" else nn.GroupNorm
+        self.norm_out = _NormCls(_g, cfg.d_model)
         self.readout = nn.Conv1d(cfg.d_model, cfg.vocab_size, kernel_size=1)
         # H_9200 E1 — optional gated-write forward-slot. None => byte-identical
         # additive-readout CLMConvMoE (existing golden path untouched). The SLW

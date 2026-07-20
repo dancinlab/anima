@@ -1747,6 +1747,12 @@ def main():
                     help="H_9805: TFLD inner width r for phi (n_bucket, r) and W_up (r, d).")
     ap.add_argument("--tension-field-lam0", type=float, default=1.0,
                     help="H_9805: TFLD lam init (additive pre-trunk scale).")
+    ap.add_argument("--trunk-norm", choices=["global", "position"], default="global",
+                    help="H_9814: trunk normalization statistics. global = legacy GroupNorm over "
+                         "(C,T) — measurably NON-CAUSAL (H_9813: masking input bytes AFTER t moved "
+                         "the prediction AT t by 0.5964 nats). position = per-position (causal-safe "
+                         "contrast arm). ⚠️ .clm decode implements GLOBAL semantics, so a position "
+                         "ckpt is a torch-side DIRECTIONAL screen only until a decode lane exists.")
     ap.add_argument("--serialize-parity", default="",
                     help="H_9813: after writing the .clm, re-score this bind-panel through BOTH "
                          "the trained torch model and the serialized .clm and report agreement. "
@@ -2125,6 +2131,7 @@ def main():
                         tfld_arm=("" if a.tension_field == "off" else a.tension_field),
                         tfld_rank=a.tension_field_rank, tfld_lam0=a.tension_field_lam0,
                         tfld_concord=a.tension_concord,
+                        trunk_norm=a.trunk_norm,
                         n_factions=a.n_factions, faction_bridge_lam0=a.faction_bridge_lam0)
         model = _to_device_or_die(CLMConvMoE(cfg), device)   # production additive readout (all arms)
         if tlora_on:
@@ -2445,6 +2452,10 @@ def main():
                   f"rank={model.tfld.rank} n_bucket={model.tfld.n_bucket})", flush=True)
         print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
         print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
+        if getattr(a, "trunk_norm", "global") == "position":
+            print("  ⚠️ trunk_norm=position — the .clm decode path implements GLOBAL GN semantics; "
+                  "any engine-native score of this ckpt is semantically WRONG until a decode lane "
+                  "exists. torch-side numbers are DIRECTIONAL screens only.", flush=True)
         if getattr(a, "serialize_parity", ""):
             try:
                 serialize_parity(model, out_path, a.serialize_parity, device)
