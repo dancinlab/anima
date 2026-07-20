@@ -13,6 +13,7 @@ from core.workspace_adapters import (
     load_fact_anchors,
     selected_grounded_texts,
     falsifier_fact,
+    support_fact,
     write_fact_anchor,
     write_falsifier_anchor,
 )
@@ -139,6 +140,26 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         self.assertIn("turbines", text)
         self.assertTrue(any(word in text for word in ("score", "rate", "frequency", "strength", "level", "ratio")))
 
+    def test_model_realizer_is_accepted_only_when_semantics_survive(self) -> None:
+        class PreservingMouth:
+            def ideate(self, *args):
+                return "copper heat predicts water turbines score"
+
+        class DroppingMouth:
+            def ideate(self, *args):
+                return "This is an interesting possibility."
+
+        seed = "if copper conducts heat, then water drives turbines: "
+        good = TypedWorkspaceMouth(PreservingMouth(), realizer="model")
+        bad = TypedWorkspaceMouth(DroppingMouth(), realizer="model")
+        self.assertEqual(good.ideate(seed, 40, 40, 0.7, 7),
+                         "copper heat predicts water turbines score")
+        fallback = bad.ideate(seed, 40, 40, 0.7, 7)
+        self.assertIn("copper", fallback)
+        self.assertEqual(good.decisions[0].realized_by, "model")
+        self.assertEqual(bad.decisions[0].realized_by, "workspace_fallback")
+        self.assertFalse(bad.decisions[0].realizer_valid)
+
     def test_workspace_composition_is_coherent_and_explicitly_falsifiable(self) -> None:
         text = compose_seed(
             "if memory composes into new meaning, then silence still carries information: "
@@ -174,6 +195,21 @@ class CognitiveWorkspaceTest(unittest.TestCase):
         self.assertEqual(decision.rejected_claim_ids, ids)
         self.assertEqual(decision.text, "insufficient grounded evidence")
 
+    def test_strict_grounding_holds_without_evidence_and_exposes_g6_spec(self) -> None:
+        seed = "if copper conducts heat, then water drives turbines: "
+        ids = claim_ids(seed)
+        held = decide_seed(seed, require_evidence=True)
+        supported = decide_seed(seed, [support_fact(ids[0], "meter")], require_evidence=True)
+        contradicted = decide_seed(seed, [falsifier_fact(ids[0], "meter")], require_evidence=True)
+
+        self.assertTrue(held.abstained)
+        self.assertEqual(supported.selected_claim_id, ids[0])
+        self.assertEqual(contradicted.selected_claim_id, ids[1])
+        spec = supported.candidate_specs[0]
+        self.assertTrue(spec.measure)
+        self.assertEqual(spec.control, "each_operand_alone")
+        self.assertEqual(spec.falsified_when, "interaction_not_above_control")
+
     def test_kosmos_falsifier_changes_live_mouth_selection(self) -> None:
         seed = "if copper conducts heat, then water drives turbines: "
         with tempfile.TemporaryDirectory() as directory:
@@ -187,7 +223,7 @@ class CognitiveWorkspaceTest(unittest.TestCase):
     def test_heldout_semantic_certification(self) -> None:
         report = run_semantic_certification()
         self.assertTrue(report["ok"], report)
-        self.assertEqual(len(report["cases"]), 5)
+        self.assertEqual(len(report["cases"]), 11)
 
 
 if __name__ == "__main__":

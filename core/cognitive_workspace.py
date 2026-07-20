@@ -58,6 +58,7 @@ class ClaimStatus(str, Enum):
 class Claim:
     proposition: Fact
     falsifiers: tuple[Fact, ...]
+    grounds: tuple[Fact, ...] = ()
     status: ClaimStatus = ClaimStatus.PROPOSED
     evidence: tuple[Fact, ...] = ()
 
@@ -94,8 +95,9 @@ class CognitiveWorkspace:
                 produced.append(result)
         return produced
 
-    def propose(self, proposition: Fact, falsifiers: Sequence[Fact]) -> Claim:
-        claim = Claim(proposition, tuple(falsifiers))
+    def propose(self, proposition: Fact, falsifiers: Sequence[Fact],
+                grounds: Sequence[Fact] = ()) -> Claim:
+        claim = Claim(proposition, tuple(falsifiers), tuple(grounds))
         self.claims.append(claim)
         return claim
 
@@ -103,9 +105,12 @@ class CognitiveWorkspace:
         """Ground a claim and test its preregistered counterexamples."""
 
         hits = tuple(self.facts[f.key] for f in claim.falsifiers if f.key in self.facts)
-        claim.evidence = hits
+        grounding = tuple(self.facts[f.key] for f in claim.grounds if f.key in self.facts)
+        claim.evidence = hits + grounding
         if hits:
             claim.status = ClaimStatus.FALSIFIED
+        elif claim.grounds and not grounding:
+            claim.status = ClaimStatus.UNGROUNDED
         elif claim.proposition.key in self.facts:
             claim.status = ClaimStatus.SUPPORTED
         else:

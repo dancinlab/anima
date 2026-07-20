@@ -8,7 +8,7 @@ explicit measurable hypothesis. No benchmark concept table is embedded here.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Iterable
 
 try:
@@ -71,15 +71,28 @@ def claim_ids(seed: str) -> tuple[str, str]:
 
 
 @dataclass(frozen=True)
+class HypothesisSpec:
+    claim_id: str
+    measure: str
+    control: str
+    falsified_when: str
+
+
+@dataclass(frozen=True)
 class WorkspaceDecision:
     text: str
     candidate_claim_ids: tuple[str, str]
+    candidate_specs: tuple[HypothesisSpec, HypothesisSpec]
     selected_claim_id: str | None
     rejected_claim_ids: tuple[str, ...]
     abstained: bool
+    required_terms: tuple[str, ...]
+    realized_by: str = "workspace"
+    realizer_valid: bool = True
 
 
-def decide_seed(seed: str, evidence: Iterable[Fact] = ()) -> WorkspaceDecision | None:
+def decide_seed(seed: str, evidence: Iterable[Fact] = (),
+                require_evidence: bool = False) -> WorkspaceDecision | None:
     clauses = split_compound(seed)
     if clauses is None:
         return None
@@ -105,6 +118,17 @@ def decide_seed(seed: str, evidence: Iterable[Fact] = ()) -> WorkspaceDecision |
     if proposition is None:
         raise RuntimeError("compound requires at least two operands")
     ids = claim_ids(seed)
+    comparator, measure = _realizer_axes(proposition.subject, proposition.object)
+    specs = tuple(
+        HypothesisSpec(
+            claim_id=claim_id,
+            measure=measure,
+            control="each_operand_alone",
+            falsified_when=("interaction_not_above_control" if index == 0
+                            else "interaction_above_control"),
+        )
+        for index, claim_id in enumerate(ids)
+    )
     primary = proposition
     alternative = Fact(
         proposition.subject,
@@ -113,47 +137,81 @@ def decide_seed(seed: str, evidence: Iterable[Fact] = ()) -> WorkspaceDecision |
         proposition.provenance + ("counter-hypothesis",),
     )
     workspace.add_facts([alternative])
+    evidence = tuple(evidence)
     workspace.add_facts(evidence)
+    # The two candidates are an exhaustive positive/non-positive split. A measured
+    # contradiction of one side grounds the other side unless it is independently
+    # contradicted as well.
+    if Fact(ids[0], "has_verdict", "contradicted").key in workspace.facts:
+        workspace.add_facts([Fact(ids[1], "has_verdict", "supported", ("binary-complement",))])
+    if Fact(ids[1], "has_verdict", "contradicted").key in workspace.facts:
+        workspace.add_facts([Fact(ids[0], "has_verdict", "supported", ("binary-complement",))])
     claims = []
     for index, candidate in enumerate((primary, alternative)):
         falsifier = Fact(ids[index], "has_verdict", "contradicted")
-        claims.append(workspace.propose(candidate, [falsifier]))
+        grounds = [Fact(ids[index], "has_verdict", "supported")] if require_evidence else []
+        claims.append(workspace.propose(candidate, [falsifier], grounds))
     try:
         selected = workspace.select(claims)
     except RuntimeError:
         return WorkspaceDecision(
             text="insufficient grounded evidence",
             candidate_claim_ids=ids,
+            candidate_specs=specs,
             selected_claim_id=None,
             rejected_claim_ids=ids,
             abstained=True,
+            required_terms=tuple(_words(proposition.subject + " " + proposition.object)),
         )
-    comparator, measure = _realizer_axes(proposition.subject, proposition.object)
     selected_index = 0 if selected is claims[0] else 1
     if selected_index == 0:
         text = proposition.subject + " " + comparator + " " + proposition.object + " " + measure
     else:
         text = proposition.subject + " decreases " + proposition.object + " " + measure
     rejected = tuple(ids[i] for i, claim in enumerate(claims) if claim.status.value == "falsified")
-    return WorkspaceDecision(text, ids, ids[selected_index], rejected, False)
+    required = tuple(dict.fromkeys(_words(proposition.subject + " " + proposition.object)))
+    return WorkspaceDecision(text, ids, specs, ids[selected_index], rejected, False, required)
 
 
-def compose_seed(seed: str, evidence: Iterable[Fact] = ()) -> str | None:
-    decision = decide_seed(seed, evidence)
+def compose_seed(seed: str, evidence: Iterable[Fact] = (),
+                 require_evidence: bool = False) -> str | None:
+    decision = decide_seed(seed, evidence, require_evidence)
     return None if decision is None else decision.text
 
 
 class TypedWorkspaceMouth:
     """Drop-in ``ideate`` wrapper; atomic calls delegate without alteration."""
 
-    def __init__(self, mouth, evidence: Iterable[Fact] = ()):
+    def __init__(self, mouth, evidence: Iterable[Fact] = (), require_evidence: bool = False,
+                 realizer: str = "structured"):
+        if realizer not in ("structured", "model"):
+            raise ValueError("realizer must be structured or model")
         self.mouth = mouth
         self.evidence = tuple(evidence)
+        self.require_evidence = require_evidence
+        self.realizer = realizer
         self.decisions: list[WorkspaceDecision] = []
 
     def ideate(self, seed, gen, top_k, temp, seed_rng):
-        decision = decide_seed(seed, self.evidence)
+        decision = decide_seed(seed, self.evidence, self.require_evidence)
         if decision is None:
             return self.mouth.ideate(seed, gen, top_k, temp, seed_rng)
+        if self.realizer == "model" and not decision.abstained:
+            prompt = ("Structured hypothesis: " + decision.text
+                      + ". Restate this hypothesis without changing its operands: ")
+            candidate = self.mouth.ideate(prompt, gen, top_k, temp, seed_rng)
+            if realization_preserves(decision, candidate):
+                decision = replace(decision, text=candidate, realized_by="model", realizer_valid=True)
+            else:
+                decision = replace(decision, realized_by="workspace_fallback", realizer_valid=False)
         self.decisions.append(decision)
         return decision.text
+
+
+def realization_preserves(decision: WorkspaceDecision, text: str) -> bool:
+    """Fail closed unless the mouth preserves operands and falsifiable structure."""
+    words = set(_words(text))
+    required = set(decision.required_terms)
+    comparator = {"predicts", "correlates", "causes", "increases", "decreases", "depends"}
+    measurable = {"score", "rate", "frequency", "strength", "level", "ratio"}
+    return required.issubset(words) and bool(words & comparator) and bool(words & measurable)

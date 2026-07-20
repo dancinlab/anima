@@ -817,13 +817,15 @@ def eval_rho_fan(mouth, gen, known, seed_class="composed", seed_off=0):
 
 def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
                    seed_class="composed", fan_temp_ladder=False, seed_off=0,
-                   weave_null="off", workspace_reach=False, workspace_evidence=()):
+                   weave_null="off", workspace_reach=False, workspace_evidence=(),
+                   workspace_require_evidence=False, workspace_realizer="structured"):
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
     mouth = _Mouth(ckpt, grow_window=grow_window)
     if workspace_reach:
         from workspace_mouth import TypedWorkspaceMouth
-        mouth = TypedWorkspaceMouth(mouth, workspace_evidence)
+        mouth = TypedWorkspaceMouth(mouth, workspace_evidence, workspace_require_evidence,
+                                    workspace_realizer)
         print("  [workspace] typed compose/falsify wrapper ON — SYSTEM reach; "
               "bare-model bars unchanged", flush=True)
     if grow_window:
@@ -870,12 +872,17 @@ def workspace_reach_only_run(argv):
         from workspace_adapters import load_fact_anchors
         evidence = load_fact_anchors(evidence_dir)
     known = _rho_fan_dict_load()
-    mouth = TypedWorkspaceMouth(_Mouth(ckpt, grow_window=grow), evidence)
+    require_evidence = "--workspace-require-evidence" in argv
+    realizer = evaluate_strval(argv, "--workspace-realizer", "structured")
+    mouth = TypedWorkspaceMouth(_Mouth(ckpt, grow_window=grow), evidence, require_evidence,
+                                realizer)
     print("=== anima evaluate --workspace-reach-only — frozen G1/G6 system panel ===", flush=True)
     print("ckpt: " + ckpt, flush=True)
     print("scope: typed SYSTEM reach; bare model claim = unchanged", flush=True)
     print("evidence: %d typed fact(s)%s" %
           (len(evidence), (" from " + evidence_dir) if evidence_dir else " (none)"), flush=True)
+    print("evidence_required: %s" % require_evidence, flush=True)
+    print("realizer: %s" % realizer, flush=True)
     g1 = eval_rho_weave(mouth, gen, known, seed_off=seed_off)
     g6 = eval_rho_fan(mouth, gen, known, seed_off=seed_off)
     print("G1 pass=%s best_distinct=%d max_single=%d noecho=%d echo_suspect=%s"
@@ -892,6 +899,11 @@ def workspace_reach_only_run(argv):
               (index, ",".join(decision.candidate_claim_ids),
                decision.selected_claim_id or "none",
                ",".join(decision.rejected_claim_ids) or "none", decision.abstained))
+        for spec in decision.candidate_specs:
+            print("    spec id=%s measure=%s control=%s falsified_when=%s" %
+                  (spec.claim_id, spec.measure, spec.control, spec.falsified_when))
+        print("    realization by=%s valid=%s" %
+              (decision.realized_by, decision.realizer_valid))
     ok = bool(g1["pass"]) and not bool(g1["echo_suspect"]) and bool(g6["pass"])
     print("WORKSPACE_REACH: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
@@ -1249,6 +1261,10 @@ def evaluate_usage():
     print("  (same bars, reduced 303M decode cost; exits 0 only when both pass).")
     print("  --workspace-evidence <kosmos-dir>: load typed contradiction facts; rejected")
     print("  candidates are replaced, and all-candidates-rejected causes explicit abstention.")
+    print("  --workspace-require-evidence: no supported/contradicted measurement keeps the")
+    print("  compound claim UNGROUNDED and forces explicit abstention.")
+    print("  --workspace-realizer structured|model: let the mounted mouth restate the selected")
+    print("  fact; operand/falsifiability loss fails closed to the structured realization.")
     print("  --workspace-semantic: ckpt-free exact-triple certification across held-out domains")
     print("  with direction, pairing, missing-middle, irrelevant-fact, and falsification controls.")
     print("")
@@ -2182,7 +2198,10 @@ def evaluate_run(argv):
                        seed_class=seed_class, fan_temp_ladder=fan_temp_ladder,
                        seed_off=seed_off, weave_null=weave_null,
                        workspace_reach="--workspace-reach" in argv[1:],
-                       workspace_evidence=workspace_evidence)
+                       workspace_evidence=workspace_evidence,
+                       workspace_require_evidence="--workspace-require-evidence" in argv[1:],
+                       workspace_realizer=evaluate_strval(argv[1:], "--workspace-realizer",
+                                                          "structured"))
     g0 = r["g0"]; g1 = r["g1"]; g2 = r["g2"]
     g3 = r["g3"]; g5 = r["g5"]; g6 = r["g6"]
 
@@ -9475,6 +9494,8 @@ _KNOWN_FLAGS = frozenset((
     "--workspace-reach",                          # typed workspace around compound mouth calls
     "--workspace-reach-only",                     # frozen G1/G6 only through workspace wrapper
     "--workspace-evidence",                       # typed contradiction .kosmos directory
+    "--workspace-require-evidence",               # strict UNGROUNDED without measurement
+    "--workspace-realizer",                       # structured|model with semantic fail-closed
     "--workspace-semantic",                       # exact held-out semantic certification
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
     "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture

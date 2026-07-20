@@ -2,7 +2,7 @@
 
 ## Verdict
 
-**CERTIFIED — 5/5 held-out domains, 55/55 checks.** This panel scores exact triples and contains no
+**CERTIFIED — 11/11 held-out panels, 121/121 checks.** This panel scores exact triples and contains no
 keyword-coverage criterion.
 
 Run through the production evaluation entry point:
@@ -11,7 +11,8 @@ Run through the production evaluation entry point:
 python3 cli/evaluate.py --workspace-semantic
 ```
 
-Domains: energy, biology, navigation, Korean growth, and software compilation. Every domain passed:
+Panels: energy, biology, navigation, Korean growth, software compilation, everyday causality,
+negative causality, conditionals, and 3-, 4-, and 5-step relation chains. Every panel passed:
 
 - exact live derivation;
 - storage-order invariance;
@@ -31,5 +32,5 @@ causal corruptions change that fact in the preregistered direction.
 ## Scope
 
 Cases are deterministic architecture fixtures, not learned natural-language extraction. They certify
-the workspace operator and verifier across unseen symbols/domains. Learning arbitrary rules from text
-and preserving them through the 303M natural-language realizer remain separate follow-ons.
+the workspace operator and verifier across unseen symbols/domains. The 303M natural-language realizer
+is independently checked and fails closed to the structured rendering when it drops required meaning.

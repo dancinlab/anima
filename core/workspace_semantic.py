@@ -60,6 +60,27 @@ def _cases() -> tuple[SemanticCase, ...]:
             CompositionRule("compiler-chain", "emits", "feeds", "can_feed"),
             ("parser", "can_feed", "optimizer"),
         ),
+        SemanticCase(
+            "everyday",
+            Fact("alarm", "wakes", "owner", ("heldout:everyday:a",)),
+            Fact("owner", "opens", "shop", ("heldout:everyday:b",)),
+            CompositionRule("morning-chain", "wakes", "opens", "enables_opening"),
+            ("alarm", "enables_opening", "shop"),
+        ),
+        SemanticCase(
+            "negative_causal",
+            Fact("cooling", "prevents", "overheat", ("heldout:negative:a",)),
+            Fact("overheat", "causes", "shutdown", ("heldout:negative:b",)),
+            CompositionRule("prevention-chain", "prevents", "causes", "reduces_risk_of"),
+            ("cooling", "reduces_risk_of", "shutdown"),
+        ),
+        SemanticCase(
+            "conditional",
+            Fact("launch", "requires", "authorization", ("heldout:conditional:a",)),
+            Fact("authorization", "requires", "quorum", ("heldout:conditional:b",)),
+            CompositionRule("requirement-chain", "requires", "requires", "requires_indirectly"),
+            ("launch", "requires_indirectly", "quorum"),
+        ),
     )
 
 
@@ -108,6 +129,48 @@ def _falsification_checks(case: SemanticCase, proposition: Fact) -> dict[str, bo
     }
 
 
+def _closure(facts: list[Fact]) -> CognitiveWorkspace:
+    workspace = CognitiveWorkspace()
+    workspace.add_facts(facts)
+    transitive = CompositionRule("transitive-chain", "leads_to", "leads_to", "leads_to")
+    while workspace.compose(transitive):
+        pass
+    return workspace
+
+
+def _multihop_row(length: int) -> dict:
+    facts = [
+        Fact("node%d" % i, "leads_to", "node%d" % (i + 1), ("heldout:hop%d" % i,))
+        for i in range(length)
+    ]
+    expected = ("node0", "leads_to", "node%d" % length)
+    live = _closure(facts)
+    missing = _closure(facts[: length // 2] + facts[length // 2 + 1 :])
+    shuffled_facts = list(facts)
+    mid = length // 2
+    shuffled_facts[mid] = Fact("unrelated", "leads_to", facts[mid].object)
+    shuffled = _closure(shuffled_facts)
+    irrelevant = _closure([*facts, Fact("noise", "decorates", "nothing")])
+    reverse = _closure([Fact(f.object, f.relation, f.subject) for f in facts])
+    proposition = live.facts.get(expected)
+    checks = {
+        "live_exact": proposition is not None,
+        "direction_reversal_collapses": expected not in reverse.facts,
+        "pair_shuffle_collapses": expected not in shuffled.facts,
+        "missing_middle_collapses": expected not in missing.facts,
+        "irrelevant_fact_inert": expected in irrelevant.facts,
+        "all_edges_provenance": proposition is not None
+        and all("heldout:hop%d" % i in proposition.provenance for i in range(length)),
+    }
+    if proposition is not None:
+        pseudo_case = SemanticCase(
+            "chain_%d" % length, facts[0], facts[-1],
+            CompositionRule("transitive-chain", "leads_to", "leads_to", "leads_to"), expected,
+        )
+        checks.update(_falsification_checks(pseudo_case, proposition))
+    return {"case": "chain_%d_hop" % length, "checks": checks, "ok": all(checks.values())}
+
+
 def run_semantic_certification() -> dict:
     rows = []
     for case in _cases():
@@ -132,15 +195,16 @@ def run_semantic_certification() -> dict:
             "live_exact": exact,
             "storage_order_invariant": len(reverse_storage) == 1
             and reverse_storage[0].key == case.expected,
-            "direction_reversal_collapses": len(reverse_direction) == 0,
-            "pair_shuffle_collapses": len(pair_shuffle) == 0,
-            "missing_middle_collapses": len(missing) == 0,
+            "direction_reversal_collapses": case.expected not in {x.key for x in reverse_direction},
+            "pair_shuffle_collapses": case.expected not in {x.key for x in pair_shuffle},
+            "missing_middle_collapses": case.expected not in {x.key for x in missing},
             "irrelevant_fact_inert": len(with_irrelevant) == 1
             and with_irrelevant[0].key == case.expected,
         }
         if exact:
             checks.update(_falsification_checks(case, live[0]))
         rows.append({"case": case.name, "checks": checks, "ok": all(checks.values())})
+    rows.extend(_multihop_row(length) for length in (3, 4, 5))
     return {
         "schema": "anima-workspace-semantic/v1",
         "ok": all(row["ok"] for row in rows),

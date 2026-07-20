@@ -132,9 +132,20 @@ def falsifier_fact(claim_id: str, source: str = "measurement") -> Fact:
     return Fact(claim_id, "has_verdict", "contradicted", (source,))
 
 
+def support_fact(claim_id: str, source: str = "measurement") -> Fact:
+    if not claim_id.startswith("workspace-claim-"):
+        raise ValueError("claim_id is not a workspace claim")
+    return Fact(claim_id, "has_verdict", "supported", (source,))
+
+
 def write_falsifier_anchor(out_dir: str, name: str, claim_id: str,
                            source: str = "measurement") -> str:
     return write_fact_anchor(out_dir, name, falsifier_fact(claim_id, source))
+
+
+def write_support_anchor(out_dir: str, name: str, claim_id: str,
+                         source: str = "measurement") -> str:
+    return write_fact_anchor(out_dir, name, support_fact(claim_id, source))
 
 
 def selected_grounded_texts(workspace: CognitiveWorkspace) -> list[str]:
