@@ -5797,6 +5797,11 @@
         "name": "🔬 H_9811 — 수용영역 × 답가중은 CONJUNCTIVE (2×2 실측)",
         "type": "gate",
         "detail": "마스크 오조준 수리 후 2×2(K=2·seed7·1200step·d64·top_ans): [L=2 RF7B] w=0 0.7500 · w=5 0.7500 / [L=6 RF127B] w=0 0.7500 · w=5 0.5000 경고소멸. 둘 다 켜진 칸에서만 readout 포화가 풀린다 — RF 가 증거를 덮어야 볼 수 있고 답-가중이 있어야 맞히려 든다. 앞선 census 의 '축별 전부 음성' 은 단독효과 없음이지 무관함이 아니었다(상호작용 미관측). d_acc 는 네 칸 모두 0.5000 = 결합은 여전히 미학습."
+       },
+       {
+        "name": "⛔ H_9811 사다리 = INSTRUMENT-INVALID — 손실구간은 torch↔.clm",
+        "type": "gate",
+        "detail": "사전등록 예산사다리(1200/3600/10800·K=2·L=6·w=5) 완주. 학습측 ans_ce 0.3068→0.0284→0.0001(우연 0.347)로 모델은 답을 사실상 완벽 예측하는데 같은 학습의 .clm 채점은 d_acc 0.5000 고정·top_ans→1.0000·margin_sd→8.8670. 동결표의 🔴 칸에 닿았으나 그 전제(못 배웠다)가 같은 명령의 다른 숫자로 반박돼 적용하지 않는다(verdict-integrity 발산=도구 먼저). 배제: 창정렬(win 78~128 전부 0.5000)·채점로직·예산(9×). 선결=serialize-parity 계기(.pt 대조군)."
        }
       ]
      }
@@ -16261,10 +16266,10 @@
        },
        {
         "id": "gate-preservation-fresh-lane-h9798",
-        "title": "🔴 H_9798 보존축 반증 — 분리 lane 도 base 유창성 간섭",
+        "title": "🔴 H_9798 보존축 반증 — 조건① 2/2 seed 재현",
         "type": "gate",
-        "detail": "H_9720 OPEN(a) 회수. step-1 val_CE(gen.txt·동일호스트): base 1.399 · C-noscore 6.658 · fresh 9.780 · legacy 9.950. fresh 가 표류통제보다 +3.12 nats 악화 ⟹ 'reach=legacy·보존=fresh' 이중구조 KILL. 수치·경계=H_9798 card.",
-        "verdict": "🔴 DIRECTIONAL (s7 1 seed·사전등록 {7,4302} 미충족 ⟹ TERMINAL 불가). CE0=1.399(이 호스트)≠카드 1.25336 원인 OPEN·혼용금지. main-only warm-start(CLMS 미복원·lane-off CE)·형식 TOST 미실시. NEXT=s4302 확대."
+        "detail": "H_9720 OPEN(a) 회수. fresh−noscore(step-1 val_CE·동일계기): s7 +3.12 · s4302 +4.12 ⟹ 분리 lane 도 base 유창성 간섭 = 'reach=legacy·보존=fresh' 이중구조 KILL. 수치·경계=H_9798 card.",
+        "verdict": "🔴 조건①(fresh≢C-noscore) 2/2 seed 충족 — seed 우연 배제. 조건②(fresh<legacy)는 legacy_s4302 완주 대기. 잔여경계: CE0 1.399 vs 1.25336 불일치(GPU/CPU 유력·미규명) · main-only warm-start(lane-off CE) · MITOSIS 공통교란 · 형식 TOST 미실시."
        },
        {
         "id": "serialize-trailer-aware-parity-gate",
