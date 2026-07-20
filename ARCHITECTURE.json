@@ -11059,12 +11059,6 @@
           "type": "gate",
           "verdict": "DIRECTIONAL POSITIVE · 통제 2종 8/8 셀 0 · collapse-Δ=+2 · 단 bar 1/8 seed-취약 · 비율 미확정",
           "detail": "ByteGPT h1129 8 seed × null 통제 2종. null_a(임의 키워드집합 재추첨=우연바닥) 와 null_b(개념없는 filler 씨앗=인과귀속) 가 **8/8 셀 전부 0** ⟹ 우연바닥이 realized 분포서 0 으로 측정되고 커버리지는 복합씨앗에 causally 귀속. off100 bd_noecho=2 → collapse-Δ=+2 = 잡음 아님(measurement-metalaw 충족). 그러나 동결 bar 통과 1/8 이고 그 셀의 max_single=0 이 저-검정력 의심 ⟹ 크랙 아님. ⚠️ 통제설계 자수정: derangement 는 적중-집합-개수 지표에 항등연산이라 무효였음(실패 못하는 통제=검정력 0)."
-         },
-         {
-          "name": "🏁 G1 벽의 성질 측정 완료 — '무신호' 아닌 '문턱미달' (H_9804 n=24 · 2026-07-20)",
-          "type": "gate",
-          "verdict": "G1 🧱 FAIL 유지 · 신호 실재(9/24 Δ>0 · null 24/24=0) · bar 통과 1/24=4.2% = 문턱미달",
-          "detail": "ByteGPT h1129 × 24 seed × null 통제 2종. null_a∧null_b 24/24 셀 0(우연바닥 측정값). bd_noecho 0=15·1=8·2=1. 겉보기 bar 통과 2/24 중 off1900 은 echo=0.38·bd_noecho=0 이라 echo-guard+null 통제가 동시 INVALID ⟹ 실제 1/24. ⟹ 벽은 '아무 신호 없음' 이 아니라 '신호가 bar 문턱(>=2 ∧ >max_single)에 못 미침'. 이 구분은 캠페인 전 미측정. scope=1 ckpt·mouth 간 일반화 미검정."
          }
         ],
         "type": "gate",
@@ -16267,10 +16261,10 @@
        },
        {
         "id": "gate-preservation-fresh-lane-h9798",
-        "title": "🔴 H_9798 보존축 반증 — 분리 lane 도 base 유창성 간섭",
+        "title": "🔴 H_9798 보존축 반증 — 조건① 2/2 seed 재현",
         "type": "gate",
-        "detail": "H_9720 OPEN(a) 회수. step-1 val_CE(gen.txt·동일호스트): base 1.399 · C-noscore 6.658 · fresh 9.780 · legacy 9.950. fresh 가 표류통제보다 +3.12 nats 악화 ⟹ 'reach=legacy·보존=fresh' 이중구조 KILL. 수치·경계=H_9798 card.",
-        "verdict": "🔴 DIRECTIONAL (s7 1 seed·사전등록 {7,4302} 미충족 ⟹ TERMINAL 불가). CE0=1.399(이 호스트)≠카드 1.25336 원인 OPEN·혼용금지. main-only warm-start(CLMS 미복원·lane-off CE)·형식 TOST 미실시. NEXT=s4302 확대."
+        "detail": "H_9720 OPEN(a) 회수. fresh−noscore(step-1 val_CE·동일계기): s7 +3.12 · s4302 +4.12 ⟹ 분리 lane 도 base 유창성 간섭 = 'reach=legacy·보존=fresh' 이중구조 KILL. 수치·경계=H_9798 card.",
+        "verdict": "🔴 조건①(fresh≢C-noscore) 2/2 seed 충족 — seed 우연 배제. 조건②(fresh<legacy)는 legacy_s4302 완주 대기. 잔여경계: CE0 1.399 vs 1.25336 불일치(GPU/CPU 유력·미규명) · main-only warm-start(lane-off CE) · MITOSIS 공통교란 · 형식 TOST 미실시."
        },
        {
         "id": "serialize-trailer-aware-parity-gate",
