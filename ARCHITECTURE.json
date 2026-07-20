@@ -5915,6 +5915,13 @@
                 "name": "🔧 --parity-items — 채점 항목 상한 해제 (검정력 sd 0.077→0.027)",
                 "role": "계기 수리 · H_9820 결함의 선결조건",
                 "detail": "serialize_parity 의 max_items=32 하드상한이 패널을 키워도 슬롯을 min(32,items)×K 로 묶어 검정력 증가를 막고 있었다(K=4 패널 64 items 가 32 로 조용히 잘림). 플래그 신설(기본 32=byte-identical). 실측: K=4 + items 64 ⟹ 256 슬롯 · sd 0.0271(목표 0.03 달성). 토이 e2e 로 n=128→256 출력 확인. 계기이며 판정 아님."
+              },
+              {
+                "id": "h9821-continuous-auc-prereg",
+                "type": "gate",
+                "name": "🔒 H_9821 — 임계 없는 연속 지표(구간 AUC)로 場 재측정 (사전등록·실행중)",
+                "role": "PENDING · DIRECTIONAL(토이)",
+                "detail": "두 지표 실패(H_9819 분모 seed-가변 · H_9820 분자·분모 둘 다 임계라 취약성 상속)의 결론=임계 사용 자체가 병(evaluate-py-24). DV=mean(d_acc 3600~14400) 로 전 셀 기여⟹잡음 평균, 구간한정⟹천장 회피. 검정력 선결 확보: K=4+--parity-items 64 ⟹ 256 슬롯·셀당 sd 0.0271·팔간 차이 sd 0.019 ⟹ 바 2σ=0.04(관측치 아닌 도출). 3팔×5seed×4rung 전량."
               }
             ]
           }
