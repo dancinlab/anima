@@ -95,4 +95,3 @@ def format_report(report: dict) -> str:
     lines.append("scope: " + report["scope"])
     lines.append("WORKSPACE_SMOKE: " + ("OK" if report["ok"] else "FAIL"))
     return "\n".join(lines)
-

@@ -128,4 +128,3 @@ class CognitiveWorkspace:
             raise RuntimeError("mouth is gated until a claim is selected")
         fact = self.selected.proposition
         return f"{fact.subject} {fact.relation} {fact.object}"
-
