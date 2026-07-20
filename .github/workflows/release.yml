@@ -137,6 +137,13 @@ jobs:
         run: |
           set -euo pipefail
           hexa --version || true
+          # hexa v0.759.0/Linux isolates the compiled hook's nested /bin/sh
+          # from both GITHUB_PATH and inherited env vars.  Make the already
+          # verified release binary visible on the nested shell's system PATH.
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            sudo ln -sf "$(command -v hexa)" /usr/local/bin/hexa
+            env -i PATH=/usr/local/bin:/usr/bin:/bin /bin/sh -c 'command -v hexa'
+          fi
           # a_install_canonical: 유일 setup 경로를 그대로 실행. setup.hexa 의 ckpt
           # 다운로드는 best-effort(실패해도 exit≠1) 라 CI 에서 안전.
           HEXA="$(command -v hexa)" hexa run install.hexa
