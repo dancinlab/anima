@@ -284,3 +284,127 @@ def sqrt_mean_square(values):
     if n == 0:
         return 0.0
     return sqrt(sum(v * v for v in values) / float(n))
+
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+# READ SIDE — the SAME statistics over the REAL 303M's own units, not a 20-step toy's.
+#
+# WHY THIS EXISTS (the motivation is a refutation, not an extension):
+#   H_9838 landed a headline positive — CA3 multi-step completion at 12x derived chance with a
+#   lesion that collapsed it to the floor — on PLANTED integer codes. When the ONLY thing that
+#   changed was the code source (planted fixture -> the production trunk's real penultimate
+#   representations, same arms, same controls, same bars), the zero-truth pedestal FIRED at two
+#   of the three loads: a structure-free store answered correctly, because the planted codes
+#   were effectively orthogonal (within .0469 / across .0117) while the real reps overlap 2.2x
+#   (.0625 / .0260). The favourable geometry, not the mechanism, had manufactured the result.
+#   H_9846's treatment numbers came from exactly the same kind of hand-made world: a d=64 · L=2 ·
+#   20-step CPU toy. So the identical swap is owed here — read the envelope over the REAL
+#   checkpoint's units and let the landed reading die if it is going to.
+#
+# NAMING (a_phi_iit4_tool, hard gate): nothing added below is named `phi`. The read-side entry
+#   is `--structure-envelope-read`, matching the log prefix `[structure-envelope H_9846]` that
+#   the trainer already prints. The pre-existing `--phi-envelope-monitor` flag name is inherited
+#   from the pre-existing module `core/phi_envelope_substrate.py` and is deliberately NOT
+#   extended into any new name.
+#
+# WHAT IS AND IS NOT A KNOB: there is exactly ONE new flag and it takes no tuning arguments.
+#   The probe carriers below are FROZEN constants for the same reason NEST_CLASS is — a knob
+#   sitting next to a threshold is a tune-to-green surface, and the H_9838 lesson is that the
+#   INPUT is the knob that matters most.
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+
+# Frozen EN probe carriers (EN-FIRST owner directive). Each is >= 24 bytes, so the decode
+# window (_seed_to_tok, T=24) is fully filled and no arm is measured on a padded window.
+READ_SEEDS = (
+    "the sky is blue and the sea is deep",
+    "a stone falls when you let it go now",
+    "she opened the door and walked inside",
+    "numbers add up when you count them all",
+)
+# STRUCTURE-FREE CARRIER — one byte repeated. Not a zero-truth pedestal (the trunk's weights
+# still carry structure), but the matched arm that answers "is the read reporting the INPUT's
+# structure or only the weights'?" REPORTED, gates nothing.
+NULL_CARRIER = "a" * 34
+
+
+def read_side_trajectory(tick_units, battery, every=1):
+    """One real trajectory -> the SAME per-tick records + cliff read the trainer produces.
+
+    `tick_units` is a list of unit vectors, one per tick. Deliberately routed through the
+    unchanged `unit_structure` / `summarize` pair so the cadence-robustness treatment
+    (cliff_by_subsample · cliff_gap_spread_rel · regime) is literally the same code, not a
+    re-implementation that could quietly differ."""
+    ticks = []
+    for i, u in enumerate(tick_units):
+        rec = unit_structure(u)
+        rec["step"] = i
+        ticks.append(rec)
+    return summarize(ticks, every, battery)
+
+
+def _flat_like(tick_units):
+    """ZERO-TRUTH PEDESTAL arm 1 — every unit in a tick replaced by that tick's own mean.
+    Structure-free input carried through the REAL read path. True value 0 by construction."""
+    out = []
+    for u in tick_units:
+        m = (sum(u) / float(len(u))) if u else 0.0
+        out.append([m] * len(u))
+    return out
+
+
+def _frozen_like(tick_units):
+    """ZERO-TRUTH PEDESTAL arm 2 — the REAL tick-0 unit vector repeated at every tick.
+
+    This is the arm matched to H_9838's value-shuffled pedestal: real magnitudes kept, the
+    structure the statistic claims to read (the trajectory) removed. `dispersion` stays at its
+    real value while the true `cliff_gap` is 0, so a non-zero cliff here would mean the read
+    MANUFACTURES a jump out of real-looking magnitudes."""
+    return [list(tick_units[0]) for _ in tick_units] if tick_units else []
+
+
+def read_side_report(static_units, trajectories, null_trajectory, battery, meta=None):
+    """The full real-input read. Torch-free, plain floats in, plain dict out.
+
+    Frozen order, controls first: the shipped battery (planted cliff / structure-free pedestal /
+    same-endpoint ramp) decides admissibility with its ORIGINAL bars, then the two real-input
+    pedestals must read <= EPS_STRUCT with that SAME bar, and only then are treatment values
+    reported. No new threshold is introduced anywhere in this function."""
+    rep = {
+        "instrument": "structure-envelope-read", "hypothesis": "H_9846",
+        "engine": "core/phi_envelope_substrate.py (structure/envelope layer)",
+        "battery": battery, "meta": meta or {},
+        "static": None, "trajectories": {}, "pedestals": {}, "null_carrier": None,
+        "status": None, "why": None,
+    }
+    if not battery.get("certified"):
+        rep["status"] = battery.get("status")
+        rep["why"] = battery.get("why")
+        return rep
+    if static_units:
+        rep["static"] = unit_structure(static_units)
+    ped_fail = []
+    for name, tu in sorted(trajectories.items()):
+        rep["trajectories"][name] = read_side_trajectory(tu, battery)
+        f = read_side_trajectory(_flat_like(tu), battery)
+        z = read_side_trajectory(_frozen_like(tu), battery)
+        rep["pedestals"][name] = {
+            "flat_units": {"cliff_gap": f["cliff"]["cliff_gap"],
+                           "max_dispersion": max(t["dispersion"] for t in f["ticks"])},
+            "frozen_trajectory": {"cliff_gap": z["cliff"]["cliff_gap"],
+                                  "dispersion": z["ticks"][0]["dispersion"] if z["ticks"] else 0.0},
+        }
+        if abs(f["cliff"]["cliff_gap"]) > EPS_STRUCT or \
+           abs(rep["pedestals"][name]["flat_units"]["max_dispersion"]) > EPS_STRUCT or \
+           abs(z["cliff"]["cliff_gap"]) > EPS_STRUCT:
+            ped_fail.append(name)
+    if null_trajectory:
+        rep["null_carrier"] = read_side_trajectory(null_trajectory, battery)
+    if ped_fail:
+        rep["status"] = "INVALID"
+        rep["why"] = ("the real-input zero-truth pedestal read above FP zero on " +
+                      ",".join(ped_fail) + " — carried through the real read path the watch "
+                      "MANUFACTURES structure, so no real-input value it emits is interpretable.")
+        return rep
+    rep["status"] = "CERTIFIED"
+    rep["why"] = battery.get("why")
+    return rep

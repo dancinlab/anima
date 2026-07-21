@@ -3490,6 +3490,178 @@ def hippo_transitive_selftest_run(argv):
     return 0 if controls == "CERTIFIED" else (1 if controls == "INSTRUMENT-DEAD" else 3)
 
 
+# ── H_9846 · STRUCTURE-ENVELOPE READ over the REAL 303M (the planted-geometry swap) ─────────
+# WHY THIS FLAG EXISTS — it is owed, not optional:
+#   H_9838 landed a headline positive (CA3 multi-step completion at 12x derived chance, lesion
+#   collapsing it to the floor, certified, positive control + zero-truth pedestal, 3 seeds x 3
+#   geometries, independently reproduced) on PLANTED integer codes. Swapping ONLY the input
+#   source to the production trunk's real penultimate representations — same arms, same
+#   controls, same bars — made the zero-truth pedestal FIRE at 2 of 3 loads (16 items:
+#   value-shuffled 0.3750 > bar 0.3077; 32 items: 0.1562 > 0.1500). Diagnosis: the planted
+#   codes were effectively orthogonal (within .0469 / across .0117) while the real reps overlap
+#   2.2x (.0625 / .0260), i.e. hand-made favourable geometry had manufactured the result.
+#   H_9846's treatment numbers came from the same kind of hand-made world: a d=64 · L=2 ·
+#   20-step CPU toy training run. This flag performs the identical swap on THIS instrument —
+#   the units come from a real checkpoint instead of a toy's training-time parameters, and
+#   nothing else moves (arms, controls, bars, cadence treatment all unchanged; the trajectory
+#   is routed through the very same phi_envelope_monitor.summarize the trainer calls).
+#
+# NAMING (a_phi_iit4_tool, hard gate): the flag is `--structure-envelope-read`, matching the
+#   `[structure-envelope H_9846]` prefix the trainer already prints. NOTHING added here is
+#   named `phi`; the pre-existing `--phi-envelope-monitor` name is inherited from the
+#   pre-existing module `core/phi_envelope_substrate.py` and is not extended.
+#
+# TWO UNIT SOURCES, both real, both from the SAME checkpoint:
+#   WEIGHTS    — one RMS per weight tensor (sorted name order). The exact analogue of the
+#                trainer's `units` vector, so it is the scale-comparable arm (23 toy tensors
+#                vs 31 real ones). A static checkpoint is ONE tick, so it has no cliff and
+#                none is invented.
+#   DEPTH      — one RMS per channel at each trunk depth (core/decode.clm_forward_taps, the
+#                production _fwd_trunk observed, no new forward invented: a_eval_py_canonical).
+#                Depth is the substrate's own forward trajectory, so it is the honest read-side
+#                stand-in for the training-step trajectory the toy provided.
+# READ-ONLY: loads weights, runs the production trunk forward, prints. No write path, no bar.
+def _se_static_units(ckpt):
+    """WEIGHTS arm — one RMS per real weight tensor of the loaded checkpoint, sorted by name.
+
+    Deliberately the same reduction the trainer applies to its torch parameters (RMS per
+    tensor, name-sorted, arch-agnostic), so the toy row and the 303M row of the card are
+    produced by the same arithmetic over different substrates."""
+    import numpy as np
+    import decode as clm
+    import phi_envelope_monitor as PEM
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        return None, None, {}
+    named = []
+    for k in sorted(W.keys()):
+        v = W[k]
+        if v is None or isinstance(v, (bool, int, float, str)):
+            continue
+        items = v if isinstance(v, list) else [v]
+        for i, a in enumerate(items):
+            if a is None or isinstance(a, (bool, int, float, str)):
+                continue
+            arr = np.asarray(a, dtype=np.float64).ravel()
+            if arr.size == 0:
+                continue
+            nm = k if not isinstance(v, list) else "%s[%d]" % (k, i)
+            named.append((nm, float(PEM.sqrt_mean_square(arr.tolist()))))
+    meta = {k: W[k] for k in ("d", "E", "V", "K", "L") if k in W}
+    return W, named, meta
+
+
+def _se_depth_units(W, seed):
+    """DEPTH arm — the unit vector at every trunk depth for one carrier: per-channel RMS over
+    the T decode-window positions of that depth's residual.
+
+    `clm_forward_taps` is the production trunk forward observed from beside the mixer (its own
+    docstring: 'Same forward as production (_fwd_trunk), just observed'), so these are the real
+    representations the gates decode over — not a re-implementation."""
+    import numpy as np
+    import decode as clm
+    T = 24
+    taps = clm.clm_forward_taps(W, clm._seed_to_tok(seed, T), T)
+    out = []
+    for k in sorted(taps.keys()):
+        a = np.asarray(taps[k], dtype=np.float64)
+        out.append(np.sqrt((a * a).mean(axis=0)).tolist())
+    return out
+
+
+def structure_envelope_read_run(argv):
+    """`anima-py evaluate <ckpt.clm> --structure-envelope-read [--out j.json]`
+
+    H_9846's landed monitor read over the REAL checkpoint instead of the 20-step toy. Frozen
+    order: the shipped battery (planted cliff · structure-free pedestal · same-endpoint ramp)
+    runs FIRST with its ORIGINAL bars; then the two real-input zero-truth pedestals must read
+    <= EPS_STRUCT with that SAME bar; only then are treatment values printed. There is exactly
+    ONE flag and it takes no tuning argument — the probe carriers are frozen constants, because
+    the H_9838 lesson is that the INPUT is the knob that decides everything."""
+    import phi_envelope_monitor as PEM
+    ck = [a for a in argv if not a.startswith("--") and a.endswith((".clm", ".bin"))]
+    if not ck:
+        print("evaluate --structure-envelope-read: needs a <ckpt.clm> positional",
+              file=sys.stderr, flush=True)
+        return 2
+    ckpt = ck[0]
+    out_path = evaluate_strval(argv, "--out", "")
+    battery = PEM.battery_liveness()
+    print("[structure-envelope H_9846 · REAL-INPUT READ] ckpt=%s" % ckpt)
+    print("  ① battery (UNCHANGED bars · controls first): %s — plant_fires=%s "
+          "pedestal_refuses=%s discriminates_ramp=%s"
+          % (battery["status"], battery["plant_fires"], battery["pedestal_refuses"],
+             battery["discriminates_ramp"]))
+    plant_gap = battery["arms"][0]["plant"]["cliff_gap"]
+    ramp_gap = battery["arms"][0]["ramp"]["cliff_gap"]
+    ped_gap = battery["arms"][0]["pedestal"]["cliff_gap"]
+    print("     plant_cliff gap=%.6f · plant_ramp gap=%.6f · plant_flat gap=%.6f"
+          % (plant_gap, ramp_gap, ped_gap))
+    W, named, meta = _se_static_units(ckpt)
+    if W is None:
+        print("evaluate --structure-envelope-read: %s is not clm-decodable" % ckpt,
+              file=sys.stderr, flush=True)
+        return 2
+    static_units = [v for _, v in named]
+    trajectories = {s: _se_depth_units(W, s) for s in PEM.READ_SEEDS}
+    null_traj = _se_depth_units(W, PEM.NULL_CARRIER)
+    meta["n_weight_tensors"] = len(named)
+    meta["carriers"] = list(PEM.READ_SEEDS)
+    rep = PEM.read_side_report(static_units, trajectories, null_traj, battery, meta=meta)
+    print("  ② REAL WEIGHTS arm (one RMS per weight tensor · the trainer's own reduction)")
+    st = rep.get("static") or {}
+    print("     n_units=%s dispersion=%.6f span=%.6f nest_sync=%.6f nest_scale=%.6f"
+          % (st.get("n_units"), st.get("dispersion", 0.0), st.get("span", 0.0),
+             st.get("nest_sync", 0.0), st.get("nest_scale", 0.0)))
+    print("     (a static checkpoint is ONE tick — no cliff is computed and none is invented)")
+    print("  ③ REAL-INPUT ZERO-TRUTH PEDESTALS (same EPS_STRUCT=%g bar as the battery)"
+          % PEM.EPS_STRUCT)
+    for nm in sorted(rep["pedestals"]):
+        p = rep["pedestals"][nm]
+        print("     %-40s flat_units: disp=%.9g gap=%.9g · frozen_traj: disp=%.6f gap=%.9g"
+              % ('"' + nm[:36] + '"', p["flat_units"]["max_dispersion"],
+                 p["flat_units"]["cliff_gap"], p["frozen_trajectory"]["dispersion"],
+                 p["frozen_trajectory"]["cliff_gap"]))
+    if rep["status"] != "CERTIFIED":
+        print("  → %s — %s" % (rep["status"], rep["why"]))
+        print("    (treatment REFUSED — an uncertified read reports no number)")
+    else:
+        print("  ④ REAL DEPTH TRAJECTORY (units = per-channel RMS at each trunk depth)")
+        for nm in sorted(rep["trajectories"]):
+            tr = rep["trajectories"][nm]
+            ds = " → ".join("%.6f" % t["dispersion"] for t in tr["ticks"])
+            print("     %-40s n_ticks=%d  dispersion %s" % ('"' + nm[:36] + '"',
+                                                            tr["n_ticks"], ds))
+            print("     %-40s cliff_gap=%.6f cliff_rate=%.8f spread_rel=%.4f  %s"
+                  % ("", tr["cliff"]["cliff_gap"], tr["cliff"]["cliff_rate"],
+                     tr["cliff_gap_spread_rel"], tr["regime"]))
+            t0 = tr["ticks"][0]
+            print("     %-40s span=%.6f nest_sync=%.6f nest_scale=%.6f (depth 0)"
+                  % ("", t0["span"], t0["nest_sync"], t0["nest_scale"]))
+        nt = rep.get("null_carrier")
+        if nt:
+            print("  ⑤ STRUCTURE-FREE CARRIER (one byte repeated · REPORTED, gates nothing)")
+            print("     %-40s cliff_gap=%.6f  dispersion %s"
+                  % ('"' + PEM.NULL_CARRIER[:12] + '..."', nt["cliff"]["cliff_gap"],
+                     " → ".join("%.6f" % t["dispersion"] for t in nt["ticks"])))
+        gaps = [rep["trajectories"][n]["cliff"]["cliff_gap"] for n in rep["trajectories"]]
+        lo, hi = min(gaps), max(gaps)
+        print("  ⑥ WHERE PRODUCTION SITS between the two shipped controls")
+        print("     plant_ramp %.6f  <=  REAL depth cliff_gap [%.6f .. %.6f]  <=  "
+              "plant_cliff %.6f" % (ramp_gap, lo, hi, plant_gap))
+        print("     real/ramp=%.4f  real/cliff=%.4f  (REPORTED placement · no bar is moved)"
+              % (hi / ramp_gap if ramp_gap else 0.0, hi / plant_gap if plant_gap else 0.0))
+        rep["placement"] = {"plant_ramp_gap": ramp_gap, "plant_cliff_gap": plant_gap,
+                            "real_gap_min": lo, "real_gap_max": hi,
+                            "ratio_to_ramp": (hi / ramp_gap if ramp_gap else 0.0),
+                            "ratio_to_cliff": (hi / plant_gap if plant_gap else 0.0)}
+    rep["reaudit"] = {"argv": ["anima-py", "evaluate"] + list(argv)}
+    if out_path:
+        open(out_path, "w", encoding="utf-8").write(json.dumps(rep, ensure_ascii=False, indent=2))
+        print("  wrote %s" % out_path)
+    return 0 if rep["status"] == "CERTIFIED" else 3
+
+
 def store_addr_census_run(argv):
     """`anima-py evaluate <ckpt> --store-addr-census <dump.npz> [--census-seeds 12]`
     — the H_9719 EMERGENT-ADDRESS $0 pre-screen, engine-native (a_experiment_engine_native).
@@ -10621,6 +10793,9 @@ _KNOWN_FLAGS = frozenset((
     # H_9838 CA3 multi-step transitive completion (core/hippo_lane.py · ckpt-free · read-side)
     "--hippo-transitive-selftest", "--hippo-hops", "--hippo-kwta-k", "--hippo-seed",
     "--hippo-dim", "--hippo-active", "--hippo-chains", "--hippo-chain-len", "--hippo-reps",
+    # H_9846 structure-envelope read over the REAL checkpoint (the H_9838 planted-geometry
+    # swap applied to this instrument). ONE flag, no tuning argument — the carriers are frozen.
+    "--structure-envelope-read",
     "--fan-bind", "--fan-smp",
     "--mouth-binder", "--mouth-binder-order-scramble",
     "--fan-dump",
@@ -17297,6 +17472,12 @@ def main(argv):
     # READ-SIDE ONLY — it moves no frozen bar and opens no write path into the emit-drive lane.
     if "--hippo-transitive-selftest" in argv:
         return hippo_transitive_selftest_run(argv)
+    # H_9846 --structure-envelope-read: the landed structure-envelope monitor read over a REAL
+    # checkpoint's units instead of a 20-step toy's. Dispatches on flag PRESENCE (it takes the
+    # ckpt from the positional). ADDITIVE and READ-ONLY — it moves no frozen bar, opens no
+    # write path, and default-absent it changes nothing.
+    if "--structure-envelope-read" in argv:
+        return structure_envelope_read_run(argv)
     # ── H_9808 $0 PRE-REGISTRATION GATES ────────────────────────────────────────────────────
     # Ckpt-FREE, closed-form referees dispatched on the leading flag: they read a spec file and
     # decide ADMISSIBILITY, never a verdict. Exit 3 = REFUSE (abort before spend), 0 = PASS,
