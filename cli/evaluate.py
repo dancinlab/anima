@@ -2651,6 +2651,7 @@ def store_parity_selftest_run(argv):
     prevent."""
     tol = float(evaluate_strval(argv[1:], "--parity-tol", "2e-5") or "2e-5")
     pkf = evaluate_strval(argv[1:], "--parity-key-fn", "mean") or "mean"
+    pkf = evaluate_strval(argv[1:], "--parity-key-fn", "mean") or "mean"
     print("=== anima evaluate --store-parity-selftest — H_9826 torch<->numpy CLMS parity ===")
     import clms as _clms
     fn = getattr(_clms, "parity_selftest", None)
@@ -2662,6 +2663,10 @@ def store_parity_selftest_run(argv):
         ok, rows = fn(tol=tol, key_fn=pkf, verbose=True)
     except TypeError:                      # older engine without the key_fn arm
         ok, rows = fn(tol=tol, verbose=True)
+    rt = getattr(_clms, "codec_roundtrip_selftest", None)
+    if rt is not None:                     # H_9853: lane_type alone is NOT a roundtrip check —
+        rok, _ = rt(key_fn=pkf, verbose=True)   # a lane missing from read_clms's header branch
+        ok = ok and rok                    # loads at wrong shapes and dies silently at inference
     print("  SELFTEST %s — the mirror %s the trainer, and the guard %s catch a divergence" %
           ("PASS ✓" if ok else "FAIL ✗",
            "MATCHES" if ok else "DIVERGES FROM",
