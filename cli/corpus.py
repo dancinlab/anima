@@ -196,7 +196,57 @@ def _rho_words_en(text):
     return out
 
 
-def build_weavedrill(n_lines, seed):
+def _wd_coverage(n_lines, seed, coverage, rnd):
+    """Shared-vocabulary, pair-held-out drill. Panel pairs are never demonstrated; every other
+    pair on the SAME grid is fair game, and `coverage` sets how much of that grid is taught."""
+    panel_items, _ = build_weavepanel("", 0, seed)
+    panel_pairs = {(it.get("a"), it.get("b")) for it in panel_items}
+    # The panel exhausts its own grid — H_9827 built it from EVERY pair in 2..10 (add) and 2..5
+    # (mul) to buy statistical power, and the cost of that choice is that nothing is left to teach
+    # on the same grid. So the drill widens the grid to 2..20 with the SAME answer vocabulary: the
+    # panel's pairs stay held out, every other pair on the wider grid is teachable, and answers
+    # overlap on purpose because shared vocabulary is what makes transfer possible at all.
+    grid = []
+    for i in range(2, 21):
+        for j in range(2, 21):
+            if i + j <= 20 and (_WP_NUM[i], _WP_NUM[j]) not in panel_pairs:
+                grid.append(("add", i, j, i + j))
+    for i in range(2, 11):
+        for j in range(2, 11):
+            if i * j <= 20 and (_WP_NUM[i], _WP_NUM[j]) not in panel_pairs:
+                grid.append(("mul", i, j, i * j))
+    if not grid:
+        raise SystemExit("weavedrill --wd-coverage: the panel covers the whole grid; nothing to teach")
+    keep = max(1, int(round(len(grid) * coverage)))
+    idx = list(range(len(grid)))
+    for a in range(len(idx) - 1, 0, -1):
+        b = rnd(a + 1)
+        idx[a], idx[b] = idx[b], idx[a]
+    taught = [grid[k] for k in idx[:keep]]
+    lines = []
+    for _ in range(n_lines):
+        fam, i, j, t = taught[rnd(len(taught))]
+        car = _WP_CARRIERS["arith-add" if fam == "add" else "arith-mul"]
+        comp_t, _b = car[rnd(len(car))]
+        lines.append(comp_t.format(a=_WP_NUM[i], b=_WP_NUM[j]) + " " + _WP_NUM[t] + " .")
+    text = "\n".join(lines) + "\n"
+    panel_cues = {it["cue"] for it in panel_items}
+    leak = [l for l in lines if any(c in l for c in panel_cues)]
+    audit = {"n_lines": len(lines), "families": ["add", "mul"], "panel_cue_leak": len(leak),
+             "panel_target_overlap": [], "grid_total": len(grid), "grid_taught": keep,
+             "coverage": keep / len(grid), "violations": []}
+    if leak:
+        audit["violations"].append(
+            "%d drill line(s) reproduce a PANEL cue — the eval becomes retrieval" % len(leak))
+    # NOTE: target-vocabulary overlap is EXPECTED and REQUIRED here — the drill and the panel share
+    # one answer vocabulary on purpose, because that is what makes transfer possible at all. The
+    # echo it invites is defeated by pair coverage, not by vocabulary separation, and the
+    # atom-swap control is what decides whether the mapping was learned (H_9864 removed the echo by
+    # removing transferability; that trade is the thing this mode exists to undo).
+    return text, audit
+
+
+def build_weavedrill(n_lines, seed, coverage=0.0):
     """H_9862 — the G1 counterpart of falsidrill: a corpus that CONTAINS the recombination.
 
     H_9861 measured rho·weave at 0/212 with every control also 0 — the production model does not
@@ -212,6 +262,15 @@ def build_weavedrill(n_lines, seed):
     """
     rnd = _wp_rand(seed)
     lines = []
+    if coverage > 0.0:
+        # H_9865 PAIR-HOLD-OUT (the design H_9863 needed and did not have). Grid-disjoint drills
+        # cannot work: with a disjoint VOCABULARY a lookup composition has no shared structure to
+        # transfer at all, and arithmetic would need real numeric generalization. Measured
+        # signature of that failure: reach 0.057 ~ atom-swap 0.052 ~ 1/17, i.e. exactly the uniform
+        # guess over the panel's 17 answer words — the model learned the answer TYPE and no mapping.
+        # H_6182 showed the working shape: share the vocabulary, hold out PAIRS, and cover enough
+        # of the grid (held-out went 2% -> 92% past ~20% coverage).
+        return _wd_coverage(n_lines, seed, coverage, rnd)
     # eval panel grids: arith-add i,j in 2..10 · arith-mul i,j in 2..5 · the fixed color/direction
     # triples. The drill uses the COMPLEMENT of each, so no panel pair is ever demonstrated.
     # The drill grid must clear the panel's TARGET vocabulary, not just its cues. First build
@@ -1078,7 +1137,7 @@ def _parse_args(argv):
             # H_9825 weavepanel: parametric ρ·weave panel (the n=12 instrument fix).
             #   --weave-families f1,f2   default = all five
             #   --weave-max N            0 = no cap
-            "weave_families": "", "weave_max": 0,
+            "weave_families": "", "weave_max": 0, "wd_coverage": 0.0,
             # H_9837 falsidrill: --falsi-ablate = the matched-surface structure-off arm
             "falsi_ablate": False, "falsi_vocab_n": 400, "falsi_prompt_form": False,
             # H_9839 dreamgen: --dream-target = the dream node's COMPOSITION LAW (the DV) ·
@@ -1242,6 +1301,8 @@ def _parse_args(argv):
             opts["bind_k"] = int(argv[i + 1]); i += 2               # H_9810 bindpanel conjuncts
         elif a == "--weave-families":
             opts["weave_families"] = argv[i + 1]; i += 2            # H_9825 weavepanel families
+        elif a == "--wd-coverage":
+            opts["wd_coverage"] = float(argv[i + 1]); i += 2       # H_9865 pair-hold-out coverage
         elif a == "--weave-max":
             opts["weave_max"] = int(argv[i + 1]); i += 2            # H_9825 weavepanel cap
         elif a == "--falsi-ablate":
@@ -7110,7 +7171,8 @@ def main():
         if not opts["out"]:
             print("anima-py corpus weavedrill: --out c.txt is required", file=sys.stderr)
             sys.exit(2)
-        text, audit = build_weavedrill(opts["n_blocks"], opts["seed"])
+        text, audit = build_weavedrill(opts["n_blocks"], opts["seed"],
+                                       coverage=opts.get("wd_coverage", 0.0))
         regen = "anima-py corpus " + " ".join(argv)
         if audit["violations"]:
             print("anima-py corpus weavedrill: CORPUS INVALID — %d violation(s):"
@@ -7126,6 +7188,11 @@ def main():
         print("  lines %d · families %s · panel-cue leak %d · panel-target overlap %d"
               % (audit["n_lines"], ",".join(audit["families"]), audit["panel_cue_leak"],
                  len(audit["panel_target_overlap"])))
+        if "coverage" in audit:
+            print("  PAIR-HOLD-OUT: grid %d pairs (panel pairs excluded) · taught %d = coverage %.2f"
+                  % (audit["grid_total"], audit["grid_taught"], audit["coverage"]))
+            print("  shared answer vocabulary is DELIBERATE — transfer needs it; the echo is beaten")
+            print("  by coverage and judged by atom-swap, not by separating the words (H_9864 note).")
         print("  operand grids are DISJOINT from the eval panel's, so every panel item stays")
         print("  0-exposure on its own pair — the drill teaches the OPERATION, not the answers.")
         print("  regen: " + regen)
