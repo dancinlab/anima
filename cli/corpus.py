@@ -460,7 +460,26 @@ def falsidrill_mine_vocab(corpus_paths, n_want, held_out, banned):
     return out
 
 
-def build_falsidrill(n_lines, seed, ablate, vocab=None):
+# H_9858 — optional PROMPT FORM. The eval never asks for a standalone sentence: it hands the
+# mouth `<concept phrase>: ` and reads the continuation. Every drill line so far was a bare
+# sentence, so the drill never once showed the model the SHAPE the gate uses. Measured transfer
+# rose 8.2% -> 15% when the drill's register widened (H_9856); matching the surface form is the
+# same kind of move on the other axis.
+#
+# The prefixes are concept-shaped phrases built from the mined vocabulary, NOT the eval concepts —
+# every eval-concept content word stays held out, so what is taught is the task form (after a
+# topic and a colon, make a falsifiable claim), never the answer.
+_FD_PROMPT_FRAMES = [
+    "{p1} {v} from {p2}",
+    "{p1} shapes {p2}",
+    "{p1} and {p2} meet",
+    "the study of {p1} and {p2}",
+    "{p1} under {p2}",
+]
+_FD_PROMPT_V = ["grows", "follows", "emerges", "departs", "returns"]
+
+
+def build_falsidrill(n_lines, seed, ablate, vocab=None, prompt_form=False):
     """H_9837 — EN drill corpus dense in falsifiable claims (or its matched-surface ablation).
 
     Returns (text, audit). The audit is BLOCKING: it re-runs the production detector over every
@@ -493,7 +512,14 @@ def build_falsidrill(n_lines, seed, ablate, vocab=None):
         d = _FD_DIR[rnd(len(_FD_DIR))]
         cars = _FD_CARRIERS_ABL if ablate else _FD_CARRIERS
         car = cars[rnd(len(cars))]
-        lines.append(car.format(s=subj, cvi=cvi, cvt=cvt, ca=ca, m=m, o=o, d=d, alt=alt))
+        line = car.format(s=subj, cvi=cvi, cvt=cvt, ca=ca, m=m, o=o, d=d, alt=alt)
+        if prompt_form:
+            # `<topic>: <falsifiable claim>` — the exact shape the gate prompts with.
+            pf = _FD_PROMPT_FRAMES[rnd(len(_FD_PROMPT_FRAMES))]
+            p1 = subj_pool[rnd(len(subj_pool))]
+            p2 = obj_pool[rnd(len(obj_pool))]
+            line = pf.format(p1=p1, p2=p2, v=_FD_PROMPT_V[rnd(len(_FD_PROMPT_V))]) + ": " + line
+        lines.append(line)
     text = "\n".join(lines) + "\n"
 
     known = _rho_fan_dict_load()
@@ -953,7 +979,7 @@ def _parse_args(argv):
             #   --weave-max N            0 = no cap
             "weave_families": "", "weave_max": 0,
             # H_9837 falsidrill: --falsi-ablate = the matched-surface structure-off arm
-            "falsi_ablate": False, "falsi_vocab_n": 400,
+            "falsi_ablate": False, "falsi_vocab_n": 400, "falsi_prompt_form": False,
             # H_9839 dreamgen: --dream-target = the dream node's COMPOSITION LAW (the DV) ·
             #   --dream-nights = the number of nights = mi-screen segments (a POWER knob only:
             #   it moves the pair count, never the block geometry, which is a frozen constant).
@@ -1118,6 +1144,8 @@ def _parse_args(argv):
             opts["weave_max"] = int(argv[i + 1]); i += 2            # H_9825 weavepanel cap
         elif a == "--falsi-ablate":
             opts["falsi_ablate"] = True; i += 1                     # H_9837 structure-off arm
+        elif a == "--falsi-prompt-form":
+            opts["falsi_prompt_form"] = True; i += 1                # H_9858 eval-shaped prompt
         elif a == "--falsi-vocab-n":
             opts["falsi_vocab_n"] = int(argv[i + 1]); i += 2        # H_9857 mined vocab size
         elif a == "--wake-buffer-cap":
@@ -6790,7 +6818,8 @@ def main():
                       "breadth lead; give a bigger --corpus" % len(vocab), file=sys.stderr)
                 sys.exit(2)
         text, audit = build_falsidrill(opts["n_blocks"], opts["seed"],
-                                       opts.get("falsi_ablate", False), vocab=vocab)
+                                       opts.get("falsi_ablate", False), vocab=vocab,
+                                       prompt_form=opts.get("falsi_prompt_form", False))
         regen = "anima-py corpus " + " ".join(argv)
         if audit["violations"]:
             print("anima-py corpus falsidrill: CORPUS INVALID — %d violation(s):"
