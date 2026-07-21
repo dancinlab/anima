@@ -18889,6 +18889,13 @@
     "value": "CLMS 에 새 lane 변종(lane_type 6 = 순서인식 키)을 추가하며 소비처를 하나씩 빠뜨려 같은 결함이 3회 반복됐다 — ① read_clms 헤더 분기 누락으로 legacy 헤더 파싱(d_g=0 · W_g (d,0))되어 추론서 lane 무작동 ② cli/train.py 가 키 계산을 인라인 복제해 key_fn 을 조용히 무시 ③ cli/evaluate.py 의 세 계기(적대배치·검색probe·census)가 _entity_key 를 키함수 없이 호출해 lane 6 ckpt 를 mean 키로 측정. 공통 원인: 주소함수를 lane_type 의존으로 만들면 새 변종이 기본값 경로로 조용히 떨어지고 아무도 예외를 안 던진다.",
     "threshold": "변종 추가 시 3층으로 막아라. (1) grep -n '_entity_key(' core/ cli/ 로 호출부를 전수하고 각각이 lane 을 물어보는지 확인 — 인라인 복제본도 찾아 제거(중복이 곧 드리프트다). (2) 코덱 왕복 검사는 식별자 보존이 아니라 배열 모양 전부를 대조하라(codec_roundtrip_selftest) — lane_type 은 첫 바이트라 잘못된 헤더로도 살아남으므로 그것만 보는 검사는 검사가 아니다. (3) 두 ckpt 가 소수점까지 동일한 값을 내면 성능이 아니라 배선을 의심하라 — 조작 무반응이 곧 경로 사망 신호다.",
     "source": "core/clms.py"
+   },
+   {
+    "id": "train-py-mps-dropout-leak",
+    "state": "pos-conv",
+    "value": "Apple MPS 백엔드는 fill_scalar(ConstantOps) 그래프 캐시 키에 스칼라 VALUE를 박아, 매 step 새로운 float이 값-키 op(F.dropout(x,p)→bernoulli_→at::full({},1-p)→fill_scalar_mps_impl·`.fill_`·exponential_ 등)을 타면 step당 새 MPSGraph가 영구 적재된다. SAVANT 스케줄의 연속 dropout p(cli/train.py `m.p=dp`)가 이걸 유발해 d=64 L=2 토이가 45GB/61k step로 스왑 포화·OOM 사망(실측 0.767MB/step·처리량 7× 붕괴). torch.mps.empty_cache()는 allocator만 비우고 그래프 캐시는 못 비워 증상조차 못 가린다. wd/lr 스칼라는 BinaryOps 런타임-feed라 무죄. 원인은 상류 torch 버그이나 우리 층위의 근본수정은 '변동 스칼라를 값-키 op에 넘기지 않는 것'이다.",
+    "threshold": "재발조건: MPS에서 매 step 변하는 float을 fill_scalar/`.fill_`/exponential_ 같은 값-키 op에 넘김(dropout p·temperature·noise scale 등). 해결(SHIPPED · cli/train.py _install_mps_dropout_shim · VERSION 0.20.158 · G5): device=='mps'에서만 F.dropout를 monkeypatch(모델 구조/serialize 무영향·nn.Dropout.forward 자동 포착)해 마스크를 rand_like(x)<keep(비교=BinaryOps) + /keep(나눗셈=BinaryOps)로 구성 — fill_scalar 미경유. ⚠️ 두 오답 회피: ①`p_t.fill_(dp)`를 MPS 텐서에 하면 재발 ②지속 device 스칼라를 매 forward copy_로 덮으면 다중 dropout+autograd 버전카운터 붕괴(backward 크래시) → 매호출 fresh 텐서 + python-float 스칼라가 정답. CPU/CUDA는 shim 미설치=byte-identical. GREEN 실측: 훈련 RSS 0.767→0.022 MB/step(37×·평탄), dropout 의미론 정확(zero-frac=p·nonzero=1/(1-p)·eval identity·grad{0,1/(1-p)}). 별개 잔여 0.022MB/step(--no-savant서도 존재=dropout무관·기저 CLMConvMoE MPS경로·후속 hunt).",
+    "linked_hypotheses": []
    }
   ]
  }
