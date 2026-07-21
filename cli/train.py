@@ -110,7 +110,7 @@ USAGE (installed `anima` PATH command after `hx install anima`):
       --gauges-out ckpt/bg_ctrl_cnce.json
 """
 from __future__ import annotations
-import argparse, json, math, os, re, sys, time
+import argparse, json, math, os, random, re, sys, time   # `random`: H_9841 replay-selection control
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -155,6 +155,7 @@ if _CORE is None:
 from model import (CLMConfig, CLMConvMoE, MoEStats, CausalDilatedConv1d,
                    ByteGPTConfig, ByteGPT)           # core/model.py (unified CONV+BYTE)
 import serialize as S                                # core/serialize.py — serialize_v3 = bridge SSOT
+import phi_envelope_monitor as PEM                   # core/phi_envelope_monitor.py — H_9846 watch
 import verify_clm_v2 as VC                            # core/verify_clm_v2.py — clm_decodable / descent
 # ByteGPT .pt -> .bin serializer is folded into the SAME unified core/serialize.py.
 import serialize as BGS                               # core/serialize.py — serialize(pt_path, bin_path)
@@ -737,6 +738,31 @@ def dbes_specialization(model: CLMConvMoE, x: torch.Tensor) -> dict:
             "usage_gini": round(gini, 5),
             "usage": [round(float(z), 5) for z in usage.tolist()],
             "n_experts": n_e}
+
+
+def phi_envelope_tick(core_model, step: int) -> dict:
+    """H_9846 — ONE structure-envelope reading of the parameter tensors. MONITOR-ONLY.
+
+    The `units` vector is one RMS per parameter tensor, in sorted-name order (arch-agnostic:
+    identical treatment for clm and bytegpt, and no dependence on module traversal order).
+    `core/phi_envelope_monitor.py` turns that vector into the envelope statistics.
+
+    THREE PROPERTIES, all deliberate, all checkable in this function's body:
+      · no_grad + `.detach()`      — no graph, so the value CANNOT reach the loss.
+      · no tensor is CREATED       — the RMS is computed by reducing the param in place, so
+                                     there is no CPU/CUDA device-mismatch surface (train-py-1:
+                                     a monitor-only tick with exactly that bug killed a run).
+      · no RNG draw, no forward    — so a run with the watch ON and the same run with it OFF
+                                     are byte-identical, which is what makes 'never in the
+                                     loss' a proof instead of a claim (a_train_inline_gauge).
+    Nothing returned here is Φ (a_phi_iit4_tool); the names say what the arithmetic is."""
+    with torch.no_grad():
+        units = [float(p.detach().float().pow(2).mean().sqrt())
+                 for _, p in sorted(core_model.named_parameters(), key=lambda kv: kv[0])
+                 if p.numel() > 0]
+    rec = PEM.unit_structure(units)
+    rec["step"] = step
+    return rec
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -2156,6 +2182,405 @@ def closure_monitor_rung1(model, device, seq_cap, *, seed, ticks, schedules, ste
                         "REFUSED means the instrument did not certify, which is a statement about "
                         "the instrument, never about the model.")}
 
+# ════════════════════════════════════════════════════════════════════════════
+#  H_9841 — IMAGINATION RECONSOLIDATION LANE (training-time N3/REM rehearsal)
+#
+#  WHY THIS EXISTS (the p8 asymmetry it closes, MEASURED in origin/main, not assumed):
+#  the daemon ALREADY grows on rehearsal. cli/chat.py:3350-3380 enters an N3/REM phase
+#  (`dr_imagination_active(stage) == 1`), calls the SAME core functions this lane calls
+#  — `ir_select_snapshots` → `ir_replay_tick` — and then, per replay tick, advances a
+#  LIVE `vadapt_field_step` on the session AdaptField (chat.py:3375, wired 2026-07-10,
+#  lesionable there with `--imag-growth off`). core/imagination_replay.py's own header
+#  states the asymmetry: `ir_mitosis_tick_during_replay` is a log record
+#  (`wired_to_lib=False`), but "The REAL AdaptField growth is WIRED daemon-side".
+#
+#  So a growth hook fires on every replay tick at DAEMON time and has NO counterpart at
+#  TRAINING time. p8 says there is no train/infer split; that gap is the most concrete
+#  instance of the violation in the tree. This lane is the missing counterpart.
+#
+#  WHAT IT DOES (single forward, shape-preserving, DDP-safe, rank-local):
+#    · every step the lane pushes the window the trainer actually saw (x‖y, the exact
+#      row — never a re-materialized approximation) into the daemon's OWN WAKE working
+#      ring (core/wake_memory.mem_push_ctx, cap 20 FIFO);
+#    · every --reconsolidate-every steps it enters an N3/REM phase: it selects snapshots
+#      with the daemon's `ir_select_snapshots`, `ir_replay_tick`s each one under an
+#      INVARIANT WATCH (emit_count must be 0 — a rehearsal that speaks is a p5 violation
+#      and hard-fails the run), fires the growth hook when --vadapt-on-replay is set, and
+#      re-trains the rehearsed rows IN PLACE of that many fresh rows.
+#
+#  WHAT MAKES THE HOOK CAUSAL (and therefore lesionable): the replay DOSE is
+#  `ir_consolidation_gain(n_replayed, density)` and `density` is the ONE thing the hook
+#  changes — with the hook ON it is `dr_density(splits, ticks)`, the growth the rehearsal
+#  actually CAUSED in the field; with the hook OFF it is the fixed N3 prior
+#  `dr_mitosis_prior(3)` = 0.80, exactly the constant `ir_mitosis_tick_during_replay`
+#  records. Rehearsing content the field already holds produces zero splits ⇒ density 0
+#  ⇒ gain 0 ⇒ ZERO rows replayed: the lane refuses to spend gradient on content that
+#  taught the substrate nothing. That is the whole manipulation, and it is why
+#  `--vadapt-on-replay` off is a real control and not a weaker treatment.
+#
+#  a_train_inline_gauge: the consolidation gain is a SCHEDULE (a function of the replay
+#  count and the field's growth), NOT a model-quality gauge — no loss, CE, logit or
+#  validation number feeds it, and `ir_effective_age` is emitted MONITOR-ONLY.
+#
+#  DEFAULT OFF (--imagination-replay 0.0) ⇒ every line below is skipped and the run is
+#  byte-identical (verified: two 30-step CPU runs, lane-absent vs --imagination-replay
+#  0.0, produce the same CE trace).
+# ════════════════════════════════════════════════════════════════════════════
+
+IMAG_SPLIT_SEED = "anima|imagination-reconsolidation|H_9841"
+
+
+def _imag_byte_feature(byte_list, dim=8):
+    """DIM=8 byte-statistics feature — the construction cli/chat.py `_afs_byte_feature`
+    (anima.hexa:5400 · H_1163 `_byte_feature` VERBATIM) feeds `vadapt_field_step`.
+
+    chat.py takes a STRING and encodes it; the trainer's tokens ARE bytes already (V=256,
+    the text column is concatenated UTF-8 → raw bytes), so the encode step is a no-op here
+    and the statistic is applied directly to the window. Values are masked to a byte so a
+    non-byte vocab could never silently shift the feature scale. Kept local rather than
+    imported from cli/chat.py: the trainer must not pull the daemon (numpy + the whole A⇄G
+    loop) into a training process."""
+    n = len(byte_list)
+    if n == 0:
+        return [0.0] * dim
+    fn_n = float(n)
+    total = sumsq = 0.0
+    n_hi = n_low = n_sp = n_dig = n_pun = n_lt64 = 0
+    for tok in byte_list:
+        byte = int(tok) & 0xFF
+        bf = float(byte)
+        total += bf
+        sumsq += bf * bf
+        if byte >= 128: n_hi += 1
+        if 97 <= byte <= 122: n_low += 1
+        if byte == 32: n_sp += 1
+        if 48 <= byte <= 57: n_dig += 1
+        if 33 <= byte <= 64: n_pun += 1
+        if byte < 64: n_lt64 += 1
+    mean = total / fn_n
+    var = sumsq / fn_n - mean * mean
+    return [
+        (mean / 255.0) * 5.0,
+        (float(n_hi) / fn_n) * 5.0,
+        (float(n_low) / fn_n) * 5.0,
+        (float(n_sp) / fn_n) * 5.0,
+        (float(n_dig) / fn_n) * 5.0,
+        (var / (255.0 * 255.0)) * 5.0,
+        (float(n_pun) / fn_n) * 5.0,
+        (float(n_lt64) / fn_n) * 5.0,
+    ]
+
+
+class ImaginationLane:
+    """Training-time twin of the daemon's N3/REM replay phase (cli/chat.py:3350-3380).
+
+    Every core call below is the REAL production function — core/imagination_replay.py,
+    core/wake_memory.py, core/dream_lib.py and core/engine_cli.py's VAdaptField — imported,
+    never re-implemented (`a_experiment_engine_native`: the instrument is engine-native too).
+
+    THE FIELD IS SEEDED ON THE FIRST REHEARSED WINDOW, not on a session seed as the daemon
+    does. That is a deliberate, STRICTER choice and it is load-bearing for the pedestal: with
+    a session-seed origin, rehearsing 20 byte-identical windows still splits ONCE (the first
+    tick's reconstruction error against an unrelated seed clears 0.30), so a structure-free
+    input would manufacture a small non-zero dose. Seeded on its own first window, a
+    novelty-free rehearsal has reconstruction error 0 at every tick and the dose is EXACTLY
+    0 — a zero-truth pedestal with no threshold in it."""
+
+    def __init__(self, ratio, every, vadapt_on, select, seed, dim=8):
+        import imagination_replay as IR                # core/imagination_replay.py
+        import wake_memory as WM                       # core/wake_memory.py
+        import dream_lib as DL                         # core/dream_lib.py
+        import engine_cli as EC                        # core/engine_cli.py (VAdaptField)
+        self.IR, self.WM, self.DL, self.EC = IR, WM, DL, EC
+        self.ratio = float(ratio)
+        self.every = int(every)
+        self.vadapt_on = bool(vadapt_on)
+        self.select = select
+        self.dim = dim
+        self.mem = WM.mem_init()
+        self.cfg = EC.engine_config_default()          # mitosis ON = the daemon's own cfg
+        self.afield = None                             # seeded on the first rehearsed window
+        self.rng = random.Random(int(seed))
+        self.n_phases = 0
+        self.n_ticks = 0
+        self.n_splits = 0
+        self.n_rows_replayed = 0
+        self.emit_violations = 0
+        self.last = {}
+
+    # ── WAKE: the trainer's own stream fills the daemon's working ring ────────────
+    def observe(self, x_row, y_row):
+        """Push ONE window (x‖y, flat ints) into the WAKE working ring (cap 20 FIFO)."""
+        self.mem = self.WM.mem_push_ctx(self.mem, list(x_row) + list(y_row))
+
+    def due(self, step):
+        return self.every > 0 and step % self.every == 0
+
+    # ── N3/REM: rehearse, watch the invariant, grow, dose ─────────────────────────
+    def reconsolidate(self, step, budget):
+        """Run one N3/REM phase. Returns (rehearsed_windows, record).
+
+        `budget` = how many rows the caller is willing to hand over. The number actually
+        returned is the CONSOLIDATION-SCALED dose, which is what the growth hook moves."""
+        IR, DL, EC = self.IR, self.DL, self.EC
+        snaps = IR.ir_select_snapshots(self.mem, step, budget)
+        if self.select == "random" and snaps:
+            # CONTROL B — isolates whether ir_select_snapshots' RECENCY policy is causal:
+            # same ring, same count, the recency ordering destroyed.
+            pool = self.IR.ir_select_snapshots(self.mem, step, len(self.mem["working"]))
+            snaps = [pool[i] for i in self.rng.sample(range(len(pool)), min(len(snaps), len(pool)))]
+        splits = 0
+        for snap in snaps:
+            rec = IR.ir_replay_tick(snap)
+            if rec["emit_count"] != 0:
+                self.emit_violations += 1
+            _imag_emit_watch(rec, step)            # p5 — hard-exits on a speaking rehearsal
+            self.n_ticks += 1
+            if self.vadapt_on:
+                feat = _imag_byte_feature(rec["ctx_tokens"], self.dim)
+                if self.afield is None:
+                    self.afield = EC.vadapt_field_new(feat, 2048)
+                    continue                          # the seed tick cannot be its own split
+                before = EC.vadapt_field_cells(self.afield)
+                self.afield = EC.vadapt_field_step(self.afield, feat, self.cfg)
+                splits += EC.vadapt_field_cells(self.afield) - before
+        self.n_splits += splits
+        # THE ONE VARIABLE the hook moves: realized growth density vs the fixed N3 prior.
+        if self.vadapt_on:
+            density = DL.dr_density(splits, len(snaps))
+        else:
+            density = DL.dr_mitosis_prior(3)          # 0.80 — the constant the log record carries
+        gain = IR.ir_consolidation_gain(len(snaps), density)
+        n_rows = min(len(snaps), int(round(gain * len(snaps))))
+        # MONITOR-ONLY (a_train_inline_gauge): never enters the loss, reported for the log.
+        eff_age = IR.ir_effective_age(float(self.every), len(snaps), density)
+        self.n_phases += 1
+        self.n_rows_replayed += n_rows
+        self.last = {
+            "step": step, "snapshots": len(snaps), "splits": splits,
+            "cells": (EC.vadapt_field_cells(self.afield) if self.afield is not None else 0),
+            "density": density, "consolidation": gain, "rows_replayed": n_rows,
+            "effective_age": eff_age, "emit_violations": self.emit_violations,
+        }
+        return [s["ctx_tokens"] for s in snaps[:n_rows]], self.last
+
+    def summary(self):
+        return {"phases": self.n_phases, "replay_ticks": self.n_ticks,
+                "vadapt_splits": self.n_splits, "rows_replayed": self.n_rows_replayed,
+                "emit_violations": self.emit_violations,
+                "cells": (self.EC.vadapt_field_cells(self.afield)
+                          if self.afield is not None else 0),
+                "select": self.select, "vadapt_on_replay": self.vadapt_on}
+
+
+def _imag_emit_watch(rec, step):
+    """p5 INVARIANT WATCH — rehearsal must not speak.
+
+    Not a warning and not a counter: a replay tick that emits means the imagination lane has
+    become a mouth, which is the one thing p5 forbids, and every number produced after it would
+    be unreadable. Factored out of the lane so the certification battery can PLANT a violation
+    and prove the watch actually fires — a guard only ever observed not-firing is not a guard."""
+    if rec["emit_count"] != 0:
+        raise SystemExit("[imagination] p5 INVARIANT VIOLATED — ir_replay_tick returned "
+                         "emit_count=%d at step %s (rehearsal must be emit-free). Refusing to "
+                         "continue: an imagination lane that speaks is a mouth."
+                         % (rec["emit_count"], step))
+
+
+def _imag_dose_floor():
+    """Smallest replay budget whose dose can reach ONE row even at MAXIMUM growth density.
+
+    SELF-CAUGHT, and the reason this function exists: the dose is `round(gain * n)` rows, and
+    `ir_consolidation_gain` saturates slowly (per-replay refresh 0.04), so for small n the
+    product rounds to 0 for EVERY possible density. The first run of the certification battery
+    below reported INSTRUMENT-DEAD at the (ring 8, budget 3) geometry — measured gain 0.0779 on
+    a signal the lane clearly saw (2 field splits) yet 0 rows replayed. A lane configured under
+    this floor is not a weak lane, it is an INERT one that still logs "lane ON": exactly the
+    silent-no-op class of defect. The floor is DERIVED by asking the engine's own function, not
+    chosen — nothing here is tunable, and it is enforced as a refusal (`no-tune-to-green`)."""
+    import imagination_replay as IR
+    n = 1
+    while n < 4096:
+        if int(round(IR.ir_consolidation_gain(n, 1.0) * n)) >= 1:
+            return n
+        n += 1
+    return n
+
+
+def _imag_ring_of(windows, seed):
+    """Build a WAKE ring (core/wake_memory) out of explicit windows — the selftest's
+    only way to plant a KNOWN structure into the lane's input."""
+    import wake_memory as WM
+    mem = WM.mem_init()
+    for w in windows:
+        mem = WM.mem_push_ctx(mem, w)
+    return mem
+
+
+def _imag_probe(windows, vadapt_on, select, budget, seed):
+    """One lane probe on an explicit ring — returns the lane's own record. No torch, no
+    model, no corpus: the whole battery below is $0."""
+    lane = ImaginationLane(1.0, 1, vadapt_on, select, seed)
+    lane.mem = _imag_ring_of(windows, seed)
+    _, rec = lane.reconsolidate(1, budget)
+    rec["ticks"] = lane.n_ticks
+    return rec
+
+
+def run_imagination_selftest(ratio, every, vadapt_on, select, seed):
+    """H_9841 — $0 certification battery for the imagination-reconsolidation lane.
+
+    GATE ORDER IS FROZEN AND SEQUENTIAL (the shape cli/corpus.py::run_mi_screen landed):
+      ① POSITIVE CONTROL — a ring of MUTUALLY DISTINCT windows is a planted signal: novel
+         rehearsal must split the field and buy a non-zero dose. If it does not fire, the
+         lane cannot see a signal that is known to be there ⇒ INSTRUMENT-DEAD, stop, and
+         report NO treatment row.
+      ② ZERO-TRUTH PEDESTAL — two structure-free inputs the lane must REFUSE:
+           (a) an EMPTY ring (nothing to rehearse) ⇒ 0 snapshots, gain exactly 0.0;
+           (b) a ring of 20 BYTE-IDENTICAL windows (rehearsal with no novelty in it) ⇒ 0
+               splits, density exactly 0.0, dose exactly 0 rows.
+         If either fires, the lane MANUFACTURES consolidation ⇒ INVALID, stop.
+      ③ ROBUSTNESS — ① and ② are re-run at 3 ring/budget geometries × 2 seeds. If the
+         plant>pedestal ordering flips with a knob, that is a defect in THIS instrument,
+         not a result (H_9844 found exactly that failure in the mi-screen and had to gate
+         against it) ⇒ GEOMETRY-DEPENDENT, refuse.
+      ④ Only then the arms: --vadapt-on-replay ON vs OFF (is the growth hook causal?) and
+         recency vs random selection (is ir_select_snapshots' policy causal?).
+    The p5 INVARIANT WATCH runs inside every probe: any emit_count>0 hard-exits the process.
+
+    SCOPE, pre-registered (honesty gate): this battery certifies the INSTRUMENT and the
+    lane's own quantities — field growth, consolidation gain, replay dose, emit-freedom.
+    It is NOT a training result. It says nothing about whether rehearsal changes what the
+    model learns, and — per H_9790, which measured imagination as DIRECTIONAL: it reached
+    interior structure and did NOT reach the mouth — the pre-registered likely outcome for
+    any follow-on training run is the SAME mouth 미도달 wall."""
+    def novel(n, w, off=0):
+        return [[(off + i * 37 + j * 7) % 256 for j in range(w)] for i in range(n)]
+
+    def flat(n, w):
+        return [[7] * w for _ in range(n)]
+
+    # (ring, window, budget). budget < ring on purpose in ③/④: at budget == ring the recency
+    # and random arms select the SAME SET (only the order differs), so the selection-policy
+    # control would be an ORDER control wearing a membership control's name.
+    geometries = [(20, 32, 8), (8, 16, 3), (20, 64, 5)]
+    dose_floor = _imag_dose_floor()
+    out = {"instrument": "imagination-selftest", "hypothesis": "H_9841",
+           "dose_floor": {
+               "budget_floor_rows": dose_floor,
+               "derived_from": "ir_consolidation_gain(n, density=1.0) * n >= 0.5",
+               "why": ("below this budget round(gain*n)==0 at EVERY density, so the lane is "
+                       "structurally inert while still logging 'lane ON'. Geometries below the "
+                       "floor are marked and their rows_replayed==0 is BY CONSTRUCTION, not a "
+                       "null; the trainer REFUSES such a configuration outright."),
+           },
+           "engine": "core/imagination_replay.py + core/wake_memory.py + "
+                     "core/dream_lib.py + core/engine_cli.py (VAdaptField)",
+           "daemon_counterpart": "cli/chat.py:3350-3380 (N3/REM replay + live "
+                                 "vadapt_field_step per tick, wired 2026-07-10)"}
+    # ⓪ THE WATCH ITSELF — plant a speaking rehearsal and require the p5 guard to fire.
+    #    A guard that has only ever been observed NOT firing certifies nothing.
+    try:
+        _imag_emit_watch({"emit_count": 1}, "planted")
+        watch_fires = False
+    except SystemExit:
+        watch_fires = True
+    _imag_emit_watch({"emit_count": 0}, "planted-null")   # …and must NOT fire on a silent tick
+    out["p5_watch_control"] = {
+        "planted_violation_detected": watch_fires,
+        "silent_tick_passes": True,
+        "why": "the p5 hard-exit is proven to fire on a planted emit_count=1 and to pass a 0.",
+    }
+    rows, plant_ok, ped_ok = [], True, True
+    for (n_ring, w, budget) in geometries:
+        for s in (seed, seed + 4):
+            # the seed shifts the PLANTED CONTENT, not just an rng: the recency path is
+            # deterministic, so a seed that only reseeded random.Random would leave the
+            # robustness axis vacuous (it did, in the first run of this battery).
+            p = _imag_probe(novel(n_ring, w, off=s), True, "recency", budget, s)
+            e = _imag_probe([], True, "recency", budget, s)
+            f = _imag_probe(flat(n_ring, w), True, "recency", budget, s)
+            # FIRING is read on the lane's CAUSAL quantities (the field split, the gain).
+            # `rows_replayed` is the DERIVED dose and it is required only above the derived
+            # dose floor — below the floor a 0 is arithmetic, not a null, and reading it as a
+            # null is what made the first run of this battery declare itself dead.
+            below = budget < dose_floor
+            fires = p["splits"] > 0 and p["consolidation"] > 0.0 and (below or p["rows_replayed"] > 0)
+            refuses = (e["snapshots"] == 0 and e["consolidation"] == 0.0
+                       and f["splits"] == 0 and f["density"] == 0.0
+                       and f["consolidation"] == 0.0 and f["rows_replayed"] == 0)
+            plant_ok = plant_ok and fires
+            ped_ok = ped_ok and refuses
+            rows.append({"geometry": {"ring": n_ring, "window": w, "budget": budget},
+                         "seed": s, "below_dose_floor": below,
+                         "plant_fires": fires, "pedestal_refuses": refuses,
+                         "plant": p, "pedestal_empty": e, "pedestal_flat": f})
+    if not watch_fires:
+        out["status"] = "INSTRUMENT-DEAD"
+        out["why"] = ("the p5 invariant watch did NOT fire on a PLANTED emit_count=1 — the guard "
+                      "that is supposed to stop a speaking rehearsal cannot see one, so every "
+                      "'emit_violations: 0' below would be worthless.")
+    elif not plant_ok:
+        out["status"] = "INSTRUMENT-DEAD"
+        out["why"] = ("the planted signal (a ring of mutually distinct windows) did NOT move the "
+                      "lane — no field split and/or no dose. A null on real data would then be a "
+                      "property of the instrument, not of rehearsal.")
+    elif not ped_ok:
+        out["status"] = "INVALID"
+        out["why"] = ("a zero-truth pedestal FIRED — the lane reports consolidation on an empty "
+                      "ring and/or on a rehearsal with no novelty in it, i.e. it MANUFACTURES "
+                      "the quantity it exists to measure.")
+    else:
+        out["status"] = "CERTIFIED"
+        out["why"] = ("plant fires and both pedestals refuse at every geometry x seed — the "
+                      "ordering is not a knob artefact.")
+    out["controls"] = rows
+    if out["status"] == "CERTIFIED":
+        ring, w, budget = geometries[0]
+        wins = novel(ring, w, off=seed)
+        on = _imag_probe(wins, True, "recency", budget, seed)
+        off = _imag_probe(wins, False, "recency", budget, seed)
+        # CONTROL B is drawn on SEVERAL seeds: it is the only arm with an rng in it, so a
+        # single draw could not tell a policy effect from one lucky sample.
+        rnds = [_imag_probe(wins, True, "random", budget, seed + k) for k in range(5)]
+        rnd_c = [r["consolidation"] for r in rnds]
+        out["arms"] = {
+            "vadapt_on_recency": on,
+            "vadapt_off_recency": off,      # CONTROL A — replay happens, hook lesioned
+            "vadapt_on_random": rnds,       # CONTROL B — hook fires, selection policy destroyed
+            "hook_delta_consolidation": on["consolidation"] - off["consolidation"],
+            "policy_delta_consolidation_range": [min(rnd_c), max(rnd_c)],
+            "policy_recency_inside_random_range":
+                bool(min(rnd_c) <= on["consolidation"] <= max(rnd_c)),
+            "reading": ("hook_delta is NEGATIVE by construction whenever the realized growth "
+                        "density falls below the fixed N3 prior 0.80 — the hook does not add "
+                        "dose, it CORRECTS it, and the direction is the measurement. "
+                        "policy: if recency sits INSIDE the random arm's range, the selection "
+                        "POLICY is not doing work at this ring size and must not be claimed."),
+        }
+        out["p5_invariant"] = {
+            "emit_violations_total": sum(r["plant"]["emit_violations"]
+                                         + r["pedestal_empty"]["emit_violations"]
+                                         + r["pedestal_flat"]["emit_violations"] for r in rows)
+                                    + on["emit_violations"] + off["emit_violations"]
+                                    + sum(r["emit_violations"] for r in rnds),
+            "replay_ticks_watched": sum(r["plant"]["ticks"] + r["pedestal_flat"]["ticks"]
+                                        for r in rows) + on["ticks"] + off["ticks"]
+                                    + sum(r["ticks"] for r in rnds),
+            "reading": "every ir_replay_tick was checked; emit_count>0 hard-exits the process (p5).",
+        }
+    out["requested"] = {"imagination_replay": ratio, "reconsolidate_every": every,
+                        "vadapt_on_replay": bool(vadapt_on), "select": select, "seed": seed}
+    out["scope"] = ("INSTRUMENT CERTIFICATION ONLY — this is not a training result and not a "
+                    "verdict. It bounds what the lane's own quantities do; whether rehearsal "
+                    "changes what the model LEARNS, let alone what it SAYS, is unmeasured here. "
+                    "H_9790 measured imagination as DIRECTIONAL (interior reached, mouth NOT), "
+                    "and that same mouth-미도달 outcome is pre-registered as the likely result "
+                    "of any follow-on training run.")
+    print(json.dumps(out, ensure_ascii=False, indent=2))
+    sys.exit(0 if out["status"] == "CERTIFIED"
+             else (3 if out["status"] == "INVALID" else 4))
+
 
 def main():
     ap = argparse.ArgumentParser(
@@ -2378,6 +2803,37 @@ def main():
                          "(sample-seed-invalid-for-deterministic-do-intervention).")
     ap.add_argument("--closure-monitor-out", type=str, default="",
                     help="H_9845: append each monitor reading to this JSONL (log sink only).")
+
+    # ── H_9841 IMAGINATION RECONSOLIDATION (training-time N3/REM rehearsal) ──────────────────
+    # The daemon already grows on rehearsal (cli/chat.py:3350-3380 fires a live
+    # vadapt_field_step per replay tick); training had no counterpart. That gap is the p8
+    # violation this lane closes. DEFAULT OFF (0.0) ⇒ every branch is skipped, byte-identical.
+    ap.add_argument("--imagination-replay", type=float, default=0.0,
+                    help="H_9841: fraction of the batch a reconsolidation phase may hand to "
+                         "REHEARSED windows (0.0 = OFF, byte-identical). The rows actually "
+                         "replayed = ir_consolidation_gain x budget, so a rehearsal that grew "
+                         "nothing spends nothing.")
+    ap.add_argument("--reconsolidate-every", type=int, default=50,
+                    help="H_9841: enter the N3/REM reconsolidation phase every N steps "
+                         "(inert unless --imagination-replay > 0).")
+    ap.add_argument("--vadapt-on-replay", action="store_true",
+                    help="H_9841: fire the daemon's OWN growth hook (core/engine_cli "
+                         "vadapt_field_step, the call cli/chat.py:3375 makes) once per replay "
+                         "tick, so the replay dose follows the growth the rehearsal actually "
+                         "CAUSED. OFF = replay happens with the hook lesioned and the dose "
+                         "follows the fixed N3 prior dr_mitosis_prior(3)=0.80 — THE control "
+                         "that isolates whether the hook is causal, not a weaker treatment.")
+    ap.add_argument("--imagination-select", choices=["recency", "random"], default="recency",
+                    help="H_9841: snapshot selection. 'recency' = ir_select_snapshots' own "
+                         "policy (the daemon's) · 'random' = THE CONTROL, same ring and same "
+                         "count with the recency ordering destroyed, isolating whether the "
+                         "selection POLICY is causal.")
+    ap.add_argument("--imagination-selftest", action="store_true",
+                    help="H_9841: run the $0 certification battery for the lane and EXIT — no "
+                         "model, no corpus, no GPU. Controls first (planted novel ring must "
+                         "FIRE; empty ring and novelty-free ring must REFUSE) across 3 "
+                         "geometries x 2 seeds, then the arms. Emits JSON; exit 0 CERTIFIED / "
+                         "3 INVALID / 4 INSTRUMENT-DEAD.")
     ap.add_argument("--seed", type=int, default=7)
     # a `<corpus>.meta.json` written by `anima-py corpus` carries the budget floor that corpus
     # earned; _budget_preflight refuses to start below it (H_9324) — see cli/corpus.py BUDGET_FLOORS.
@@ -2409,6 +2865,29 @@ def main():
     ap.add_argument("--val-batches", type=int, default=4)
     ap.add_argument("--log-every", type=int, default=50)
     ap.add_argument("--dbes-every", type=int, default=0, help="0=final only; N=also every N steps")
+    # ── H_9846 STRUCTURE-ENVELOPE WATCH (MONITOR-ONLY · core/phi_envelope_monitor.py) ────────
+    # WHY IT EXISTS: a lever that raises a capability number while shredding the substrate's
+    # structure is a REGRESSION, and today nothing in the trainer would notice. This watch reads
+    # the envelope/structure layer (core/phi_envelope_substrate.py) over the parameter tensors
+    # and reports `phi_smooth_no_cliff` — a function whose entire job is "was there a cliff".
+    # WHY IT IS A LOG AND NOTHING ELSE (a_train_inline_gauge): a number in the loss stops being
+    # evidence about the model — that is p7 (no perplexity verdict) in its Φ edition. Loss-freedom
+    # here is STRUCTURAL, not a promise: the tick reads params under no_grad, draws no RNG, and
+    # the value never touches `loss`, so ON and OFF produce byte-identical checkpoints (that
+    # equality is the proof obligation, measured in the H_9846 card).
+    # NAMING (a_phi_iit4_tool): Φ is IIT4-only. Nothing this flag prints is called Φ — the outputs
+    # are `dispersion`/`span`/`nest_*`/`cliff_gap`, i.e. what they arithmetically are.
+    ap.add_argument("--phi-envelope-monitor", choices=["off", "on"], default="off",
+                    help="H_9846: log the parameter-structure envelope (dispersion + cliff) every "
+                         "--phi-monitor-every steps. MONITOR-ONLY — never enters the loss; ON vs "
+                         "OFF is byte-identical. Runs its positive control + zero-truth pedestal "
+                         "FIRST and refuses to report any value unless both certify.")
+    ap.add_argument("--phi-monitor-every", type=int, default=0,
+                    help="H_9846: monitor cadence in steps (0 = follow --log-every). The cliff "
+                         "statistic compares CONSECUTIVE ticks, so it is cadence-dependent by "
+                         "construction — compare two runs only at the same value (the shipped "
+                         "battery certifies the fire/refuse DECISION across cadences and reports "
+                         "the ramp inflation factor rather than pretending the number is scale-free).")
     ap.add_argument("--skip-inline-rho", action="store_true",
                     help="skip the slow directional torch-side rho probe at shutdown; the "
                          "serialized checkpoint must still receive its terminal engine-native "
@@ -2538,6 +3017,31 @@ def main():
     # (convergence instrument-never-run-hides-multiple-bugs).
     if a.sleep_selftest > 0:
         sys.exit(run_sleep_selftest(a.sleep_ticks, a.sleep_selftest))
+
+    # ══ H_9841 — IMAGINATION-LANE SELFTEST: runs BEFORE any spend and EXITS ══════════════════════
+    #   Placed here (like the H_9808 gate below) so it needs no corpus, no CUDA, no DDP re-exec
+    #   and no checkpoint — the whole battery is $0. `a_experiment_engine_native`: the certification
+    #   of a manipulation is itself a flag on the installed CLI, never a script beside the engine.
+    if a.imagination_selftest:
+        run_imagination_selftest(a.imagination_replay, a.reconsolidate_every,
+                                 a.vadapt_on_replay, a.imagination_select, a.seed)
+
+    # ══ H_9841 — DOSE-FLOOR REFUSAL (no-tune-to-green, abort before spend) ═══════════════════════
+    #   The replay dose is round(ir_consolidation_gain * budget) ROWS, so below a derived budget
+    #   floor it is 0 at every possible density: the lane would log "ON" and train nothing. That
+    #   is a knob silently deciding the outcome, so it is refused rather than tuned around. The
+    #   floor comes from the engine's own gain function (_imag_dose_floor), never a chosen number.
+    if a.imagination_replay > 0.0:
+        _iw = max(1, len([g for g in a.gpus.split(",") if g.strip() != ""]))
+        _ibudget = max(1, int(round(a.imagination_replay * (a.batch_size // _iw))))
+        _ifloor = _imag_dose_floor()
+        if _ibudget < _ifloor:
+            sys.exit("[imagination] REFUSING TO START — --imagination-replay %g on a per-rank "
+                     "batch of %d gives a replay budget of %d row(s), below the derived dose "
+                     "floor of %d. round(ir_consolidation_gain(n,density)*n) == 0 for every "
+                     "density at n < %d, so the lane would report itself ON and replay NOTHING. "
+                     "Raise --imagination-replay or --batch-size."
+                     % (a.imagination_replay, a.batch_size // _iw, _ibudget, _ifloor, _ifloor))
 
     # ══ H_9808 — TRAINED-CONTROL CEILING: the ABORT-BEFORE-SPEND gate ═══════════════════════════
     #
@@ -3281,8 +3785,48 @@ def main():
     # ByteGPT has no experts (mito is None) so it is a fixed 1.
     def e_now():
         return mito.e_active if mito is not None else 1
+    # ── H_9846 structure-envelope watch: CONTROLS FIRST, before step 1 ──────────────────
+    #    The order is frozen and it is the whole discipline: the positive control (a planted
+    #    structure cliff, which must be recovered) and the zero-truth pedestal (structure-free
+    #    input, which must read exactly zero) run BEFORE a single training value is taken. An
+    #    uncertified watch prints its status and then stays silent forever — reading a run
+    #    through an instrument that cannot see a planted signal, or that manufactures one, is
+    #    precisely what `positive-control-before-reading-a-negative` and
+    #    `phi-estimator-needs-zero-truth-pedestal` exist to stop. Training itself is NEVER
+    #    aborted by this: a monitor that can stop a run is a lever, and this is not a lever.
+    phi_mon_ticks = []
+    phi_mon_battery = None
+    phi_mon_every = a.phi_monitor_every or a.log_every
+    phi_mon_on = (a.phi_envelope_monitor == "on")
+    if phi_mon_on:
+        phi_mon_battery = PEM.battery_liveness()
+        p0(f"  [structure-envelope H_9846] battery {phi_mon_battery['status']} — "
+           f"plant_fires={phi_mon_battery['plant_fires']} "
+           f"pedestal_refuses={phi_mon_battery['pedestal_refuses']} "
+           f"discriminates_ramp={phi_mon_battery['discriminates_ramp']} "
+           f"(plant gap {phi_mon_battery['arms'][0]['plant']['cliff_gap']:.6f} · pedestal "
+           f"{phi_mon_battery['arms'][0]['pedestal']['cliff_gap']:.6g} · ramp cadence-inflation "
+           f"{phi_mon_battery['ramp_cadence_inflation']:.4f}×)", flush=True)
+        if not phi_mon_battery["certified"]:
+            phi_mon_on = False
+            p0(f"  [structure-envelope H_9846] {phi_mon_battery['why']} "
+               f"→ NO value will be reported. Training continues unaffected.", flush=True)
+        else:
+            p0(f"  [structure-envelope H_9846] MONITOR-ONLY, every {phi_mon_every} steps — "
+               f"never in the loss (a_train_inline_gauge); these are envelope/structure "
+               f"statistics, NOT Φ (a_phi_iit4_tool).", flush=True)
     # intermediate-ckpt extension: bytegpt writes .bin, clm writes .clm.
     _ck_ext = ".bin" if is_bytegpt else ".clm"
+    # ── H_9841 imagination-reconsolidation lane (None ⇒ every branch below skipped) ──
+    #    RANK-LOCAL by construction: each rank rehearses the stream IT saw, so the lane
+    #    adds no collective and cannot desync DDP (shapes are preserved exactly).
+    imag_lane = None
+    if a.imagination_replay > 0.0:
+        imag_lane = ImaginationLane(a.imagination_replay, a.reconsolidate_every,
+                                    a.vadapt_on_replay, a.imagination_select, a.seed + rank)
+        p0(f"  [imagination] H_9841 lane ON — ratio={a.imagination_replay:g} "
+           f"every={a.reconsolidate_every} vadapt_on_replay={a.vadapt_on_replay} "
+           f"select={a.imagination_select} (p5 invariant watch armed)", flush=True)
     for step in range(1, steps + 1):
         # --ckpt-every: dump an intermediate ckpt of the state AFTER (step-1) updates
         # (step-window multiplex — one run yields 2000/4000/… checkpoints, no re-train).
@@ -3333,6 +3877,29 @@ def main():
                 assert int(mx.item()) == mito.e_active, \
                     f"[ddp] mitosis e_active desync: local {mito.e_active} != max {int(mx.item())}"
         x, y = get_batch(step)
+        # ── H_9841 N3/REM RECONSOLIDATION — rehearsed rows REPLACE fresh rows in place ──
+        #    The batch shape, the optimizer step and the DDP graph are untouched; the ONE
+        #    thing that changes is WHICH windows this step's gradient is spent on. The dose
+        #    is ir_consolidation_gain, so with --vadapt-on-replay a rehearsal that caused no
+        #    field growth replaces ZERO rows (the lane declines to re-train what taught the
+        #    substrate nothing) — that is what makes the hook lesion a real control.
+        if imag_lane is not None:
+            for _b in range(x.shape[0]):
+                imag_lane.observe(x[_b].tolist(), y[_b].tolist())
+            if imag_lane.due(step):
+                _budget = max(1, int(round(a.imagination_replay * x.shape[0])))
+                _wins, _rec = imag_lane.reconsolidate(step, _budget)
+                for _b, _w in enumerate(_wins):
+                    if _b >= x.shape[0] or len(_w) != 2 * seq_len:
+                        break                      # a short/stale ring entry is SKIPPED, never padded
+                    x[_b] = torch.tensor(_w[:seq_len], dtype=x.dtype, device=x.device)
+                    y[_b] = torch.tensor(_w[seq_len:], dtype=y.dtype, device=y.device)
+                p0(f"  [imagination] step {step:5d} N3/REM  snaps={_rec['snapshots']} "
+                   f"splits={_rec['splits']} cells={_rec['cells']} "
+                   f"density={_rec['density']:.4f} consolidation={_rec['consolidation']:.4f} "
+                   f"rows_replayed={_rec['rows_replayed']} "
+                   f"eff_age={_rec['effective_age']:.3f}(monitor-only) "
+                   f"emit_violations={_rec['emit_violations']}", flush=True)
         opt.zero_grad(set_to_none=True)
         # §4 one composite DDP forward() → (loss, detached shard-CE, aux). Backward runs at the
         # callsite OUTSIDE the shell's internal autocast; DDP's grad hooks fire here and
@@ -3416,6 +3983,21 @@ def main():
                             _fh.write(json.dumps(_cm, ensure_ascii=False) + "\n")
                 except Exception as _e:
                     p0(f"  closure-monitor skipped: {type(_e).__name__}: {_e}", flush=True)
+        # ── H_9846 structure-envelope tick (MONITOR-ONLY, rank-0, no_grad, no RNG) ───────
+        #    `phi_mon_on` is False unless BOTH shipped controls certified before step 1, so an
+        #    uncertified watch emits nothing at all rather than a number nobody may read.
+        #    Wrapped: train-py-1 (a monitor-only tick with a device bug killed a whole run) —
+        #    a watch that can abort training would be a lever, and this must never be one.
+        if phi_mon_on and rank == 0 and (step == 1 or step % phi_mon_every == 0 or step == steps):
+            try:
+                tick = phi_envelope_tick(core_model, step)
+                phi_mon_ticks.append(tick)
+                p0(f"  [structure-envelope H_9846 MONITOR-ONLY] step={step} "
+                   f"dispersion={tick['dispersion']:.6f} span={tick['span']:.6f} "
+                   f"nest_sync={tick['nest_sync']:.6f} units={tick['n_units']}", flush=True)
+            except Exception as e:                       # never let the watch kill the run
+                p0(f"  [structure-envelope H_9846] tick error at step {step}: {e}", flush=True)
+                phi_mon_on = False
         if step == 1 or step % a.log_every == 0 or step == steps:
             vtxt = ""
             ptxt = ""
@@ -3443,6 +4025,17 @@ def main():
            f"(sleep_ratio={slp_final['sleep_steps'] / max(1, steps):.4f}) "
            f"replay_batches={slp_final['replay_batches']} "
            f"warmup_fresh={slp_final['warmup_fresh']}", flush=True)
+    # H_9841: the lane's OWN telemetry, printed before any verdict is read off this run
+    # (train-py-9: a new loss/data term whose telemetry goes unread gets misread as "no lever").
+    if imag_lane is not None:
+        p0("  [imagination] H_9841 lane summary: "
+           + json.dumps(imag_lane.summary(), ensure_ascii=False), flush=True)
+        if imag_lane.emit_violations == 0:
+            p0("  [imagination] p5 invariant HELD for all %d replay tick(s): emit_count==0"
+               % imag_lane.n_ticks, flush=True)
+        else:
+            p0("  [imagination] ⛔ p5 INVARIANT BROKEN — %d emitting replay tick(s)"
+               % imag_lane.emit_violations, flush=True)
 
     # ══ §6 FINALIZE — held-out val / DBES / gauges / ckpt / summary / serialize are ALL
     #    RANK-0-ONLY on the UNWRAPPED core_model (`model`). A non-zero rank writing files =
@@ -3491,6 +4084,19 @@ def main():
                 print(f"  [ρ·weave/ρ·fan (G1/G6) torch-probe DIRECTIONAL] {json.dumps(gauges, ensure_ascii=False)}", flush=True)
             except Exception as e:
                 print(f"  gauges error: {e}", flush=True)
+
+        # ── H_9846 structure-envelope headline (MONITOR-ONLY, never a verdict) ────
+        #    `cliff_gap` is the largest tick-to-tick jump in parameter-structure dispersion —
+        #    the safety-net read. A cliff is a REGRESSION signal even if every capability
+        #    number went up; it is not, and can never be, a capability score.
+        if phi_mon_battery is not None and phi_mon_battery.get("certified") and phi_mon_ticks:
+            _pm = PEM.summarize(phi_mon_ticks, phi_mon_every, phi_mon_battery)
+            print(f"  [structure-envelope H_9846 MONITOR-ONLY] n_ticks={_pm['n_ticks']} "
+                  f"every={_pm['every']} cliff_gap={_pm['cliff']['cliff_gap']:.6f} "
+                  f"cliff_rate={_pm['cliff']['cliff_rate']:.8f} "
+                  f"dispersion {phi_mon_ticks[0]['dispersion']:.6f} → "
+                  f"{phi_mon_ticks[-1]['dispersion']:.6f} · self-subsample spread "
+                  f"{_pm['cliff_gap_spread_rel']:.4f} ⇒ {_pm['regime']}", flush=True)
 
         # ── persist torch ckpt (ALWAYS — a_fire_recover_complete) ────────────────
         # "ALWAYS" used to mean "if you remembered to pass --ckpt-out". It now means always: the
@@ -3565,6 +4171,12 @@ def main():
                    "gauges_g1g6_torch_probe": gauges,
                    # H_9840 — None when the lane is off (nothing was scheduled and nothing replayed).
                    "sleep_schedule": slp_final,
+                   # H_9846 — the structure-envelope watch's own record, battery included, so
+                   # the run's cliff read is re-auditable by someone who was not in the session.
+                   # null when the flag was off; status-only (no values) when uncertified.
+                   "phi_envelope_monitor": (PEM.summarize(phi_mon_ticks, phi_mon_every,
+                                                          phi_mon_battery)
+                                            if phi_mon_battery is not None else None),
                    "tier": ("engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
                             if is_bytegpt else
                             "engine-native-eligible (.clm additive, TLoRA materialized); torch probe DIRECTIONAL")}
