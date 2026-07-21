@@ -67,3 +67,16 @@ held-out 엔티티(+held-out 키)에서 읽는다 ⟹ 외운 행이 아니라 *�
   DIRECTIONAL 이라 여기 인용은 동기일 뿐 근거가 아니다.
 - v2 원본은 예제 스트림에서 뽑은 0-shot 분할을 썼고, 프로덕션 dump 는 엔티티당 hidden 1개라
   **엔티티 분할**로 옮겼다. 같은 질문이지만 같은 수치가 아니다.
+- **tap 범위 한계** (H_9720 카드 §40 이 census 에 대해 지적한 것과 같은 한계가 이 probe 에도 있다):
+  입력이 `--dump-hidden` 의 **penultimate `__last`** 라서, 주소 질의가 초기층 tap +
+  학습된 `W_fresh`/`W_q_fresh` 에서 나오는 **lane_type 5(fresh query lane)의 실제 주소경로는
+  판별하지 못한다**. lane_type 1~4(penultimate 질의)에서만 천장이 그 lane 의 천장이다.
+  fresh lane 을 재려면 `--dump-hidden` 을 fresh tap 으로 확장해야 한다 — 미착수.
+
+## 발사 재개지점 (미측정)
+
+재료는 있다 — `~/anima-weights/rv3c13.clm` 이 CLMS trailer 보유(lane_type=3 · n_slot=8 · d_k=64).
+막힌 곳은 **엔티티 풀 spec 부재**: `--dump-hidden` 은 `{id}__last` 로 저장하므로 id = store 엔티티명인
+프롬프트 spec 이 필요한데 repo 에 커밋된 것이 없다(H_9720 은 held-out 128 엔티티를 pod 에서 생성).
+판정표는 이미 동결(#4241)됐으므로 남은 자유도는 엔티티 풀뿐 —
+**데이터를 보기 전에 spec 을 먼저 동결**해야 shopping 이 아니다. 그 pre-registration 이 다음 단위.
