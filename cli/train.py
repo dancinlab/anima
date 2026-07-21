@@ -155,6 +155,7 @@ if _CORE is None:
 from model import (CLMConfig, CLMConvMoE, MoEStats, CausalDilatedConv1d,
                    ByteGPTConfig, ByteGPT)           # core/model.py (unified CONV+BYTE)
 import serialize as S                                # core/serialize.py — serialize_v3 = bridge SSOT
+import phi_envelope_monitor as PEM                   # core/phi_envelope_monitor.py — H_9846 watch
 import verify_clm_v2 as VC                            # core/verify_clm_v2.py — clm_decodable / descent
 # ByteGPT .pt -> .bin serializer is folded into the SAME unified core/serialize.py.
 import serialize as BGS                               # core/serialize.py — serialize(pt_path, bin_path)
@@ -737,6 +738,31 @@ def dbes_specialization(model: CLMConvMoE, x: torch.Tensor) -> dict:
             "usage_gini": round(gini, 5),
             "usage": [round(float(z), 5) for z in usage.tolist()],
             "n_experts": n_e}
+
+
+def phi_envelope_tick(core_model, step: int) -> dict:
+    """H_9846 — ONE structure-envelope reading of the parameter tensors. MONITOR-ONLY.
+
+    The `units` vector is one RMS per parameter tensor, in sorted-name order (arch-agnostic:
+    identical treatment for clm and bytegpt, and no dependence on module traversal order).
+    `core/phi_envelope_monitor.py` turns that vector into the envelope statistics.
+
+    THREE PROPERTIES, all deliberate, all checkable in this function's body:
+      · no_grad + `.detach()`      — no graph, so the value CANNOT reach the loss.
+      · no tensor is CREATED       — the RMS is computed by reducing the param in place, so
+                                     there is no CPU/CUDA device-mismatch surface (train-py-1:
+                                     a monitor-only tick with exactly that bug killed a run).
+      · no RNG draw, no forward    — so a run with the watch ON and the same run with it OFF
+                                     are byte-identical, which is what makes 'never in the
+                                     loss' a proof instead of a claim (a_train_inline_gauge).
+    Nothing returned here is Φ (a_phi_iit4_tool); the names say what the arithmetic is."""
+    with torch.no_grad():
+        units = [float(p.detach().float().pow(2).mean().sqrt())
+                 for _, p in sorted(core_model.named_parameters(), key=lambda kv: kv[0])
+                 if p.numel() > 0]
+    rec = PEM.unit_structure(units)
+    rec["step"] = step
+    return rec
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -2839,6 +2865,29 @@ def main():
     ap.add_argument("--val-batches", type=int, default=4)
     ap.add_argument("--log-every", type=int, default=50)
     ap.add_argument("--dbes-every", type=int, default=0, help="0=final only; N=also every N steps")
+    # ── H_9846 STRUCTURE-ENVELOPE WATCH (MONITOR-ONLY · core/phi_envelope_monitor.py) ────────
+    # WHY IT EXISTS: a lever that raises a capability number while shredding the substrate's
+    # structure is a REGRESSION, and today nothing in the trainer would notice. This watch reads
+    # the envelope/structure layer (core/phi_envelope_substrate.py) over the parameter tensors
+    # and reports `phi_smooth_no_cliff` — a function whose entire job is "was there a cliff".
+    # WHY IT IS A LOG AND NOTHING ELSE (a_train_inline_gauge): a number in the loss stops being
+    # evidence about the model — that is p7 (no perplexity verdict) in its Φ edition. Loss-freedom
+    # here is STRUCTURAL, not a promise: the tick reads params under no_grad, draws no RNG, and
+    # the value never touches `loss`, so ON and OFF produce byte-identical checkpoints (that
+    # equality is the proof obligation, measured in the H_9846 card).
+    # NAMING (a_phi_iit4_tool): Φ is IIT4-only. Nothing this flag prints is called Φ — the outputs
+    # are `dispersion`/`span`/`nest_*`/`cliff_gap`, i.e. what they arithmetically are.
+    ap.add_argument("--phi-envelope-monitor", choices=["off", "on"], default="off",
+                    help="H_9846: log the parameter-structure envelope (dispersion + cliff) every "
+                         "--phi-monitor-every steps. MONITOR-ONLY — never enters the loss; ON vs "
+                         "OFF is byte-identical. Runs its positive control + zero-truth pedestal "
+                         "FIRST and refuses to report any value unless both certify.")
+    ap.add_argument("--phi-monitor-every", type=int, default=0,
+                    help="H_9846: monitor cadence in steps (0 = follow --log-every). The cliff "
+                         "statistic compares CONSECUTIVE ticks, so it is cadence-dependent by "
+                         "construction — compare two runs only at the same value (the shipped "
+                         "battery certifies the fire/refuse DECISION across cadences and reports "
+                         "the ramp inflation factor rather than pretending the number is scale-free).")
     ap.add_argument("--skip-inline-rho", action="store_true",
                     help="skip the slow directional torch-side rho probe at shutdown; the "
                          "serialized checkpoint must still receive its terminal engine-native "
@@ -3736,6 +3785,36 @@ def main():
     # ByteGPT has no experts (mito is None) so it is a fixed 1.
     def e_now():
         return mito.e_active if mito is not None else 1
+    # ── H_9846 structure-envelope watch: CONTROLS FIRST, before step 1 ──────────────────
+    #    The order is frozen and it is the whole discipline: the positive control (a planted
+    #    structure cliff, which must be recovered) and the zero-truth pedestal (structure-free
+    #    input, which must read exactly zero) run BEFORE a single training value is taken. An
+    #    uncertified watch prints its status and then stays silent forever — reading a run
+    #    through an instrument that cannot see a planted signal, or that manufactures one, is
+    #    precisely what `positive-control-before-reading-a-negative` and
+    #    `phi-estimator-needs-zero-truth-pedestal` exist to stop. Training itself is NEVER
+    #    aborted by this: a monitor that can stop a run is a lever, and this is not a lever.
+    phi_mon_ticks = []
+    phi_mon_battery = None
+    phi_mon_every = a.phi_monitor_every or a.log_every
+    phi_mon_on = (a.phi_envelope_monitor == "on")
+    if phi_mon_on:
+        phi_mon_battery = PEM.battery_liveness()
+        p0(f"  [structure-envelope H_9846] battery {phi_mon_battery['status']} — "
+           f"plant_fires={phi_mon_battery['plant_fires']} "
+           f"pedestal_refuses={phi_mon_battery['pedestal_refuses']} "
+           f"discriminates_ramp={phi_mon_battery['discriminates_ramp']} "
+           f"(plant gap {phi_mon_battery['arms'][0]['plant']['cliff_gap']:.6f} · pedestal "
+           f"{phi_mon_battery['arms'][0]['pedestal']['cliff_gap']:.6g} · ramp cadence-inflation "
+           f"{phi_mon_battery['ramp_cadence_inflation']:.4f}×)", flush=True)
+        if not phi_mon_battery["certified"]:
+            phi_mon_on = False
+            p0(f"  [structure-envelope H_9846] {phi_mon_battery['why']} "
+               f"→ NO value will be reported. Training continues unaffected.", flush=True)
+        else:
+            p0(f"  [structure-envelope H_9846] MONITOR-ONLY, every {phi_mon_every} steps — "
+               f"never in the loss (a_train_inline_gauge); these are envelope/structure "
+               f"statistics, NOT Φ (a_phi_iit4_tool).", flush=True)
     # intermediate-ckpt extension: bytegpt writes .bin, clm writes .clm.
     _ck_ext = ".bin" if is_bytegpt else ".clm"
     # ── H_9841 imagination-reconsolidation lane (None ⇒ every branch below skipped) ──
@@ -3904,6 +3983,21 @@ def main():
                             _fh.write(json.dumps(_cm, ensure_ascii=False) + "\n")
                 except Exception as _e:
                     p0(f"  closure-monitor skipped: {type(_e).__name__}: {_e}", flush=True)
+        # ── H_9846 structure-envelope tick (MONITOR-ONLY, rank-0, no_grad, no RNG) ───────
+        #    `phi_mon_on` is False unless BOTH shipped controls certified before step 1, so an
+        #    uncertified watch emits nothing at all rather than a number nobody may read.
+        #    Wrapped: train-py-1 (a monitor-only tick with a device bug killed a whole run) —
+        #    a watch that can abort training would be a lever, and this must never be one.
+        if phi_mon_on and rank == 0 and (step == 1 or step % phi_mon_every == 0 or step == steps):
+            try:
+                tick = phi_envelope_tick(core_model, step)
+                phi_mon_ticks.append(tick)
+                p0(f"  [structure-envelope H_9846 MONITOR-ONLY] step={step} "
+                   f"dispersion={tick['dispersion']:.6f} span={tick['span']:.6f} "
+                   f"nest_sync={tick['nest_sync']:.6f} units={tick['n_units']}", flush=True)
+            except Exception as e:                       # never let the watch kill the run
+                p0(f"  [structure-envelope H_9846] tick error at step {step}: {e}", flush=True)
+                phi_mon_on = False
         if step == 1 or step % a.log_every == 0 or step == steps:
             vtxt = ""
             ptxt = ""
@@ -3991,6 +4085,19 @@ def main():
             except Exception as e:
                 print(f"  gauges error: {e}", flush=True)
 
+        # ── H_9846 structure-envelope headline (MONITOR-ONLY, never a verdict) ────
+        #    `cliff_gap` is the largest tick-to-tick jump in parameter-structure dispersion —
+        #    the safety-net read. A cliff is a REGRESSION signal even if every capability
+        #    number went up; it is not, and can never be, a capability score.
+        if phi_mon_battery is not None and phi_mon_battery.get("certified") and phi_mon_ticks:
+            _pm = PEM.summarize(phi_mon_ticks, phi_mon_every, phi_mon_battery)
+            print(f"  [structure-envelope H_9846 MONITOR-ONLY] n_ticks={_pm['n_ticks']} "
+                  f"every={_pm['every']} cliff_gap={_pm['cliff']['cliff_gap']:.6f} "
+                  f"cliff_rate={_pm['cliff']['cliff_rate']:.8f} "
+                  f"dispersion {phi_mon_ticks[0]['dispersion']:.6f} → "
+                  f"{phi_mon_ticks[-1]['dispersion']:.6f} · self-subsample spread "
+                  f"{_pm['cliff_gap_spread_rel']:.4f} ⇒ {_pm['regime']}", flush=True)
+
         # ── persist torch ckpt (ALWAYS — a_fire_recover_complete) ────────────────
         # "ALWAYS" used to mean "if you remembered to pass --ckpt-out". It now means always: the
         # .clm is int4, and a fine-tune whose updates are smaller than the quant step does not
@@ -4064,6 +4171,12 @@ def main():
                    "gauges_g1g6_torch_probe": gauges,
                    # H_9840 — None when the lane is off (nothing was scheduled and nothing replayed).
                    "sleep_schedule": slp_final,
+                   # H_9846 — the structure-envelope watch's own record, battery included, so
+                   # the run's cliff read is re-auditable by someone who was not in the session.
+                   # null when the flag was off; status-only (no values) when uncertified.
+                   "phi_envelope_monitor": (PEM.summarize(phi_mon_ticks, phi_mon_every,
+                                                          phi_mon_battery)
+                                            if phi_mon_battery is not None else None),
                    "tier": ("engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
                             if is_bytegpt else
                             "engine-native-eligible (.clm additive, TLoRA materialized); torch probe DIRECTIONAL")}
