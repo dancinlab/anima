@@ -2933,6 +2933,279 @@ def store_retr_probe_run(argv):
     return 0
 
 
+# ── H_9838 · CA3 multi-step transitive completion (ckpt-FREE · READ-SIDE ONLY) ─────────
+# WHY THIS EXISTS: core/hippo_lane.py (H_9129 rung-3) already ships the CA3
+# heteroassociative store whose completion loop is, by construction, transitive chaining —
+# but nothing ever MEASURED it. The one question recombination needs answered is: with a
+# store built from A→B and B→C ONLY, does completion recover A→C above chance? That is the
+# operation CE (next-byte) cannot supply, and it is answerable at $0 with no checkpoint
+# because the store + completion are arch-independent numpy arithmetic (no torch, no FFI).
+#
+# STRICTLY READ-SIDE (a_substrate_disjoint: separation = preservation). hippo_lane's header
+# states it is a READ-ONLY relatedness readout that never mutates the emit-drive lane
+# (Ψ / motivation / recall_thr / generator). This selftest imports its three pure functions
+# and prints; it opens NO write path into emit-drive and touches no frozen bar. The card's
+# other half — feeding completed pairs back as an auxiliary TRAINING target (`train
+# --hippo-aux`) — is deliberately NOT landed here: that is the arm that would create the
+# write path, and it may not be built before this read-side number says the completion is
+# worth carrying at all.
+def _hippo_world(n_chains, chain_len, dim, active, seed):
+    """The PREMISE world: n_chains DISJOINT directed chains of chain_len items each, coded
+    by hippo_lane's deterministic integer fixture (no float RNG, byte-stable).
+
+    Only ADJACENT edges are ever stored, so every hop>=2 pair is a relation the store was
+    never told — exactly the A→B, B→C ⊢ A→C setting. Chains are disjoint so reachability
+    is chain-local and a distractor drawn from another chain is PROVABLY unreachable."""
+    import hippo_lane as HL
+    codes = HL.fixture_codes(n_chains * chain_len, dim, active, seed)
+    edges = [(c * chain_len + p, c * chain_len + p + 1)
+             for c in range(n_chains) for p in range(chain_len - 1)]
+    return codes, edges
+
+
+def _hippo_arm(codes, edges, dim, hops, kwta, n_chains, chain_len, shuffle_rng=None, steps=None):
+    """One arm: for every source i, rank the TRUE hops-away target against the pool of
+    cross-chain (unreachable) items by CA3 completion overlap.
+
+    DV = top-1 with EXPLICIT tie handling: a target tied with t−1 others at the top scores
+    1/t, so a store that says nothing (every overlap 0 ⇒ everything ties) reads EXACTLY the
+    derived chance 1/pool instead of a spurious 0 or 1. Chance is derived from the realized
+    pool, never assumed (chance-level-must-be-derived-per-metric).
+
+    shuffle_rng != None = the VALUE-SHUFFLED store pedestal: the same edge count and the same
+    code multiset, but each edge's target code is reassigned, so the store is structure-free
+    while every norm/sparsity statistic is preserved.
+
+    steps != None truncates the completion loop below the hop distance. steps=1 against a
+    hops>=2 query is the CHAINING lesion: the target is then unreachable by construction, so
+    anything the arm still recovers is code geometry rather than transitive completion."""
+    import numpy as np
+    import hippo_lane as HL
+    N = n_chains * chain_len
+    ed = edges
+    if shuffle_rng is not None:
+        perm = shuffle_rng.permutation(N)
+        while bool((perm == np.arange(N)).all()):
+            perm = shuffle_rng.permutation(N)
+        ed = [(cur, int(perm[nxt])) for cur, nxt in edges]
+    W = HL.hippo_build_store(codes, ed, dim)
+    hits, npool = [], 0
+    for c in range(n_chains):
+        for p in range(chain_len - hops):
+            i = c * chain_len + p
+            pool = [i + hops] + [x for x in range(N) if x // chain_len != c]
+            s = [HL.hippo_relatedness(W, codes, i, x, steps or hops, kwta) for x in pool]
+            top = max(s)
+            ties = sum(1 for v in s if v >= top - 1e-12)
+            hits.append(1.0 / ties if s[0] >= top - 1e-12 else 0.0)
+            npool = len(pool)
+    return {"acc": float(sum(hits) / len(hits)), "chance": 1.0 / float(npool),
+            "n_queries": len(hits), "pool": npool}
+
+
+def _hippo_battery(n_chains, chain_len, seeds, geoms, kwta_f, hop_list):
+    """Run every arm over seeds x geometries at ONE store load, and reduce to the conservative
+    headline: MIN over configs for the positive/treatment arms, MAX for the pedestals. A number
+    that survives only at one seed or one code density is therefore unreportable."""
+    import numpy as np
+    rows = []
+    for sd in seeds:
+        for (dm, ac) in geoms:
+            codes, edges = _hippo_world(n_chains, chain_len, dm, ac, sd)
+            k = kwta_f or ac
+            r = {"cfg": {"seed": sd, "dim": dm, "active": ac, "kwta": k},
+                 "pos": _hippo_arm(codes, edges, dm, 1, k, n_chains, chain_len),
+                 "ped1": _hippo_arm(codes, edges, dm, 1, k, n_chains, chain_len,
+                                    shuffle_rng=np.random.default_rng(9838 + sd)),
+                 "hop": {}}
+            for h in hop_list:
+                r["hop"][h] = {
+                    "treat": _hippo_arm(codes, edges, dm, h, k, n_chains, chain_len),
+                    "ped": _hippo_arm(codes, edges, dm, h, k, n_chains, chain_len,
+                                      shuffle_rng=np.random.default_rng(9838 + sd + h)),
+                    "kwta_off": _hippo_arm(codes, edges, dm, h, dm, n_chains, chain_len),
+                    "one_step": _hippo_arm(codes, edges, dm, h, k, n_chains, chain_len, steps=1),
+                }
+            rows.append(r)
+    chance = rows[0]["pos"]["chance"]
+    pos_min = min(r["pos"]["acc"] for r in rows)
+    ped_max = max(max(r["ped1"]["acc"], max(r["hop"][h]["ped"]["acc"] for h in hop_list))
+                  for r in rows)
+    inv_bar, floor_bar = max(4.0 * chance, 0.15), max(2.0 * chance, 0.15)
+    status = ("INSTRUMENT-DEAD" if pos_min < 0.90 else
+              "INVALID" if ped_max > inv_bar else "CERTIFIED")
+    return {"n_chains": n_chains, "n_items": n_chains * chain_len,
+            "n_edges": n_chains * (chain_len - 1), "pool": rows[0]["pos"]["pool"],
+            "chance": chance, "positive_min": pos_min, "pedestal_max": ped_max,
+            "invalid_bar": inv_bar, "floor_bar": floor_bar, "status": status,
+            "hops": {h: {"treat_min": min(r["hop"][h]["treat"]["acc"] for r in rows),
+                         "treat_max": max(r["hop"][h]["treat"]["acc"] for r in rows),
+                         "kwta_off_max": max(r["hop"][h]["kwta_off"]["acc"] for r in rows),
+                         "one_step_max": max(r["hop"][h]["one_step"]["acc"] for r in rows)}
+                     for h in hop_list},
+            "per_config": [{"cfg": r["cfg"], "pos": r["pos"]["acc"], "ped1": r["ped1"]["acc"],
+                            "hop": {str(h): {"treat": r["hop"][h]["treat"]["acc"],
+                                             "ped": r["hop"][h]["ped"]["acc"],
+                                             "kwta_off": r["hop"][h]["kwta_off"]["acc"],
+                                             "one_step": r["hop"][h]["one_step"]["acc"]}
+                                    for h in hop_list}} for r in rows]}
+
+
+def hippo_transitive_selftest_run(argv):
+    """`anima-py evaluate --hippo-transitive-selftest [--hippo-hops H] [--hippo-kwta-k K]
+    [--hippo-seed S] [--hippo-dim D] [--hippo-active A] [--hippo-chains C]
+    [--hippo-chain-len L] [--out j.json]` — H_9838, core/hippo_lane.py CA3 completion.
+
+    ARM ORDER IS FROZEN AND SEQUENTIAL (positive-control-before-reading-a-negative):
+      ① POSITIVE CONTROL — hops=1, i.e. the pairs the store was literally built from. If
+         completion cannot recover THOSE, the instrument is dead and no negative may be read
+         from it: INSTRUMENT-DEAD, and the treatment row is NOT printed.
+      ② ZERO-TRUTH PEDESTAL — the value-shuffled store (same edge count, same code multiset,
+         targets reassigned). If it fires there the readout is manufacturing relatedness:
+         INVALID, and the treatment row is NOT printed.
+      ③ TREATMENT — hops>=2, pairs never stored. TRANSITIVE vs FLOOR against derived chance.
+      ④ MECHANISM LESIONS (reported, not gates) — ④a ONE-STEP: the identical query with the
+         completion truncated to a single step, so the hops>=2 target is unreachable BY
+         CONSTRUCTION; this is what isolates transitive CHAINING from the code geometry.
+         ④b kWTA OFF (k = full width): removes the sparse pattern separation. Each prints its
+         collapse-Δ against the treatment and a `causal` flag (lesion at/below the floor bar
+         while the treatment is above it).
+
+    WHY THE LOAD LADDER EXISTS (measured 2026-07-21, and it is the reason this is not a
+    single-config battery): a heteroassociative store has a CAPACITY. At 8 chains x 4 items
+    (32 items / 24 edges) the positive control reads min=0.8750 across seeds x geometries —
+    BELOW the 0.90 bar — because code crosstalk, not the completion rule, limits recovery.
+    Reading a transitive number there would be reading an over-capacity store. Reading it at a
+    hand-picked lighter load would be tune-to-green. So the flag sweeps a LOAD LADDER and reads
+    the treatment at the LARGEST load whose POSITIVE CONTROL still fires — the hardest
+    certifying point, chosen by the control arm and never by the treatment number. The whole
+    ladder (including the loads that fail) is printed and emitted.
+
+    NO TUNE-TO-GREEN elsewhere either: within a load the battery runs 3 frozen seeds x 3
+    geometries and the headline is the MIN over all of them for the positive/treatment arms and
+    the MAX for the pedestals, so a lift that lives at one seed or one code density cannot be
+    reported (H_9844 caught exactly this failure mode with block size). Passing an explicit knob
+    (--hippo-dim/--hippo-active/--hippo-kwta-k/--hippo-seed/--hippo-chains) COLLAPSES the sweep
+    to that config and the emitted JSON marks robust=false — a hand-picked config is a probe.
+
+    $0: pure numpy, no ckpt, no GPU, no corpus. DIRECTIONAL — it measures the store lane's own
+    arithmetic on a planted world, so it bounds what CA3 completion CAN do, never what a
+    trained 303M does (a_toy_scale_recheck)."""
+    hops_f = evaluate_intval(argv, "--hippo-hops", 0)
+    dim_f = evaluate_intval(argv, "--hippo-dim", 0)
+    act_f = evaluate_intval(argv, "--hippo-active", 0)
+    kwta_f = evaluate_intval(argv, "--hippo-kwta-k", 0)
+    seed_f = evaluate_intval(argv, "--hippo-seed", 0)
+    chains_f = evaluate_intval(argv, "--hippo-chains", 0)
+    chain_len = evaluate_intval(argv, "--hippo-chain-len", 4)
+    out_path = evaluate_strval(argv, "--out", "")
+
+    dim0, act0 = dim_f or 256, act_f or 8
+    seeds = (seed_f,) if seed_f else (7, 11, 20260721)
+    geoms = ([(dim0, act0)] if (dim_f or act_f)
+             else [(dim0, act0), (dim0 // 2, act0), (dim0, act0 * 2)])
+    ladder = [chains_f] if chains_f else [2, 4, 8]
+    robust = not (seed_f or dim_f or act_f or kwta_f or chains_f)
+    hop_list = [hops_f] if hops_f else [h for h in (2, 3) if h <= chain_len - 1]
+    if chain_len < 2 or min(ladder) < 2 or not hop_list:
+        print("--hippo-transitive-selftest: need --hippo-chains>=2, --hippo-chain-len>=2 and a "
+              "hop <= chain_len-1 (got chains=%s len=%d hops=%s)" % (ladder, chain_len, hop_list))
+        return 2
+
+    print("=== --hippo-transitive-selftest — H_9838 CA3 multi-step completion "
+          "(core/hippo_lane.py, H_9129 rung-3) ===")
+    print("  premise world: N disjoint chains x %d items, ONLY adjacent edges stored — every "
+          "hops>=2 pair is a relation the store was never told." % chain_len)
+    print("  seeds=%s · geometries(dim,active)=%s · robust=%s · READ-SIDE ONLY (no write path "
+          "into the emit-drive lane)" % (list(seeds), geoms, robust))
+
+    loads = [_hippo_battery(nc, chain_len, seeds, geoms, kwta_f, hop_list) for nc in ladder]
+    print("  ① CERTIFICATION LADDER — the treatment is read at the LARGEST certifying load; "
+          "the load is picked by the CONTROL arms, never by the treatment number.")
+    print("    %-6s %-6s %-6s %-7s | %-22s | %-24s | %s"
+          % ("items", "edges", "pool", "chance", "STORED hops=1 (min)", "SHUFFLED store (max)",
+             "status"))
+    for L in loads:
+        print("    %-6d %-6d %-6d %-7.4f | %.4f  bar>=0.90 %-4s | %.4f  bar<=%.4f %-4s | %s"
+              % (L["n_items"], L["n_edges"], L["pool"], L["chance"],
+                 L["positive_min"], "PASS" if L["positive_min"] >= 0.90 else "FAIL",
+                 L["pedestal_max"], L["invalid_bar"],
+                 "PASS" if L["pedestal_max"] <= L["invalid_bar"] else "FAIL", L["status"]))
+
+    ok = [L for L in loads if L["status"] == "CERTIFIED"]
+    if not ok:
+        controls = "INVALID" if any(L["status"] == "INVALID" for L in loads) else "INSTRUMENT-DEAD"
+        why = ("the value-shuffled store still fires at every load — the readout manufactures "
+               "relatedness" if controls == "INVALID" else
+               "no load recovers the pairs the store was literally built from, so no negative "
+               "may be read from this instrument")
+        print("  → controls: %s (%s)" % (controls, why))
+        print("    (treatment row REFUSED — an uncertified battery reports no number)")
+        verdict_load, hop_out = None, {}
+    else:
+        verdict_load = max(ok, key=lambda L: L["n_edges"])
+        controls = "CERTIFIED"
+        why = ("positive control fires and the pedestal refuses at %d items / %d edges (the "
+               "largest certifying load)" % (verdict_load["n_items"], verdict_load["n_edges"]))
+        print("  → controls: CERTIFIED — reading the treatment at %d items / %d edges "
+              "(chance=%.4f, floor bar >%.4f)"
+              % (verdict_load["n_items"], verdict_load["n_edges"], verdict_load["chance"],
+                 verdict_load["floor_bar"]))
+        hop_out = {}
+        for h in hop_list:
+            hh = verdict_load["hops"][h]
+            hv = "TRANSITIVE" if hh["treat_min"] > verdict_load["floor_bar"] else "FLOOR"
+            hop_out[str(h)] = {"treat_min": hh["treat_min"], "treat_max": hh["treat_max"],
+                               "spread": hh["treat_max"] - hh["treat_min"],
+                               "one_step_max": hh["one_step_max"],
+                               "chaining_delta": hh["treat_min"] - hh["one_step_max"],
+                               "kwta_off_max": hh["kwta_off_max"],
+                               "separation_delta": hh["treat_min"] - hh["kwta_off_max"],
+                               "floor_bar": verdict_load["floor_bar"], "verdict": hv,
+                               "chaining_causal": bool(
+                                   hh["one_step_max"] <= verdict_load["floor_bar"]
+                                   and hh["treat_min"] > verdict_load["floor_bar"]),
+                               "separation_causal": bool(
+                                   hh["kwta_off_max"] <= verdict_load["floor_bar"]
+                                   and hh["treat_min"] > verdict_load["floor_bar"])}
+            print("    %-44s min=%.4f max=%.4f  [③ TREATMENT] → %s"
+                  % ("TRANSITIVE hops=%d (never stored)" % h,
+                     hh["treat_min"], hh["treat_max"], hv))
+            print("    %-44s max=%.4f            [④a chaining lesion · Δ=%+.4f · causal=%s]"
+                  % ("  ONE-STEP completion (target unreachable)", hh["one_step_max"],
+                     hh["treat_min"] - hh["one_step_max"],
+                     hop_out[str(h)]["chaining_causal"]))
+            print("    %-44s max=%.4f            [④b separation lesion · Δ=%+.4f · causal=%s]"
+                  % ("  kWTA OFF k=full width (no separation)", hh["kwta_off_max"],
+                     hh["treat_min"] - hh["kwta_off_max"],
+                     hop_out[str(h)]["separation_causal"]))
+
+    res = {"instrument": "hippo-transitive-selftest", "hypothesis": "H_9838",
+           "engine": "core/hippo_lane.py (H_9129 rung-3)", "controls": controls, "why": why,
+           "read_side_only": True, "robust": robust,
+           "world": {"chain_len": chain_len, "load_ladder_chains": ladder,
+                     "seeds": list(seeds), "geometries": geoms, "hops": hop_list},
+           "verdict_load": (None if verdict_load is None else
+                            {"n_items": verdict_load["n_items"], "n_edges": verdict_load["n_edges"],
+                             "pool": verdict_load["pool"], "chance": verdict_load["chance"]}),
+           "bars": {"positive": 0.90, "invalid": "max(4*chance,0.15)",
+                    "floor": "max(2*chance,0.15)"},
+           "hops": hop_out, "ladder": loads,
+           "reaudit": {"argv": ["anima-py", "evaluate"] + list(argv)},
+           "reading": ("Headline = MIN over seeds x geometries for the positive/treatment arms "
+                       "and MAX for the pedestals; the load is chosen as the LARGEST one whose "
+                       "positive control fires, so neither a seed, a code density nor the store "
+                       "load can be picked to favour the treatment. DIRECTIONAL: this is the "
+                       "store lane's own arithmetic on a planted premise world — it bounds what "
+                       "CA3 completion can do and cements nothing about a trained model. "
+                       "READ-SIDE ONLY: no write path into the emit-drive lane is opened "
+                       "(a_substrate_disjoint: separation = preservation).")}
+    if out_path:
+        open(out_path, "w", encoding="utf-8").write(json.dumps(res, ensure_ascii=False, indent=2))
+    print(json.dumps(res, ensure_ascii=False))
+    return 0 if controls == "CERTIFIED" else (1 if controls == "INSTRUMENT-DEAD" else 3)
+
+
 def store_addr_census_run(argv):
     """`anima-py evaluate <ckpt> --store-addr-census <dump.npz> [--census-seeds 12]`
     — the H_9719 EMERGENT-ADDRESS $0 pre-screen, engine-native (a_experiment_engine_native).
@@ -10035,6 +10308,9 @@ _KNOWN_FLAGS = frozenset((
     "--store-retr-probe", "--retr-probe-selftest", "--retr-probe-iters",   # H_9825 retrieval ceiling
     "--retr-probe-center", "--retr-probe-nway",              # H_9825 deconfound · live-lane re-read
     "--store-parity-selftest", "--parity-tol",              # H_9826 torch<->numpy CLMS parity
+    # H_9838 CA3 multi-step transitive completion (core/hippo_lane.py · ckpt-free · read-side)
+    "--hippo-transitive-selftest", "--hippo-hops", "--hippo-kwta-k", "--hippo-seed",
+    "--hippo-dim", "--hippo-active", "--hippo-chains", "--hippo-chain-len",
     "--fan-bind", "--fan-smp",
     "--mouth-binder", "--mouth-binder-order-scramble",
     "--fan-dump",
@@ -16705,6 +16981,12 @@ def main(argv):
     # flag PRESENCE, not on argv[0]. ADDITIVE — it moves no frozen bar and touches no panel.
     if "--closure-ladder" in argv:
         return closure_ladder_run(argv)
+    # H_9838 --hippo-transitive-selftest: core/hippo_lane.py's CA3 multi-step completion on a
+    # planted premise world. Ckpt-FREE by construction (the store + completion are pure numpy
+    # arithmetic), so it dispatches on flag PRESENCE like --closure-ladder. ADDITIVE and
+    # READ-SIDE ONLY — it moves no frozen bar and opens no write path into the emit-drive lane.
+    if "--hippo-transitive-selftest" in argv:
+        return hippo_transitive_selftest_run(argv)
     # ── H_9808 $0 PRE-REGISTRATION GATES ────────────────────────────────────────────────────
     # Ckpt-FREE, closed-form referees dispatched on the leading flag: they read a spec file and
     # decide ADMISSIBILITY, never a verdict. Exit 3 = REFUSE (abort before spend), 0 = PASS,
