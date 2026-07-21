@@ -1990,6 +1990,83 @@ def _closure_model_brain(model, device, seq_cap):
     return act
 
 
+def _closure_clm_brain(ckpt, seq_cap):
+    """H_9845-B — the SAME `digest -> action` brain, but the acting policy is a REAL serialized
+    `.clm` (e.g. the 303M) read through the py-canonical measurement path
+    (core/decode.clm_load_weights + clm_forward_hidden_logits), instead of the live torch model.
+
+    ⚠️ WHY THIS FLAG EXISTS — the H_9838 PLANTED-GEOMETRY FAILURE, one lane over. H_9838 landed a
+    headline positive (CA3 multi-step completion at 12x derived chance, lesion-collapsing, 3 seeds
+    x 3 geometries, independently reproduced) on a rig whose item codes were a PLANTED integer
+    fixture. Swapping ONLY that input source for the production trunk's real penultimate
+    representations turned the 16-item load from CERTIFIED into INVALID: the value-shuffled
+    ZERO-TRUTH PEDESTAL read 0.3750 against a 0.3077 bar, i.e. a structure-free store answered,
+    so the result had come from the fixture's hand-made near-orthogonal geometry (within .0469 /
+    across .0117) and not from the mechanism (real reps overlap 2.2x: .0625 / .0260 — exactly what
+    core/hippo_lane.py's own header warns about). H_9845 landed under the same defect class: every
+    number in its card was produced with a d32 · L2 · 12-step TOY as the acting brain, and the
+    rig's own header says a thermostat clears rung 1, so a toy result is unreadable as evidence
+    about anything. This flag is the identical swap: same arms, same 6 controls, same frozen bars
+    (CLOSURE_SIGN / NULL_CLOSURE_MAX / MIN_BLOCKS), same tick budget, same >=2 perturbation
+    schedules, same tie order — ONLY the acting policy's input source changes.
+
+    Readout is byte-for-byte the same CONTRACT as `_closure_model_brain`: each of the 8 actions is
+    appended to `digest + CLOSURE_SEP`, teacher-forced, and the action with the lowest mean NLL
+    over ITS OWN BYTES wins, ties broken on ACTIONS order. The only difference is the engine that
+    produces the logits (numpy `.clm` forward vs torch nn.Module), which is the point of the swap.
+
+    Memoization: `act` is a pure deterministic function of (frozen weights, digest), so identical
+    digests are cached. This changes NO number — it only avoids recomputing a forward whose result
+    is already known. It is NOT a bar, a threshold or an arm; the world still calls the brain once
+    per tick and the recorded tape is unchanged.
+
+    Cost note (measured on this host, CPU numpy, py303_full.clm): ~0.26 s per forward at T~90, and
+    one decision = 8 forwards, so a 600-tick schedule is ~21 min of real compute. That is why the
+    tick budget is NOT lowered to make it cheap — at 400 ticks the scripted positive control stops
+    firing (closure_ladder MIN_BLOCKS), and lowering the budget would destroy the comparison this
+    swap exists to make."""
+    import numpy as _np
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                    "core"))
+    import closure_ladder as CL
+    import decode as D                                   # core/decode.py — the numpy .clm path
+    actions = list(CL.ACTIONS)
+    W = D.clm_load_weights(ckpt)
+    diag = {"scored_positions": None, "expected_positions": [len(a.encode()) for a in actions],
+            "span_ok": None, "truncated": False}
+    cache = {}
+
+    def act(digest):
+        hit = cache.get(digest)
+        if hit is not None:
+            return hit
+        head = (digest + CLOSURE_SEP).encode("utf-8")
+        scores, spans = [], []
+        for a in actions:
+            s = head + a.encode("utf-8")
+            lo, hi = len(head) - 1, len(s) - 1        # same closed span as _closure_model_brain
+            if seq_cap and len(s) > seq_cap:          # keep the TAIL — the scored span lives there
+                cut = len(s) - seq_cap
+                s, lo, hi = s[cut:], lo - cut, hi - cut
+                diag["truncated"] = True
+            tok = _np.frombuffer(s, dtype=_np.uint8).astype(_np.float64)
+            lg = D.clm_forward_hidden_logits(W, tok, len(s))[1]        # [T, V] host numpy
+            lg = lg - lg.max(axis=1, keepdims=True)
+            logp = lg - _np.log(_np.exp(lg).sum(axis=1, keepdims=True))
+            nll = [-float(logp[j, s[j + 1]]) for j in range(lo, hi)]
+            scores.append(sum(nll) / max(1, len(nll)))
+            spans.append(len(nll))
+        if diag["scored_positions"] is None:
+            diag["scored_positions"] = spans
+            diag["span_ok"] = bool(spans == diag["expected_positions"])
+        best = min(range(len(actions)), key=lambda i: (scores[i], i))  # ties -> ACTIONS order
+        cache[digest] = actions[best]
+        return actions[best]
+
+    act.diag = diag
+    return act
+
+
 # The yoked OPEN floor is averaged over these derangement draws. MEASURED (2026-07-21, the
 # scripted digest-reading brain at 600 ticks): ONE draw is not a floor — at seed 7 draw k=9 read
 # 0.7500 while k=3 read 0.5000, i.e. the derangement INDEX alone flipped the sign of the
@@ -2018,10 +2095,20 @@ def _closure_arm(brain, seed, ticks):
     opens = [CL.lv_c(CL.make_tape_policy(CL._derange(tape, seed, k)), seed, ticks)["closure_sign"]
              for k in CLOSURE_OPEN_DERANGEMENTS]
     omean = sum(opens) / len(opens)
+    # H_9845-B TELEMETRY (read-only, moves NO bar): `action_support` alone cannot tell a degenerate
+    # policy apart from the C6 input-blind pedestal, and it cannot say WHICH action a degenerate
+    # readout locked onto — which is the difference between "this policy does not read its input"
+    # and "the byte-LM NLL readout has a length/prior bias". The real-303M swap needed exactly that
+    # distinction, so the executed-action histogram is now reported. It is telemetry: no gate, no
+    # threshold and no arm reads it, and the OLD path's numbers are byte-identical with it present.
+    hist = {}
+    for a in tape:
+        hist[a] = hist.get(a, 0) + 1
     return {"closure": live["closure_sign"], "blocks": live["blocks"],
             "open_floor_mean": omean, "open_floor_min": min(opens), "open_floor_max": max(opens),
             "open_draws": opens, "delta_vs_open": live["closure_sign"] - omean,
             "action_support": len(set(tape)),
+            "action_hist": dict(sorted(hist.items(), key=lambda kv: (-kv[1], kv[0]))),
             "anchors": bool(live["closure_sign"] >= CL.CLOSURE_SIGN
                             and live["closure_sign"] > omean),
             "derangement_robust": bool(live["closure_sign"] > max(opens))}
@@ -2139,8 +2226,13 @@ def _closure_schedule(brain, seed, ticks):
     return row
 
 
-def closure_monitor_rung1(model, device, seq_cap, *, seed, ticks, schedules, step):
+def closure_monitor_rung1(model, device, seq_cap, *, seed, ticks, schedules, step, brain_ckpt=""):
     """H_9845 — run the rung-1 closure battery against the LIVE model. MONITOR-ONLY.
+
+    `brain_ckpt` (H_9845-B, default "" ⇒ byte-identical to the landed path): when set, the ACTING
+    POLICY is that serialized `.clm` read through core/decode instead of the in-training model.
+    Nothing else moves — same controls, same bars, same ticks, same schedules (see
+    `_closure_clm_brain` for why this swap is the whole point).
 
     Returns a dict; the caller may only LOG it. The model is put in eval mode and the torch RNG
     state is snapshotted and restored, so the probe cannot perturb the trajectory it observes.
@@ -2154,7 +2246,8 @@ def closure_monitor_rung1(model, device, seq_cap, *, seed, ticks, schedules, ste
     try:
         model.eval()
         with torch.no_grad():
-            brain = _closure_model_brain(model, device, seq_cap)
+            brain = (_closure_clm_brain(brain_ckpt, seq_cap) if brain_ckpt
+                     else _closure_model_brain(model, device, seq_cap))
             rows = [_closure_schedule(brain, seed + k, ticks) for k in range(max(1, schedules))]
             readout_diag = dict(brain.diag)
     finally:
@@ -2174,6 +2267,7 @@ def closure_monitor_rung1(model, device, seq_cap, *, seed, ticks, schedules, ste
         read = "NO-ANCHOR"
     return {"instrument": "closure-monitor", "hypothesis": "H_9845", "rung": 1,
             "engine": "core/closure_ladder.py (H_9807)", "step": step,
+            "brain_source": ("real-clm:%s" % brain_ckpt) if brain_ckpt else "live-training-model",
             "geometry": {"ticks": ticks, "seed0": seed, "schedules": len(rows),
                          "block": CL.BLOCK, "min_blocks": CL.MIN_BLOCKS,
                          "closure_gate": CL.CLOSURE_SIGN, "null_max": CL.NULL_CLOSURE_MAX},
@@ -2964,6 +3058,22 @@ def main():
                          "(sample-seed-invalid-for-deterministic-do-intervention).")
     ap.add_argument("--closure-monitor-out", type=str, default="",
                     help="H_9845: append each monitor reading to this JSONL (log sink only).")
+    # H_9845-B REAL-INPUT SWAP. Motivation = the H_9838 planted-geometry failure: a certified,
+    # 3-seed, independently-reproduced positive evaporated (CERTIFIED -> INVALID, zero-truth
+    # pedestal 0.3750 > bar 0.3077) the moment its PLANTED integer fixture was replaced by the
+    # production trunk's real representations, because the fixture's hand-made near-orthogonal
+    # geometry had manufactured the result. H_9845's landed numbers share the defect class: the
+    # acting brain was a d32/L2/12-step TOY, and closure_ladder's own header says a thermostat
+    # clears rung 1. This flag swaps ONLY that input source. Every bar, control, tick budget and
+    # schedule count is untouched — changing one would destroy the very comparison.
+    ap.add_argument("--closure-brain", type=str, default="",
+                    help="H_9845-B: run the closure monitor with this serialized .clm (e.g. the "
+                         "real 303M) as the ACTING POLICY, read via core/decode "
+                         "(clm_load_weights + clm_forward_hidden_logits), instead of the "
+                         "in-training model. Same 8-action NLL scoring, same tie order, same "
+                         "controls/bars/ticks/schedules. '' (default) => the landed path, "
+                         "byte-identical. ⚠️ ~0.26 s/forward x 8 per tick on CPU: a 600-tick "
+                         "schedule is ~21 min.")
 
     # ── H_9841 IMAGINATION RECONSOLIDATION (training-time N3/REM rehearsal) ──────────────────
     # The daemon already grows on rehearsal (cli/chat.py:3350-3380 fires a live
@@ -4153,7 +4263,8 @@ def main():
                     _cm = closure_monitor_rung1(
                         core_model, device, seq_len,
                         seed=a.closure_monitor_seed, ticks=a.closure_monitor_ticks,
-                        schedules=a.closure_monitor_schedules, step=step)
+                        schedules=a.closure_monitor_schedules, step=step,
+                        brain_ckpt=a.closure_brain)
                     p0("  [H_9845 closure-monitor rung1 · MONITOR-ONLY · not in the loss] "
                        + json.dumps(_cm, ensure_ascii=False), flush=True)
                     if a.closure_monitor_out:
