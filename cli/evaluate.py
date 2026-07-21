@@ -3667,6 +3667,132 @@ def structure_envelope_read_run(argv):
     return 0 if rep["status"] == "CERTIFIED" else 3
 
 
+# ── H_1520 CONVERSATIONAL-SALIENCE · REAL-INPUT RE-READ (--salience-toggle-read) ─────────
+# H_1520 landed 🟢 GREEN (DIRECTIONAL): the cfg.salience toggle gives usable request→reply
+#   (P1 grounded emit 1.00) while PROVABLY retaining silence-autonomy (P2 ungrounded 0.00,
+#   GAP 1.00) — the philosophy guard of the whole conversational lane.
+# THE SWAP (H_9854 real-input audit · same swap as --structure-envelope-read): every string
+#   in that mirror became a vector through `fnv_trigram_vec`, a hand-made 512-dim byte-trigram
+#   hash. Two unrelated strings share almost no trigram, so the store keys were near-ORTHOGONAL
+#   BY CONSTRUCTION and grounded/ungrounded coupling separated trivially (the card's own numbers:
+#   grounded cos .37-.85 vs ungrounded .10-.36). Today's re-reads of H_9838/9839/9841 all died
+#   the same way: planted codes are effectively orthogonal, REAL representations are near-
+#   collinear (~0.92), so any discrimination that silently assumed orthogonality dies.
+#   This flag mounts the REAL 303M penultimate (core/decode.clm_penult_pooled_W, the production
+#   pre-readout pooled read) as the key geometry. NOTHING else moves — same eight facts, same
+#   eight grounded / eight ungrounded prompts, same five arms, same resting base state, same
+#   seeds [1520,1521,1522], same thresholds, same seven frozen bars.
+# FROZEN ORDER: ① the ported FNV arm must reproduce the card's numbers verbatim (zero-regression
+#   — otherwise the port is not the landed instrument and no real number may be read) ② the gate
+#   must be certified byte-equal to the live core/engine_g.py ③ the controls (P3 source audit,
+#   P3 adversarial positive control, P4 toggle no-damage) on the REAL geometry ④ only then the
+#   treatment bars. Searching dims/seeds/gains for a passing configuration is tune-to-green and
+#   is not done here: there is exactly ONE flag and it takes no tuning argument.
+# READ-ONLY. Moves no bar, opens no write path; default-absent it changes nothing.
+def salience_toggle_read_run(argv):
+    """`anima-py evaluate <ckpt.clm> --salience-toggle-read [--out j.json]`
+
+    H_1520's landed emit-gate toggle re-read over a REAL checkpoint's representations instead
+    of the planted FNV-trigram key geometry."""
+    import salience_gate as SG
+    ck = [a for a in argv if not a.startswith("--") and a.endswith((".clm", ".bin"))]
+    out_path = evaluate_strval(argv, "--out", "")
+    print("[salience-toggle H_1520 · REAL-INPUT RE-READ]")
+
+    # ② gate identity — the port must not have drifted from the live engine gate.
+    ident = SG.assert_gate_matches_engine_g()
+    print("  ⓪ gate identity vs core/engine_g.py: constants_equal=%s score_grid_equal=%s"
+          % (ident["constants_equal"], ident["score_grid_equal"]))
+    if not ident["gate_matches_engine_g"]:
+        print("  ⇒ ⛔ INSTRUMENT-DEAD — the ported gate is not the live gate; no bar is read.",
+              file=sys.stderr, flush=True)
+        return 3
+
+    # ① PLANTED arm first (zero-regression against the card).
+    fnv = SG.run_arms(SG.fnv_trigram_vec)
+    zr = SG.fnv_zero_regression(fnv)
+    fnv_audit = SG.p3_audit()
+    fnv_p4 = SG.p4_no_damage(SG.fnv_trigram_vec)
+    fnv_bars = SG.score_bars(fnv, fnv_audit, fnv_p4)
+    print("  ① PLANTED arm (FNV-trigram · the landed geometry · bars UNCHANGED)")
+    print("     P1=%.4f P2=%.4f GAP=%.4f | P2b off=%.4f delta=%.4f | P3adv=%.4f | P4=%s → %s"
+          % (fnv["grounded_emit_rate_on_mean"], fnv["ungrounded_emit_rate_on_mean"],
+             fnv["gap_mean"], fnv["grounded_emit_rate_off_mean"], fnv["toggle_delta_mean"],
+             fnv["ungrounded_emit_rate_on_adversarial_mean"], fnv_p4["p4_no_damage"],
+             fnv_bars["verdict"]))
+    print("     zero-regression vs card: %s" % ("MATCHES CARD VERBATIM" if zr["matches_card"]
+                                                else "MISMATCH %s" % zr["mismatches"]))
+    print("     geometry: store-key pairwise cos mean=%.4f [%.4f..%.4f] · grounded cos "
+          "[%.4f..%.4f] · ungrounded cos [%.4f..%.4f]"
+          % (fnv["geometry"]["store_key_pairwise_cos_mean"],
+             fnv["geometry"]["store_key_pairwise_cos_min"],
+             fnv["geometry"]["store_key_pairwise_cos_max"],
+             fnv["geometry"]["grounded_cos_min"], fnv["geometry"]["grounded_cos_max"],
+             fnv["geometry"]["ungrounded_cos_min"], fnv["geometry"]["ungrounded_cos_max"]))
+    rep = dict(hypothesis="H_1520 CONVERSATIONAL-SALIENCE — real-input re-read",
+               gate_identity=ident, planted=dict(arms=fnv, bars=fnv_bars,
+                                                 zero_regression=zr),
+               reaudit={"argv": ["anima-py", "evaluate"] + list(argv)})
+    if not zr["matches_card"]:
+        print("  ⇒ ⛔ PORT-INVALID — the FNV arm does not reproduce the card; no real number "
+              "may be read.", file=sys.stderr, flush=True)
+        rep["status"] = "PORT-INVALID"
+        if out_path:
+            open(out_path, "w", encoding="utf-8").write(
+                json.dumps(rep, ensure_ascii=False, indent=2))
+        return 3
+    if not ck:
+        print("  (no <ckpt.clm> positional — PLANTED arm only; the real swap needs a checkpoint)")
+        rep["status"] = "PLANTED-ONLY"
+        if out_path:
+            open(out_path, "w", encoding="utf-8").write(
+                json.dumps(rep, ensure_ascii=False, indent=2))
+        return 0
+
+    ckpt = ck[0]
+    keys = SG.RealPenultKeys(ckpt)
+    if not keys.ok():
+        print("evaluate --salience-toggle-read: %s is not clm-decodable" % ckpt,
+              file=sys.stderr, flush=True)
+        return 2
+    real = SG.run_arms(keys)
+    real_audit = SG.p3_audit()
+    real_p4 = SG.p4_no_damage(keys)
+    real_bars = SG.score_bars(real, real_audit, real_p4)
+    print("  ② REAL arm (ckpt=%s · key geometry = clm_penult_pooled_W, L2-normalised)" % ckpt)
+    print("     geometry: store-key pairwise cos mean=%.4f [%.4f..%.4f] · grounded cos "
+          "[%.4f..%.4f] · ungrounded cos [%.4f..%.4f]"
+          % (real["geometry"]["store_key_pairwise_cos_mean"],
+             real["geometry"]["store_key_pairwise_cos_min"],
+             real["geometry"]["store_key_pairwise_cos_max"],
+             real["geometry"]["grounded_cos_min"], real["geometry"]["grounded_cos_max"],
+             real["geometry"]["ungrounded_cos_min"], real["geometry"]["ungrounded_cos_max"]))
+    print("  ③ CONTROLS on the real geometry (frozen order, before any treatment bar)")
+    print("     P3 source audit clean=%s · P3 ADVERSARIAL positive control (must_answer=1.0 → "
+          "ungrounded emit) = %.4f (needs > 0.40) → %s"
+          % (real_audit["p3_clean"], real["ungrounded_emit_rate_on_adversarial_mean"],
+             "ALIVE" if real_bars["P3_adversarial"]["pass_"] else "DEAD"))
+    print("     P4 toggle no-damage = %s (gen byte-identical OFF→ON→OFF=%s)"
+          % (real_p4["p4_no_damage"],
+             real_p4["generation_byte_identical_across_toggle"]))
+    print("  ④ TREATMENT bars on the real geometry (UNCHANGED rules)")
+    for nm in ("P1_usability", "P2_retained_autonomy", "GAP", "P2b_default_pure"):
+        b = real_bars[nm]
+        v = b.get("value")
+        vs = ("%.4f" % v) if v is not None else ("off=%.4f delta=%.4f"
+                                                 % (b["off_grounded"], b["toggle_delta"]))
+        print("     %-22s %-72s %s  %s" % (nm, b["rule"], vs,
+                                           "✅" if b["pass_"] else "❌"))
+    print("  ⇒ PLANTED %s   |   REAL %s" % (fnv_bars["verdict"], real_bars["verdict"]))
+    rep["real"] = dict(ckpt=ckpt, arms=real, bars=real_bars)
+    rep["status"] = ("SURVIVES" if real_bars["green"] else "DOES-NOT-SURVIVE")
+    if out_path:
+        open(out_path, "w", encoding="utf-8").write(
+            json.dumps(rep, ensure_ascii=False, indent=2))
+        print("  wrote %s" % out_path)
+    return 0 if real_bars["green"] else 3
+
+
 def store_addr_census_run(argv):
     """`anima-py evaluate <ckpt> --store-addr-census <dump.npz> [--census-seeds 12]`
     — the H_9719 EMERGENT-ADDRESS $0 pre-screen, engine-native (a_experiment_engine_native).
@@ -10801,6 +10927,9 @@ _KNOWN_FLAGS = frozenset((
     # H_9846 structure-envelope read over the REAL checkpoint (the H_9838 planted-geometry
     # swap applied to this instrument). ONE flag, no tuning argument — the carriers are frozen.
     "--structure-envelope-read",
+    # H_1520 conversational-salience emit gate re-read with the PLANTED FNV-trigram key
+    # geometry swapped for the REAL 303M penultimate. ONE flag, no tuning argument.
+    "--salience-toggle-read",
     "--fan-bind", "--fan-smp",
     "--mouth-binder", "--mouth-binder-order-scramble",
     "--fan-dump",
@@ -17483,6 +17612,12 @@ def main(argv):
     # write path, and default-absent it changes nothing.
     if "--structure-envelope-read" in argv:
         return structure_envelope_read_run(argv)
+    # H_1520 --salience-toggle-read: the landed conversational-salience emit gate re-read with
+    # its PLANTED FNV-trigram key geometry swapped for the REAL 303M penultimate. Dispatches on
+    # flag PRESENCE (ckpt from the positional). ADDITIVE and READ-ONLY — it moves no frozen bar,
+    # opens no write path, and default-absent it changes nothing.
+    if "--salience-toggle-read" in argv:
+        return salience_toggle_read_run(argv)
     # ── H_9808 $0 PRE-REGISTRATION GATES ────────────────────────────────────────────────────
     # Ckpt-FREE, closed-form referees dispatched on the leading flag: they read a spec file and
     # decide ADMISSIBILITY, never a verdict. Exit 3 = REFUSE (abort before spend), 0 = PASS,
