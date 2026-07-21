@@ -1292,6 +1292,10 @@ def evaluate_usage():
     print("      taught atoms (V-LIVE), recovers each atom's polarity by undoing its form flip,")
     print("      counts power at the ATOM level, and reports a label-permutation null (H_9302/H_9303).")
     print("  --store <held.json> [--store-oracle] [--store-lambda λ] [--store-addr-audit]")
+    print("      [--store-oracle-pair]  H_9875 · compose-2 panels only: hands the address for BOTH")
+    print("      named slots (a = 1/2 onehot(A) + 1/2 onehot(B)) so v is exactly the mixture a")
+    print("      working softmax would form. PASS => addressing/credit-assignment is the wall;")
+    print("      FAIL => the answer is not a function of the stored value at all. Needs target_slot_b.")
     print("      [--store-shuffle | --store-flip | --store-neutral] [--store-ctrl-seed 9423]")
     print("      [--store-query qpos|every-token] [--store-fuse overwrite|gated-add|odd|pairodd] [--store-readout 2way|vocab]")
     print("      H_9423 CLMS store-bridge lane eval (the CO-TRAINED bridge, not the H_9392 bolt-on):")
@@ -7522,6 +7526,10 @@ def store_run(argv):
     ckpt = argv[0]
     man_path = evaluate_strval(argv[1:], "--store", "")
     oracle = "--store-oracle" in argv
+    if "--store-oracle-pair" in argv:
+        # H_9875 pair-oracle: the 2-conjunct analogue of C0-e. Splits "addressing is the wall"
+        # from "the answer never became a function of the stored value" on a compose panel.
+        oracle = "pair"
     lam_s = evaluate_strval(argv[1:], "--store-lambda", "")
     lam_override = float(lam_s) if lam_s else None
     if lam_override is not None and not (0.0 <= lam_override <= 1.0):
@@ -7743,6 +7751,7 @@ def store_run(argv):
         ents = list(st["entities"])
         pols = list(st["pols"])
         tslot = it.get("target_slot")
+        tslot_b = it.get("target_slot_b")     # H_9875 compose-2 panels only (absent elsewhere)
         n_slot = len(ents)
         if len(set(ents)) != n_slot:
             dup_entities += 1                         # loud, never silent — derangement fixed-point-leak risk
@@ -7753,9 +7762,11 @@ def store_run(argv):
             perm = _sattolo(n_slot, rng)
             ents2 = [ents[perm[i]] for i in range(n_slot)]   # entities-only derange · pols/target_slot fixed
             fixed_points_total += sum(1 for i in range(n_slot) if ents2[i] == ents[i])
-            store = {"entities": ents2, "pols": pols, "target_slot": tslot}
+            store = {"entities": ents2, "pols": pols, "target_slot": tslot,
+                     "target_slot_b": tslot_b}
         elif mode == "flip":
-            store = {"entities": ents, "pols": [1 - p for p in pols], "target_slot": tslot}
+            store = {"entities": ents, "pols": [1 - p for p in pols], "target_slot": tslot,
+                     "target_slot_b": tslot_b}
         elif mode == "neutral":
             rng = np.random.default_rng(ctrl_seed * 100003 + idx + 7)
             # length-matched nonce filler (control-must-match-mediating-covariate): CVCVC not in this entry
@@ -7764,11 +7775,14 @@ def store_run(argv):
                 return (cons[int(rng.integers(0, 14))] + vow[int(rng.integers(0, 5))]
                         + cons[int(rng.integers(0, 14))] + vow[int(rng.integers(0, 5))]
                         + cons[int(rng.integers(0, 14))])
-            store = {"entities": [_nonce() for _ in range(n_slot)], "pols": pols, "target_slot": tslot}
+            store = {"entities": [_nonce() for _ in range(n_slot)], "pols": pols,
+                     "target_slot": tslot, "target_slot_b": tslot_b}
         else:
-            store = {"entities": ents, "pols": pols, "target_slot": tslot}
+            store = {"entities": ents, "pols": pols, "target_slot": tslot,
+                     "target_slot_b": tslot_b}
         if mode == "flip":
-            base = _predict({"entities": ents, "pols": pols, "target_slot": tslot})
+            base = _predict({"entities": ents, "pols": pols, "target_slot": tslot,
+                             "target_slot_b": tslot_b})
             flip = _predict(store)
             if base is None or flip is None:
                 continue
@@ -11496,7 +11510,7 @@ _KNOWN_FLAGS = frozenset((
     "--bridge-trace", "--flip0", "--theta",
     "--store-mix", "--store-lambda", "--manifest",
     "--store-component-swap", "--store-swap-from",
-    "--store", "--store-oracle",
+    "--store", "--store-oracle", "--store-oracle-pair",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
     "--store-addr-audit", "--store-telemetry", "--weave-null", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
     "--store-query", "--store-fuse", "--store-readout",
