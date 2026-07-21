@@ -1,7 +1,10 @@
 # H_9875 — 학습이 아니라 **공부(study)** 로 재조합을 통과하는가 — 배선된 store 에 두 사실을 런타임에 얹고 결합시킨다
 
 **status:** 🔒 **PRE-REGISTERED** (판정표 동결 · 수치 보기 전) · 상한 **DIRECTIONAL**(토이·mac $0) → 303M py 재측정 시 TERMINAL 후보
-**wired:** no(계기 미착륙) — 신규 플래그 **`anima-py corpus storebind --compose 2`** 하나 · 판정 경로는 기존 `anima-py evaluate <clm> --store …` 를 **그대로** 재사용(a_experiment_engine_native: 조작은 엔진 플래그이지 옆에 둔 프로브가 아니다)
+**wired:** yes(계기) — **`anima-py corpus storebind --compose 2 [--compose-teach]`** 착륙 · 판정 경로는 기존 `anima-py evaluate <clm> --store …` 를 **그대로** 재사용(a_experiment_engine_native: 조작은 엔진 플래그이지 옆에 둔 프로브가 아니다)
+**재생성 커맨드**(seed 포함 · 없으면 아무도 재검증 못 한다 · corpus-py-1 ⑫J):
+`anima-py corpus storebind --lang en --out c.txt --n-blocks 4000 --store-slots 8 --seed 7 --compose 2`
+(양성통제 빌드는 같은 줄 + `--compose-teach`)
 **source:** 오너 물음 — *"학습으로 G1/G6 돌파가 불가능하다면, 뇌가 배선된 상태에서 study 로 돌파?"*
 
 ## 0. 전제 정정 — "학습으로 불가능" 은 현재 원장이 말하는 바가 아니다
@@ -55,12 +58,17 @@ G1 이 묻는 모양은 **둘 다 밖에서 온 두 사실을 런타임에 묶�
 
 | 팔 | 플래그 | 역할 |
 |---|---|---|
-| ORACLE | `--store-oracle` | **선결 양성통제** — <0.90 이면 아무것도 읽지 않는다 |
-| 1-slot 재현 | 기존 held/balanced | 같은 ckpt 에서 [[H_9775]] 레인이 살아있음 확인 |
-| **주팔** | `--compose 2` balanced | DV |
+| ORACLE | 1-slot 면 + `--store-oracle` | **선결 양성통제** — <0.90 이면 배관(값/MLP/λ/직렬화)이 죽은 것 ⟹ 아무것도 읽지 않는다 |
+| 1-slot 재현 | 기존 `.held_balanced.json` | 같은 ckpt 에서 [[H_9775]] 레인이 살아있음 확인 |
+| **조성 SEEN** | `--compose-teach` 빌드의 `.compose2_seen.json` | **조성 판독이 애초에 가능한가** — [[H_9869]] 가 죽은 자리(SEEN 을 한 번도 안 쟀다) |
+| **주팔** | `.compose2.json` (study 빌드) | DV |
 | 주소파괴 | `--store-shuffle` | 붕괴해야 함 |
 | 값파괴 | `--store-flip` | flip-coherence |
-| **1-slot-only** | B 슬롯 제거 | **핵심 통제** — 한쪽만으로 맞히면 재조합 아님 |
+| **1-slot-only** | `.compose2_drop.json` | **핵심 통제** — 프롬프트·정답 동일, B 의 사실만 store 에서 제거 |
+
+한쪽 항만 읽는 독자가 이 패널에서 **실제로** 도달 가능한 천장은 빌더가 **측정해서 출력**한다
+(seed 7·n=128 실측: pol_A 0.5391 · pol_B 0.5391 · op 0.5000). 0.5 가 아니라 **이 값**에 대고 읽는다
+(`chance-level-must-be-derived-per-metric`).
 
 ## 4. 🔒 동결 판정표 (수치 보기 전 확정 · 사후조정 금지)
 
@@ -82,10 +90,25 @@ G1 이 묻는 모양은 **둘 다 밖에서 온 두 사실을 런타임에 묶�
 그 경계이며, 카드 헤드라인은 반드시 *study-time* 을 달고 나간다(`a_scale_honest_scope`).
 토이·mac = **DIRECTIONAL**. TERMINAL 은 303M py + pool 재측정에서만([[H_9775]] 와 동일 사다리).
 
-## 6. 다음 물리적 단계
+## 6. 계기 착륙 — 토이 e2e 1회 실행 완료 (`instrument-never-run-hides-multiple-bugs`)
 
-1. `cli/corpus.py` `build_storebind(..., compose=2)` + `_sb_emit_block` 2-slot 분기 (+ 우연 0.5 감사 · zero-leak assert 유지)
-2. 토이 co-train(1-slot only) → ORACLE 게이트 → 6팔 실측(예상 $0 · mac MPS)
+착륙 즉시 실행해서 **버그 1개를 실제로 잡았다**: 첫 빌드의 정답 분할이 **57/128** 이었다 —
+xor 는 블록 안에서 반반으로 맞췄는데 **op 를 자유 추첨**해서 `gold = op ⊕ xor` 가 다시 흐트러진 것.
+감사가 빌드를 **거부**했고(수치를 못 내보냄), op 를 xor 그룹 안에서 교대 배정해 **4칸(xor×op) 균등**으로 고쳤다.
+
+| 검사 | 결과 |
+|---|---|
+| 정답 독립 재계산(store 에서 직접) | **0/128 불일치** |
+| 정답 분할 | **64/128 = 0.5000** (하드 assert) |
+| drop 통제 = 주팔과 프롬프트·정답 동일 | **True / True** |
+| drop 에서 B 가 store 에 남았나 | **0/128** (주팔은 128/128) |
+| 판정 항목의 코퍼스 노출 | 개체 **0** · 조성 라인 **0** |
+| `--compose` 없는 기존 빌드 | 산출 **6/6 byte-identical** (stock 대조) |
+
+## 7. 다음 물리적 단계
+
+1. ✅ 계기 — `storebind --compose 2 [--compose-teach]` 착륙 + 토이 e2e
+2. 토이 co-train 2종(study 빌드 / `--compose-teach` 양성통제) → ORACLE·SEEN 게이트 → 7팔 실측(mac MPS · $0)
 3. 결과와 무관하게 카드 갱신 — 음성이면 그것이 **G1 의 성격을 바꾸는 결과**(공급 부족 vs 항수 구속)
 
 related: [[H_9775]] [[H_9744]] [[H_9423]] [[H_9359]] [[H_9817]] [[H_9869]] [[H_9870]]

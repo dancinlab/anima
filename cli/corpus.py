@@ -1167,6 +1167,7 @@ def _parse_args(argv):
             #                          replacing the builtin CVCVC nonce enumeration. Omitted =>
             #                          builtin, byte-identical to before.
             "n_blocks": 4000, "store_slots": 8, "entity_pool": None,
+            "compose": 0, "compose_teach": False,
             # H_9520 study-replay (consolidation-CPT corpus from an `anima study` transcript):
             #   --transcript T.jsonl   the study transcript (teacher percepts + substrate emits)
             #   --study-frac 0.05      teacher-content byte share of the replay-mix (small % · rest = base replay)
@@ -1332,6 +1333,10 @@ def _parse_args(argv):
             opts["store_slots"] = int(argv[i + 1]); i += 2
         elif a == "--entity-pool":
             opts["entity_pool"] = argv[i + 1]; i += 2   # H_9683 storebind: external atom pool
+        elif a == "--compose":
+            opts["compose"] = int(argv[i + 1]); i += 2  # H_9875 storebind: 2-conjunct study panel
+        elif a == "--compose-teach":
+            opts["compose_teach"] = True; i += 1        # H_9875 positive-control build (SEEN slice)
         elif a == "--transcript":
             opts["transcript"] = argv[i + 1]; i += 2
         elif a == "--study-frac":
@@ -3017,6 +3022,96 @@ def _sb_emit_block(rng, entities, store_slots, balanced=False):
     return lines, rows
 
 
+# ── H_9875 · compose-2 — STUDY-TIME RECOMBINATION panel (both conjuncts come from the STORE) ──
+#
+# The 1-slot lane above already binds two things, but one of them (the is/not operator) is written
+# in the prompt. G1's shape is different: BOTH terms arrive from outside the weights and must be
+# combined at decode time. compose-2 asks `<op> A and B => ` with
+#     gold = op ⊕ (pol_A ⊕ pol_B)
+# XOR (not AND) is deliberate — it is the only 2-bit function whose EVERY single-bit marginal is
+# exactly chance, so a reader that recovers just one conjunct scores 0.5 by construction (an AND
+# panel would hand an op-only guesser 0.75 and sit ABOVE the pre-registered bar · H_9875 §4).
+#
+# The corpus stays 1-slot unless --compose-teach is passed: the study arm must never have seen a
+# composed line (that is the whole question), while the taught build exists so a negative can be
+# read at all — H_9869 died precisely for lacking a SEEN slice.
+_SB_COMPOSE_FILLER = "zzqqx"        # drop-control stand-in: a non-atom that no prompt ever names
+
+
+def _sb_emit_compose_block(rng, entities, store_slots, drop_b=False):
+    """One compose-2 block: a balanced store + exactly store_slots two-conjunct queries.
+
+    Gold is forced to an EXACT 50/50 split inside the block (half the pairs xor=0, half xor=1, then
+    op drawn uniformly) so chance is 0.5000 by construction and not by expectation
+    (chance-level-must-be-derived-per-metric). drop_b=True is the 1-SLOT-ONLY control: the prompt
+    and the gold are IDENTICAL, but B's entity is replaced in the store by a filler nobody asks for,
+    so pol_B is unreadable and the ceiling is 0.5 — if the main arm and this arm both clear the bar,
+    the panel was never measuring recombination."""
+    idx = rng.sample(range(len(entities)), store_slots)
+    names = [entities[i] for i in idx]
+    pols = [0] * (store_slots // 2) + [1] * (store_slots - store_slots // 2)
+    rng.shuffle(pols)
+    same = [(a, b) for a in range(store_slots) for b in range(store_slots)
+            if a != b and pols[a] == pols[b]]
+    diff = [(a, b) for a in range(store_slots) for b in range(store_slots)
+            if a != b and pols[a] != pols[b]]
+    n_half = store_slots // 2
+    if len(same) < n_half or len(diff) < n_half:
+        raise SystemExit("storebind --compose 2: store_slots %d cannot carry a balanced xor split "
+                         "(need >= %d same- and diff-polarity pairs, have %d/%d)"
+                         % (store_slots, n_half, len(same), len(diff)))
+    # op is assigned BALANCED WITHIN each xor group, not drawn freely: gold = op ⊕ xor, so a free
+    # draw leaves the gold split to luck (measured 57/128 on the first build — the audit caught it).
+    # Four equal cells (xor × op) also kill the op-only and the xor-only guesser at the same time.
+    items = []
+    for grp in (rng.sample(same, n_half), rng.sample(diff, store_slots - n_half)):
+        for j, ab in enumerate(grp):
+            items.append((ab, j % 2))                  # alternate op inside the group
+    rng.shuffle(items)
+    rows, lines = [], []
+    for (a, b), op in items:
+        ans = _sb_answer(op, pols[a] ^ pols[b])
+        op_s = "is" if op == 0 else "not"
+        prompt = "%s %s and %s => " % (op_s, names[a], names[b])
+        lines.append(prompt + _SB_ANSWER[ans])
+        ents = list(names)
+        if drop_b:
+            ents[b] = _SB_COMPOSE_FILLER               # B's fact removed; prompt/gold untouched
+        rows.append({"prompt": prompt, "gold": _SB_ANSWER[ans], "entity": names[a],
+                     "entity_b": names[b],
+                     "store": {"entities": ents, "pols": list(pols)},
+                     "target_slot": a, "target_slot_b": b, "op": op,
+                     "compose": 2, "xor": pols[a] ^ pols[b]})
+    return lines, rows
+
+
+def _sb_compose_audit(rows, label):
+    """Hard-assert the frozen chance of a compose panel, and MEASURE the one-conjunct ceilings.
+
+    The gold split is forced to exactly half, so chance is 0.5000 by construction. The per-conjunct
+    ceilings are NOT forced — they are whatever the realized draw gives — so they are measured and
+    reported: a bar must be read against the ceiling a partial reader can already reach on THIS
+    panel, not against the nominal 0.5 (chance-level-must-be-derived-per-metric)."""
+    n = len(rows)
+    n_good = sum(1 for r in rows if r["gold"] == _SB_ANSWER[0])
+    if n == 0 or n_good * 2 != n:
+        raise SystemExit("storebind --compose 2: %s gold split %d/%d != exact 0.5000 — the panel's "
+                         "chance is not the bar's chance (refusing to ship)" % (label, n_good, n))
+
+    def _ceiling(keyfn):
+        # best achievable accuracy for a reader that sees ONLY keyfn(row) (majority per cell)
+        cells = {}
+        for r in rows:
+            cells.setdefault(keyfn(r), []).append(r["gold"])
+        return sum(max(g.count(_SB_ANSWER[0]), g.count(_SB_ANSWER[1]))
+                   for g in cells.values()) / float(n)
+
+    return {"n": n, "gold_good": n_good, "chance": 0.5,
+            "ceiling_pol_a": _ceiling(lambda r: r["store"]["pols"][r["target_slot"]]),
+            "ceiling_pol_b": _ceiling(lambda r: r["store"]["pols"][r["target_slot_b"]]),
+            "ceiling_op": _ceiling(lambda r: r["op"])}
+
+
 # ── H_9694 (R2) g6bind — targeted vs shuf co-train corpus (kill#6 bind-Δ debris recovery) ──
 # convergence g6-ideation-hexa-1 killed "TARGETED forges FALS" but NOT "TARGETED moves BIND":
 # it OBSERVED bind Δ 0.444 (targeted) vs 0.000 (shuf) with a non-frozen hexa-era probe, so the
@@ -3209,7 +3304,7 @@ def _g6bind_sha(items):
 
 
 def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, replay=0,
-                    entity_pool=None):
+                    entity_pool=None, compose=0, compose_teach=False):
     """Build the storebind corpus + co-train store manifest + 0-shot held-out eval manifest.
 
     Returns (text, st). st carries the manifests and a hard-asserted zero-leak witness. The store
@@ -3271,6 +3366,51 @@ def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, r
         _, br = _sb_emit_block(seen_rng, train, store_slots)
         seen_rows.extend(br)
 
+    # ── H_9875 compose-2 panels (both conjuncts from the store) ─────────────────────────────────
+    # Three faces, each on its own rng stream:
+    #   compose      = HELD-OUT entities, corpus has 0 composed lines  → the study arm (the DV)
+    #   compose_drop = the SAME items with B's fact deleted from the store → 1-SLOT-ONLY control
+    #   compose_seen = TRAIN entities → the SEEN slice. Under --compose-teach this is the positive
+    #                  control that says the composed readout is legible AT ALL; without it the
+    #                  panel is an addr-gap control only. H_9869 died for never scoring a SEEN slice.
+    # Note the drop control re-draws the SAME stream (same seed) so its prompts/golds are identical
+    # to the main arm item-for-item — the ONLY difference is B's store entry (control-must-match).
+    compose_rows = compose_drop_rows = compose_seen_rows = None
+    compose_audit = {}
+    if compose:
+        if compose != 2:
+            raise SystemExit("storebind: --compose %d unsupported (2 only — the 2-conjunct panel is "
+                             "the recombination shape H_9875 pre-registered)" % compose)
+        if store_slots % 4 != 0:
+            raise SystemExit("storebind --compose 2: --store-slots must be a multiple of 4 (got %d) "
+                             "— the four xor×op cells must be equal for chance to be exactly 0.5"
+                             % store_slots)
+        c_rows, d_rows, s_rows = [], [], []
+        for off, sink, ents in ((10013, c_rows, ev), (10013, d_rows, ev), (10017, s_rows, train)):
+            crng = random.Random(seed + off)
+            for _ in range(n_eval_blocks):
+                _, br = _sb_emit_compose_block(crng, ents, store_slots,
+                                               drop_b=(sink is d_rows))
+                sink.extend(br)
+        if [r["prompt"] for r in c_rows] != [r["prompt"] for r in d_rows] or \
+           [r["gold"] for r in c_rows] != [r["gold"] for r in d_rows]:
+            raise SystemExit("storebind --compose 2: drop control diverged from the main arm "
+                             "(prompt/gold must be identical — only B's store entry may differ)")
+        compose_rows, compose_drop_rows, compose_seen_rows = c_rows, d_rows, s_rows
+        compose_audit = {"held": _sb_compose_audit(c_rows, "compose"),
+                         "drop": _sb_compose_audit(d_rows, "compose_drop"),
+                         "seen": _sb_compose_audit(s_rows, "compose_seen")}
+        if compose_teach:
+            # POSITIVE-CONTROL BUILD: composed lines enter the corpus (TRAIN entities only) and the
+            # co-train manifest in lockstep, so a ckpt exists for which the composed readout is
+            # KNOWN to be trainable. The judged held-out panel stays 0-exposure either way (C0-a
+            # below re-asserts it over the composed lines too · corpus-py-1 (C)).
+            t_rng = random.Random(seed + 10019)
+            for _ in range(n_blocks):
+                bl, br = _sb_emit_compose_block(t_rng, train, store_slots)
+                lines.extend(bl)
+                store_rows.extend(br)
+
     # C0-a zero-leak HARD-ASSERT (both surfaces): a held-out entity must appear NOWHERE in the
     # training corpus — not as a store key, not as a prompt substring. A gate that scores a stratum
     # the corpus reinforces is a forgery that always passes (cpt-destroys-what-corpus-omits); the
@@ -3307,6 +3447,20 @@ def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, r
           "entity_pool": entity_pool,
           "store_manifest": store_manifest, "held_manifest": held_manifest,
           "balanced_manifest": balanced_manifest, "seen_manifest": seen_manifest}
+    if compose:
+        def _cm(rows, **kw):
+            m = {"schema": "anima-storebind/v1", "store_slots": store_slots, "lang": lang,
+                 "seed": seed, "compose": compose, "entries": rows}
+            m.update(kw)
+            return m
+        st["compose"] = compose
+        st["compose_teach"] = compose_teach
+        st["compose_audit"] = compose_audit
+        st["compose_manifest"] = _cm(compose_rows, held_out=True, balanced=True)
+        st["compose_drop_manifest"] = _cm(compose_drop_rows, held_out=True, balanced=True,
+                                          control="one-slot-only")
+        st["compose_seen_manifest"] = _cm(compose_seen_rows, held_out=False, seen=True,
+                                          balanced=True)
     return text, st
 
 
@@ -6796,6 +6950,14 @@ def main():
         print("      that attaches to the stem — the suspected mechanism of the BINDING wall.")
         print("      A lang/atom mismatch fails LOUD (--lang en over Korean atoms is refused).")
         print("  storebind              --out c.txt [--n-blocks N] [--store-slots K] [--seed S] [--lang en] [--entity-pool POOL.txt]")
+        print("      [--compose 2] [--compose-teach]   H_9875 STUDY-TIME RECOMBINATION panel:")
+        print("      gold = op ⊕ (pol_A ⊕ pol_B) so BOTH conjuncts come from the store (the 1-slot")
+        print("      lane writes one of them in the prompt). Emits .compose2.json (study arm ·")
+        print("      corpus teaches 0 composed lines) · .compose2_drop.json (1-SLOT-ONLY control:")
+        print("      same prompts/golds, B's fact deleted from the store ⟹ ceiling 0.5) ·")
+        print("      .compose2_seen.json (SEEN slice). --compose-teach puts composed lines IN the")
+        print("      corpus = the positive-control build (a negative is unreadable without one ·")
+        print("      H_9869). XOR not AND: every single-conjunct marginal is exactly chance.")
         print("      H_9423 co-trained store-lookup bridge (EN-only). --entity-pool (H_9683) replaces")
         print("      the builtin CVCVC nonce enumeration with an external pool — ONE ascii atom per")
         print("      line, order preserved, no duplicates, at least n_pool atoms. Every contract is")
@@ -7063,7 +7225,8 @@ def main():
             print("anima corpus storebind: --out c.txt is required", file=sys.stderr)
             sys.exit(2)
         text, st = build_storebind(opts["n_blocks"], opts["store_slots"], opts["seed"], opts["lang"],
-                                   entity_pool=opts["entity_pool"])
+                                   entity_pool=opts["entity_pool"], compose=opts["compose"],
+                                   compose_teach=opts["compose_teach"])
         open(opts["out"], "w", encoding="utf-8").write(text)
         # .store.jsonl = per-training-line store manifest (block<->store · the co-train input the
         # trainer feeds the CLMS lane · JSONL, one row per line).
@@ -7101,6 +7264,29 @@ def main():
             print("  entity pool = EXTERNAL %s (%d atoms sampled to n_pool=%d · ascii · no dups) — "
                   "the builtin CVCVC nonce enumeration is NOT used"
                   % (st["entity_pool"], st["n_pool"], st["n_pool"]))
+        # H_9875 compose-2 panels (opt-in · absent flag = every existing build byte-identical).
+        if st.get("compose"):
+            cj = opts["out"] + ".compose2.json"
+            dj = opts["out"] + ".compose2_drop.json"
+            zj = opts["out"] + ".compose2_seen.json"
+            json.dump(st["compose_manifest"], open(cj, "w", encoding="utf-8"), ensure_ascii=False)
+            json.dump(st["compose_drop_manifest"], open(dj, "w", encoding="utf-8"),
+                      ensure_ascii=False)
+            json.dump(st["compose_seen_manifest"], open(zj, "w", encoding="utf-8"),
+                      ensure_ascii=False)
+            ca = st["compose_audit"]
+            print("  compose-2 (H_9875) -> %s (%d held-out · study arm) · %s (1-slot-only control) · "
+                  "%s (SEEN slice)" % (cj, ca["held"]["n"], dj, zj))
+            print("     gold = op ⊕ (pol_A ⊕ pol_B) — BOTH conjuncts come from the store · exact "
+                  "0.5000 split asserted (%d/%d good) ⟹ chance is 0.5 by construction, not by "
+                  "expectation" % (ca["held"]["gold_good"], ca["held"]["n"]))
+            print("     one-conjunct ceilings on THIS panel (measured, not assumed): pol_A %.4f · "
+                  "pol_B %.4f · op %.4f — read the drop control against these, not against 0.5"
+                  % (ca["held"]["ceiling_pol_a"], ca["held"]["ceiling_pol_b"],
+                     ca["held"]["ceiling_op"]))
+            print("     corpus composed lines = %s ⟹ the study arm's exposure to composition is %s"
+                  % ("TAUGHT (--compose-teach)" if st["compose_teach"] else "0",
+                     "the positive-control build" if st["compose_teach"] else "ZERO (the question)"))
         print("  C0-a 0-shot ✅ held-out entities appear 0x in corpus (store-key + substring both asserted)")
         print("  answer = polarity XOR operator (is/not × good/bad) — store holds the FACT, text the "
               "OPERATOR; binding both needs the CLMS lane's nonlinear (GELU-MLP) readout.")
