@@ -1874,6 +1874,289 @@ def _to_device_or_die(model, device):
         raise
 
 
+# ══ H_9845 — INTERVENTIONAL CLOSURE MONITOR (rung 1) · ⛔ MONITOR-ONLY ═══════════════════
+# WHY THIS EXISTS. "Is this lane actually CAUSAL, or only correlated with the loss?" is today
+# answered by an ABLATION RETRAIN — a second full run per lane, and the reason most lanes are
+# never causally checked at all. core/closure_ladder.py (H_9807) already ships the one rig in
+# this repo that can ANCHOR rather than correlate: the executed action is a seeded coin over
+# {true action, marginal-matched shuffle}, so P(I_{t+1} | do(A_t)) is IDENTIFIED. Driving that
+# rig with the LIVE model as the acting policy turns it into a WITHIN-RUN causal probe — it
+# asks whether the model's contingency structure (how its own input maps to its action), and
+# not its action marginal, leaves a fingerprint on its own next input.
+#
+# ⛔ a_train_inline_gauge — THIS NEVER ENTERS THE LOSS, and that is structural, not a promise:
+#    · it runs inside `torch.no_grad()`, after `opt.step()`, on a saved/restored RNG state;
+#    · it returns a plain dict, and the ONLY thing the call site does with that dict is print
+#      it (and optionally append it to a JSONL);
+#    · nothing it computes is a torch graph leaf, so no term of it can reach `loss.backward()`.
+#    The landing evidence is a BYTE-IDENTICAL ON-vs-OFF training trajectory at a fixed seed
+#    (same per-step CE lines, same .clm/.pt sha256) — see the H_9845 card. Put any of this in
+#    the loss and it becomes tune-to-green by construction.
+#
+# ⚠️ RUNG 1 IS NOT ALIVENESS. A thermostat clears it; the scripted P-LIVE plant used here as the
+#    POSITIVE CONTROL clears it BY DESIGN. A reading diagnoses lane causality. No consciousness,
+#    aliveness or interiority claim follows from any number this monitor prints.
+#
+# ⚠️ REPRODUCTION. `--closure-monitor-seed` is NOT a sampler seed: it keys the world's exogenous
+#    schedule (regime moves, arrivals, the A/B coin) via closure_ladder's (seed, t, tag) streams.
+#    Re-running one schedule with a deterministic policy is byte-identical and therefore proves
+#    nothing (sample-seed-invalid-for-deterministic-do-intervention); real replication = several
+#    PERTURBATION SCHEDULES, which is why the monitor runs `--closure-monitor-schedules` of them
+#    and reports agreement rather than one number.
+CLOSURE_SEP = " => "          # digest -> action prompt separator (scored span = the action)
+
+
+def _closure_model_brain(model, device, seq_cap):
+    """Bind the LIVE model as a `digest -> action` brain for core/closure_ladder.py.
+
+    The rig's brains are callables `str -> action` (CL.digest_brain / CL.constant_brain). The
+    model is a byte LM, so the action is read out by SCORING, never by sampling: each of the 8
+    actions is appended to the digest and teacher-forced, and the action with the lowest mean
+    NLL over ITS OWN BYTES wins (ties break on ACTIONS order, so the readout is deterministic —
+    CL.lv_p's `replay_agree` re-checks that and the monitor refuses a brain that fails it).
+
+    Sampling would inject RNG into a monitor that must not perturb the run; scoring keeps the
+    whole probe deterministic given (weights, digest). One forward of batch 8 per decision.
+
+    train-py-9: the scored SPAN is closed on BOTH sides and its size is REPORTED (`act.diag`),
+    because a weighted-position count that nobody checked is how H_9811 sent 99% of its loss
+    mass at the wrong bytes and read the miss as a substrate negative."""
+    import closure_ladder as CL                       # core/ is on sys.path (see header)
+    actions = list(CL.ACTIONS)
+    diag = {"scored_positions": None, "expected_positions": [len(a.encode()) for a in actions],
+            "span_ok": None, "truncated": False}
+
+    def act(digest):
+        xs, ys, ms = [], [], []
+        head = (digest + CLOSURE_SEP).encode("utf-8")
+        seqs = [head + a.encode("utf-8") for a in actions]
+        maxlen = max(len(s) for s in seqs)
+        for s in seqs:
+            buf = torch.frombuffer(bytearray(s + b" " * (maxlen - len(s))),
+                                   dtype=torch.uint8).long()
+            x, y = buf[:-1], buf[1:]
+            m = torch.zeros(y.shape[0])
+            # position j of `y` holds the byte at index j+1, so the action span [len(head), len(s))
+            # is scored at j in [len(head)-1, len(s)-1) — right edge CLOSED at the action's end,
+            # never left to run to the end of the window (train-py-9).
+            m[len(head) - 1:len(s) - 1] = 1.0
+            if seq_cap and x.shape[0] > seq_cap:      # keep the TAIL — the scored span lives there
+                x, y, m = x[-seq_cap:], y[-seq_cap:], m[-seq_cap:]
+                diag["truncated"] = True
+            xs.append(x); ys.append(y); ms.append(m)
+        x = torch.stack(xs).to(device)
+        y = torch.stack(ys).to(device)
+        m = torch.stack(ms).to(device)
+        if diag["scored_positions"] is None:
+            got = [int(v) for v in m.sum(dim=1).tolist()]
+            diag["scored_positions"] = got
+            diag["span_ok"] = bool(got == diag["expected_positions"])
+        logits = model(x)["logits"].float()           # (B, V, T)
+        nll = -torch.log_softmax(logits, dim=1).gather(1, y.unsqueeze(1)).squeeze(1)
+        score = (nll * m).sum(dim=1) / m.sum(dim=1).clamp(min=1.0)
+        return actions[int(torch.argmin(score).item())]
+
+    act.diag = diag
+    return act
+
+
+# The yoked OPEN floor is averaged over these derangement draws. MEASURED (2026-07-21, the
+# scripted digest-reading brain at 600 ticks): ONE draw is not a floor — at seed 7 draw k=9 read
+# 0.7500 while k=3 read 0.5000, i.e. the derangement INDEX alone flipped the sign of the
+# treatment-minus-control delta. Reading a single draw would have let a knob pick the verdict
+# (tune-to-green with extra steps), so the floor is the MEAN over 5 draws and the per-draw
+# [min,max] spread is reported; `derangement_robust` marks the stronger read (treatment above
+# the WORST draw). The mean, not the max, is the gate — Δ = exp − max(controls) carries an
+# order-statistic bias that mechanises KILL (probe-defect-census-max-control-bias).
+CLOSURE_OPEN_DERANGEMENTS = (3, 5, 9, 11, 13)
+
+
+def _closure_arm(brain, seed, ticks):
+    """Drive a `digest -> action` brain through the closed loop and build its OWN
+    marginal-matched yoked floor: the brain's executed actions, order destroyed by the rig's
+    Watson derangement, replayed as a tape at the SAME exogenous schedule. Only the closed leg
+    calls the brain; every floor draw is a tape replay (no model forwards)."""
+    import closure_ladder as CL
+    tape = []
+
+    def recording_policy(s, t, past):
+        a = brain(CL.observe(s))
+        tape.append(a)
+        return a
+
+    live = CL.lv_c(recording_policy, seed, ticks, null=False)
+    opens = [CL.lv_c(CL.make_tape_policy(CL._derange(tape, seed, k)), seed, ticks)["closure_sign"]
+             for k in CLOSURE_OPEN_DERANGEMENTS]
+    omean = sum(opens) / len(opens)
+    return {"closure": live["closure_sign"], "blocks": live["blocks"],
+            "open_floor_mean": omean, "open_floor_min": min(opens), "open_floor_max": max(opens),
+            "open_draws": opens, "delta_vs_open": live["closure_sign"] - omean,
+            "action_support": len(set(tape)),
+            "anchors": bool(live["closure_sign"] >= CL.CLOSURE_SIGN
+                            and live["closure_sign"] > omean),
+            "derangement_robust": bool(live["closure_sign"] > max(opens))}
+
+
+def _closure_schedule(brain, seed, ticks):
+    """One PERTURBATION SCHEDULE of the rung-1 battery. Control order is FROZEN: every control
+    leg runs FIRST and the model row is REFUSED unless all of them certify.
+
+      C1 LV-E echo guard      — no action name is reachable in the observation vocabulary, so
+                                every action->input path is DYNAMICS, never a byte echo.
+      C2 frame alignment      — the H_013 standing regression test (a mis-framed Closed stream
+                                scored 0.667 closure in a provably DEAD world, above its gate).
+      C3 POSITIVE CONTROL     — the scripted contingent plant must FIRE at THIS tick budget
+                                (closure >= CLOSURE_SIGN) and the digest-reading brain must
+                                show a contingency rate (CR >= 0.20, replay_agree == 1.0). If
+                                it cannot see a signal that is planted, a null model row is a
+                                property of the instrument (positive-control-before-negative).
+      C4 ZERO-TRUTH PEDESTAL  — the INERT world must read closure <= NULL_CLOSURE_MAX and the
+                                input-BLIND brain must read CR exactly 0. If either fires, the
+                                instrument MANUFACTURES signal (phi-estimator-needs-zero-truth).
+      C5 PATHWAY POSITIVE     — the scripted DIGEST-READING brain pushed through the EXACT code
+                                path the model uses (observe -> brain -> recording policy ->
+                                lv_c + yoked floor) must ANCHOR. C3 certifies the closure
+                                ESTIMATOR; only C5 certifies that a contingent brain can be
+                                read AS A BRAIN through this pathway, so a model NO-ANCHOR is
+                                about the model and not about the pipe.
+      C6 PATHWAY PEDESTAL     — the input-BLIND brain through that same pathway must read
+                                closure <= NULL_CLOSURE_MAX (zero-truth on the pathway).
+
+    ⚠️ C5 is an EASIER task than the model's (train-py-10): it certifies the PATHWAY, never that
+    the model's regime is learnable at this budget. Passing C5 buys readability, not power.
+
+    Only then the model row: the live model acting in order vs its own marginal-matched yoked
+    floor. The read is that collapse-delta, never the raw closure value."""
+    import closure_ladder as CL
+
+    echo = CL.echo_guard()
+    frame = CL._frame_alignment_check(seed, ticks)
+    digests = CL.sample_digests(seed, ticks)
+    pos_c = CL.lv_c(CL.policy_live, seed, ticks, null=False)          # scripted plant, coupled env
+    pos_p = CL.lv_p(CL.digest_brain, digests)                         # reading brain
+    ped_c = CL.lv_c(CL.policy_live, seed, ticks, null=True)           # INERT env
+    ped_p = CL.lv_p(CL.constant_brain, digests)                       # input-blind brain
+
+    blocks = min(pos_c["blocks"], ped_c["blocks"])
+    plant_fires = bool(pos_c["closure_sign"] >= CL.CLOSURE_SIGN
+                       and pos_p["CR"] >= 0.20 and pos_p["replay_agree"] == 1.0)
+    pedestal_refuses = bool(ped_c["closure_sign"] <= CL.NULL_CLOSURE_MAX and ped_p["CR"] == 0.0)
+    structural_ok = bool(echo["ok"] and frame["ok"])
+    under_powered = bool(blocks < CL.MIN_BLOCKS)
+
+    row = {"seed": seed, "ticks": ticks, "blocks": blocks,
+           "controls": {"echo_ok": echo["ok"], "frame_ok": frame["ok"],
+                        "plant_closure": pos_c["closure_sign"], "plant_CR": pos_p["CR"],
+                        "plant_replay_agree": pos_p["replay_agree"],
+                        "pedestal_closure": ped_c["closure_sign"], "pedestal_CR": ped_p["CR"],
+                        "plant_fires": plant_fires, "pedestal_refuses": pedestal_refuses},
+           "under_powered": under_powered, "model": None}
+
+    if not structural_ok:
+        row["status"] = "INSTRUMENT-INVALID"
+        row["why"] = ("a structural pre-check failed (echo_ok=%s frame_ok=%s) — no closure "
+                      "number is readable until it is fixed." % (echo["ok"], frame["ok"]))
+        return row
+    if not plant_fires:
+        # power BEFORE a negative verdict: below the measured block floor a plant miss is a
+        # sample-size artefact, and calling it INSTRUMENT-DEAD would record a power problem
+        # as a substrate fact (the rig's own MIN_BLOCKS doctrine).
+        row["status"] = "UNDER-POWERED" if under_powered else "INSTRUMENT-DEAD"
+        row["why"] = ("the scripted contingent plant did NOT fire at %d ticks (%d blocks; "
+                      "closure %.3f vs gate %.2f) — %s"
+                      % (ticks, blocks, pos_c["closure_sign"], CL.CLOSURE_SIGN,
+                         "raise --closure-monitor-ticks to >= %d before reading anything."
+                         % (CL.MIN_BLOCKS * CL.BLOCK) if under_powered else
+                         "the estimator cannot see a planted signal, so a model null would be "
+                         "a fact about the instrument."))
+        return row
+    if not pedestal_refuses:
+        row["status"] = "INVALID"
+        row["why"] = ("the zero-truth pedestal did NOT refuse (inert-world closure %.3f, "
+                      "blind-brain CR %.3f) — the instrument manufactures signal."
+                      % (ped_c["closure_sign"], ped_p["CR"]))
+        return row
+
+    path_pos = _closure_arm(CL.digest_brain, seed, ticks)             # C5
+    path_ped = _closure_arm(CL.constant_brain, seed, ticks)           # C6
+    row["controls"]["pathway_positive"] = path_pos
+    row["controls"]["pathway_pedestal"] = path_ped
+    if not path_pos["anchors"]:
+        row["status"] = "PATHWAY-DEAD"
+        row["why"] = ("the scripted digest-READING brain did not anchor through the model's own "
+                      "pathway at this schedule (closure %.3f vs gate %.2f, yoked floor %.3f) — "
+                      "the pathway cannot discriminate here, so a model row would be unreadable."
+                      % (path_pos["closure"], CL.CLOSURE_SIGN, path_pos["open_floor_mean"]))
+        return row
+    if path_ped["closure"] > CL.NULL_CLOSURE_MAX:
+        row["status"] = "INVALID"
+        row["why"] = ("the input-BLIND brain read closure %.3f > %.2f through the model's "
+                      "pathway — the pathway manufactures closure."
+                      % (path_ped["closure"], CL.NULL_CLOSURE_MAX))
+        return row
+
+    arm = _closure_arm(brain, seed, ticks)
+    mp = CL.lv_p(brain, digests)
+    arm["CR"] = mp["CR"]
+    arm["replay_agree"] = mp["replay_agree"]
+    arm["anchors"] = bool(arm["anchors"] and mp["replay_agree"] == 1.0)
+    row["model"] = arm
+    row["status"] = "UNDER-POWERED" if under_powered else "CERTIFIED"
+    row["why"] = ("controls certified at this tick budget: plant fires, pedestal refuses."
+                  if not under_powered else
+                  "controls certified but only %d blocks < %d — DIRECTIONAL at best."
+                  % (blocks, CL.MIN_BLOCKS))
+    return row
+
+
+def closure_monitor_rung1(model, device, seq_cap, *, seed, ticks, schedules, step):
+    """H_9845 — run the rung-1 closure battery against the LIVE model. MONITOR-ONLY.
+
+    Returns a dict; the caller may only LOG it. The model is put in eval mode and the torch RNG
+    state is snapshotted and restored, so the probe cannot perturb the trajectory it observes.
+    Several PERTURBATION SCHEDULES are run (a deterministic do()-intervention makes single-seed
+    re-running byte-identical and therefore vacuous as replication), and the headline read is
+    the AGREEMENT across them, not any single schedule's number."""
+    import closure_ladder as CL
+    was_training = model.training
+    cpu_rng = torch.get_rng_state()
+    cuda_rng = torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None
+    try:
+        model.eval()
+        with torch.no_grad():
+            brain = _closure_model_brain(model, device, seq_cap)
+            rows = [_closure_schedule(brain, seed + k, ticks) for k in range(max(1, schedules))]
+            readout_diag = dict(brain.diag)
+    finally:
+        torch.set_rng_state(cpu_rng)
+        if cuda_rng is not None:
+            torch.cuda.set_rng_state_all(cuda_rng)
+        if was_training:
+            model.train()
+    certified = [r for r in rows if r["status"] in ("CERTIFIED", "UNDER-POWERED") and r["model"]]
+    if not readout_diag.get("span_ok") or len(certified) != len(rows):
+        read = "REFUSED"
+    elif all(r["model"]["anchors"] for r in rows):
+        read = "ANCHOR-ALL-SCHEDULES"
+    elif any(r["model"]["anchors"] for r in rows):
+        read = "SCHEDULE-SPLIT"
+    else:
+        read = "NO-ANCHOR"
+    return {"instrument": "closure-monitor", "hypothesis": "H_9845", "rung": 1,
+            "engine": "core/closure_ladder.py (H_9807)", "step": step,
+            "geometry": {"ticks": ticks, "seed0": seed, "schedules": len(rows),
+                         "block": CL.BLOCK, "min_blocks": CL.MIN_BLOCKS,
+                         "closure_gate": CL.CLOSURE_SIGN, "null_max": CL.NULL_CLOSURE_MAX},
+            "readout_span": readout_diag, "schedules": rows, "read": read,
+            "loss_coupling": "NONE — monitor-only (a_train_inline_gauge); no term reaches the loss",
+            "reading": ("MONITOR-ONLY, DIRECTIONAL. A rung-1 ANCHOR says the model's contingency "
+                        "structure (not its action marginal — that is what the yoked open control "
+                        "removes) leaves a fingerprint on its own next input in THIS toy world. A "
+                        "THERMOSTAT CLEARS RUNG 1: no aliveness/consciousness claim follows. "
+                        "REFUSED means the instrument did not certify, which is a statement about "
+                        "the instrument, never about the model.")}
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="anima canonical python trainer (`anima-py train`) — CLMConvMoE "
@@ -2064,6 +2347,37 @@ def main():
                     help="H_9643: K contiguous faction blocks on the d axis (0 = OFF, byte-identical)")
     ap.add_argument("--faction-bridge-lam0", type=float, default=0.1,
                     help="H_9643: initial cross-faction bridge scale (K>0 only)")
+    # ── H_9845 INTERVENTIONAL CLOSURE MONITOR (rung 1) · ⛔ MONITOR-ONLY ──────────────────────
+    # Default off ⇒ byte-identical golden path. WHY a flag on the trainer and not a script beside
+    # it: the question ("is this lane causal or merely correlated?") is only answerable WHILE the
+    # weights are live, and `a_experiment_engine_native` says a manipulation is a flag on the
+    # installed CLI. WHY it can never become a lever: a_train_inline_gauge — it is read AFTER
+    # opt.step() under no_grad on a saved/restored RNG state and only ever printed. The ON-vs-OFF
+    # trajectory at a fixed seed is byte-identical, and that is the landing evidence (H_9845).
+    ap.add_argument("--closure-monitor", choices=["off", "rung1"], default="off",
+                    help="H_9845: 'rung1' logs the interventional closure ladder "
+                         "(core/closure_ladder.py) with the LIVE model as the acting policy. "
+                         "MONITOR-ONLY — never enters the loss. ⚠️ a thermostat clears rung 1: "
+                         "it diagnoses lane causality, NOT aliveness. 'off' (default) ⇒ "
+                         "byte-identical.")
+    ap.add_argument("--closure-monitor-every", type=int, default=0,
+                    help="H_9845: run the monitor every N steps (0 = final step only). Each "
+                         "invocation costs ticks x schedules model forwards of batch 8.")
+    ap.add_argument("--closure-monitor-ticks", type=int, default=600,
+                    help="H_9845: world ticks per schedule. 600 = the rig's MEASURED power floor "
+                         "(12 LV-C blocks of 50). Lower is NOT a cheaper reading: at 400 ticks "
+                         "the scripted positive control itself stops firing, and the monitor "
+                         "then reports UNDER-POWERED rather than a model number.")
+    ap.add_argument("--closure-monitor-seed", type=int, default=7,
+                    help="H_9845: FIRST perturbation-schedule seed (keys the world's exogenous "
+                         "streams, not a sampler).")
+    ap.add_argument("--closure-monitor-schedules", type=int, default=2,
+                    help="H_9845: how many perturbation SCHEDULES (seed, seed+1, ...) to run. "
+                         ">=2 because a deterministic do()-intervention makes a single-schedule "
+                         "re-run byte-identical, i.e. vacuous as replication "
+                         "(sample-seed-invalid-for-deterministic-do-intervention).")
+    ap.add_argument("--closure-monitor-out", type=str, default="",
+                    help="H_9845: append each monitor reading to this JSONL (log sink only).")
     ap.add_argument("--seed", type=int, default=7)
     # a `<corpus>.meta.json` written by `anima-py corpus` carries the budget floor that corpus
     # earned; _budget_preflight refuses to start below it (H_9324) — see cli/corpus.py BUDGET_FLOORS.
@@ -3004,6 +3318,28 @@ def main():
             if rank == 0:
                 db = dbes_specialization(model, x); db["step"] = step
                 dbes_log.append(db)
+        # ── H_9845 INTERVENTIONAL CLOSURE MONITOR (rung 1) · ⛔ MONITOR-ONLY ──────────────
+        #   Runs AFTER opt.step(), rank-0 only, on the UNWRAPPED core_model, under no_grad with
+        #   the torch RNG state snapshotted+restored inside closure_monitor_rung1. Its return
+        #   value is ONLY printed / appended to a JSONL — it is not read by the loss, the
+        #   optimizer, the scheduler or any gate (a_train_inline_gauge). Wrapped in try/except
+        #   because a diagnostic must never kill a run (train-py-1).
+        if a.closure_monitor == "rung1" and rank == 0:
+            _cm_due = (step == steps if a.closure_monitor_every <= 0
+                       else (step % a.closure_monitor_every == 0 or step == steps))
+            if _cm_due:
+                try:
+                    _cm = closure_monitor_rung1(
+                        core_model, device, seq_len,
+                        seed=a.closure_monitor_seed, ticks=a.closure_monitor_ticks,
+                        schedules=a.closure_monitor_schedules, step=step)
+                    p0("  [H_9845 closure-monitor rung1 · MONITOR-ONLY · not in the loss] "
+                       + json.dumps(_cm, ensure_ascii=False), flush=True)
+                    if a.closure_monitor_out:
+                        with open(a.closure_monitor_out, "a", encoding="utf-8") as _fh:
+                            _fh.write(json.dumps(_cm, ensure_ascii=False) + "\n")
+                except Exception as _e:
+                    p0(f"  closure-monitor skipped: {type(_e).__name__}: {_e}", flush=True)
         if step == 1 or step % a.log_every == 0 or step == steps:
             vtxt = ""
             ptxt = ""
