@@ -3,7 +3,7 @@
 **status:** 🔧 **INSTRUMENT LANDED + 첫 실측** (2026-07-21 · `anima-py corpus mi-screen` 배선 · 계기 CERTIFIED · 과학 판정은 아직 0)
 **source:** R12 뇌부위 census (2026-07-21) — `origin/main` `core/` 12개 모듈 실측 후 1모듈=1레버로 등록.
 상위 설계 노드 = ARCHITECTURE `C2 RECOMBINE` 아래 `🧠 뇌부위 census`. R11(H_9830~9836)의 후속.
-**wired:** yes — `anima-py corpus mi-screen --corpus PATH [--mi-seg-lines N] [--mi-win/--mi-span/--mi-estimator/--mi-eps] [--out J]`
+**wired:** yes — `anima-py corpus mi-screen --corpus PATH [--mi-seg-lines N] [--mi-robust] [--mi-win/--mi-span/--mi-estimator/--mi-eps] [--out J]`
 
 ## 실측 — 이 모듈은 **이미 프로덕션에 있고 아무도 이 용도로 안 쓰고 있다**
 
@@ -104,3 +104,58 @@ anima-py corpus mi-screen --corpus /tmp/mi_en.txt --mi-seg-lines 60 --out mi_en.
 
 **NEXT:** 4칸 chat 코퍼스 · H_9839 midpoint vs rule-derived 꿈 데이터 · 그리고 병렬세션의 신규 실측
 (G6 = 기질 벽이 아니라 **코퍼스-밀도 벽**)과 같은 축이므로 결과를 맞대볼 것.
+
+
+---
+
+## ⚠️ 자가적발: 첫 판 계기는 블록 크기로 초록불을 만들 수 있었다 (2026-07-21 · 같은 날)
+
+코퍼스 3종을 스크리닝하다 **기하만 바꿔도 부호가 뒤집히는 것**을 발견했다:
+
+| 코퍼스 | 60줄/4096B 블록 gzip | 8~46줄/512B 블록 gzip |
+|---|---|---|
+| `flat --lang en` | **−0.0020** | **+0.0312** (eps=0.02 통과) |
+| `storebind` | **+0.0195** (최고) | **+0.0000** (소멸) |
+| `derivtrace` | −0.0098 | +0.0000 |
+
+두 기하 모두 통제는 정상이었다(plant 발화 · null 거부). 즉 **계기는 살아있는데 판정이 블록 크기의
+함수**였다 — 한 기하만 보고하면 블록 크기가 판정을 고르게 되고, 그것이 정확히 `no tune-to-green`
+위반이다. 아무도 이 숫자에 cement 하기 전에 잡았다.
+
+### 교정 — `--mi-robust` 강건성 게이트
+
+같은 배터리를 요청 기하 + 그 **1/2 · 1/8** 기하에서 재실행하고 **최솟값**을 헤드라인으로 삼는다.
+`read` 는 그 최솟값이 eps 를 넘을 때만 참. `geometry_dependent` 는 "한 블록 크기에선 살고 다른
+크기에선 죽는" 추정기를 표시한다(spread > eps 인데 최솟값은 eps 미달) = 분절 인공물.
+
+### 3-기하 census 실측 (통제 3/3 발화 · 3/3 거부 · 전 기하 재인증)
+
+```
+코퍼스        robust_over_floor(최솟값)          spread              READ   기하의존
+flat(en)      gzip−0.0078 ppm−0.0023 mk−0.0102   .039/.005/.050      none   gzip·markov6
+derivtrace    gzip−0.0098 ppm−0.0055 mk−0.0144   .041/.012/.057      none   gzip·markov6
+storebind     gzip+0.0000 ppm−0.0022 mk+0.0019   .020/.005/.009      none   없음
+```
+
+**판정: READ = none (3/3 코퍼스).** anima 의 절차적 학습 코퍼스 중 **기하-강건한 교차경계 정보를
+담은 것은 하나도 없다.** 그리고 앞서 보였던 두 양성(`flat` +0.0312 · `storebind` +0.0195)은
+새 게이트가 **분절 인공물로 정확히 분류**했다 — `storebind` 만 기하의존이 아닌데, 그건 그 코퍼스의
+설계 구조(store 창 24줄)가 애초에 블록 경계 위에 있지 않기 때문이다.
+
+### 이 결과가 레버들에 주는 함의
+
+DIRECTIONAL 이지만 방향은 분명하다: 데이터면이 비어 있다는 H_9304 의 그림이 **모델 없이도** 재현된다.
+⟹ 학습측 레버(R11·R12)들이 기대는 "코퍼스에 결합정보는 있는데 모델이 못 읽는다" 전제는
+**적어도 이 세 포맷에서는 지지되지 않는다.** 남은 진짜 대상은 303M 이 실제 학습한 4칸 chat 코퍼스와
+H_9839 의 rule-derived 꿈 데이터이며, 그 둘을 재기 전에는 데이터면 결론을 닫지 않는다.
+
+### 재현
+
+```
+anima-py corpus flat      --out /tmp/mi_en.txt   --lang en --seed 7
+anima-py corpus derivtrace --out /tmp/mi_dt.txt  --lang en --seed 7
+anima-py corpus storebind --out /tmp/mi_sb.txt   --lang en --seed 7
+anima-py corpus mi-screen --corpus /tmp/mi_en.txt --mi-seg-lines 60  --mi-robust --out en.json
+anima-py corpus mi-screen --corpus /tmp/mi_dt.txt --mi-seg-lines 60  --mi-robust --out dt.json
+anima-py corpus mi-screen --corpus /tmp/mi_sb.txt --mi-seg-lines 500 --mi-robust --out sb.json
+```
