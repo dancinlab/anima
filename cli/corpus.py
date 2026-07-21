@@ -1015,6 +1015,7 @@ def _parse_args(argv):
             "wake_caps": [], "replay_source": "both", "wake_anchors": 24,
             "wake_ticks": 0, "wake_eps": 0.05,
             "bind_legacy_lengths": False, "bind_task": "xor",   # H_9815 xor | hp(positive control)
+            "bind_lex_corpus": [],                              # H_9819R real-lexeme input swap
             "ngram_recoverable_audit": False, "audit_train": None, "panel": None,
             "codec": None, "audit_marker": None, "audit_min_coverage": 0.10}
     i = 1
@@ -1180,6 +1181,8 @@ def _parse_args(argv):
             opts["bind_legacy_lengths"] = True; i += 1              # H_9812 disqualified control
         elif a == "--bind-task":
             opts["bind_task"] = argv[i + 1]; i += 2                 # H_9815 xor|hp · H_9818 xmark
+        elif a == "--bind-lex-corpus":
+            opts["bind_lex_corpus"].append(argv[i + 1]); i += 2     # H_9819R real-lexeme input swap
         elif a == "--audit-train":
             opts["audit_train"] = argv[i + 1]; i += 2               # H_9809
         elif a == "--panel":
@@ -3182,6 +3185,73 @@ _BP_VERB_HELD = ["wait", "pull", "push", "kick", "hold", "lead", "feed", "send"]
 # 6-letter nouns: +"s" => 7B plural.
 _BP_NOUN_SEEN = ["doctor", "artist", "banker", "driver", "farmer", "hunter", "keeper", "lawyer"]
 _BP_NOUN_HELD = ["mentor", "singer", "tailor", "writer", "dancer", "porter", "sailor", "editor"]
+
+# H_9819R — REAL-LEXEME INPUT SWAP (`--bind-lex-corpus <real.txt>`).
+#
+# WHY. The four pools above are HAND-CURATED and, by construction, maximally SEPARATED: each stem
+# was chosen so the seen/held split is string-disjoint, every stem is equally frequent (exactly
+# 1/8 of its pool by the rotation sweep), and no stem nests in another. That is the byte-level
+# analogue of "planted codes are orthogonal" — the assumption the H_9854 audit found five landed
+# positives silently resting on. Real lexemes are the opposite: near-collinear (heavy shared
+# character n-grams: that/than/what · were/where), Zipf-skewed (the top 4-letter word outnumbers
+# the 16th by an order of magnitude), and never chosen by anyone.
+#
+# This flag swaps ONLY that input. Frame, morphology (`+es`/`+ed`, `+us`/`+is`), K, gold rule,
+# rotation sweep, audits, and every downstream gate are UNCHANGED — the pools are the one thing
+# that moves. The mining rule is the `mine_lexicon` doctrine already in this file ("rank by
+# frequency in the real corpus — the designer does not get to pick"), specialised to the two
+# structural constraints the frame itself imposes and states in the header above:
+#   verbs = EXACTLY 4 letters  (stem+2B suffix keeps every verb surface byte-length-identical)
+#   nouns = EXACTLY 6 letters  (stem+2B suffix keeps every noun surface byte-length-identical)
+# Ranking is by word-boundary count (never substring — convergence corpus-py-1 (G)/(K)), ties
+# broken alphabetically so the pools are a deterministic function of the corpus bytes: no seed,
+# no RNG, no seed-policy change.
+#
+# SPLIT: rank-INTERLEAVED (even rank -> SEEN, odd rank -> HELD). Frozen before the first run. The
+# alternative (top-8 seen / next-8 held) would confound the 0-shot axis with frequency, which is
+# exactly the kind of axis-collinearity convergence corpus-py-1 (E) forbids.
+_BP_LEX_VERB_LEN = 4
+_BP_LEX_NOUN_LEN = 6
+_BP_LEX_POOL = 8                            # per pool; 2 pools per part of speech (seen + held)
+
+
+def mine_bindpanel_pools(corpus_paths):
+    """Rank real words by word-boundary frequency and cut the four bindpanel pools from them.
+
+    Returns (verb_seen, verb_held, noun_seen, noun_held, stats). Deterministic: frequency desc,
+    then alphabetical. Raises SystemExit if the corpus cannot supply enough words of the required
+    lengths — a short corpus must fail LOUD, never fall back to the hand-curated pools (that would
+    silently re-run the toy while the command line says `--bind-lex-corpus`)."""
+    tok = re.compile(r"[a-z]+")
+    counts = collections.Counter()
+    n_lines = 0
+    for cp in corpus_paths:
+        with open(cp, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                n_lines += 1
+                counts.update(tok.findall(line.lower()))
+
+    def _cut(nletters):
+        cand = sorted(((w, n) for w, n in counts.items() if len(w) == nletters),
+                      key=lambda wn: (-wn[1], wn[0]))
+        need = 2 * _BP_LEX_POOL
+        if len(cand) < need:
+            raise SystemExit("anima corpus bindpanel --bind-lex-corpus: the corpus offers only %d "
+                             "distinct %d-letter words, need %d. A corpus that cannot fill the "
+                             "pools cannot run this panel — it is not a fallback condition."
+                             % (len(cand), nletters, need))
+        top = cand[:need]
+        return ([w for w, _ in top[0::2]], [w for w, _ in top[1::2]], top)
+
+    vs, vh, vtop = _cut(_BP_LEX_VERB_LEN)
+    ns, nh, ntop = _cut(_BP_LEX_NOUN_LEN)
+    st = {"lex_source": list(corpus_paths), "lines_read": n_lines,
+          "distinct_words": len(counts),
+          "verb_ranked": [{"w": w, "occ": n} for w, n in vtop],
+          "noun_ranked": [{"w": w, "occ": n} for w, n in ntop]}
+    return vs, vh, ns, nh, st
+
+
 _BP_ANS = ("up", "dn")                      # 2B each — length parity, checked by --free-slot-score
 _BP_TAIL = "waited"
 _BP_ARROW = " => "
@@ -3346,8 +3416,11 @@ def _bp_audit(items, K):
             "max_seq_bytes": max(lens) + 2 * K}
 
 
-def build_bindpanel(K, n_blocks, seed, lang, rot=0, lengths="matched", task="xor"):
+def build_bindpanel(K, n_blocks, seed, lang, rot=0, lengths="matched", task="xor", pools=None):
     """Returns (drill_corpus_text, panel_items, codebook, stats).
+
+    `pools` (H_9819R) = (verb_seen, verb_held, noun_seen, noun_held) overriding the hand-curated
+    frozen pools. None keeps the frozen ones, so every existing call is byte-identical.
 
     The DRILL corpus teaches the binding operation on the SEEN lexeme pool; the PANEL asks it on
     the HELD pool. The two pools are string-disjoint and neither nests in the other, so the 0-shot
@@ -3370,7 +3443,11 @@ def build_bindpanel(K, n_blocks, seed, lang, rot=0, lengths="matched", task="xor
     xmark = (task == "xmark")
     judged = "xor" if xmark else task
     mark = _BP_MARK[judged] if xmark else ""
-    panel = _bp_items(K, _BP_VERB_HELD, _BP_NOUN_HELD, rot, lengths=lengths, task=judged, mark=mark)
+    # H_9819R — the four lexeme pools are the ONE input this flag swaps. `pools=None` keeps the
+    # frozen hand-curated ones, so every pre-existing call stays byte-identical.
+    vseen, vheld, nseen, nheld = pools or (_BP_VERB_SEEN, _BP_VERB_HELD, _BP_NOUN_SEEN,
+                                           _BP_NOUN_HELD)
+    panel = _bp_items(K, vheld, nheld, rot, lengths=lengths, task=judged, mark=mark)
     # The drill sweeps EVERY rotation so all 8 seen verbs and all 8 seen nouns are exercised in
     # every slot. One rotation would teach the rule at 6 lexemes and leave "it memorised those six"
     # as a live alternative to "it learned the operation" (corpus-py-1 (E): count the axis).
@@ -3379,8 +3456,8 @@ def build_bindpanel(K, n_blocks, seed, lang, rot=0, lengths="matched", task="xor
     drill_tasks = ("hp", "pos", "xor") if xmark else (task,)
     seen = []
     for t in drill_tasks:
-        for r in range(len(_BP_VERB_SEEN)):
-            seen.extend(_bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, rot + r, lengths=lengths,
+        for r in range(len(vseen)):
+            seen.extend(_bp_items(K, vseen, nseen, rot + r, lengths=lengths,
                                   task=t, mark=(_BP_MARK[t] if xmark else "")))
     rng = random.Random(seed)
     order = list(range(len(seen)))
@@ -3400,9 +3477,9 @@ def build_bindpanel(K, n_blocks, seed, lang, rot=0, lengths="matched", task="xor
         if tok:
             words.add(tok)
     held_forms = set()
-    for v in _BP_VERB_HELD:
+    for v in vheld:
         held_forms.add(v + "s"); held_forms.add(v + "ing")
-    for nn_ in _BP_NOUN_HELD:
+    for nn_ in nheld:
         held_forms.add(nn_); held_forms.add(nn_ + "s")
     leaks = sorted(held_forms & words)
 
@@ -3427,8 +3504,9 @@ def build_bindpanel(K, n_blocks, seed, lang, rot=0, lengths="matched", task="xor
           "n_panel": len(panel), "n_drill_lines": len(lines),
           "bytes": len(text.encode()), "leaks": leaks,
           "audit_panel": aud, "audit_drill": aud_seen,
-          "held_lexemes": {"verbs": _BP_VERB_HELD, "nouns": _BP_NOUN_HELD},
-          "seen_lexemes": {"verbs": _BP_VERB_SEEN, "nouns": _BP_NOUN_SEEN}}
+          "held_lexemes": {"verbs": vheld, "nouns": nheld},
+          "seen_lexemes": {"verbs": vseen, "nouns": nseen},
+          "lex_pools": "hand-curated" if pools is None else "mined"}
     return text, panel, codebook, st
 
 
@@ -6427,6 +6505,12 @@ def main():
         print("             carrier makes the carrier axis collinear with the composition axis).")
         print("             Consumed by `anima-py evaluate <clm> --rho-axon --weave-panel panel.json`.")
         print("      bindpanel --lang en --out c.txt [--bind-k 6] [--n-blocks 4000] [--seed 7]")
+        print("                [--bind-lex-corpus real.txt ...]  H_9819R REAL-LEXEME INPUT SWAP:")
+        print("             replace the hand-curated (maximally separated, uniform-frequency)")
+        print("             lexeme pools with the top-16 4-letter / 6-letter words MINED from a")
+        print("             real corpus by word-boundary frequency (rank-interleaved seen/held).")
+        print("             Frame, morphology, K, gold rule and every audit are unchanged — the")
+        print("             pools are the only thing that moves. Omit = byte-identical to before.")
         print("             H_9810 — the HELD-OUT BINDING PANEL for the H_9805 tension-field arms.")
         print("             K stacked number-concord edges per sentence; gold = agreement-marker XOR")
         print("             singular-noun position, both balanced at 0.5. LENGTH-CODED on purpose:")
@@ -6997,8 +7081,16 @@ def main():
         # baseline but an out-of-distribution basin (convergence corpus-py-1 ⑫, measured on H_9397).
         _bp_judged = "xor" if _bp_task == "xmark" else _bp_task
         _bp_mark = _BP_MARK[_bp_judged] if _bp_task == "xmark" else ""
+        # H_9819R --bind-lex-corpus: mine the four pools from a REAL corpus by word-boundary
+        # frequency instead of using the hand-curated ones. Nothing else about the build moves.
+        _bp_pools = _bp_lexst = None
+        if opts["bind_lex_corpus"]:
+            _vs, _vh, _ns, _nh, _bp_lexst = mine_bindpanel_pools(opts["bind_lex_corpus"])
+            _bp_pools = (_vs, _vh, _ns, _nh)
+        _BP_VS, _BP_VH, _BP_NS, _BP_NH = _bp_pools or (_BP_VERB_SEEN, _BP_VERB_HELD,
+                                                       _BP_NOUN_SEEN, _BP_NOUN_HELD)
         text, panel, codebook, st = build_bindpanel(K, opts["n_blocks"], opts["seed"], opts["lang"],
-                                                    lengths=_bp_len, task=_bp_task)
+                                                    lengths=_bp_len, task=_bp_task, pools=_bp_pools)
         regen = "anima-py corpus " + " ".join(argv)
         if st["leaks"]:
             # A held-out lexeme in the drill corpus makes the panel a memorization test, and the
@@ -7027,7 +7119,7 @@ def main():
         # H_9812 FIELD-ALONE LEAK GATE — per concord mode, fit on the DRILLED conjuncts and score
         # on the held-out ones. A mode that calls gold above the derived chance is DISQUALIFIED:
         # under it the field hands the reader the answer, so no Δ measured with it is readable.
-        _train_conj = [c for it in _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0, lengths=_bp_len,
+        _train_conj = [c for it in _bp_items(K, _BP_VS, _BP_NS, 0, lengths=_bp_len,
                                              task=_bp_judged, mark=_bp_mark)
                        for c in it["conjuncts"]]
         _panel_conj = [c for it in panel for c in it["conjuncts"]]
@@ -7045,7 +7137,7 @@ def main():
         # is measuring a dead model and must not be read at all. Without it F2 has no instrument
         # either, and a floor-level held-out d_acc is unattributable.
         sj = opts["out"] + ".seen_panel.json"
-        seen_panel = _bp_items(K, _BP_VERB_SEEN, _BP_NOUN_SEEN, 0, lengths=_bp_len,
+        seen_panel = _bp_items(K, _BP_VS, _BP_NS, 0, lengths=_bp_len,
                                task=_bp_judged, mark=_bp_mark)
         json.dump({"schema": "anima-bindpanel/v1", "K": K, "lang": st["lang"], "seed": st["seed"],
                    "answers": list(_BP_ANS), "tail": _BP_TAIL, "arrow": _BP_ARROW,
@@ -7058,6 +7150,10 @@ def main():
         mj = opts["out"] + ".meta.json"
         json.dump({"fmt": "bindpanel", "lang": st["lang"], "K": K, "seed": st["seed"],
                    "bytes": st["bytes"], "lines": st["n_drill_lines"], "regen_cmd": regen,
+                   # H_9819R — provenance of the pools, so a downstream reader can never mistake a
+                   # mined panel for the frozen hand-curated one (convergence corpus-py-1 (J)).
+                   "lex_pools": st["lex_pools"], "lex_mining": _bp_lexst,
+                   "seen_lexemes": st["seen_lexemes"], "held_lexemes": st["held_lexemes"],
                    "min_steps": None, "min_lr": None,
                    "note": ("no MEASURED budget floor for this format yet. It is a FROM-SCRATCH "
                             "drill corpus, NOT a CPT mix — continuing a pretrained ckpt on it "
