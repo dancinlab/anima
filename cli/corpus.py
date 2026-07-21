@@ -533,7 +533,125 @@ def _dg_block_lines(rnd):
             for _ in range(_DG_PLANT_LINES)]
 
 
-def build_dreamgen(nights, target, seed):
+# ── `--dream-anchors real:<ckpt.clm>` — the SYNTHETIC-GEOMETRY SWAP (H_9838's lesson) ──
+#
+# WHY THIS FLAG EXISTS. H_9838 landed a headline positive (CA3 multi-step completion at 12x
+# derived chance, chaining lesion at the floor, 3 seeds x 3 geometries, independently reproduced)
+# and then DIED when the only thing that changed was the input source: swapping its PLANTED
+# integer code fixture for the production trunk's REAL penultimate representations turned the
+# 16-item load from CERTIFIED to INVALID (value-shuffled pedestal 0.3750 over a 0.3077 bar) and
+# the 32-item load likewise (0.1562 over 0.1500). Diagnosis: the planted codes were effectively
+# orthogonal (within .0469 / across .0117) while real reps overlap 2.2x (.0625 / .0260) — and
+# `core/hippo_lane.py`'s own header had already warned that "Raw single-token 303M reps are
+# near-collinear". The result had been manufactured by hand-made favourable geometry.
+#
+# dreamgen has the SAME SHAPE. Its anchors' coordinates — including the per-slot token indices
+# that the composition law actually operates on — are drawn from the builder's own `_wp_rand`,
+# i.e. iid-uniform over a 64-token pool. That is a hand-made near-orthogonal world: two parents
+# differ in every slot with probability 63/64, so `rule-derived` always has a genuine choice to
+# make and `midpoint` always lands away from both parents. Real 303M anchors may not have that
+# spread at all. So the flag swaps ONLY the input source: the anchor's coordinates come from the
+# production trunk's real pre-readout penultimate (`core/decode.py::clm_load_weights` ->
+# `clm_penult_pooled_W`, the py-canonical rep path, `a_eval_py_canonical`) of the anchor's own
+# entity string. Everything else is untouched — same nights, same seeds, same arms, same
+# composition laws, same blocking audit, same `mi-screen --mi-robust` judging, same eps.
+#
+# WHAT STAYS BYTE-IDENTICAL. The real path still CONSUMES every RNG draw the synthetic path
+# consumes, in the same order, and only then overwrites the drawn fields. So the rule sequence,
+# the entity-string draws, the drift filler, the plant blocks and the night order are byte-
+# identical between `--dream-anchors synthetic` and `real:` at a fixed seed. The single
+# difference is where an anchor's coordinates come from. Default = `synthetic` => the pre-swap
+# command is byte-identical to before this flag existed (zero regression).
+#
+# THE REDUCER IS FROZEN AND SCALE-FREE, and was fixed BEFORE any real-anchor number was read.
+# A pooled 303M rep is a d=3784 vector whose units are not a design choice of mine, so a reducer
+# with an absolute scale in it (e.g. squash the raw chunk mean) would collapse or spread for a
+# UNITS reason rather than a geometry reason. Both halves are therefore invariant to scaling the
+# rep by any positive constant:
+#   token index (slot s of 3)  contiguous chunk s -> argmax of |.| -> position bucketed into
+#                              [0, _DG_POOL) by pos*_DG_POOL//len. Scale-invariant, monotone in
+#                              position, and the same contiguous/abs/argmax idiom that
+#                              `core/decode.py::penult_fold8` already freezes for this rep.
+#   coord / tension5 / radius  contiguous chunk mean DIVIDED BY the rep's own mean |.| (a
+#                              scale-free ratio), then the parameter-free monotone squash
+#                              `_dg_softsign01` into (0,1) — the range `dc_make_anchor` gets from
+#                              the synthetic draw.
+# No knob of this reducer is a flag, and it is not re-picked after seeing a result (no
+# tune-to-green). If real anchors collapse under it, that collapse is a geometry fact about the
+# production trunk, which is exactly the question H_9838 forces this card to answer.
+def _dg_softsign01(x):
+    """Parameter-free monotone R -> (0,1). No cut point, no temperature, nothing to tune."""
+    return 0.5 * (1.0 + x / (1.0 + abs(x)))
+
+
+def _dg_chunks(d, n):
+    """n contiguous [lo, hi) chunks of a length-d vector; the remainder joins the LAST chunk."""
+    w = d // n
+    return [(i * w, (i + 1) * w if i < n - 1 else d) for i in range(n)]
+
+
+def _dg_real_anchor_fields(pooled):
+    """FROZEN reducer: one REAL pooled penultimate -> (coord[6], tension5[5], radius, idx[3])."""
+    d = len(pooled)
+    scale = sum(abs(v) for v in pooled) / float(d) or 1.0
+
+    def chunk_val(lo, hi):
+        return _dg_softsign01((sum(pooled[lo:hi]) / float(hi - lo)) / scale)
+
+    coord = [chunk_val(lo, hi) for lo, hi in _dg_chunks(d, _DG_COORD_D)]
+    t5 = [chunk_val(lo, hi) for lo, hi in _dg_chunks(d, 5)]
+    radius = chunk_val(0, d)
+    idx = []
+    for lo, hi in _dg_chunks(d, 3):
+        n = hi - lo
+        best, bestv = 0, -1.0
+        for j in range(n):
+            v = abs(pooled[lo + j])
+            if v > bestv:
+                best, bestv = j, v
+        idx.append(min(_DG_POOL - 1, best * _DG_POOL // n))
+    return coord, t5, radius, tuple(idx)
+
+
+def _dg_real_reader(ckpt):
+    """Mount the production trunk ONCE and return a memoised entity-string -> pooled reader.
+
+    The memo is a cache of a deterministic function, not a shortcut: `clm_penult_pooled_W` is
+    read-only (no readout, no sampling, no perturbation), so a repeated entity string has a
+    repeated rep by construction."""
+    import decode as DEC                       # core/decode.py — the py-canonical rep path
+    W = DEC.clm_load_weights(ckpt)
+    if not W or W.get("ok") is False:
+        raise SystemExit("corpus dreamgen: --dream-anchors real:%s is not a decodable .clm" % ckpt)
+    cache = {}
+
+    def rep(s):
+        if s not in cache:
+            cache[s] = DEC.clm_penult_pooled_W(W, s)
+        return cache[s]
+    return rep, cache
+
+
+def _dg_rep_geometry(cache):
+    """Witness: HOW SPREAD is the real anchor rep set, in the same currency H_9838 diagnosed in.
+
+    That card's post-mortem was a cosine-overlap pair (planted codes .0469 within / .0117 across
+    vs real reps .0625 / .0260, a 2.2x overlap), so this builder reports the same kind of fact
+    about its own anchors rather than leaving a reader to infer it from the code count."""
+    import numpy as np
+    keys = sorted(cache)
+    if len(keys) < 2:
+        return {}
+    M = np.array([cache[k] for k in keys], dtype=np.float64)
+    M = M / (np.sqrt((M * M).sum(axis=1, keepdims=True)) + 1e-300)
+    C = M @ M.T
+    iu = np.triu_indices(len(keys), 1)
+    v = C[iu]
+    return {"n_distinct_entities": len(keys), "cos_mean": float(v.mean()),
+            "cos_min": float(v.min()), "cos_max": float(v.max())}
+
+
+def build_dreamgen(nights, target, seed, real_ckpt=None):
     """H_9839 — emit one arm of the dream-composition-law corpus. Returns (text, audit).
 
     The audit is BLOCKING (the falsidrill idiom): it re-reads the emitted stream and refuses to
@@ -549,21 +667,31 @@ def build_dreamgen(nights, target, seed):
     pools = [_dg_pool(_DG_POOL, 0), _dg_pool(_DG_POOL, 1000), _dg_pool(_DG_POOL, 2000)]
     fill = _dg_pool(64, 3000)
     planted_arm = target in ("planted", "pedestal")
+    real_rep, real_cache = _dg_real_reader(real_ckpt) if real_ckpt else (None, None)
 
-    heads, carry, body_end = [], [], []
+    heads, carry, body_end, all_idx = [], [], [], []
     for t in range(nights):
         rule = _DG_RULES[rnd(len(_DG_RULES))]
         anchors, idx = [], {}
         for k in range(budget):
             ii = (rnd(_DG_POOL), rnd(_DG_POOL), rnd(_DG_POOL))
-            a = dc_make_anchor("a%03d.%d" % (t, k),
-                               [rnd(10000) / 10000.0 for _ in range(_DG_COORD_D)],
-                               "wake", rnd(10000) / 10000.0,
-                               [rnd(10000) / 10000.0 for _ in range(5)],
+            coord = [rnd(10000) / 10000.0 for _ in range(_DG_COORD_D)]
+            radius = rnd(10000) / 10000.0
+            t5 = [rnd(10000) / 10000.0 for _ in range(5)]
+            if real_rep is not None:
+                # THE SWAP, and nothing else. Every draw above is consumed first so the rest of
+                # the stream (rules, drift, plants, night order) is byte-identical to synthetic;
+                # the anchor's ENTITY STRING is the RNG-drawn one either way. Only where the
+                # anchor's coordinates come from changes: the production trunk's real pooled
+                # penultimate of that entity string replaces the uniform draw.
+                coord, t5, radius, ii = _dg_real_anchor_fields(
+                    real_rep(" ".join(pools[s][ii[s]] for s in range(3))))
+            a = dc_make_anchor("a%03d.%d" % (t, k), coord, "wake", radius, t5,
                                " ".join(pools[s][ii[s]] for s in range(3)))
             a["replay_window"] = t
             anchors.append(a)
             idx[a["id"]] = ii
+            all_idx.append(tuple(ii))
         head = ["NIGHT %03d STAGE %d BUDGET %d RULE %s" % (t, _DG_STAGE, budget, rule)]
         for a in anchors:
             head.append("ANCHOR %s coord=%s t5=%s r=%.4f text=%s"
@@ -621,8 +749,16 @@ def build_dreamgen(nights, target, seed):
     # the geometry witness is DREAM-only: a control arm's CARRY line has no `text=` field, so
     # including it would make the two shas coincide by construction and witness nothing.
     geom = sorted(l.split(" text=")[0] for l in dream_lines if l.startswith("DREAM "))
+    # anchor-source witness. `distinct_anchor_codes` is REPORTED, never blocking: on real anchors
+    # a collapsed code set is the FINDING (the trunk's reps are near-collinear), not a builder bug,
+    # and a blocking check would hide it behind a refusal instead of measuring it.
+    anchor_codes = sorted(set(all_idx))
     audit = {
         "arm": target, "nights": nights, "seed": seed, "budget": budget,
+        "anchor_source": ("real:" + real_ckpt) if real_ckpt else "synthetic",
+        "n_anchors": len(all_idx), "distinct_anchor_codes": len(anchor_codes),
+        "distinct_slot_values": [len(set(c[s] for c in all_idx)) for s in range(3)],
+        "real_anchor_geometry": _dg_rep_geometry(real_cache) if real_cache else None,
         "bytes": len(raw), "lines": text.count("\n"),
         "n_segments": len(segs), "n_pairs": max(0, len(segs) - 1),
         "min_block_bytes": min(lens) if lens else 0, "max_block_bytes": max(lens) if lens else 0,
@@ -722,7 +858,11 @@ def _parse_args(argv):
             # H_9839 dreamgen: --dream-target = the dream node's COMPOSITION LAW (the DV) ·
             #   --dream-nights = the number of nights = mi-screen segments (a POWER knob only:
             #   it moves the pair count, never the block geometry, which is a frozen constant).
-            "dream_target": "midpoint", "dream_nights": 24,
+            #   --dream-anchors synthetic|real:<ckpt.clm> = where an anchor's COORDINATES come
+            #   from. `synthetic` (default) = the builder's own uniform draw, byte-identical to
+            #   before the flag existed. `real:` = the production trunk's pooled penultimate of
+            #   the anchor's own entity string — the H_9838 planted-geometry swap.
+            "dream_target": "midpoint", "dream_nights": 24, "dream_anchors": "synthetic",
             # H_9809 ngram-audit (--ngram-recoverable-audit · absorbs lab/v3 H_004's theorem
             # "oracle-fusable <=> n-gram-recoverable" as a production audit flag):
             #   --ngram-recoverable-audit  arm the audit (required by fmt `ngram-audit`)
@@ -897,6 +1037,12 @@ def _parse_args(argv):
                                  % ("|".join(_DG_TARGETS), opts["dream_target"]))
         elif a == "--dream-nights":
             opts["dream_nights"] = int(argv[i + 1]); i += 2         # H_9839 power knob
+        elif a == "--dream-anchors":
+            opts["dream_anchors"] = argv[i + 1]; i += 2             # H_9839 real-anchor swap
+            if opts["dream_anchors"] != "synthetic" and \
+                    not opts["dream_anchors"].startswith("real:"):
+                raise SystemExit("--dream-anchors must be 'synthetic' or 'real:<ckpt.clm>' "
+                                 "(got %r)" % opts["dream_anchors"])
         elif a == "--ngram-recoverable-audit":
             opts["ngram_recoverable_audit"] = True; i += 1          # H_9809 ngram-audit
         elif a == "--bind-legacy-lengths":
@@ -6041,7 +6187,8 @@ def main():
                    "bindpanel", "weavepanel", "falsidrill", "dreamgen"):
         print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind|counterfactual-decl|bindpanel|weavepanel|dreamgen|ngram-audit> --out PATH")
         print("      dreamgen --lang en --out c.txt --dream-target "
-              "{planted|pedestal|midpoint|rule-derived|shuffled} [--dream-nights 24] [--seed 7]")
+              "{planted|pedestal|midpoint|rule-derived|shuffled} [--dream-nights 24] [--seed 7]"
+              " [--dream-anchors synthetic|real:<ckpt.clm>]")
         print("             H_9839 — the dream node's COMPOSITION LAW as the manipulated variable.")
         print("             core/dream_compose.py blends two co-replayed anchors by coord midpoint")
         print("             — its own header calls that 'a designed geometric law (NOT a learned")
@@ -6464,7 +6611,12 @@ def main():
         if not opts["out"]:
             print("anima-py corpus dreamgen --out c.txt --lang en "
                   "--dream-target {planted|pedestal|midpoint|rule-derived|shuffled} "
-                  "[--dream-nights 24] [--seed 7]", file=sys.stderr)
+                  "[--dream-nights 24] [--seed 7] "
+                  "[--dream-anchors synthetic|real:<ckpt.clm>]", file=sys.stderr)
+            print("      --dream-anchors real:<ckpt.clm> replaces the builder's uniformly-drawn")
+            print("      anchor coordinates with the production trunk's REAL pooled penultimate")
+            print("      of the same entity string (H_9838's planted-geometry swap). Everything")
+            print("      else — nights, seeds, arms, laws, audit, eps — is unchanged.")
             print("      H_9839 — swaps core/dream_compose.py's geometric midpoint (its own header:")
             print("      'a designed geometric law (NOT a learned semantic insight, c9)') for the")
             print("      derivation of a DECLARED composition rule, and emits both plus a")
@@ -6484,7 +6636,12 @@ def main():
                 "Korean lane is BINDING and every escape measured dead (H_9327), and EN is the "
                 "discriminator. No ko variant is emitted rather than a silently dead one."
                 % opts["lang"])
-        text, audit = build_dreamgen(opts["dream_nights"], opts["dream_target"], opts["seed"])
+        real_ckpt = (opts["dream_anchors"].split("real:", 1)[1]
+                     if opts["dream_anchors"].startswith("real:") else None)
+        if real_ckpt and not os.path.exists(real_ckpt):
+            raise SystemExit("corpus dreamgen: --dream-anchors real:%s does not exist" % real_ckpt)
+        text, audit = build_dreamgen(opts["dream_nights"], opts["dream_target"], opts["seed"],
+                                     real_ckpt=real_ckpt)
         regen = "anima-py corpus " + " ".join(argv)
         if audit["violations"]:
             print("anima-py corpus dreamgen: CORPUS INVALID — %d violation(s):"
@@ -6511,6 +6668,16 @@ def main():
         print("  repeat-exposure knob (corpus-py-3). Block size is a frozen constant, not a flag.")
         print("  carry multiset sha %s · geometry-field sha %s"
               % (audit["carry_multiset_sha"], audit["geometry_field_sha"]))
+        print("  anchors %s · %d anchor(s) → %d distinct code(s) · per-slot distinct %s"
+              % (audit["anchor_source"], audit["n_anchors"], audit["distinct_anchor_codes"],
+                 audit["distinct_slot_values"]))
+        print("    (H_9838 lesson: a synthetic anchor world is near-orthogonal BY CONSTRUCTION.")
+        print("     A collapsed real-anchor code count is the trunk's geometry, not a builder bug.)")
+        if audit["real_anchor_geometry"]:
+            g = audit["real_anchor_geometry"]
+            print("    real rep geometry: %d distinct entity string(s) · pairwise cosine "
+                  "mean %.4f [%.4f .. %.4f]"
+                  % (g["n_distinct_entities"], g["cos_mean"], g["cos_min"], g["cos_max"]))
         print("  → witnesses: rule-derived and shuffled at the SAME --seed must share the carry")
         print("    multiset sha (identical marginals, pairing destroyed); midpoint and")
         print("    rule-derived must share the geometry-field sha (identical coord/t5/r — only")
