@@ -5895,6 +5895,10 @@
                         "detail": "--clms-key-fn {mean,roll} → cfg.clms_key_fn → CLMSModule(key_fn) → lane 6 방출 → pack/read 왕복 → store_apply 가 _key_fn_of 로 판독. 근본수정: train.py 가 키 계산을 인라인 복제해 key_fn 을 조용히 무시했을 자리를 코어 _entity_key 호출로 교체."
                       },
                       {
+                        "name": "🔴 첫 재학습 회차 = INSTRUMENT-DEAD (H_9853)",
+                        "detail": "pool(summer CUDA)서 키함수만 다른 두 팔 학습 후 evaluate --store held-out 128: mean(lane3) 균등 0.5469/적대 0.5391 · roll(lane6) 균등 0.5312/적대 0.5312 = 네 칸 전부 우연 ⟹ 두 lane 다 미학습이라 비교 불가. 같은 경로가 store303 서 0.9688 이므로 평가 무죄·내 학습 레시피가 죽음. 유력 사인=원본 base(slw_restored) 미확보로 다른 trunk 대체."
+                      },
+                      {
                         "name": "가드도 함께 확장(--parity-key-fn)",
                         "detail": "H_9826 정합성 가드가 lane 의 자기 주소함수를 쓰도록 고쳤다. 새 lane 이 가드 밖에 남으면 그 가드를 만든 이유가 사라진다."
                       }
