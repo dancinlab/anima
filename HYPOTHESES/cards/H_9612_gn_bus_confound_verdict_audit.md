@@ -162,6 +162,52 @@ donor  = B_taps[l][stem_t0:…]        ← 그 인덱스로 B 를 퍼감 (5곳 �
 **📌 메타 관찰(이번 세션 3번째 같은 벽)**: 화석이 **verdict 는 보존하나 그것을 재감사할 입력/per-pair 기록은 보존하지 않는다**. 이 감사가 매니페스트를 **3번 재구성**해야 했던 이유가 이것이다 — ①cement 셋 매니페스트 부재(A1 원 arm) ②route-audit 매니페스트 부재(정량화) ③H_9331 per-pair 부재(소급 감사). 재구성은 **원 regime 을 재현 못 해**(내 셋은 dOP 가 bar 의 1/20·베이스 ckpt 는 라우터 축퇴) 결론의 이전이 막힌다.
 ⟹ **함의(설계 권고 · verdict 무관)**: 계기 결과에 **재감사에 필요한 입력 지문**(per-pair seed byte-길이·arm 별 통제 매핑·매니페스트 sha)을 함께 박으면 미래의 감사가 재구성 없이 가능하다. 이번에 `--route-audit` 이 `res["ctrl_of"]/len_mismatch/gn_freeze` 를 기록하기 시작한 게 그 방향의 첫 걸음이다.
 
+## 🔻 심화: 입력을 실제 c34 원자셋으로 — **"길이-시프트 기여 ≈0" 은 그 한 재구성 셋의 성질이었다** (2026-07-21 · 로컬 CPU · $0 · 자가반박)
+
+동기 = H_9854 감사(손으로 만든 기하 위에 굳은 양성 85건). 이 카드가 착륙시킨 **9번째 자기정정**(“진짜 inert 길이매칭 `ped13` 으로 재니 −0.002152 → −0.002203 = 3B 시프트 기여 사실상 0”)은 **stem 이 합성**인 재구성 매니페스트에서 나왔다. 같은 결함 계급이라 입력만 갈아끼웠다.
+
+**배선(입력만 교체 · 팔·통제·bar·seed 전부 불변)**: `anima-py evaluate <ckpt> --route-audit <manifest> --ra-stems-from <atoms.json|corpus.txt>` (`cli/evaluate.py::_ra_stems_swap` · `_KNOWN_FLAGS` 등록 · VERSION 0.20.124→0.20.125 · G5). 매니페스트가 **frame(surface 별 prefix/suffix)·surface 집합·`ctrl_of`·win·bar·perm seed** 를 그대로 공급하고, 플래그는 **stem 문자열**(과 소스가 들고 있으면 그 stem 의 pol·split)만 갈아끼운다. 프레임 불변은 산술로 확인됨 — planted/real 양쪽 `seed_bytes − stem_bytes` 가 surface 별로 완전 동일(`flip0 18 · negL 25 · negZ 28 · negJ 28 · ped 25 · ped13 28`).
+
+**⚠️ 원 수치 축자 재현은 불가 — 아티팩트 벽 4번째(이 카드가 3번 기록한 그 벽)**: 착륙 커밋 `498d0cfd1` 은 `CHANGELOG.jsonl`·`HYPOTHESES.jsonl`·이 카드·`cli/evaluate.py` **4파일뿐**이고, `git log --all --diff-filter=A -- '*route_audit*'` = **빈 출력**, `git log --all -S"ped13"` 도 코드/노트만 — **−0.002152/−0.002203 을 낳은 12-stem 재구성 매니페스트도, 그 `ped` 문자열도 레포에 없다**. 그래서 이번 심화는 그 두 수를 재현하는 대신 **(a) 코드 회귀 0 을 sha 로 증명**하고 **(b) 같은 frame·같은 bar 위에서 planted 셋과 real 셋을 나란히** 읽는다. 프레임 자체는 **지어내지 않았다** — 카드가 인쇄해 둔 len-audit 바이트(negL 25B · negZ 28B)와 실 코퍼스 문장형(`이 영화 …`)에서 `이 영화 <stem><surface> => ` 로 **역산**했고 25/28 이 정확히 맞는다. 두 픽스처는 이제 커밋된다(`core/testdata/h9612_route_audit_planted{,_ctrl}.json`) — 이 계기에 대해서만은 벽이 닫힌다.
+
+**① 옛 경로 회귀 0**: 같은 픽스처·플래그 없음으로 origin/main 코드와 패치 코드를 각각 완주 → 결과 JSON **sha256 `4a6dc5c2d11a399f…` 완전 동일**(로그 차이 = heartbeat 초와 `--out` 경로뿐). 내부 불변식도 성립 — `ctrl_of` 는 negZ 팔만 건드리므로 `dOP[negL]` 과 `J_STEM` 이 A/B 간 자릿수까지 동일(planted +0.000043/0.000889 · real +0.000422/0.001449).
+
+**② 통제 먼저(동결 순서) · 실입력에서 계기는 살아 있다**: G-SPIKE `JS(one-hot,one-hot)=1.000000` / `JS(u,u)=0.000e+00` 🟢 · G-SHAM `max 0.000e+00` 🟢 · **G-LIVE `J_STEM=0.001449 ≥ 0.0001` 🟢**(planted 0.000889 보다 오히려 크다) · top-expert 히스토그램 `flip0 [20,0,29]`·`negL [48,0,1]` = **축퇴 아님**(이 카드의 앞선 베이스-ckpt 실패는 `top_agree 1.00` 이었다). ⟹ 실패는 계기死가 아니라 **판독의 실패**로 읽어야 한다. len-audit 도 동일하게 발화: `negL 25B vs ped 25B 🟢` · `negZ 28B vs ped 25B ⚠️ +3B SHIFT` (arm B 에선 `negZ 28B vs ped13 28B 🟢`).
+
+**③ 실측 — `[ans]` 판독점(verdict 가 읽히는 유일한 점) · natem_c34_main_s11 · n=49 stem · perm 10000 · seed 7**
+
+| stem 셋 | A: `ped`(25B · 불일치) | B: `ped13`(28B · 매칭) | A−B = 3B 시프트 몫 | \|A\| 대비 |
+|---|---|---|---|---|
+| **카드 착륙본**(12 합성 · 소실) | **−0.002152** | **−0.002203** | **+0.000051** | **2.4%** |
+| planted(49 손수 · 이 세션) | **+0.000386** (perm p 0.0315 · CI90 [+0.000101,+0.000672]) | **−0.000070** (p 0.6082 · CI90 [−0.000294,+0.000154]) | **+0.000456** | **118% — 부호가 뒤집힌다** |
+| **real**(49 `c34/gt_atoms.json` · 실 pol·실 split) | **−0.000745** (p 0.0039 · CI90 [−0.001150,−0.000340]) | **−0.000236** (p 0.2032 · CI90 [−0.000540,+0.000068]) | **−0.000509** | **68%** |
+
+**🔻 착륙 주장 비생존**: “길이-시프트 기여 **사실상 0**(2.4%) ⟹ H_9355 무해 판정의 **이유가 더 강해졌다**”는 **그 한 셋의 성질**이었다. 내가 실제로 돌릴 수 있는 두 셋 모두에서 기여는 68%·118% 이고, **실입력에서는 그 몫이 유의성 판정 자체를 뒤집는다** — 길이 불일치 pedestal 로 읽으면 `dOP[negZ]` 가 **perm p 0.0039 · CI90 이 0 을 배제**(“유의”)인데, 길이매칭 pedestal 로 바꾸면 **p 0.2032 · CI90 이 0 을 포함**(“무”)이 된다. 즉 기본 `ped` 로 읽은 negZ 팔의 p 값은 **연산자 특이성이 아니라 3바이트**를 재고 있었다.
+
+**🟢 반대로 살아남은 것**: ① 3계기 자동감사 배선과 len-audit·`ctrl_of` 경로 — 실입력에서 정확히 설계대로 발화 ② 일반법칙(“matched 는 주장일 수 있다”) — 이번 실측이 오히려 **강화**한다 ③ **cement verdict re-open 0** — 네 arm 전부 `[ans]`·`[stem]` 에서 🔵 **LOCUS-SHARED** 이고 최대 크기 0.000745 는 LOCUS-SPLIT bar 0.05 의 **67× 아래**, TOST ±0.02 안이다. H_9355 는 이 심화로도 뒤집히지 않는다.
+
+**🔒 소급 감사 벽의 부분 해소(신규 · $0 · 모델 불요)**: 카드가 “미확인”으로 남긴 **실 원자셋의 twin 길이 동질성**을 실입력으로 셌다. `c34/gt_atoms.json` 49 원자의 stem byte 길이 = **{3B:4, 6B:23, 9B:22} = 비동질**. 같은 극성 연속쌍(자연스러운 twin 구성)으로 짝지으면 **24쌍 중 11쌍(46%)이 byte-길이 위반** ⟹ `--bind-locus` 의 REFUSE 가드는 **토이 문자열(좋3B↔싫3B)에서만 의미 있는 게 아니라 실 원자 인벤토리에서 실제로 이빨을 가진다**. (이건 census 이지 bind-locus 실행이 아니다 — 아래 후속 참조.)
+
+**⚠️ 정직한 범위**: 1 ckpt(natem_c34_main_s11) · 2 stem 셋 · n=49 · `[ans]` 주판독 · CPU · **DIRECTIONAL**. **원 12-stem 셋이 틀렸다는 주장이 아니다** — 그 셋은 재현 불가이므로 어떤 진술도 할 수 없고, 말할 수 있는 것은 **그 ≈0 이 일반화되지 않는다**는 것뿐이다. 카드 착륙본의 dOP 절대크기(0.0021)가 내 두 셋(0.0004~0.0007)보다 3~5배 크므로 **regime 도 다르다**(카드가 스스로 적어둔 재개 조건 그대로). `--gn-freeze` 는 **돌리지 않았다** — 그건 입력 스왑이 아니라 팔 추가라서 이 심화의 계약 밖이다. 따라서 “68% 가 GN bus 경유인가”는 카드의 caveat ④ 그대로 **미확인**.
+
+**차단되는 하류 지출**: ① “route-audit 의 길이 불일치는 실측상 무해하다(≈0)”를 근거로 **`ctrl_of` 없이** negZ 팔을 읽는 모든 후속 — 실입력에서 그 기본값은 유의성을 제조한다. len-audit 의 LOUD 경고는 **정보가 아니라 차단선**으로 읽어야 한다. ② 이 카드를 “계기 위생은 이미 정량적으로 무해 확인됨”으로 인용하는 하류(그 인용은 이제 무효). ③ 원 12-stem regime 으로의 결론 이전.
+
+**사전등록 후속(이번에 실행 안 함 · 사후 탐색 = tune-to-green 금지)**: (R-a) `--gn-freeze <ref>` 를 real 팔에 걸어 68% 중 GN bus 경유분 분리 — **팔 추가이므로 별도 H** · (R-b) `--bind-locus` 를 실 원자 twin 쌍으로 실제 발사해 REFUSE 가 뜨는지 확인(위 census 는 산술일 뿐 실행 아님 · 입력 구성 자체가 새 계기 표면) · (R-c) `--valence-audit` 실입력 스왑(매니페스트 부재는 동일 벽) · (R-d) 2번째 ckpt(swap_s7 = C3 결과가 지목한 원 ckpt)로 셋-불변성 확인.
+
+**재현**:
+```
+anima-py evaluate /Users/mini/anima-weights/c34/natem_c34_main_s11.clm \
+  --route-audit core/testdata/h9612_route_audit_planted.json      --out planted_A.json   # A · 회귀 0 기준
+anima-py evaluate ... --route-audit core/testdata/h9612_route_audit_planted_ctrl.json --out planted_B.json
+anima-py evaluate ... --route-audit core/testdata/h9612_route_audit_planted.json \
+  --ra-stems-from /Users/mini/anima-weights/c34/gt_atoms.json     --out real_A.json      # 실입력 A
+anima-py evaluate ... --route-audit core/testdata/h9612_route_audit_planted_ctrl.json \
+  --ra-stems-from /Users/mini/anima-weights/c34/gt_atoms.json     --out real_B.json      # 실입력 B
+```
+
+## 상태
+🔻 감사 lane **완결 · 정량 주장 1건 비생존**(DIRECTIONAL · 2026-07-21 실입력 심화) — 3계기 자동감사 WIRED 와 일반법칙과 **cement re-open 0 은 생존**하나, 착륙본의 **“3B 길이-시프트 기여 ≈0”은 그 한 소실 셋의 성질**이었다(실 c34 원자셋 68% · planted 118%·부호역전 · 실입력에선 negZ 팔의 perm p 를 0.0039↔0.2032 로 가른다). 계기 위생은 **정량적으로 무해 확인됨이 아니라 필수 차단선**. 소급 감사 아티팩트 벽은 이 계기에 한해 부분 해소(픽스처 커밋 + `--ra-stems-from` 로 입력이 경로가 됨).
+<!--prev-->
 ## 상태
 🔒 감사 lane **완결** (DIRECTIONAL) — 3계기 자동감사 WIRED(route-audit·valence-audit·bind-locus) · 일반법칙 획득("matched" 는 주장일 수 있고 load-bearing 이면 refuse) · 소급 감사는 **아티팩트 벽**(화석이 per-pair 미보존 · 미래 실행이 자동 답함) · **cement verdict re-open 0**.
 <!--prev-->

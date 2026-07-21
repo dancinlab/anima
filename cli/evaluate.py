@@ -1085,6 +1085,9 @@ def evaluate_usage():
     print("      (H_9355 LOCUS-CAUSAL · ConvMoE router audit — do the declarative lane and the operator")
     print("       lane run on DIFFERENT experts? Read-only; --vs runs a 2nd ckpt in the SAME process on")
     print("       the SAME device so the pre/post-CPT route delta carries no device confound.)")
+    print("      [--ra-stems-from <atoms.json|corpus.txt>] H_9854 real-input swap — keep the manifest's")
+    print("       frame/surfaces/ctrl_of/bars and re-point them at a REAL stem set (pol+split come from")
+    print("       an atoms json; a .txt corpus is mined with the manifest's own negL frame).")
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
     print("  anima evaluate <clm> --collide-select [--k=4]")
     print("      (H_9362 — does the A⇄G COLLISION select emergence (recombination)? Over a fixed K")
@@ -6274,6 +6277,119 @@ def _ra_forward(ckpt, items, T, note, gn_ref=""):
     return reads, meta
 
 
+def _ra_stems_swap(items, src, T):
+    """H_9854/H_9612 REAL-INPUT SWAP — replace the manifest's STEM CONTENT and nothing else.
+
+    Why a flag and not a second manifest: every number the H_9612 audit landed came off a
+    RECONSTRUCTED manifest whose 12 synthetic stems were never committed (the artifact wall the
+    card itself recorded three times). A hand-written stem list is exactly the planted-geometry
+    defect class that H_9838/H_9839 died of, so the deepening has to be able to point the SAME
+    frame at a REAL stem set with one installed command — and the input has to stay a path, not a
+    fossil.
+
+    What moves: the stem string, and (when the source carries them) its polarity and split, which
+    are properties of the CONTENT, not of the design. What does NOT move: the per-surface frame
+    (prefix/suffix), the surface set, `ctrl_of`, the window, the bars, the perm seed. The frame is
+    read back out of the manifest's own items — prefix = seed before the stem, suffix = seed after
+    it — so a swapped run is the same instrument on different bytes.
+
+    Accepted sources:
+      *.json  {"atoms": [{"stem", "pol", "split"}, ...]} (or a bare list of those dicts) — the
+              c34/gt_atoms.json shape: real stems with the real polarity and the real
+              train/held-out split of the CPT that produced the ckpt. "train" maps to "seen".
+      *.txt   a real corpus — stems are mined with the manifest's OWN negL frame (lines that
+              contain prefix+X+suffix contribute X), first-seen order, deduped. pol/split are
+              carried positionally from the manifest, and that is said out loud below.
+
+    Refuses (never silently repairs) on: a surface whose frame is not constant across its items,
+    a stem that does not occur in its own seed, a rebuilt seed longer than the window (the read
+    would be truncated), or an empty mined set."""
+    tmpl = {}
+    for it in items:
+        f, stem, seed = it["surf"], it["stem"], it["seed"]
+        if stem not in seed:
+            print("ERROR: --ra-stems-from: item %r has a stem that does not occur in its seed — "
+                  "the frame cannot be read back out." % it["id"], file=sys.stderr)
+            return None
+        cut = seed.index(stem)
+        pair = (seed[:cut], seed[cut + len(stem):])
+        if f in tmpl and tmpl[f] != pair:
+            print("ERROR: --ra-stems-from: surface %r does not have ONE constant frame across its "
+                  "items (%r vs %r) — a varying frame is not a frame." % (f, tmpl[f], pair),
+                  file=sys.stderr)
+            return None
+        tmpl[f] = pair
+    order = []                                   # surfaces in first-seen manifest order
+    for it in items:
+        if it["surf"] not in order:
+            order.append(it["surf"])
+    old = []                                     # stems in first-seen order, with their tags
+    for it in items:
+        if not any(o[0] == it["stem"] for o in old):
+            old.append((it["stem"], int(it["pol"]), it["split"]))
+
+    rows, prov = [], ""
+    if src.endswith(".json"):
+        d = json.load(open(src))
+        atoms = d["atoms"] if isinstance(d, dict) else d
+        for a in atoms:
+            sp = a.get("split", "seen")
+            sp = "seen" if sp == "train" else sp
+            if sp not in ("seen", "heldout"):
+                print("ERROR: --ra-stems-from: unknown split %r (expected train/seen/heldout)"
+                      % sp, file=sys.stderr)
+                return None
+            rows.append((a["stem"], int(a.get("pol", 0)), sp))
+        prov = "atoms json (stem + pol + split all from the source)"
+    else:
+        pre, suf = tmpl["negL"]
+        seen_s = set()
+        for line in open(src, "r", errors="replace"):
+            i = line.find(pre)
+            if i < 0:
+                continue
+            j = line.find(suf, i + len(pre))
+            if j <= i + len(pre):
+                continue
+            s = line[i + len(pre):j]
+            if (not s) or (" " in s) or (s in seen_s):
+                continue
+            seen_s.add(s)
+            k = len(rows)
+            rows.append((s, old[k % len(old)][1], old[k % len(old)][2]))
+        prov = ("corpus mined with the manifest's own negL frame %r…%r · pol/split carried "
+                "positionally from the manifest (the corpus does not state them)" % (pre, suf))
+    if not rows:
+        print("ERROR: --ra-stems-from: the source yielded 0 stems — refusing to measure an empty "
+              "set.", file=sys.stderr)
+        return None
+
+    out = []
+    for i, (s, pol, sp) in enumerate(rows):
+        for f in order:
+            pre, suf = tmpl[f]
+            seed = pre + s + suf
+            sb = len(seed.encode())
+            if sb > T:
+                print("ERROR: --ra-stems-from: stem %r makes a %dB seed for surface %r, longer "
+                      "than the %dB window — the read would be truncated." % (s, sb, f, T),
+                      file=sys.stderr)
+                return None
+            off = max(0, T - sb)
+            t0 = off + len(pre.encode())
+            out.append({"id": "%03d_%s" % (i, f), "stem": s, "surf": f, "split": sp, "pol": pol,
+                        "seed": seed, "seed_bytes": sb,
+                        "stem_span": [t0, t0 + len(s.encode())]})
+    n_seen = sum(1 for r in rows if r[2] == "seen")
+    print("  [ra-stems-from] REAL-INPUT SWAP · source %s" % src)
+    print("                  %s" % prov)
+    print("                  stems %d -> %d (seen %d · heldout %d · pol1 %d) · %d items · frame "
+          "UNCHANGED (%d surfaces from the manifest)"
+          % (len(old), len(rows), n_seen, len(rows) - n_seen,
+             sum(1 for r in rows if r[1] == 1), len(out), len(order)))
+    return out
+
+
 def route_audit_run(argv):
     """`anima-py evaluate <ckpt> --route-audit <manifest.json> [--vs <ckpt2>] --out <f.json>`
     — H_9355 LOCUS-CAUSAL, the AUDIT half: do the declarative lane and the operator lane live on
@@ -6333,6 +6449,13 @@ def route_audit_run(argv):
     n_perm = evaluate_intval(argv[1:], "--perm", 10000)
     seed = evaluate_intval(argv[1:], "--seed", 7)
     items = spec["items"]
+    # H_9854 real-input swap: --ra-stems-from <atoms.json|corpus.txt> re-points the SAME frame at a
+    # real stem set (see _ra_stems_swap). Absent => items are the manifest's, byte-identical.
+    ra_src = evaluate_strval(argv[1:], "--ra-stems-from", "")
+    if ra_src:
+        items = _ra_stems_swap(items, ra_src, T)
+        if items is None:
+            return 2
 
     # frozen bars — written before the first forward (no tune-to-green)
     G_SHAM, G_LIVE, G_DV, G_TOST, A_PERM = 0.0, 0.0001, 0.05, 0.02, 0.01
@@ -11221,7 +11344,7 @@ _KNOWN_FLAGS = frozenset((
     "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--eval-historicity", "--schedule", "--dv", "--jitter", "--af-forward", "--impulse", "--side", "--kmax", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--pos-control", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
-    "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--rho-axon-isolated", "--rho-cache", "--rho-axes", "--rho-no-cells", "--rho-out", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
+    "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--rho-axon-isolated", "--rho-cache", "--rho-axes", "--rho-no-cells", "--rho-out", "--route-audit", "--ra-stems-from", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
     "--fan-branch", "--branches",              # H_9803 branch-latent ideation fan arms
     "--tension-rank-audit", "--ctrl-seed",     # H_9805 write-side tension-field rank audit
