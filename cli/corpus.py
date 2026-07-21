@@ -323,12 +323,27 @@ _FD_HELD_OUT = {"consciousness", "arises", "cells", "tension", "ripples", "dista
 _FD_HELD_OUT_FUNCTION = {"between", "into", "still", "when", "the", "new", "from"}
 
 # subjects/objects — ordinary dictionary nouns, disjoint from every eval-concept word above.
+# Subjects/objects span TWO registers on purpose. The first build used physical quantities only
+# (rainfall, salt, voltage) and H_9837 measured the consequence: corpus density 0.197 produced a
+# model rate of 0.0162 — only 8.2% transferred. The eval prompt is `consciousness arises from
+# cells: `, i.e. an ABSTRACT/mental register, so a drill that lives entirely in the physical
+# register asks the model to carry the falsifiable FORM across a topic gap it was never shown
+# crossing. Half the vocabulary is now mental/abstract, while every eval-concept content word
+# stays held out (the generalization axis is untouched — only the register gap closes).
 _FD_SUBJ = ["rainfall", "traffic", "sleep", "exercise", "altitude", "humidity", "sunlight",
             "practice", "noise", "temperature", "pressure", "salt", "caffeine", "fatigue",
-            "crowding", "wind", "sugar", "vibration", "dust", "voltage"]
+            "crowding", "wind", "sugar", "vibration", "dust", "voltage",
+            # mental / abstract register
+            "attention", "belief", "emotion", "thought", "perception", "curiosity",
+            "language", "habit", "mood", "focus", "doubt", "reasoning", "learning",
+            "boredom", "surprise", "intention", "reflection", "patience"]
 _FD_OBJ = ["harvest", "delay", "recall", "endurance", "boiling", "corrosion", "growth",
            "accuracy", "error", "expansion", "leakage", "yield", "alertness", "reaction",
-           "spread", "erosion", "decay", "wear", "fouling", "current"]
+           "spread", "erosion", "decay", "wear", "fouling", "current",
+           # mental / abstract register
+           "insight", "judgement", "hesitation", "fluency", "confusion", "recognition",
+           "concentration", "recollection", "expectation", "understanding", "inference",
+           "association", "imagination", "wonder"]
 _FD_DIR = ["rises", "falls", "climbs", "drops"]
 
 # FROZEN detector vocabulary, used verbatim — these sets ARE the definition of the target
