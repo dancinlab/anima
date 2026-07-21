@@ -1,6 +1,7 @@
 # H_9871 — 토폴로지 결합은 데몬 발화 경로에 없다 (호출부 전수 census)
 
-**status:** 🔻 **WIRING-NOT-CLOSED** — [[H_1521]] 'LIVE-WIRING' 과 [[H_1522]] '🟢 on the live
+**status:** 🔻 **부분 철회(2026-07-22)** — census 의 *함수 호출* 사실은 맞지만 **결론이 틀렸다**:
+15-lane 은 이미 데몬 발화 경로에 있다(아래 §철회). 원 표기 → 🔻 WIRING-NOT-CLOSED — [[H_1521]] 'LIVE-WIRING' 과 [[H_1522]] '🟢 on the live
 emit path' 의 *live* 는 **engine_cli 의 Ψ 모델**을 뜻하며, **chat 데몬의 실제 발화 결정은
 이 코드를 한 번도 부르지 않는다.** 두 카드의 과학은 유효하고, **범위 표기만 정정된다.**
 **wired:** n/a — 이 카드는 배선 census 다 (코드 사실 · $0 · 실행 없음)
@@ -61,3 +62,31 @@ core/brain.hexa  동일                                                      →
 
 [[H_1521]] naive 연산자의 Ψ 파괴 · [[H_1522]] mean-center 해법(모델 내 유효) · [[H_9870]] 같은 계열의
 '발사 전에 무엇에 연결됐는지 세라'
+
+
+---
+
+## 🔻 철회 — "데몬 경로에 15-lane 이 없다" 는 틀렸다
+
+이 카드는 *"`brain_decide_anchored` 는 스칼라를 받고 15-lane 벡터가 그 경로에 존재하지 않는다"*
+라고 적었다. **`core/` 만 보고 `cli/chat.py` 를 안 봤다.** 데몬 루프를 읽으면:
+
+```
+chat.py:2233   lanes     = ci_lane_scores(m_grounding_p, m_field, cell_count, tick, 1, 1.0, recon_err)
+chat.py:2234   coh_lane  = lanes[3]
+chat.py:2235   bal_lane  = lanes[9]
+chat.py:2859   dec = brain_emit_refractory(pf, rel, gap_ctx, cur, allo_ctx, coh_lane,
+                                           nov_ctx, bal_lane, agloop_ctx, …)
+engine_g.py:73 motivation_score(…) = … + 0.10·coh + … + 0.15·bal
+brain.py:167   emit = should_emit(score) and safe
+```
+
+⟹ **`lanes[3]` 과 `lanes[9]` 는 데몬의 발화 점수에 가중치 0.10 / 0.15 로 직접 들어간다.**
+15-lane 은 그 경로에 **있고**, 배선할 자리도 **있다**(2233 행 한 줄).
+
+**유지되는 것**: `ci_lane_scores_coupled` 자체의 호출부가 자기검증·스모크뿐이라는 census 는 사실이고,
+따라서 *결합이 아직 켜지지 않았다* 는 결론도 맞다. 틀린 것은 **이유**다 —
+"자리가 없어서" 가 아니라 **자리는 있는데 그 자리가 결합되지 않은 함수를 부르고 있어서**다.
+
+**틀린 근거**: `core/brain.{py,hexa}` 참조 0 만 세고 **호출자(`cli/chat.py`)를 안 셌다.**
+census 를 `core/` 로 한정한 것이 결함이다 — 배선은 호출 사슬 전체에서 세야 한다.
