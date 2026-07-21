@@ -181,7 +181,22 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
             q = _gelu(hf @ clms["W_fresh"]) @ clms["W_q_fresh"]           # (d_k,) disjoint address query
         else:
             q = h @ clms["W_q"]                                           # (d_k,) [row-vector conv, CLML-form]
-        if oracle:
+        if oracle == "pair":
+            # H_9875 PAIR-ORACLE — the 2-conjunct analogue of the C0-e oracle. Hands the address
+            # for BOTH named slots (a = 1/2 onehot(A) + 1/2 onehot(B)) so v is exactly the mixture
+            # the lane would form if its softmax had found both. It splits the only two live
+            # accounts of the composed failure: the fusion MLP CAN separate the mixture (v sits at
+            # the midpoint for xor=1 and at an endpoint for xor=0), so a PASS here says addressing
+            # / credit assignment is the wall, and a FAIL says the answer never became a function
+            # of v at all. Requires target_slot_b (compose panels carry it).
+            a = np.zeros(n_slot, dtype=q.dtype)
+            tb = store.get("target_slot_b")
+            if tb is None:
+                raise ValueError("store_apply: oracle='pair' needs target_slot_b — the panel is not "
+                                 "a compose-2 panel (build it with `corpus storebind --compose 2`)")
+            a[int(store["target_slot"])] += 0.5
+            a[int(tb)] += 0.5
+        elif oracle:
             a = np.zeros(n_slot, dtype=q.dtype)
             a[int(store["target_slot"])] = 1.0                            # softmax bypassed (address free)
         else:
