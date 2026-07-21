@@ -2431,7 +2431,97 @@ def _imag_probe(windows, vadapt_on, select, budget, seed):
     return rec
 
 
-def run_imagination_selftest(ratio, every, vadapt_on, select, seed):
+def _imag_ring_spread(windows, dim=8):
+    """TELEMETRY ONLY — how far apart the ring's windows are IN THE SPACE THE FIELD SPLITS ON.
+
+    Feeds nothing: no arm, no bar, no threshold, no dose reads this (a_train_inline_gauge).
+    It exists because H_9838's post-mortem was decidable only once the code geometry itself
+    was reported (planted codes within .0469 / across .0117 = effectively orthogonal, real
+    reps .0625 / .0260 = 2.2x overlap). `vadapt_field_step` splits when the L2 distance from
+    the nearest prototype exceeds its SPLIT_THRESH literal (0.30, core/engine_cli.py), so the
+    pairwise L2 spread of `_imag_byte_feature` over the ring is the ONE number that says
+    whether a ring could have split the field at all — and therefore whether a plant that
+    does not fire is a fact about the content or an artefact of how the content was made."""
+    feats = [_imag_byte_feature(w, dim) for w in windows]
+    n = len(feats)
+    if n < 2:
+        return {"n": n, "mean_pairwise_l2": 0.0, "min_pairwise_l2": 0.0, "max_pairwise_l2": 0.0}
+    dists = []
+    for i in range(n):
+        for j in range(i + 1, n):
+            s = 0.0
+            for k in range(dim):
+                dv = feats[i][k] - feats[j][k]
+                s += dv * dv
+            dists.append(math.sqrt(s))
+    return {"n": n, "mean_pairwise_l2": sum(dists) / len(dists),
+            "min_pairwise_l2": min(dists), "max_pairwise_l2": max(dists)}
+
+
+def _imag_real_anchors(dir_path):
+    """H_9841-R — REAL ring content: the payload bytes of a REAL `.kosmos` anchor store.
+
+    WHY THIS EXISTS — the H_9838 planted-geometry failure (2026-07-21). H_9838 landed a
+    headline positive (CA3 multi-step completion at 12x derived chance, lesion at the floor,
+    3 seeds x 3 geometries, independently reproduced) on a store whose codes were a PLANTED
+    INTEGER FIXTURE. When the code source alone was swapped for the production trunk's REAL
+    penultimate representations — same arms, same controls, same bars — the ZERO-TRUTH
+    PEDESTAL FIRED: at 16 items the value-shuffled pedestal read 0.3750 against a 0.3077 bar
+    (INVALID), and at 32 items 0.1562 against 0.1500 (INVALID). Diagnosis: the planted codes
+    were effectively orthogonal (within .0469 / across .0117) while real reps overlap 2.2x
+    (.0625 / .0260). Hand-made favourable geometry, not the mechanism, had produced the bar.
+
+    THIS BATTERY HAS THE SAME EXPOSURE. `run_imagination_selftest`'s ring is synthesized by
+    `novel(n, w, off) = (off + i*37 + j*7) % 256` — an arithmetic lattice whose windows are
+    spread across the 8-dim byte statistic BY CONSTRUCTION, which is precisely the property
+    `vadapt_field_step` splits on. Real snapshots do not look like that: they carry real
+    novelty structure, real lengths and REAL REPETITION, and `ir_consolidation_gain` /
+    `ir_effective_age` are computed from exactly those statistics. So the same swap is run
+    here: this flag replaces the SYNTHESIZED ring — and nothing else — with real content.
+
+    WHY .kosmos AND NOT `clm_penult_pooled_W`. The field's split test is an ABSOLUTE L2
+    threshold (`core/engine_cli.vadapt_field_step`, SPLIT_THRESH = 0.30) read against
+    `_imag_byte_feature`'s 8-dim, ~[0,5]-scaled statistic. Handing it a 768-dim penultimate
+    vector instead would change the L2 scale that FIXED threshold is compared against — i.e.
+    it would move the bar while claiming to move only the input, which is the one thing the
+    swap may not do. The ring is a list of BYTE windows, so the honest swap keeps the byte
+    feature and swaps the bytes: a real store read by the production reader.
+
+    READER HONESTY (H_9843): `core/kosmos_io.load_anchors` is measured LOSSY — the @anchor
+    line's title is dropped and the text payload comes back STILL-ESCAPED. Both are AUDITED
+    in the returned report and NEITHER is repaired here: this lane consumes payload BYTES,
+    and silently repairing the reader inside the measurement would swap the input twice.
+    """
+    import kosmos_io as KI                              # core/kosmos_io.py (production reader)
+    recs = KI.load_anchors(dir_path)
+    pool, lens, escaped = [], [], 0
+    for rec in recs:
+        txt = rec.get("text_payload", "")
+        if not txt:
+            continue
+        if "\\" in txt:
+            escaped += 1
+        raw = list(txt.encode("utf-8", "surrogateescape"))
+        pool.append((rec.get("name", ""), raw))
+        lens.append(len(raw))
+    audit = {
+        "dir": dir_path,
+        "anchors_read": len(recs),
+        "with_text_payload": len(pool),
+        "payload_bytes_min": (min(lens) if lens else 0),
+        "payload_bytes_max": (max(lens) if lens else 0),
+        "payload_bytes_total": sum(lens),
+        "payloads_still_escaped": escaped,
+        "titles_recovered": sum(1 for r in recs if "title" in r.get("fields", {})),
+        "reader": "core/kosmos_io.load_anchors (production reader, unmodified)",
+        "reader_caveat": ("H_9843 measured this reader LOSSY (titles dropped · payload "
+                          "returned still-escaped). Audited, not repaired — the lane eats "
+                          "payload BYTES and repairing the reader would change the input twice."),
+    }
+    return pool, audit
+
+
+def run_imagination_selftest(ratio, every, vadapt_on, select, seed, real_source=""):
     """H_9841 — $0 certification battery for the imagination-reconsolidation lane.
 
     GATE ORDER IS FROZEN AND SEQUENTIAL (the shape cli/corpus.py::run_mi_screen landed):
@@ -2463,6 +2553,39 @@ def run_imagination_selftest(ratio, every, vadapt_on, select, seed):
 
     def flat(n, w):
         return [[7] * w for _ in range(n)]
+
+    # ── REAL-INPUT SWAP (--imagination-real-source · H_9838 precedent) ────────────────────
+    # Everything from here down — gate order, bars, thresholds, arms, controls, the seed
+    # policy — is UNCHANGED. The ONLY difference is where the ring's bytes come from.
+    real_pool, real_audit = ([], None)
+    if real_source:
+        real_pool, real_audit = _imag_real_anchors(real_source)
+
+    def real_take(n, w, off):
+        """n REAL windows of width w — one ring slot per STORED SNAPSHOT, which is the shape
+        `mem_push_ctx` has in vivo (one ctx per push). Truncated to w, NEVER padded: a pad
+        byte is invented content and would re-manufacture the very uniformity this swap
+        exists to remove. `off` rotates the START of the anchor list exactly as it shifted
+        the planted content on the synthetic path, so the robustness axis keeps its meaning
+        (WHICH real content, not merely which rng). Anchors shorter than w are skipped, and
+        the shortfall is reported as `realized_ring`, never padded away."""
+        elig = [b for (_nm, b) in real_pool if len(b) >= w]
+        if not elig:
+            return []
+        r = off % len(elig)
+        elig = elig[r:] + elig[:r]
+        return [b[:w] for b in elig[:n]]
+
+    def real_flat(n, w, off):
+        """The novelty-free pedestal, MATCHED to the real path's covariate: ONE real window
+        repeated. Same real byte marginal as the plant, all across-window novelty removed.
+        A synthetic `[7]*w` pedestal against a real-content arm would be a control from a
+        different world than the arm it pedestals (control-must-match-mediating-covariate);
+        the pedestal's ROLE — structure-free input the lane must refuse — is identical."""
+        base = real_take(1, w, off)
+        if not base:
+            return []
+        return [list(base[0]) for _ in range(n)]
 
     # (ring, window, budget). budget < ring on purpose in ③/④: at budget == ring the recency
     # and random arms select the SAME SET (only the order differs), so the selection-policy
@@ -2496,14 +2619,27 @@ def run_imagination_selftest(ratio, every, vadapt_on, select, seed):
         "why": "the p5 hard-exit is proven to fire on a planted emit_count=1 and to pass a 0.",
     }
     rows, plant_ok, ped_ok = [], True, True
+    underpowered_any = False
     for (n_ring, w, budget) in geometries:
         for s in (seed, seed + 4):
             # the seed shifts the PLANTED CONTENT, not just an rng: the recency path is
             # deterministic, so a seed that only reseeded random.Random would leave the
             # robustness axis vacuous (it did, in the first run of this battery).
-            p = _imag_probe(novel(n_ring, w, off=s), True, "recency", budget, s)
+            if real_source:
+                p_wins = real_take(n_ring, w, s)
+                f_wins = real_flat(len(p_wins), w, s)
+            else:
+                p_wins = novel(n_ring, w, off=s)
+                f_wins = flat(n_ring, w)
+            # REALIZED n is reported, never stretched: a real store that cannot fill the
+            # requested geometry makes that geometry UNDERPOWERED, and an underpowered null
+            # is not a negative result (power-before-negative-verdict).
+            realized = len(p_wins)
+            under = bool(real_source) and realized < n_ring
+            underpowered_any = underpowered_any or under
+            p = _imag_probe(p_wins, True, "recency", budget, s)
             e = _imag_probe([], True, "recency", budget, s)
-            f = _imag_probe(flat(n_ring, w), True, "recency", budget, s)
+            f = _imag_probe(f_wins, True, "recency", budget, s)
             # FIRING is read on the lane's CAUSAL quantities (the field split, the gain).
             # `rows_replayed` is the DERIVED dose and it is required only above the derived
             # dose floor — below the floor a 0 is arithmetic, not a null, and reading it as a
@@ -2517,6 +2653,8 @@ def run_imagination_selftest(ratio, every, vadapt_on, select, seed):
             ped_ok = ped_ok and refuses
             rows.append({"geometry": {"ring": n_ring, "window": w, "budget": budget},
                          "seed": s, "below_dose_floor": below,
+                         "realized_ring": realized, "underpowered": under,
+                         "plant_feature_spread": _imag_ring_spread(p_wins),
                          "plant_fires": fires, "pedestal_refuses": refuses,
                          "plant": p, "pedestal_empty": e, "pedestal_flat": f})
     if not watch_fires:
@@ -2538,10 +2676,24 @@ def run_imagination_selftest(ratio, every, vadapt_on, select, seed):
         out["status"] = "CERTIFIED"
         out["why"] = ("plant fires and both pedestals refuse at every geometry x seed — the "
                       "ordering is not a knob artefact.")
+    # REAL-INPUT POWER GATE. A real store that cannot fill the requested geometry makes the
+    # row undecidable in BOTH directions, so neither a pass nor a plant-null may be read off
+    # it (power-before-negative-verdict). A FIRED PEDESTAL is exempt: manufacturing
+    # consolidation on structure-free input is a positive event and stays INVALID at any n.
+    if real_source and underpowered_any:
+        _real_n = [r["realized_ring"] for r in rows]
+        if out["status"] in ("CERTIFIED", "INSTRUMENT-DEAD") and watch_fires:
+            out["status"] = "REAL-UNDERPOWERED"
+            out["why"] = ("the real .kosmos store cannot fill the requested geometry — realized "
+                          "ring sizes %s against requested %s. Neither the plant nor its absence "
+                          "is readable at this n; reported as UNDERPOWERED with the realized n "
+                          "rather than stretched." % (_real_n, [g[0] for g in geometries]))
     out["controls"] = rows
+    if real_audit is not None:
+        out["real_source"] = real_audit
     if out["status"] == "CERTIFIED":
         ring, w, budget = geometries[0]
-        wins = novel(ring, w, off=seed)
+        wins = (real_take(ring, w, seed) if real_source else novel(ring, w, off=seed))
         on = _imag_probe(wins, True, "recency", budget, seed)
         off = _imag_probe(wins, False, "recency", budget, seed)
         # CONTROL B is drawn on SEVERAL seeds: it is the only arm with an rng in it, so a
@@ -2574,7 +2726,8 @@ def run_imagination_selftest(ratio, every, vadapt_on, select, seed):
             "reading": "every ir_replay_tick was checked; emit_count>0 hard-exits the process (p5).",
         }
     out["requested"] = {"imagination_replay": ratio, "reconsolidate_every": every,
-                        "vadapt_on_replay": bool(vadapt_on), "select": select, "seed": seed}
+                        "vadapt_on_replay": bool(vadapt_on), "select": select, "seed": seed,
+                        "real_source": real_source}
     out["scope"] = ("INSTRUMENT CERTIFICATION ONLY — this is not a training result and not a "
                     "verdict. It bounds what the lane's own quantities do; whether rehearsal "
                     "changes what the model LEARNS, let alone what it SAYS, is unmeasured here. "
@@ -2583,7 +2736,8 @@ def run_imagination_selftest(ratio, every, vadapt_on, select, seed):
                     "of any follow-on training run.")
     print(json.dumps(out, ensure_ascii=False, indent=2))
     sys.exit(0 if out["status"] == "CERTIFIED"
-             else (3 if out["status"] == "INVALID" else 4))
+             else (3 if out["status"] == "INVALID"
+                   else (5 if out["status"] == "REAL-UNDERPOWERED" else 4)))
 
 
 def main():
@@ -2840,7 +2994,22 @@ def main():
                          "model, no corpus, no GPU. Controls first (planted novel ring must "
                          "FIRE; empty ring and novelty-free ring must REFUSE) across 3 "
                          "geometries x 2 seeds, then the arms. Emits JSON; exit 0 CERTIFIED / "
-                         "3 INVALID / 4 INSTRUMENT-DEAD.")
+                         "3 INVALID / 4 INSTRUMENT-DEAD / 5 REAL-UNDERPOWERED.")
+    ap.add_argument("--imagination-real-source", type=str, default="",
+                    help="H_9841-R: DIRECTORY of a REAL .kosmos anchor store whose payload "
+                         "bytes REPLACE the selftest's synthesized ring (selftest-scoped; the "
+                         "in-vivo lane's ring is already real — it is the trainer's own "
+                         "windows). Motivated by the H_9838 planted-geometry failure: that "
+                         "card's positive died when its PLANTED integer codes were swapped for "
+                         "real 303M representations and the zero-truth pedestal fired (0.3750 > "
+                         "bar 0.3077 at 16 items), because the planted codes were effectively "
+                         "orthogonal while real ones overlap 2.2x. This battery's `novel()` ring "
+                         "is the same kind of hand-made favourable geometry. Arms, controls, "
+                         "bars, thresholds and the seed policy are UNCHANGED — only the ring's "
+                         "bytes change. Read via core/kosmos_io.load_anchors (audited, not "
+                         "repaired: H_9843 measured that reader lossy). A store that cannot fill "
+                         "a geometry yields REAL-UNDERPOWERED with the realized n, never a "
+                         "stretched null.")
     ap.add_argument("--seed", type=int, default=7)
     # a `<corpus>.meta.json` written by `anima-py corpus` carries the budget floor that corpus
     # earned; _budget_preflight refuses to start below it (H_9324) — see cli/corpus.py BUDGET_FLOORS.
@@ -3031,7 +3200,8 @@ def main():
     #   of a manipulation is itself a flag on the installed CLI, never a script beside the engine.
     if a.imagination_selftest:
         run_imagination_selftest(a.imagination_replay, a.reconsolidate_every,
-                                 a.vadapt_on_replay, a.imagination_select, a.seed)
+                                 a.vadapt_on_replay, a.imagination_select, a.seed,
+                                 a.imagination_real_source)
 
     # ══ H_9841 — DOSE-FLOOR REFUSAL (no-tune-to-green, abort before spend) ═══════════════════════
     #   The replay dose is round(ir_consolidation_gain * budget) ROWS, so below a derived budget
