@@ -2720,6 +2720,27 @@ def _retr_probe_split(N, rng):
     return np.sort(idx[:cut]), np.sort(idx[cut:])
 
 
+def _retr_probe_center(H, tr, mode):
+    """Deconfound the shared prompt-template component (H_9719 정정 ③ measured it at 95% of the
+    hidden norm on a base lineage, 57% on t3), using the TRAIN half's mean only so no test-half
+    statistic enters the estimator.
+
+    Asymmetry that makes this the verdict arm rather than a cosmetic step: writing h_j = c + r_j,
+    the probe's logit gains a term (c@W)·K_i that is ROW-CONSTANT and key-indexed. It therefore
+    cannot fake REACHABLE — a row-constant bias pulls every row toward the same keys, while a
+    correct held-out argmax needs row-differential signal, and the entity split leaves the probe no
+    per-class bias to exploit (test keys are disjoint). But it CAN fake FLOOR: the fit only nulls c
+    at convergence, and when ‖c‖ dominates the hidden norm the gradient is spent managing the
+    nuisance direction while a readable residual is swamped. So raw is a trustworthy positive and an
+    unreliable negative — and FLOOR is a live outcome here. Centering leaves mean(r_tr), again
+    row-constant, so it cannot manufacture REACHABLE either."""
+    if mode == "none":
+        return H
+    if mode != "train-mean":
+        raise ValueError("--retr-probe-center must be 'none' or 'train-mean' (got %r)" % mode)
+    return H - H[tr].mean(axis=0, keepdims=True)
+
+
 def store_retr_probe_run(argv):
     """`anima-py evaluate <ckpt> --store-retr-probe <dump.npz> [--retr-probe-iters 1200]`
     — the H_9825 bridge-faithful slot-retrieval CEILING, engine-native.
@@ -2737,30 +2758,43 @@ def store_retr_probe_run(argv):
     chance on planted geometry, i.e. that this instrument CAN fail. $0 on mini."""
     import numpy as np
     iters = evaluate_intval(argv[1:], "--retr-probe-iters", 1200)
+    center = evaluate_strval(argv[1:], "--retr-probe-center", "none") or "none"
     rng = np.random.default_rng(29825)
 
     def _arms(H, K, tag):
         tr, te = _retr_probe_split(len(H), rng)
-        live = _retr_probe_core(H, K, tr, te, iters=iters, seed=7)
         hn = float(np.sqrt((H * H).sum(axis=1).mean()) + 1e-9)
         Hnull = rng.standard_normal(H.shape) / np.sqrt(H.shape[1]) * hn
-        null = _retr_probe_core(Hnull, K, tr, te, iters=iters, seed=7)
         R = rng.standard_normal((K.shape[1], H.shape[1])) / np.sqrt(K.shape[1])
         Horc = (K @ R) * hn / (np.sqrt(((K @ R) ** 2).sum(axis=1).mean()) + 1e-9)
-        orc = _retr_probe_core(Horc, K, tr, te, iters=iters, seed=7)
-        print("  [%s] n_train=%d n_test=%d  chance=%.4f" %
-              (tag, live["n_train"], live["n_test"], live["chance"]))
-        print("    ORACLE (planted linear-reachable) acc=%.4f   [positive control]" % orc["acc"])
-        print("    NULL   (structureless H)         acc=%.4f   [zero-truth pedestal]" % null["acc"])
-        print("    LIVE   (this trunk)              acc=%.4f   [CEILING · DIRECTIONAL]" % live["acc"])
-        return live, null, orc
+
+        def _triple(mode):
+            # every arm goes through the IDENTICAL centering path, so the frozen ORACLE/NULL
+            # gates certify the estimator actually used for the verdict
+            f = lambda X: _retr_probe_core(_retr_probe_center(X, tr, mode), K, tr, te,
+                                           iters=iters, seed=7)
+            return f(H), f(Hnull), f(Horc)
+
+        raw = _triple("none")
+        cen = _triple(center) if center != "none" else raw
+        shared = float(np.linalg.norm(H.mean(axis=0)) / (np.sqrt((H * H).sum(axis=1).mean()) + 1e-9))
+        print("  [%s] n_train=%d n_test=%d  chance=%.4f  shared-template=%.1f%% of hidden norm" %
+              (tag, raw[0]["n_train"], raw[0]["n_test"], raw[0]["chance"], 100.0 * shared))
+        print("    %-38s raw=%.4f  centered=%.4f   [positive control]"
+              % ("ORACLE (planted linear-reachable)", raw[2]["acc"], cen[2]["acc"]))
+        print("    %-38s raw=%.4f  centered=%.4f   [zero-truth pedestal]"
+              % ("NULL   (structureless H)", raw[1]["acc"], cen[1]["acc"]))
+        print("    %-38s raw=%.4f  centered=%.4f   [CEILING · DIRECTIONAL]"
+              % ("LIVE   (this trunk)", raw[0]["acc"], cen[0]["acc"]))
+        print("    verdict arm = %s" % ("centered(train-mean)" if center != "none" else "raw"))
+        return cen[0], cen[1], cen[2], raw, shared
 
     if "--retr-probe-selftest" in argv:
         print("=== --store-retr-probe SELFTEST (planted geometry · no ckpt) ===")
         N, d, d_k = 64, 256, 32
         Kp = rng.standard_normal((N, d_k))
         Hp = rng.standard_normal((N, d))          # structureless live arm: must read at chance
-        live, null, orc = _arms(Hp, Kp, "selftest")
+        live, null, orc, _raw, _sh = _arms(Hp, Kp, "selftest")
         ok_pos = orc["acc"] >= 0.90
         ok_null = null["acc"] <= max(4.0 * null["chance"], 0.15)
         ok = ok_pos and ok_null
@@ -2790,7 +2824,7 @@ def store_retr_probe_run(argv):
     H = np.stack([npz[e + "__last"].astype(np.float64) for e in ents])   # (N, d)
     K = np.stack([_clms._entity_key(key_emb, e) for e in ents])          # (N, d_k)
     print("  n_entities=%d  d=%d  d_k=%d  iters=%d" % (len(ents), H.shape[1], K.shape[1], iters))
-    live, null, orc = _arms(H, K, "ckpt")
+    live, null, orc, raw, shared = _arms(H, K, "ckpt")
     if orc["acc"] < 0.90:
         verdict = "INSTRUMENT-DEAD"
     elif null["acc"] > max(4.0 * null["chance"], 0.15):
@@ -2801,7 +2835,9 @@ def store_retr_probe_run(argv):
         verdict = "REACHABLE"
     print("  → %s   [DIRECTIONAL ceiling · never cements · the verdict is the 303M fire]" % verdict)
     print(json.dumps({"ckpt": ckpt, "dump": dump_path, "n": len(ents), "chance": live["chance"],
+                      "center": center, "shared_template_frac": shared,
                       "live": live["acc"], "null": null["acc"], "oracle": orc["acc"],
+                      "live_raw": raw[0]["acc"], "null_raw": raw[1]["acc"], "oracle_raw": raw[2]["acc"],
                       "verdict": verdict}, ensure_ascii=False))
     return 0
 
@@ -9906,6 +9942,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-query", "--store-fuse", "--store-readout",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--store-retr-probe", "--retr-probe-selftest", "--retr-probe-iters",   # H_9825 retrieval ceiling
+    "--retr-probe-center",                                  # H_9825 train-mean deconfound
     "--store-parity-selftest", "--parity-tol",              # H_9826 torch<->numpy CLMS parity
     "--fan-bind", "--fan-smp",
     "--mouth-binder", "--mouth-binder-order-scramble",
