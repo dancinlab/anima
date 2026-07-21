@@ -68,6 +68,170 @@ CLOSE = ["new meaning arises", "meaning composes anew",
          "a new whole arises", "they compose into meaning"]
 
 
+_WP_NUM = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+           "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
+           "seventeen", "eighteen", "nineteen", "twenty"]
+
+# Opposite pairs for the double-negation family. Each is its own composition: the operator
+# `opposite` applied twice must return the ORIGINAL word, which no single atom supplies.
+_WP_OPP = [("hot", "cold"), ("big", "small"), ("fast", "slow"), ("light", "dark"),
+           ("high", "low"), ("near", "far"), ("hard", "soft"), ("full", "empty"),
+           ("open", "closed"), ("loud", "quiet"), ("wet", "dry"), ("early", "late"),
+           ("strong", "weak"), ("rich", "poor"), ("clean", "dirty"), ("sharp", "dull")]
+
+_WP_MIX = [("red", "yellow", "orange"), ("blue", "yellow", "green"), ("red", "blue", "purple"),
+           ("black", "white", "grey"), ("red", "white", "pink"), ("blue", "green", "teal")]
+
+_WP_DIR = [("north", "east", "northeast"), ("north", "west", "northwest"),
+           ("south", "east", "southeast"), ("south", "west", "southwest")]
+
+# ≥2 CARRIERS per family. A single carrier makes the carrier axis and the composition axis
+# perfectly collinear — no experiment can then separate "it learned the composition" from
+# "it learned this one template" (convergence corpus-py-1 ⑧/(E), measured on H_9327).
+# Each carrier is (compose_template, bind_strip_template); {a} {b} {op} are filled per item.
+_WP_CARRIERS = {
+    "arith-add": [("{a} plus {b} gives the number", "{a} and {b} are two numbers here "),
+                  ("adding {b} to {a} yields the number", "here are the numbers {a} , {b} ")],
+    "arith-mul": [("{a} times {b} gives the number", "{a} and {b} are two numbers here "),
+                  ("multiplying {a} by {b} yields the number", "here are the numbers {a} , {b} ")],
+    "color-mix": [("{a} mixed with {b} makes the color", "{a} and {b} are two colors here "),
+                  ("blending {a} and {b} produces the color", "here are the colors {a} , {b} ")],
+    "double-neg": [("the opposite of the opposite of {a} is", "{a} and {b} are two words here "),
+                   ("reversing {a} and then reversing it again gives", "here are the words {a} , {b} ")],
+    "direction": [("{a} and {b} makes the direction", "{a} and {b} are two directions here "),
+                  ("heading {a} then {b} points toward", "here are the directions {a} , {b} ")],
+}
+# `double-neg` is DELIBERATELY NOT in the default set. Double negation returns its own input,
+# so the target necessarily occurs inside the cue — a model that merely COPIES a word out of the
+# prompt scores a hit, and the atom-swap control does not catch it (the copier echoes the swapped
+# word, not the original target, so the control stays clean while reach is inflated).
+# ⚠️ The frozen 12-item `_WEAVE` battery contains TWO such items (one ko, one en), i.e. 1/6 of the
+# production G1 instrument is copy-passable. Recorded, not silently fixed: the frozen battery is
+# not edited here (burned-gate-no-refreeze) — this builder simply refuses to reproduce the defect.
+_WP_FAMILIES = ("arith-add", "arith-mul", "color-mix", "direction")
+
+
+def _wp_emit(fam, carriers, a, b, tgt, sa, sb, s_tgt):
+    """One panel item per carrier. `sa`/`sb` = the atom-swap variant (a DIFFERENT pair whose
+    true answer `s_tgt` != `tgt`), so the frozen atom-swap control still asks the same question:
+    does `tgt` surface when it is the WRONG answer?"""
+    out = []
+    for ci, (comp_t, bind_t) in enumerate(carriers):
+        cue = comp_t.format(a=a, b=b)
+        swap = comp_t.format(a=sa, b=sb)
+        bind = bind_t.format(a=a, b=b)
+        out.append({"cue": cue, "target": tgt, "swap_cue": swap, "bind_cue": bind,
+                    "lang": "en", "family": fam, "carrier": ci,
+                    "swap_target": s_tgt})
+    return out
+
+
+def build_weavepanel(families, max_items, seed):
+    """H_9825 — parametric held-out recombination panel (the ρ·weave n=12 instrument fix).
+
+    The frozen `_WEAVE` battery in cli/rho_axon.py carries TWELVE items, six of them on the ko
+    lane that H_9327 measured 🧱 BINDING-walled. One item flipping moves the reported value by
+    0.083 against a 0.30 bar with a 0.15 control cap — the threshold-fragility disease H_9820
+    diagnosed at n=32, here at n=12. No budget ladder read through that panel can be decidable.
+
+    This builder emits the SAME item shape (cue · target · swap_cue · bind_cue · lang) from
+    parametric families so n scales, keeping the frozen bar, the frozen controls and the frozen
+    scorer untouched — only the sample size moves.
+    """
+    fams = [f.strip() for f in families.split(",") if f.strip()] if families else list(_WP_FAMILIES)
+    unknown = [f for f in fams if f not in _WP_CARRIERS]
+    if unknown:
+        raise SystemExit("anima-py corpus weavepanel: unknown family %s (known: %s)"
+                         % (",".join(unknown), ",".join(_WP_FAMILIES)))
+    items = []
+    for fam in fams:
+        car = _WP_CARRIERS[fam]
+        if fam == "arith-add":
+            grid = [(i, j) for i in range(2, 11) for j in range(2, 11) if i + j <= 20]
+            for k, (i, j) in enumerate(grid):
+                si, sj = grid[(k + 1) % len(grid)]
+                if si + sj == i + j:                    # swap must change the true answer
+                    si, sj = grid[(k + 2) % len(grid)]
+                if si + sj == i + j:
+                    continue
+                items += _wp_emit(fam, car, _WP_NUM[i], _WP_NUM[j], _WP_NUM[i + j],
+                                  _WP_NUM[si], _WP_NUM[sj], _WP_NUM[si + sj])
+        elif fam == "arith-mul":
+            grid = [(i, j) for i in range(2, 6) for j in range(2, 6) if i * j <= 20]
+            for k, (i, j) in enumerate(grid):
+                si, sj = grid[(k + 1) % len(grid)]
+                if si * sj == i * j:
+                    si, sj = grid[(k + 2) % len(grid)]
+                if si * sj == i * j:
+                    continue
+                items += _wp_emit(fam, car, _WP_NUM[i], _WP_NUM[j], _WP_NUM[i * j],
+                                  _WP_NUM[si], _WP_NUM[sj], _WP_NUM[si * sj])
+        elif fam == "color-mix":
+            for k, (a, b, t) in enumerate(_WP_MIX):
+                sa, sb, st = _WP_MIX[(k + 1) % len(_WP_MIX)]
+                if st == t:
+                    continue
+                items += _wp_emit(fam, car, a, b, t, sa, sb, st)
+        elif fam == "direction":
+            for k, (a, b, t) in enumerate(_WP_DIR):
+                sa, sb, st = _WP_DIR[(k + 1) % len(_WP_DIR)]
+                if st == t:
+                    continue
+                items += _wp_emit(fam, car, a, b, t, sa, sb, st)
+        elif fam == "double-neg":
+            for k, (a, b) in enumerate(_WP_OPP):
+                sa, sb = _WP_OPP[(k + 1) % len(_WP_OPP)]
+                if sa == a:
+                    continue
+                # target = a itself (opposite applied twice); the swap asks the same of `sa`,
+                # for which `a` is the wrong answer.
+                items += _wp_emit(fam, car, a, b, a, sa, sb, sa)
+    # deterministic shuffle so a family's block structure cannot align with a seed-indexed
+    # decode sweep (rho_weave uses SEEDS[0]+i per item).
+    rnd = _wp_rand(seed)
+    for i in range(len(items) - 1, 0, -1):
+        j = rnd(i + 1)
+        items[i], items[j] = items[j], items[i]
+    if max_items > 0:
+        items = items[:max_items]
+
+    # ── audits (BLOCKING · a panel that fails these measures nothing) ──
+    audit = {"n": len(items), "by_family": {}, "by_carrier": {}, "violations": []}
+    seen_cue = {}
+    for it in items:
+        audit["by_family"][it["family"]] = audit["by_family"].get(it["family"], 0) + 1
+        ck = "%s/c%d" % (it["family"], it["carrier"])
+        audit["by_carrier"][ck] = audit["by_carrier"].get(ck, 0) + 1
+        if it["target"] == it["swap_target"]:
+            audit["violations"].append("swap keeps the true answer: " + it["cue"])
+        if it["target"] in it["cue"].split():
+            audit["violations"].append("target leaks into cue: " + it["cue"])
+        if it["target"] in it["bind_cue"].split():
+            audit["violations"].append("target leaks into bind-strip cue: " + it["bind_cue"])
+        if it["cue"] in seen_cue and seen_cue[it["cue"]] != it["target"]:
+            audit["violations"].append("same cue, two targets: " + it["cue"])
+        seen_cue[it["cue"]] = it["target"]
+    # carrier census — the collinearity guard (convergence corpus-py-1 (E))
+    for fam in set(it["family"] for it in items):
+        ncar = len(set(it["carrier"] for it in items if it["family"] == fam))
+        if ncar < 2:
+            audit["violations"].append(
+                "family %s has %d carrier(s) — carrier axis is collinear with the composition "
+                "axis, so no arm can separate them" % (fam, ncar))
+    return items, audit
+
+
+def _wp_rand(seed):
+    """Deterministic LCG (no `random` import — the builder must be byte-reproducible from seed
+    alone, which is what makes a ckpt's panel re-auditable · corpus-py-1 (J))."""
+    state = [(seed * 6364136223846793005 + 1442695040888963407) & ((1 << 64) - 1)]
+
+    def nxt(n):
+        state[0] = (state[0] * 6364136223846793005 + 1442695040888963407) & ((1 << 64) - 1)
+        return (state[0] >> 33) % n if n > 0 else 0
+    return nxt
+
+
 def _parse_args(argv):
     fmt = argv[0] if argv else ""
     # H_9643 --held-out-frac: hold out a FRACTION of the (i,j) pair grid instead of the single
@@ -113,6 +277,10 @@ def _parse_args(argv):
             # H_9810 bindpanel: --bind-k = stacked contested edges per sentence (K). K=1 collapses
             # the field to rank 1 by construction, so the floor is 2 and the default is 6.
             "bind_k": 6,
+            # H_9825 weavepanel: parametric ρ·weave panel (the n=12 instrument fix).
+            #   --weave-families f1,f2   default = all five
+            #   --weave-max N            0 = no cap
+            "weave_families": "", "weave_max": 0,
             # H_9809 ngram-audit (--ngram-recoverable-audit · absorbs lab/v3 H_004's theorem
             # "oracle-fusable <=> n-gram-recoverable" as a production audit flag):
             #   --ngram-recoverable-audit  arm the audit (required by fmt `ngram-audit`)
@@ -236,6 +404,10 @@ def _parse_args(argv):
             opts["eval_episodes"] = int(argv[i + 1]); i += 2       # H_9800 counterfactual-decl
         elif a == "--bind-k":
             opts["bind_k"] = int(argv[i + 1]); i += 2               # H_9810 bindpanel conjuncts
+        elif a == "--weave-families":
+            opts["weave_families"] = argv[i + 1]; i += 2            # H_9825 weavepanel families
+        elif a == "--weave-max":
+            opts["weave_max"] = int(argv[i + 1]); i += 2            # H_9825 weavepanel cap
         elif a == "--ngram-recoverable-audit":
             opts["ngram_recoverable_audit"] = True; i += 1          # H_9809 ngram-audit
         elif a == "--bind-legacy-lengths":
@@ -4872,8 +5044,15 @@ def main():
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
                    "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "consult-variants",
                    "routeaudit", "atoms", "c34", "storebind", "g6bind", "counterfactual-decl",
-                   "bindpanel"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind|counterfactual-decl|bindpanel|ngram-audit> --out PATH")
+                   "bindpanel", "weavepanel"):
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind|counterfactual-decl|bindpanel|weavepanel|ngram-audit> --out PATH")
+        print("      weavepanel --out panel.json [--weave-families f1,f2] [--weave-max N] [--seed 7]")
+        print("             H_9825 — the parametric ρ·weave held-out recombination panel. The frozen")
+        print("             `_WEAVE` battery is TWELVE items (6 on the ko lane H_9327 walled), so one")
+        print("             item is 0.083 of the value against a 0.30 bar with a 0.15 control cap.")
+        print("             Families: " + ",".join(_WP_FAMILIES) + " (>=2 carriers each — a single")
+        print("             carrier makes the carrier axis collinear with the composition axis).")
+        print("             Consumed by `anima-py evaluate <clm> --rho-axon --weave-panel panel.json`.")
         print("      bindpanel --lang en --out c.txt [--bind-k 6] [--n-blocks 4000] [--seed 7]")
         print("             H_9810 — the HELD-OUT BINDING PANEL for the H_9805 tension-field arms.")
         print("             K stacked number-concord edges per sentence; gold = agreement-marker XOR")
@@ -5245,6 +5424,40 @@ def main():
               "OPERATOR; binding both needs the CLMS lane's nonlinear (GELU-MLP) readout.")
         print("  score:  anima-py evaluate <clm> --store %s" % hj)
         return 0
+
+    if fmt == "weavepanel":
+        # H_9825 — the ρ·weave n=12 instrument fix. Emits a manifest consumed by
+        # `anima-py evaluate <clm> --rho-axon --weave-panel <manifest.json>`.
+        if not opts["out"]:
+            print("anima-py corpus weavepanel: --out panel.json is required", file=sys.stderr)
+            sys.exit(2)
+        items, audit = build_weavepanel(opts["weave_families"], opts["weave_max"], opts["seed"])
+        regen = "anima-py corpus " + " ".join(argv)
+        if audit["violations"]:
+            # A panel that leaks its target into the cue, or whose atom-swap keeps the true
+            # answer, or that runs on ONE carrier, measures something other than composition.
+            # Refuse rather than ship it (corpus-py-1 (E)/(F)).
+            print("anima-py corpus weavepanel: PANEL INVALID — %d violation(s):"
+                  % len(audit["violations"]), file=sys.stderr)
+            for v in audit["violations"][:20]:
+                print("  · " + v, file=sys.stderr)
+            sys.exit(2)
+        payload = {"items": items, "audit": audit, "regen": regen, "seed": opts["seed"]}
+        with open(opts["out"], "w") as fh:
+            json.dump(payload, fh, indent=1)
+        print("anima-py corpus weavepanel → %s" % opts["out"])
+        print("  n = %d items (frozen _WEAVE battery = 12, of which 6 on the ko lane that"
+              " H_9327 measured BINDING-walled)" % audit["n"])
+        print("  per-family : " + " · ".join("%s %d" % (k, v)
+                                             for k, v in sorted(audit["by_family"].items())))
+        print("  per-carrier: " + " · ".join("%s %d" % (k, v)
+                                             for k, v in sorted(audit["by_carrier"].items())))
+        n = audit["n"]
+        sd = (0.30 * 0.70 / n) ** 0.5 if n else 0.0
+        print("  binomial sd at the frozen 0.30 bar: %.4f  (n=12 → 0.1323 · one item = %.4f)"
+              % (sd, 1.0 / n if n else 0.0))
+        print("  regen: " + regen)
+        sys.exit(0)
 
     if fmt == "bindpanel":
         # H_9810 — the held-out binding panel + its drill corpus for the H_9805 tension-field arms.
