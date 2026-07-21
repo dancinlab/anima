@@ -2680,7 +2680,7 @@ def store_parity_selftest_run(argv):
     return 0 if ok else 1
 
 
-def _store_adversarial_entries(entries, key_emb, mode, seed):
+def _store_adversarial_entries(entries, key_emb, mode, seed, key_fn="mean"):
     """Refill every entry's NON-TARGET slots from the ckpt's own key geometry (H_9850).
 
     Shipped manifests draw slots with `rng.sample` (cli/corpus.py `_sb_emit_block`), so a store
@@ -2702,7 +2702,7 @@ def _store_adversarial_entries(entries, key_emb, mode, seed):
     pool = sorted({e for it in entries for e in it["store"]["entities"]})
     if len(pool) < 2:
         return entries
-    K = np.stack([_clms._entity_key(key_emb, e) for e in pool]).astype(np.float64)
+    K = np.stack([_clms._entity_key(key_emb, e, key_fn) for e in pool]).astype(np.float64)
     Kn = K / (np.linalg.norm(K, axis=1, keepdims=True) + 1e-12)
     cos = Kn @ Kn.T
     at = {e: i for i, e in enumerate(pool)}
@@ -3098,7 +3098,8 @@ def store_retr_probe_run(argv):
         print("ERROR: dump has %d entities — the held-out half needs >=4, so >=8 total" % len(ents))
         return 2
     H = np.stack([npz[e + "__last"].astype(np.float64) for e in ents])   # (N, d)
-    K = np.stack([_clms._entity_key(key_emb, e) for e in ents])          # (N, d_k)
+    _kf = _clms._key_fn_of(cl.get("lane_type", 1))   # the ckpt's OWN address fn, not a default
+    K = np.stack([_clms._entity_key(key_emb, e, _kf) for e in ents])     # (N, d_k)
     print("  n_entities=%d  d=%d  d_k=%d  iters=%d" % (len(ents), H.shape[1], K.shape[1], iters))
     live, null, orc, raw, shared, nw = _arms(H, K, "ckpt")
     if nw is not None:
@@ -4175,7 +4176,8 @@ def store_addr_census_run(argv):
     if len(ents) < 2:
         print("ERROR: dump has <2 entities (%d) — need a held-out entity pool" % len(ents)); return 2
     H = np.stack([npz[e + "__last"].astype(np.float64) for e in ents])   # (N, d)
-    K = np.stack([_clms._entity_key(key_emb, e) for e in ents])          # (N, d_k) entity-keys
+    _kf = _clms._key_fn_of(cl.get("lane_type", 1))   # the ckpt's OWN address fn, not a default
+    K = np.stack([_clms._entity_key(key_emb, e, _kf) for e in ents])     # (N, d_k) entity-keys
     r = _addr_census_core(H, K, seeds, rng)
     print("  n_entities=%d  n_slot(keys)=%d  seeds=%d" % (r["N"], r["S"], seeds))
     print("  RAW      collision obs=%.4f ped=%.4f excess=%+.4f  (template-confounded)"
@@ -7460,9 +7462,11 @@ def store_run(argv):
         if W.get("clms") is None:
             print("ERROR: --store-adversarial needs a CLMS trailer (key_emb) on the ckpt")
             return 2
+        import clms as _clms_kf
         entries = _store_adversarial_entries(
             entries, W["clms"]["key_emb"], store_adv,
-            evaluate_intval(argv[1:], "--store-ctrl-seed", 9423))
+            evaluate_intval(argv[1:], "--store-ctrl-seed", 9423),
+            key_fn=_clms_kf._key_fn_of(W["clms"].get("lane_type", 1)))
         print("  [--store-adversarial %s] non-target slots refilled from the ckpt's own key "
               "geometry · target slot + polarity vector untouched" % store_adv)
 
