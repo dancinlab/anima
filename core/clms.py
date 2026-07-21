@@ -510,3 +510,93 @@ if _HAS_TORCH:
             # (L_addr = CE(att, target_slot)). att is computed regardless of oracle_slot, so oracle-train
             # + addr-loss compose. need_att=False → byte-identical to the prior single-return signature.
             return (out, att) if need_att else out
+
+    def parity_selftest(tol=2e-5, seed=9826, q_scale=8.0, verbose=True):
+        """H_9826 — does the numpy inference mirror still equal the torch trainer?
+
+        The lane is written TWICE: CLMSModule.forward trains it, store_apply serves it. Until now
+        the two were held in step by a COMMENT ("Op order MIRRORS core/clms.store_apply 6–14"), so a
+        silent op-order divergence would move a verdict in either direction with nothing to catch it.
+
+        Builds one random CLMSModule, converts it with clms_weights_from_torch, runs BOTH paths on
+        the same input, and compares. Then, one tensor at a time, RESAMPLES that tensor at its own
+        scale — the shape a real "the two implementations disagree here" drift takes — and asserts
+        every such divergence is caught. A guard is trustworthy only once it has been shown it can
+        fail (lab/v2 gradcheck --selftest discipline).
+
+        OPERATING POINT (why q_scale exists, measured not assumed): at raw random init the address
+        softmax is near-uniform (a_max 0.1281 vs uniform 0.1250), so v = a·V_slots barely moves when
+        the address changes and a W_q divergence is INVISIBLE (delta 1.3e-05 < tol) — the check would
+        report a clean bill while blind to one tensor. Influence rises monotonically with the query
+        scale (a_max 0.1376 / 0.1512 / 0.1808 at scale 4 / 8 / 16; W_q delta 5.1e-05 / 1.0e-04 /
+        2.1e-04), while parity itself stays exact (~1e-17) at every scale. So the module is placed at
+        a well-scaled point and the address influence is then ASSERTED as a precondition — reading
+        the corruption arms at a dead-flat point is what makes a guard fake.
+
+        arm64 numpy raises spurious divide-by-zero/overflow RuntimeWarnings inside matmul here while
+        every value stays finite (a known false alarm in this repo); finiteness is asserted instead.
+
+        Returns (ok, rows) with rows = [(name, max_abs_delta, caught_or_None)]; row 0 is the
+        uncorrupted parity arm, row 1 the address-influence precondition."""
+        import numpy as np
+        d, V, n_slot, d_k, d_s, r = 32, 48, 8, 16, 16, 24
+        _torch.manual_seed(seed)
+        rng = np.random.default_rng(seed)
+        mod = CLMSModule(d, V, n_slot=n_slot, d_k=d_k, d_s=d_s, r=r, lam0=0.7).double()
+        mod.eval()
+        with _torch.no_grad():
+            mod.W_q.weight.mul_(q_scale)          # well-scaled point: the address path must matter
+        w = clms_weights_from_torch(mod)
+        for k in ("key_emb", "W_q", "W_g", "val", "W_h", "b_h", "W_out", "lam"):
+            w[k] = np.asarray(w[k], dtype=np.float64)
+
+        ents = ["slot%d" % i for i in range(n_slot)]
+        pols = [int(rng.integers(0, 2)) for _ in range(n_slot)]
+        store = {"entities": ents, "pols": pols, "target_slot": 3}
+        yn = rng.standard_normal((5, d))
+        logits = rng.standard_normal((5, V))
+        qpos = [2]
+
+        K = np.stack([_entity_key(w["key_emb"], e) for e in ents])          # (n_slot, d_k)
+        with _torch.no_grad():
+            ref = mod(_torch.from_numpy(yn[qpos]),                          # (1,d)
+                      _torch.from_numpy(K)[None, :, :],                     # (1,n_slot,d_k)
+                      _torch.tensor([pols], dtype=_torch.long)).numpy()[0]  # (V,)
+
+        def _delta(wd):
+            got = store_apply(logits, yn, wd, store, qpos, fuse="overwrite")[qpos[0]]
+            if not (np.all(np.isfinite(got)) and np.all(np.isfinite(ref))):
+                return float("nan")
+            return float(np.max(np.abs(got - ref)))
+
+        a_unif = 1.0 / n_slot
+        a_max = float(np.max(_softmax((yn[qpos[0]] @ w["W_q"]) @ K.T / np.sqrt(float(d_k)))))
+        par = _delta(w)
+        rows = [("parity (uncorrupted)", par, None),
+                ("address influence a_max", a_max, None)]
+        for name in ("W_q", "W_g", "val", "W_h", "b_h", "W_out", "lam"):
+            bad = dict(w)
+            t = np.asarray(w[name], dtype=np.float64)
+            bad[name] = rng.standard_normal(t.shape) * (float(t.std()) + 1e-12)
+            rows.append((("drift " + name), _delta(bad), None))
+
+        ok_par = (par == par) and par <= tol            # NaN-safe
+        ok_point = a_max > a_unif * 1.10                # the address must actually influence output
+        out_rows = [rows[0], rows[1]]
+        ok_catch = True
+        for nm, dv, _ in rows[2:]:
+            caught = (dv == dv) and dv > tol
+            ok_catch = ok_catch and caught
+            out_rows.append((nm, dv, caught))
+        ok = ok_par and ok_point and ok_catch
+        if verbose:
+            print("  tolerance = %.1e   (torch fp64 vs numpy fp64) · q_scale = %.1f" % (tol, q_scale))
+            print("    %-24s max|delta| = %.3e   %s" %
+                  ("parity (uncorrupted)", par, "PASS" if ok_par else "FAIL <-- mirror diverged"))
+            print("    %-24s a_max = %.4f (uniform %.4f)   %s" %
+                  ("address influence", a_max, a_unif,
+                   "PASS" if ok_point else "FAIL <-- dead-flat point, corruption arms unreadable"))
+            for nm, dv, caught in out_rows[2:]:
+                print("    %-24s max|delta| = %.3e   %s" %
+                      (nm, dv, "CAUGHT" if caught else "MISSED <-- guard blind to this tensor"))
+        return ok, out_rows
