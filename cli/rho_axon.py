@@ -131,7 +131,7 @@ def rho_form(mouth, gen, known, kwr_fn, concepts, thr=0.50, gate=0.70, ctrl_cap=
 # contract to ≤2 distinct → spread is distributional, not decode noise).
 # ════════════════════════════════════════════════════════════════════════
 def rho_fan(mouth, gen, known, kwr_fn, jaccard_fn, words_fn, falsi_fn, concepts,
-            n_cont=8, need=5, cgate=0.5):
+            n_cont=8, need=5, cgate=0.5, fals_draws=0):
     # cgate = coherence-gating bar (kwr floor a continuation must clear to count). Default 0.5
     # = the en value (byte-identical to the pre-③ path); the ko per-cell dispatch passes
     # KWR_KO_GATE so kwr_ko (a different physical quantity) gates on its own frozen bar.
@@ -162,12 +162,39 @@ def rho_fan(mouth, gen, known, kwr_fn, jaccard_fn, words_fn, falsi_fn, concepts,
             greedy_distinct += 1
     delta = n_distinct - greedy_distinct
     ok = n_distinct >= need and any_falsi and greedy_distinct <= 2 and delta > 0
+    ctrl = {"greedy-collapse": greedy_distinct,
+            "falsifiable": (1 if any_falsi else 0)}
+    extra = ""
+    if fals_draws > 0:
+        # H_9829 — CONTINUOUS falsifiability rate, REPORTED ONLY. The frozen PASS logic above is
+        # untouched: `any_falsi` still comes from the frozen n_cont draws and still decides.
+        #
+        # Why this exists: H_9828 censused the EN training corpus and found falsifiable sentences
+        # at p≈0.0065. `any_falsi` over 8 draws therefore clears only ~5% of the time for a model
+        # that reproduces its corpus EXACTLY, and reads 0 in all four register cells ~81% of the
+        # time — so a fals=0 observation carries almost no information about the faculty. A rate
+        # over many draws does (80% power needs ~249 draws at that base rate).
+        # Seeds continue the frozen sequence (SEEDS[0] + 17*j, j >= n_cont) so these draws are
+        # disjoint from the ones the verdict is read on — the estimate never reuses the gate's own
+        # samples.
+        f_hit = 0; f_seen = 0
+        for j in range(n_cont, n_cont + fals_draws):
+            o = mouth.ideate(seed_prompt, gen, 40, 0.9, SEEDS[0] + 17 * j)
+            if kwr_fn(o, known) >= cgate:        # same coherence gate the frozen leg uses
+                f_seen += 1
+                if falsi_fn(o, known):
+                    f_hit += 1
+        rate = (f_hit / f_seen) if f_seen else 0.0
+        # Wilson-free honest interval: binomial sd on the realized coherent count.
+        sd = ((rate * (1.0 - rate) / f_seen) ** 0.5) if f_seen else 0.0
+        ctrl["fals-rate"] = "%d/%d=%.4f±%.4f" % (f_hit, f_seen, rate, sd)
+        extra = (" · fals-rate %d/%d=%.4f (sd %.4f · REPORTED ONLY, verdict still on the frozen "
+                 "any_falsi over %d draws)" % (f_hit, f_seen, rate, sd, n_cont))
     return _axis("ρ·fan", PASS if ok else FAIL, value=n_distinct,
-                 controls={"greedy-collapse": greedy_distinct,
-                           "falsifiable": (1 if any_falsi else 0)},
+                 controls=ctrl,
                  delta=delta,
-                 detail="distinct %d (need %d) · greedy %d (cap 2) · falsi %s"
-                        % (n_distinct, need, greedy_distinct, any_falsi))
+                 detail="distinct %d (need %d) · greedy %d (cap 2) · falsi %s%s"
+                        % (n_distinct, need, greedy_distinct, any_falsi, extra))
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -638,7 +665,7 @@ _STRATA = [
 # vector, forbidden), so a ko cell scores kwr_ko + reach Δ (its ρ·fan may FAIL the falsi
 # sub-check — an honest documented scope, negative=result, not tuned away).
 # ════════════════════════════════════════════════════════════════════════
-def _run_cell(mouth, gen, cd, selected=None):
+def _run_cell(mouth, gen, cd, selected=None, fals_draws=0):
     """One register cell's concept-driven reach axes under that cell's dispatched dets.
     `cd` = {concepts, known, kwr_fn, kwr_gate, words_fn, falsi_fn, jaccard_fn, ngram_fn,
     corpus_tokens, lang}. Returns {lang, hillock, axes:{ρ·form/leap/fan}, invalid}."""
@@ -659,12 +686,13 @@ def _run_cell(mouth, gen, cd, selected=None):
                                   cd["corpus_tokens"], concepts, cgate=g)
     if "ρ·fan" in selected:
         axes["ρ·fan"] = rho_fan(mouth, gen, cd["known"], cd["kwr_fn"], cd["jaccard_fn"],
-                                cd["words_fn"], cd["falsi_fn"], concepts, cgate=g)
+                                cd["words_fn"], cd["falsi_fn"], concepts, cgate=g,
+                                fals_draws=fals_draws)
     return {"lang": cd["lang"], "hillock": hk, "axes": axes, "invalid": False}
 
 
 def run_panel(mouth, corpus_paths, gen, dets, cell_dets=None, selected_axes=None,
-              weave_panel=None):
+              weave_panel=None, fals_draws=0):
     """Run the ρ-AXON reach panel. `dets` bundles the reused detectors from
     cli/evaluate.py: kwr_fn, jaccard_fn, words_fn, falsi_fn, ngram_fn, corpus_tokens,
     concepts. When `cell_dets` (lang-keyed {cell_key: cd}) is given, ALSO computes a
@@ -697,7 +725,8 @@ def run_panel(mouth, corpus_paths, gen, dets, cell_dets=None, selected_axes=None
                                   dets["ngram_fn"], dets["corpus_tokens"], concepts)
     if "ρ·fan" in selected:
         axes["ρ·fan"] = rho_fan(mouth, gen, dets["known"], dets["kwr_fn"],
-                                dets["jaccard_fn"], dets["words_fn"], dets["falsi_fn"], concepts)
+                                dets["jaccard_fn"], dets["words_fn"], dets["falsi_fn"], concepts,
+                                fals_draws=fals_draws)
     if "ρ·tether" in selected:
         axes["ρ·tether"] = rho_tether(mouth, gen)
     if "ρ·self" in selected:
@@ -721,7 +750,8 @@ def run_panel(mouth, corpus_paths, gen, dets, cell_dets=None, selected_axes=None
               "reach_closed": reach_closed, "invalid": False}
     cell_selected = selected & {"ρ·form", "ρ·leap", "ρ·fan"}
     if cell_dets and cell_selected:
-        result["cells"] = {ck: _run_cell(mouth, gen, cell_dets[ck], cell_selected)
+        result["cells"] = {ck: _run_cell(mouth, gen, cell_dets[ck], cell_selected,
+                                         fals_draws=fals_draws)
                            for ck in _CELL_ORDER if ck in cell_dets}
     return result
 

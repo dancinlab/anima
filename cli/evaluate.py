@@ -945,7 +945,7 @@ def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
 
 
 def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_dir="",
-                  axes="", include_cells=True, weave_panel_path=""):
+                  axes="", include_cells=True, weave_panel_path="", fals_draws=0):
     """ρ-AXON reach panel (`anima-py evaluate <clm> --rho-axon`) — the redesigned reach
     layer (cli/rho_axon.py; G0-G6 → ρ-AXON, design SSOT state/rho_axon_measurement/). Reuses
     the SAME engine decode (_Mouth.ideate) + g6 detectors the G-battery uses (no side-harness),
@@ -998,7 +998,7 @@ def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_
               % (weave_panel_path, len(weave_panel)), flush=True)
     panel = rho_axon.run_panel(
         mouth, corpus_paths, g, dets, cell_dets=cell_dets, selected_axes=selected_axes,
-        weave_panel=weave_panel)
+        weave_panel=weave_panel, fals_draws=fals_draws)
     print(rho_axon.render_panel(panel), flush=True)
     breakout = rho_axon.render_cells(panel)
     if breakout:
@@ -2212,6 +2212,7 @@ def evaluate_run(argv):
             axes=evaluate_strval(argv[1:], "--rho-axes", ""),
             include_cells="--rho-no-cells" not in argv[1:],
             weave_panel_path=evaluate_strval(argv[1:], "--weave-panel", ""),
+            fals_draws=evaluate_intval(argv[1:], "--fan-draws", 0),
         )
         rho_out = evaluate_strval(argv[1:], "--rho-out", "")
         if rho_out:
@@ -9924,6 +9925,8 @@ _KNOWN_FLAGS = frozenset((
     "--falsi-census", "--falsi-max-sent", "--falsi-out",
     # H_9825 parametric ρ·weave panel (the n=12 instrument fix · default-off = byte-identical)
     "--weave-panel",
+    # H_9829 continuous ρ·fan falsifiability rate (REPORTED ONLY · default 0 = byte-identical)
+    "--fan-draws",
     "--leak-bar", "--leak-eps", "--leak-nmax",
 ))
 
