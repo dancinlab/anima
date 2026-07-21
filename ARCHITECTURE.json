@@ -5831,6 +5831,14 @@
                     "detail": "evaluate --store · store303_s2000.clm · pols 바이트 동일 유지(다수결 지름길 통제 일치) · 단일변수=비정답 슬롯. 원본 0.9688 · 재추출통제 0.9609(재구성 무해) · 적대 0.8594(-0.109) · 적대-충돌제외 0.8672(회복 7%뿐) ⟹ 혼잡이 범인. lane 은 붕괴 안 함(0.8594 >> 우연 0.5)."
                   },
                   {
+                    "name": "R2 ① 충돌 부류는 애너그램이 아니라 비율(정규화 히스토그램)",
+                    "detail": "평균은 길이로 나누므로 같은 것은 다중집합이 아니라 정규화 바이트 히스토그램이다 — mean≡meanmean·ab≡aabb·cat≡catcat (전부 1.49e-08=반올림). 어휘 9135 기준 다중집합 1090 vs 비율 1091, 새 실사례 teammate≡{team,mate,meat,meta,tame}. 길이제한 없는 엔티티에선 이 부류가 그대로 산다."
+                  },
+                  {
+                    "name": "R2 ② 학습 도달 불가 — 증명 + 200-질의 실측",
+                    "detail": "주의 로짓 q·K_i/√d_k 에서 K_i=K_j 이면 임의의 q 에 q·K_i=q·K_j ⟹ softmax 질량 항상 동일. 학습이 바꾸는 건 q(=W_q·trunk)뿐이고 key_emb 는 frozen ⟹ 결함이 학습 공간 밖. store_apply 경로서 q 200회 주사: 같은키 9.735e-09 vs 다른키 3.413e-01 = 3.5e7 배, 한 번도 안 갈라짐."
+                  },
+                  {
                     "name": "🔩 계기 승격 — --store-adversarial (수제 매니페스트 폐기)",
                     "detail": "anima-py evaluate <clm> --store <m> --store-adversarial {off|nearest|nocollide|redraw} 가 ckpt 자신의 키로 비-정답 슬롯만 런타임 재구성. 검증: 손수제와 128/128 동일 · nearest 가 0.8594 정확 재현 · 잘못된 값 3종 rc=1 거부 · 부재시 off 로 기존 경로 불변. 재추출 통제 2 seed 0.9609/0.9453 ⟹ 균등 재구성 -0.008~-0.024 vs 적대 -0.109."
                   }
