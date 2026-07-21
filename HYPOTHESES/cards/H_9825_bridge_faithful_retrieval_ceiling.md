@@ -204,6 +204,36 @@ n 확대 실패 자체가 결과다. `_entity_key` 는 바이트 임베딩 평�
 **기존 128 과 교집합 0** 인 새 128 엔티티. 같은 템플릿·같은 판정팔·같은 8-way·같은 동결표.
 이 풀의 LIVE 만이 FLOOR/REACHABLE 판정 자격이 있다.
 
+### 🟢 Stage 2 실측 (확증 · 겹침 0 인 새 풀 · 새 순전파 128)
+
+```
+poscontrol cos(advanced,alas)=0.7550 (distinct ✓) · shared-template 56.1%
+8-way chance=0.1250
+  ORACLE 0.9402   GRAM-exact-W 0.9598   NULL 0.1603   KEY-PERMUTE 0.1226   LIVE 0.6774
+  → REACHABLE
+  (64-way 대조: ORACLE 0.6562 · NULL 0.0000 · KEY-PERMUTE 0.0156 · LIVE 0.2656)
+```
+
+| 팔 | Stage 1 (재판독) | Stage 2 (확증) | 읽는 법 |
+|---|---|---|---|
+| ORACLE | 0.9159 | **0.9402** | ≥0.90 두 풀 모두 → 계기 ALIVE |
+| GRAM-exact-W | 0.9408 | 0.9598 | 코드북은 lane 규모에서 충분 |
+| NULL | 0.1087 | 0.1603 | 게이트(0.50) 한참 아래 |
+| KEY-PERMUTE | 0.1211 | **0.1226** | 우연(0.125)으로 붕괴 = 주소 대응이 신호원 |
+| **LIVE** | 0.6496 | **0.6774** | FLOOR 0.25 대비 REACHABLE · 우연의 5.4배 |
+
+**판정: REACHABLE (DIRECTIONAL).** 실제 lane 이 마주하는 규모(n_slot=8)에서 이 얼어붙은 trunk 의
+penultimate 은 **주소지정 가능하다**. 서로소 두 풀에서 0.6496 / 0.6774 로 재현됐고,
+KEY-PERMUTE 가 우연으로 붕괴하므로 신호는 기하 잔재가 아니라 **내용-주소 대응**이다.
+
+### 이 판정이 말하지 않는 것
+
+- lane 이 실제로 이 성능을 낸다는 뜻이 **아니다** — 이건 bolt-on 이 도달 가능한 **천장**이다.
+- in-vivo 슬롯은 동시출현 블록 엔티티라 균등 추출 8-way 보다 **더 헷갈릴 수** 있다 ⟹ 천장은 상한.
+- `__last` penultimate 읽기라 **lane_type 5(fresh-query)** 는 여전히 판별 불가(rv3c13 은 3 이라 범위 내).
+- 굳히지 않는다 — cement 는 engine-native 303M 발사뿐.
+- Stage 1 의 LIVE 는 비-blind 였고, 그래서 판정은 **Stage 2** 에서만 나온다.
+
 ## 발사 재개지점 (초기 기록 · 위 결과로 갱신됨)
 
 재료는 있다 — `~/anima-weights/rv3c13.clm` 이 CLMS trailer 보유(lane_type=3 · n_slot=8 · d_k=64).
