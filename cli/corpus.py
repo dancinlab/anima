@@ -885,7 +885,13 @@ def _parse_args(argv):
             #   --mi-eps               decoration guard in bpb — an over-floor lift below this is not read
             # $0 · no GPU · no ckpt: measures what the STREAM carries across a segment boundary,
             # never what a model can reach (that conflation is exactly what H_9304 could not split).
+            #   --mi-chat-cell C       REAL-INPUT SWAP: screen a cell of the 4-cell chat corpus the
+            #                          303M actually trained on (ko-general|en-general|ko-sns|
+            #                          en-sns|all, PUBLIC on HF) instead of a procedurally
+            #                          generated stream. Repeatable. Resolves to an ordinary
+            #                          --corpus path — it changes the INPUT and nothing else.
             "mi_win": 0, "mi_span": 0, "mi_estimator": "all", "mi_eps": 0.0, "mi_seg_lines": 0, "mi_robust": False,
+            "mi_chat_cells": [],
             # H_9800 counterfactual-decl (ephemeral-declaration grounding):
             #   --stems-per-episode S   declared stems per episode (>=4, multiple of 4)
             #   --eval-episodes N       eval episodes PER STRATUM (5 strata)
@@ -1050,6 +1056,8 @@ def _parse_args(argv):
             opts["mi_seg_lines"] = int(argv[i + 1]); i += 2   # H_9844: line-record segmentation
         elif a == "--mi-robust":
             opts["mi_robust"] = True; i += 1                  # H_9844: geometry-robustness gate
+        elif a == "--mi-chat-cell":
+            opts["mi_chat_cells"].append(argv[i + 1]); i += 2  # H_9844: REAL 4-cell chat input
         elif a == "--arm":
             opts["arm"] = argv[i + 1]; i += 2          # H_9694 g6bind: targeted|shuf
         elif a == "--stems-per-episode":
@@ -5428,6 +5436,81 @@ def run_mi_screen(opts):
         sys.exit(3)
 
 
+# ── H_9844 REAL-INPUT SWAP — the 4-cell chat corpus the 303M actually trained on ─────────
+# WHY THIS FLAG EXISTS (do not delete this comment — it is the reason the flag is not optional).
+# The landed H_9844 census screened three PROCEDURAL corpora (flat / derivtrace / storebind)
+# and read READ=none on all three. Those streams are generated one line at a time, so "carries
+# no information across a block boundary" is very nearly a TAUTOLOGY about them: the screener
+# was being handed a world built to have none. A null measured on hand-made input is a fact
+# about the input, not about anima's data face.
+#
+# The precedent that forces this swap is H_9838 (2026-07-21, same day). It landed a headline
+# positive — CA3 multi-step completion at 12x derived chance, positive control + zero-truth
+# pedestal + 3 seeds x 3 geometries + independent reproduction — on a PLANTED integer fixture.
+# When the code source alone was swapped to the production trunk's REAL penultimate
+# representations (same arms, same controls, same bars), the zero-truth pedestal FIRED
+# (value-shuffled 0.3750 > bar 0.3077) and the verdict went INVALID. Diagnosis: the planted
+# codes were effectively orthogonal (within .0469 / across .0117) while real reps overlap 2.2x
+# (.0625 / .0260) — the hand-made geometry had manufactured the result.
+#
+# So: same battery, same shipped controls, same eps, same --mi-robust geometry sweep, same
+# frozen gate order. ONLY the input source changes — from procedurally generated text to the
+# REAL natural-language training data (ko/en x general/sns), which is what the card itself named
+# as its open target. These four datasets are PUBLIC on HF (README.md "Clean 4-cell register
+# corpus (2026-06-24)"), so a plain https GET reaches them with no token and no `datasets`
+# dependency. A cell that cannot be fetched is REPORTED as unfetched and screened by nobody —
+# its contents are never substituted or invented (`honesty`).
+_MI_CHAT_CELLS = ("ko-general", "en-general", "ko-sns", "en-sns")
+_MI_CHAT_URL = ("https://huggingface.co/datasets/dancinlab/anima-corpus-%s"
+                "/resolve/main/anima-corpus-%s.txt")
+
+
+def _mi_chat_cell_names(spec):
+    """Expand a --mi-chat-cell value: a cell name, or 'all' for the whole 4-cell register set."""
+    if spec == "all":
+        return list(_MI_CHAT_CELLS)
+    if spec not in _MI_CHAT_CELLS:
+        raise SystemExit("--mi-chat-cell must be one of %s|all (got %r)"
+                         % ("|".join(_MI_CHAT_CELLS), spec))
+    return [spec]
+
+
+def _mi_fetch_chat_cell(cell):
+    """Return a local path to the PUBLIC HF chat-corpus cell, downloading it once.
+
+    Cached under $ANIMA_CORPUS_CACHE (default ./.corpus_cache) — the same cache root
+    cli/train.py::resolve_corpus_path uses, so a cell fetched for a train run is reused here
+    instead of re-downloaded. stdlib urllib only: these repos are public, so no token, no
+    `datasets`, no huggingface_hub. A failed fetch RAISES — it never falls back to a
+    substitute stream, because a screener that silently screens the wrong bytes is exactly the
+    failure mode this whole swap exists to catch."""
+    import urllib.request
+    cache_root = os.environ.get("ANIMA_CORPUS_CACHE",
+                                os.path.join(os.getcwd(), ".corpus_cache"))
+    os.makedirs(cache_root, exist_ok=True)
+    local = os.path.join(cache_root, "anima-corpus-%s.txt" % cell)
+    if os.path.exists(local) and os.path.getsize(local) > 0:
+        print("  mi-chat-cell %-10s cached  %s (%d B)" % (cell, local, os.path.getsize(local)))
+        return local
+    url = _MI_CHAT_URL % (cell, cell)
+    print("  mi-chat-cell %-10s fetch   %s" % (cell, url))
+    try:
+        with urllib.request.urlopen(url, timeout=300) as resp:
+            blob = resp.read()
+    except Exception as e:
+        raise SystemExit(
+            "mi-screen: could not fetch chat cell %r from %s (%s).\n"
+            "  This cell is NOT screened and its numbers must not be reported. Fetch it by "
+            "hand and pass it with --corpus, or drop it from the run and say which cells were "
+            "actually read." % (cell, url, e))
+    if not blob:
+        raise SystemExit("mi-screen: chat cell %r fetched EMPTY from %s — refusing." % (cell, url))
+    with open(local, "wb") as fh:
+        fh.write(blob)
+    print("  mi-chat-cell %-10s stored  %s (%d B)" % (cell, local, len(blob)))
+    return local
+
+
 def _mi_segments_by_lines(path, per_seg, win, span):
     """Segment a LINE-RECORD corpus into blocks of `per_seg` consecutive lines.
 
@@ -5798,6 +5881,13 @@ def main():
         run_wake_coresidency(opts)
         return
     if fmt == "mi-screen":
+        # H_9844 real-input swap: --mi-chat-cell resolves a PUBLIC HF cell of the 4-cell chat
+        # corpus the 303M actually trained on into an ORDINARY --corpus path. Nothing downstream
+        # of this line knows the difference — same battery, same controls, same eps, same
+        # --mi-robust sweep. That is the point: only the input source moves.
+        for spec in opts["mi_chat_cells"]:
+            for cell in _mi_chat_cell_names(spec):
+                opts["corpus"].append(_mi_fetch_chat_cell(cell))
         if not opts["corpus"]:
             print("anima-py corpus mi-screen --corpus PATH [--corpus PATH2 ...] "
                   "[--mi-win 4096] [--mi-span 2048] [--mi-estimator gzip|ppm|markov6|all] "
@@ -5818,6 +5908,13 @@ def main():
             print("      flips with block size (flat en gzip -0.0020 @4096B vs +0.0312")
             print("      @512B; storebind +0.0195 @4096B vs +0.0000 @512B), so a single")
             print("      geometry lets the block size pick the verdict — tune-to-green.")
+            print("      --mi-chat-cell ko-general|en-general|ko-sns|en-sns|all (repeatable)")
+            print("      swaps the INPUT to the REAL 4-cell chat corpus the 303M trained on")
+            print("      (PUBLIC HF, fetched once into $ANIMA_CORPUS_CACHE). The procedural")
+            print("      corpora are line-generated, so 'no cross-block structure' is nearly")
+            print("      tautological for them; H_9838 showed a planted fixture can manufacture")
+            print("      a whole headline positive, so the real input is not optional.")
+            print("      ko is ~3 B/char: pick --mi-seg-lines PER CELL, never one number.")
             sys.exit(2)
         run_mi_screen(opts)
         return
