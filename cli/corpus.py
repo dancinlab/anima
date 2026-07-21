@@ -399,7 +399,7 @@ def _parse_args(argv):
             #   --mi-eps               decoration guard in bpb — an over-floor lift below this is not read
             # $0 · no GPU · no ckpt: measures what the STREAM carries across a segment boundary,
             # never what a model can reach (that conflation is exactly what H_9304 could not split).
-            "mi_win": 0, "mi_span": 0, "mi_estimator": "all", "mi_eps": 0.0, "mi_seg_lines": 0,
+            "mi_win": 0, "mi_span": 0, "mi_estimator": "all", "mi_eps": 0.0, "mi_seg_lines": 0, "mi_robust": False,
             # H_9800 counterfactual-decl (ephemeral-declaration grounding):
             #   --stems-per-episode S   declared stems per episode (>=4, multiple of 4)
             #   --eval-episodes N       eval episodes PER STRATUM (5 strata)
@@ -541,6 +541,8 @@ def _parse_args(argv):
             opts["mi_eps"] = float(argv[i + 1]); i += 2
         elif a == "--mi-seg-lines":
             opts["mi_seg_lines"] = int(argv[i + 1]); i += 2   # H_9844: line-record segmentation
+        elif a == "--mi-robust":
+            opts["mi_robust"] = True; i += 1                  # H_9844: geometry-robustness gate
         elif a == "--arm":
             opts["arm"] = argv[i + 1]; i += 2          # H_9694 g6bind: targeted|shuf
         elif a == "--stems-per-episode":
@@ -4822,17 +4824,45 @@ def run_mi_screen(opts):
         status = "CERTIFIED"
         why = "both shipped controls behaved: plant fires, null refuses."
 
+    # ── ② geometry sweep — a lift that lives at ONE block size is not a corpus fact ──
+    # MEASURED 2026-07-21, and it is why this is not optional: on the SAME three corpora the
+    # sign flips with the block size. corpus flat --lang en: gzip over_floor -0.0020 at
+    # 60-line/4096B blocks but +0.0312 at 8-line/512B blocks; corpus storebind: +0.0195 at
+    # 60-line/4096B (the highest of any corpus) but +0.0000 at 46-line/512B. Reporting one
+    # geometry lets the block size choose the verdict — tune-to-green with extra steps. So the
+    # headline is the MINIMUM over_floor across geometries, and a lift is READ only if every
+    # geometry clears eps. The controls are re-certified at each geometry too.
+    geometries = [(opts["mi_seg_lines"], win, span)]
+    if opts["mi_robust"]:
+        for div in (2, 8):
+            g_win, g_span = max(64, win // div), max(32, span // div)
+            g_lines = max(1, (opts["mi_seg_lines"] or 0) // div) if opts["mi_seg_lines"] else 0
+            geometries.append((g_lines, g_win, g_span))
+
     rows = []
     if certified:
         for path in opts["corpus"]:
-            if opts["mi_seg_lines"]:
-                segments, how = _mi_segments_by_lines(path, opts["mi_seg_lines"], win, span)
-            else:
-                segments, how = MI.segments_from_path(path, win=win, span=span)
-            row = MI.stream_mi(segments, win=win, span=span, eps=eps, estimators=estimators)
-            row["path"] = path
-            row["segmented_as"] = how
-            row["sha256"] = _mi_sha_of(path)
+            per_geom, sha = [], _mi_sha_of(path)
+            for (g_lines, g_win, g_span) in geometries:
+                if g_lines:
+                    segments, how = _mi_segments_by_lines(path, g_lines, g_win, g_span)
+                else:
+                    segments, how = MI.segments_from_path(path, win=g_win, span=g_span)
+                r = MI.stream_mi(segments, win=g_win, span=g_span, eps=eps, estimators=estimators)
+                r["geometry"] = {"seg_lines": g_lines, "win": g_win, "span": g_span}
+                r["segmented_as"] = how
+                per_geom.append(r)
+            names = [n for n, _ in estimators]
+            robust = {n: min(g[n]["over_floor"] for g in per_geom) for n in names}
+            spread = {n: (max(g[n]["over_floor"] for g in per_geom)
+                          - min(g[n]["over_floor"] for g in per_geom)) for n in names}
+            row = {
+                "path": path, "sha256": sha, "n_geometries": len(per_geom),
+                "robust_over_floor": robust, "geometry_spread": spread,
+                "read": {n: bool(robust[n] > eps) for n in names},
+                "geometry_dependent": {n: bool(spread[n] > eps and robust[n] <= eps) for n in names},
+                "per_geometry": per_geom,
+            }
             rows.append(row)
 
     out = {
@@ -4846,7 +4876,12 @@ def run_mi_screen(opts):
                      "estimators": [n for n, _ in estimators]},
         "corpus": rows,
         "reaudit": {"argv": ["anima-py", "corpus"] + sys.argv[1:]},
-        "reading": ("`over_floor` is the headline, never a bare ceiling: it is the estimator's "
+        "reading": ("With --mi-robust the headline is `robust_over_floor` = the MINIMUM over_floor "
+                    "across geometries, and `read` is true only when that minimum clears eps; "
+                    "`geometry_dependent` marks an estimator whose lift exists at one block size "
+                    "and dies at another (spread > eps while the minimum does not clear it) — that "
+                    "is a segmentation artefact, not a corpus fact. Underneath: "
+                    "`over_floor` is the headline, never a bare ceiling: it is the estimator's "
                     "ceiling MINUS its own derived shuffle floor. over_floor <= eps on every "
                     "estimator = this stream carries no readable cross-boundary information, "
                     "which is a CORPUS fact and is measured without any model. DIRECTIONAL: a "
@@ -4922,7 +4957,7 @@ def main():
         if not opts["corpus"]:
             print("anima-py corpus mi-screen --corpus PATH [--corpus PATH2 ...] "
                   "[--mi-win 4096] [--mi-span 2048] [--mi-estimator gzip|ppm|markov6|all] "
-                  "[--mi-eps 0.02] [--mi-seg-lines N] [--out mi.json]")
+                  "[--mi-eps 0.02] [--mi-seg-lines N] [--mi-robust] [--out mi.json]")
             print("      H_9844 — compression-MI screener over core/mi_compress.py (H_9806).")
             print("      Measures what the STREAM carries across a segment boundary WITHOUT a")
             print("      forward pass, so 'the corpus has no joint information' and 'the model")
@@ -4934,6 +4969,11 @@ def main():
             print("      --mi-seg-lines N segments a LINE-RECORD corpus into N-line blocks —")
             print("      anima's own procedural corpora carry ZERO blank lines, so without it")
             print("      the screener cannot segment the streams it exists to screen.")
+            print("      --mi-robust re-runs the whole battery at 1/2 and 1/8 the block")
+            print("      geometry and reports the MINIMUM over_floor. MEASURED: the sign")
+            print("      flips with block size (flat en gzip -0.0020 @4096B vs +0.0312")
+            print("      @512B; storebind +0.0195 @4096B vs +0.0000 @512B), so a single")
+            print("      geometry lets the block size pick the verdict — tune-to-green.")
             sys.exit(2)
         run_mi_screen(opts)
         return

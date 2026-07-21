@@ -1897,7 +1897,14 @@
                                         "name": "🔧 H_9844 mi-screen 착륙 + 첫 실측 (2026-07-21 · 계기 CERTIFIED · 과학 판정 0)",
                                         "type": "gate",
                                         "detail": "배선: anima-py corpus mi-screen --corpus PATH [--mi-seg-lines N] [--mi-win/--mi-span/--mi-estimator/--mi-eps] [--out J] (cli/corpus.py · VERSION 0.20.95→0.20.96 · G5). 동봉 통제를 먼저 돌리고 둘 다 통과 못 하면 코퍼스 행을 아예 보고하지 않는 순차 동결 게이트. 계기 인증 실측: plant_crossboundary over_floor gzip +6.664 · ppm +0.767 · markov6 +5.973 (3/3 발화) · plant_null_stream 0.000 / +0.002 / +0.004 (3/3 거부) ⟹ CERTIFIED (positive-control-before-reading-a-negative + phi-estimator-needs-zero-truth-pedestal 동시 충족). 첫 코퍼스 실측(corpus flat --lang en --seed 7 · 798,570 B · 60줄 블록 109개 · underpowered=False · win4096/span2048/eps0.02): gzip over_floor −0.0020 · ppm +0.0029 · markov6 −0.0043 ⟹ 세 추정기 전부 |Δ|<0.005 ≪ eps, 둘은 음수 = 이 스트림은 경계를 넘는 읽을 수 있는 정보를 담지 않는다. 모델을 통과시키지 않고 얻은 코퍼스 사실이며 H_9304 가 모델을 통해 잰 +0.0023 nats 와 크기까지 나란하다. ⚠️ 정직 범위: 대상이 줄 단위 독립생성 절차 코퍼스라 블록 간 구조 부재는 거의 동어반복 — 이건 벽 판정이 아니라 계기 생존 증명 + 기준점이다. 판정이 필요한 진짜 대상은 303M 이 실제 학습한 4칸 chat 코퍼스와 H_9839 의 rule-derived 꿈 데이터. 압축 추정기는 하한이라 null 은 읽을 수 있음의 부재를 한정하지 존재의 부재를 증명하지 않는다. 부수 발견: MI.segments_from_path 는 빈 줄로 자르는데 anima 절차 코퍼스에는 빈 줄이 0개(798,570B/6,540줄/b'\\n\\n' 0회)라 원본 API 만으로는 계기가 자기 측정 대상을 못 자른다 ⟹ --mi-seg-lines 로 교정(짧은 블록은 패딩 없이 드롭·감소분 보고). 결과 JSON 에 reaudit.argv 전량 + 입력별 sha256/바이트수 + 해소된 기하를 박음(corpus-py-1 ⑫(J)).",
-                                        "children": []
+                                        "children": [
+                                          {
+                                            "name": "⚠️ 기하-강건성 게이트 — 첫 판 계기는 블록 크기로 초록불을 만들 수 있었다 (2026-07-21 · 자가적발)",
+                                            "type": "gate",
+                                            "detail": "코퍼스 3종 census 중 기하만 바꿔도 부호가 뒤집히는 것을 발견: flat(en) gzip over_floor −0.0020(60줄/4096B) vs +0.0312(8줄/512B · eps=0.02 통과) · storebind +0.0195(60줄/4096B · 전 코퍼스 최고) vs +0.0000(46줄/512B · 소멸) · derivtrace −0.0098 vs +0.0000. 두 기하 모두 통제는 정상(plant 발화·null 거부). ⟹ 계기는 살아있는데 판정이 블록 크기의 함수였다 = 한 기하만 보고하면 블록 크기가 판정을 고른다 = no tune-to-green 위반. cement 전에 자가적발. 교정: --mi-robust 가 요청 기하 + 1/2 + 1/8 에서 배터리를 재실행하고 최솟값을 헤드라인으로 삼는다(read = 최솟값이 eps 초과일 때만 참 · geometry_dependent = spread>eps 인데 최솟값 미달 = 분절 인공물). 3-기하 census 판정: READ=none 3/3. flat robust gzip−0.0078/ppm−0.0023/markov6−0.0102(기하의존 gzip·markov6) · derivtrace −0.0098/−0.0055/−0.0144(기하의존 gzip·markov6) · storebind +0.0000/−0.0022/+0.0019(기하의존 없음). ⟹ anima 절차 코퍼스 3종 중 기하-강건한 교차경계 정보를 담은 것은 없으며, 앞선 두 양성은 새 게이트가 분절 인공물로 정확히 분류했다. 함의(DIRECTIONAL): 데이터면이 비어 있다는 H_9304 의 그림이 모델 없이도 재현 ⟹ R11·R12 학습레버들이 기대는 '코퍼스엔 있는데 모델이 못 읽는다' 전제는 최소한 이 세 포맷에서 지지되지 않는다. 남은 진짜 대상 = 303M 이 실제 학습한 4칸 chat 코퍼스 + H_9839 rule-derived 꿈 데이터. VERSION 0.20.96→0.20.97.",
+                                            "children": []
+                                          }
+                                        ]
                                       }
                                     ]
                                   }
