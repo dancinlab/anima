@@ -100,6 +100,8 @@ _WP_CARRIERS = {
                    ("reversing {a} and then reversing it again gives", "here are the words {a} , {b} ")],
     "direction": [("{a} and {b} makes the direction", "{a} and {b} are two directions here "),
                   ("heading {a} then {b} points toward", "here are the directions {a} , {b} ")],
+    "rule-compound": [("{a} joined with {b} forms", "{a} and {b} are two stems here "),
+                      ("binding {a} onto {b} yields", "here are the stems {a} , {b} ")],
 }
 # `double-neg` is DELIBERATELY NOT in the default set. Double negation returns its own input,
 # so the target necessarily occurs inside the cue — a model that merely COPIES a word out of the
@@ -108,7 +110,24 @@ _WP_CARRIERS = {
 # ⚠️ The frozen 12-item `_WEAVE` battery contains TWO such items (one ko, one en), i.e. 1/6 of the
 # production G1 instrument is copy-passable. Recorded, not silently fixed: the frozen battery is
 # not edited here (burned-gate-no-refreeze) — this builder simply refuses to reproduce the defect.
+# H_9867 RULE-DERIVED family. Every earlier family failed for the same structural reason: the
+# composed answer had to be COMPUTED (arithmetic) or LOOKED UP from an arbitrary table (colour),
+# so teaching pairs could never transfer to held-out pairs — measured as delta <= 0.005 across
+# four arms (H_9866). Here the answer is derived by a RULE the model can actually induce: the
+# compound of A and B is A's first syllable followed by B's second. 20x20 = 400 pairs on a shared
+# stem vocabulary, which is the shape H_6182 saw a coverage phase transition in.
+_WP_STEM = ["kalo", "mireh", "tavun", "sorix", "delam", "penu", "girath", "volen",
+            "nusca", "brelo", "quilan", "zephor", "andil", "corvem", "ristu", "malok",
+            "tenrai", "obelu", "farien", "sylnok"]
+
+
+def _wp_compound(a, b):
+    """rule: first half of A + second half of B — inducible, and novel for every unseen pair."""
+    return a[:len(a) // 2] + b[len(b) // 2:]
+
+
 _WP_FAMILIES = ("arith-add", "arith-mul", "color-mix", "direction")
+_WP_FAMILIES_RULE = ("rule-compound",)
 
 
 def _wp_emit(fam, carriers, a, b, tgt, sa, sb, s_tgt):
@@ -262,6 +281,28 @@ def build_weavedrill(n_lines, seed, coverage=0.0):
     """
     rnd = _wp_rand(seed)
     lines = []
+    if coverage < 0:
+        # H_9867 rule-derived drill: the COMPLEMENT of the panel's slice, same stem vocabulary,
+        # same rule. The panel pairs stay 0-exposure; the rule itself is demonstrated everywhere.
+        n = len(_WP_STEM)
+        pairs = [(x, y) for x in range(n) for y in range(n) if x != y and (x + y) % 5 != 0]
+        car = _WP_CARRIERS["rule-compound"]
+        lines = []
+        for _ in range(n_lines):
+            x, y = pairs[rnd(len(pairs))]
+            a, b = _WP_STEM[x], _WP_STEM[y]
+            comp_t, _b = car[rnd(len(car))]
+            lines.append(comp_t.format(a=a, b=b) + " " + _wp_compound(a, b) + " .")
+        text = "\n".join(lines) + "\n"
+        panel_items, _ = build_weavepanel("rule-compound", 0, seed)
+        panel_cues = {it["cue"] for it in panel_items}
+        leak = [l for l in lines if any(c in l for c in panel_cues)]
+        audit = {"n_lines": len(lines), "families": ["rule-compound"], "panel_cue_leak": len(leak),
+                 "panel_target_overlap": [], "grid_total": len(pairs), "grid_taught": len(pairs),
+                 "coverage": 1.0, "violations": []}
+        if leak:
+            audit["violations"].append("%d drill line(s) reproduce a PANEL cue" % len(leak))
+        return text, audit
     if coverage > 0.0:
         # H_9865 PAIR-HOLD-OUT (the design H_9863 needed and did not have). Grid-disjoint drills
         # cannot work: with a disjoint VOCABULARY a lookup composition has no shared structure to
@@ -406,6 +447,19 @@ def build_weavepanel(families, max_items, seed):
             for k, (a, b, t) in enumerate(_WP_DIR):
                 sa, sb, st = _WP_DIR[(k + 1) % len(_WP_DIR)]
                 if st == t:
+                    continue
+                items += _wp_emit(fam, car, a, b, t, sa, sb, st)
+        elif fam == "rule-compound":
+            # panel takes the pairs where (i+j) % 5 == 0 — a fixed, reproducible slice; the drill
+            # gets the complement, so panel pairs are never demonstrated while the RULE is.
+            n = len(_WP_STEM)
+            grid = [(x, y) for x in range(n) for y in range(n) if x != y and (x + y) % 5 == 0]
+            for k, (x, y) in enumerate(grid):
+                sx, sy = grid[(k + 1) % len(grid)]
+                a, b = _WP_STEM[x], _WP_STEM[y]
+                sa, sb = _WP_STEM[sx], _WP_STEM[sy]
+                t, st = _wp_compound(a, b), _wp_compound(sa, sb)
+                if t == st:
                     continue
                 items += _wp_emit(fam, car, a, b, t, sa, sb, st)
         elif fam == "double-neg":
