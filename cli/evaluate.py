@@ -2628,6 +2628,144 @@ def _addr_census_core(H, K, W_q_seeds, rng):
             "obs_raw": obs_r, "ped_raw": ped_r, "excess_raw": ex_r, "shared_frac": shared_frac}
 
 
+def _retr_probe_core(H, K, tr, te, iters=1200, lr=0.05, seed=0):
+    """Bridge-FAITHFUL slot-retrieval probe (H_9825 · ported from lab/v2 probe_decode.py:84).
+
+    Fits ONLY a linear query map W(d -> d_k) — exactly store_apply's q = h @ W_q — such that
+    softmax((h@W) . K[i] / sqrt(d_k)) picks the entity's own key out of the pool. This is the
+    RETRIEVAL half a bolt-on bridge must form on a FROZEN trunk, isolated from the readout and
+    the operator gate, so it answers "can this trunk be addressed AT ALL" with a CEILING rather
+    than a pass/fail. Distinct from --store-addr-census, which is a random-W_q geometry screener
+    and reads no target at all.
+
+    H  : (N, d)   penultimate __last per entity.
+    K  : (N, d_k) entity-keys K[i] = _entity_key(key_emb, e_i); entity i's target IS index i.
+    tr/te : disjoint index arrays. W is fit on the tr entities scored against the tr keys ONLY,
+        then read on the te entities against the te keys — so the number is GENERALIZING
+        content-addressing, never a memorized row. Chance is DERIVED from the realized test
+        pool (1/len(te)), never assumed (chance-level-must-be-derived-per-metric).
+    Returns {acc, chance, n_train, n_test}."""
+    import numpy as np
+    d = H.shape[1]
+    d_k = K.shape[1]
+    Htr, Ktr = H[tr], K[tr]
+    Hte, Kte = H[te], K[te]
+    n = len(tr)
+    scale = 1.0 / np.sqrt(d_k)
+    rng = np.random.default_rng(seed)
+    W = rng.standard_normal((d, d_k)) * 0.02
+    m = np.zeros_like(W); v = np.zeros_like(W)
+    b1, b2, eps = 0.9, 0.999, 1e-8
+    Yoh = np.eye(n)
+    for t in range(1, iters + 1):
+        q = Htr @ W                                  # (n, d_k)
+        logits = (q @ Ktr.T) * scale                 # (n, n) == the bridge's attention logits
+        z = logits - logits.max(axis=1, keepdims=True)
+        P = np.exp(z); P /= P.sum(axis=1, keepdims=True)
+        dlog = (P - Yoh) / n * scale                 # (n, n)
+        g = Htr.T @ (dlog @ Ktr)                     # (d, d_k)
+        m = b1 * m + (1 - b1) * g
+        v = b2 * v + (1 - b2) * (g * g)
+        W -= lr * (m / (1 - b1 ** t)) / (np.sqrt(v / (1 - b2 ** t)) + eps)
+    pred = ((Hte @ W) @ Kte.T).argmax(axis=1)
+    acc = float((pred == np.arange(len(te))).mean())
+    return {"acc": acc, "chance": 1.0 / float(len(te)), "n_train": int(n), "n_test": int(len(te))}
+
+
+def _retr_probe_split(N, rng):
+    """Disjoint half/half entity split (the held-out pool the ceiling is read on)."""
+    import numpy as np
+    idx = rng.permutation(N)
+    cut = N // 2
+    return np.sort(idx[:cut]), np.sort(idx[cut:])
+
+
+def store_retr_probe_run(argv):
+    """`anima-py evaluate <ckpt> --store-retr-probe <dump.npz> [--retr-probe-iters 1200]`
+    — the H_9825 bridge-faithful slot-retrieval CEILING, engine-native.
+
+    Reports the fitted-W held-out retrieval accuracy together with TWO controls that decide
+    whether the number is readable at all:
+      · NULL (zero-truth pedestal) — structureless norm-matched H. A probe that scores above
+        chance here is manufacturing retrieval, and the live arm is unreadable.
+      · ORACLE (positive control) — H planted as a linear image of K, so an exact W exists. A
+        probe that fails here is INSTRUMENT-DEAD and no negative may be read from it
+        (positive-control-before-reading-a-negative).
+    DIRECTIONAL: a ceiling on what a bolt-on could reach on this frozen trunk; it never cements.
+
+    --retr-probe-selftest: no ckpt/dump — asserts ORACLE reaches the bar and NULL stays at
+    chance on planted geometry, i.e. that this instrument CAN fail. $0 on mini."""
+    import numpy as np
+    iters = evaluate_intval(argv[1:], "--retr-probe-iters", 1200)
+    rng = np.random.default_rng(29825)
+
+    def _arms(H, K, tag):
+        tr, te = _retr_probe_split(len(H), rng)
+        live = _retr_probe_core(H, K, tr, te, iters=iters, seed=7)
+        hn = float(np.sqrt((H * H).sum(axis=1).mean()) + 1e-9)
+        Hnull = rng.standard_normal(H.shape) / np.sqrt(H.shape[1]) * hn
+        null = _retr_probe_core(Hnull, K, tr, te, iters=iters, seed=7)
+        R = rng.standard_normal((K.shape[1], H.shape[1])) / np.sqrt(K.shape[1])
+        Horc = (K @ R) * hn / (np.sqrt(((K @ R) ** 2).sum(axis=1).mean()) + 1e-9)
+        orc = _retr_probe_core(Horc, K, tr, te, iters=iters, seed=7)
+        print("  [%s] n_train=%d n_test=%d  chance=%.4f" %
+              (tag, live["n_train"], live["n_test"], live["chance"]))
+        print("    ORACLE (planted linear-reachable) acc=%.4f   [positive control]" % orc["acc"])
+        print("    NULL   (structureless H)         acc=%.4f   [zero-truth pedestal]" % null["acc"])
+        print("    LIVE   (this trunk)              acc=%.4f   [CEILING · DIRECTIONAL]" % live["acc"])
+        return live, null, orc
+
+    if "--retr-probe-selftest" in argv:
+        print("=== --store-retr-probe SELFTEST (planted geometry · no ckpt) ===")
+        N, d, d_k = 64, 256, 32
+        Kp = rng.standard_normal((N, d_k))
+        Hp = rng.standard_normal((N, d))          # structureless live arm: must read at chance
+        live, null, orc = _arms(Hp, Kp, "selftest")
+        ok_pos = orc["acc"] >= 0.90
+        ok_null = null["acc"] <= max(4.0 * null["chance"], 0.15)
+        ok = ok_pos and ok_null
+        print("  ORACLE>=0.90 %s · NULL<=max(4x chance,0.15) %s" %
+              ("PASS" if ok_pos else "FAIL", "PASS" if ok_null else "FAIL"))
+        print("  SELFTEST %s — the probe %s separate reachable from structureless geometry" %
+              ("PASS ✓" if ok else "FAIL ✗", "DOES" if ok else "does NOT"))
+        return 0 if ok else 1
+
+    dump_path = evaluate_strval(argv[1:], "--store-retr-probe", "")
+    ckpt = argv[0]
+    print("=== anima evaluate --store-retr-probe — H_9825 bridge-faithful retrieval ceiling ===")
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt); return 1
+    cl = W.get("clms")
+    if cl is None:
+        print("ERROR: ckpt has no CLMS trailer — the probe needs key_emb (use a store-trailer ckpt)")
+        return 2
+    import clms as _clms
+    key_emb = cl["key_emb"]
+    npz = np.load(dump_path, allow_pickle=False)
+    ents = sorted({k[:-6] for k in npz.files if k.endswith("__last")})
+    if len(ents) < 8:
+        print("ERROR: dump has %d entities — the held-out half needs >=4, so >=8 total" % len(ents))
+        return 2
+    H = np.stack([npz[e + "__last"].astype(np.float64) for e in ents])   # (N, d)
+    K = np.stack([_clms._entity_key(key_emb, e) for e in ents])          # (N, d_k)
+    print("  n_entities=%d  d=%d  d_k=%d  iters=%d" % (len(ents), H.shape[1], K.shape[1], iters))
+    live, null, orc = _arms(H, K, "ckpt")
+    if orc["acc"] < 0.90:
+        verdict = "INSTRUMENT-DEAD"
+    elif null["acc"] > max(4.0 * null["chance"], 0.15):
+        verdict = "INVALID"
+    elif live["acc"] <= max(2.0 * live["chance"], 0.15):
+        verdict = "FLOOR"
+    else:
+        verdict = "REACHABLE"
+    print("  → %s   [DIRECTIONAL ceiling · never cements · the verdict is the 303M fire]" % verdict)
+    print(json.dumps({"ckpt": ckpt, "dump": dump_path, "n": len(ents), "chance": live["chance"],
+                      "live": live["acc"], "null": null["acc"], "oracle": orc["acc"],
+                      "verdict": verdict}, ensure_ascii=False))
+    return 0
+
+
 def store_addr_census_run(argv):
     """`anima-py evaluate <ckpt> --store-addr-census <dump.npz> [--census-seeds 12]`
     — the H_9719 EMERGENT-ADDRESS $0 pre-screen, engine-native (a_experiment_engine_native).
@@ -9523,6 +9661,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-addr-audit", "--store-telemetry", "--weave-null", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
     "--store-query", "--store-fuse", "--store-readout",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
+    "--store-retr-probe", "--retr-probe-selftest", "--retr-probe-iters",   # H_9825 retrieval ceiling
     "--fan-bind", "--fan-smp",
     "--mouth-binder", "--mouth-binder-order-scramble",
     "--fan-dump",
@@ -16399,6 +16538,11 @@ def main(argv):
     # pedestal. DIRECTIONAL screener (KILL-before-spend); admissible (no target_slot read).
     if "--store-addr-census" in argv or "--store-census-selftest" in argv:
         return store_addr_census_run(argv)
+    # --store-retr-probe <dump.npz> / --retr-probe-selftest: H_9825 bridge-faithful retrieval
+    # CEILING — fits the linear query map the bridge itself uses and reads held-out entity
+    # retrieval against ORACLE (positive) and NULL (zero-truth) arms. DIRECTIONAL, never cements.
+    if "--store-retr-probe" in argv or "--retr-probe-selftest" in argv:
+        return store_retr_probe_run(argv)
     # --faction-phi-proxy <prompts.json>: the ARCHIVED faction Phi proxy recomputed on live
     # trunk activations vs a zero-truth PEDESTAL (H_9660/H_9654 · faction-lateral-axis-r3).
     # Indicts the formula; never cements a consciousness verdict (a_phi_iit4_tool).
