@@ -1,0 +1,42 @@
+codegen_native.hexa's own enc_bl (lines 124-129) already handles negative off26 correctly (commit history shows prior fix); its standalone T5 (17,25)=138 failure has a distinct root cause unrelated to BL imm26 sign — not addressed in this commit.
+fix(codegen): test_native_multi_calls inline patch_call_fixups_arm64 — backward BL imm26 wrap (17/17 PASS, was 15/17)
+  + self/codegen_native.hexa — extends lower_expr for bool_lit / unary_op /
+test(codegen): wire real native exec for VM→ARM64 — 5/5 bytes+exec PASS
+- scripts/native_build.hexa — P7-6c driver: hexa → native binary using
+Applied identical fix pattern from self/codegen/mod.hexa@1f80182 to the 4 inline copies of patch_call_fixups_arm64 in tests/test_native_multi_calls.hexa. Hexa's `%` follows sign of dividend so `-5 % 2^26 = -5` not 67108859; adding 0x94000000 to a negative imm26 corrupts the opcode byte (0x93FFFFFB instead of 0x97FFFFFB).
+Baseline: 15/17 PASS (Test 3 backward byte[20] = 0xFB failing; Test 7 tautology passing by accident)
+feat(ir): P7-6 lower_expr extension — bool_lit/unary_op/bin_op recursion + assign/for_range
+feat(scripts): ai_native unified dashboard — orchestrates lint/hotpath/algorithm_swap
+fix(codegen): backward BL imm26 sign-extension — codegen_native T5 (17,25)=42 PASS
+  #1 naming (F1-F5)   — scripts/ai_native_scan.hexa + inline bash guard
+fix(tests): inline 87 large modules (500-1000 lines) — nearly all imports resolved
+feat(ir): P7-6 lower_expr +string_lit/index/field + array_from_vids helper
+  bin_op recursion, adds assign + for_range, codegen_native picks up the
+- Reuses FnDecl.annotations (no new AST field) — structured form lives
+  기존: int/float/bool/ident/unary/bin + let/assign/if/while/for/match/break/continue/return
+feat(M4): 4-track parallel optimization — hxmetal GPU FFI + bf16 NEON + allocator + bugfix
+fix(tests+runtime): inline 4 ai_native/ml imports + re-add execinfo.h (133 assertions)
+After:    17/17 PASS (both backward paths now produce correct imm26 sign-extended BL)
+- hello_world native PoC: self/compile_hello.hexa — drives the zero-tool
+Extends scripts/ai_native_testgen.hexa so the signature-aware (AST-typed)
+feat(p7-7a): full-operand backend ARM64 syscall emit in codegen/mod.hexa
+Also corrected Test 7's expected-value assertion which was computing the buggy modular arithmetic (`((-10) % 67108864) % 256 = -10`) against itself; replaced with the correct unsigned byte `0xF6` derived from 0x97FFFFF6 LE encoding.
+feat(runtime): add streaming builtins read_bytes_at / write_bytes_append / file_size for multi-GB safetensors I/O
+  first runtime.c function group ported to pure Hexa. ./hexa self/test_char_pure.hexa → 40 passed, 0 failed.
+feat(codegen): end-to-end AST→IR→ARM64→Mach-O pipeline — 3 programs PASS (P7-8)
+components, single-node, empty graph, unreachable target — 49 assertions, ALL PASS.
+  (2) next — one line in self/codegen_c2.hexa that calls select_find_in_annotations
+feat(ai_native): 9 training primitives — muon/SWA/sparse_grad/mixed_precision/etc
+feat(runtime): @limit enforcement — singleton + system-state refusal (ai-native)
+fix(codegen): codegen_native T5 — STP-pre/LDP-post imm7 overflow for frame>512B
+fix(tests): inline final 6 giant modules (1000-4092 lines) — 0 imports remain
+  absmax scaling. Renames: quantize_4bit → quantize_nf4, nearest_code →
+feat(codegen): ARM64+x86_64 write/exit syscall encoders — P7-7 unblocked
+  - Handles single-file and sharded inputs (model.safetensors.index.json).
+builtin or native dependency — useful as a drop-in PQ for pathfinding,
+feat(codegen): VM bytecode → ARM64 transpiler — 5 tests PASS (P7-8)
+feat(self): P7-6 IR lowering 43/43 + runtime char_pure 40/40 + hello_world native exit 42
+fix(tests): inline dijkstra/kmp/levenshtein imports + codegen updates (91 assertions)
+feat(codegen): compile_hello emits real hello-world native Mach-O — P7-7 closed
+feat(codegen): compile_factorial — 3 factorial variants as native ARM64 Mach-O
+Lands the scaffolding for S-5 / S5-1 (shared/hexa-lang/ai_native_s_level.json)

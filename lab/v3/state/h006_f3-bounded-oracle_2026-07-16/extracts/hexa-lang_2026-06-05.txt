@@ -1,0 +1,35 @@
+* domain(HEXA-FUSION P1B-a''): device-glue RACEFIX — zero-on-alloc kills the uninitialized-tail non-determinism (WIP CHECKPOINT)
+* domain(HEXA-FUSION P1B-a'): device-resident eager ref — HEXA_EAGER_DEVRESIDENT (WIP CHECKPOINT)
+HEXA-FUSION N1+N2: ~1e-1 device-glue non-det = async cross-stream race (N1 harness GREEN · CE-correct under async-OFF) (#2789)
+* domain(HEXA-FUSION P1B-a'): build inputs — FP64-megafwd runtime_cuda.c (extractor) + device-eager clm_prod.c + fire script
+* domain(HEXA-FUSION N1): per-glue-kernel run-to-run determinism harness (WIP CHECKPOINT)
+* domain(HEXA-FUSION P1B-a''): RACEFIX FALSIFIED 🔴 — zero-on-alloc INEFFECTIVE, device-glue non-det is ~1e-1 INPUT-path (not ~7e-6 tail)
+HEXA-FUSION P1B-a'': device-glue RACEFIX 🔴 CLOSED-NEG — zero-on-alloc FALSIFIED (non-det is ~1e-1 INPUT-path, not ~7e-6 tail) (#2783)
+fire_p1b_aprime2.sh: STAGE A pins the race (full-fwd ladder x3, knob OFF=~7e-6 vs ON=Δ0),
+* domain(HEXA-FUSION N1+N2): FINAL verdict — ~1e-1 = async cross-stream race; CE-correct under async-OFF
+HEXA-FUSION B6: FP64 own-GEMM in the cooperative megakernel — byte-eq CLOSED-NEG (max|Δ|≠0, reduction-order), util +3.44pp GREEN (#2772)
+HEXA-FUSION P1B-a': byte-eq CLOSED-NEG — device-glue NON-DETERMINISM re-classifies the wall (🟢 util +2.49pp) (#2779)
+byte-eq-SAFE realization is the GLUE-ONLY megakernel (GEMMs stay separate cublasDgemm) already
+megastep path is NOT max|Δ|=0 byte-eq to eager (rel-RMS ~1e-3, TF32 own-GEMM bar). The
+* domain(HEXA-FUSION N2): pin ~1e-1 to the async _h2d cross-stream RACE + fix (forge_sync drain)
+two device-glue runs. The erf gap is clean + deterministic (host vs device |Δ|=9.3e-13
+tail). Both probes fire: [MEGAFWD-FIRED] (_hx_k_clm_megafwd, grid=528) + [FULLSTEP-FIRED]
+* feat(hexa-fusion H1b): device-resident full-step MEGAKERNEL SKELETON (WIP) — cooperative-launch persistent kernel + inline own-GEMM, GEMM->gelu->GEMM sub-chain
+* WIP(qforge): LaH10 2nd-anchor cross-val scaffold — elph fixtures + a2f→λ tail test
+domain(HEXA-FUSION M2 full-step): cooperative full-step megakernel BUILT+MEASURED on H100 — 🔴 util-GREEN FALSIFIED (serial-DAG floor intrinsic) (#2788)
+HEXA-FUSION P1: TF32 GEMM-pulling megakernel REAL-step A/B — util +5.51pp CE-safe, util-99% closed-neg (serial-DAG floor) (#2769)
+* domain(HEXA-FUSION P1B-a'): 🔴 byte-eq CLOSED-NEG — device-glue NON-DETERMINISM re-classifies the wall (🟢 util +2.49pp)
+* domain(hexa-fusion P1): discovery log — megakernel FIRES on Blackwell, sizing fix unblocked the launcher
+clm_prod GEMMs are FP64 cublasDgemm. TF32 ≠ FP64 → CE byte-eq (max|Δ|=0) FAILS by construction
+* fix(hexa-fusion P1): groupnorm in megakernel = G=1 whole-tensor reduction (was wrongly per-row)
+    accuracy |Δψ⟩ FP64-vs-mixed max_rel_err = 0.0 (linear residual-refine, bit-exact);
+(_ensure_dev_alloc_out + GEMM-C + batched-C), gated HEXA_DEVGLUE_DETERMINIZE (default ON).
+* domain(HEXA-FUSION M2 full-step): cooperative full-step megakernel BUILT + MEASURED on H100 — 🔴 util-GREEN FALSIFIED (10.4%→13.9% MEAN, serial-DAG floor intrinsic)
+* feat(hexa-fusion B6): wire FP64-exact own-GEMM into the cooperative megakernel (HEXA_CLM_MEGASTEP_FP64)
+⚠ STRUCTURAL byte-eq NOTE (the decisive gate, pre-registered): the megakernel pulls the conv
+WALL 2 (already measured on the REAL trainer): the only byte-eq-SAFE megakernel (glue-only,
+megakernel (PR #2743) and wire it into the REAL clm_prod_fwd path, to measure util on the
+from "irreducible deterministic erf ULP" (P1B #2777) to a FIXABLE device-glue race that
+feat(hexa-fusion H1b): device-resident MEGAKERNEL SKELETON — cooperative-launch persistent kernel + inline own-GEMM (structure byte-exact, util-win regime-scoped honestly) (#2735)
+* verdict(hexa-fusion P1): TF32 megakernel REAL-step util 29.03→34.54% (+5.51pp), CE converges — util-99% CLOSED-NEG (serial-DAG floor)
+docs(hexa-fusion E1): README flame/forge — own-GEMM (CUDA-OWN) is ≈cuBLAS-parity, 100% hexa-ownable, megakernel-unblock (#2719)

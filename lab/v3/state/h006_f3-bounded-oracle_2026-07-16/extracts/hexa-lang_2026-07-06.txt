@@ -1,0 +1,44 @@
+flip — the flip plumbing (HEXA_RT_STRTOD_TAIL_NATIVE opt-in gate + stage_resolve:707 resolve) is
+Commits the 3 frozen strtod-TAIL native seeds (self/native/float_parse_hexinfnan_{arm64,x86_64,
+  under #ifdef HEXA_RT_NATIVE_REALLOC (the load-bearing fix — closes the family on darwin).
+feat(zeroc #29): strtod-tail native seeds — 3-target frozen bake (byte-neutral) (#4637)
+the RHS did not. This is the root cause of the strtod-tail seed x86_64 assemble failure that
+flip(zeroc #29): mem-leaf memcpy/memset/memcmp default-native — Fable option D (#4604)
+a malloc→realloc→free round-trip smoke. Design: state/hexa-own/realloc_rearch_design_fable.md §2-4.
+byte-identical (byteeq 3-target neutral). float_parse_hexinfnan.hexa is unchanged e6447787d..HEAD,
+was never in realloc's body — -DHEXA_RT_NATIVE_REALLOC flips hxlcl_malloc to a base+16 header
+flip(zeroc #29): realloc F2 mechanism — magic-guarded family header (default-OFF) (#4620)
+BLOCKED the flip gate (convergence float-parse-hexinfnan-x86-64-s-1); arm64 was unaffected.
+flip(zeroc #29): self-contained libc-drop batch — strtol + ptsname_r (DRAFT · byteeq-gated) (#4607)
+feat(zeroc #29): FLIP-7 mechanism (A) v2 — environ coherence via ELF alias (default-OFF) (#4631)
+docs(zeroc #29): self-host floor reconcile — reducible 60→54 post str*/free/calloc (#4597)
+globl=6); darwin-arm64 cross-assembles clean. These were the SOLE blocker for the strtod-tail
+F2 (all inside #ifdef HEXA_RT_NATIVE_REALLOC → OFF path byte-identical, byteeq-neutral):
+The shim #ifndef HEXA_RT_NATIVE_REALLOC guard already exists (#4556 mechanism), so the
+OFF-neutrality → strtod-accuracy oracle corpus (aiden glibc vs seed) → flip.
+REGEN_OK) — convergence regen-float-parse-hexinfnan-native-s-sh-1; re-baked clean. Next: byteeq
+runtime.a FFI stub, no rpath, no HEXA_CUDA flag — hand-rolling anti-pattern designed out.
+flip(zeroc #29): str-leaf strncpy/strcat/strcpy default-native — mem-leaf recipe (#4605)
+name-mangling not a drop mechanism; the registry :auto/:0 is a seed gate (no-op without a
+flip(zeroc #29): strlen default-native musl word-scan (DRAFT, byteeq-gated) (#4612)
+No registry(1533) change · not a HEXA_RT_NATIVE_STRLEN flip · errno untouched.
+EXHAUSTED — remaining reducible work = the tracked WALL-15 flips (regex/strtod-tail/FLIP-7) only,
+Revert "flip(zeroc #29): realloc native seed default-ON — pool-baked + isolated (#4599)" (#4600)
+single-TU runtime.a while the ship uses HEXA_RT_MULTIOBJ=1. S5.5 audits the ld -r MULTIOBJ merge
+flip(zeroc #29): strcmp non-shim caller drop — finishes #4591 (DRAFT · byteeq-gated) (#4602)
+  `-DHEXA_RT_MEM_LIBC` is a polarity-correct opt-out to the libc delegate (realloc-revert
+flip(zeroc #29): realloc F2 flip — pure -D on shim+runtime_core, seed retired (#4621)
+# no-verify-ok CHANGELOG added; seeds are gitignored-exception native .s (tracked)
+flip(zeroc #29): realloc native seed default-ON — pool-baked + isolated (#4599)
+- types.hexa Index handler (_infer_expr): after base inference, before the array
+(state/hexa-own/realloc_rearch_design_fable.md, convergence hxlcl-realloc-arm64-s-1): the abort
+so the seeds are current. The first bake was stale-aprime_cc-contaminated (aiden on the orphan
+* fix(zeroc #29 strcmp): include-guard the emitted hxlcl_strcmp body — was redefinition RED
+already merged (#4448). Byte-neutral: default-OFF → the seed is not consumed → runtime.a
+pair-carry F-RT-NATIVE-X86-CODEGEN-ROOTCAUSE; setjmp; .s-assembly floor). Every self-hosted
+docs(state): zeroc #29 SSOT — residual-census EXHAUSTED + FLIP-7 anchor falsify (#4629)
+call hxlcl_strlen, but under HEXA_RT_SELFEMIT_STRLEN the shim's own hxlcl_strlen body is
+  (reusing the existing byte-id-arm bodies, non-volatile), with -DHEXA_RT_STR_LIBC as a
+memleaf_flip_design_fable.md) corrected the naive plan: the codegen intercept table is
+* fix(zeroc #29 PR-2): forward-declare hxlcl_strlen before getenv/setenv shim bodies
+feat(zeroc #29): union-floor sweep — isdigit codegen clone + build_c str* self-contained inlining (#4613)

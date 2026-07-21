@@ -1,0 +1,75 @@
+======================================================================
+H_003 training driver — SMOKE (wiring only) · d=64 L=2 · 1 seeds × 3 arms
+======================================================================
+    encoding CPT for 'atom' (1500 lines)…
+    A-atom s0 cpt step 0/30 loss=5.688
+    A-atom s0 cpt step 3/30 loss=5.117
+    A-atom s0 cpt step 6/30 loss=4.906
+    A-atom s0 cpt step 9/30 loss=4.718
+    A-atom s0 cpt step 12/30 loss=4.585
+    A-atom s0 cpt step 15/30 loss=4.428
+    A-atom s0 cpt step 18/30 loss=4.216
+    A-atom s0 cpt step 21/30 loss=4.169
+    A-atom s0 cpt step 24/30 loss=4.050
+    A-atom s0 cpt step 27/30 loss=3.958
+    A-atom s0 drill step 0/20 loss=3.528
+    A-atom s0 drill step 2/20 loss=3.485
+    A-atom s0 drill step 4/20 loss=3.331
+    A-atom s0 drill step 6/20 loss=3.266
+    A-atom s0 drill step 8/20 loss=3.112
+    A-atom s0 drill step 10/20 loss=3.087
+    A-atom s0 drill step 12/20 loss=2.971
+    A-atom s0 drill step 14/20 loss=2.858
+    A-atom s0 drill step 16/20 loss=2.851
+    A-atom s0 drill step 18/20 loss=2.740
+  A-atom   s0  f2'=0.5  f1'=0.5
+    encoding CPT for 'shat' (1500 lines)…
+    A-shat s0 cpt step 0/30 loss=5.611
+    A-shat s0 cpt step 3/30 loss=5.223
+    A-shat s0 cpt step 6/30 loss=4.927
+    A-shat s0 cpt step 9/30 loss=4.644
+    A-shat s0 cpt step 12/30 loss=4.517
+    A-shat s0 cpt step 15/30 loss=4.464
+    A-shat s0 cpt step 18/30 loss=4.221
+    A-shat s0 cpt step 21/30 loss=4.213
+    A-shat s0 cpt step 24/30 loss=4.100
+    A-shat s0 cpt step 27/30 loss=3.959
+    A-shat s0 drill step 0/20 loss=3.837
+    A-shat s0 drill step 2/20 loss=3.908
+    A-shat s0 drill step 4/20 loss=3.689
+    A-shat s0 drill step 6/20 loss=3.586
+    A-shat s0 drill step 8/20 loss=3.505
+    A-shat s0 drill step 10/20 loss=3.446
+    A-shat s0 drill step 12/20 loss=3.213
+    A-shat s0 drill step 14/20 loss=3.162
+    A-shat s0 drill step 16/20 loss=3.140
+    A-shat s0 drill step 18/20 loss=3.044
+  A-shat   s0  f2'=0.5  f1'=0.5
+    encoding CPT for 'plc' (1500 lines)…
+    C-plc s0 cpt step 0/30 loss=5.659
+    C-plc s0 cpt step 3/30 loss=5.198
+    C-plc s0 cpt step 6/30 loss=4.922
+    C-plc s0 cpt step 9/30 loss=4.723
+    C-plc s0 cpt step 12/30 loss=4.569
+    C-plc s0 cpt step 15/30 loss=4.401
+    C-plc s0 cpt step 18/30 loss=4.490
+    C-plc s0 cpt step 21/30 loss=4.046
+    C-plc s0 cpt step 24/30 loss=4.006
+    C-plc s0 cpt step 27/30 loss=4.037
+    C-plc s0 drill step 0/20 loss=3.526
+    C-plc s0 drill step 2/20 loss=3.483
+    C-plc s0 drill step 4/20 loss=3.334
+    C-plc s0 drill step 6/20 loss=3.269
+    C-plc s0 drill step 8/20 loss=3.118
+    C-plc s0 drill step 10/20 loss=3.085
+    C-plc s0 drill step 12/20 loss=2.963
+    C-plc s0 drill step 14/20 loss=2.849
+    C-plc s0 drill step 16/20 loss=2.844
+    C-plc s0 drill step 18/20 loss=2.746
+  C-plc    s0  f2'=0.5  f1'=0.5
+
+falsifier readout (per seed):
+  s0: {'F1_delta_atom_minus_shat': 0.0, 'F2_liveness_f1prime': 0.5, 'F6_placebo_atom_minus_plc': 0.0}
+
+SMOKE: wiring verified iff every arm produced f2'/f1' numbers above (values are meaningless at d=64/30 steps). The full run is the verdict.
+wrote train_result_smoke.json

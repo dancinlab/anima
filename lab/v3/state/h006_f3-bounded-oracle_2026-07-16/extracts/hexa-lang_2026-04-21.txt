@@ -1,0 +1,34 @@
+verified: hexa tool/workspace_sync.hexa /Users/ghost/core/.workspace → anima atlas.n6/atlas.signals 2개 self-ref 감지 (exit errors=2 + reject 메시지)
+- anima/tool/roadmap_progress_check.hexa → hexa-lang/tool/roadmap_progress_check.hexa
+- `hexa tool/roadmap_progress_check.hexa --strict` exit=0 with all 44 probes PASS
+  `roadmap_dod_bridge.hexa:45 DOD_GATE = HEXA_LANG + "/tool/dod_gate.hexa"` was always NO_SPEC because dod_gate.hexa lived only in nexus after the consolidation commit 879caf24. Now resolvable from the canonical location.
+chore(.raw-audit): roadmap verification gates append — session 2026-04-21
+   2026-04-21 — airgenome hook manifest would chain hexa run calls and
+Context (2026-04-21 fork-storm incident): 108 user.safe_hexa.* zombie launchd jobs accumulated, roadmap-watcher 60s cadence + readme-english-audit 15m unregistered, roadmap_critical_path --selftest stuck 10+ min re-spawned every tick piling up to 1722 stage0 processes.
+Common logic tier SSOT policy — all roadmap_* / parallel_* / scheduler / dispatcher tools live in hexa-lang/tool/ (raw#0 root-ssot consumers). nexus/tool/ and anima/tool/ are thinned to repo-local logic only.
+  launchd dev.hexa-lang.roadmap-progress.plist updated to new path, still scoped to anima cwd
+chore(.roadmap): hybrid main + cell/lora sub 구조 최종 — session 2026-04-21 보관
+Context: 2026-04-21 workspace_sync.hexa + cl.hexa env (zshrc login chain) 이
+  (observed 2026-04-21 "Runtime error: undefined function: safe_write_file"
+feat(roadmap-engine): airgenome hook CLI wiring — T*/cp_shift + verify-gates per-module touch
+- NEXUS -> HEXA_LANG (all references; NEXUS_BIN/NEXUS_ENV-type composites preserved)
+/Users/ghost/Dev/airgenome/bin/airgenome but lacks `hook` subcommand; parallel
+chore(.roadmap): verification gates + session invariants enrichment (linter)
+- tool/backup_file_lint.hexa (163L) -- raw#34 enforcer: glob scan + --sweep + AI-native JSON error with canonical_recovery field
+- $NEXUS/harness/*              -> $HEXA_LANG/state/*    (cross-repo canonical state)
+  → 2026-04-20T18:52:51Z | promote | ghost | raw#12 append subcommand test \
+- self/module_loader.hexa: @pure on 5 bootstrap helpers (ml_dirname, ml_join_path, ml_with_hexa_ext, ml_starts_with, ml_split_lines). Grammar-level guard against future exec/spawn addition via raw#3 attr-usage + raw#11 ai-native-enforce pure transitive check.
+- Path rewiring: 19 files reference HARNESS = NEXUS + "/harness" which is an obsolete ghost path (nexus/harness/ does not exist). Next commit redirects HARNESS → hexa-lang/state/ for centralized state, or per-repo state/ for repo-local output
+- Divergence resolved: roadmap_engine.hexa + roadmap_parse.hexa had newer AOT/verify-gates/airgenome-CLI work in hexa-lang already; nexus versions discarded in favor of existing hexa-lang canonical
+- tool/loop_lint.hexa: launchd plist ↔ .loop cross-check + bounded-timeout invariant on launchd-owned entries. Transitional — raw#17 follow-up retargets to .own.
+- shared/config/infrastructure.json (symlink → /Users/ghost/core/nexus/shared/config/infrastructure.json)
+  2026-04-20T18:49:09Z | defer        | ghost | raw#15 … | ok | c77f863a… | 7e562956… | 254e3553…
+  2026-04-20T18:49:09Z | scope_reduce | ghost | raw#6 … | ok | c77f863a… | 7e562956… | 2a72c18d…
+- ProgramArguments script path -> /Users/ghost/core/hexa-lang/scripts/safe_hexa_launchd.sh
+fix(roadmap): progress_check exit propagation + mkdir -p guard + restore dod_gate.hexa
+Introduce tool/airgenome_hook.hexa so roadmap/verify tools can interact with
+ULTRA_UNIFORMITY_THEOREM (lines 21634-21646) + "[11*]"-tagged documentation
+  engine verify-gates   : 147s  → 2.16s  (68×, requires airgenome AOT)
+  Previously the bare `main()` call always exited 0 even on `roadmap_file_not_found` or --strict violations, making launchd miss failure signals.
+- env NEXUS_COMMIT_OK           -> HEXA_COMMIT_OK        (heads-up: any shell setting this must update)
+refactor(tools): rewire NEXUS+harness -> HEXA_LANG+state across 29 tools + reactivate dispatch launchd

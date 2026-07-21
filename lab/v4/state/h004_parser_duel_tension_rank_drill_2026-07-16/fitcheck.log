@@ -1,0 +1,10 @@
+FIT-CHECK: d=64 L=2, CPT 200 + drill 1500 on mps (fixed objective λ=5.0 + cosine LR); A-duel s0/s1 + C-perm s0 …
+    A-duel.s0: drill_dacc=1.0  ce_ans=0.0004
+    A-duel.s1: drill_dacc=1.0  ce_ans=0.0004
+    C-perm.s0: drill_dacc=0.6432  ce_ans=0.1728
+
+bar1 A-duel≥0.95 both + spread≤0.03: PASS  (s0=1.0 s1=1.0)
+bar2 ce_ans<0.05 both:               PASS
+bar3 C-perm true-gold ≤0.60:         FAIL  (0.6432)
+
+FIT-CHECK VERDICT: NO-GO — do not spend the full run; diagnose from train_log_fitcheck.jsonl

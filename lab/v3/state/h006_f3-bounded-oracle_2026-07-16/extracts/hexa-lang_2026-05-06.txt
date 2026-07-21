@@ -1,0 +1,50 @@
+이 SSOT 는 ~/.hx/bin/hexa::_darwin_bypass_check 와 build/hexa_interp shim
+hexa run 자체를 hang 시킴 (단순 fn main() { eprintln('x') } 도 timeout).
+즉시 visible. T1~T3 정상 case (단순 eprintln + sleep) 그대로 작동.
+emit하던 기존 cmd_run/try_cache_exec path가 interactive 환경에서
+되지 않아, 이 경로의 .hexa 를 라우팅하면 컨테이너가 빈 파일을 읽어 silent 실패
+자식 interp의 stderr를 temp 파일로 redirect 후 자식 종료시 일괄
+검사용) — 별도 commit 에서 install_interp_shim.hexa 를 함께 수정 예정.
+/tmp/hive_bundle.hexa, hexa build (.../cli_mvp.hexa) 모두 silent → 정상 출력
+정상 출력 (이전엔 silent). 후속: install_interp_shim.hexa 의 Mac
+출력 인자도 [-f] 검사를 통과 못해 (아직 미존재) 결국 라우팅이 일어나 버림.
+도구, hexa.real build 의 bundle.hexa 스테이징, ad-hoc 테스트 스크립트가 모두
+(stdout 비고 exit 0). flatten_imports.hexa <in> <out> 처럼 /tmp 출력 인자를 받는
+darwin-landing block (build/hexa_interp embed 시) 에도 동일 pre-pass 가
+보이면 무조건 bypass. 첫 .hexa 만 보던 기존 루프 위에 배치되어 출력 경로,
+양쪽이 공유. 후자는 별도로 추가 pre-pass 가 필요 (.hexa 가 아닌 출력 인자
+flatten_imports.hexa <input.hexa> <OUTPUT.hexa> 처럼 두번째 인자 = 출력 경로가
+  1. constructor priority 101 (이전: default 65535) — 다른 constructor 전 실행
+setvbuf constructor (commit e4fa9908)가 일부 macOS 환경에서 무력화 사례
+T4 probe 결과 진단: hexa runtime의 popen() 호출시 fork() 전 fflush 누락.
+부모 hexa.real의 stdio buffer가 자식 sh에 inherit. sh가 read </dev/tty로
+/tmp/* 인 경우, 첫 .hexa 인자 (flatten_imports.hexa 자체) 는 패턴에 안 걸리고
+안 되는 사례 발견 (사용자가 enter 한 번 쳐야 출력 나옴). Belt-and-
+새 pre-pass: 모든 positional arg 를 스캔해 /tmp /private/tmp /var/folders 가
+  - uchg lock 우회 사이클로 final 3 lint hits 처리 (chflags nouchg → edit
+f3f2577d 시점 runtime.c로 복귀. e4fa9908 + af462c10 setvbuf constructor가
+진짜 root fix는 hexa.real source의 println impl에 fflush(stdout) 추가
+  ~/.hx/packages/hexa/hexa.real, but tool/bin/build.hexa was cp-ing the
+호출. setvbuf과 무관하게 강제 flush — interactive dead-time 0 절대 보장.
+발견 — 사용자 zsh + Terminal.app + qrencode subprocess 혼재시 stderr조차
+295 idea slots across 14 dimensions (A컴파일러/B런타임/C인터프리터/
+  - Rebuild required to take effect — current ~/.hx/packages/hexa/hexa.real
+Fix: hexa_println / hexa_eprintln 매 호출 후 fflush(stdout/stderr) 명시
+  - Full hexa.real rebuild + T1-T7 prompt-visibility regression NOT run
+Note: AOT regen path currently blocked by separate self-bootstrap issue
+Headline: ~/.hx/bin/hexa was reduced to 6-line direct-exec wrapper on
+- TTY → 자식 stderr 부모 PTY로 직접 inherit (즉시 visible)
+이전 commit (bafedbcd) 은 .hexa 인자에만 적용된 path-pattern bypass 였음. 그러나
+필요 — 별도 cycle. 현재 buffer 문제는 setup_2fa.hexa의 eprintln 변환
+원인 추정: constructor가 다른 hexa runtime init와 race 또는 stdio close
+이전 fix (45821e2 setvbuf _IOLBF constructor)가 일부 환경에서 \n flush
+docs(brainstorm): hexa-lang 성능/자원/속도 개선 — 100+ ideas catalog
+refactor(runaway): annotate ai_native_pass.hexa structural recursion (Class A)
+refactor(runaway): annotate 78 more structural recursions + R3/R6 refinements
+  3. main() 첫 줄에서 setvbuf 재호출 — constructor override 방지
+  raw Mach-O binary directly to ~/.hx/bin/hexa on every `hx install hexa`,
+     ~/.hx/bin/* wrappers. Idempotent installer with --check / --install
+refactor(runaway): annotate stdlib structural recursion (Class A cont'd)
+refactor(runaway): annotate tool/ structural recursion (Class A cont'd)
+build(native): rebuild hexa_v2 — incorporate F05 hexa_cc.c free-site
+docs(daemon): option A plan — hexa.real native daemon-serve + AST cache

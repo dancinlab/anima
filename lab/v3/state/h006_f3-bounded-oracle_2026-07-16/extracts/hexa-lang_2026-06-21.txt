@@ -1,0 +1,47 @@
+and the parser has no range syntax (arr[i+1..j] mis-lexes as chained `.` field
+PROBE-5c-MSG: [warn] non-exhaustive match — missing variants: Green, Blue (add a '_ ->' arm)
+PROBE-5c-MSG: [warn] non-exhaustive match — missing variants: Green, Blue (add a '_ ->' arm)
+PROBE-5c-MSG: [warn] non-exhaustive match — missing variants: Green, Blue (add a '_ ->' arm)
+PROBE-5c-MSG: [warn] non-exhaustive match — missing variants: Green, Blue (add a '_ ->' arm)
+MULTI-LAYER feature gap — the typed compiler's lexer has NO `..` (DotDot) token
+  t33_repro_minimal (struct construct + field chains): native out=[132] rc=0 ==
+SIGSEGV mismatches on some programs — but for a clang-less pod the alternative is
+native). The OTHER r10 target, range/slice arr[lo..hi], is NOT fixed here: it is a
+* feat(forge HEXA_NO_CUBLAS): cuBLAS-free variant — #ifdef out every cublas* call-site (piece 3+4 WIP, pre-build)
+  - main() stripped via awk brace-depth (single-line `}` assumed) lowers __hx_syscall6(39,..) to the inline asm SE; compiled
+feat(run): clang-free native cold path for hexa run + x86_64 seed-link wiring fix (opt-in HEXA_RUN_NATIVE) (#3762)
+  struct field read (P{a:7,b:35}; p.a+p.b): native out=[42] rc=0 (was empty []).
+   hexa_map_set_impl SEGV. Fixed to the correct ABI (mirrors arm64_darwin.hexa
+feat(codegen): __hx_syscall0/6 raw-syscall lowering (opt-in HEXA_RT_SYSCALL_NATIVE, leg-B r3) (#3760)
+   dir, but the compiler's _precompile_lookup probes <install_dir>/release/precompile/.
+revealed ROOT B is bigger than r6's 13 SIGSEGV — flattened use-programs that ALSO
+SCOPE (honest): this fixes the struct_lit + field-access (map-key) construct class
+cublasDgemv call-site under HEXA_NO_CUBLAS — vs cublasDgemv (reference-first:
+patch (deferred to its own lane). Remaining ROOT-B native gaps the corpus still
+Under opt-in codegen-time env HEXA_RT_SYSCALL_NATIVE (default OFF), lower to a
+access), so range/slice needs lexer+parser+HIR+MIR+codegen work, not a codegen
+Standard build (NO_CUBLAS unset) byte-unchanged: the new lines are all inside
+  when the caller's --query already constrains that field (true override, not
+NOTE: depends on the native route's correctness (r6). r6 found native-codegen
+(without r9 all 3 fell back: undefined-ref on the use-d add3/dbl/fib).
+  [transpile] HEXA_VAL_ARENA=0 /Users/mini/.hx/bin/build/hexat /Users/mini/.hx/bin/self/lexer.hexa /tmp/_lexer.c 2>&1
+feat(run): no-host-C-compiler → auto-engage native route (ING #79 root-fix, leg-B r7) (#3766)
+* fix(self): hexa typecheck str/String → string 별칭 정규화 (phantom mismatch 제거)
+* feat(run): clang-free native cold path for hexa run (opt-in HEXA_RUN_NATIVE=1, leg-B)
+to the existing C-transpile+clang path UNTOUCHED (native-first + delegate-fallback,
+— a high-leverage ROOT-B increment (every struct construct + field read on x86_64
+silently ignoring merged source changes (e.g. #3747 --offer). Root cause = release
+Wire the flatten in: before `aprime --emit=obj`, when the source has a use/import/
+Under HEXA_NO_CUBLAS, _forge_bf16_own_on() forced ON (own is the only BF16 path).
+   by release) over the source/version-keyed cmd_run path, so a once-built binary
+cache placement + stale-standalone purge + the source/version-keyed cmd_run path,
+"no host C compiler found" (host_cc() :1345 exit 1). The native cold path (r4/r5,
+:1345 fatal. HEXA_ASSUME_NO_CC=1 forces the no-cc condition (test hook + operator
+as a phantom 'expected [str], got array' mismatch (16 in stdlib/cloud/vast.hexa,
+#3325 contract). DEFAULT OFF = shipped path byte-unchanged (self-host!=release);
+Fix: add #else } #endif to close the own-branch (matching the main-GEMM/batched
+tracked frozen-seed runtime_cuda.c stale (342 lines out of sync). Regenerate it
+(151c52c8...) by restore_frozen_seeds since the .c-graduation (#2065); there is
+range/slice + struct_lit SEGV (r8). So r9 is the necessary ROOT-A prerequisite;
+gemm-perf precedent -- the fix lands as a deterministic post-restore awk patch
+array/map/alloc/rt_hi + -DHEXA_RT_ALLOC_NATIVE=1, str skipped=no x86_64 seed;

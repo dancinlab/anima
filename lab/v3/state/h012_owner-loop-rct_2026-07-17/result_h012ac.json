@@ -1,0 +1,59 @@
+{
+ "knn": 5,
+ "sign_pair": 0.55,
+ "K": 5,
+ "M_cap": 60,
+ "N_cap": 2000,
+ "certify": {
+  "P_BLOCKPOS": {
+   "n": 640,
+   "M": 60,
+   "sign_base_full": 0.7922,
+   "null_p95": 0.6469,
+   "beats_null": true,
+   "onestep_sign": 0.6975,
+   "pass": true
+  },
+  "P_DELAY": {
+   "n": 640,
+   "M": 60,
+   "sign_base_full": 0.65,
+   "null_p95": 0.6484,
+   "beats_null": true,
+   "onestep_beats": false,
+   "pass": true
+  },
+  "P_BLOCKNULL": {
+   "n": 640,
+   "M": 60,
+   "sign_base_full": 0.4688,
+   "null_p95": 0.5391,
+   "beats_null": false,
+   "pass": true
+  },
+  "P_BLOCKCONF": {
+   "n": 800,
+   "M": 60,
+   "sign_base_full": 0.5025,
+   "null_p95": 0.5637,
+   "beats_null": false,
+   "pass": true
+  },
+  "ok": true
+ },
+ "primary": {
+  "n": 2000,
+  "M": 60,
+  "sign_base_full": 0.4205,
+  "null_p95": 0.403,
+  "beats_null": false
+ },
+ "replication": {
+  "n": 2000,
+  "M": 60,
+  "sign_base_full": 0.437,
+  "null_p95": 0.4215,
+  "beats_null": false
+ },
+ "verdict": "BLOCK-REFUSE — even at the WINDOW level (k=5) a single utterance does not shift the owner's subsequent-window input above the shift-null band (sign 0.420/0.437 vs null 0.403/0.421). The refusal is ROBUST across TARGETS (text, behavior) AND TIMESCALES (one-step, window). Honest residue: the sequence-CONTINGENCY channel (yoked ghost) stays H_012B-only — cannot be excluded at $0."
+}

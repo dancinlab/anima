@@ -1,0 +1,70 @@
+{
+ "model": "Qwen/Qwen2.5-3B-Instruct",
+ "episodes": 5,
+ "ticks": 800,
+ "per_episode": [
+  {
+   "seed": 7,
+   "lv_w": {
+    "sign_base_full": 0.0,
+    "sign_shuf_full": 0.165
+   },
+   "closure": 0.625,
+   "blocks": 16
+  },
+  {
+   "seed": 8,
+   "lv_w": {
+    "sign_base_full": 0.0,
+    "sign_shuf_full": 0.0
+   },
+   "closure": 0.3125,
+   "blocks": 16
+  },
+  {
+   "seed": 9,
+   "lv_w": {
+    "sign_base_full": 0.0,
+    "sign_shuf_full": 0.0
+   },
+   "closure": 0.375,
+   "blocks": 16
+  },
+  {
+   "seed": 10,
+   "lv_w": {
+    "sign_base_full": 0.0,
+    "sign_shuf_full": 0.0
+   },
+   "closure": 0.5625,
+   "blocks": 16
+  },
+  {
+   "seed": 11,
+   "lv_w": {
+    "sign_base_full": 0.215,
+    "sign_shuf_full": 0.95375
+   },
+   "closure": 0.625,
+   "blocks": 16
+  }
+ ],
+ "lv_w": {
+  "sign_base_full": 0.043,
+  "sign_shuf_full": 0.22374999999999998,
+  "pass": false
+ },
+ "lv_c": {
+  "closure_mean": 0.5,
+  "episodes_pass": 2,
+  "pass": false
+ },
+ "lv_p": {
+  "CR": 0.41,
+  "replay_agree": 1.0,
+  "n": 200,
+  "pass": true
+ },
+ "brain_calls": 8600,
+ "verdict": "LOOP-REFUSED (localized to THIS agent) — the brain reads its input (CR 0.410) but its contingency leaves no fingerprint above the yoked floor (closure 0.500 < 0.6, 2/5 episodes) — in a world built to reward closure. A terminal-grade negative for Qwen2.5-3B greedy/memoryless; pre-registered escalations (bigger brain, memory, richer env) remain."
+}

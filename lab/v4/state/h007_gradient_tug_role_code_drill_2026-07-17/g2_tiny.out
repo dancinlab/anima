@@ -1,0 +1,20 @@
+==============================================================================
+H_007 mech-5 G-2 verdict run — device=mps d=48 L=2 steps=(60, 80) seeds=(0,) arms=('A-tug', 'C-dup', 'C-shuf', 'C-scaf', 'C-perm') drill=384 f2=192 f1=64
+==============================================================================
+
+--- A-tug.s0 …
+  A-tug.s0: f2_dacc=0.5 f1_dacc=0.5 cos_mean_early=-0.3249 | F4 effrank≥2=True | F5 ΔprojF4=0.0
+
+--- C-dup.s0 …
+  C-dup.s0: f2_dacc=0.5 f1_dacc=0.5 cos_mean_early=-0.3215 | F4 effrank≥2=True | F5 ΔprojF4=0.0
+
+--- C-shuf.s0 …
+  C-shuf.s0: f2_dacc=0.4792 f1_dacc=0.5 cos_mean_early=-0.3486
+
+--- C-scaf.s0 …
+  C-scaf.s0: f2_dacc=0.5 f1_dacc=0.5 cos_mean_early=0.0
+
+--- C-perm.s0 …
+  C-perm.s0: f2_dacc=0.5 f1_dacc=0.5 cos_mean_early=-0.329
+
+wrote g2_result_full.json — run collect_verdict_g2.py for the frozen verdict

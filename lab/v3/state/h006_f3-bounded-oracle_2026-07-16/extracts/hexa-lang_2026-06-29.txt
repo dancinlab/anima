@@ -1,0 +1,44 @@
+  release-integrity invariant. Local darwin clang: base==new .text sha d2090a42…;
+and proven by routec-smoke. It just lacked the per-symbol shim-drop gate the libm
+errno smoke all GREEN; only the darwin-arm64 ON-path link remained, which this fixes.
+libc and the frozen blob's raw `timegm(&g)` resolves to the native body, dropping
+(SSE-class, the atoi→atoll inner-call pattern extended to the SSE class). The
+* fix(codegen arm64 §M8): __hx_rodata_tab_ptr arm64 implementation — darwin Route C ON-path emit smoke
+the PUREST self-contained leaf — the frozen 0-libc floor's no-op free (the hxlcl_malloc
+* fix(§M8 varargs r1): variadic fn returns C-ABI single-register (rax), not PAIR-MODEL
+The darwin-arm64 ON-path emit smoke link-failed: `Undefined symbols for architecture
+* fix(hxlcl_cos Route C): strict cancellation diversion — single `divert` predicate gates ALL bands (k·pi/2 band-ladder bug, the #4230/#4231 sin inheritance)
+feat(selfhost RFC061 §M8 RT-NATIVE-STRSTR): hxlcl_strstr native-emit via Route C — FIRST non-libm shim symbol drop (default-OFF, byteeq-neutral) (#4240)
+an ordinary PAIR-MODEL fn during the whole-module ON-path emit — arm64 fp Route C is
+is a PURE self-contained byte-walk parse leaf — no syscall, no errno, no inner C-ABI
+THIRD non-libm hxlcl_* to leave the shim (strstr #4240 / strtoll #4241). hxlcl_free is
+reference-match: musl src/math/{sin,__sin,__cos,__rem_pio2}.c (all constants verified
+The advisory Route C ON-path smoke (which runs the REAL compiler on hxlcl_core.hexa
+on arm64); shim drops cos via `#ifndef HEXA_RT_NATIVE_COS`; stage_resolve_runtime_a
+Same convergence pattern the prompt flagged (fp-ABI #4225 also deferred arm64 Route
+(integer C-ABI) and proven by routec-smoke; it just lacked the per-symbol shim-drop
+link path. R2 = drop-ON link wiring + adjacent α leaves (the other native-compute
+reference-match: musl src/math/{cos,__sin,__cos,__rem_pio2}.c (constants verified
+intrinsic broke the darwin-arm64 Route C ON-path emit smoke (advisory). The whole
+double-leaves to an integer-returning PURE leaf. hxlcl_strstr is a self-contained
+   runtime_core.c WITH HEXA_RT_ALLOC_NATIVE guards (after restore_frozen_seeds)
+(T·Cout·Cin·K ≈ 201M iter/call × 4 calls/step) with zero GPU involvement,
+feat(forge/cuda det): PyTorch-canon HEXA_DET reference-match — alertNotDeterministic guard + hexa gpu self-report lockstep (#4212) (#4212)
+* feat(forge/cuda): own-native fast-default IMPL — _forge_det_on() gate + atomic kernels default, det opt-in (#4204)
+* fix(codegen x86_64 payload-shift): resolve operands into r10/r11 scratch before rcx copy — avoid pool-reg clobber
+* fix(hxlcl_sin Route C): inline __sin/__cos kernels + hoist muts + rename `fn`→`qn` — ON-path compile errors
+* fix(arm64 codegen): lower __hx_payload_f2i/i2f (fcvtzs/scvtf) — darwin-arm64 ON-path link gap
+docs(ARCHITECTURE): lockstep-register #4208 forge det kernels into #4204 policy node (#4210)
+self/ closure; intrinsic only fires under HEXA_CABI_HXLCL) → rodata/__const unchanged
+small-band reduction is a STRICT ix-range if/elif ladder, but #4230 FLATTENED it to 4
+matches ONLY its exclusive (lower, upper] range, exactly mirroring musl's ladder. The
+Also fixed the verify tool: the 1647099.0 sweep point sits AT the large-path boundary
+zero inner C-ABI callee, zero extern-data. The Route C native body is FAITHFUL to the
+musl's `goto medium` for a cancellation case (|x|~=k·pi/2) jumps PAST all remaining
+  * NEW _hx_k_col2im_scatter (atomic-scatter col2im, DX pre-zeroed); det -> gather.
+  (B[0..10]), special-value path (0→-inf · inf→x · neg/nan→NaN · subnormal
+  • __builtin_va_arg(ap): integer class — reg path (gp_offset<48) AND overflow
+the toint trick; fn is already integral so truncation is exact) + __hx_payload_i2f
+under -DHEXA_RT_NATIVE_SIN (Gate D). The prior CI run had ALL required gates GREEN
+(arm64_darwin.hexa) serves both arm64-darwin and arm64-linux, so this covers both.
+The first cut of hxlcl_cos FLATTENED musl __rem_pio2's small-path band ladder into

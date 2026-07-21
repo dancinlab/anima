@@ -1,0 +1,53 @@
+feat(build): scripts/build_stage0.sh — portable Linux/Darwin stage0 rebuild
+tag-only bug that casts TAG_VALSTRUCT pointer bits to double when the
+codegen_c2.hexa / hexa_cc.c 가 user-defined `fn main()` 을 reserved-name
+이전: arr.tag != TAG_ARRAY/TAG_STR 모두 val_void() — dict fall-through.
+  outside comments/strings. Emits single synthetic violation if zero matches.
+3 new @invariant DSL predicates (line-scan, no AST) built on the existing
+fix(selfhost): unblock stage0 rebuild — T33 Val arena canary flips PASS
+feat(vm/bytecode): T45 — rt#36-D Struct opcodes (NEW_STRUCT/LOAD_FIELD/STORE_FIELD)
+feat(invariant): I3 — ensure_type + require + audit_type (line-scan predicates)
+fix(runtime): to_int NaN/Inf/overflow → 안전값 (INT64_MIN sentinel 제거)
+    (int+int → int; either side float → float for + - * /; / and % avoid 0)
+- /tmp/hexa_v2.new 실행 시 tc 13 tests PASS + codegen_c2 banner 출력
+  - P5 fixpoint untouched: codegen_c2.hexa MD5 = 2c4be609… (unchanged)
+feat(codegen_c2): bt-53 SSOT 포팅 — reserved-name mangling in codegen_c2.hexa
+  - 동일 6 construct 의 standalone 테스트 (단일-블록 flat instr 모델,
+    NaN/Inf → 0, ≥INT64_MAX → INT64_MAX, ≤INT64_MIN → INT64_MIN clamp.
+    `ram_mb * 100.0 / total_ram` (total_ram=0 edge) → NaN → INT64_MIN %
+AST → bytecode 경로 완성: free-var 분석 → OP_CLOSURE + N×OP_NEW_
+    JUMP into header; caller wires cond→branch and backedge→header.
+All 5 edits replace the inline ternary with __hx_to_double(v) — zero
+- scripts/build_stage0.sh: `use "runtime_core"` 감지 시 flatten_imports.hexa 선행 실행.
+남은 이슈: /tmp/hexa_v2.new 가 empty identifier 방출 — initialization
+docs(rt#36): T50 — rt36-d regression suite 승격 + 62/62 landing snapshot
+  · Deduplicate the `__hexa_codegen_c2_ic_*` static slot definitions —
+      /tmp/bcvm.hexa && hexa_stage0 /tmp/bcvm.hexa  → 0.03s, 9/9 PASS.
+regression_stage1: 13/14 PASS (1 SKIP, cached build/hexa_stage0 기준).
+unknown method calls, struct constructors lacked forward decls, and the
+- scripts/flatten_imports.hexa: emit files in REVERSE topological order
+flatten topo order emitted dependents before their struct definitions.
+TAG_VALSTRUCT-wrapped Val (interpreter heap value), it fell through to
+self/bc_vm.hexa: BC_STRUCT_TAG sentinel + 3 dispatch blocks. Layout C
+    overflow 시 C spec 상 UB — x86 에선 INT64_MIN. 결과: 운영 코드에서
+airgenome 재배포 단순화: rsync → hexa_v2 bootstrap → build_stage0.sh →
+이전: `to_int(x)` 의 float 경로가 inline `(int64_t)a.f` 라 NaN/Inf/range-
+  - hexa_cc.c.new IC slots: 1001 (≥ 976 baseline 977 +24 신규 fold helper)
+test(invariant): T33 Val arena audit — array-passthrough corruption canary
+    `guard` is now a reserved keyword (GuardStmt) so the lexer misclassifies
+feat(invariant): I2 forbid_field checker — FieldAssign on <target> 검출
+(D) 수학 inline 6건 __hx_to_double 예방 교체 (hexa_cc.c 5741-5770):
+self/proof/test_certificate.hexa — 3 self-tests + 1 bucket-split sanity:
+  ./hexa parse self/{parser,codegen_c2,main,invariant_check}.hexa  → OK
+IC_0 redef 로 /tmp/hexa_v2.new 빌드 불가). fix 는 소스 레벨만.
+feat(invariant): @invariant DSL 최소 구현 — I1 AST 기반 checker
+fix(codegen_c2): AssertStmt dispatch — type_checker self-tests 처리
+  - ./hexa build self/test_ir_lowering.hexa → clang-native 18/18 PASS
+- P5 fixpoint: hexa_v2 MD5 06c8cb3a unchanged (checker is runtime-only,
+    matches baseline, smoke 22/22 + collatz + primes + float 11/11 PASS
+feat(vm/bytecode): T46 — rt#36-D Exception opcodes (TRY/THROW/ENDTRY)
+multiplication) + hexa_cc.c parse_addition 의 `+` inline _p_cont_plus
+- self/runtime.c: extend the HEXA_VAL_ARENA comment with the T33 repro
+    entry in codegen_c2, so every site silently swallowed its arg and
+chore(runtime): T1 Phase B — runtime_core.hexa 22 fn 추출 + flatten_imports 파이프라인
+  호출부(execute_proof_block_stmt×2, match_pattern×2, format_stack_trace×5)는 유지.

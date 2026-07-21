@@ -1,0 +1,82 @@
+{
+ "liveness_cumulative": {
+  "over_floor": {
+   "1": 0.84375,
+   "2": 1.796875,
+   "4": 3.76171875,
+   "8": 7.71875
+  },
+  "growth_8_minus_1": 6.875,
+  "monotone": true,
+  "n_targets": 51
+ },
+ "liveness_directional": {
+  "direction_signal": 6.57421875,
+  "past_over_floor": 6.5703125,
+  "future_over_floor": 0.0,
+  "n_targets": 58
+ },
+ "null_cumulative": {
+  "over_floor": {
+   "1": 0.00390625,
+   "2": 0.0,
+   "4": 0.00390625,
+   "8": 0.0
+  },
+  "growth_8_minus_1": -0.00390625,
+  "monotone": true,
+  "n_targets": 51
+ },
+ "null_directional": {
+  "direction_signal": 0.0,
+  "past_over_floor": 0.00390625,
+  "future_over_floor": 0.00390625,
+  "n_targets": 58
+ },
+ "liveA_ok": true,
+ "liveB_ok": true,
+ "nullA_ok": true,
+ "nullB_ok": true,
+ "n_sessions": 242,
+ "owner_cumulative_gzip": {
+  "over_floor": {
+   "1": 0.0859375,
+   "2": 0.125,
+   "4": 0.140625,
+   "8": 0.19140625
+  },
+  "growth_8_minus_1": 0.10546875,
+  "monotone": true,
+  "n_targets": 233
+ },
+ "owner_direction_gzip": {
+  "direction_signal": 0.00390625,
+  "past_over_floor": 0.0859375,
+  "future_over_floor": 0.08203125,
+  "n_targets": 240
+ },
+ "owner_cumulative_markov6": {
+  "over_floor": {
+   "1": 0.04490506565108632,
+   "2": 0.060728795210990505,
+   "4": 0.05688098142553155,
+   "8": 0.07317400975886734
+  },
+  "growth_8_minus_1": 0.028268944107781024,
+  "monotone": true,
+  "n_targets": 233
+ },
+ "owner_direction_markov6": {
+  "direction_signal": -0.006496602507795046,
+  "past_over_floor": 0.04127700657560318,
+  "future_over_floor": 0.049227376964662284,
+  "n_targets": 240
+ },
+ "static_self": true,
+ "cumulative": true,
+ "directional": false,
+ "instrument_ok": true,
+ "cumulative_agree": true,
+ "directional_agree": false,
+ "verdict": "F5-WEAK (undirected drift) — the recent past accumulates (growth +0.1055 > 0.02) but time is SYMMETRIC (direction_signal +0.0039 <= 0.02). This is a topical WINDOW / smooth drift, not a directed arrow-of-time trajectory. F5 adds a recency-window over F7 but no directed self."
+}

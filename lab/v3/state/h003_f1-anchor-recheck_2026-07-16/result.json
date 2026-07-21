@@ -1,0 +1,85 @@
+{
+ "metrics": {
+  "genspec_sha256": "fbcf0c8ad444d0f3c2fa5ad018d12ce8f33ad6bcf8e0f78eb26be5495527ce2b",
+  "genspec_matches_card": true,
+  "band_counts": [
+   46,
+   74
+  ],
+  "B1_M_above": true,
+  "B2_C3_live": true,
+  "B3_C1_no_leak": true,
+  "B4_cement_agrees": true,
+  "boundary_shift_rate": 0.12555803571428573,
+  "drift_floor": 0.05,
+  "deficit_frozen": 1.0,
+  "deficit_refit": 0.0,
+  "frozen_single_token": 0,
+  "refit_single_token": 12,
+  "eval_candidate_pairs": 1536,
+  "leak_hits": 0,
+  "heldout_neg_cooccurrence": 0,
+  "leak_scan_lines_per_phase": 200000,
+  "n_clean_items": 1536,
+  "n_required_worst": 1178,
+  "spec_hash_stable": true,
+  "bpe_deterministic": true,
+  "roundtrip_ok": true,
+  "rig": "LICENSED"
+ },
+ "falsifiers": [
+  {
+   "name": "B-1 treatment above floor",
+   "triggered": false,
+   "status": "PASS"
+  },
+  {
+   "name": "B-2 liveness",
+   "triggered": false,
+   "status": "PASS"
+  },
+  {
+   "name": "B-3 leak test",
+   "triggered": false,
+   "status": "PASS"
+  },
+  {
+   "name": "B-4 replication",
+   "triggered": false,
+   "status": "PASS"
+  },
+  {
+   "name": "N-1 drift existence",
+   "triggered": false,
+   "status": "PASS"
+  },
+  {
+   "name": "N-2 contrast existence",
+   "triggered": false,
+   "status": "PASS"
+  },
+  {
+   "name": "N-3 emittability",
+   "triggered": false,
+   "status": "PASS"
+  },
+  {
+   "name": "N-4 zero leak",
+   "triggered": false,
+   "status": "PASS"
+  },
+  {
+   "name": "N-5 determinism+roundtrip",
+   "triggered": false,
+   "status": "PASS"
+  },
+  {
+   "name": "genspec matches card",
+   "triggered": false,
+   "status": "PASS"
+  }
+ ],
+ "n_pass": 10,
+ "n_total": 10,
+ "rig": "LICENSED"
+}

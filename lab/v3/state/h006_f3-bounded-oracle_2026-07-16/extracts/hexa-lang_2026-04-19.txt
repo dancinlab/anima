@@ -1,0 +1,46 @@
+건드리지 않고, codegen interpose 단계에서 그대로 인라인 emit 될 베이스.
+Note: 재검증 결과 post-Blocker5 hexa_v2(a3132183) 단독으로는 bit-op 여전히 parse error
+(parse_bit_ops 확장이 stage0 바이너리에 아직 미반영). FORCE=1 rebuild_stage0 후에만
+(feedback_seed_freeze) 때문에 FORCE rebuild 금지, 리그레션 해소
+로직 보존: status ∈ {done,live,ossified} → proof_path 필수 → 파일 존재 + state 일치.
+으로 확인. 각 @test 는 빈/단일/다중/경계 경로를 커버하며 /tmp/hexa_io_test_*
+- ids 136~146 status=todo (잔여 ai_native_pass / native_codegen / 메타 11건 — 같은 파일 충돌로 순차 처리 대상)
+merge: fix/bitop-surface-parser — bit-op << >> | 표면 파서 지원 (seed-freeze 해제 후 활성)
+ROI 표 status=todo 20건 중 신규 파일 생성 8건을 bg Agent 병렬 발사로 처리:
+문서가 자기 구조를 직접 선언 → hexa-lang 하네스가 그 선언만 검증.
+대비: HX11 `.<attr>-rules.json` 패턴 일치 — 전 프로젝트 이식 재사용
+Phase 2 scope: attrs 패턴 대칭으로 self/raws/ 이관 시작. raws SSOT 가 hexa 모듈로.
+다음 sequential 단계에서 use 라인 + all_attr_names() 추가 예정.
+- hexa_stage0.real 로 실행 PASS (raw.json id=4 proof_path 누락 감지, exit 1)
+  · 원칙: status=done 선언은 proof_path 필수 + proof 파일 존재 + state∈{ossified,done,live}
+error_catalog doc_paper_own_missing 메시지를 Phase 5 removal 명시로 업데이트.
+미전파 기술 부채(160+ 회, 40 파일) 표면화. declarative marker + HX11 rules
+parse_bit_ops() 에 Shl/Shr/BitOr 확장 — self/hexa_full.hexa SSOT drift 해소.
+   plain "__hexa_ic_" — 이름 불일치로 decl 0건. Aligned to plain
+  · scripts/install_wrapper.hexa — shell function 가이드 출력 (.sh 파일 repo 생성 X)
+  · 근거: anima 136 phases 전부 done 선언 → 실제 22 unwired + 3 FALSIFIED + 9 drift
+  남음 (별개 이슈 — 본 PR 범위 밖, pre-fix 10건 대비 6건으로 감소).
+10/10 PASS 로 전환 예상 — seed-freeze 해제 작업과 pair 로 진행 요망.
+feat(raw): L1 own 레이어 도입 — .own-rules.json 프로젝트별 절대 규칙
+P7-7b chunk 4 검증. self/runtime/io.hexa 의 10 함수를 byte-semantic 동일성
+  verbose 출력을 정수처럼 산술 평가하려다 실패 (BSD `stat -f %m` /
+- self/attrs/_lib/error_catalog.hexa: doc_paper_own_missing 카탈로그 엔트리
+body block. self/raws/ 신규 패턴 (meta + enforce + induce) — attrs 구조
+SUB #0→MOV 의 ORR shifted-register 인코딩 오류 수정. 13/13 PASS.
+Phase 2 (2026-04-19) 345 paper @own 전환 완료 후 이어지는 단계.
+  - self-contained: builtin + pure string 조작만, FFI / cstring 금지
+@attr 신규 3종은 self/attrs/_registry.hexa 와이어업 미반영 (병렬 충돌 회피).
+- @pure/@memoize 는 stage0 에서 marker 무시되지만 AI-native lint 신호로 보존
+이전 commit (0abcdf72) 에서 신규 attr 3종 파일만 생성하고 dispatch SSOT
+  · shell function (alias 대신) bash/zsh 호환 — HEXA_LAW_OK 재진입 방지
+_resolve_use_path .hexa 접미어 strip 수정은 이전 세션 잔류 편집
+두 바이너리 역할 표 (hexa = compiler/REPL/LSP, hx = package manager).
+project .doc-rules.json / 전역 fallback / builtin 3경로 전부 미경유.
+  GNU `stat -c %Y` 분기 누락). stale lockdir 잔류도 별도 발생.
+Tests deferred to ubu (local mac hexa runtime hang) — 구조적으로 기존 test_own / verify_n6arch 무영향.
+- @own 설계가 n=6 closure 구조와 Δ₀-absolute 호환, self-hosting soundness 확증.
+의미: raw 는 low-level 강제 뉘앙스 직관. edict 의 법령 의미는 엔진 구조
+PR-1 (2026-04-19): stdout-prefix 워크어라운드 first-class 승격 — stage0 exit()
+chunk 1/2/3 (strings/arrays/math) 과 동일한 additive 레퍼런스 — runtime.c 는
+hxblas_bf16_to_f32/lora_forward_patch. serve_alm.hexa 네이티브 transpile 차단.
+loader + .hexa-attrs warn 토큰 → lint 강제 실행. 런타임 전파는 PR-3.

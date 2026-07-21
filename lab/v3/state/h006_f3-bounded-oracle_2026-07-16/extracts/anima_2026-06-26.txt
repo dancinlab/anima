@@ -1,0 +1,25 @@
+* fix(clm_decode): per-decode weight-set leak — clm_decode_topk_sampled freed scratch but NOT the _clmd_load W map (303M ~2-3GB/call); g_eval_all 49 decodes → monotonic RSS → OOM (was 'fix④'). Add _clmd_weights_free + free W after topk_sampled. anima-side, NOT hexa-lang(t_free=real __libc_free). byte-faithful(W freed after result captured)
+* gov(2-production engine + clm303_clean size-tiered registry): a_engine_native_learning 개정 — hexa+py 2 공동-production(py=reference 아님, 동등 1급, byte-parity, 양쪽 terminal 가능). a_train_flame_forge py 트레이너 co-production. a_hf_registry 사이즈별 canonical=clm303_clean. ARCHITECTURE.json decoder-map lockstep. 동기=hexa bump-allocator OOM(t_free no-op 검증)→py 측정경로 정당
+* docs+ci(2-production proven): CHANGELOG — py 엔진 byte-parity PASS(golden+303M byte-identical, CE 15자리) + clm303_clean G0-G6 terminal(a7b_pass FAIL=G1 recombination 벽). ci.yml 전 잡 blacksmith 러너(blacksmith-ci commons 준수)
+* research(clm303): terminal 2-pod race — #3934 host-leak FALSIFIED, CPU-path leak-free+coherent gen (G0-G6 scoring 미완)
+* research(clm303): terminal 2-pod race — #3934 host-leak FALSIFIED, CPU-path leak-free+coherent gen (G0-G6 scoring 미완)
+* research(clm303): terminal 2-pod race — #3934 host-leak FALSIFIED, CPU-path leak-free+coherent gen (G0-G6 scoring 미완)
+* research(clm303): terminal 2-pod race — #3934 host-leak FALSIFIED, CPU-path leak-free+coherent gen (G0-G6 scoring 미완)
+core/g_gates.py + core/g6_ideation.py: G0-G6 driver + scoring ops 1:1 from
+* research(ByteGPT pool eval BLOCKED): x86_64-linux hexa v0.315.0 코드젠 버그 — gen_auto_ideate C-prototype 미방출→clang undeclared(all 6 call sites). summer+aiden 동일=pool 전체 anima eval 차단(ckpt무관, clm303도). mini=arm64는 컴파일OK(OOM). ByteGPT G1 engine-native UNMEASURED(torch-ref 🟢 = DIRECTIONAL 유지)
+fully byte-parity, either produces terminal verdicts). Header ledger + PARITY.md
+core/g_gates.hexa + core/g6_ideation.hexa, frozen bars verbatim. G0-G6 on
+* verify(clm303_clean a7b_pass=FAIL=REAL): py-first 검증 — gen-budget artifact REFUTED(G1 native 80/120서도 best_distinct1<2 FAIL), single-entry 존재확인, 채점port 구조1:1. clm303 FAIL=진짜 recombination 천장(H_1129/1139)
+* feat(core): engine_cli.py COMPLETE — all 434 pub fn byte-parity → 2-production mirror TRUE 10/10
+* verify(확정): clm303_clean a7b_pass=FAIL=terminal-grade — Defect2 VERIFIED(golden wired hexa CLI⇄py G0-G6 byte-동일), py 엔진 byte-faithful 완결. 3대 의혹 전부 해소(gen-budget REFUTED·port VERIFIED·single-entry CONFIRMED)
+* feat(core): py production engine — byte-parity port of clm_decode.hexa + G0-G6
+sampler) reproduces the hexa arithmetic.
+* feat(core): bytegpt_decode.py byte-parity 포팅 + g_gates.py mouth-sniff dispatch (py 미러 4/10) — hexa⇄py logits ~12.6dp·greedy/sampled byte-identical, ByteGPT py-측정 가능
+* research(clm303 G0-G6 terminal): pod 42540799 harvest — RANK-3 FALSIFIED (prior), Phase-2 CPU-path G0-G6 NOT MEASURED (ar-d strip broke runtime.a → link fail, 0 metrics)
+2-production engine (a_engine_native_learning): py mirror of the hexa CLMConvMoE
+* gov(side-harness BLOCK · 실제 anima CLI ONLY): 권위 G-게이트 평가 = 실제 anima CLI 바이너리(anima eval)만, decode 떼낸 py side-harness 차단. 2층 코드강제 — enforce_anima_gates.py(py terminal=parity-record 必 else PR차단) + tool/parity_gate.py(CI: golden anima-CLI⇄py G0-G6 byte동일 강제, drift=red). clm303 a7b_pass=FAIL을 DIRECTIONAL 정정(gen=40 budget+미대조 채점 artifact)
+* feat(core): engine_cli.py §ThirdLaw + §Savant scoring byte-parity (named free-fns complete)
+ALL 434 pub fn of engine_cli.hexa now byte-parity-mirrored → engine_cli.py is
+* research(clm303): GPU-path host 누수 근본규명 — CUDA driver per-launch 부기(토큰당 ~13k launch), emit소스엔 미해제 alloc 0; 레버=M-stack 배칭(task#15) (workflow 9-agent 전수감사, med-conf)
+core/g6_ideation.py
+---------

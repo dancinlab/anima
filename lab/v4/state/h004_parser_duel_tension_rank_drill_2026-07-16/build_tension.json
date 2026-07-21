@@ -1,0 +1,119 @@
+{
+  "n": 192,
+  "K": 6,
+  "offtop_mean": 0.833333,
+  "probes": {
+    "vec": {
+      "train_per_slot": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "train_mean": 1.0,
+      "cv8_per_slot": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "cv8_mean": 1.0
+    },
+    "rank1": {
+      "train_per_slot": [
+        1.0,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "train_mean": 0.5833,
+      "cv8_per_slot": [
+        1.0,
+        0.0,
+        0.5,
+        0.5,
+        0.0,
+        0.5
+      ],
+      "cv8_mean": 0.4167
+    },
+    "norm": {
+      "train_per_slot": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "train_mean": 0.5,
+      "cv8_per_slot": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "cv8_mean": 0.5
+    },
+    "tok_only": {
+      "train_per_slot": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "train_mean": 0.5,
+      "cv8_per_slot": [
+        0.0,
+        0.0,
+        0.5,
+        0.5,
+        0.0,
+        0.5
+      ],
+      "cv8_mean": 0.25
+    },
+    "perm_placebo_vec": {
+      "train_per_slot": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "train_mean": 1.0,
+      "cv8_per_slot": [
+        0.5234,
+        0.3984,
+        0.5977,
+        0.5703,
+        0.4922,
+        0.5586
+      ],
+      "cv8_mean": 0.5234
+    }
+  },
+  "separation_cv8": 0.5833,
+  "placebo_headroom_cv8": 0.4766,
+  "g0_pass": true,
+  "g1_pass": true,
+  "f6_pass": true,
+  "verdict_pass": true,
+  "prediction_factorial": {
+    "offtop": 0.8333,
+    "vec": 1.0,
+    "rank1": 0.5833,
+    "sep": 0.4167
+  }
+}

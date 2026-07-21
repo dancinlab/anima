@@ -1,0 +1,41 @@
+P7-7b chunk 2. runtime.c 의 hexa_array_* C 헬퍼 10종을 pure-Hexa 로 재구현. byte-for-byte 동일 의미: array_new/array_len/array_get/array_set/array_push/array_pop/array_slice/array_reverse/array_index_of/array_concat. additive 포팅 — runtime.c 는 건드리지 않음 (HX4/HX7, feedback_seed_freeze 준수). strings.hexa (chunk 1) 와 동일한 방어적 type_of 가드 + 음수 인덱스 wrap + clamp semantics 유지.
+  · edict   — 6 법률 SSOT + CLI (shared/hexa-lang/edict.json, self/edict_cli.hexa)
+  3. .git/hooks/pre-commit — @edict-stanza 3 블록 (#3 attr naming, #5 F5/F6, #1 warn)
+  3. .git/hooks/pre-commit — @edict-stanza 3 블록 (#3 attr naming, #5 F5/F6, #1 warn)
+  · scripts/hexa_init.hexa — 요약에 law_check + shell alias 힌트 추가
+  · Step 1~4 이식 플랜 (파일 배치 → 전용 edict → bootstrap → CLAUDE.md)
+docs(seed-unlock): shared/hexa-lang/seed_unlock_runbook.md — 3-path resumable checklist
+docs(runner): shared/hexa-lang/test-runner.md — hexa test 사용법 + 설계 메모
+- scripts/hooks/ — git-tracked pre-commit 편입 (HX4 + poc-lint + ai-native)
+CLAUDE.md ref: 섹션에 3개 엔트리 추가 (poc/poc-lint/poc-gen). attr 규약과 동일한 열 정렬.
+verify: 7 프로젝트(nexus/anima/n6-architecture/papers/hexa-lang/void/airgenome) 에서
+충돌 회피 mangle 을 use-site 에서만 `u_abs` 로 emit 하고 def-site 는 `abs` 그대로
+호스트에서 `compile_to_binary` 호출 시 반환 포맷이 맞지 않아 사용 불가.
+떨어졌던 케이스 중 산술 계열 우선. 이제 x86 target 으로 fib/factorial
+라서 인코더 헬퍼로 감싸지 않고 raw 3바이트 내보내는 자리.
+P7-6 coverage gap #2 대응 — self/codegen/mod.hexa 는 건드리지 않음.
+P7-6 Call 디스패처가 hexa_full.hexa 규모에서 빌트인을 놓치지 않는지의
+  - attr_cli.hexa — _parse_attrs_file 에 nonblock 키, run_compile 에 배선
+- build/hexa_stage0: Darwin 에서 HEXA_LOCAL/NO_CAP bypass 거부 (RSS cap 우회 = panic 경로). wrapper 부재 시 Darwin 은 hard-fail (exit 77), Linux 는 기존 raw 실행 유지
+결정론적이므로, emit 시점에 _ic_counter 기반 루프로 재생성. 핫 패스의 배열 변이
+fix(codegen-x86): x86_emit_setcc low-reg 경로에 REX(0x40) 강제 — AH/BH 오염 차단
+ir_to_arm64.hexa의 구조를 x86-64로 포팅. 두-패스 바이트-오프셋 해결
+두 가지 근본 버그 수정으로 self/attr_cli.hexa 가 "undefined function:
+이미 해결했지만 compile_to_binary pipeline 은 여전히 망가진 경로.
+refactor(attrs): _naming 규칙 준수 + @watchdog/@monitor 도입 + lint 강제
+적재 (REX.W 덕에 32-bit write 가 64-bit 로 zero-extend → 0/1 그대로).
+- self/attrs/mac_forbid.hexa: runtime refuse on Darwin (HEXA_MAC_OK=1 override). AG6 Mac Compute Zero 강제, xpcproxy 폭주/panic 재발 방지
+| vs closure 모호성: parse_bit_ops() 는 infix 위치(좌피연산자 이후) 에서만
+is_imm=true 일 때만 nr 고정. 레지스터 case 는 상위 pipeline(emit_function_x86
+  Phase 1 (git + CLAUDE.md) → Phase 2 (+ hexa) → Phase 3 (OS FUSE) → Phase 4 (self)
+silent self-host 블로커 — compile 로그에선 정상, 실행하면 fall-through
+만 emit 하고 call 사이트에 extern decl 을 내지 않아, anima 의 88개 `use
+"sibling"` 을 쓰는 파일이 single-file transpile 경로에서 link 실패했다.
+  → 둘 다 soft detection / text rule 레벨 → raw gate 부재가 공통 원인
+If/while 에서 block-exit phi 가 있는 hexa_full 함수 다수가 이 경로 →
+   조용히 넘어간다 (C preprocessor #pragma once 과 동일한 include-guard
+self/native_compile_poc.hexa (41 dep 그래프) 재귀 확장 시 RSS 4GB+ 폭주.
+self/main.hexa 53ef97a1 CLI bake 후 CLAUDE.md 에 nexus-cli 11 subcmd passthrough
+  - x86_emit_prologue       stack_size (양수라 원래 문제 없음, 통일성)
+rebuild_stage0 결과로 검증 필요. 현 agent 는 clang/hexa_v2 실행 금지.
+    · 1차 PoC (rule 6, ~300 LOC) → 2차 full 6 rules → 3차 hexa-native FUSE

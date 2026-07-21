@@ -1,0 +1,78 @@
+{
+  "F7_pass": true,
+  "panels": {
+    "f2prime": {
+      "n": 192,
+      "presence_heuristic": 0.5,
+      "held_out_blind": 0.5,
+      "held_out_blind_gated": true,
+      "template_heuristic": 0.5,
+      "worst_suffix_leak_L<=10": {
+        "worst_suffix_score": 0.5,
+        "suffix_len": 1
+      },
+      "eojeol_length_heuristic": 0.5,
+      "sentiment_balance_per_cell": {
+        "A1": 0.5,
+        "A2": 0.5,
+        "K1": 0.5,
+        "K2": 0.5
+      },
+      "depth_split_D1_D2": [
+        96,
+        96
+      ],
+      "F7_pass": true,
+      "verdict_eligible": true
+    },
+    "f1prime": {
+      "n": 64,
+      "presence_heuristic": 0.5,
+      "held_out_blind": 1.0,
+      "held_out_blind_gated": false,
+      "template_heuristic": 0.5,
+      "worst_suffix_leak_L<=10": {
+        "worst_suffix_score": 0.5,
+        "suffix_len": 1
+      },
+      "eojeol_length_heuristic": 0.5,
+      "sentiment_balance_per_cell": {
+        "L1": 0.5,
+        "L2": 0.5,
+        "L3": 0.5,
+        "L4": 0.5
+      },
+      "depth_split_D1_D2": [
+        32,
+        32
+      ],
+      "F7_pass": true,
+      "verdict_eligible": true
+    },
+    "f2b_bound_diagnostic": {
+      "n": 96,
+      "presence_heuristic": 0.5,
+      "held_out_blind": 0.5,
+      "held_out_blind_gated": true,
+      "template_heuristic": 0.5,
+      "worst_suffix_leak_L<=10": {
+        "worst_suffix_score": 0.5,
+        "suffix_len": 1
+      },
+      "eojeol_length_heuristic": 1.0,
+      "sentiment_balance_per_cell": {
+        "Kb1": 0.5,
+        "Kb2": 0.5
+      },
+      "depth_split_D1_D2": [
+        48,
+        48
+      ],
+      "F7_pass": false,
+      "verdict_eligible": false
+    },
+    "union_template_heuristic": 0.5
+  },
+  "strategy": "SLOT-CONTRAST v3 — drilled scaffold constant within pair; slot eojeol = held-out 못 (D2) vs 1-syllable filler 잘/더/꽤 (D1)",
+  "note": "gold_flip audited here = negator parity; sentiment gold = pol XOR flip at eval"
+}

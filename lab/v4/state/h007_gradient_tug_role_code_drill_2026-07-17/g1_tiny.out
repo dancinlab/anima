@@ -1,0 +1,16 @@
+==============================================================================
+H_007 mech-5 G-1 kill-only smoke — device=mps d=48 steps=(60, 80) drill=384 f2=192
+==============================================================================
+
+--- training A-tug …
+/Users/mini/dancinlab/anima-v4/state/h007_gradient_tug_role_code_drill_2026-07-17/train_g1_smoke.py:205: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:823.)
+  log({"phase": "cpt", "step": step, "ce": round(float(loss), 4)})
+  A-tug: probe_subj=0.9483 probe_obj=0.8621 cos_frac_neg_early=1.0 cos_mean_early=-0.3278 cos_min=-0.6595
+
+--- training C-dup …
+  C-dup: probe_subj=0.9138 probe_obj=0.8103 cos_frac_neg_early=1.0 cos_mean_early=-0.3286 cos_min=-0.621
+
+==============================================================================
+G-1 VERDICT: PROCEED-CANDIDATE — early conflict present (frac_neg 1.0 ≥ 0.30) AND probe separation +0.0345 (A-tug 0.9483 > C-dup 0.9138). NOT a d=384 result (G3-0b: smoke passing ≠ proof); sets τ≈1.0, E[A-tug probe]≈0.9483 for the G-2 freeze.
+wrote g1_smoke_result.json

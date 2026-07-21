@@ -1,0 +1,121 @@
+{
+  "metrics": {
+    "d_acc": {
+      "M_s4302": 0.9083,
+      "M_s7": 0.9167,
+      "C1_s4302": 0.6167,
+      "C1_s7": 0.575,
+      "C3_s4302": 0.9167
+    },
+    "mech3_threshold": 0.1,
+    "reachability_vs_fixed_codec": {
+      "M_s4302": {
+        "control_d_acc": 0.9083,
+        "max_attainable_delta": 0.0917,
+        "threshold": 0.1,
+        "reachable": false
+      },
+      "M_s7": {
+        "control_d_acc": 0.9167,
+        "max_attainable_delta": 0.0833,
+        "threshold": 0.1,
+        "reachable": false
+      }
+    },
+    "reachability_vs_no_codec_NEGATIVE_CONTROL": {
+      "C1_s4302": {
+        "control_d_acc": 0.6167,
+        "max_attainable_delta": 0.3833,
+        "threshold": 0.1,
+        "reachable": true
+      },
+      "C1_s7": {
+        "control_d_acc": 0.575,
+        "max_attainable_delta": 0.425,
+        "threshold": 0.1,
+        "reachable": true
+      }
+    },
+    "saturation_vs_leak_ceiling": {
+      "M_s4302": 0.0084,
+      "M_s7": 0.0
+    },
+    "m_seed_spread": 0.0084,
+    "control_named_by_clause_is_a_codec": false,
+    "predicted_fall_to": 0.617,
+    "actual_fixed_codec_floor": 0.9083
+  },
+  "falsifiers": [
+    {
+      "name": "F-001-1-threshold-attainable",
+      "triggered": false,
+      "status": "PASS"
+    },
+    {
+      "name": "F-001-2-control-is-actually-a-fixed-codec",
+      "triggered": false,
+      "status": "PASS"
+    },
+    {
+      "name": "F-001-3-panel-not-saturated",
+      "triggered": false,
+      "status": "PASS"
+    },
+    {
+      "name": "F-001-4-NEGATIVE-CONTROL-audit-kills-everything",
+      "triggered": false,
+      "status": "PASS"
+    },
+    {
+      "name": "F-001-5-m-estimate-too-noisy",
+      "triggered": false,
+      "status": "PASS"
+    },
+    {
+      "name": "F-001-6-BOUNDS-d-acc-out-of-range",
+      "triggered": false,
+      "status": "PASS"
+    },
+    {
+      "name": "F-001-7-predicted-fall-matches-fixed-codec",
+      "triggered": false,
+      "status": "PASS"
+    }
+  ],
+  "n_pass": 7,
+  "n_total": 7,
+  "all_pass": true,
+  "verdict": "SUPPORTED",
+  "arms_provenance": {
+    "M_s4302": {
+      "d_acc": 0.9083,
+      "codec": "codec.json",
+      "what": "FIXED jamo-BPE codec (K=2048, frequency-trained, label-blind)",
+      "src": "~/anima-weights/morphatom/vM_f2.json"
+    },
+    "M_s7": {
+      "d_acc": 0.9167,
+      "codec": "codec.json",
+      "what": "FIXED jamo-BPE codec — seed-7 replication (cement)",
+      "src": "anima/state/nbind_curriculum/cement_result/vM_s7_f2.json"
+    },
+    "C1_s4302": {
+      "d_acc": 0.6167,
+      "codec": "raw",
+      "what": "NO CODEC AT ALL — raw utf-8 bytes",
+      "src": "~/anima-weights/morphatom/vC1_f2.json"
+    },
+    "C1_s7": {
+      "d_acc": 0.575,
+      "codec": "raw",
+      "what": "NO CODEC AT ALL — raw utf-8, seed-7 replication (cement)",
+      "src": "anima/state/nbind_curriculum/cement_result/vC1_s7_f2.json"
+    },
+    "C3_s4302": {
+      "d_acc": 0.9167,
+      "codec": "codec_c3.json",
+      "what": "LEAK CEILING — 4 negator stems collapsed to ONE shared token id, i.e. the answer handed to the model outright (v1's V1-liveness arm)",
+      "src": "~/anima-weights/morphatom/v1_f2b.json"
+    }
+  }
+}

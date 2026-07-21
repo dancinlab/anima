@@ -1,0 +1,101 @@
+{
+ "streams": {
+  "anima": {
+   "days": 44,
+   "markov6": {
+    "64": {
+     "ceiling": 0.0,
+     "over_floor": 0.0
+    },
+    "256": {
+     "ceiling": 0.004067816046328332,
+     "over_floor": 0.0004905324557995527
+    },
+    "1024": {
+     "ceiling": 0.016473605138868308,
+     "over_floor": 0.003246348519163611
+    },
+    "4096": {
+     "ceiling": 0.03524908071298416,
+     "over_floor": 0.011589804836697581
+    }
+   },
+   "ppm": {
+    "64": {
+     "ceiling": 0.0,
+     "over_floor": 0.0
+    },
+    "256": {
+     "ceiling": 0.030849207012342283,
+     "over_floor": 0.011185699392815884
+    },
+    "1024": {
+     "ceiling": 0.07772816425021567,
+     "over_floor": 0.003911932283228836
+    },
+    "4096": {
+     "ceiling": 0.20936830183269617,
+     "over_floor": 0.01870423973348423
+    }
+   },
+   "markov6_4096_over": 0.011589804836697581,
+   "ppm_4096_over": 0.01870423973348423,
+   "anchored": false,
+   "agree_4096": true
+  },
+  "hexa-lang": {
+   "days": 102,
+   "markov6": {
+    "64": {
+     "ceiling": 0.0,
+     "over_floor": 0.0
+    },
+    "256": {
+     "ceiling": -0.00594873896842163,
+     "over_floor": -0.0028758678315146113
+    },
+    "1024": {
+     "ceiling": -0.008359416769498473,
+     "over_floor": -0.0012778586447756979
+    },
+    "4096": {
+     "ceiling": -0.02267206875365968,
+     "over_floor": -0.008555331351700168
+    }
+   },
+   "ppm": {
+    "64": {
+     "ceiling": 0.0,
+     "over_floor": 0.0
+    },
+    "256": {
+     "ceiling": 0.026260147126333955,
+     "over_floor": 0.004521926168339796
+    },
+    "1024": {
+     "ceiling": 0.08570694565023551,
+     "over_floor": 0.017883567253544896
+    },
+    "4096": {
+     "ceiling": 0.20978462766722128,
+     "over_floor": 0.02612212986891116
+    }
+   },
+   "markov6_4096_over": -0.008555331351700168,
+   "ppm_4096_over": 0.02612212986891116,
+   "anchored": false,
+   "agree_4096": false
+  }
+ },
+ "eps": 0.02,
+ "liveness_ceiling": {
+  "64": 0.0,
+  "256": -0.009058413902732099,
+  "1024": 0.36456972196444415,
+  "4096": 0.3656175689021328
+ },
+ "liveness_ok": true,
+ "anima_anchored": false,
+ "both_refused": true,
+ "verdict": "F3-BOUNDED-REFUSED — a hindsight k<=4096 extract does NOT retain the ceiling on either anchored stream; the day MI is incompressible below context scale. The F3 twin is CANCELLED ($0 saved) — the k-bottleneck instantiation is dead even though the unbounded MI (H_005) is real."
+}

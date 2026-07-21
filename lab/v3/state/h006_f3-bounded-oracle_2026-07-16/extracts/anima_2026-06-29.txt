@@ -1,0 +1,34 @@
+* governance(CLAUDE.md): 최상단 성능 정답지 배너 — Go·Rust·PyTorch reference-match (Rust 동등이상·PyTorch throughput 동등이상)
+* governance(CLAUDE.md): 최상단 성능 정답지 배너 — Go·Rust·PyTorch reference-match (Rust 동등이상·PyTorch throughput 동등이상)
+* perf(cli/eval): eval/verdict/decode 경로 HEXA_DET=1 결정성 안전핀 배선 (hexa-lang #4208 fast-default follow-on)
+* perf(cli/eval): eval/verdict/decode 경로 HEXA_DET=1 결정성 안전핀 배선 (hexa-lang #4208 fast-default follow-on)
+#4208 가 forge 극성을 뒤집음 — own-native NON-det atomic 커널이 DEFAULT(학습속도),
+#4208 가 forge 극성을 뒤집음 — own-native NON-det atomic 커널이 DEFAULT(학습속도),
+repo_id + 내부 레지스트리 둘 다, 파일명 접미사 금지=canonical-naming). 하네스
+repo_id + 내부 레지스트리 둘 다, 파일명 접미사 금지=canonical-naming). 하네스
+(G0-G6·Ψ-checksum·cross-host byte-parity) 보존 위해 HEXA_DET=1 강제, TRAIN 만 fast 유지.
+(G0-G6·Ψ-checksum·cross-host byte-parity) 보존 위해 HEXA_DET=1 강제, TRAIN 만 fast 유지.
+dispatch=HEXA_DET=1·train=미설정 실측 · 런처 exclusion(train→UNSET, evaluate/serialize/ckpt→1)
+dispatch=HEXA_DET=1·train=미설정 실측 · 런처 exclusion(train→UNSET, evaluate/serialize/ckpt→1)
+perf(cli/eval): eval/verdict/decode HEXA_DET=1 결정성 안전핀 (hexa-lang #4208 fast-default follow-on) (#2656)
+머지(origin/main 통합) 시 CLAUDE.md(118줄)+enforce(43줄)가 origin/main의 옛 py-retire 버전으로 auto-merge되며 오너 결정 2-production 복원(bd658d539)을 silently revert함. origin/main은 merge-base 이후 두 파일 미변경(diff 0) 확인 → bd658d539 복원 = teammate 손실 0, 오너의 2개-프로덕션(hexa+py byte-parity) 결정 재적용. CO-EQUAL py terminal + LOCKSTEP 거버넌스 환원.
+  decode 커버 + sub-process dispatch 상속); HEXA_DET 이미 set 이면 미덮어씀(override).
+  decode 커버 + sub-process dispatch 상속); HEXA_DET 이미 set 이면 미덮어씀(override).
+* governance+harness: 모델·데이터셋 아키텍처-family SemVer version 관리
+* governance+harness: 모델·데이터셋 아키텍처-family SemVer version 관리
+  (런처 우회한 직접 hexa run belt, 예: eval_pod.sh). anima_train_mode 미설정 = fast.
+  (런처 우회한 직접 hexa run belt, 예: eval_pod.sh). anima_train_mode 미설정 = fast.
+- ARCHITECTURE.json/README.md: g6-ideation/decode 노드(parent+4 children) + determinism 섹션 lockstep.
+- ARCHITECTURE.json/README.md: g6-ideation/decode 노드(parent+4 children) + determinism 섹션 lockstep.
+CLAUDE.md a_hf_registry 에 version 관리 do: 추가(ByteGPT x.x·ConvMoE x.x, HF
+CLAUDE.md a_hf_registry 에 version 관리 do: 추가(ByteGPT x.x·ConvMoE x.x, HF
+- bin/anima: train 제외 모든 verb 에 HEXA_DET=1 export (in-proc consciousness/--byte
+- bin/anima: train 제외 모든 verb 에 HEXA_DET=1 export (in-proc consciousness/--byte
+deterministic 커널은 HEXA_DET=1 opt-in(`_forge_det_on()`). eval/verdict/decode 재현성
+deterministic 커널은 HEXA_DET=1 opt-in(`_forge_det_on()`). eval/verdict/decode 재현성
+필드 추가+build+smoke PASS+self-update live. bump=sidecar model set <id> version.
+필드 추가+build+smoke PASS+self-update live. bump=sidecar model set <id> version.
+ByteGPT-303M h1129 frozen 벤치마크(G1/G6 벽 reference, H_1129/1139/1464/1587/1588/1595) HF PRIVATE 업로드(commit 7491136) → models 노드 1줄 등록. mac-local 유일본이었던 ckpt를 HF 백업(단일사본 위험 해소, a_fire_recover_complete).
+# no-verify-ok artifacts-only 커밋(staged=연구산출물 텍스트, CLAUDE.md 미포함); CLAUDE-MD-NO-DESC/TREE 는 governance CLAUDE.md(do/dont 포맷 SSOT)의 선재 조건 = 본 변경 무관
+* docs(convergence): TORCH_PASS_VS_ENGINE_FAIL_IS_SCAFFOLD_HARNESS — 3축 전수 격리(forward GN byte-동일·detector 27/27·decode 전략) → 진범=옛 scaffold+best-of-K 하네스, 엔진 4축 무죄·G1G6벽=trunk-objective floor
+4중 배선:

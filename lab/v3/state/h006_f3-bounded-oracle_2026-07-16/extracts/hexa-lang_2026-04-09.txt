@@ -1,0 +1,51 @@
+feat(ml): Phase 2 AI-native @attr 프로토타입 4종 + kv_cache 재작성
+feat(ml): Phase 2 AI-native @attr 프로토타입 4종 + kv_cache 재작성
+- ML suite: 13 라이브러리 전부 PASS, 3개 버그 수정 (attention_fused, phi_metric, hexaw)
+- ML suite: 13 라이브러리 전부 PASS, 3개 버그 수정 (attention_fused, phi_metric, hexaw)
+- tensor_fill(n, v): n-길이 v 텐서 (루프 push 대비 극적 속도 향상)
+- tensor_fill(n, v): n-길이 v 텐서 (루프 push 대비 극적 속도 향상)
+7B forward 전체는 인터프리터로 불가 → matmul 자체가 95% 비중이므로
+7B forward 전체는 인터프리터로 불가 → matmul 자체가 95% 비중이므로
+- t1_bench.hexa (252): 7B-fake forward 벤치 하네스 (SHRINK=32 proxy)
+- t1_bench.hexa (252): 7B-fake forward 벤치 하네스 (SHRINK=32 proxy)
+- self/test_*: 15+ 신규 테스트 스위트 (286 assertions PASS)
+- self/test_*: 15+ 신규 테스트 스위트 (286 assertions PASS)
+- 21종 STABLE, 3종 버그 문서화 (BUG-1: @optimize+@lazy hang,
+- 21종 STABLE, 3종 버그 문서화 (BUG-1: @optimize+@lazy hang,
+256²/512²/1024²/2048² 4단계. 목표: Ryzen 9 7950X3D 피크 2.5 TFLOPS
+256²/512²/1024²/2048² 4단계. 목표: Ryzen 9 7950X3D 피크 2.5 TFLOPS
+- Update matmul, dot, matvec, mat_add, mat_scale, hadamard, attention,
+- Update matmul, dot, matvec, mat_add, mat_scale, hadamard, attention,
+feat(self): M831-M836 — 🔥 multi-kind body buckets + aggregate growth (inline + standalone 동기)
+feat(self): M831-M836 — 🔥 multi-kind body buckets + aggregate growth (inline + standalone 동기)
+- self-optimization config 60/100→20/30 축소 (push value-semantics O(n) 대응)
+- self-optimization config 60/100→20/30 축소 (push value-semantics O(n) 대응)
+설계: docs/superpowers/specs/2026-04-09-cpu-ai-native-physical-limits-design.md
+설계: docs/superpowers/specs/2026-04-09-cpu-ai-native-physical-limits-design.md
+- lowrank_mm.hexa (137) + test (94): @lowrank(r) rank-r 근사, 5/5 PASS
+- lowrank_mm.hexa (137) + test (94): @lowrank(r) rank-r 근사, 5/5 PASS
+BLAS 네이티브 경로만 측정해서 물리한계 근접치 확보.
+BLAS 네이티브 경로만 측정해서 물리한계 근접치 확보.
+pin: L0 보호 체계 적용 — ⛔ 태깅 4개 + CLAUDE.md L0 블록
+pin: L0 보호 체계 적용 — ⛔ 태깅 4개 + CLAUDE.md L0 블록
+  rms_norm, grouped_query_attention, batch_matvec to use FloatSlice
+  rms_norm, grouped_query_attention, batch_matvec to use FloatSlice
+G1: @symbol/@link attribute parsing + codegen (lexer/parser/interpreter/codegen_c/codegen_c2)
+G5: ptr_alloc/free/write/read/offset 10 builtins (runtime.c + interpreter + codegen_c2)
+G2: struct_pack/unpack/rect/point/size builtins (runtime.c + interpreter + codegen_c2)
+feat(runtime): Value::Tensor + mmap_weights + FloatSlice zero-copy + rayon parallel
+feat(runtime): Value::Tensor + mmap_weights + FloatSlice zero-copy + rayon parallel
+- self/bench_suite.hexa: 7 시나리오 (loop/fib/sort/concat/map/dispatch/memoize)
+- self/bench_suite.hexa: 7 시나리오 (loop/fib/sort/concat/map/dispatch/memoize)
+  가드 밖으로 승격 — attr 유무와 무관하게 모든 fn body 집계
+  가드 밖으로 승격 — attr 유무와 무관하게 모든 fn body 집계
+- Update embedding() to accept both Array and Tensor weights via to_f64_slice()
+- Update embedding() to accept both Array and Tensor weights via to_f64_slice()
+feat(self): 천장 돌파 — ai_native_pass 가드 제거 (모든 fn 분석)
+feat(self): 천장 돌파 — ai_native_pass 가드 제거 (모든 fn 분석)
+- Update load_weights_bin/mmap_weights to return Value::Tensor (Arc shared)
+- Update load_weights_bin/mmap_weights to return Value::Tensor (Arc shared)
+합성 벤치(nfn=20 nbody=20): baseline 89s+ 미완 vs 신규 2.0s (>44x).
+합성 벤치(nfn=20 nbody=20): baseline 89s+ 미완 vs 신규 2.0s (>44x).
+feat(ml): t1_attr_micro 상대 가속 측정 — dense/lowrank/fused 비교
+feat(ml): t1_attr_micro 상대 가속 측정 — dense/lowrank/fused 비교

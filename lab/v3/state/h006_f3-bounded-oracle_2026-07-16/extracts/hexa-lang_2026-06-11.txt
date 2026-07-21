@@ -1,0 +1,48 @@
+HEXA-0POD OP-29 — machine-independence generalizes to a 2nd flame model arch (decoder block); G2 closed + FMA-matmul hole found+closed (rebased v2) (#3045)
+HEXA-0POD OP-31 — machine-independence generalizes to a 3rd flame arch (MLP); OP-30 cross-ISA-matmul invariant DIRECTLY demonstrated (#3048)
+* domain(HEXA-0POD OP-31): 3rd-arch MLP machine-indep GREEN — cross-platform byte-identical + OP-30 FMA invariant DIRECTLY demonstrated
+domain(SELFHOST-NEXT): persist the native tier2 default-flip across `hx install` (marker-gated re-apply) 🟢 (#3031)
+-> the OP-29 cross-ISA FMA divergence CANNOT false-fail either H100 gate.
+inline-ascending det path (fwd ck 1585504437 / grad 926871122, identical
+domain(SELFHOST-NEXT): x86_64 codegen path [x] — full source→x86_64 binary via native emitter (RUNG 1+3 PASS) (#3036)
+3rd flame arch = plain feed-forward MLP (Linear→GELU→Linear→GELU→Linear),
+* feat(hexa-0pod OP-29): self-contained twin CROSS-PLATFORM byte-identical + FMA hole closed
+- full patched self/runtime.c builds under musl (zero environ diags) + Darwin
+OP-29 surfaced that the C farr_matmul FMA-fused kernel byte-DIVERGES across
+_db_proj_batch_farr / _db_grad_accum_farr as inline ascending-order dot
+ROOT CAUSE (2nd-arch hole #2, found): the C farr_matmul kernel (ikj
+domain(HEXA-0POD OP-23b): TF32 drift N=500 + LR-schedule — bounded loss-tracking HOLDS at longer/harsher horizon (aiden 5070, 4/4 GREEN) (#3034)
+* domain(HEXA-0POD OP-30): formalize cross-ISA FMA-matmul invariant in the determinism contract (FMA-fused farr_matmul forbidden on the det path)
+* domain(HEXA-0POD OP-23b): TF32 drift N=500 + LR-schedule — bounded loss-tracking HOLDS at longer/harsher horizon (aiden 5070, 4/4 GREEN)
+* domain(HEXA-0POD OP-31): WIP skeleton — 3rd-arch MLP machine-indep oracle (milestone + 2 oracles run-to-run GREEN local + verdict stub)
+Hole closed inline-ascending; libm-clean (GELU dt_erf/dt_exp). $0, 0-pod, no vast.
+1401117690 on byte-identical fp64 inputs). That finding lived only in the OP-29
+inline ascending += (not fmaf-fused; deterministic; == w16.cu L558; FMA Δ <<
+dispatch binary, silently reverting any tier2 native default-flip (the Jun-7
+Cross-platform byte-IDENTICAL local arm64-macos vs aiden x86-linux on the
+a*b+c into one FMA, x86 emits mul+add). The production decoder_block_lib
+The x86_64 STMT_CALL path emitted the bare hexa builtin name (print,
+stdlib/flame/op31_mlp_determinism_eq.hexa
+Durable via tool/restore_frozen_seeds OP-19e post-restore patch (runtime.c gitignored).
+   (mv hexa.real → backup; symlink hexa.real → hx-selfhost-cli) IFF the marker
+already rebuilds itself byte-for-byte on a real ARM server — that one is done.
+Machine-independence generalizes to a 3rd structurally-distinct flame arch (a
+FMA-fused under clang -O2) is NOT machine-independent — on byte-identical
+fp64 inputs an 8x8·8x4 matmul byte-diverges arm64 vs x86 (arm64 contracts
+  not aprime(C)==gen2; gate wired on the selfhost-byteeq-real CI (GREEN).
+STORM skeleton-first. 2nd arch = stdlib/flame/decoder_block_lib (pre-norm
+the production nn_linear_fwd rides byte-diverges arm64 2039553633 vs x86
+side (tokenize->pack->batch producing (ids,targets)) runs on CPU. Self-
+stdlib/flame/op29_decoder_block_determinism_eq.hexa
+stdlib/flame/op31_mlp_selfcontained.hexa
+domain(HEXA-0POD OP-30): formalize cross-ISA FMA-matmul invariant in the flame determinism contract (#3047)
+  / libm-free / cross-ISA-FMA-free), threat-model row T4, recipe item (d), provenance
+ · install.sh, after (re)installing + codesigning hexa.real, re-applies the flip
+fingerprints). OP-30 invariant DIRECTLY demonstrated: the FMA-fused farr_matmul
+native compiler reached its self-copy fixpoint, the campaign plan, and a one-
+cheapest effective check. Passes on fixed tree; catches injected regression.
+setting. Like a printing press that can now print its own replacement parts
+The native compiler reproduces itself byte-for-byte (gen3 == gen4), it is
+Full source->x86_64 binary PROVEN on summer (x86_64 GNU/Linux): cc_native
+OP-30 FMA-diag pending.
+tool/wgmma/build_w16.sh

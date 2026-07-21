@@ -1,0 +1,38 @@
+docs(convergence): 게이트 판정은 브랜치 보호를 직접 조회하라 + 좀비 러너 (#4955)
+* docs(convergence): typed-leaf 는 결함이 두 겹 — 스칼라-ABI 미스매치는 carrier 치환으로 안 고쳐진다 (__hxw_ 브리지가 정답지)
+* docs(convergence): typed-leaf 는 결함이 두 겹 — 스칼라-ABI 미스매치는 carrier 치환으로 안 고쳐진다 (__hxw_ 브리지가 정답지)
+* docs(convergence): bind-hexa-1 — 빌트인 등록 5곳 불변식 + read_f32_at 3회 재발 기록
+낳았고 게이트 4개가 GREEN 이었다)가, 내가 메인 워크트리의 ARCHITECTURE.json
+* docs(convergence): array-new-leaf-hexa-1 본문 복구 (백틱이 셸에 먹혀 코드 조각이 유실됐던 것)
+      유일한 형태). C 가 정식 이름을 C-ABI thunk 로 소유 → 3종 호출자가 전부 착지한다.
+ARRAY_NEW 가드 바깥에 emit 한다(시드가 켜져도 carrier 는 남아야 하므로). 생성된
+ARRAY_NEW 가드 바깥에 emit 한다(시드가 켜져도 carrier 는 남아야 하므로). 생성된
+* fix(convergence): main-hexa-2 복원 — 앞선 커밋의 기록이 내 실수로 유실됐다
+빌드됐다 — 진짜 원인은 풀 호스트에 남은 stale 생성 아티팩트였다.
+빌드됐다 — 진짜 원인은 풀 호스트에 남은 stale 생성 아티팩트였다.
+   ("string[N] out of bounds (len M)") 뿐이다. 배열과 똑같은 bounds 계약이지
+* fix(tool/build_aprime): 오류 필터에 참조자 줄까지 포함 — 'who references it' 이 여전히 잘렸음
+그런데 C 원본 바디의 주석[runtime_core_emit.hexa:2739]이 정확히 이걸 금지한다: 배열
+              을 반환했다. sanctioned allow-list 에 숨어 있어 이름 게이트로는 영원히
+   유일하게 빠뜨린 소비자다. `use "tool/raw_audit"` 가 삭제된 모듈을 계속 가리켜
+perf(L4 RUNG-1): infer array elem-type from write sites — HEXA_ARRAY_ELEM_INFER (default-OFF) (#4950)
+항상 hexa_int(0) 을 반환했고, sanctioned allow-list 에 숨어 이름 게이트로는 잡히지
+* docs(audit): typed-leaf 는 결함 세 겹 — 진짜 근인은 디스크립터 레이아웃 표류
+* docs(audit): typed-leaf 는 결함 세 겹 — 진짜 근인은 디스크립터 레이아웃 표류
+atlas 의 유일한 최종 소비자는 citation_check 이고, 그것은 `if strict_citations` 안에
+* fix(compiler): read_f32_at — 바인더 + native codegen 등록 누락 복구 (#3359 갭 종결)
+  busy/좀비를 안 본다 → 좀비 Runner.Worker(Worker 는 살아있는데 빌드 자식 0)가
+L4 정적타입 레인의 유일한 측정 가능 DONE 게이트를 실측으로 고정한다.
+* fix(CHANGELOG): restore union after merge — merge=union driver dropped main's #4947 entry
+and FORCES the Warning band (observe-only, never build-refusing). Default OFF => unreached
+* docs(convergence): stale 생성 아티팩트가 코드 결함으로 위장한다 — 판정 전 새 clone 대조군 필수
+* docs(convergence): stale 생성 아티팩트가 코드 결함으로 위장한다 — 판정 전 새 clone 대조군 필수
+* docs(convergence): arena 인과 오판 정정 + stale 생성물 학습 되살림(id 충돌로 드롭됐던 것)
+* docs(convergence): arena 인과 오판 정정 + stale 생성물 학습 되살림(id 충돌로 드롭됐던 것)
+docs(axis-②): FALSE TERMINAL 정정 — 'libc-floor 0 reducible' 은 nm 을 안 돌린 결과였다 (#4948)
+BYTE-NEUTRAL — array_new 의 .s 시드는 main 에 없으므로(#4932 revert) ARR-NEW 는 C 경로를
+BYTE-NEUTRAL — array_new 의 .s 시드는 main 에 없으므로(#4932 revert) ARR-NEW 는 C 경로를
+* fix(tool/build_aprime): clang 오류 필터가 undefined 심볼명을 삼켜 진단 불가였던 것
+흘려버린다. 그래서 로그만으로는 진단이 불가능했고, 시드를 로컬에서 다시
+* docs(convergence): elf-x86-64-hexa-3 — LOCAL 심볼은 cross-object alias 대상이 될 수 없다
+  store → UAF. 시드 주석 자체가 stale 했고(존재하지도 않는 runtime.h HexaArrI64 를

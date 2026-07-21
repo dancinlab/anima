@@ -1,0 +1,44 @@
+feat(raw#17): meta2_verify — BT-HEXA-28 Meta² fixpoint certificate emitter
+Sits above tool/verify_fixpoint.hexa + tool/fixpoint_v3_v4.hexa + tool/p7_7_fixpoint_check.hexa — this layer turns the v2==v3 IDENTICAL status (P5, 2026-04-10) into a first-class, hash-chained proof artifact.
+.roadmap: self-host P7-6~P7-9 + raw#17 promotion + fixpoint archive/cron + rebootstrap + cross-platform (10 entries).
+known non-deterministic places, fix 방법 per category, progressive adoption
+  exists next to an ossified entry, parse + verify_certificate() each line,
+- verify: emit .meta2-cert/<ts>.json with {level, sha_v2/v3/v4, ts, prev_cert_sha, status}
+follower repo 간 drift 감지 + 단방향 (canonical → follower) 동기화 도입.
+feat(raw#15): no_hardcode_lint triage — bake 43 drift entries (485→511)
+v3→v4 stable) is monitored. Connects tool/verify_fixpoint.hexa (enforce)
+3 checkpoints + 22 entries back-annotated (7 self-host reaches CP2 requires CP1, 15 ssot/ai-native reaches CP1).
+- chain-verify: walk certs in sort order, verify prev_cert_sha chain (GENESIS anchored)
+doc/runbook/raw_rebootstrap.md — 의도적 fixpoint 변경 절차 (7-step ceremony),
+  with chflags uchg on Darwin; .raw-fixpoint-index append-only audit log.
+- raw_cli/raw_loader: O(n²) string concat 제거 (lazy _fmt_err, __pool_raw_path_cache, whitelist/pad_right → parts.push+join) → verify PERF 경고 소멸
+  · IDENTITY_B0 PASS — A=Kaiming/B=0 → output bit-identical to v54 (FNV hash a3730daee4dbe870 match, L2=0, 0 differing floats over 1.22M)
+doc/runbook/raw_determinism.md — raw#17 전제조건 체크리스트 (10 rules),
+(planned — statuses-loop 밖) 에서 new 로 교정 → self/raw_cli.hexa
+  hx_downgrade, raw_exemptions, raw_attestation, raw_sync, fixpoint_v3_v4,
+Secondary O(N²) amplifier: `X = X.push(Y)` reassigns allocate a new array
+Absorbs 8 sites that weren't in agent aa66ceec's migration: 2 new /tmp/ paths added by the raw_all concat-refactor (264bb3e6) + 6 tool/build/build_hexa*.hexa paths from my earlier delta-bake (7feb3313). Same category as the tmp_scratch follow-up — next-pass migration target.
+- tool/worktree_own_lock.hexa — BFS 스캔 + chflags uchg (Darwin) / chattr +i (Linux) / SKIP fallback
+feat(hxqwen14b): v5.6 LoRA forward per-projection sgemm chain — 48L × 4 proj 통합 PASS
+fix(raw#0): hexa parser compat — use-string, ternary, last_index_of, exec metachar
+chore(raw#1): gitignore .raw-audit.pre-chain backups + land migrated audit file
+feat(build): cmd_build Darwin refusal — _mac suffix / /tmp / @refuse sources
+feat(raw#0): P2 follow-up — raw_dag cascade skip wired into raw_all Phase 1
+feat(raw#15): roadmap exit_criteria 필드 필수화 + 기존 entries 보강
+  · tool/hx_init.hexa (new) — first-run bootstrap: verify 5 SSOT exist,
+  fixpoint_archive, fixpoint_bisect, raw_all_promote, p7_7_fixpoint_check.
+  for check_lazy diagnostics (verified via standalone probe: 1 error each)
+The stale memory still blocks seed-freeze lift reasoning; audit recommends
+feat(raw#0): tool/workspace_sync.hexa — .workspace SSOT parser + symlink materializer
+feat(raw#15): tool/roadmap_status.hexa — ASCII progress view per track × checkpoint
+feat(raw#15): roadmap status 전이 불변성 검증 (done=sealed, 역행 금지)
+feat(raw#15): roadmap checkpoint/reaches/requires/verify DSL + V1-V5 validations
+없어 safe_write_file undefined runtime error → airgenome help 4-line stderr
+`.raw` 는 cross-project L0 universal rule — canonical repo (hexa-lang) 과
+  chflags uchg 감지 후 backup → overwrite → pinned-hash 갱신 + audit
+fix(raw#0): align hx commit trailer with CI verifier + direct CI roadmap_lint
+- New per-entry keys: reaches / requires (comma-split CP IDs), verify (single
+raw#17 new — enforces that hexa self-host closure (v2→v3 byte-identical,
+enforcer output into LSP Diagnostic entries so editors show squiggles inline
+fix(raw#6): ai_native_scan.hexa OOM (exit=137) via shell-pipeline delegation
+  · Level 0 — readonly filesystem permissions only (unsupported-platform

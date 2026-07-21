@@ -1,0 +1,48 @@
+기능하는거지?' + '외부(claude, git hook 등 의존도 없이) 100% 자체구현으로 만 완성'.
+raw 9 hexa-only / raw 18 self-host fixpoint 영향 없음 — 분기 abort만 추가, builtin 변경 X.
+  helper 정의되어 있지만 staging 루프에서 filename 만 검사, 본문 grep 안 함
+- (gap-C) hexa-push: non-FF 휴리스틱 부정확 — auth / network 실패도 rebase 시도
+- 외부 의존 0: pure bash 분기, git pre-push hook 미사용 (raw 13 호환)
+- _is_non_ff_failure() helper 신규 (stderr 분류: 'non-fast-forward' / '(fetch
+- (gap-B) hexa-push: 보호 브랜치 차단 미구현 — main / master / hive/main push 가능
+- staging 루프에 file content scan 추가 (filename heuristic + content scan 양축)
+- 0 외부 라이브러리 의존 (pure bash + coreutils + grep + git porcelain)
+deprecate(self/attrs/publish): paper 자동 배포 분기 폐기 — papers CLI 위임 (own 9 sister)
+sister repo 자체 zenodo/osf publish 도구 작성 금지 → papers CLI 단일 진입점.
+- (gap-A) hexa-commit: secret-pattern 파일 내용 스캔 미작동 — _secret_match
+- _secret_scan_file() helper 신규 (file content grep + binary skip via grep -I)
+- _is_protected_ref() helper 신규 (default: main + master + hive/main,
+- (a) bin = bash, raw 9 hexa-only 예외 (기존 escalate/hx_meta/clickify 패턴)
+- push 실패 stderr 캡처 → 분류 → NON_FF 만 rebase retry, OTHER (auth /
+- self/attrs/publish.hexa: [DEPRECATED 2026-04-28] header marker + paper 자동 배포 분기 abort
+- (c) hive scripts/safety/* (5 파일) absorb 별 cycle, 본 commit 영향 없음
+- 0 scripts/safety/* 의존 (안전 게이트 inline, raw 168 minimum-viable)
+- audit ledger schema bumped v1 → v2 (protected_check 필드 추가)
+Self-dogfood: 본 commit 자체가 hexa-commit 으로 작성됨 (live-fire production).
+- 외부 의존 0: bash + grep 만 (raw 13 git-hook ban 호환, raw 9 hexa-only bin 예외)
+bin/hexa-commit's own selftest fixture lines (containing fake AKIA AWS keys for
+User directive (cross-repo from hive 2026-04-29 ALL kick): hexa-native test
+  network) 는 즉시 raw 66 trailer + exit 17 (rebase 시도 안 함)
+검증: papers cross-repo-lint --report → hexa-lang 잔재 0 (PASS)
+  term_input.hexa    17  — keypress/mouse/paste/focus/Ctrl/Alt/Kitty u
+Modules (170 selftest assertions total, 100 percent PASS):
+- self/stdlib/test_self.test.hexa — dogfood: framework eats own dogfood (8/8 PASS via runner)
+raw 91 honest C3 gap closure per user directive 2026-04-29 'auto, safe 모두
+- no parallel runner / no watch / no per-test name pattern selection
+       OpenAI-compat wire, delegates parser to openai_sdk; passes
+- self/stdlib/test.hexa          — describe/it/test, before_*/after_* lifecycle (7/7 selftest PASS)
+NO code actuation — preserves the L0 → L1 migration matrix in commit history per the
+  OR if Stage 1 build bails on key-order variance (graceful schemafree fallback)
+   stale entries (back_dist > A33_RING_CAP) filtered by existing walk check.
+5/5 selftest fixtures. F-A33-1/2/4/6 DEFERRED (LIVE FIRE gates). F-A33-5
+lsp.hexa ×1). This DOES trigger a stage0 → stage1 → stage2 rebuild
+Verification: both bins --selftest PASS 5/5 each; total 10/10.
+fix(bin/hexa-commit): bootstrap paradox closure — @raw176-test-fixture marker excludes own selftest fake-keys from secret-scan
+- self/stdlib/test_mock.hexa     — id-based vi.fn() spies + mock_record/calls/return (14/14 PASS)
+- self/stdlib/test_runner.hexa   — *.test.hexa discover + subprocess run + JSONL out (7/7 PASS)
+feat(hxc-a33-first-tick): cross-repo LZ77 256KB rolling ring buffer skeleton — sigil ^h
+   Now: hash arrays are caller-local params (in-place mutated via hexa_array_set).
+  312 KB+seed:     PASS 4 3.24 GB CPU-killed → PASS 5 327 MB / 45.9s completed
+  hexa_v2 parser rejects `()` empty-tuple as void-literal; semantics preserved.
+Track-D: tool/roadmap_sync_gate.hexa direct `git commit -F <msg> -- <path>`
+  *.bench.hexa walker + warmup/iters loop + JSONL emit per raw 77 schema

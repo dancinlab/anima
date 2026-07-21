@@ -1,0 +1,23 @@
+================================================================================
+H_008 G-1.5 phase=a — device=mps d=384 steps=(3000, 4000) drill=384 f2=192 budgets=[24, 96, 192, 384]
+BAND target: control f2_dacc ∈ [0.60, 0.80] stable across seeds ⇒ k* exists; else K1 CLOSE.
+================================================================================
+
+--- C-dup k=24 seed=0 …
+  C-dup k=24 s0: f2_dacc=0.5417 in_sample=1.0 in_band=False last_ceA=0.0003
+
+--- C-dup k=96 seed=0 …
+  C-dup k=96 s0: f2_dacc=0.7448 in_sample=0.9896 in_band=True last_ceA=0.001
+
+--- C-dup k=192 seed=0 …
+  C-dup k=192 s0: f2_dacc=0.9167 in_sample=1.0 in_band=False last_ceA=0.0014
+
+--- C-dup k=384 seed=0 …
+  C-dup k=384 s0: f2_dacc=0.6302 in_sample=0.638 in_band=True last_ceA=0.0105
+
+================================================================================
+  C-dup k=24 s0: 0.5417 
+  C-dup k=96 s0: 0.7448 ← IN BAND
+  C-dup k=192 s0: 0.9167 
+  C-dup k=384 s0: 0.6302 ← IN BAND
+wrote g1_5_result.json

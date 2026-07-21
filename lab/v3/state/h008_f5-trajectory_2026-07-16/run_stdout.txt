@@ -1,0 +1,30 @@
+==============================================================================
+H_008 — f5-trajectory · directed/cumulative temporal self vs static MI ($0)
+==============================================================================
+W=4096 tail · P=2048 prefix · eps=0.02 · N in (1, 2, 4, 8)
+
+[L-A cumulative liveness] over_floor {1:+0.844, 2:+1.797, 4:+3.762, 8:+7.719}  growth(8-1)=+6.8750 monotone=True -> ok=True
+[L-B direction liveness]  direction_signal=+6.5742 (past_over +6.570 / future_over +0.000) -> ok=True
+[NULL negative]           cumulative growth=-0.0039 ok=True · direction=+0.0000 ok=True
+
+genuine-owner sessions (>= 6144B): 242
+
+[owner · gzip] cumulative over_floor {1:+0.0859, 2:+0.1250, 4:+0.1406, 8:+0.1914}
+              growth(8-1)=+0.1055 monotone=True
+[owner · gzip] direction_signal=+0.0039 (past_over +0.0859 / future_over +0.0820)
+
+[owner · markov6] cumulative over_floor {1:+0.0449, 2:+0.0607, 4:+0.0569, 8:+0.0732}
+              growth(8-1)=+0.0283 monotone=True
+[owner · markov6] direction_signal=-0.0065 (past_over +0.0413 / future_over +0.0492)
+
+==============================================================================
+  PASS  C-live (blind instrument)
+  PASS  C-static (no self at all)
+  PASS  C-cumulative-null
+  FAIL  C-direction-null
+  agree(gzip vs markov6): cumulative=True direction=False
+
+  VERDICT: F5-WEAK (undirected drift) — the recent past accumulates (growth +0.1055 > 0.02) but time is SYMMETRIC (direction_signal +0.0039 <= 0.02). This is a topical WINDOW / smooth drift, not a directed arrow-of-time trajectory. F5 adds a recency-window over F7 but no directed self.
+==============================================================================
+
+artifacts: state/h008_f5-trajectory_2026-07-16/result.json

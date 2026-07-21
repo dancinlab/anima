@@ -1,0 +1,24 @@
+The 317-file wipe bf406f08 + restore a2a17a0a reverted PR #295's iter-2b gate of _build_nvptx_emit_driver, bringing back 6 undefined symbols at Stage 1 link (lex/parse/static_atlas/lower/lower_hir/codegen_emit_ptx_for_sm — bodies in compiler/ modules not linked by bootstrap.yml Stage 1). CI regressed 9/9 → fail (macOS + linux-x86_64 + linux-arm64).
+The 317-file wipe also reverted PR #300's iter-2e: self/runtime.c L937 syscall guard reverted to (__arm64__||__aarch64__) which matches Linux arm64 too, but the body is Darwin-only (svc #0x80 + x16 + Darwin SYS_*). Linux arm64 segfaults at Stage 1 transpile. CI bootstrap (linux-arm64) FAIL.
+The grace_consent workflow expected build/hexa_interp.linux — a hexa INTERPRETER that never existed. hexa is a COMPILED language (transpile .hexa → C via self/native/hexa_cc.c, then cc). The 'no hexa interpreter found' error failed grace-consent on every PR.
+Re-applies the gate: live MIR pipeline commented, _build_nvptx_emit_driver returns early with [nvptx] GATED message. ASCII-only println (hexa_v2 transpiler silently fails on multi-byte UTF-8 in string literals — separate known limitation). Reversible; standalone driver at compiler/cli/build_nvptx.hexa.
+fix(self/runtime): iter-2c flock #undef + iter-2d x86_64 syscall libc fallback — Linux Stage 0 unblock
+fix(self/runtime): iter-2c flock #undef + iter-2d x86_64 syscall libc fallback — Linux Stage 0 unblock
+WIPE-DELETE-OK: dist/atlas.hxc is the retired runtime sidecar (no-hxc closure final step); n6/atlas.n6 + 9 append shards now serve as the single SSOT, verified loaded 16061 nodes end-to-end (PR #312 source + runtime fix in this branch).
+fix(self/runtime): re-apply iter-2e Darwin guard narrow — linux-arm64 (bf406f08 wipe reverted PR #300)
+macOS arm64 path unchanged (matches __APPLE__). linux-x86_64 unchanged (was __x86_64__&&__linux__, now __linux__ still covers it). linux-arm64 now routes to libc fallback instead of Darwin trap.
+fix(self/runtime): iter-2e Darwin guard __APPLE__ narrow + Linux arm64 libc fallback — 9/9 CI green
+fix(self/runtime): iter-2e Darwin guard __APPLE__ narrow + Linux arm64 libc fallback — 9/9 CI green
+Verified on pool:ubu-2 (Ubuntu 24.04 x86_64 · gcc 13.3.0): full bootstrap GREEN — Stage 0 + Stage 1 transpile (7453 lines) + Stage 1 compile (hexa binary) + ./hexa version + smoke 'ok'.
+fix(self/main): re-apply iter-2b nvptx gate — bootstrap regression (bf406f08 wipe reverted PR #295)
+Bootstrap-safe: standalone stdlib files, not imported by self/main.hexa (bootstrap path unaffected).
+fix(self/main): re-apply iter-2b nvptx gate — bootstrap 9/9 regression (wipe reverted PR #295)
+Cross-implementation parity vs Python reference (same IEC formula · ground truth on pool:ubu-2): kernel main() output matches exactly — v=4 43.5038 · v=6 222.222 · v=8 570.253 · v=10 1144.03 · rated plateau 2000 · cut-out 0 · density-corr v10 rho1.0 928.074 (gt 928.0735). power_curve_kernel_test.hexa is the formal use-based harness (for installed-hexa / CI kernel-test runs).
+feat(runtime+stdlib): RUNTIME.md Step 5 잔여 #3 unblocker — rt_str_concat hexa port via @no_arena + hxlcl_realloc over-read fix
+feat(self/native+runtime): RUNTIME.md — manual regen hexa_cc.c, inline builtin activation (driver-bypass)
+firmware/boards/rtsc/ is the 24-file absorbed copy of hexa-rtsc imported on 2026-05-10 per SPEC.yaml firmware_evolution Option C. This commit keeps it in sync with hexa-rtsc 7ccd61d so the vendored snapshot does not drift.
+feat(compiler/codegen): RUNTIME.md Step 5 #4 SSOT — __fd_write_bytes codegen builtin + 4-unblocker campaign closure
+fix(runtime): re-restore hxlcl_realloc clamp — 9th silent-wipe (L2 found, c25ef75e wiped b2ae2e9d)
+* feat(compiler/cli/build_nvptx): RFC 071 P2.1 — wire codegen_emit_ptx_sm80 for hand-MIR vec-add
+feat(inbox/tools): _const0_ driver diagnostic — d4 closure target identification (Agent 4 / C2)
+  install/test_selftest reference cli/hexa-rtsc.hexa via HEXA_RTSC_ROOT/CWD (self-contained).

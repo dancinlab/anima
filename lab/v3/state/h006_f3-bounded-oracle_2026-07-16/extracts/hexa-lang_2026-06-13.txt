@@ -1,0 +1,27 @@
+* fix(qforge-bio R9): AbfeConfig struct→dict — interp struct-slot collides w/ autograd structs causing spurious 'map key not found'; dict is collision-free
+fix(hexa-0pod/OP-136): URL parse/normalize audit — 🔴 multibyte %-decode corruption + IPv6 authority crash FIXED + 🟢 CONVERGED (#3305)
+domain(HEXA-0POD OP-55): NEW 2-CTA/SM-preserving 128x256 own-GEMM tile (MODE 10) — register economy HELD but REGRESSES -7.1% @D=4096 (serialized) → @D=4096 gap SETTLED bit-exactness-bound (1 H100, leak-0) (#3148)
+test(0pod): OP-107 — crypto VERIFICATION/AUTH-path security audit; 12 verifiers ALL 🟢 reject forgery + constant-time, RSA right-anchored parse defeats BERserk, + forge-reject lock (#3265)
+* feat(hexa-0pod OP-60): operationalize the validated own-GEMM shape-adaptive selector — importable launch-dict + REGRESSION-LOCK + selection table
+feat(hexa-0pod OP-60): operationalize the validated own-GEMM shape-adaptive selector — importable + REGRESSION-LOCKED + selection table (#3165)
+* chore(qforge): vendor MOLSCF coulomb_integrals + rhf verbatim into atoms branch (cross-lane consume snapshot)
+fix(hexa-0pod/OP-138): faithful-nobaseline dt_erf golden RE-PIN — (b) STALE golden from a now-fixed float-serialize bug, machine-independence INTACT (RED→green+meaningful) (#3307)
+test(0pod): OP-97 — SYSTEMIC boundary-run-collapse census across LANE-1 stdlib; 🟢 class CLOSED (0 new bugs, OP-87/88 were the 2 🔴) + 39/39 leaf-lock + no closure twin (#3252)
+fix(json): OP-120 — cap recursion depth in 3 untrusted-input JSON parsers to close a nesting-bomb stack-overflow DoS (CWE-674) (#3286)
+domain(HEXA-0POD OP-121): LANE-1 comparator / total-order-violation sweep (sort/heap/bsearch/merge) — 🟢 CONVERGED, NO 🔴 (#3284)
+fix(0pod): OP-75 — base64_decode dropped the trailing partial group (round-trip broken for non-multiple-of-3 inputs) (#3207)
+audit(hexa-0pod/OP-142): Unicode case-transformation correctness — 🟢 CONVERGED, ZERO corrupting case helpers (#3310)
+sweep(hexa-0pod OP-122): 🟢 streaming-decoder cross-chunk state-corruption — CONVERGED, NO 🔴 (#3287)
+domain(HEXA-0POD OP-58): consolidate the COMPLETE own-GEMM-vs-cuBLAS-TF32 parity story into ONE authoritative parity map (both regimes settled) — docs only, every number verdict-traced (#3163)
+fix(stdlib/net): OP-91 — parse_query URL query parser 🔴→FIXED (value-truncation + spurious blank-key vs urllib.parse_qsl) + 20/20 leaf lock (#3245)
+test(0pod): OP-99 — FRESH stdlib SCIENTIFIC/COMPUTE numeric-algorithm bug-hunt; 🟢 fresh surface CLEAN (0 new bugs, 3 invariant-locks 13/13) (#3254)
+fix(json): OP-120 — cap recursion depth in 3 untrusted-input JSON parsers to close a nesting-bomb stack-overflow DoS (CWE-674) (#3285)
+* wip(qforge-bio R9): abfe_demo selftest — Path A harmonic-recovery + Path B soft-core TI cross-check + constrained chain
+* domain(QFORGE-MOLSCF): round-14 core/virtual canonicalization — SC-NEVPT2 on real multi-core/virtual molecules (#3222)
+domain(hexa-0pod OP-63): HONEST-NUMBER provenance tagging for the route-(a) own-GEMM selector (🟢) (#3177)
+own-GEMM = bit-exact-parity-not-beat @D=4096 is the honest final answer. Register-feasibility was
+audit(crypto): OP-111 — AEAD nonce + TLS 1.3 key-schedule/transcript security audit (RFC 8446 + RFC 8448 §3 KAT, all 🟢 RFC-correct, no nonce-reuse/wrong-key/wrong-transcript) (#3271)
+fix(stdlib/net): OP-92 — parse_request truncated bodies containing a blank line 🔴→FIXED + 13/13 leaf lock; 2 sibling net parsers CLEAN; closure twin FLAGGED 🟠 (#3247)
+feat(hexa-0pod OP-66): wire the MISSING CI tripwire for flame determinism LAYER 2 (no libm on the production step) — 🟢 proven pass-clean + fail-on-regression (#3186)
+domain(HEXA-0POD OP-116): path-traversal / file-access / injection security audit — 🟢 CONVERGED, NO 🔴 (guards load-bearing + trust-boundary census) (#3276)
+test(0pod): OP-90 — LANE-1 bespoke-stdlib bug-hunt (data-struct/numeric/parser); 🔴 argparse `--key=value` FOUND+FIXED + hashset CLEAN (#3246)

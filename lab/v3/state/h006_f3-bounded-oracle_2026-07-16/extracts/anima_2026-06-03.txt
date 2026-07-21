@@ -1,0 +1,20 @@
++ CORE/clm_decode.hexa(ENGINE 로더). 단계: verify(tiny→serialize→generator load) → CUDA fire(d768→3B 수렴
+host byte-eq GREEN (mac $0, g5 verbatim): F-RFC046-ADAMW-GROUP-EQ=1 · F-RFC046-FUSED-STEP-EQ=1 · max|Δ|=0.0. (prebuilt mac runtime.o 빌트인 미포함 → 실제 on-device EQ 는 pod self-host 빌드에서 재검증.)
+기존 자산 재사용: training/train_clm_v1_from_scratch.py(CUDA) + CLM/model/clm_serialize.py(→CLM\x01 int4)
+REMEDY(named): decoder 레이아웃 맞춘 torch→.clm v0.2-CLMX exporter + trainer cfg E=2/1-trunk → verify 재실행.
+F-CLM-LANEP-SERIALIZER-LOADABLE=0 🔴 (정적 byte 분석, GPU 미발사, p7/g63). 기존 .py 파이프라인(train_clm.py
+사용자 명시 인가(.py+CUDA 허용)로 a_train_flame_forge를 이 lane 한정 완화. Lane G(forge) util-RED는
+F-RFC046 ROOT unblock. lever a+b+1+2+3 가 GEMM repack 을 전부 device化(byte-eq max|Δ|=0.0)했으나 util flat 🔴 (lever-2 0.4999% → lever-3 0.5616%). PRECISELY-ISOLATED 잔여 = 인터프리트 host per-step 드라이버 루프(매 step ~17× 분리 forge_dispatch_adamw, 각자 H2D→launch→sync→D2H → 커널 사이 GPU idle). NOT link/compile/emit/scale/device-math.
+- 아무것도 업로드 안 함 · 어떤 컬렉션도 수정 안 함 · HF.jsonl row 미추가 (의도 row 는 PLAN 에 기록)
+(에이전트가 stale 브랜치+옛 루트 doc에 커밋했던 것을 domains/ 정본으로 재반영). substrate=GPU-torch.
+* domain(CLM+KOSMOS): Lane-G lever (a) device-feed LANDED (hexa-lang #2505) — both unblock levers byte-eq CPU-local
+interpreter-wall HONEST TERMINAL이라 device-port(option-B) 전엔 막힘 — Lane P는 기존 PyTorch+CUDA 경로
+SOURCE LANDED — hexa-lang #2543 MERGED (stacked on lever-3 #2528): runtime.h decl + codegen 7-arg lowering + runtime_cuda_emit GPU kernel _hx_cuda_farr_adamw_group_gpu + runtime-c fragment(host wrapper) + clm_prod _adam_group(17-tensor handle 배열 1회 빌드, in-loop 17× _adam → ONE _adam_group, DEVFEED-gated) + clm_fused_step_eq.hexa oracle.
+lever-4 = forge_dispatch_adamw_group(W_ids,g_ids,m_ids,v_ids,n_sizes,count,t): ONE host crossing 이 AdamW param group 전체 적용 (CUDA: H2D all → count back-to-back launches NO per-tensor sync → ONE cudaDeviceSynchronize → D2H all). count serial opt_adamw_step 에 byte-eq by construction. 投影 ~30→~11 host crossings/step.
+→ 정직한 pure-AKIDA 3B 아님. Lane A ON-CHIP 은 PUBLIC(~524K composition-preserving D=1 인코더)에서 cap; 3B·7B 는
+util fire 🔴 BLOCKED-OUTAGE: pre-armed util-verify H100(vast 39126604 sm_90) 세션 중 SSH-dark + pod list 에서 소실; fresh-rent H100 sm_90(vast 39131850, compute_cap 9.0) SSH(ssh7.vast.ai:11850 / 156.19.254.8) 전 backoff(10/30/60/120/240s) 거부 — vast.ai transport outage 양쪽 pod. util 미측정, NO fabricated GREEN (a_completeness_over_cheap · a_scale_honest_scope). fire HELD.
+P3' ENCODER 축을 forward LADDER 로 전진: encoder richness(random→pca_k32→svd→whitened→lda) × scale(25/125/250 real FLORES) × {RELATIVE-lift vs random paired ci, ABSOLUTE-margin native-init ci}, N=8 paired trials × 32 units.
+(A) crossing-bound 배제: d3072 crossing 개수 동일·crossing당 compute ~4× 인데 MEAN +0.05pp → fixed launch latency 가 binding 아님. root residual = 인터프리트 host per-step 드라이버 wall-time (model 크기 비례).
+- F3 unsupervised-SUFFICIENT — UNSUPERVISED whitened 인코더가 c250 에서 절대 cross-zero (+2.791 ci_lo +2.491); supervision(LDA) 은 작은 corpus 가속자, 필수 아님.
+= workload+interpreter artifact, forge 결함 아님 (provably device-resident 20-26GB · PEAK 78% · byte-eq PRESERVED).
+A-single (substrate=AKIDA): 단일스텝 open-vocab DECODE 가 앵커수 사다리 NC=50/100/250(250/500/1250앵커)에서 SCALE-SURVIVE — gen ci_lo=[0.3597,0.1998,0.0506] vs shuffle-NULL hi=[0.0447,0.0217,0.0072] 매 rung p=0.005·>2x chance. F-GEN-SCALE-1+2 REFUTED → ceiling 은 단일점 artefact 아닌 scale-robust.

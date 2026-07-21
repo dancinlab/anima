@@ -1,0 +1,72 @@
+{
+ "knn": 5,
+ "sign_pair": 0.55,
+ "sign_sess": 0.6,
+ "liveness": {
+  "P-POS": {
+   "sign_topic_full": 1.0,
+   "sign_base_full": 0.8776041666666666,
+   "rank_full": 1,
+   "pass": true
+  },
+  "P-NULL": {
+   "sign_topic_full": 0.5233333333333333,
+   "pass": true
+  },
+  "P-ECHO": {
+   "unstripped": 0.65625,
+   "stripped": 0.515625,
+   "pass": true
+  },
+  "ok": true
+ },
+ "total_pairs": 9889,
+ "total_sessions": 129,
+ "primary": {
+  "n": 2000,
+  "n_sess": 95,
+  "sign_base_full": 0.4055,
+  "sign_topic_full": 0.366,
+  "sign_xsess_full": 0.5195,
+  "sign_base_xsess": 0.3305,
+  "sign_topic_full_unstripped": 0.3585,
+  "rank_full": 0,
+  "n_shifts": 24,
+  "align_full": 9.541334777095898,
+  "sess_sign_frac": 0.23157894736842105,
+  "tot_sess": 95,
+  "err_full_sum": 248.18261341473058,
+  "err_base_sum": 248.1464624389909,
+  "err_topic_sum": 251.00111945366694
+ },
+ "replication": {
+  "n": 2000,
+  "n_sess": 95,
+  "sign_base_full": 0.437,
+  "sign_topic_full": 0.3465,
+  "sign_xsess_full": 0.489,
+  "sign_base_xsess": 0.3905,
+  "sign_topic_full_unstripped": 0.348,
+  "rank_full": 1,
+  "n_shifts": 24,
+  "align_full": 5.937166319523072,
+  "sess_sign_frac": 0.11578947368421053,
+  "tot_sess": 95,
+  "err_full_sum": 241.04065854128183,
+  "err_base_sum": 244.08205468029024,
+  "err_topic_sum": 242.25456466671275
+ },
+ "lc1": false,
+ "lc2_pair": false,
+ "lc2_sess": false,
+ "lc2": false,
+ "lc3_echo_only": false,
+ "lc4_diag": {
+  "xsess_full": 0.5195,
+  "topic_full": 0.366,
+  "base_xsess": 0.3305
+ },
+ "lc6_replicates": true,
+ "sign_need_frac": 1.0,
+ "verdict": "LOOP-REFUSED — the true utterance does NOT predict the owner's next reply above the topic-matched floor on the natural loop (LC-1 rank_full=0/sign_base_full=0.406; LC-2 pair sign(topic>full)=0.366<0.55). The owner replies on-topic to anything relevant (topic decoration, the F3 pattern in loop clothing). The $0 entry to reframe C is closed; only the paid live A/B intervention remains (research-gated)."
+}

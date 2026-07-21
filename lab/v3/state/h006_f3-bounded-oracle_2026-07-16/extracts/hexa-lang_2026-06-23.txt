@@ -1,0 +1,38 @@
+#3806 + #3807: every forge_dispatch host heredoc in tool/restore_frozen_seeds
+additive (runtime_emit.hexa + regen verifier; generated seed .c gitignored);
+Toward the FIRST file-drop (top-level ls self/*.c 3→1). r8 measured the wall
+- .gitignore (runtime_hi_seed.c generated artifact) + CHANGELOG (r11/r13/r14).
+  of the frozen runtime.c reference; gated behind HEXA_ZEROC_DROP_RUNTIME=1.
+* feat(selfhost zero-c r18): +47 array-family transform leaves — alloc WALL-2 = portable-link-dep, DROP_RESIDUAL 499→452 (ING #35)
+MEASURED (aiden x86_64 Linux, clean-regen restore_frozen_seeds + regen via
+DROP_RESIDUAL 430 → 416 (-14, all 14 verified gone from residual). regen
+chore(selfhost zero-c r7 rtcore-include-drop measure): committed drop-guard + PROBE-C harness — 3→1 wall = declaration surface, NOT 19 cascade rt_* (ING #35) (#3815)
+feat(selfhost zero-c r18): +47 array-family transform leaves — alloc-WALL-2 = portable-link-dep, DROP_RESIDUAL 499→452 (#3824)
+zero-c r9 (clean): FIRST file-drop ls self/*.c 3→1, default byte-identical, -Wcomment fixed (ING #35) (#3817)
+scripts measure-only (write /tmp + gitignored build/*.o). self-host≠release:
+self-host != release: default-OFF byte-identical (preprocessed + object sha
+seed (frozen runtime.c stays SSOT, byte-identical). Frozen blob untouched.
+feat(selfhost zero-c r11+r13+r14 consolidated): exec-graduate + runtime.c .hexa SSOT emitter (28 bodies) — DROP_RESIDUAL 558→512, default byte-identical (ING #35) (#3821)
+chore(selfhost zero-c r5 SELFEMIT-compile-unblock): non-frozen linux-branch hxlcl_* static-drop → PROBE-B compiles, reproducible SELFEMIT undefined=143 (ING #35) (#3814)
+* feat(selfhost zero-c r30): +15 carrier-emit real-impl bodies — FP32 farr32(8)+int64 farr_int(7) → DROP_RESIDUAL 332→317, default byte-identical (ING #29)
+feat(selfhost zero-c r30+r31 consolidated): farr32/farr_int + term_ffi carrier-emit — DROP_RESIDUAL 332→296 (-36), default byte-identical (ING #29) (#3844)
+* feat(selfhost zero-c r31): +21 carrier-emit real-impl term_ffi bodies — DROP_RESIDUAL 317→296, default byte-identical (ING #29)
+feat(selfhost zero-c r16): +6 HexaVal-tail accessor leaves — DROP_RESIDUAL 512→506, default byte-identical (ING #35) (#3822)
+feat(selfhost zero-c r17): +7 HexaVal-tail accessor leaves — DROP_RESIDUAL 506→499, default byte-identical (ING #35) (#3823)
+* docs(changelog): selfhost zero-c r26 RFC061 carrier-emit — (C) forbidden-wall falsified, DROP_RESIDUAL 393→391 (ING #35)
+self-host≠release [절대상위]: default-OFF byte-identical — merge ONLY on 3-target
+    rt_to_int are already supplied by committed self/native/rtcore_*.c seeds —
+under the experimental HEXA_ZEROC_DROP_RUNTIME drop path. frozen runtime.c stays
+DEFAULT BYTE-IDENTICAL (self-host != release, absolute top guardrail): the seed
++ tool/regen_runtime_hi_seed_o.sh verifier + CHANGELOG); no default build path
+proven). PR-only; do not merge before 3-target byteeq + shipping smoke GREEN.
+Adds the reproducible-from-tree measurement for the top-level `ls self/*.c`
+74→14. The remaining 14 are the CORE prototypes runtime.h does not carry
+feat(selfhost zero-c r19): +10 str/coerce/poly leaves — strbuf-alloc = genuine static-inline wall, DROP_RESIDUAL 452→442, default byte-identical (ING #35) (#3825)
+* feat(selfhost zero-c r9 exec-graduate): zeroc_exec_graduate.sh — full EXECUTABLE link of the drop-ON path (ld -r → real binary) + exec smoke (ING #35)
+feat(selfhost zero-c r23): +8 hxlcl mem/str-static delegate leaves — DROP_RESIDUAL 416→408, strbuf=static-inline wall (ING #35) (#3831)
+measured: DROP_RESIDUAL 317→296 (−21) · HI_DROP_COMPILES=YES · 시드 export S14=21/21 PASS.
+fix(build_aprime): MATH 블록 fi 누락 복원 — mac bash 3.2 EOF syntax error 해소 (#3829)
+exec smoke EXIT 42; default build byte-identical (flag-OFF, drop-guard transparent).
+that the numerator lacked → λ_QFORGE≈890477 vs QE 2.8197 (rel-ε≈315804, gate
+runtime_core.c). Reaching 3→1 needs the next #3811-style header-extraction steps

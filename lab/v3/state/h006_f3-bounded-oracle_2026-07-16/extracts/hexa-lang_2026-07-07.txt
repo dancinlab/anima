@@ -1,0 +1,41 @@
+fix(zeroc #29): drain nm in own-start _start probe — pipefail+grep-q SIGPIPE dup-_start (clean linux build FATAL) (#4698)
+flip(zeroc #29): strtod-tail native default-ON — T_mis=0 3-target (bit-changing) (#4651)
+Corrects the root cause (my first ranlib/stale-armap hypothesis was FALSIFIED by Fable + a live aiden
+* fix(zeroc #29): ranlib runtime.a before own-start _start probe (dup-_start clean build)
+flip(zeroc #29): FLIP-7 flip-D — own-start default-ON (bit-changing · DRAFT) (#4656)
+native hxlcl_strcmp (the cross-TU shim symbol — NOT rt_strcmp, which the workflow verify caught does
+patterns excluded from replace rows, crash filed as its own byte-changing fix round; (2) the
+but this CI step links runtime.a directly via clang. Fix: mirror the stage_build_hexa nm ' T _start'
+feat(zeroc #29): axis-② strcmp default-ON flip (couple range drop to strcmp seed) [DRAFT] (#4679)
+round-3 track B (routing hexa build's DX through hexa_ld — which links runtime.a). Extracts
+compiler/main.hexa), so it stops forking host `as`. The x86_64 ELF writer (pack_lir_x86_64 +
+feat(zeroc #29): FLIP-7 flip-D prep — main.hexa C1/C2 _start probe (byte-neutral) (#4652)
+feat(zeroc #29): axis-① round-1 — HEXA_BUILD_NATIVE leg-B cold path (no hexat/clang · byte-neutral · DRAFT) (#4664)
+non-OWN_START build/runtime.a) would otherwise link with no _start = exec/link FATAL (#4489; C1/C2
+path (main.hexa exit(1)) and forced the build onto the C-transpile delegate. Adds native lowering:
+inference was FALSIFIED — the ELF .o was `as`-produced. BIT-CHANGING (x86_64 object bytes shift
+feat(zeroc #29): axis-③ round-2 — wire --linker=hexa for darwin-arm64 (opt-in) (#4677)
+fix(zeroc #29): FLIP-7 environ — compile out libc-environ capture ctor under own-start (byte-neutral · DRAFT) (#4657)
+correctness fix (not behind a flag) -> bit-changing (runtime.c body) -> byteeq 3-target reconverge +
+'#define strcmp hxlcl_strcmp'; CUDA-caseB reuses the S3 runtime_core.o -> only S3 needs the -D. When
+has no own-start (aiden ~/.hx/bin/build/runtime.a), the crt-drop link failed with 'ld: cannot find
+Next round on DONE axis ③ (no clang/ld). Replaces the compiler/main.hexa --linker=hexa warn-stub
+Bit-changing: linux x86_64/arm64 runtime.a + hexat re-converge (own _start replaces glibc crt1);
+docs(CLAUDE.md): self-host DONE criterion = no hexa_cc.c + no runtime.c + no clang (#4659)
+feat(zeroc #29): axis-① native-lower literal_bool match arm (drop HX1102 punt) (#4687)
+# no-verify-ok CHANGELOG added; frozen native seeds + guard-file flip (bit-changing, gated on byteeq+faithful)
+but was NEVER link-and-run measured — no test had actually linked a .o via --linker=hexa and RUN the
+link FATAL. This is the consumer-link class the main.hexa C1/C2 probe (#4652) covers for hexa build,
+#ifdef HEXA_ZEROC_OWN_START) while Scrt1.o also provides one. Root cause: the -nostartfiles decision
+runtime.o's _start may not yet be in the archive symbol INDEX (stale armap), so nm reports NO _start
+hxlcl_strcmp, dropping runtime_core.o's last strcmp nm-UND. S2/single-TU amalgam already route via
+globl=6). Bit-changing: the ON runtime.a ar's the native seed and drops the emitted-C strtod-tail
+zeroc #29 win) + stage_resolve S5.5 nm-clean gate + install.sh clang-18 3-target consumer smoke.
+lowers through the native source→own-IR→native path with ZERO hexat fork and ZERO clang. Any
+.hexa:4253); amalgam sites already native via '#define strcmp hxlcl_strcmp' → no edit. OFF =>
+First round on the self-host DONE axis ① (no hexa_cc.c). Adds an opt-in native cold path to
+feat(zeroc #29): axis-③ round-1 — x86_64-linux native ELF obj default [DRAFT] (#4676)
+* feat(zeroc #29): axis-① round-1 — HEXA_BUILD_NATIVE leg-B cold path (byte-neutral)
+feat(zeroc #29): §3.1 arm64-linux native cold-path (de-hardcode from uname -sm) (#4668)
+fix(zeroc #29): strtod-tail hex/nan parse — reference-match glibc (176 → 0) (#4645)
+feat(zeroc #29): axis-③ round-3 track A — darwin exec-path as-kill [DRAFT] (#4681)

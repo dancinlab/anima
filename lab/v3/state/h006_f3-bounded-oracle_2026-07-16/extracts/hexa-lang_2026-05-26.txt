@@ -1,0 +1,30 @@
+feat(test/codegen): PR-C FIRE PASS — F-GPU-SWEEP-SHARED-REDUCE-NUMERIC closes on ubu-2 RTX 5070 (post-piece-6) (#1323)
+2. **mersenne_perfect_sigma_pure undefined** (V10 bignum arm) — the helper is referenced but never defined anywhere in the tree. Stubbed the arm to `return NOCALC` (= 🟠 verdict) with a TODO comment. The bignum σ(P)=2·P verification at large Mersenne exponents is a substantive bignum algorithm deferred to its own PR.
+* test(nvptx): math-intrinsic lowering cases (f32 family / f64 EXACT+stubs / inherit) — 38/38
+1. **sopfr undefined** (clang: `use of undeclared identifier 'sopfr'` at the _recompute arm) — the arm `if fn_name == "sopfr" { return sopfr(n) }` references the canonical stdlib sopfr (stdlib/core/math.hexa:140) but verify_cli's `use` list lacked it. Added the use → arm resolves.
+Effect: verify_cli source now parses + builds clean (post-nil-fix already on main); fresh build picks up the sopfr arm → `verify --expr sopfr 6 5` will reach _recompute(6) → sopfr(6)=5 → 🔵/🟢 tier instead of falling back to a stale pre-arm cached binary that returned 🟠 NOCALC.
+docs(GPU): close §1i math-intrinsics (PR #1215) — codegen coverage lane COMPLETE (#1216)
+* checkpoint(transpiler-reinstall): capture before-state — stale Mac transpiler omits V4 bessel/gamma codegen mapping
+* test(codegen): NVPTX FP32 div mnemonic — Sub-case A3 (div_f32→div.rn.f32, div_f16 honest-stub)
+* feat(cli): nvptx_emit — runnable standalone .hexa @gpu_kernel to PTX CLI (thin wrapper over build_nvptx_emit_driver; bypasses gated single-CLI path)
+wip(test/codegen): PR-C fire — F-GPU-SWEEP-SHARED-REDUCE-NUMERIC BLOCKED-CODEGEN (piece 6 territory) (#1320)
+docs(GPU/2c): honest-negative — .version 8.7 does NOT unblock native .reg .bf16 (RTX 5070 probe) (#1238)
+fix(nvptx): mixed-width int setp widen — closes F-RFC071-E2E-NUMERIC-EQ (source->silicon vec-add) (#1278)
+fix(codegen): NVPTX bare sm_120 .version 8.0 → 8.7 (matmul E2E driver-JIT reject) (#1202)
+fix(nvptx): PR-C piece 6 — skip default-init STMT_ASSIGN for SHARED-bank dst (closes #1320 fire blocker) (#1322)
+feat(self/codegen/macho): macho_obj_wrap_v2 — 2-symbol .o + PAGE21/PAGEOFF12 reloc emit (HEXA_BACKEND flip chunk-B phase-H inc4 · closes #1297 residual #2) (#1302)
+* wip: built new hexa_cli_driver (1902384 B) with HEXA_NATIVE_RT_EXIT env-gate baked in (strings: 4 hits); staged at /tmp/h7_verify/hexa_new
+feat(tool/hexa_ld): dyld function-import via __stubs + __got + chained-fixups bind (HEXA_BACKEND flip chunk-B phase-H inc4) (#1307)
+* feat(tool/hexa_ld): dyld function-import via __stubs + __got + chained-fixups bind (HEXA_BACKEND flip chunk-B phase-H inc4)
+feat(codegen/arm64): inline hexa_bool repr-pack behind HEXA_INLINE_BOOL_BOX (HEXA_BACKEND flip chunk-A step2) (#1270)
+docs(GPU): ledger — N71-C re-landing (silent-wipe finding) + wmma scaffold grammar + N71-A correction (#1196)
+feat(nvptx): PR-C piece 4+5 — emit .shared directive + route IndexGet/Set to ld.shared/st.shared (#1318)
+docs(GPU): §1i codegen correctness coverage closure (2026-05-26) + domain frontier state (#1212)
+2 patches (anima 2-gap, flame-v3) → already migrated by prior triage (dedup-confirmed in log).
+* fix(runtime): rt_cmp ordering codes non-negative (negative literal → hexa_sub recursion)
+feat(verify): add ln(x) 1-arg float calculator — CLM init-CE floor numerical path (#1128)
+feat(HEXA_BACKEND flip · 열한째): pair-safe alloc/free — `_hexa_ptr_free` override + rt_alloc 16-B header pattern (#1326 (B) CLOSED) (#1329)
+* feat(codegen/macho): macho_obj_wrap_v3 — N text symbols + optional __const (HEXA_BACKEND flip phase-H chunk-B · PR #1297 residual #1)
+feat(GPU R12): fusion-autoregressive-complete — 🟠 sub-threshold launch-bound decode win (F-FUSION-AUTOREGRESSIVE-COMPLETE) (#1146)
+feat(codegen/macho): macho_obj_wrap_v3 — N text symbols in one .o (HEXA_BACKEND flip phase-H · PR #1297 residual #1 CLOSED) (#1311)
+feat(codegen/arm64): inline hexa_int repr-pack behind HEXA_INLINE_INT_BOX (HEXA_BACKEND flip chunk-A step1) (#1258)

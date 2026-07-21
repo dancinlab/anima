@@ -1,0 +1,25 @@
+{
+  "project": "anima-v5",
+  "stack": [],
+  "lockdown": {
+    "files": [],
+    "fromMarkdown": "CLAUDE.md",
+    "onEditReminder": "L0 file edited — update CHANGELOG + issue tracker in the same change."
+  },
+  "enforcementFile": ".harness/enforcement.json",
+  "keywordsFile": ".harness/keywords.json",
+  "severityMapFile": ".harness/severity-map.json",
+  "verify": {
+    "checks": []
+  },
+  "lint": {
+    "_why": "This tree's ids deliberately encode the parent (next-gate.falsifiers.l1-l2, defect-encoding.a1-leak) — the same convention anima-v4 declared (its convergence record architecture-json-1: dot notation never broke substring search; `architecture search` matches ids as substrings). Declared rather than mangled.",
+    "archIdPattern": "^[a-zA-Z0-9][a-zA-Z0-9.-]*$",
+    "_whyCellCap": "700 = sidecar's own previous default. A conceptual design tree carries one fact per node, but a fact like 'F1a passed both seeds (0.2982/0.1914) while F1a′ failed (−0.1758/−0.2904) ⇒ misidentified, not inert' does not survive being cut to 300 with its arm+source intact — and citing a number without its arm is the campaign's own banned move.",
+    "archCellCap": 700
+  },
+  "ledger": {
+    "staleSec": 1800
+  },
+  "_note": "@canonical-ok — 'anima-v5' is a deliberate successor CAMPAIGN, not a copy suffix: anima (v1), anima-v2, anima-v4 and this repo are separate campaigns, each inheriting only the previous one's SEALED, MEASURED verdicts and none of its code (the rule v4 applied to v1, and this repo applies to v4). History-in-filename is banned; generation-as-identity is the established pattern of this line."
+}

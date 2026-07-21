@@ -1,0 +1,53 @@
+fix(compiler/lower): gap 4 — rename _new_ctx → _new_lower_ctx (211→0 warnings)
+SPEC.yaml firmware_evolution.roadmap.F3 status: follow-up -> this_commit.
+Temp incoming/ dock — upstream patch confluence while self/ → compiler/ transition.
+fixes". Single-file → multi-file pivot (Gap 1) cascades into Module shape,
+types.hexa (+50): _types_t_i8/i16/i32/f32 factories; _types_lower_type_ref
+canonical `STMT_*` symbols already imported via `import "../ir/mir.hexa"`.
+  L8423-8454  match_pattern EnumPath branch: on variant-name match, walk
+  compiler/lower/ast_to_hir.hexa::_helper  → _hir_helper (already done many)
+    self/     109 files  → 1 hit (self/ai_native_pass.hexa:11328 'guard')
+Root cause of interpreter gap: RFC-020 A1/A3 landed in self/parser.hexa and
+  L2935  parse_match_pattern EnumPath dict gains "payload_expr": "" so all
+  removing the import "./compiler/lower/hir_to_mir.hexa" line eliminated
+firmware/boards/chip/architecture/l13-mev-optomech-roadmap/l13-mev-optomech-roadmap.md
+    [C] trailer for HX1042 but new site is HX5001       → exit 2 (mentions HX5001)
+  rename → 211 → 0 warnings, asm output unchanged (370 bytes, label+ret intact)
+doc(self/ir/instr): RFC-020 B1 audit + holdout — stage0 binary blocks migration
+         val_void → false on non-void scrutinees, breaking `Square(_)` arms).
+feat(compiler): Gap 14 lower coverage match payload index nested struct HX1100
+D5 (parser Await production missing — actually wide-open per RFC-022 §2.3
+doc(README): rewrite from SPEC.md/SPEC.yaml SSOT — 167 lines, 12 sections
+    6. Any unconsented site → exit 2, report listing site + all observed
+    → 2 diags: HX9001 (Error, expired) + HX9000 (Warning, ack-required)
+parse_match_pattern, eval_expr (NK_ENUM_PATH), and match_pattern that all
+    Tombstoned L citation → HX1099 (compile fail), winning over HX8001
+  L8417  match_pattern adds explicit Wildcard branch (was eval_expr-d to
+     @discover(kind="L")             register THIS fn as new L (RFC-017
+SPEC.yaml atlas_self_discovery.registration_authority.staging_pipeline:
+🎯 wilson core gate CLEARED. G1 (RFC-020 A5) + G2 (this) + G3 (cancel
+firmware/boards/chip/architecture/mk3-roadmap-l1-l15-audit/mk3-roadmap-l1-l15-audit.md
+    [B] no trailer for HX1042 site                       → exit 2 (mentions HX1042)
+firmware/boards/chip/architecture/monster-leech-mapping/monster-leech-mapping.md
+  11 memory model (arena 1.x → borrow 2.x; tracing GC permanently rejected)
+    avoid an import cycle that stage0's interp doesn't resolve transitively.
+fix(codegen): RFC-020 A4 match-side payload extraction + A5 regression PASS
+         env_define(name, get_enum_data(scrutinee)); literal/nested pattern
+LowerCtx (no `module` field) → ctx.module access in _ctx_with_fn emitted
+  (d) body L[valid-law], no annot         → HX8004 + HX8003 (deprecated)
+spec(rfc): RFC-022 async model parity + stdlib cancel token (wilson G2+G3)
+all other AST/codegen diffs are matched-by-design. RFC-022 §3 establishes
+feat(spec+firmware): Option C — stdlib core/alloc split + firmware/ tree
+    Stage0 imports are not transitive (despite check/types.hexa importing
+  Report-only — NOT a hook, NOT enforcement; intended for manual or CI.
+and compiler/lower/* to prevent stage0 last-import-wins shadow collisions
+  (commit 6a379609) and bind.hexa scope → sc rename (commit e800b87d).
+  verify sync-diff   → hexa verify sync-diff P1 M  partial (sync deps)
+ast_to_hir.hexa (+10): _hir_t_i8/i16/i32/f32 factories + dispatch mirror
+firmware/boards/antimatter/firmware/doc/schematic_v0_tabletop_penning.md
+  formula → @implements OR @discover OR @grace(HX8004, until, reason)
+    walks @grace sites; for each, finds matching diagnostics in `diags`
+feat(compiler/daemon): RFC-021 v0 prototype — atlas.lookup + shutdown
+    self/hexa_full.hexa (A5 fixes only land in source, not the deployed
+  firmware_evolution, stdlib_evolution, both phases_completed sections,
+firmware/boards/antimatter/firmware/doc/phase_e_test_report_template.md

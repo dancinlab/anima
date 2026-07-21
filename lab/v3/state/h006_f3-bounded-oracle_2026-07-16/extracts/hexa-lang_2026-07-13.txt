@@ -1,0 +1,41 @@
+byteeq GREEN→census REAL FD==0→@grace B4 warn→error(element-disjoint dynamic residual).
+- byteeq중립 CONFIRMED: borrowck OBSERVE-ONLY(hir_to_mir:471-476·never emits MIR)·
+- FP-resolution: 3 real FP(passes.hexa disjoint field) suppress·controls_truepos
+design(L5): field place-projection 구현-ready 스펙 (B4-error PREREQ·wf_03c8f90c) (#4912)
+노출(빌드거부 0비용). PREREQ(B4-error 가능조건)=field place-projection ceiling
+measure(L5 B4): census REAL field-disjoint FP=3 → B4-error NO-GO, WARN 유지 (#4909)
+* docs(axis-② A1): Fable frozen-seed isolation design — LModule-level reachability filter
+* docs(axis-② A1): characterize frozen-seed isolation algorithm (reachability DCE) for next round
+인데 3발견 → B4-error면 안전한 field-disjoint 코드(passes.hexa 3곳) 빌드거부=
+→착륙후 재센서스 REAL FD==0 확인→@grace B4-error flip. 결과=state/hexa-own/
+  write-side _bck_w_projs push-only 배열(_bck_note_write proj param+push·3 call-
+B4(warn→error) 판정=NO-GO→WARN 유지(정직 terminal): 게이트바 REAL FD-FP==정확히0
+flip(axis-② #3 PR-2): array i64 typed-leaf native DEFAULT-ON — 3-target .s seeds (#4918)
+  (same-place) 계속 발화(no under-narrow)·dynamic-index residual conservative.
+flip(axis-② #6 hexa_array_new): empty-array ctor own-native default-ON (3-target .s seed) (#4930)
+flip(axis-② #4 f64 PR-3): array f64 typed-leaf native DEFAULT-ON — 3-target .s seeds (#4922)
+* feat(axis-②③ A1): wire strdup/calloc/free frozen-seed arms — CLASS COMPLETE (7/7)
+feat(axis-② A1): frozen-seed isolation — isolate_lmodule_x86_64 + --isolate (own isolate_native_seed.py) (#4907)
+feat(axis-② #5 zeros_leaf PR-1): boxed-zeros 2 constructors seed + 5-piece wiring (guard-OFF byte-neutral) (#4926)
+feat(axis-② #4 f64 PR-1): __hx_f64_bits/__hx_bits_f64 bit-reinterpret leaves (ADD-only byte-neutral) (#4920)
+feat(axis-② #6 hexa_array_new PR-1): empty-array ctor seed + 5-piece wiring (guard-OFF byte-neutral) (#4929)
+docs(axis-② #4 f64 DEPLOYED): ARCHITECTURE ②-terminal 3→4 units + CHANGELOG (#4922 merged) (#4923)
+* docs(axis-② #3): array typed-leaf push reduction spec — Fable design + repo-verified corrections
+* test(axis-③): float corpus into own-link parity gate — SSE + FCVTZS coverage (Fable B2)
+* flip(axis-② #4 f64 PR-3): array f64 typed-leaf native DEFAULT-ON — 3-target .s seeds
+* feat(axis-② #4 f64 PR-2b-wire): resolver + regen + def-var (default-OFF byte-neutral)
+* feat(axis-② A1): frozen-seed isolation arm64-elf twin — isolate_lmodule_arm64_elf
+* feat(axis-② A1): frozen-seed isolation — isolate_lmodule_x86_64 + --isolate flag
+* fix(axis-② #4 f64 flip): C-shim non-static (static→plain·decl conflict fix)
+* feat(axis-②③ A1): wire strcmp frozen-seed resolver arm (E4+isolate own-obj)
+feat(axis-② #3 PR-1): array i64 typed-leaf reduction unit — seed+guard+resolver+regen (default-OFF byte-neutral) (#4917)
+Revert "flip(axis-② #6 hexa_array_new): empty-array ctor own-native default-ON (3-target .s seed) (#4930)" (#4932)
+* feat(axis-② #3): emitter i64 typed-leaf sub-guard HEXA_RT_CORE_ARRAY_I64_LEAF_NATIVE (guard-OFF·byte-neutral)
+docs(axis-②): reduction 백로그 census SSOT + zeros_leaf #5 spec (67후보→34GO/18WALL/15DEFER) (#4924)
+feat(axis-② #4 f64 PR-2): array f64 typed-leaf seed + C-shim + resolver (default-OFF byte-neutral) (#4921)
+flip(axis-② #2 PR-2): valop eqtruthy/coercion native DEFAULT-ON — ②-terminal #2 unit deployed (#4916)
+flip(axis-② #5 zeros_leaf): 2 boxed-zeros constructors own-native default-ON (3-target .s seed) (#4927)
+* feat(axis-② #4 f64 PR-1a): bind.hexa allowlist __hx_f64_bits/__hx_bits_f64 (ADD-only byte-neutral)
+* feat(axis-② #4 f64 PR-1a): bind.hexa allowlist __hx_f64_bits/__hx_bits_f64 (ADD-only byte-neutral)
+* feat(axis-② #4 f64 PR-2a): array_typed_leaf_f64.hexa seed (hexa_arr_f64_{new,push_bits,len,box})
+* docs(axis-② A1): libm+objcopy classes COMPLETE (17 branches/18 syms) — only frozen-seed left

@@ -1,0 +1,15 @@
+==========================================================================
+H_003 span-policy encoder — one-variable verification ($0, no training)
+==========================================================================
+vocab=2314  negator atomic ids={'안': 286, '않': 520, '못': 381, '아니': 438}
+
+lines containing a negator (sample): 907
+negator lines: identical=348  differ=559
+  (differ = the span policy changed the negator's encoding — expected)
+CONTROL — 500 lines with NO negator: SOME DIFFER (BUG)
+  (this is the one-variable proof: absent a negator, the arms are byte-identical)
+atom stream bytes=77770  shat stream bytes=89308  (shat longer: jamo singletons cost more)
+example negator line: 흠...포스터보고 초딩영화줄....오버연기조차 가볍지 않구나
+
+VERDICT: BROKEN — arms differ outside negator spans, contrast confounded
+wrote span_policy_verify.json

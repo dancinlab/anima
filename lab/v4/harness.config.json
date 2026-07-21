@@ -1,0 +1,9 @@
+{
+  "_note": "@canonical-ok — 'anima-v4' is a deliberate successor CAMPAIGN, not a copy suffix: anima (v1), anima-v2, anima-v3 exist as live sibling repos and v4 inherits only v1's sealed verdicts (see salvage in ARCHITECTURE.json). Renaming in place would collapse four distinct campaigns into one name.",
+  "lint": {
+    "_why": "This tree's ids deliberately encode the parent (mech-3.falsifier, L4.arms) and its salvage laws are named L1..L9 — capitalisation is semantic (L1 = Law 1). Kebab-only would force l1-one-bit-seam and lose that. Declared rather than mangled; the rule's own searchability rationale is satisfied either way, since `architecture search` matches ids as substrings.",
+    "archIdPattern": "^[a-zA-Z0-9][a-zA-Z0-9.-]*$",
+    "_whyCellCap": "700 = sidecar's own previous default (it was tightened 1500->700->300). A conceptual design tree carries one fact per node, but a fact like 'the metric is d_acc, f1/f2 are PANEL names, and its 1.0 ceiling is definitional' does not survive being cut at 300 chars. 700 still blocks prose-leaves; 32/103 nodes exceeded 300, which flags the calibration, not the tree.",
+    "archCellCap": 700
+  }
+}

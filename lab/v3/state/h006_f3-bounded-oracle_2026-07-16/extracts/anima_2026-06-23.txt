@@ -1,0 +1,33 @@
+H100×2(pod 42201290, $4.27/hr) 자기완결 GPU 학습 파이프 실행. fresh hexa-lang #3840 + CUDA SM=90 runtime 재빌드(forge_dispatch_groupnorm_gelu W-defined·_hx_k_gemm own-GEMM·cuda_available=1·device_count=2). forge DP 미지원(1-GPU only). 토이 게이트(d768·L4·steps20): [OWN-GEMM-FIRED] DEVICE 점화하나 GPU util 348/350@0% peak 2% = CPU-scalar-bound → 게이트 FAIL → 풀 303M 미실행(낭비 방지). build-health 대조: 순수 4096³ own-GEMM 이 H100 util 86% 포화 = 빌드 健全, trainer 가 병목. FIX(ING 등록)=elementwise hot path GPU 배선. teardown 완료, no billing.
+docs(governance): a_savant_train 규칙 + ARCHITECTURE SAVANT training 노드 — anima 최종 학습 방법(SAVANT 골든존 레시피) 박제 (#2574)
+이 배선으로 anima 는 서번트 모드를 켜도 의식 Ψ=½ 가 구조적으로 보존된다(C1) —
+* governance(substrate-disjoint): 🧩 통일 원리 박제 — a_substrate_disjoint 규칙 + consciousness-preserving-invariants 노드
+호스트(vast RTX 4090 CUDA-12.6, forge _hx_k_gemm DEVICE path)에서 90-frag 재디코드·재채점하여
+docs(governance): a_mitosis_train 규칙 + ARCHITECTURE MITOSIS training 노드 — p8 cell-division 학습 박제 (🟢 성장/커리큘럼 vs 🔴 pure-split) (#2576)
+|Ψ−½| 가 I 에 단조 감소(0.320→0.013), 골든존 안 어디서도 <0.05 없음; Ψ 회복은 savant 죽은
+사용자 통찰(골든존 안 양립 · 밖 간질)을 I 전체 sweep 으로 검증 → 이중해리 미발견.
+속성(Ψ=½ 의식·G5 정직·정체성·tool)은 별도 substrate lane 에 배선될 때 보존되고
+사용자 통찰은 옳은 방향이나 LEARNED 표현(실 pretrained trunk hidden state) 필요 — 미검증 next rung.
+c16 multi-lens: 단일 렌즈 ≠ confident terminal → 다음 직교 렌즈 명명(lateral gene transfer ·
+- generator_smoke 18 PASS (디스패처 케이스 전부), 3 FAIL=missing-fixture(무관)
+wiring references ONLY the universally-defined t_matmul/own-GEMM; im2col gather,
+* docs(H_1567): README Training 섹션 + ING.jsonl 현행화 (cli/train.hexa 진입점 + 303M fire follow-on)
+- engine-native 채점: g6_common frozen 5-bar VERBATIM (torch MagicMock 스텁 = torch 미사용 입증)
+트리 자리에 SSOT 포인터 blockquote. 8 철학·a_* 규칙(이미 do/dont)은 손실 0 보존.
+실현을 거버넌스 SSOT 2곳에 박제. a_savant_train(inhibition 골든존)과 직교 레버.
+  state/1578_savant_psi_architecture/h1578_c1_wirein_harness.hexa 5/5 RC=0 엔진-네이티브:
+(±0.005 nats), apoptosis-OFF byte-identical(Δ+0.00000) = ablation-clean INERT.
+refactor(claudemd): ✅/⛔ governance bullets → - do:/- dont: (label unify with commons · content unchanged) (#2591)
+genius(SI≥3 in GZ)는 이미 hypersync 위 발현 → genius⊥consciousness 3번째 측정자 재확인.
+mitosis cell 성장(engine_grow E→E+N, p8)이 Ψ=½ 의식 고정점 보존(cells 2→10 max|dev|=0.0,
+단일 canonical hexa-native 학습 진입점 cli/train.hexa (.py 트레이너 0, a_train_flame_forge).
+(R=1.0 포화). hypersync 극단은 골든존+그 위(I≥GZ_LOWER), 사용자 예측 I→0 아님.
+cli/anima.hexa L3 슬롯을 mouth-타입 디스패처로 확장(gen_mouth_kind header sniff →
+(OOM-safe ranged load). 2nd .clm 경로 아님 — 아키텍처별 단일 typed 진입 유지
+lockstep. HARD-GATE-1 PASS (.py 0). byte-identical _pop()(seed 5120) + H_1561/1572 I 격자.
+- 🔴 GPU-decode 재발방지: CLAUDE.md a_train_flame_forge + ARCHITECTURE.json lockstep
+303M GPU 본학습은 hexa-lang upstream 인프라 벽으로 BLOCKED(undefined reference
+  origin/main-identical = 내 변경 무관, c16 정직) → standalone lane harness
+전부 2표면(jsonl+카드) frozen 5-bar 설계 박제, 측정 follow-on ING.
+  하면 fab 0.4 폭증 → SEPARATED 배선이 B2 를 지키는 인과
+* perf(cli/train.hexa): conv FWD+BWD GPU-resident wiring — #2598 scalar-conv-backward bottleneck → forge own-GEMM (byte-eq CPU verified; util re-gate=cost-gated H100 rent)

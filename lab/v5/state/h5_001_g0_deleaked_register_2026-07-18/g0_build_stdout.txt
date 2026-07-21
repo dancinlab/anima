@@ -1,0 +1,98 @@
+================================================================================
+H5_001 G-0 — constructed DELEAKED register: build + closed-form audit
+================================================================================
+
+[census unit-test] planted 0.75 count-leak → census worst=1.0 (presence n=1 gram=b'\xec'→pos_0) · CAUGHT=True
+
+--- δ0  [REPORT-ONLY (templatic anchor)]  drill=1536 f2d=192 f1d=64
+    [rpt] A1_census_drill: worst=1.0 (bar 0.5078) at [presence n=3 gram=b'\x89 \xeb'→hp_2] · per-target {'hp_0': 1.0, 'hp_1': 1.0, 'hp_2': 1.0, 'hp_3': 1.0} · top: 1.0:pos_5:"b'\\xec\\x9e\\x85\\xec'"(256); 1.0:pos_5:"b'\\xec\\x9e\\x85\\xeb'"(256); 1.0:pos_5:"b'\\xec\\x84\\x9c\\xec'"(256); 1.0:pos_5:"b'\\xec\\x84\\x9c\\xeb'"(256); 1.0:pos_5:"b'\\xeb\\xb0\\xb0\\xec'"(256)
+    [rpt] A1_census_f2d: worst=1.0 (bar 0.5208) at [presence n=3 gram=b'\x89 \xeb'→hp_2] · per-target {'hp_0': 1.0, 'hp_1': 1.0, 'hp_2': 1.0, 'hp_3': 1.0} · top: 1.0:pos_5:"b'\\x9e\\x98 \\xec'"(32); 1.0:pos_5:"b'\\xec\\x9b\\x83\\xec'"(32); 1.0:pos_5:"b'\\xec\\x9b\\x83\\xeb'"(32); 1.0:pos_5:"b'\\xeb\\x8b\\x98\\xec'"(96); 1.0:pos_5:"b'\\xeb\\x8b\\x98\\xeb'"(96)
+    [rpt] A1_census_f1d: worst=1.0 (bar 0.5208) at [presence n=2 gram=b'\x90\xeb'→pos_2] · per-target {'gold_2': 1.0, 'gold_3': 1.0, 'hp_0': 1.0, 'hp_1': 1.0} · top: 1.0:pos_5:"b'\\xec\\x9e\\x85\\xec'"(32); 1.0:pos_5:"b'\\xec\\x9e\\x85\\xeb'"(32); 1.0:pos_5:"b'\\xa2\\x80 \\xec'"(32); 1.0:pos_5:"b'\\xa2\\x80  '"(32); 1.0:pos_5:"b'\\x9e\\x85\\xec\\x9d'"(32)
+    [PASS] A4_geom_bin_quantized: L==8W(768) & region k==[W(k+1),W(k+2)): all items OK
+    [PASS] A_map_node_spans: spans re-derived == emitted, region-bounded, disjoint: all items OK
+    [PASS] A_sup_contested_edges: contested rows=[1, 5, 9, 13, 17, 21] (expect [1,5,9,13,17,21], 6 = offtop 5/6)
+    [PASS] codebook_free_slots: free=[0, 1, 2, 4] (expect [0,1,2,4])
+    [PASS] codebook_gf2_rank: GF(2) rank=4 (expect 4)
+    [PASS] field_blind_ceiling: ceiling=0.6667 (expect 0.667)
+    [PASS] A3_heldout_disjoint: held-out args in drill: []
+    [PASS] A4_gold_balance_f2d: gold mean=0.5
+    [PASS] A4_gold_balance_f1d: gold mean=0.5
+
+--- δ1  [PASS]  drill=3072 f2d=192 f1d=64
+    [PASS] A1_census_drill: worst=0.5 (bar 0.5078) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A1_census_f2d: worst=0.5 (bar 0.5208) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A1_census_f1d: worst=0.5 (bar 0.5208) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A4_geom_bin_quantized: L==8W(768) & region k==[W(k+1),W(k+2)): all items OK
+    [PASS] A_map_node_spans: spans re-derived == emitted, region-bounded, disjoint: all items OK
+    [PASS] A_sup_contested_edges: contested rows=[1, 5, 9, 13, 17, 21] (expect [1,5,9,13,17,21], 6 = offtop 5/6)
+    [PASS] codebook_free_slots: free=[0, 1, 2, 4] (expect [0,1,2,4])
+    [PASS] codebook_gf2_rank: GF(2) rank=4 (expect 4)
+    [PASS] field_blind_ceiling: ceiling=0.6667 (expect 0.667)
+    [PASS] A3_heldout_disjoint: held-out args in drill: []
+    [PASS] A4_gold_balance_f2d: gold mean=0.5
+    [PASS] A4_gold_balance_f1d: gold mean=0.5
+    [PASS] anti_parity_si_constant: per-conjunct si_total values = [1] (must be a single constant)
+
+--- δ2  [PASS]  drill=4608 f2d=192 f1d=64
+    [PASS] A1_census_drill: worst=0.5 (bar 0.5078) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A1_census_f2d: worst=0.5 (bar 0.5208) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A1_census_f1d: worst=0.5 (bar 0.5208) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A4_geom_bin_quantized: L==8W(768) & region k==[W(k+1),W(k+2)): all items OK
+    [PASS] A_map_node_spans: spans re-derived == emitted, region-bounded, disjoint: all items OK
+    [PASS] A_sup_contested_edges: contested rows=[1, 5, 9, 13, 17, 21] (expect [1,5,9,13,17,21], 6 = offtop 5/6)
+    [PASS] codebook_free_slots: free=[0, 1, 2, 4] (expect [0,1,2,4])
+    [PASS] codebook_gf2_rank: GF(2) rank=4 (expect 4)
+    [PASS] field_blind_ceiling: ceiling=0.6667 (expect 0.667)
+    [PASS] A3_heldout_disjoint: held-out args in drill: []
+    [PASS] A4_gold_balance_f2d: gold mean=0.5
+    [PASS] A4_gold_balance_f1d: gold mean=0.5
+    [PASS] anti_parity_si_constant: per-conjunct si_total values = [1] (must be a single constant)
+
+--- δ3  [PASS]  drill=4608 f2d=192 f1d=64
+    [PASS] A1_census_drill: worst=0.5 (bar 0.5078) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A1_census_f2d: worst=0.5 (bar 0.5208) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A1_census_f1d: worst=0.5 (bar 0.5208) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A4_geom_bin_quantized: L==8W(960) & region k==[W(k+1),W(k+2)): all items OK
+    [PASS] A_map_node_spans: spans re-derived == emitted, region-bounded, disjoint: all items OK
+    [PASS] A_sup_contested_edges: contested rows=[1, 5, 9, 13, 17, 21] (expect [1,5,9,13,17,21], 6 = offtop 5/6)
+    [PASS] codebook_free_slots: free=[0, 1, 2, 4] (expect [0,1,2,4])
+    [PASS] codebook_gf2_rank: GF(2) rank=4 (expect 4)
+    [PASS] field_blind_ceiling: ceiling=0.6667 (expect 0.667)
+    [PASS] A3_heldout_disjoint: held-out args in drill: []
+    [PASS] A4_gold_balance_f2d: gold mean=0.5
+    [PASS] A4_gold_balance_f1d: gold mean=0.5
+    [PASS] anti_parity_si_constant: per-conjunct si_total values = [1] (must be a single constant)
+
+--- δ4  [PASS]  drill=4608 f2d=192 f1d=64
+    [PASS] A1_census_drill: worst=0.5 (bar 0.5078) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A1_census_f2d: worst=0.5 (bar 0.5208) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A1_census_f1d: worst=0.5 (bar 0.5208) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A4_geom_bin_quantized: L==8W(1152) & region k==[W(k+1),W(k+2)): all items OK
+    [PASS] A_map_node_spans: spans re-derived == emitted, region-bounded, disjoint: all items OK
+    [PASS] A_sup_contested_edges: contested rows=[1, 5, 9, 13, 17, 21] (expect [1,5,9,13,17,21], 6 = offtop 5/6)
+    [PASS] codebook_free_slots: free=[0, 1, 2, 4] (expect [0,1,2,4])
+    [PASS] codebook_gf2_rank: GF(2) rank=4 (expect 4)
+    [PASS] field_blind_ceiling: ceiling=0.6667 (expect 0.667)
+    [PASS] A3_heldout_disjoint: held-out args in drill: []
+    [PASS] A4_gold_balance_f2d: gold mean=0.5
+    [PASS] A4_gold_balance_f1d: gold mean=0.5
+    [PASS] anti_parity_si_constant: per-conjunct si_total values = [1] (must be a single constant)
+
+--- δ5  [PASS]  drill=4608 f2d=192 f1d=64
+    [PASS] A1_census_drill: worst=0.5 (bar 0.5078) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A1_census_f2d: worst=0.5 (bar 0.5208) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A1_census_f1d: worst=0.5 (bar 0.5208) at [presence n=1 gram=b'\xec'→gold_0] · per-target {'gold_0': 0.5, 'gold_1': 0.5, 'gold_2': 0.5, 'gold_3': 0.5} · top: 
+    [PASS] A4_geom_bin_quantized: L==8W(1344) & region k==[W(k+1),W(k+2)): all items OK
+    [PASS] A_map_node_spans: spans re-derived == emitted, region-bounded, disjoint: all items OK
+    [PASS] A_sup_contested_edges: contested rows=[1, 5, 9, 13, 17, 21] (expect [1,5,9,13,17,21], 6 = offtop 5/6)
+    [PASS] codebook_free_slots: free=[0, 1, 2, 4] (expect [0,1,2,4])
+    [PASS] codebook_gf2_rank: GF(2) rank=4 (expect 4)
+    [PASS] field_blind_ceiling: ceiling=0.6667 (expect 0.667)
+    [PASS] A3_heldout_disjoint: held-out args in drill: []
+    [PASS] A4_gold_balance_f2d: gold mean=0.5
+    [PASS] A4_gold_balance_f1d: gold mean=0.5
+    [PASS] anti_parity_si_constant: per-conjunct si_total values = [1] (must be a single constant)
+
+================================================================================
+G-0 VERDICT: PASS — deleaked register admissible for δ≥1; G-0k window pre-check next
+wrote {drill,f2d,f1d}_d{0..5}.json + g0_verdict.json

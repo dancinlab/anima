@@ -1,0 +1,176 @@
+{
+  "F7_pass": true,
+  "f2prime": {
+    "panel": "f2prime",
+    "n": 192,
+    "cell_counts": {
+      "SI_N1": 48,
+      "SI_N2": 48,
+      "PL_N1": 48,
+      "PL_N2": 48
+    },
+    "heuristics": {
+      "presence_attach": 0.5,
+      "locality": 0.5,
+      "lexical_lookup_max": 0.5,
+      "marker_position": 0.5,
+      "template_heuristic": 0.5,
+      "worst_suffix_leak_L10": 0.5,
+      "verbform_prefix_leak": 0.5,
+      "charlen_majority": 0.5
+    },
+    "heuristics_in_band": true,
+    "structural": {
+      "per_cell_equal": true,
+      "eojeol_len_single": true,
+      "particle_const_도": true,
+      "answer_tokens_absent": true,
+      "negators_absent": true,
+      "all_strata_balanced_0.5": true,
+      "task_conjunction_sanity": 1.0
+    },
+    "structural_ok": true,
+    "balances": {
+      "overall": 0.5,
+      "per_hp": {
+        "1": 0.5,
+        "0": 0.5
+      },
+      "per_pos": {
+        "1": 0.5,
+        "2": 0.5
+      },
+      "per_hon_lexeme": {
+        "어머님": 0.5,
+        "회장님": 0.5,
+        "스승님": 0.5,
+        "박사님": 0.5
+      },
+      "per_plain_lexeme": {
+        "조카": 0.5,
+        "후배": 0.5,
+        "비서": 0.5,
+        "제자": 0.5
+      },
+      "per_verb": {
+        "웃": 0.5,
+        "오": 0.5,
+        "떠나": 0.5
+      },
+      "per_tail": {
+        "기다렸다": 0.5,
+        "기다렸어요": 0.5
+      }
+    },
+    "fixedL_prefix_curve_reportonly": {
+      "1": 0.5,
+      "2": 0.5,
+      "3": 0.5,
+      "4": 0.6667,
+      "5": 0.8333,
+      "6": 1.0,
+      "7": 1.0,
+      "8": 1.0,
+      "9": 1.0,
+      "10": 1.0
+    },
+    "F7_pass": true
+  },
+  "f1prime": {
+    "panel": "f1prime",
+    "n": 64,
+    "cell_counts": {
+      "SI_N1": 16,
+      "SI_N2": 16,
+      "PL_N1": 16,
+      "PL_N2": 16
+    },
+    "heuristics": {
+      "presence_attach": 0.5,
+      "locality": 0.5,
+      "lexical_lookup_max": 0.5,
+      "marker_position": 0.5,
+      "template_heuristic": 0.5,
+      "worst_suffix_leak_L10": 0.5,
+      "verbform_prefix_leak": 0.5,
+      "charlen_majority": 0.5
+    },
+    "heuristics_in_band": true,
+    "structural": {
+      "per_cell_equal": true,
+      "eojeol_len_single": true,
+      "particle_const_도": true,
+      "answer_tokens_absent": true,
+      "negators_absent": true,
+      "all_strata_balanced_0.5": true,
+      "task_conjunction_sanity": 1.0
+    },
+    "structural_ok": true,
+    "balances": {
+      "overall": 0.5,
+      "per_hp": {
+        "1": 0.5,
+        "0": 0.5
+      },
+      "per_pos": {
+        "1": 0.5,
+        "2": 0.5
+      },
+      "per_hon_lexeme": {
+        "선생님": 0.5,
+        "교수님": 0.5,
+        "사장님": 0.5,
+        "아버님": 0.5
+      },
+      "per_plain_lexeme": {
+        "아이": 0.5,
+        "학생": 0.5,
+        "직원": 0.5,
+        "친구": 0.5
+      },
+      "per_verb": {
+        "쉬": 0.5,
+        "달리": 0.5,
+        "노래하": 0.5,
+        "춤추": 0.5
+      },
+      "per_tail": {
+        "기다렸네요": 0.5
+      }
+    },
+    "fixedL_prefix_curve_reportonly": {
+      "1": 0.5,
+      "2": 0.5,
+      "3": 0.5,
+      "4": 0.5469,
+      "5": 0.7031,
+      "6": 0.8906,
+      "7": 0.9844,
+      "8": 1.0,
+      "9": 1.0,
+      "10": 1.0
+    },
+    "F7_pass": true
+  },
+  "union": {
+    "template": 0.5,
+    "suffix_L10": 0.5,
+    "ok": true
+  },
+  "drill_disjointness": {
+    "status": "PENDING",
+    "note": "drill_grid.json not built yet",
+    "held_out": [
+      "어머님",
+      "회장님",
+      "스승님",
+      "박사님",
+      "조카",
+      "후배",
+      "제자",
+      "비서",
+      "기다렸네요"
+    ]
+  },
+  "sigma_f2": 0.0361
+}

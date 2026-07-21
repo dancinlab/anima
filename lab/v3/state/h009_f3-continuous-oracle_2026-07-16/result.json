@@ -1,0 +1,218 @@
+{
+ "eps_f": 0.075,
+ "anchor": 0.25,
+ "knn": 5,
+ "rank_gate": 2,
+ "streams": {
+  "anima": {
+   "n_days": 44,
+   "n_train": 26,
+   "numrank": 150,
+   "n_pairs": 43,
+   "n_shifts": 37,
+   "valid_ks": [
+    2,
+    4,
+    8
+   ],
+   "primary_k": 8,
+   "full": {
+    "e0": 0.0819103691073295,
+    "median_shift": 0.11223141731863881,
+    "align": 0.030321048211309307,
+    "rank": 0,
+    "p": 0.0,
+    "n_shifts": 37
+   },
+   "s": {
+    "2": {
+     "e0": 0.0827102241815117,
+     "median_shift": 0.10977677455223644,
+     "align": 0.02706655037072475,
+     "rank": 0,
+     "p": 0.0,
+     "n_shifts": 37
+    },
+    "4": {
+     "e0": 0.0834813052391372,
+     "median_shift": 0.11297219582960243,
+     "align": 0.029490890590465224,
+     "rank": 0,
+     "p": 0.0,
+     "n_shifts": 37
+    },
+    "8": {
+     "e0": 0.08327907105790754,
+     "median_shift": 0.11382437213160285,
+     "align": 0.03054530107369531,
+     "rank": 0,
+     "p": 0.0,
+     "n_shifts": 37
+    }
+   },
+   "topic": {
+    "e0": 0.0874391082777482,
+    "median_shift": 0.1091802083880979,
+    "align": 0.0217411001103497,
+    "rank": 0,
+    "p": 0.0,
+    "n_shifts": 37
+   },
+   "capture": {
+    "2": 0.8926653914500662,
+    "4": 0.9726210777721581,
+    "8": 1.0073959468954758
+   },
+   "capture_primary": 1.0073959468954758,
+   "topic_capture_primary": 0.7170299640973689,
+   "gate_ok": true,
+   "sign_topic_gt_s": 23,
+   "capture_primary_rawweight": 0.8191625968608673
+  },
+  "hexa-lang": {
+   "n_days": 102,
+   "n_train": 61,
+   "numrank": 190,
+   "n_pairs": 101,
+   "n_shifts": 95,
+   "valid_ks": [
+    2,
+    4,
+    8,
+    16
+   ],
+   "primary_k": 8,
+   "full": {
+    "e0": 0.11664061082113553,
+    "median_shift": 0.19012811559728449,
+    "align": 0.07348750477614896,
+    "rank": 0,
+    "p": 0.0,
+    "n_shifts": 95
+   },
+   "s": {
+    "2": {
+     "e0": 0.14537117550911138,
+     "median_shift": 0.1839236031064551,
+     "align": 0.03855242759734373,
+     "rank": 1,
+     "p": 0.010526315789473684,
+     "n_shifts": 95
+    },
+    "4": {
+     "e0": 0.12977317220020085,
+     "median_shift": 0.18757179879369512,
+     "align": 0.05779862659349427,
+     "rank": 0,
+     "p": 0.0,
+     "n_shifts": 95
+    },
+    "8": {
+     "e0": 0.1264805910603033,
+     "median_shift": 0.18883644316535517,
+     "align": 0.06235585210505187,
+     "rank": 0,
+     "p": 0.0,
+     "n_shifts": 95
+    },
+    "16": {
+     "e0": 0.11870330244705855,
+     "median_shift": 0.18779180058983053,
+     "align": 0.06908849814277197,
+     "rank": 0,
+     "p": 0.0,
+     "n_shifts": 95
+    }
+   },
+   "topic": {
+    "e0": 0.13010174749671302,
+    "median_shift": 0.18199262863897764,
+    "align": 0.05189088114226462,
+    "rank": 0,
+    "p": 0.0,
+    "n_shifts": 95
+   },
+   "capture": {
+    "2": 0.5246120100931264,
+    "4": 0.7865095810444954,
+    "8": 0.8485231917316376,
+    "16": 0.9401393931284394
+   },
+   "capture_primary": 0.8485231917316376,
+   "topic_capture_primary": 0.7061184251707819,
+   "gate_ok": true,
+   "sign_topic_gt_s": 52,
+   "capture_primary_rawweight": 0.8840248737427987
+  }
+ },
+ "liveness": {
+  "44": {
+   "n_days": 44,
+   "high": {
+    "gate_ok": true,
+    "capture8": 0.8400054710895283,
+    "pass": true
+   },
+   "low": {
+    "gate_ok": true,
+    "rank_full": 0,
+    "sweep": {
+     "2": 0.7032789940273769,
+     "4": 0.7400605738956638,
+     "8": 1.0607348480236953
+    },
+    "pass": false,
+    "gating": false
+   },
+   "fail": {
+    "gate_ok": false,
+    "rank_full": 14,
+    "pass": true
+   },
+   "ok": true
+  },
+  "102": {
+   "n_days": 102,
+   "high": {
+    "gate_ok": true,
+    "capture8": 1.1791746427825909,
+    "pass": true
+   },
+   "low": {
+    "gate_ok": true,
+    "rank_full": 0,
+    "sweep": {
+     "2": 0.23048564404326838,
+     "4": -0.009757548634796474,
+     "8": 0.1375282391851625
+    },
+    "pass": true,
+    "gating": true
+   },
+   "fail": {
+    "gate_ok": false,
+    "rank_full": 68,
+    "pass": true
+   },
+   "ok": true
+  }
+ },
+ "liveness_ok": true,
+ "sign_need": 43,
+ "basis_ok": true,
+ "mono_ok": true,
+ "reweight_ok": true,
+ "kill": false,
+ "topic_fail": true,
+ "anchored": false,
+ "hexa_confirm": {
+  "gate_ok": true,
+  "capture": 0.8485231917316376,
+  "cap_minus_topic": 0.14240476656085566,
+  "sign": 52,
+  "sign_need": 101,
+  "topic_fail": true,
+  "refused": true
+ },
+ "verdict": "F3-CONTINUOUS-REFUSED — a hindsight rank-k continuous code does NOT clear its own anchor/floors (topic(cap-topic=+0.2904,sign=23/43)) against a certified-live instrument. hexa-lang (FULLY-certified n=102) CONFIRMS: gate=True, cap-topic=+0.1424, sign=52/101 -> refused=True. The s-over-topic advantage exists on AGGREGATE (cap-topic margin > 0) but the per-pair sign ~50% shows it is concentrated in a MINORITY of day-pairs = a sometimes-day-specific code, not a pervasive day-specific self (L2 replacement-not-coupling). Both operator classes now dead (byte-selection H_006, distributional-projection here). Fire the pre-registered reframe (C)."
+}

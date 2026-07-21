@@ -1,0 +1,54 @@
+wip(H_1431): G6 5-bar 엔진-네이티브 측정 시도 → decode OOM PARKED (hexa-lang release stale)
+재개=release 재빌드 후 ckpt(aiden 보존) 재셋업. torch DIRECTIONAL 🧱 미반증 유지.
+Merge remote-tracking branch 'origin/wip/dfree-other-remeasure' into wip/dfree-other-remeasure
+전멸 → pod teardown(과금정지) + 측정 PARKED. 근본=hexa-lang release stale
+decode batch 에 H1431_JOBS_ONLY 병렬분할 모드 추가. 대용량 pod 5벽 돌파 후
+forward 작동했으나 scalar full-load RSS 53GB+/proc 누수성 증가로 6/3병렬 OOM
+(ranged segfault #3462 미반영 + fast-gemv drop), hexa-lang ING 4건 전달.
+ing(H_1431): v0.239.0 fresh-install UNBLOCK verified (a~e) + decode gated on vast outage
+state/verdicts/1427_temporal_replay_prediction/H_1427_R2_engine_native.txt
+state/verdicts/1404_lane_compose_phi/H_1404_engine_native_reverify.txt
+- d fast-gemv: restored — bg_load_ranged native farr_matmul + bounded-RSS (24GB/proc)
+state/verdicts/1300_mitosis_skill_curriculum/H_1300_R3_engine_native.txt
+state/verdicts/1387_g6_production_close/b1_engine_native_303m_raw.txt
+state/verdicts/1297_mitosis_native_train/H_1297_R4_engine_native.txt
+state/verdicts/1430_concept_prototype_abstraction/H_1430_R1b_FREEZE.txt
+state/verdicts/1430_concept_prototype_abstraction/H_1430_R1c_FREEZE.txt
+state/verdicts/1429_transitive_inference/H_1429_R2_engine_native.txt
+state/verdicts/1167_bytegpt_1b_scale/H_1167_ENGINE_MOUNT_PARITY.txt
+state/verdicts/1430_concept_prototype_abstraction/H_1430_FREEZE.txt
+- a/b decode segfault + tag24: RESOLVED — bg_load_ranged(read_bytes_at) forward
+state/verdicts/1283_thalamus_global_workspace/H_1283_R8_engine_native_gate.txt
+state/verdicts/924_qentropy_substrate_agnostic/c7_formal_parity.txt
+state/verdicts/9022_mitosis_pure_substrate_theorem/grand_mitosis_pure_substrate_scale.txt
+state/verdicts/968_action_from_substrate_motivation/h968_substrate_action.txt
+state/verdicts/1159b_mitosis_capacity_self_tuning/live_engine_smoke.txt
+state/verdicts/1407_brain_lane_compose_cerebellum_basal/result.txt
+state/verdicts/1413_cerebellum_basal_modulation_compose/result.txt
+state/verdicts/1414_memory_tom_engine_compose/H_1414_R3_LIVEOP.txt
+state/verdicts/1416_cerebellum_basal_sequential_compose/result.txt
+state/verdicts/924_qentropy_substrate_agnostic/m4_torch_lane_p.txt
+state/verdicts/mid-convmoe-engine-mount/axis2_mirror_validated.txt
+state/verdicts/1405_brain_lane_compose_memory_tom/phi_result.txt
+state/verdicts/846_coffeshop_akida_closedloop/verify_substrate_akida_5of5.txt
+state/verdicts/1086_gemini_engine_g_small_brake_not_generator/verdict.txt
+state/verdicts/1408_spatial_episodic_engine_compose/H_1415_R3_LIVEOP.txt
+state/verdicts/933_free_will_auditable_causation/free_will_signature.txt
+state/verdicts/1407_brain_lane_compose_cerebellum_basal/phi_result.txt
+state/verdicts/1408_brain_lane_compose_spatial_episodic/phi_result.txt
+state/verdicts/924_qentropy_substrate_agnostic/m3_decoder_sampling.txt
+state/verdicts/9020_predictive_information_law/grand_pi_law_scale.txt
+state/verdicts/1079_gemini_psi_tracking_error_emergence/verdict.txt
+state/verdicts/1297_mitosis_native_train/H_1297_R3_sharp_target.txt
+state/verdicts/846_coffeshop_akida_closedloop/decoder_bytematch.txt
+state/verdicts/918_omega_conv_native_dualhead/F-OE1-CONV-NATIVE.txt
+state/verdicts/1308_hive_real_substrate_transfer/H_1308_FREEZE.txt
+state/verdicts/1408_brain_lane_compose_spatial_episodic/result.txt
+state/verdicts/877_clm_decoder_bytematch_mid/F-CLM-DECODER-MID.txt
+state/verdicts/1409_brain_lane_compose_spatial_pfc/phi_result.txt
+state/verdicts/1411_lane_compose_law_predictive/states_build.txt
+state/verdicts/1146_anchor_conditioned_decode/H_1146_FREEZE.txt
+chore: retire all .tape files — dancinlab-wide .tape format 폐기 (harness recommend.tape→.md 선례)
+state/verdicts/921_akida_nondeterminism_functional_advantage/init_seeded_not_learning.txt
+state/verdicts/9022_mitosis_pure_substrate_theorem/grand_mitosis_pure_substrate.txt
+state/verdicts/924_qentropy_substrate_agnostic/sw_quantum_coupling_pass.txt

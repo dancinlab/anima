@@ -1,0 +1,194 @@
+{
+  "single_bind_f2prime": {
+    "n": 192,
+    "offtop_mean": 0.0,
+    "probes": {
+      "vec": {
+        "train": 1.0,
+        "cv8": 1.0
+      },
+      "rank1": {
+        "train": 1.0,
+        "cv8": 1.0
+      },
+      "norm": {
+        "train": 0.5,
+        "cv8": 0.5
+      },
+      "tok_only": {
+        "train": 0.5,
+        "cv8": 0.5
+      },
+      "tok_plus_forbidden_product": {
+        "train": 1.0,
+        "cv8": 1.0
+      },
+      "allpairs_no_mask": {
+        "train": 1.0,
+        "cv8": 1.0
+      },
+      "perm_placebo_vec": {
+        "train": 1.0,
+        "cv8": 1.0
+      }
+    }
+  },
+  "single_bind_f1prime": {
+    "n": 64,
+    "offtop_mean": 0.0,
+    "probes": {
+      "vec": {
+        "train": 1.0,
+        "cv8": 1.0
+      },
+      "rank1": {
+        "train": 1.0,
+        "cv8": 1.0
+      },
+      "norm": {
+        "train": 0.5,
+        "cv8": 0.5
+      },
+      "tok_only": {
+        "train": 0.5,
+        "cv8": 0.5
+      },
+      "tok_plus_forbidden_product": {
+        "train": 1.0,
+        "cv8": 1.0
+      },
+      "allpairs_no_mask": {
+        "train": 1.0,
+        "cv8": 1.0
+      },
+      "perm_placebo_vec": {
+        "train": 1.0,
+        "cv8": 1.0
+      }
+    }
+  },
+  "multi_bind_K6_factorial": {
+    "K": 6,
+    "n_nodes": 20,
+    "n_factorial": 4096,
+    "offtop_mean": 0.833333,
+    "probes": {
+      "vec": {
+        "per_slot": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean": 1.0
+      },
+      "rank1": {
+        "per_slot": [
+          1.0,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        "mean": 0.5833
+      },
+      "norm": {
+        "per_slot": [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        "mean": 0.5
+      },
+      "tok_only": {
+        "per_slot": [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        "mean": 0.5
+      },
+      "perm_placebo_vec": {
+        "per_slot": [
+          0.7117,
+          0.7114,
+          0.7085,
+          0.7178,
+          0.7092,
+          0.7095
+        ],
+        "mean": 0.7113
+      }
+    }
+  },
+  "verdict": {
+    "G0_rank_mass_single_bind": "off-top 0.000 < 0.20 -> F4-DEAD at $0 (as pre-registered)",
+    "G1_single_bind": "probe(vec)-probe(rank1) = 0.0000 <= 0.05 -> STOP fires (field == its own rank-1 on a one-edge frame)",
+    "G1_multi_bind_prediction": {
+      "vec": {
+        "per_slot": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean": 1.0
+      },
+      "rank1": {
+        "per_slot": [
+          1.0,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        "mean": 0.5833
+      },
+      "norm": {
+        "per_slot": [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        "mean": 0.5
+      },
+      "tok_only": {
+        "per_slot": [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        "mean": 0.5
+      },
+      "perm_placebo_vec": {
+        "per_slot": [
+          0.7117,
+          0.7114,
+          0.7085,
+          0.7178,
+          0.7092,
+          0.7095
+        ],
+        "mean": 0.7113
+      }
+    }
+  }
+}

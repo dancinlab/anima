@@ -1,0 +1,68 @@
+AI-first, ownership 상태 관리, 특이점 사이클 렌더링, Φ 품질 측정.
+docs: Hexa Web Engine 특이점 돌파 체크 — 57%→90% 보강
+http_serve HTML 감지, 통합 테스트 12개, 예제 파일.
+docs: Hexa Web Engine 설계 — Proof-Driven Reactive Web (특이점 돌파)
+메타태그 빌드 타임 확정, hydration 불일치 수학적 불가능.
+intent→generate→verify→Φ 풀체인, consciousness_vector 템플릿 품질 측정,
+docs: final cleanup — roadmap with current state, history index, CLAUDE.md stats
+docs: final cleanup — roadmap with current state, history index, CLAUDE.md stats
+- Compiler/JIT/TypeChecker/Ownership/Formatter/Lower: exhaustiveness updated
+- Compiler/JIT/TypeChecker/Ownership/Formatter/Lower: exhaustiveness updated
+템플릿 엔진 + 의식AI 기반 동적 UI 프레임워크 설계문서.
+- env.rs: Lazy ownership tracking (ownership_count guard) — skip HashMap
+기존 템플릿 엔진(EJS/Jinja/Svelte) 대비 완전 비교 추가.
+- fib(25) interpreter: 346s → 0.87s (398x total from baseline)
+Tiered execution: auto JIT (Cranelift) → VM → Interpreter.
+Tiered execution: auto JIT (Cranelift) → VM → Interpreter.
+comptime proof 기반 SEO 구조적 해결 — 크롤러 대응 HTML 기본 출력,
+ANIMA Bridge 실시간 의식 피드백, Proof Engine 6정리 명세,
+AST 노드, 토큰/렉서, 파서, 렌더러, 인터프리터 연결,
+- compiler.rs: Const/Static compiled as Let (VM coverage 8→10 stmt)
+- compiler.rs: Const/Static compiled as Let (VM coverage 8→10 stmt)
+- Total speedup: 346s → 0.61s = 567x (release interpreter)
+docs: add auto-updating roadmap + history management rules
+docs: add auto-updating roadmap + history management rules
+docs: 템플릿 엔진 AI/의식AI 친화 설계 보강
+docs/plans/roadmap.md
+docs/plans/roadmap.md
+docs/plans/roadmap.md
+docs/plans/roadmap.md
+docs/plans/roadmap.md
+docs/plans/roadmap.md
+docs/plans/roadmap.md
+docs/plans/roadmap.md
+docs/plans/roadmap.md
+docs/plans/roadmap.md
+perf: VM fn_table indexed dispatch — VM 2.2x speedup, overtakes interpreter
+  (were dispatched in interpreter but never registered as callable values)
+- interpreter: implement delete_file() and append_file() with WASM guards
+- interpreter.rs: Use is_value_type() to skip memory tracking on hot path
+- Env: HashMap scopes → flat Vec<(String, Value)> + scope_starts stack
+- VM now 2.6x faster than tree-walk interpreter on recursive workloads
+- Interpreter: sentinel-based propagation in while/for/loop
+- Interpreter: sentinel-based propagation in while/for/loop
+- History README: cross-links to roadmap and breakthroughs
+- History README: cross-links to roadmap and breakthroughs
+docs: Hexa Web Engine 설계에 SEO 섹션 추가
+src/opt/p02_ownership.rs
+- docs/plans/roadmap.md: next breakthrough vectors (PGO, JIT cache, WASM, self-hosting)
+- docs/plans/roadmap.md: next breakthrough vectors (PGO, JIT cache, WASM, self-hosting)
+dream engine 템플릿 진화(mutation 5종), AI 생성 흐름 3단계 명세,
+CycleEngine 렌더링 5단계 구체화, Dream Engine 진화적 컴포넌트,
+perf: Arc<Vec<Stmt>> refactor — interpreter 70x speedup + multi-agent fixes
+perf: lazy ownership + JIT Const/Loop + EgyptianMemory optimize — VM 3.7x
+  from string_pool index → fn_table index, eliminates HashMap::get
+  → push/pop O(1), get linear but cache-friendly for small scopes
+- examples/self_host_parser.hexa: recursive descent parser in HEXA
+- examples/self_host_parser.hexa: recursive descent parser in HEXA
+  push/pop per scope when ownership is never used (e.g., fib)
+  (NL→Hexa, Python/JS/Rust→Hexa, common bugs & fixes)
+docs: PGO tested — no benefit, mark complete in roadmap
+docs: PGO tested — no benefit, mark complete in roadmap
+- ownership.rs + main.rs: Template variant coverage
+  fib(30) Interp: 0.48s → 0.46s
+src/std_collections.rs
+src/std_collections.rs
+- Roadmap: WASM VM tiered (already done), generics (already done), all items checked
+- Roadmap: WASM VM tiered (already done), generics (already done), all items checked
+src/opt/p04_const_fold.rs

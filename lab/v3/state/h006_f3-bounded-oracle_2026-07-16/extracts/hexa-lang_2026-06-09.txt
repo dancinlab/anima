@@ -1,0 +1,38 @@
+* wip(OP-20): TF32 deterministic fast-mode probe skeleton — in-process TF32 vs FP64 step bench + idle-guarded 5070 driver
+domain(HEXA-0POD OP-20): deterministic TF32 fast-mode — breaks the ~3x flame step cap (self-byte-eq + W14-tol vs FP64, aiden 5070) 🟢 (#2999)
+* domain(HEXA-0POD OP-20): deterministic TF32 fast-mode — self-byte-eq + W14-tol vs FP64 + 4.2-21x faster, breaks the ~3x cap (aiden 5070) 🟢
+D={768,1536,2048} x B={1,8} x dtype={FP64,TF32,BF16} = 18 cells on aiden RTX 5070
+ALL 9 small-B cells (B=1 x D={768,1536,2048} x {TF32,BF16,FP64}); worst cell BF16/D=2048/B=1
+eager+compile across D={768,1536,2048} x B={1,8} x dtype={FP64,TF32,BF16} on
+domain(HEXA-0POD OP-4): flame fused-step 5070 win/lose map — LOSES everywhere, FP64 near-parity (aiden RTX 5070) (#2976)
+Wrapped the flame FUSED per-step DAG in a CUDA graph on the FREE pool RTX 5070 (aiden,
+* hexa-0pod OP-4: flame fused-step 5070 win/lose map — LOSES everywhere, FP64 near-parity (aiden RTX 5070)
+flame wins-or-ties torch.compile every cell; FP64 wins; last GEMM-bound cell closed by fused valley+AdamW+
+Continuous flame+forge improvement using ONLY the sidecar pool (aiden/summer RTX 5070 + local code), zero
+Verdict .verdicts/hexa-0pod/F-OP4-5070-COVERAGE.txt; driver tool/bench/run_op4_5070.sh.
+double-buffer. GATE g5: rel-RMS vs FP64 ref <=1e-2 (bit-faithful, W14) + det max|d|=0.
+domain(HEXA-0POD OP-6): 🔴 .v4/.v2 vectorization does NOT transfer to memory-bound elementwise — CLOSED-NEG (aiden RTX 5070) (#2983)
+* wip(HEXA-0POD OP-2): verdict skeleton — transpose-elim is the missing bench win (cuBLAS-FP64/valley/AdamW already wired)
+* domain(HEXA-0POD OP-6): vectorization lever does NOT transfer to memory-bound elementwise — CLOSED-NEG (aiden RTX 5070)
+the identity. Mirrors commons g86. Recipe: matched-dtype+compiled benching, decode-elim for own-GEMM, no split-K.
+domain(HEXA-0POD OP-11): byte-eq CPU oracle for the CE loss + softmax-gradient identity (0-GPU) (#2990)
+Doc-consolidation milestone — every claim traces to a verdict line (g5). 0-GPU, $0.
+VALIDATION NOTES (comment-only, zero behavior change) appended to the headers of
+domain(HEXA-0POD OP-6b): 🔴 AdamW-into-bwd-GEMM-epilogue fusion — byte-eq (even --fmad=true) but no win, CLOSED-NEG (aiden RTX 5070) (#2985)
+domain(HEXA-BENCH): add BENCH-12 — decode-elimination in-place swizzle descriptor (the real wall) (#2958)
+-> cuBLAS bit-exact parity; the D=4096 ~1.5x residual = identity (split-K excluded). Mirrors commons g86.
+refuses to trade. determinism max|d|=0 across all 14 benches. A no-library theorem-cited compiler tying
+* domain(HEXA-BENCH BENCH-12): WIP skeleton — decode-elim in-place descriptor verdict placeholder
++ rel-RMS<=4.2e-8. flame consumer value = byte-exact/torch-free identity, not step-rate.
+j-ascending GEMM contraction order ⇒ max|Δ|=0 expected. Verification pending.
+domain(HEXA-0POD OP-18): host fallbacks for the remaining L3 fused dispatchers (gelu2 + moe_block2) — whole fused-dispatch family 0-GPU host-testable byte-eq 🟢 (#2997)
+hexa-0pod OP-1b: sm_120 TF32 own-GEMM .v2 epilogue +1.7%@1024 (BK32/3stage closed-neg) — aiden RTX 5070 (#2980)
+domain(HEXA-0POD OP-2): wire BENCH transpose-elim into the real flame trainer — byte-eq max|Δ|=0 🟢 (#2974)
+preserves accumulation order -> bit-exact. Deepest tuning layer, lowest yield; one round then the goal closes.
+trainer (forge code), BF16 sm_120 own-GEMM, fused-step coverage, forge hardening. Hopper-only decode-elim
+domain(HEXA-0POD OP-13): byte-eq CPU oracle for the embedding bwd scatter-add identity (0-GPU) (#2991)
+* wip(HEXA-0POD OP-6): AdamW fp64 scalar-vs-double2 bench harness (bit-exact gate + GB/s)
+accumulation ORDER load-bearing. Production order = position-ASCENDING in-place scatter.
+(ci,k) order == the j-ascending GEMM contraction order ⇒ true re-layout identity,
+non-det iteration, or address-ordered ordering). Comparator sensitivity verified
+aiden RTX 5070 (sm_120), with exclusive-GPU guard. Matrix filled inline next.

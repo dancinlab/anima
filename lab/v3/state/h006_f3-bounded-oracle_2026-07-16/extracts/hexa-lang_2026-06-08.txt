@@ -1,0 +1,42 @@
+re-run TF32 sweep on free aiden GPU, measure how much the 3-8x shrinks. aiden sm_120 vs OG10 sm_90a -
+OG10 W10 wgmma is sm_90a (Hopper) — ptxas REJECTS it for aiden sm_120 (consumer
+OG10 W10 wgmma is sm_90a (Hopper) — ptxas REJECTS it for aiden sm_120 (consumer
+wgmma.mma_async/fence/commit_group/wait_group for sm_120 (consumer Blackwell).
+matched-dtype (TF32) batch sweep + samples/s. flame value = reproducibility/no-LLVM not step-rate; large torch
+hexa already has OG10 own-GEMM (TF32 wgmma, bit-exact, 6.09x off cuBLAS). Wire it into the bench step,
+domain(HEXA-FUSION): register MEGASTEP milestone — whole-step fused megakernel, the only remaining ~3x uncap lever (#2920)
+* domain(HEXA-BENCH BENCH-5): port OG10 own-GEMM sm_90a→sm_120 — runs on consumer RTX 5070 (mma.sync m16n8k8 TF32), narrows naive gap 9.67x→4.73x @B8 (aiden, no vast)
+domain(HEXA-BENCH BENCH-5): port OG10 own-GEMM sm_90a→sm_120 — runs on consumer RTX 5070 (mma.sync m16n8k8 TF32) (#2943)
+autotune + epilogue fusion to match inductor). OG10 large-TF32 losses are the no-LLVM purity axis, orthogonal
+launch-dispatch, orthogonal to RNG) AND true randomness conflicts with flame's byte-exact reproducibility
+GOAL: reproducibility-first (byte-exact, no-LLVM, theorem-cite) training stack within a small constant of
+  HONEST: not max|Δ|=0 (whole-batch-vs-shard cast-point asymmetry = irreducible
+flame D1536/T512 shapes, FP64 vs TF32 vs BF16, to decide whether low precision
+overlap. Answers 'is the between-GEMM valley reclaimable at all? + how much'.
+step harness with the ACTUAL OG10 own-GEMM (W10 TF32-wgmma gemm_w10) wired as
+the research-derived lever ladder as open milestones (FF-DUTYCYCLE prereq -> FF-FUSED-OPTIM/FF-EPILOGUE
+byte-exact; magnitude byte-eq-regime-specific. BWD valley + full clm_prod wiring DEFERRED.
+The two #2924 structural blockers (footprint + blockDim<128 wgmma deadlock) DISSOLVE
+  deterministic RNE bf16-cast + 16BF tensor-core GEMM, FP32 accum). Matched peer of
+throughput big (expected); flame value = reproducibility/no-LLVM, not step-rate.
+the D->D projection GEMM — replacing BENCH-3's cuBLAS-TF32 proxy that sm_120
+FP64) on a right-sized NVIDIA A10 (72 SMs, 22.5 GiB) — which CLOSES the P2
+Rented vast H100_SXM 40064324 (sm_90a, destroyed leak-0) and ran the BENCH-3
+domain(HEXA-FUSION): register MEGASTEP lever ladder (arxiv+web deep-research) — 6 milestones + honest Amdahl framing (#2921)
+fusion trades launches for grid.syncs = wash. FAST-1's batch-headroom refuted (bwd-GEMM tile count fixed in B
+The genuinely-untested 3-way combo, measured together for the first time on real H100: flat ~1.00x full-step
+~2x cuBLAS / ~4.7x own-GEMM larger. The #2912 ~1656x was a mis-comparison (interpreted glue vs compiled
+compiled step. Measuring the compiled matched-dtype step the gap collapses to single digits:
+the step wall (noise). GATE bit-exact graph-vs-eager max|delta(W')|=0 + determinism=0
+GEMM-THROUGHPUT (cuBLAS-TF32 algo-selection on sm_120 vs torch inductor; the 2 cuBLAS
+* wip(hexa-bench-5): sm_120 TF32 own-GEMM skeleton + ISA probe (mma.sync m16n8k8)
+wgmma REJECTED (re-confirms BENCH-3 ISA gap). Built owngemm_sm120.cu (OG10 tile-
+beyond the ~3x batch-fill asymptote (#2913) and closes part of the ~1656x torch
+launch/glue/occupancy, not GEMM. Eager + graph from one binary; GATE bit-exact
+Folded the FF block (bias+exact-erf GELU+residual) into the W10 TF32 own-GEMM
+WIP-OK: skeleton before aiden build per STORM. Probes which TF32 tensor-core
+domain(HEXA-FUSION FF-GN-PARALLEL): fixed-order parallel-tree GN reduction — H100 GREEN (GN ~4900x, full-step idle-gated) (#2931)
+torch speed — NOT speed-first. STATUS demonstrated: determinism max|delta|=0 across every bench + DDP;
+User asked if ANU QRNG (qrng.anu.edu.au) could help. Honest (g5): NOT a speed lever (the ~3x cap is GPU
+domain(HEXA-BENCH): add BENCH-3 — swap naive GEMM for OG10 own-GEMM (TF32 wgmma) + re-measure (#2940)
+domain(HEXA-BENCH): add BENCH-7 — full-regime frontier map (goal: beat torch in every regime) (#2946)

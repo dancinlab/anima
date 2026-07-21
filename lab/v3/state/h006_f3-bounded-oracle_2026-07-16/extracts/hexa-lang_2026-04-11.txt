@@ -1,0 +1,48 @@
+sync: CLAUDE.md ref 테이블에 ML 파이프라인/성능추적/T1T2 로드맵 추가
+  Cargo.toml 삭제로 더 이상 유효하지 않음. 배포는 precompiled hexa
+- interpreter.rs: dlopen 경로에 /usr/local/cuda/lib64/ 추가 (.so.12/.so.11)
+Rust src/interpreter.rs 의 pub fn run() 은 이미 stmts 를 두 번 순회 —
+- 로드맵: 2026-04-11 셀프호스팅 44모듈 포팅 + 7.4G 정리 반영
+- ml-next-level.json#auto_push_policy — 완료 시 자동 commit+push, docker entrypoint git pull hexa-lang으로 다음 pod 자동 반영
+feat(ml): #31-50 에이전트 결과 — 20개 모듈 구현 (+3,442 LOC, 96 tests)
+feat(ml): 30항목 확장 + 출력 양식 규칙 (행 구분선, done 제외)
+self/interpreter.hexa 는 아직 bootstrap chain 에 연결 안 된 미래 인터프리터.
+수정: interpret() 본 실행 루프 전에 pre-reg loop 추가. FnDecl / AsyncFnDecl /
+- docs/publish-checklist.md: 상단에 OBSOLETE 배너 추가. crates.io 경로는
+roadmap: 제타 서비스 수준 체크포인트 추가 (checkpoint_zeta_level)
+CWD 기반 프로젝트 자동 감지 + 동적 git 상태 주입 improver 훅 추가. build-fail-diag는 기존 PostToolUseFailure에 연결됨.
+fix(ml): done 항목 절대 표시 금지 + 매 행 가로줄 필수 — 규칙 강화
+A2 Training 4종 (82 tests): MixedPrecision, ActivationCheckpoint, QAT, GradAccum
+- src/ 전체 (54 + 서브디렉 31 = 85 모듈) 셀프호스팅 완전 대응
+self-host 인터프리터가 hexa 언어 실행의 유일한 소스가 됨.
+  only). --dump-ast/--check 신규 모드 안내. RUST_MIN_STACK cargo test
+Fix (this commit, hexa-only, mirrors interpreter.hexa env_cache pattern):
+auto-sync 훅이 추가한 permissions 블록 — local 오버라이드 파일 편집 권한 명시.
+    재귀 호출로 crash하던 문제 → .parse_int/.parse_float 메소드 직접 사용.
+repo 루트 hexa 바이너리를 정본으로 사용. 훅 경로 11건 일괄 치환.
+src/ + Cargo.toml 삭제 이후 wasm-pack build 경로가 무효화됨. playground/
+self/interpreter.hexa 의 interpret() 는 단일 pass 였음 → forward reference
+  vm,jit,interpreter}.rs → self/*.hexa. 2026-04-11 업데이트 노트 추가.
+  * 주석 2026-04-11 self-host 노트 추가 (src/ 삭제 후 baseline은 self-
+사용자가 "ml", "ml go" 등 입력 시 .claude/commands/ml.md 절차 실행.
+/ml 슬래시 명령어가 CLI에서 미인식 → CLAUDE.md에 직접 등록.
+sync: hexa-lang 프로젝트 레지스트리 + todo 현재 상태 반영
+- src/ 54모듈 중 52 직접 포팅 + lib/main 구조적 대체(bootstrap/run.hexa) = 100% 골화
+- 기존 예제 6종 검증 헤더 추가 (benchmark/concurrency/bt_verification/consciousness x3)
+이미 존재하므로 Rust 원본은 불필요. 프로젝트 루트 .rs 파일 0개 달성.
+hexa-only-guard hook 규칙 준수: 이제 모든 빌드/벤치/인스톨 스크립트는
+chore(token-forge): forge.hexa python3 0 — analyze/bench/compress 3건 모두 pure-hexa
+fix(ml): 제안 항목도 동일 표 안에 행으로 표시 — ml add 텍스트 금지
+feat(self-host): 44모듈 100% 포팅 + 트리 정리 (ready/ 6.3G + PGO 28M 삭제)
+상단에 self-host 마일스톤 배너. WASM build 섹션 제거 (wasm-pack/cargo
+  self/interpreter.hexa / self/proof_engine.hexa / self/llm.hexa / self/error.hexa
+  마이그레이션 가이드, n=6 alignment (keywords ≤6, categories ≤4),
+- rewrite_returns_for_ensures(): 모든 return 경로에 ensures 체크 삽입
+  경로 src/interpreter.rs:5097 / src/compiler.rs:950 / src/env.rs:454 →
+chore(hooks): hexa 바이너리 경로 target/release/hexa → hexa 통일
+회귀 테스트 examples/test_p11_newline_continuation.hexa 8건 추가.
+- .claude/hooks/block-forbidden-ext.sh — Claude Code hook, 유지 (hook
+- compress_messages: json_parse + json_stringify + 직접 경로 mutation
+- ml-commands.json: 표 양식 규칙 — done 제외, 매 행 가로줄
+feat(ml): 에이전트 5종 결과 — 21개 모듈 구현 (+12,050 LOC)
+feat(ml): 5종 에이전트 결과 반영 — Flash/StructuredOutput/FnCalling/Safety/Bench

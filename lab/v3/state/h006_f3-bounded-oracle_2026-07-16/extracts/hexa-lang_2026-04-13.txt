@@ -1,0 +1,44 @@
+- T32 (P0): hexa_full.hexa 인터프리터 경로 float 산술 동일 버그 — T23 (hexa_cc.c) 픽스는 컴파일 경로 한정. 10.0*1000.0 → 2.47e+19, 90.0>75.0 → false.
+- 진화 중 같은 버그 재발 방지 (R6 — 발견/결과 자동 기록 원칙)
+fix(stage0): hexa_full.hexa 중복 정의 제거 + is_comparison_op + shp 리팩토링 + argv[2] 진입
+  → `cd root && /tmp/ssot_sync 2>&1` (defaults 경로 활용, stage0/native 양쪽 안전)
+- 동일 인라인 패턴 (exp/sin/cos/log/log10/round) 은 추후 필요시 같은
+    로직 직접 테스트. HEXA_CACHE_DIR=/tmp/custom_cache → /tmp/custom_cache
+docs(cli): 문서/shared 일괄 업데이트 — stage1 서브커맨드 반영
+동일 패턴 — Val struct immutable 기반이므로 같은 인스턴스 공유 안전.
+- exec_stmt(node) (L7155) — 동일 패턴, 그러나 grep 검증 결과 callsite ZERO
+- docs/community/CONTRIBUTING.md: 테스트 실행법 + 새 프로젝트 구조
+merge(rt#36-A): bytecode VM design — stack-based 62 opcodes, iABC 32-bit, LuaJIT-pattern
+bt 52 commit 5c47a06에서 언급된 "독립 rt 16 tokenize off-by-one 버그"
+T32 float 산술/비교 (hexa_full.hexa 인터프리터 경로) — P0 해소:
+  TAG_VALSTRUCT 래핑 값은 분기 fallthrough 해서 vs 포인터 비트를
+    · bt 74.sub_74C 블록 추가: 접근방식(c)cached/테스트5건 PASS/
+merge(rt 32-G Phase 0 redesign): HexaValStruct 폴리모픽 — map_new -97.2%, RSS -74.6%, 실제 stage0 rebootstrap 성공
+- T33 (P2): arena scope-pop heapify audit → HEXA_VAL_ARENA=1 안전 복원 → rt#32-L fib K=30 wall -3.7% perf 복귀.
+feat(rt 33): module_loader fast-exit — grep으로 use/import 유무 확인 후 전처리 스킵
+(1347 int→ptr 에러의 주경로 해소). Method 경로에 obj_str=((const char*)(obj_code))
+미설정 시 기존 \$HOME/Dev/hexa-lang/.hexa-cache fallback. 결정된 경로가
+feat(cli): hexa 서브커맨드 디스패처 — go/cargo 스타일 stage1 전환
+- run 서브커맨드는 stage0 위임 (script argv 미전달 한계 그대로)
+feat(bt 38): hexa gc 서브커맨드 — .hexa-cache mtime 기반 30일 정리
+fix(interpreter): AssignStmt Index LHS 처리 + 골화 레지스트리 링크
+    balance tracking — 첫 `{` at paren depth 0 (not last `{`) 선택해서
+Measurement table (3-run median, macOS arm64, ./build/hexa_stage0_variant_{a,b} self/test_anima_lm.hexa, HEXA_ALLOC_STATS=1):
+docs(rt 32-A Phase 2): runtime-only 경로 empirical 불가 확인 — Phase 2 multi-session 격상
+- 필터 wrapper가 커버하고 있었으나, hook-entry.hexa 내부 `exec(cmd)` 재귀 호출
+- args() 규약: 런타임이 argv[0] 중복 삽입, 스크립트 관점 av[2]부터 실인자
+  → 73 parse error 전부 pub/guard 토큰 관련, 라인/컬럼 정확. off-by-one 없음.
+self/main.hexa 를 Rust-포팅 스텁에서 실제 동작하는 CLI 디스패처로 교체.
+- hexa-build 래퍼 삭제 (self/main.hexa 가 -O0/-O1/-O3 전부 커버 확인 후 가능)
+env_define의 다중 푸시 패턴을 '하나의 바인딩 이벤트'로 간주하고
+self/build_c.hexa 에 emit_str_arg 헬퍼 + coerce_str Str 분기에 (const char*)
+별칭 도입으로 substring/len/chars/split/contains/starts_with/ends_with/trim/
+push의 상당분이 env bookkeeping이므로. 실측 call_heavy는 NK_CALL 본령
+  - 다른 clone 위치나 /usr/local/bin/hexa 설치 사용자도 HEXA_CACHE_DIR
+hexa_full에 자동 포팅되었으나 val_closure cache_snap을 빈 리스트로
+  * FNV-1a 64 이중 해시 — signature 문자열(between `fn NAME` and `{`),
+feat(rt 32-M): array arena (slice_fast path) — fib K=30 wall -7.4%, RSS -1.6%
+feat(rt 34): watchdog sleep 1 → 0.05 + PPID=1 fast-path — hook wall -93%
+  별도라 hexa_full_regen.c의 trigraph 1건은 -Wno-trigraphs로 처리)
+- hexa_v2 파서 갭: self/{parser,type_checker,codegen_c2,interpreter}.hexa 아직 미수용 (pub, return 위치, ; 이슈) — 인터프리터 self-compile 후속 과제
+- hexa_impl: aa3060c+66ccc81+d452e21+2a58aa6 (배너 제거 + pass-by-value 18건 + env_lookup.name + join builtin)

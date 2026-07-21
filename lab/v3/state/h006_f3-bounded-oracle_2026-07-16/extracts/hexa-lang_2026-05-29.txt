@@ -1,0 +1,40 @@
+- [ ] M2/M3 — TTL/cost-cap watchdog 미구현 (live-pod 검증 필요 · blast-radius 오종료)
+같은 워크로드·연속·warmup 으로 실측. 두 arm 모두 동일 self/runtime.c 링크.
+같은 워크로드·연속·warmup 으로 실측. 두 arm 모두 동일 self/runtime.c 링크.
+  경로(g5 검증대상), 비자명 커널 → 자기무모순 차폐. 동일 generic 경로.
+인자 리터럴로 호출하면 런타임 call 대신 검증된 리터럴을 직접 emit.
+release(씨앗 부재 체크아웃)를 모델링하지 못해 false-green 이었다. 진짜
+씨앗은 release.yml Stage-0 가 clang 으로 첫 hexa 를 빌드하는 데 필요(=.c≠0 구조적);
+  23 씨앗 1개도 컴파일하지 않고 edge 의 runtime.a + hexat 로 부트스트랩 → regen
+씨앗 임시제거(워킹카피만)→prebuilt runtime.a 링크→./hexa 동작을 검증.
+기존 numerics_mcmillan.hexa 의 mcmillan_tc / allen_dynes_tc / universal_cooper_tc 는 그대로 (d3 canonical home). 본 PR 은 @assumes 메타 신설 + 미구현 2 fn 추가만.
+- 검증: dry-run 에서 TTL-breach pod teardown 감지 + opt-in 불변식 (limit 없는 pod 무시) 통과
+정확성 우선: codegen 변경 revert(인라인은 빌드 자체 실패). bench/log/verdict 만 commit.
+`--identifier hexad` 고정(빌드 간 ASP 평가 안정). identity 누출 방지로 cert 는
+- `cloud watchdog` 가 sweep 호출 (--kill 없으면 dry-run · --kill 시만 runpod key 해결)
+fix(verify): 🟠 no-path trailer에 재빌드 한 줄 추가 — 반복 오진 차단 (#2007)
+dispatch 되지 않아 영원히 idle billing 으로 새는 사고를 systemic 하게 차단.
+죽고 그 fallback git checkout 이 제거된 파일을 복원 못 해 cascade 실패했다
+  3-플랫폼 GREEN: 23 씨앗 1개도 컴파일하지 않고 edge 의 runtime.a + hexat 로
+시점 ULP=0 회귀 확보. 구조적으로는 두 변형 모두 동일 memcpy 원시연산
+후속: 실 Hartree+XC 차폐 커널(real PW 시스템) — drho_to_dvscf 비자명 구현.
+final3 가 같은 `hexa cc --regen` 으로 통과하는 건 순서 덕: section C 가 runtime.c·hexa_cc.c
+`use`로 호출하는 합성 레이어. d3(코드 단일 홈) 유지: 예측 함수는 sim.hexa에만,
+cmd_cc 가 self/runtime.c→runtime.o, self/native/hexa_cc.c+runtime.o→build/hexat 부트스트랩
+`gap =` 로 "arm 을 extend 하라"고 안내하지만 그 다음 필수 단계인 "재빌드해야
+(runtime_core·runtime_hi_gen·tensor_kernels)에 대해 구현했으므로 🟡 부분-완화로
+1. runpodctl create 시 --ports '22/tcp' 누락하면 http-proxy port만 노출 (SSH 불가) →
+  어린 native codegen 이 지는 게 예상된 baseline (함정 아님). 분기-bound(collatz)
+  어린 native codegen 이 지는 게 예상된 baseline (함정 아님). 분기-bound(collatz)
+원격 빌드(릴리스 3 잡)에 prebuilt runtime.a 산출+번들 스텝만 추가. 기존
+CLOUD M* = 11/11: M1-M11 전부 done. M2 LIVE 검증 · M3 vast+runpod · 모든 cloud state ~/.hx/cloud/ 통일.
+- downstream verify_cli (PR-hx5) 는 dispatch_known + arity_of + dispatch 만 호출 — fn 이름 박지 않음
+스트랩 clang 이 소스 없어 실패 → build/hexat 안 생김 → regen FATAL. (edge `hexa` 는 stale
+씨앗 present(현 main·release)에선 build/hexat 선빌드 = 무해한 ready transpiler (emit 바이트
+  → 직전 커밋의 드라이버 fix 가 prebuilt runtime.a 를 링크하므로 씨앗 없이 성공.
+호출 → byte 동일 경로 → drift 구조적 불가. PR2(23 씨앗 git rm)는 sign-gated 별도.
+이동/복제 없음(이동 시 RTSC churn + 검증 원자 무효화). d4 generic: 물질별 분기/
+  release.yml 이 호출하는 바로 그 스크립트를 씨앗 제거 상태로 실제 실행한
+bootstrap.yml 이 red(runtime_core.c 부재 — 별도 fix) 여도 독립 동작. path-filter 로
+소스 컴파일 경로는 완전히 동일하게 유지(fallback-safe). 제거·gitignore 변경
+.c=0 캠페인이 5번 연속 실패한 단일 근본원인 = nobaseline-gate.yml(병렬 copy)이

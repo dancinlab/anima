@@ -1,0 +1,35 @@
+device-resident decode(422328421) byte-exact 발산은 hexa-lang forward-residency clobber 아님 — v0.315.2(#3921+matmul residency) 위 engine-native 재측정에서 v0.314.0과 비트단위 동일 발산(OFF host vs ON device: G0 2/5→0/5·G2 9→0·G5 0.714→1.0·G6 2→1, wall 1.15× faster, OWN-GEMM DEVICE 발화). 1순위=own-GEMM TF32 vs FP64. device code WIRED-dormant 유지. cli/CLAUDE.md PARITY 2-tier(수치커널 byte-golden BLOCKING + 학습레버 권장). eval_pod.sh + EVAL_KIT.md 측정-발사기.
+device-resident decode(422328421) byte-exact 발산은 hexa-lang forward-residency clobber 아님 — v0.315.2(#3921+matmul residency) 위 engine-native 재측정에서 v0.314.0과 비트단위 동일 발산(OFF host vs ON device: G0 2/5→0/5·G2 9→0·G5 0.714→1.0·G6 2→1, wall 1.15× faster, OWN-GEMM DEVICE 발화). 1순위=own-GEMM TF32 vs FP64. device code WIRED-dormant 유지. cli/CLAUDE.md PARITY 2-tier(수치커널 byte-golden BLOCKING + 학습레버 권장). eval_pod.sh + EVAL_KIT.md 측정-발사기.
+device-resident decode(422328421) byte-exact 발산은 hexa-lang forward-residency clobber 아님 — v0.315.2(#3921+matmul residency) 위 engine-native 재측정에서 v0.314.0과 비트단위 동일 발산(OFF host vs ON device: G0 2/5→0/5·G2 9→0·G5 0.714→1.0·G6 2→1, wall 1.15× faster, OWN-GEMM DEVICE 발화). 1순위=own-GEMM TF32 vs FP64. device code WIRED-dormant 유지. cli/CLAUDE.md PARITY 2-tier(수치커널 byte-golden BLOCKING + 학습레버 권장). eval_pod.sh + EVAL_KIT.md 측정-발사기.
+rename 보류(verify-done·surgical) — write-time naming-guard가 신규 위반은 이미 차단.
+live caller 0 확인. bytegpt 는 명시적 per-token farr_free + resident KV cache 1회할당 → 이미
+live caller 0 확인. bytegpt 는 명시적 per-token farr_free + resident KV cache 1회할당 → 이미
+docs(state): 검증-지식 전수수집 census 2026-06-25 (anima registry harvest) (#2616)
+이 거짓주석이 다세션 오진단 유발. 교정+scratch-reuse를 perf로 재프레임.
+core/DECODER/ 에는 flame_mm.hexa 만 남음. preserve-state: 삭제 아닌 이전.
+* fix(core/clm_decode): clm303 G0-G6 farr 누수 해소 — clm_forward_ce·clm_omega_closure 를 _sc scratch-재사용 배선
+* fix(core/clm_decode): clm303 G0-G6 farr 누수 해소 — clm_forward_ce·clm_omega_closure 를 _sc scratch-재사용 배선
+docs(state): 검증-지식 전수수집 census 2026-06-25 (anima registry harvest) (#2617)
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>

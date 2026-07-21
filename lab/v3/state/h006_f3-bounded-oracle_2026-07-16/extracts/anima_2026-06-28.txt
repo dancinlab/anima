@@ -1,0 +1,32 @@
+research(H_1603/H_1617 EXP-3): bind G0-G6 engine-native A/B TERMINAL — 곱셈 ⊙ readout이 G1/G6 floor 못넘음(NOT-SUPPORTED, INCONCLUSIVE-at-floor)
+objrun 9-run: {ce_marginal,infonce,contrastive_equilibrium}×{7,4302,4303}=9 → G1 전부 FAIL(composed=0·max_single 0~1·closure 0/9). objective축 우위 0/3 → NOT-SUPPORTED·INCONCLUSIVE-at-floor. g1-lever 4 직교렌즈(depth·binding·data·objective) 전부 floor=종결, 벽=undertrain/구조. 측정=옛 g_gates.py(py폐기로 DIRECTIONAL)→hexa eval 복구후 terminal. RESULT+jsonl+카드 lockstep. ckpt 보존.
+objrun H_1602 follow-on. g1-lever 4 직교렌즈 전부 2000-step G1 floor=INCONCLUSIVE-at-floor → step{2k,8k,20k}×wd{0,.1}×dropout{0,.1} sweep(ce_marginal 303M, engine-native G1 multiseed)으로 undertrain vs 구조천장 판별. frozen prediction 2갈래(a step↑로 composed_distinct 상승=undertrain / b 20k+reg flat0=구조천장→binding operator 필요). DO NOT auto-fire(cost-gated). frontier-novel-levers N6/N7.
+생물학 누락 보완(a_no_llm_frame_trap 1순위). 생물 메커니즘을 곱셈 readout 아닌 trunk objective축으로 구현(exp3 floor 교훈)→additive readout 유지·penultimate 보조손실·세 arm .clm 직렬화·engine-native by-construction 열림:
+research(H_1602): objective-lever G1 NOT-SUPPORTED — objrun 9/9 전부 floor (정직 negative)
+binding 축 engine-native(py 2-production, summer $0) 9eval: G1=0 all9·G6 fals=0 all9·bind dist≤ctrl
+binding-readout NOT-SUPPORTED 정합, 한국어byte 자모compositional 유리(SCRIPT'26≈ko-jamo🟢).
+- 1641 predcoding_binding: Tani PC parametric-bias binding(Eq.30)+free-energy anti-collapse → G1+G6. bio top-2(A⇄G=PC 동형 철학정합·유일 G1+G6 동시). smoke OK(latent 미붕괴 pb_var 0.0018).
+research(biolevers): 생물 렌즈 G1/G6 레버 2 패키지(CLS sep/complete·predictive-coding) + RESEARCH §7
+Q1-Q5: 외부 문헌이 'G1 레버=trunk objective+정규화 > binding-operator > scale'로 강수렴
+  clm_decode CLMB RTYPE lockstep(c4 child-split). 남은 G1/G6 engine-native = pool GPU follow-on.
+state/binding_arch_census/exp3_303m/gates_out_engine_native/ctrl_seed7.err
+state/1641_predcoding_binding/ckpt/smoke_pc_free_energy.clm
+state/1641_predcoding_binding/ckpt/smoke_pc_free_energy.json
+검증: usage train/serialize/evaluate 3줄 RC=0 · evaluate .pt거부 RC=2 · evaluate.py⇔g_gates.py⇔anima.py evaluate G0-G6 byte-identical(tiny clm mac) · hexa build RC=0(3 cli) · grep torch=0(anima/evaluate, serialize만 1=학습계열) · enforce clean. 미완(pool): hexa engine-native 풀 G0-G6(mac decode 느림)·serialize 풀 .pt→.clm(torch). + hexa x86 codegen #42492878 인수문서(state/hexa_x86_codegen_handoff, fix후 QA기준).
+fix(core/clm_decode bind-codec · 1620): CLMB bind .clm DEFECT→FIXED — arm64 numpy#25530 spurious FPE 오진, 실 303M bind .clm DESCENT+engine-native GREEN
+state/binding_arch_census/exp3_303m/gates_out_engine_native/bind_linear_seed4302.err
+state/binding_arch_census/exp3_303m/gates_out_engine_native/bind_linear_seed4303.err
+state/binding_arch_census/exp3_303m/gates_out_engine_native/bind_linear_seed7.err
+state/binding_arch_census/exp3_303m/gates_out_engine_native/bind_seed4302.err
+state/binding_arch_census/exp3_303m/gates_out_engine_native/bind_seed4302.txt
+state/binding_arch_census/exp3_303m/gates_out_engine_native/bind_seed4303.err
+state/binding_arch_census/exp3_303m/gates_out_engine_native/bind_seed4303.txt
+state/binding_arch_census/exp3_303m/gates_out_engine_native/bind_seed7.err
+state/binding_arch_census/exp3_303m/gates_out_engine_native/bind_seed7.txt
+state/binding_arch_census/exp3_303m/gates_out_engine_native/ctrl_seed4302.err
+state/binding_arch_census/exp3_303m/gates_out_engine_native/ctrl_seed4302.txt
+state/binding_arch_census/exp3_303m/gates_out_engine_native/ctrl_seed4303.err
+state/binding_arch_census/exp3_303m/gates_out_engine_native/ctrl_seed4303.txt
+state/binding_arch_census/exp3_303m/gates_out_engine_native/ctrl_seed7.txt
+state/binding_arch_census/exp3_303m/gates_out_engine_native/descent.log
+setup.hexa

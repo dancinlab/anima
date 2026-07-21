@@ -1,0 +1,11 @@
+FIT-CHECK: d=64 L=2, CPT 200 + drill 1500 on mps (fixed objective λ=5.0 + cosine LR); A-duel s0/s1 + C-perm s0 …
+    d_acc scored on FREE slots [0, 1, 2, 4] (parity slots {3,5} excluded — codebook rank-4)
+    A-duel.s0: drill_dacc(free)=1.0  ce_ans=0.0004
+    A-duel.s1: drill_dacc(free)=1.0  ce_ans=0.0004
+    C-perm.s0: drill_dacc(free)=0.4648  ce_ans=0.173  per_slot=[0.25, 0.4688, 0.6094, 1.0, 0.5312, 1.0]  f2''(held-out,free)=0.4922
+
+bar1 A-duel≥0.95 both + spread≤0.03: PASS  (s0=1.0 s1=1.0)
+bar2 ce_ans<0.05 both:               PASS
+bar3 C-perm free∈[.40,.60]+f2''∈[.45,.55]+parity: PASS  (drill=0.4648 f2''=0.4922 parity_slots=1.0,1.0)
+
+FIT-CHECK VERDICT: GO — launch the full run

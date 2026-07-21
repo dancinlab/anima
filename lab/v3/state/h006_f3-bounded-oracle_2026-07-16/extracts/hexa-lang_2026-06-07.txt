@@ -1,0 +1,43 @@
+root that carries every repo-root dir. Self-contained installs and in-repo runs
+regression. H100 sm_90a nvcc 12.6.77, pod 39761328 DESTROYED leak 0 (sibling untouched).
+DEFERRED: full 7B clm_prod_gpu on-pod build + own-kernel util Δ at production
+= roofline). pod L40S 39744220 harvested inline + DESTROYED leak-0. chain f5e18a0f.
+DEFERRED: full 7B clm_prod_gpu on-pod build + GEMM-conv util/step-time at d=6208
+H100 80GB (vast 39761793, DESTROYED leak 0). The OG-FUSE-OPT verdict pinned the
+M6b (WAN ring throughput is RTT-bound ~30KB/s not window-bound — clean TCP-buffer negative).
+H100 80GB measured (vast 39771465 DESTROYED leak 0). Lever (a) cp.async 2-stage
+the preflight regime hint, and HONEST framing (roofline / reach-roofline-not-superiority /
+pod RTX 4070 39749656 DESTROYED leak-0 (sibling H200 39749545 + RTSC anchor untouched).
+(the driver dir = install_dir_from_argv0()) from the real checkout $HX_HOME/src,
+🟢 GREEN. PL<->NV WAN (vast 39860176/39860157, DESTROYED leak-0). All 3 modes
+max|Δ|=0 vs ModuleList-30. Gate + perf-shape cross-check + perf-timing + util
+argument). Root cause: STAGES=3 static __shared__ ring = Xs(12672)+Ws(36864) =
+Salvages #2865's honest correction onto fresh main (the branch was 23 behind → merging it would silent-revert). XOVER: at d=6208/H200 production the shape is SATURATED → the fused-conv cure does NOT apply (🔴), superseding the stale 🟢 MEASURED. Adds the verbatim H200 verdict (pod destroyed leak-0).
+* domain(HEXA-FUSION): fused multi-expert Conv1d MoE kernel — f5e18a0f conv-under-fill cure (GATE PASS + regime-split finding)
+domain(dojo): GPU kernel parity recipes — canonical-atom GEMM · weight-reuse conv · the regime law (#2869)
+* domain(dojo): GPU kernel parity recipes — canonical-atom GEMM · weight-reuse conv · regime law
+(weights touched once, no reuse → bandwidth-bound). Path (E) recasts each expert
+F-FUSION-TRAINSTEP-EQ resolved from prior real-pod fires (M2 H100 / P2A·B3 B200,
+* domain(HEXA-DDP M5c): NVLink crossover RESULT — REAL NVLink A/B (canAccessPeer=1) 🟢 byte-eq + near-ideal eff, 1.0x ceiling is weight-bound
+domain(HEXA-FUSION OG-FUSE-PROD-FOLD): GEMM-conv weight-reuse path E folded into flame — byte-eq max|Δ|=0 (#2868)
+* domain(dojo): preflight regime hint — saturated→weight-reuse-GEMM / under-fill→fusion-fill
+OVERTURNED — the winning member is the cleaner sub-variant the field sweep could not reach.
+domain(HEXA-DDP M7): production-scale DDP byte-eq invariant (7B target / largest-fit) (#2902)
+PAPER (publish the campaign), DOC (README trinity + dojo). M6c in-flight (self-registers); D3
+the descriptor-direct wgmma reads the SMEM tile bit-exact with NO in-kernel decode band. The
+check + GeForce-PHB staged-host fallback (use A100_SXM4 NVLink for direct), DDP_NUM_GPUS
+reads it bit-exact with NO software decode -> the W15-measured 32KB band is removed AND
+max|Δ|=0 byte-eq selftest. Models clm_conv_batched.hexa (E=2 precedent) generalized
+3.09x fewer than the L40S 142-SM baseline). GATE FIRST (g5): byte-eq max|Δ|=0 fused
+target max|Δ|=0 vs ModuleList-30. Gate (3) + perf-shape cross-checks added for all
+E× replication), one forge_dispatch_matmul per expert with weight-tile reuse over
+critical path is interpreted inter-op glue (token t_get/t_set loop + eager 28-call
+tiled GEMM (shared im2col, weight-tile reuse across T time-rows, ci-outer/k-inner
+The production fold. OG-FUSE-FOLD wired the UNDER-FILL strided-batched fused path
+max|Δ|=0 vs the 30-conv reference HELD in both regimes for path D (gate sub-1 +
+Conv1d as an implicit GEMM and register-tiles it (BM=64 time-fold weight reuse):
+whole-step megakernel, replacing the naive in-kernel device GEMM, completing the
+moe_conv_gemm_fwd: per-expert register-tiled GEMM, shared im2col built ONCE (no
+OG16 removed the 32KB decode band -> the W11 128x256 output-tile lever (dead on
+OG16 removed the 32KB decode band -> the W11 ping-pong/relaxed-wait_group lever
+write -> sticky illegal-access poisoning the whole MODE10 sweep). Corrected the

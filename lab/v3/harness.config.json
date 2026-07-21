@@ -1,0 +1,17 @@
+{
+  "project": "anima-v3",
+  "_canonical-ok": "@canonical-ok — 'anima-v3' is the campaign's canonical identity, not a version suffix on a file: it is a distinct clean-slate campaign whose ONLY inheritance from the discarded 'anima' (v1) is a set of sealed measured verdicts (ARCHITECTURE.json -> salvage). The sibling repos anima / anima-v2 / anima-v4 are separate campaigns with their own evidence trails, not older copies of this one, so there is nothing here to update in place.",
+  "profile": "hardcore",
+  "stack": [
+    "python"
+  ],
+  "verify": {
+    "checks": [
+      {
+        "id": "estimator-fixtures",
+        "cmd": "python3 tool/test_anima_v3.py",
+        "timeoutMs": 60000
+      }
+    ]
+  }
+}

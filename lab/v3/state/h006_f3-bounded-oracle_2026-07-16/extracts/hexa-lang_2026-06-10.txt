@@ -1,0 +1,39 @@
+* feat(HEXA-0POD OP-19b): host C gelu fallback (gitignored runtime.c via restore_frozen_seeds) swaps libm erf -> dt_erf — gelu2/groupnorm_gelu host-dispatch oracles re-lock byte-eq
+* domain(HEXA-0POD OP-19b): verdict + milestone [x] + contract doc — flame FULLY machine-independent byte-exact (no libm transcendental left)
+domain(HEXA-0POD OP-21B): w16.cu canonical-atom encoder CPU-validated 0-pod (de-risks H100 D1 gate) (#3023)
+* domain(HEXA-0POD OP-21B): w16.cu canonical-atom encoder CPU-validated 0-pod (de-risks H100 D1 gate)
+* domain(hexa-0pod OP-26): verdict + milestone [x] + log — machine-independent writeup
+* domain(HEXA-0POD OP-19d): WIP skeleton — 4th-env musl/summer byte-exact milestone + verdict stub
+* domain(HEXA-0POD OP-24c): verdict + milestone [x] + log — TF32 e2e turnkey kit (kit-ready, run-gated)
+* docs(hexa-0pod OP-26): WIP skeleton — machine-independent bit-exact training results doc
+musl (Alpine, 0-pod via docker on summer) reproduces the OP-19/19b/19c
+domain(HEXA-0POD OP-19d): 4th-env byte-exact — musl (Alpine) strengthens machine-independence to 3 distinct libm impls (#3027)
+* domain(hexa-0pod OP-27): verdict + milestone [x] + log — TF32 dojo recipe done, commons directive drafted for user sign
+* domain(HEXA-0POD OP-19d): 4th-env byte-exact — musl (Alpine) strengthens machine-independence to 3 distinct libm impls
+* wip(hexa-0pod OP-27): skeleton — TF32 fast-mode dojo recipe milestone + verdict stub
+re-locked · step now machine-independent). Domain milestone OP-19b flipped [x].
+musl constructor-ABI bug (env-capture relies on glibc/Darwin-only
+* domain(HEXA-0POD OP-21A): WIP — add milestone for written wgmma_tf32_w16.cu warp-spec TMA kernel + turnkey build kit
+* domain(HEXA-0POD OP-24b): WIP skeleton — TF32 end-to-end through REAL clm_prod_gpu trainer (aiden build attempt)
+* domain(HEXA-0POD OP-21A): DONE — verdict + milestone flip + log for the written w16.cu kernel + turnkey kit
+* domain(HEXA-0POD OP-19c): WIP skeleton — 3rd-platform byte-exact (pi5 arm64-linux)
+Milestone + verdict skeleton for extending OP-19/19b's 2-platform machine-
+* feat(HEXA-0POD OP-19b): pure-FP deterministic erf seals the GELU cross-platform hole — host + device GELU swap libm erf -> dt_erf (A&S 7.1.26 + dt_exp, branchless)
+domain(HEXA-0POD OP-19b): pure-FP deterministic erf seals GELU → flame FULLY machine-independent byte-exact (0-GPU) (#3008)
+* wip(HEXA-0POD OP-19b): pure-FP deterministic erf (Maclaurin, no libm) + cross-platform GELU byte oracle skeleton
+* domain(HEXA-0POD OP-24): WIP — wire deterministic TF32 fast-mode into live forge GEMM dispatch (env-gated)
+domain(HEXA-0POD OP-19c): 3rd-platform byte-exact — pi5 arm64-linux confirms machine-independence (#3016)
+* domain(HEXA-0POD OP-19c): 3rd-platform byte-exact — pi5 arm64-linux confirms machine-independence
+* docs(hexa-0pod OP-26): machine-independent bit-exact training results writeup
+(argc,argv,envp)->ctor; musl passes no args -> segfault at init), worked
+* domain(HEXA-0POD OP-25): WIP — deterministic BF16 fast-mode harness skeleton (3-lane BF16/TF32/FP64 + drift + drivers)
+domain(HEXA-0POD OP-24): wire deterministic TF32 fast-mode into the live forge GEMM dispatch (env-gated, byte-eq-safe) 🟢 dispatch-unit (aiden 5070, $0) (#3009)
+docs(hexa-0pod OP-26): machine-independent bit-exact training — rigorous results writeup (#3014)
+* domain(HEXA-0POD OP-23): WIP — TF32 vs FP64 N-step trajectory-drift harness (skeleton)
+BONUS: surfaced a pre-existing OP-19b -DHEXA_CUDA regression (_hx_dt_exp_dev defined
+Extended OP-19 (#3002) + OP-19b (#3008)'s 2-platform machine-independence proof
+deterministic dt_exp/dt_erf folds BYTE-IDENTICALLY (4-environment proof:
+* domain(HEXA-0POD OP-21A): record PR #3017 in milestone
+* domain(HEXA-0POD OP-19b): append step log entry
+domain(HEXA-0POD OP-24c): TF32 end-to-end TURNKEY build kit (build_clmprod_tf32_e2e.sh) — local-checked, GPU-build-gated run (#3022)
+docs(hexa-0pod OP-27): deterministic TF32 fast-mode dojo recipe (0-pod) + commons directive drafted for user sign (#3028)

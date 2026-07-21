@@ -1,0 +1,42 @@
+- runtime path: static_atlas() → embedded.gen.hexa const arrays, fs read 0건.
+feat(atlas): hexa atlas CLI — read-only surface (lookup/dump/stats/hash)
+This commit re-emits compiler/atlas/embedded.gen.hexa from the live atlas
+Each patched site carries a brief `INTERP-029 workaround` comment pointing to RFC-029. find_r5 self-lint stays CLEAN; test_tokenizer 66/66 PASS; types_test all PASS; annotations_test FAIL count unchanged from main (pre-existing, unrelated).
+Phase A4 absorption closure per ATLAS_N6_RETIREMENT_PLAN.md §5 + SPEC.md §2.2
+data(atlas): re-regen embedded.gen.hexa from macOS-canonical source — P=253/C=5943/L=388/E=10 (6594 nodes, sha256 663698a0…)
+- hexa atlas CLI surface (lookup/dump/stats/hash/append) — opt B writer migration 의 토대.
+doc(inbox): atlas-absorption session note — closure status + workaround recipe
+    live ~/.hx/bin/hexa_real after promote - the prior cd817981 build errored
+compiler/discover/promote.hexa + its smokes (staging-shard promotion path,
+Sites 2 (compiler/discover/cascade.hexa:256), 4 (self/dce.hexa:35), and the 5 R1-R4/R6 functions in runaway_pattern_lint.hexa were inspected and found to be NO_BUG — all their `if { continue }` sites are at the top-level inside the while body, not nested under an outer if.
+- Verification anchors must cite at least one LATTICE_POLICY.md §1.2 limit
+  shard content verified — header shape matches witness_emit convention
+Re-promote of ~/.hx/bin/hexa_real recommended so deployed interp callers
+Both fixes are source-only — neither tested in this session (ubu-1 SSH
+data(atlas): regen embedded.gen.hexa from real corpus — P=255/C=5424/L=392/E=10 (6081 nodes, sha256 2efce3bb…)
+doc(atlas): retirement plan §0b — absorption closure (commits 0db952a2 + 150e0220)
+doc(atlas): retirement plan §0c — Phase 4/5/7 land in nexus, Phase 8 still blocked
+fix(atlas): hexa atlas append-witness — shard format compatible with parser
+- Generates a thin shim at ~/.hx/bin/hexa → ~/.hx/bin/hexa.real so the
+- compiler/check/types.hexa _collect_item_types: hoist HX3010 pub-collision check to `pub_collision` flag; gate definition registration through if/else chain instead of nested `if { i++; continue }`.
+- `hexa atlas append-witness <json>` — write 경로. nexus 의 ω-cycle 흡수 패턴을
+3 false starts on Linux): incoming/notes/2026-05-12-atlas-n6-absorption-session.md.
+    명시, 잔여 load_atlas() 직접 콜러 (discover/promote* + atlas_embed_gen
+- hexa run tool/atlas_cli.hexa {hash,stats,lookup,dump} 직접 호출 4/4 PASS.
+.real (gitignored) also rebuilt from the new hexa_v2 so the interp path emits
+Smoke: compiler/atlas/static_index_test.hexa — 9/9 PASS. Test had hardcoded
+        \$HOME/.hx/packages/hexa/build/hexa_interp tool/atlas_embed_gen.hexa
+Source-only edit — the deployed \$HOME/.hx/packages/hexa/build/hexa_interp
+unrelated to runtime SSOT) and tool/atlas_embed_gen.hexa itself (the regen
++ RFC-017 §4.5. Previously embedded.gen.hexa carried an 8-node FIXTURE
+  build: self/native/hexa_v2 self/main.hexa -> /tmp/hexa_main_rp2.c ;
+- compiler/check/annotations.hexa _grace_fields: drop 8 nested `if !cond { i++; continue }` early-exits inside `if a.name == "grace"`; use single `ok` guard flag accumulating field validation.
+feat(self/runtime+codegen): sleep_ms(ms) — nanosleep-backed sub-second sleep, no fork (wilson provider-claude-cli poll loop)
+hexa-lang 측에 `hexa atlas` 진입점을 신설하고 nexus-cli proxy 에서 분리.
+§0c root cause 정정. 이전 진단 (`use "compiler/atlas/parser"` module-loader
+Session 2 후반 nexus repo 측 진행 사항 7 commit 을 hexa-lang 의 §0c
+fixture-only IDs (`alpha`, `addition-commutative`) that were absent from the
+(`ATLAS_GENERATED_AT = "fixture"`) so a clean checkout could compile; that
+Applies LATTICE_POLICY.md §1.2 real-limits taxonomy to hexa-lang: native
+    leak (BSD stat under non-C LANG also surfaces translated diagnostics
+doc(atlas): retirement plan §0c — Phase 1-3 closure + Phase 4-8 interp-drift blocker

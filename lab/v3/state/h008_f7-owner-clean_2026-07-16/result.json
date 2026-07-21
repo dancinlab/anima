@@ -1,0 +1,53 @@
+{
+ "eps": 0.02,
+ "pr_floor": 2.0,
+ "liveness": {
+  "markov3_over_floor": 0.2242008641089277,
+  "markov3_ceiling": 1.911234343559736,
+  "markov3_shuffle": 1.6870334794508084,
+  "markov8_over_floor": 0.4761154619460002,
+  "markov8_ceiling": 1.966812345821812,
+  "markov8_shuffle": 1.490696883875812
+ },
+ "liveness_ok": true,
+ "n_usable_transcripts": 242,
+ "per_session": {
+  "n": 242,
+  "markov3": {
+   "over_floor": 0.007164054799925879,
+   "ceiling": 1.138577986637495,
+   "shuffle": 1.131413931837569
+  },
+  "markov8": {
+   "over_floor": 0.018702030579921036,
+   "ceiling": 0.24646078661771398,
+   "shuffle": 0.22775875603779294
+  },
+  "participation_ratio": 2.2906325756311396,
+  "legible": false,
+  "high_dim": true,
+  "sign_agree": true,
+  "anchored": false
+ },
+ "per_day": {
+  "n": 30,
+  "markov3": {
+   "over_floor": 0.14548095014926687,
+   "ceiling": 3.0090070635712123,
+   "shuffle": 2.8635261134219454
+  },
+  "markov8": {
+   "over_floor": 0.17636355017643623,
+   "ceiling": 1.0482594019326097,
+   "shuffle": 0.8718958517561735
+  },
+  "participation_ratio": 1.751977501539499,
+  "legible": true,
+  "high_dim": false,
+  "sign_agree": true,
+  "anchored": false
+ },
+ "elapsed_sec": 314.7,
+ "verdict": "REFUSED — text-like liveness PASSES (instrument sound), but the owner stream carries no predictable high-dimensional cross-session self above the shuffle floor on either grain (best 'per_day': markov3 over_floor +0.1455, markov8 +0.1764, PR 1.75). The F7/F5 owner-substrate premise is REFUSED at $0.",
+ "any_anchored": false
+}

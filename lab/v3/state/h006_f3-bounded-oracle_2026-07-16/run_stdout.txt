@@ -1,0 +1,26 @@
+==========================================================================
+H_006 — f3-bounded-oracle · does a k-bounded hindsight extract keep the ceiling?
+==========================================================================
+[B-2 liveness] planted ceiling(4096) = 0.3656 (>>0.02?): True
+
+[anima] days=44  ceiling(k) over-floor (markov6 | ppm):
+    k=   64: +0.0000 | +0.0000
+    k=  256: +0.0005 | +0.0112
+    k= 1024: +0.0032 | +0.0039
+    k= 4096: +0.0116 | +0.0187
+    -> anchored(some k)=False · agree@4096=True
+[hexa-lang] days=102  ceiling(k) over-floor (markov6 | ppm):
+    k=   64: +0.0000 | +0.0000
+    k=  256: -0.0029 | +0.0045
+    k= 1024: -0.0013 | +0.0179
+    k= 4096: -0.0086 | +0.0261
+    -> anchored(some k)=False · agree@4096=False
+
+==========================================================================
+  PASS  B-2 liveness
+  FAIL  B-1 kill (bounded diary doomed)
+
+  VERDICT: F3-BOUNDED-REFUSED — a hindsight k<=4096 extract does NOT retain the ceiling on either anchored stream; the day MI is incompressible below context scale. The F3 twin is CANCELLED ($0 saved) — the k-bottleneck instantiation is dead even though the unbounded MI (H_005) is real.
+==========================================================================
+
+artifacts: state/h006_f3-bounded-oracle_2026-07-16/result.json + extracts/

@@ -1,0 +1,34 @@
+- rt_read   (B9.6-C12) int+ptr+ulong 3-arg _cf, SYS_READ=3   — rt_close shape, errno reloc @0x14/0x18
+- HEXA_RT_SELFEMIT=1: _hxlcl_memset strong 'T' resolved from self-emit .o, live disasm = rt_memset 28-B loop, undefined-set 55 IDENTICAL, flatten output byte-identical
+- rt_waitpid(B9.6-C16) FIRST 4-arg _cf, SYS_WAIT4=7          — sxtw x0/x2 + mov x3,#0, errno reloc @0x1c/0x20
+- rt_mmap   (B9.6-C17) 6-arg _cf, SYS_MMAP=197               — sxtw x2/x3/x4, errno reloc @0x1c/0x20
+- 5 components (parse · word-array+reloc emitter · reset-prologue · ELF/bin target · build rewire)
+- default build (guard off): _hxlcl_memset local 't', undefined-set 55 byte-identical to origin/main → 0-extern preserved
+feat(B9.6a/F3): self-emit rt_memset — codegen runtime-floor increment 1 (foundational, .c count UNCHANGED) (#1830)
+- self/native/hexa_cc.c: regenerated via `hexa cc --regen` (bcrypt emit dropped); fixpoint byte-identical (gen2≡gen3); links clean against runtime.o (no undefined hexa_bcrypt_pbkdf)
+docs(RUNTIME.floor): F3 class-A RELOC RUNBOOK — infra PROVEN (arena adrp+add link+run rc=0), real blocker = per-primitive PORT (#1839)
+feat(stdlib/posix/posix_calling_convention_arm64): arm64 syscall CC table (Darwin + Linux) — RUNTIME.flip B3.posix-cc-arm64 (#1770)
+- keyfile.hexa direct-transpile resolves bcrypt_pbkdf to the hexa stdlib fn (0 runtime hexa_bcrypt_pbkdf refs in emitted .c)
+docs(F3): class-D HexaVal-repr frontier — struct-repr NOT NaN-box, 3-split sub-plan + single-increment no-go (#1841)
+* docs(RUNTIME.floor): F3 rt_memset ACTIVATED via Path A — 1 runtime primitive live-injected (dual-build verified)
+feat(B9.C-7): tool/test/hexa_ld_* .c-text — 7 PROVEN-DEFERRED (.c 90→90, active linker dev KEEP) (#1854)
+feat(B9.6a-6): activate rt_memset self-emit via Path A guard — first runtime primitive activated (#1836)
+docs(runtime): 4 remaining .s asm-floor classification — RUNTIME.flip B9 (.s self-emit scoping) (#1810)
+- fixpoint risk-free: emit driver not use-d by compiler/main.hexa; runtime.c diff is pure additive guard
+floor(B9.C): runtime_hi_gen.c .c-text FOUNDATION — emitter+oracle+regen-wire (byte-identical) (#1875)
+| `tls13_client_compute_finished_message(c_hs, H_pre_cf)` | client Finished on-wire bytes (hs_header + 32B verify_data) |
+feat(B9.6a/F3): self-emit 5 leaf string runtime primitives — F3 increment 3 (foundational, .c count UNCHANGED) (#1832)
+floor(B9.C): sign-batch rm 3 .c-text members — runtime_hi_gen + gpu_codegen_stub + hxffi_slot (.c 31→28) (#1879)
+* fix(atlas): --from-verify variable-arity — 3-op allen_dynes_tc rounded-literal 🔴→compute-fold (INBOX #1896)
+floor(B9.C-8): rm cuda/forge .c-text members — runtime_cuda + runtime_bf16 + forge_tier_v1 (.c 28→25) (#1884)
+feat(stdlib/posix/posix_errno): errno table (Linux + Darwin) — RUNTIME.flip B3.posix-errno-encoding (#1773)
+docs(RUNTIME.flip): strict hexa-self — move B2.ca-system-fficacert to ## deferred (47→46 active) (#1756)
+docs(B9): close additive track — B9.5c blowfish [x] (RUNEQ #1814) + register B9.6c first .c-delete (#1815)
+floor(B9.C): sign-batch rm 14 .c-text members — hexa_ld 7 + vendor FFI 6 + native_gen (.c 25→11) (#1894)
+feat(B9.C-10): runtime.c #include 16 native fragment .c-text FOUNDATION — emit+oracle+build-rewire PROVEN (.c 87, deletion sign-gated) (#1857)
+feat(stdlib/cloud/preflight_symptom_diff): cross-backend symptom comparator (RFC 091 §2.5) — RUNTIME.flip B6.preflight-symptom-diff (#1792)
+feat(stdlib/posix/posix_calling_convention_x86_64): x86_64 SysV syscall CC table — RUNTIME.flip B3.posix-cc-x86-64 (#1771)
+docs(RUNTIME.floor): F3 ACTIVATION runbook — self-emit→live injection mechanism (BLOCKED, expert infra needed) (#1834)
+feat(stdlib/posix/posix_signal_numbers): signal table (Linux + Darwin) — RUNTIME.flip B3.posix-signal-numbers (#1772)
+@F verified-allen_dynes_tc-yh10 = allen_dynes_tc(2.8197,1300.43,0.10) = 227.50113398567433 (🟢 SUPPORTED-NUMERICAL).
+* wip: risk-d oracle GREEN (.trans 8x8-block confirmed at BK=32, V-pretranspose required, plan section 2 correct)
