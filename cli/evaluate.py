@@ -2650,6 +2650,7 @@ def store_parity_selftest_run(argv):
     never a PASS, because an unrun guard that prints success is the failure mode this exists to
     prevent."""
     tol = float(evaluate_strval(argv[1:], "--parity-tol", "2e-5") or "2e-5")
+    pkf = evaluate_strval(argv[1:], "--parity-key-fn", "mean") or "mean"
     print("=== anima evaluate --store-parity-selftest — H_9826 torch<->numpy CLMS parity ===")
     import clms as _clms
     fn = getattr(_clms, "parity_selftest", None)
@@ -2657,7 +2658,10 @@ def store_parity_selftest_run(argv):
         print("  SKIPPED — torch is not installed, so the trainer arm cannot run.")
         print("  This is NOT a pass. Install the train extra:  pip install \"anima-python[train]\"")
         return 3
-    ok, rows = fn(tol=tol, verbose=True)
+    try:
+        ok, rows = fn(tol=tol, key_fn=pkf, verbose=True)
+    except TypeError:                      # older engine without the key_fn arm
+        ok, rows = fn(tol=tol, verbose=True)
     print("  SELFTEST %s — the mirror %s the trainer, and the guard %s catch a divergence" %
           ("PASS ✓" if ok else "FAIL ✗",
            "MATCHES" if ok else "DIVERGES FROM",
@@ -10518,7 +10522,7 @@ _KNOWN_FLAGS = frozenset((
     "--key-geometry-screen", "--key-fns", "--screen-pool", "--screen-manifest",   # H_9852
     "--store-retr-probe", "--retr-probe-selftest", "--retr-probe-iters",   # H_9825 retrieval ceiling
     "--retr-probe-center", "--retr-probe-nway",              # H_9825 deconfound · live-lane re-read
-    "--store-parity-selftest", "--parity-tol",              # H_9826 torch<->numpy CLMS parity
+    "--store-parity-selftest", "--parity-tol", "--parity-key-fn",   # H_9826 torch<->numpy CLMS parity
     # H_9838 CA3 multi-step transitive completion (core/hippo_lane.py · ckpt-free · read-side)
     "--hippo-transitive-selftest", "--hippo-hops", "--hippo-kwta-k", "--hippo-seed",
     "--hippo-dim", "--hippo-active", "--hippo-chains", "--hippo-chain-len",

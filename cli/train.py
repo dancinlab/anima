@@ -1552,7 +1552,7 @@ class StoreBindCell:
     the first byte at qpos), and in-window copy is structurally impossible (the answer byte does not
     exist before qpos, and each window is exactly one line)."""
 
-    def __init__(self, path, key_emb_np, n_slot, T, val_frac):
+    def __init__(self, path, key_emb_np, n_slot, T, val_frac, key_fn="mean"):
         import json as _json
         import numpy as np           # train.py imports numpy only locally (as _np); StoreBindCell needs np
         lines = open(path, encoding="ascii").read().splitlines()
@@ -1560,6 +1560,8 @@ class StoreBindCell:
         if len(lines) != len(rows):
             sys.exit(f"[store-bridge] {path}: {len(lines)} lines != {len(rows)} store rows (lockstep broken)")
         from clms import find_qpos as _fq             # core/clms.py — the SAME scanner eval uses
+        import clms as _clms                          # core address function (no inlined copy)
+        _key_fn = key_fn                              # H_9852: mean (shipped) | roll (lane_type 6)
         self.ex = []
         for ln, r in zip(lines, rows):
             prompt, gold = r["prompt"], r["gold"]
@@ -1576,8 +1578,10 @@ class StoreBindCell:
             q = _fq(x.numpy())
             if not (q and q[-1] == T - 1):
                 sys.exit("[store-bridge] qpos scanner parity broken (window geometry != eval store_run)")
-            K = np.stack([key_emb_np[np.frombuffer(e.encode("ascii"), np.uint8)].mean(0)
-                          for e in ents]).astype(np.float32)          # (n_slot, d_k) = clms._entity_key
+            # call the CORE address function — an inlined copy here is exactly how the trainer
+            # and the inference mirror drift apart (H_9826), and it would silently ignore key_fn
+            K = np.stack([_clms._entity_key(key_emb_np, e, _key_fn)
+                          for e in ents]).astype(np.float32)          # (n_slot, d_k)
             tgt = int(r["target_slot"])                              # H_9423 Stage1.5: query-entity slot (oracle-train)
             self.ex.append((x, y, torch.from_numpy(K), torch.tensor(pols, dtype=torch.long),
                             torch.tensor(tgt, dtype=torch.long)))
@@ -2667,6 +2671,9 @@ def main():
     ap.add_argument("--clms-r", type=int, default=128, help="CLMS GELU-MLP fusion bottleneck")
     ap.add_argument("--clms-key-seed", type=int, default=9423, help="CLMS frozen key_emb table seed")
     ap.add_argument("--clms-lam0", type=float, default=1.0, help="CLMS lam init (store_only scale)")
+    ap.add_argument("--clms-key-fn", choices=("mean", "roll"), default="mean",
+                    help="CLMS content-address function: mean (shipped, order-blind H_9850) "
+                         "| roll (order-aware, parameter-free, lane_type 6 · H_9852)")
     # H_9698 MBND mouth-binder lane (R6). --mouth-binder engages it; the linear arm is the INTERNAL
     # NEGATIVE CONTROL that must reproduce kill#7's fixed-role linear collapse (uniform address +
     # additive combine), so a nonlinear number is only readable next to it.
@@ -3352,7 +3359,7 @@ def main():
                         slw=a.slw, slw_n_slot=a.slw_n_slot, slw_k=a.slw_k,
                         clms=bool(a.store_bridge or a.freeze_trunk),
                         clms_n_slot=a.clms_n_slot, clms_d_k=a.clms_d_k,
-                        clms_d_s=a.clms_d_s, clms_r=a.clms_r, clms_d_g=a.clms_d_g, clms_val_center=a.store_val_center, clms_fangate=a.store_fangate,
+                        clms_d_s=a.clms_d_s, clms_r=a.clms_r, clms_d_g=a.clms_d_g, clms_val_center=a.store_val_center, clms_fangate=a.store_fangate, clms_key_fn=a.clms_key_fn,
                         clms_fresh_k=_fresh_k, clms_fresh_L=_fresh_L,
                         clms_key_seed=a.clms_key_seed, clms_lam0=a.clms_lam0,
                         mbnd=bool(a.mouth_binder), mbnd_rank=a.bind_rank,
@@ -3550,7 +3557,8 @@ def main():
         if a.store_batch % world != 0:
             sys.exit(f"[store-bridge] --store-batch {a.store_batch} not divisible by world {world}")
         _key = core_model.clms.key_emb.detach().cpu().numpy()
-        sb_cell = StoreBindCell(a.store_bridge, _key, a.clms_n_slot, a.store_win, a.store_val_frac)
+        sb_cell = StoreBindCell(a.store_bridge, _key, a.clms_n_slot, a.store_win, a.store_val_frac,
+                                key_fn=a.clms_key_fn)
         sb_gen = torch.Generator().manual_seed(4242)      # shared across ranks; SEPARATE from gen=42
         Bs_global = a.store_batch
         Bs_local = Bs_global // world
