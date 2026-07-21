@@ -3038,7 +3038,7 @@ def _sb_emit_block(rng, entities, store_slots, balanced=False):
 _SB_COMPOSE_FILLER = "zzqqx"        # drop-control stand-in: a non-atom that no prompt ever names
 
 
-def _sb_emit_compose_block(rng, entities, store_slots, drop_b=False):
+def _sb_emit_compose_block(rng, entities, store_slots, drop_b=False, drop_a=False):
     """One compose-2 block: a balanced store + exactly store_slots two-conjunct queries.
 
     Gold is forced to an EXACT 50/50 split inside the block (half the pairs xor=0, half xor=1, then
@@ -3046,7 +3046,13 @@ def _sb_emit_compose_block(rng, entities, store_slots, drop_b=False):
     (chance-level-must-be-derived-per-metric). drop_b=True is the 1-SLOT-ONLY control: the prompt
     and the gold are IDENTICAL, but B's entity is replaced in the store by a filler nobody asks for,
     so pol_B is unreadable and the ceiling is 0.5 — if the main arm and this arm both clear the bar,
-    the panel was never measuring recombination."""
+    the panel was never measuring recombination.
+
+    drop_a is the SAME control on the OTHER conjunct, and it is not redundant: the two operands sit
+    at different distances from the query byte, so deleting the near one and deleting the far one are
+    different tests. A reader that ignores A entirely (say, because A is out of reach and the answer
+    is being carried some other way) passes the B-deleted control untouched — only the A-deleted arm
+    catches it. BOTH must collapse before a composed positive means recombination."""
     idx = rng.sample(range(len(entities)), store_slots)
     names = [entities[i] for i in idx]
     pols = [0] * (store_slots // 2) + [1] * (store_slots - store_slots // 2)
@@ -3077,6 +3083,8 @@ def _sb_emit_compose_block(rng, entities, store_slots, drop_b=False):
         ents = list(names)
         if drop_b:
             ents[b] = _SB_COMPOSE_FILLER               # B's fact removed; prompt/gold untouched
+        if drop_a:
+            ents[a] = _SB_COMPOSE_FILLER               # A's fact removed; prompt/gold untouched
         rows.append({"prompt": prompt, "gold": _SB_ANSWER[ans], "entity": names[a],
                      "entity_b": names[b],
                      "store": {"entities": ents, "pols": list(pols)},
@@ -3385,19 +3393,25 @@ def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, r
             raise SystemExit("storebind --compose 2: --store-slots must be a multiple of 4 (got %d) "
                              "— the four xor×op cells must be equal for chance to be exactly 0.5"
                              % store_slots)
-        c_rows, d_rows, s_rows = [], [], []
-        for off, sink, ents in ((10013, c_rows, ev), (10013, d_rows, ev), (10017, s_rows, train)):
+        c_rows, d_rows, da_rows, s_rows = [], [], [], []
+        for off, sink, ents in ((10013, c_rows, ev), (10013, d_rows, ev),
+                                (10013, da_rows, ev), (10017, s_rows, train)):
             crng = random.Random(seed + off)
             for _ in range(n_eval_blocks):
                 _, br = _sb_emit_compose_block(crng, ents, store_slots,
-                                               drop_b=(sink is d_rows))
+                                               drop_b=(sink is d_rows),
+                                               drop_a=(sink is da_rows))
                 sink.extend(br)
-        if [r["prompt"] for r in c_rows] != [r["prompt"] for r in d_rows] or \
-           [r["gold"] for r in c_rows] != [r["gold"] for r in d_rows]:
-            raise SystemExit("storebind --compose 2: drop control diverged from the main arm "
-                             "(prompt/gold must be identical — only B's store entry may differ)")
+        for lbl, other in (("drop_b", d_rows), ("drop_a", da_rows)):
+            if [r["prompt"] for r in c_rows] != [r["prompt"] for r in other] or \
+               [r["gold"] for r in c_rows] != [r["gold"] for r in other]:
+                raise SystemExit("storebind --compose 2: %s control diverged from the main arm "
+                                 "(prompt/gold must be identical — only ONE store entry may differ)"
+                                 % lbl)
         compose_rows, compose_drop_rows, compose_seen_rows = c_rows, d_rows, s_rows
+        compose_drop_a_rows = da_rows
         compose_audit = {"held": _sb_compose_audit(c_rows, "compose"),
+                         "drop_a": _sb_compose_audit(da_rows, "compose_drop_a"),
                          "drop": _sb_compose_audit(d_rows, "compose_drop"),
                          "seen": _sb_compose_audit(s_rows, "compose_seen")}
         if compose_teach:
@@ -3459,6 +3473,8 @@ def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, r
         st["compose_manifest"] = _cm(compose_rows, held_out=True, balanced=True)
         st["compose_drop_manifest"] = _cm(compose_drop_rows, held_out=True, balanced=True,
                                           control="one-slot-only")
+        st["compose_drop_a_manifest"] = _cm(compose_drop_a_rows, held_out=True, balanced=True,
+                                            control="one-slot-only-A-deleted")
         st["compose_seen_manifest"] = _cm(compose_seen_rows, held_out=False, seen=True,
                                           balanced=True)
     return text, st
@@ -7268,15 +7284,18 @@ def main():
         if st.get("compose"):
             cj = opts["out"] + ".compose2.json"
             dj = opts["out"] + ".compose2_drop.json"
+            aj = opts["out"] + ".compose2_dropA.json"
             zj = opts["out"] + ".compose2_seen.json"
             json.dump(st["compose_manifest"], open(cj, "w", encoding="utf-8"), ensure_ascii=False)
             json.dump(st["compose_drop_manifest"], open(dj, "w", encoding="utf-8"),
                       ensure_ascii=False)
+            json.dump(st["compose_drop_a_manifest"], open(aj, "w", encoding="utf-8"),
+                      ensure_ascii=False)
             json.dump(st["compose_seen_manifest"], open(zj, "w", encoding="utf-8"),
                       ensure_ascii=False)
             ca = st["compose_audit"]
-            print("  compose-2 (H_9875) -> %s (%d held-out · study arm) · %s (1-slot-only control) · "
-                  "%s (SEEN slice)" % (cj, ca["held"]["n"], dj, zj))
+            print("  compose-2 (H_9875) -> %s (%d held-out · study arm) · %s (B-deleted control) · "
+                  "%s (A-deleted control) · %s (SEEN slice)" % (cj, ca["held"]["n"], dj, aj, zj))
             print("     gold = op ⊕ (pol_A ⊕ pol_B) — BOTH conjuncts come from the store · exact "
                   "0.5000 split asserted (%d/%d good) ⟹ chance is 0.5 by construction, not by "
                   "expectation" % (ca["held"]["gold_good"], ca["held"]["n"]))
