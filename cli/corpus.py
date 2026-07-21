@@ -311,9 +311,16 @@ def _wp_rand(seed):
 # The eval seed is `_rho_fan_concepts()[0] + ": "`. Every word of EVERY eval concept is held out
 # of this drill, so the claim being tested is "produces falsifiable claims about a concept it was
 # never drilled on" — measured at exposure 0 on its own axis (convergence corpus-py-1 (F)).
+# The held-out axis is the eval CONCEPT, so the words that carry the concept must never appear
+# in the drill. Function words are a different thing: `when`/`from`/`into`/`the` are not concepts,
+# they occur throughout the replay corpus and all of English, and holding them out is both
+# meaningless and impossible — it would only starve the drill of grammar. Split accordingly, and
+# enforce only the content set. (Caught by this builder's audit when carrier count went to 12 and
+# a frame used `when`.)
 _FD_HELD_OUT = {"consciousness", "arises", "cells", "tension", "ripples", "distant", "minds",
                 "memory", "composes", "meaning", "silence", "carries", "information",
-                "engine", "dreams", "alone", "between", "into", "still", "when", "new"}
+                "engine", "dreams", "alone"}
+_FD_HELD_OUT_FUNCTION = {"between", "into", "still", "when", "the", "new", "from"}
 
 # subjects/objects — ordinary dictionary nouns, disjoint from every eval-concept word above.
 _FD_SUBJ = ["rainfall", "traffic", "sleep", "exercise", "altitude", "humidity", "sunlight",
@@ -350,10 +357,26 @@ _FD_MEAS_ABL = ["mood", "colour", "texture", "flavour", "shade", "aroma", "grain
 # >=2 carriers (convergence corpus-py-1 (E)): one template makes the carrier axis collinear with
 # the falsifiability axis, so no arm could separate "learned the structure" from "learned this
 # sentence shape". `{cv}` takes a verb, `{ca}` a comparative — keeping the lines grammatical.
+# H_9852 — carrier count raised 3 -> 12 with varied length and word order.
+# WHY (measured, not guessed): the 3-carrier build damaged the model. After 2000 CPT steps on a
+# 15%-drill mix, rho·form went PASS -> FAIL through its CONTROL — a byte-shuffled copy of the
+# model's own output cleared the form gate 40% of the time (cap 0.05), i.e. the output had become
+# an order-free bag of known words. Three templates repeated 24,000 times teach word IDENTITY and
+# nothing about word ORDER, so shuffling stops mattering. More carriers, more lengths, and both
+# clause orders keep order informative while the falsifiable structure stays constant.
 _FD_CARRIERS = [
     "if {s} {cvi} , the {m} of {o} {d} .",
     "{s} {cvt} a {ca} {m} of {o} than {alt} does .",
     "whenever {s} {cvi} , the measured {m} of {o} {d} .",
+    "the {m} of {o} {d} if {s} {cvi} .",
+    "the {m} of {o} is {ca} than the {m} of {alt} .",
+    "when {s} {cvi} , we expect the {m} of {o} to be {ca} .",
+    "{s} {cvt} the {m} of {o} , and {alt} {cvt} it {ca} .",
+    "a {ca} {m} of {o} follows if {s} {cvi} .",
+    "if {s} {cvi} more than {alt} , the {m} of {o} {d} .",
+    "the recorded {m} of {o} {d} whenever {s} {cvi} .",
+    "{s} {cvt} a {m} of {o} that is {ca} than the one {alt} {cvt} .",
+    "compared with {alt} , {s} {cvt} a {ca} {m} of {o} .",
 ]
 
 # The ablation arm needs its FRAMES ablated too, not just the slot fillers. Caught by this
@@ -366,6 +389,15 @@ _FD_CARRIERS_ABL = [
     "as {s} {cvi} , the {m} of {o} {d} .",
     "{s} {cvt} a {ca} {m} of {o} beside {alt} .",
     "while {s} {cvi} , the noted {m} of {o} {d} .",
+    "the {m} of {o} {d} as {s} {cvi} .",
+    "the {m} of {o} looks {ca} beside the {m} of {alt} .",
+    "while {s} {cvi} , we notice the {m} of {o} looks {ca} .",
+    "{s} {cvt} the {m} of {o} , and {alt} {cvt} it {ca} .",
+    "a {ca} {m} of {o} appears while {s} {cvi} .",
+    "as {s} {cvi} beside {alt} , the {m} of {o} {d} .",
+    "the noted {m} of {o} {d} while {s} {cvi} .",
+    "{s} {cvt} a {m} of {o} that looks {ca} beside the one {alt} {cvt} .",
+    "next to {alt} , {s} {cvt} a {ca} {m} of {o} .",
 ]
 
 
