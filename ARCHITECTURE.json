@@ -18896,6 +18896,13 @@
     "value": "Apple MPS 백엔드는 fill_scalar(ConstantOps) 그래프 캐시 키에 스칼라 VALUE를 박아, 매 step 새로운 float이 값-키 op(F.dropout(x,p)→bernoulli_→at::full({},1-p)→fill_scalar_mps_impl·`.fill_`·exponential_ 등)을 타면 step당 새 MPSGraph가 영구 적재된다. SAVANT 스케줄의 연속 dropout p(cli/train.py `m.p=dp`)가 이걸 유발해 d=64 L=2 토이가 45GB/61k step로 스왑 포화·OOM 사망(실측 0.767MB/step·처리량 7× 붕괴). torch.mps.empty_cache()는 allocator만 비우고 그래프 캐시는 못 비워 증상조차 못 가린다. wd/lr 스칼라는 BinaryOps 런타임-feed라 무죄. 원인은 상류 torch 버그이나 우리 층위의 근본수정은 '변동 스칼라를 값-키 op에 넘기지 않는 것'이다.",
     "threshold": "재발조건: MPS에서 매 step 변하는 float을 fill_scalar/`.fill_`/exponential_ 같은 값-키 op에 넘김(dropout p·temperature·noise scale 등). 해결(SHIPPED · cli/train.py _install_mps_dropout_shim · VERSION 0.20.158 · G5): device=='mps'에서만 F.dropout를 monkeypatch(모델 구조/serialize 무영향·nn.Dropout.forward 자동 포착)해 마스크를 rand_like(x)<keep(비교=BinaryOps) + /keep(나눗셈=BinaryOps)로 구성 — fill_scalar 미경유. ⚠️ 두 오답 회피: ①`p_t.fill_(dp)`를 MPS 텐서에 하면 재발 ②지속 device 스칼라를 매 forward copy_로 덮으면 다중 dropout+autograd 버전카운터 붕괴(backward 크래시) → 매호출 fresh 텐서 + python-float 스칼라가 정답. CPU/CUDA는 shim 미설치=byte-identical. GREEN 실측: 훈련 RSS 0.767→0.022 MB/step(37×·평탄), dropout 의미론 정확(zero-frac=p·nonzero=1/(1-p)·eval identity·grad{0,1/(1-p)}). 별개 잔여 0.022MB/step(--no-savant서도 존재=dropout무관·기저 CLMConvMoE MPS경로·후속 hunt).",
     "linked_hypotheses": []
+   },
+   {
+    "id": "chat-py-9",
+    "state": "pos-conv",
+    "value": "게이트의 바(비교항)를 트레이스 키의 **이름**으로 추측하지 마라 — 코드가 실제로 탄 **분기 선택자**를 먼저 읽어라. 한 세션에서 같은 원인으로 두 번 틀렸다: ① --emit-gate refractory 인데 θ=0.30(should_emit)에 짝지음 — brain.py:330 이 '클록과 θ 는 은퇴' 라고 명시하는데도. ② 그 다음 g_recog_gate 라는 키 이름을 보고 emit ⟺ score > g_recog 로 읽고 'margin = score − g_recog' 표를 세워 카드까지 착륙시킴(H_9882 부분철회) — 실제로는 --g-reach 기본값이 wm-dual 이라 emit ⟺ S > E 이고, g_recog_gate 는 비교항이 아니라 그냥 dual_e_spoken 의 기록용 사본이었다(전 틱 일치). 두 오독 다 극적인 거짓 결론을 만들 뻔했다 — ①은 '점수가 임계를 넘었는데 발화가 안 바뀐다', ②는 '여유 0.354 라 진폭이 4배 부족하다'. 진실은 score 가 애초에 게이트 입력이 아니라는 것(H_9883: emit==(S>E) 60/60 이고 score 가 0.351 범위로 변해도 emit 불변).",
+    "threshold": "게이트/임계/마진 수치를 짝짓거나 '부족분 N배'를 계산하기 직전. 특히 트레이스에 그럴듯한 이름의 키(g_recog_gate·threshold·margin)가 있을 때 — 이름이 아니라 분기(_g_reach·gate_mode 기본값)를 읽고, 가능하면 emit==<규칙> 이 전 틱에서 성립하는지 먼저 검산하라.",
+    "source": "cli/chat.py"
    }
   ]
  }
