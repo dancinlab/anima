@@ -362,7 +362,7 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
         if p + 32 > len(buf):
             return None, off
         n_slot, d_k, d_s, d_g, r, key_seed, fresh_k, fresh_L = struct.unpack_from("<IIIIIIII", buf, p); p += 32
-    elif lane_type in (2, 3, 4):                           # 2 = W_g · 3 = +centering (RV-3) · 4 = CLMS-FAN
+    elif lane_type in (2, 3, 4, 6):                        # 2 = W_g · 3 = +centering (RV-3) · 4 = CLMS-FAN · 6 = 3 + order-aware key
         if p + 24 > len(buf):
             return None, off
         n_slot, d_k, d_s, d_g, r, key_seed = struct.unpack_from("<IIIIII", buf, p); p += 24
@@ -533,6 +533,47 @@ if _HAS_TORCH:
             # (L_addr = CE(att, target_slot)). att is computed regardless of oracle_slot, so oracle-train
             # + addr-loss compose. need_att=False → byte-identical to the prior single-return signature.
             return (out, att) if need_att else out
+
+    def codec_roundtrip_selftest(key_fn="mean", verbose=True):
+        """pack_clms -> read_clms must return EVERY array at its original shape, not just the same
+        lane_type (H_9853).
+
+        A lane_type left out of read_clms's HEADER branch silently falls through to the legacy
+        header, which has no d_g field: d_g reads 0, W_g comes back (d, 0), W_h/b_h/W_out come back
+        at the wrong width, and the lane is dead at inference while training reported perfect
+        accuracy. That is exactly how lane 6 shipped broken — the roundtrip was checked for
+        lane_type only, so the shapes were never compared. Comparing lane_type alone is not a
+        roundtrip check."""
+        import numpy as np
+        d, V, n_slot, d_k, d_s, r = 32, 48, 8, 16, 16, 24
+        _torch.manual_seed(9853)
+        mod = CLMSModule(d, V, n_slot=n_slot, d_k=d_k, d_s=d_s, r=r, lam0=0.7,
+                         val_center=(key_fn == "roll"), key_fn=key_fn).double()
+        w = clms_weights_from_torch(mod)
+        got = read_clms(pack_clms(w), 0, d, V)
+        if isinstance(got, tuple):
+            got = got[0]
+        rows, ok = [], True
+        if int(got.get("lane_type", -1)) != int(w["lane_type"]):
+            rows.append(("lane_type", w["lane_type"], got.get("lane_type"), False)); ok = False
+        for k in ("d_g", "d_k", "d_s", "r", "n_slot"):
+            same = int(got.get(k, -1)) == int(w[k])
+            ok = ok and same
+            rows.append((k, int(w[k]), int(got.get(k, -1)), same))
+        for k in ("key_emb", "W_q", "W_g", "val", "W_h", "b_h", "W_out"):
+            a = np.asarray(w[k]).shape
+            b = np.asarray(got[k]).shape if k in got else None
+            same = (a == b)
+            ok = ok and same
+            rows.append((k, a, b, same))
+        if verbose:
+            print("  codec roundtrip · key_fn=%s (lane_type %d)" % (key_fn, w["lane_type"]))
+            for nm, a, b, same in rows:
+                print("    %-9s packed=%-14s read=%-14s %s"
+                      % (nm, a, b, "ok" if same else "MISMATCH <-- lane dropped to a wrong header"))
+            print("  ROUNDTRIP %s" % ("PASS" if ok else "FAIL"))
+        return ok, rows
+
 
     def parity_selftest(tol=2e-5, seed=9826, q_scale=8.0, key_fn="mean", verbose=True):
         """H_9826 — does the numpy inference mirror still equal the torch trainer?
