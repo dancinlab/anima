@@ -1,6 +1,8 @@
 # H_9863 — G1 밀도 개입 (사전등록 · 발사 전 동결)
 
-**status:** 🔒 PRE-REGISTERED (선결·판정표 **발사 전** 동결) · 코퍼스 검증 완료
+**status:** ⛔ **INVALID (선결 ②③) · 표 밖 관측은 🔴 ECHO-KILL** — 사전등록한 통제가
+정확히 제 일을 했다.
+원 표기 → 🔒 PRE-REGISTERED (선결·판정표 **발사 전** 동결) · 코퍼스 검증 완료
 **wired:** yes — `anima-py corpus weavedrill` ([[H_9862]]) → `train` → `evaluate --rho-axon --rho-axes weave,form --weave-panel wp.json`
 **source:** [[H_9861]] 프로덕션 `ρ·weave` **0/212** (BASE) · [[H_9862]] 드릴 계기
 
@@ -51,3 +53,64 @@ BASE 에서 두 통제가 모두 0 이므로, 개입 후 이들이 오르면 그
 ## Cross-links
 
 [[H_9861]] BASE 0/212 · [[H_9862]] 드릴 계기 · [[H_9856]] 같은 레시피의 G6 판 · [[H_9859]] seed-취약 전례
+
+
+---
+
+## 실측 (CPT 2000 step · weavedrill 13.1% + replay · val_CE → 1.687 DESCENT)
+
+```
+HILLOCK LIVE
+CARRY   ρ·form   FAIL  val=1.0 Δ=0.8 · self-shuffle=0.2          ← 선결 ②③ 실패
+BRANCH  ρ·weave  FAIL  val=0.094 Δ=0.000
+                       atom-swap[FORM]=0.094 · bind-strip[BIND]=0.009 · unreachable=0.009
+```
+
+### ⛔ 판정: INVALID (선결 ②③) — 팔을 읽지 않는다
+
+[[H_9856]] 이 G6 에서 측정한 긴장이 **G1 에서도 그대로 재현**됐다:
+**비율을 올리는 개입이 형식을 깬다**(`self-shuffle 0.0 → 0.2`).
+사전등록이 이 경우를 미리 규정해 뒀으므로(*"판정은 '실패' 가 아니라 '같은 제약이 G1 에서도 재현'"*)
+이것은 예측된 결과다.
+
+### 🔴 그리고 선결을 통과했더라도 ECHO-KILL 이었다
+
+**표 밖 관측(판정 아님)이지만 이 실험의 진짜 산출이다:**
+
+| | BASE ([[H_9861]]) | 개입 후 |
+|---|---|---|
+| reach | 0.000 | **0.094** (BASE 상한 0.0142 의 **6.6배**) |
+| `atom-swap[FORM]` | 0.000 | **0.094** ← reach 와 **정확히 동일** |
+| `bind-strip[BIND]` | 0.000 | 0.009 |
+| `unreachable` | 0.000 | 0.009 |
+| **Δ (reach − worst)** | — | **0.000** |
+
+**조성 신호가 처음으로 0 을 벗어났다.** 그러나 `atom-swap` 이 reach 와 **소수점까지 같다.**
+atom-swap 은 *"한 원자를 바꿔 정답이 달라졌는데도 같은 답이 나오는가"* 를 묻는다.
+같다는 것은 — **모델이 단서의 원자를 보지 않고 답을 뱉는다**는 뜻이다.
+
+⟹ 드릴이 심은 것은 **조성 연산이 아니라 담체-답 연상**이다.
+`if X, the Y of Z rises` 꼴이 오면 원자와 무관하게 드릴에서 빈출한 답을 낸다.
+`Δ = 0.000` 은 [[H_9827]] 이 지킨 measurement-metalaw — *"값이 아니라 통제 대비 collapse-Δ"* —
+가 **정확히 이 경우를 잡으라고 존재한다**는 것을 보여준다.
+값만 봤다면 `0.000 → 0.094` 를 **G1 최초 균열로 보고했을 것이다.**
+
+### 🔑 이 실패가 알려주는 것 (다음 설계의 입력)
+
+1. **밀도만으로는 부족하다.** 코퍼스에 조성을 넣으면 **답의 분포**는 옮겨오지만
+   **원자 의존성**은 안 옮겨온다. G6 에서는 밀도가 비율을 25.8배 올렸는데
+   ([[H_9856]]) G1 에서는 같은 레시피가 **에코**를 만들었다 — 두 벽의 성격 차이
+   ([[H_9861]]: G6=저빈도 vs G1=부재)가 **개입 반응에서도 갈린다.**
+2. **다음 개입은 원자 의존성을 강제해야 한다** — 같은 담체에 여러 원자쌍을 붙이고
+   답이 원자에 따라 달라지는 것을 학습시키는 것(대조 학습 형태). 현재 드릴은
+   담체당 답 분포가 좁아 담체→답 지름길이 열려 있다.
+3. `bind-strip 0.009` 은 낮다 ⟹ **공기 연상은 아니다.** 지름길은 담체 경유다.
+
+## 재생성 커맨드
+
+```
+anima-py corpus weavedrill --out wd.txt --n-blocks 24000 --seed 7
+anima-py train --init py303_full.clm --d 3784 --L 4 --e0 3 --emax 3 --no-mitosis \
+  --corpus mixg1.txt --steps 2000 --seq-len 512 --batch-size 4 --seed 7
+anima-py evaluate <ckpt> --rho-axon --rho-axes weave,form --rho-no-cells --weave-panel wp.json
+```
