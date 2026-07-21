@@ -5734,6 +5734,12 @@
                 "detail": "frozen trunk 가 store 를 주소지정할 수 있는 천장을 수치화(V2_7 상시측정: frozen 0.5134~0.5724 vs cotrained 0.9998~1.0). --store-addr-census 는 기하 선별기라 대체 불가. 증거: origin/main --store-* 16개 전수에 없음 · slot-retr grep 0 hit. 이식처 cli/evaluate.py."
               },
               {
+                "name": "🔧 이식 완료 ② — H_9826 --store-parity-selftest (실측 PASS)",
+                "role": "gate",
+                "id": "clms-parity-guard-h9826",
+                "detail": "학습(torch)·추론(numpy) 두 구현을 같은 입력으로 돌려 대조 + 텐서별 재표집 발산이 잡히는지 확인. 실측 parity 6.939e-18, 7/7 drift CAUGHT. 🔑 작동점이 판정을 좌우: 무작위 초기화는 주소가 거의 균등이라 W_q 손상이 안 보임(1.28e-05<tol) ⟹ q_scale=8 + a_max>1.10x균등 전제조건 assert. torch 없으면 SKIPPED rc=3(PASS 아님). lane_type 2 만 커버."
+              },
+              {
                 "name": "미흡수 ② torch↔numpy CLMS parity selftest (v2 M14)",
                 "detail": "학습(torch CLMSModule)과 추론(numpy store_apply) 두 구현이 주석으로만 동기화됨(core/clms.py:431 'Op order MIRRORS'). origin/main 재검증: parity 언급 9건 전부 주석, 실행 검사 0(def/assert parity 없음). 조용한 op-order 발산이 판정을 양방향으로 움직여도 잡히지 않는다."
               },

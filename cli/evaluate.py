@@ -2628,6 +2628,37 @@ def _addr_census_core(H, K, W_q_seeds, rng):
             "obs_raw": obs_r, "ped_raw": ped_r, "excess_raw": ex_r, "shared_frac": shared_frac}
 
 
+def store_parity_selftest_run(argv):
+    """`anima-py evaluate --store-parity-selftest [--parity-tol 2e-5]` — the H_9826 torch<->numpy
+    CLMS parity guard, ported from lab/v2's gradcheck --selftest discipline.
+
+    The store lane exists TWICE — CLMSModule.forward (torch, trains it) and store_apply (numpy,
+    serves it) — and they were kept in step by a COMMENT alone. This runs both on one random
+    module and asserts they agree, then resamples each weight tensor in turn and asserts every
+    divergence is CAUGHT, so the guard is known to be able to fail.
+
+    Needs torch (the `[train]` extra). On a numpy-only install it reports SKIPPED and returns 3 —
+    never a PASS, because an unrun guard that prints success is the failure mode this exists to
+    prevent."""
+    tol = float(evaluate_strval(argv[1:], "--parity-tol", "2e-5") or "2e-5")
+    print("=== anima evaluate --store-parity-selftest — H_9826 torch<->numpy CLMS parity ===")
+    import clms as _clms
+    fn = getattr(_clms, "parity_selftest", None)
+    if fn is None:
+        print("  SKIPPED — torch is not installed, so the trainer arm cannot run.")
+        print("  This is NOT a pass. Install the train extra:  pip install \"anima-python[train]\"")
+        return 3
+    ok, rows = fn(tol=tol, verbose=True)
+    print("  SELFTEST %s — the mirror %s the trainer, and the guard %s catch a divergence" %
+          ("PASS ✓" if ok else "FAIL ✗",
+           "MATCHES" if ok else "DIVERGES FROM",
+           "DOES" if ok else "does NOT"))
+    print(json.dumps({"tol": tol, "ok": bool(ok),
+                      "rows": [{"arm": r[0], "value": r[1], "caught": r[2]} for r in rows]},
+                     ensure_ascii=False))
+    return 0 if ok else 1
+
+
 def _retr_probe_core(H, K, tr, te, iters=1200, lr=0.05, seed=0):
     """Bridge-FAITHFUL slot-retrieval probe (H_9825 · ported from lab/v2 probe_decode.py:84).
 
@@ -9662,6 +9693,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-query", "--store-fuse", "--store-readout",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--store-retr-probe", "--retr-probe-selftest", "--retr-probe-iters",   # H_9825 retrieval ceiling
+    "--store-parity-selftest", "--parity-tol",              # H_9826 torch<->numpy CLMS parity
     "--fan-bind", "--fan-smp",
     "--mouth-binder", "--mouth-binder-order-scramble",
     "--fan-dump",
@@ -16543,6 +16575,11 @@ def main(argv):
     # retrieval against ORACLE (positive) and NULL (zero-truth) arms. DIRECTIONAL, never cements.
     if "--store-retr-probe" in argv or "--retr-probe-selftest" in argv:
         return store_retr_probe_run(argv)
+    # --store-parity-selftest: H_9826 — the store lane is written twice (torch trainer vs numpy
+    # inference mirror) and was synchronised by a comment only. Asserts they agree AND that a
+    # resampled tensor is caught, so the guard is known to be able to fail. Needs the [train] extra.
+    if "--store-parity-selftest" in argv:
+        return store_parity_selftest_run(argv)
     # --faction-phi-proxy <prompts.json>: the ARCHIVED faction Phi proxy recomputed on live
     # trunk activations vs a zero-truth PEDESTAL (H_9660/H_9654 · faction-lateral-axis-r3).
     # Indicts the formula; never cements a consciousness verdict (a_phi_iit4_tool).
