@@ -5979,10 +5979,10 @@
             "children": [
              {
               "name": "🔑 R4 기전 — 코드북 아니라 trunk 도달성이 갈랐다",
-                        "detail": "trunk freeze 라 hidden 동일 → 키함수만 바꿔 검색천장 측정: mean GRAM 0.9812 LIVE 0.5215 vs roll GRAM 1.0000 LIVE 0.4109. 코드북은 roll 이 우월하나 얼린 trunk 가 회전된 키에 덜 닿고, 이 순서가 학습결과와 일치. ⟹ 코드북 스크린은 필요조건 필터, 실제 hidden 태운 retr-probe 가 성능 예측기."
-                      },
-                      {
-                        "name": "🔎 반증의 교란 분해 — 노출량이 39%",
+              "detail": "trunk freeze 라 hidden 동일 → 키함수만 바꿔 검색천장 측정: mean GRAM 0.9812 LIVE 0.5215 vs roll GRAM 1.0000 LIVE 0.4109. 코드북은 roll 이 우월하나 얼린 trunk 가 회전된 키에 덜 닿고, 이 순서가 학습결과와 일치. ⟹ 코드북 스크린은 필요조건 필터, 실제 hidden 태운 retr-probe 가 성능 예측기."
+             },
+             {
+              "name": "🔎 반증의 교란 분해 — 노출량이 39%",
               "detail": "두 코퍼스의 평가 과제는 동일(128항목·고유엔티티 86·슬롯 8)이나 학습 데이터가 20배 달랐다(1600줄 vs 32000줄). EN 을 n-blocks 200 으로 재생성해 1600줄로 규모를 맞추자 EN mean 균등이 0.6953->0.7500 으로 회복. ⟹ 균등 하락 -0.1406 중 -0.0547(39%)은 노출 교란이고 -0.0859 가 어휘 몫. 어휘 설명은 유지되나 크기가 60% 로 축소. 🔴🔴 그리고 규모를 맞추자 우열이 역전: EN1600 서 mean 0.7500/0.5859 vs roll 0.6719/0.5703 로 roll 이 양쪽 다 진다. roll 우세는 nonce 조건 한정이며 어휘 일반으로 이전되지 않는다 — 기본값 승격 보류가 정당화됨."
              }
             ]
@@ -18855,10 +18855,11 @@
     "source": "cli/corpus.py"
    },
    {
-    "id": "clms-lane-variant-must-thread-every-consumer",
-    "polarity": "POS-CONV",
-    "summary": "CLMS 에 새 lane 변종(lane_type 6 = 순서인식 키)을 추가할 때 소비처를 하나씩 빠뜨려 **같은 결함이 3회 반복**됐다. ① read_clms 헤더 분기 누락 → legacy 헤더로 파싱되어 d_g=0·W_g (d,0) 로 추론서 lane 무작동(#4282) ② cli/train.py 가 키 계산을 인라인 복제해 key_fn 을 조용히 무시 ③ cli/evaluate.py 의 세 계기(적대배치·검색probe·census)가 _entity_key 를 키함수 없이 호출해 lane 6 ckpt 를 mean 키로 측정(두 ckpt 가 소수점까지 동일한 값을 내는 것으로 발각). 공통 원인: 주소함수가 lane_type 에 의존하게 만들었으면 **_entity_key 를 부르는 모든 지점**이 그 lane 을 물어봐야 하는데, 새 변종은 기본값 경로로 조용히 떨어진다 — 어느 것도 예외를 던지지 않는다.",
-    "recurrence": "재발조건: CLMS 에 lane_type 변종 추가 · 또는 _entity_key/store_apply 시그니처 확장. 해결: (1) 변종 추가 시 `grep -n '_entity_key(' core/ cli/` 로 **호출부를 전수**하고 각각이 lane 을 물어보는지 확인 — 인라인 복제본도 찾아 제거(중복이 곧 드리프트다). (2) 코덱 왕복 검사는 **식별자 보존이 아니라 배열 모양 전부** 대조(codec_roundtrip_selftest) — lane_type 은 첫 바이트라 잘못된 헤더로도 살아남으므로 그것만 보는 검사는 검사가 아니다. (3) 계기가 두 ckpt 에서 **소수점까지 동일한 값**을 내면 성능이 아니라 배선을 의심하라 — 조작 무반응이 곧 경로 사망 신호다."
+    "id": "clms-py-1",
+    "state": "pos-conv",
+    "value": "CLMS 에 새 lane 변종(lane_type 6 = 순서인식 키)을 추가하며 소비처를 하나씩 빠뜨려 같은 결함이 3회 반복됐다 — ① read_clms 헤더 분기 누락으로 legacy 헤더 파싱(d_g=0 · W_g (d,0))되어 추론서 lane 무작동 ② cli/train.py 가 키 계산을 인라인 복제해 key_fn 을 조용히 무시 ③ cli/evaluate.py 의 세 계기(적대배치·검색probe·census)가 _entity_key 를 키함수 없이 호출해 lane 6 ckpt 를 mean 키로 측정. 공통 원인: 주소함수를 lane_type 의존으로 만들면 새 변종이 기본값 경로로 조용히 떨어지고 아무도 예외를 안 던진다.",
+    "threshold": "변종 추가 시 3층으로 막아라. (1) grep -n '_entity_key(' core/ cli/ 로 호출부를 전수하고 각각이 lane 을 물어보는지 확인 — 인라인 복제본도 찾아 제거(중복이 곧 드리프트다). (2) 코덱 왕복 검사는 식별자 보존이 아니라 배열 모양 전부를 대조하라(codec_roundtrip_selftest) — lane_type 은 첫 바이트라 잘못된 헤더로도 살아남으므로 그것만 보는 검사는 검사가 아니다. (3) 두 ckpt 가 소수점까지 동일한 값을 내면 성능이 아니라 배선을 의심하라 — 조작 무반응이 곧 경로 사망 신호다.",
+    "source": "core/clms.py"
    }
   ]
  }
