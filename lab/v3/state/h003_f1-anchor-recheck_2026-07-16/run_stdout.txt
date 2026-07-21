@@ -1,0 +1,44 @@
+==============================================================================
+H_003 — f1-anchor-recheck · verdict = rig LICENSED or REFUSED
+==============================================================================
+
+genspec_sha256 = fbcf0c8ad444d0f3c2fa5ad018d12ce8f33ad6bcf8e0f78eb26be5495527ce2b
+  matches frozen card: True
+
+[Anchor] exact 99% chance band, n=120, p0=0.50
+  band = [46/120, 74/120] = [0.3833, 0.6167]
+  B-1 M treatment    = 109/120  (>=75 outside band)  two-sided p=1.938e-21
+  B-2 C3 liveness    = 110/120  (>=108)  two-sided p=1.917e-22
+  B-3 C1 leak        = 74/120  (<=74 inside band)  two-sided p=1.338e-02
+  B-4 cement M       = 110/120  (>=75)  two-sided p=1.917e-22
+  B-4 cement C1      = 69/120  (<=74)  two-sided p=1.203e-01
+
+[Generator] fitting BPE-jamo codecs (K=512, 20000 lines/phase)
+  codec_p1 merges=512  codec_p2 merges=512
+
+[N-1] boundary-shift rate = 0.1256  (floor 0.05)
+[N-2] frozen codec: 0/12 single-token -> deficit=1.000 (want 1.0)
+      refit  codec: 12/12 single-token -> deficit=0.000 (want 0.0)
+[N-3] clean held-out items = 1536 (need >= 1178)
+[N-4] leak hits = 0  ·  heldout-NEG co-occurrence = 0  (scanned 200000 lines/phase)
+[N-5] spec_hash stable=True  bpe_deterministic=True  roundtrip=True
+
+==============================================================================
+FALSIFIER LEDGER
+==============================================================================
+  PASS  B-1 treatment above floor
+  PASS  B-2 liveness
+  PASS  B-3 leak test
+  PASS  B-4 replication
+  PASS  N-1 drift existence
+  PASS  N-2 contrast existence
+  PASS  N-3 emittability
+  PASS  N-4 zero leak
+  PASS  N-5 determinism+roundtrip
+  PASS  genspec matches card
+
+  10/10 PASS
+
+  VERDICT: rig = LICENSED
+
+  artifacts: state/h003_f1-anchor-recheck_2026-07-16/result.json

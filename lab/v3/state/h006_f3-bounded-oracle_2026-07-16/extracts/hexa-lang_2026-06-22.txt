@@ -1,0 +1,44 @@
+                                  151c52c82), NOT emitter-generated; #include "runtime_core.c"
+.c-graduation blob (151c52c8…), not the editable emitter SSOT — so promotion via
+(not the broad whole-runtime SELFEMIT). self-host != release honored: default-OFF
+runtime.o's .text/.rodata/.data/.data.rel.ro are byte-IDENTICAL to baseline (only
+that shares the public symbol name (array/map/str seeds delegate to a distinct
+Narrow guard HEXA_RT_CORE_LEAF_NATIVE added to ONLY the 7 ctor SELFEMIT blocks
+ROOT (MEASURED aiden x86_64, asm dump): the native backend emits the trailing
+MEASURED(aiden, c2): ⓐ genuine stale runtime.c → clang -DHEXA_CUDA = undeclared error
+- seed .o builds standalone (only runtime.h in scope = every callee external/macro
+byte-identical to the emitter SSOT so the seed TU compiles from runtime.h alone).
+FIX: regenerate runtime_core.c from the emitter SSOT on the warm path too, via a
+blob is immutable, so it cannot be reached via the emitter SSOT. Routing around
+frozen-static hxlcl_strcmp (frozen runtime.c:324) TWICE (str branch directly +
+feat(cli): hexa gpu / hexa gpu status — binary-self GPU/flame/forge/cuda SSOT + CLAUDE.md lockstep (#3791)
+- __raw_fmod  → `static double hxlcl_fmod` (frozen runtime.c:2357) — stays inline
+  origin/main emitter vs this branch emitter diffs PURELY ADDITIVE — 0 deletions,
+`#if defined(HEXA_RT_SELFEMIT) || defined(HEXA_RT_CORE_ARITH_NATIVE)` — NOT the
+path = a fresh local + rebind, SILENTLY DROPPING the store on the actual struct
+* chore(selfhost zero-c r3): rtcore seed-coverage scope tool + measured verdict
+native seed .o behind opt-in HEXA_ZEROC_RT_CORE_LEAF=1. De-risks the standalone
+Does NOT drop runtime_core.c (all-or-nothing, 250 symbols; this link de-risks 6
+static to external in the emitter, but the static lives in the IMMUTABLE frozen
+Does NOT drop runtime_core.c (all-or-nothing, 250 symbols; this link de-risks 1
+macros runtime.h lacks, HX_IS_BOOL/HX_MAP_LEN, are re-declared #ifndef-guarded
+the emitted runtime_core.c preprocesses BYTE-IDENTICAL to baseline on both the
+A STALE warm-tree runtime_core.c (from a pre-#3583 emitter that emitted the C
+PROOF aiden x86_64 + qemu-aarch64: cross-assemble valid ELF aarch64 15 T rt_str; qemu rt_str_trim ran exit 7; resolver TARGET linux-arm64 produces rt_hi_native.o HEXA_ZEROC_RT_HI 1; restore_frozen_seeds self c 3 to 2.
+WIPE-OK: dead forge-dispatch wrappers superseded by restore_frozen_seeds SSOT (sweep-proven coverage)
+  ✗ shipped runtime.a is missing the CUDA objects — dual-runtime swap did not happen
+∅ 사다리 m1(이 RFC)→m2(seed-.o 재설계)→m3(#include drop)→m4(file ∅),
+· / ≈ / — / § / → emitted 0x3f instead of the real bytes. arm64_darwin.hexa
+has NO external delegate (no rt_strcmp exists — whole-tree grep), and the frozen
+20 seeded symbols swap bodies INSIDE the file but do not reduce its existence —
+inert in self-compile. PROVEN: aprime_cc (self-compiled from this source) builds
+FIX (2 parts, reference-first from self/codegen.hexa:3287 + the index-set path):
+JUSTIFICATION — the r9-r25 leg-B campaign: 12-construct miscompile_zero corpus
+exported (weak under CUDA, incl groupnorm_gelu), 0 undefined; full sibling sweep
+it = duplicating the strcmp byte-loop in the seed + promoting 3 emitter statics
+Verified (mini, darwin-arm64): 6 seed .o compile standalone → 8+13+10+9+10+11
+native frontend (compiler/). The lexer (compiler/lex/lexer.hexa:514) emitted a
+OFF-CUDA the whole #ifdef HEXA_CUDA block is preprocessed away → CPU runtime
+"#if defined(HEXA_RT_SELFEMIT) || defined(HEXA_RT_CORE_MATH_NATIVE)" — broad
+Generated via regen_runtime_hi_native_s.sh arm64-linux: emit=asm target arm64-linux-gnu + PAGE/PAGEOFF to bare/lo12 ELF reloc fixup. 15/15 rt_str globl. Wires linux-arm64 onto native rt_str path so restore_frozen_seeds no longer synthesizes runtime_hi_gen.c there. Uniform self c count 2 across all 3 production targets.
+feat(selfhost): runtime_hi arm64-linux native seed — ls self/*.c 3→2 uniform across all 3 targets (zero-c r1) (#3786)

@@ -1,0 +1,38 @@
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 63 — 🛸 hexa_array_map (callback POC, unlocks fn-dispatch family)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 64 — hexa_array_filter + hexa_array_fold (callback family expansion)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 67 — hexa_array_scan + hexa_array_partition (callback returning arrays)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 69 — hexa_array_sort_by (callback key-extractor, insertion sort)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 52 — hexa_str_char_at + hexa_str_char_count → rt_str_*
+feat(stdlib/runtime): RUNTIME.md step 4 cycle 93 — hexa_map_invert + hexa_map_from_array
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 65 — hexa_array_any + hexa_array_all + hexa_array_count (predicate batch)
+feat(self/runtime_core): RUNTIME.md step 3 cycle 91 — hexa_eq TAG_STR strcmp fallback via rt_str_eq_b
+feat(self/runtime_core): RUNTIME.md step 3 cycle 91 — hexa_eq TAG_STR strcmp fallback via rt_str_eq_b
+feat(stdlib/runtime): RUNTIME.md step 4 cycle 92 — hexa_str_parse_int port (strtoll replacement)
+feat(stdlib/runtime): RUNTIME.md step 4 cycle 92 — hexa_str_parse_int port (strtoll replacement)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 77 — hexa_cmp_lt/gt/le/ge typed dispatch 🛸 (first hot-path port)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 62 — hexa_format → rt_format (single-arg {} substitution)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 68 — hexa_array_enumerate (pair-output, no-callback)
+feat(stdlib/runtime): RUNTIME.md step 2 cycle 6 — 19 fns ported via isolation bisect (96% step 2)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 38 — hexa_math_* sqrt/tan/tanh/abs/fmod two-mode
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 3 — hexa_clamp + numeric primitives
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 74 — 🛸 hexa_array_pop + hexa_array_shift (in-place mutation UNBLOCKED)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 53 — hexa_str_nth_char + hexa_str_char_substring (UTF-8 codepoint ops)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 79 — hexa_div_float + hexa_mod_float (typed-float div/mod with throw)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 50 — rt_str_to_upper + rt_str_to_lower move to hexa source
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 75 — 🛸 hexa_array_flat_map (type_of dispatch UNBLOCKED)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 57 — hexa_str_contains + hexa_str_eq (int-return bridge)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 45 — hexa_str_split → rt_str_split (M1-lite wire-up)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 39 — hexa_math_floor/ceil/round int→float bridge
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 60 — hexa_format_float → rt_format_float_f (snprintf %.*f replacement)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 66 — hexa_array_find + hexa_array_for_each (find via _index helper)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 51 — hexa_pad_left/right → rt_pad_left/right (UTF-8 width)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 58 — hexa_array_contains float fast-path (int-return bridge)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 49 — rt_str_trim_end + rt_str_trim move to hexa source
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 59 — hexa_array_sort float fast-path (insertion sort)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 70 — hexa_array_sample (random pick with replacement)
+feat(stdlib/runtime): RUNTIME.md step 2 cycle 4 — net/exec/pty (17 fns via 2 hexa primitives)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 48 — rt_str_trim_start moves to hexa source
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 72 — hexa_char_code (byte at idx, 0 on OOB)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 61 — hexa_format_float_sci → rt_format_float_sci (snprintf %.*e replacement)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 55 — rt_str_index_of_from + rt_str_last_index_of (int64_t batch)
+feat(stdlib/runtime): RUNTIME.md step 3 cycle 78 — hexa_sub + hexa_mul typed dispatch (second hot-path port)

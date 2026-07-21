@@ -1,0 +1,52 @@
+SSOT: shared/hexa-lang/ml-next-level.json #251~#254, #260~#261 상태 이미
+ML 20건: latent consistency, streaming LLM, xLSTM, TTT layer, griffin/hawk,
+- shared/hexa-lang/ml-next-level.json #244/245/246 todo→done, summary
+token dropping, hyena hierarchy, cross-layer KV, inference compiler,
+- LARS/LAMB multi_layer_step에서 @hot 코드젠 caller-callee 동명 mut 변수 슬롯 aliasing 버그 재현
+- hexa `continue` 키워드는 silent no-op → sparse_attention에서 if/else 분기로 교체
+feat(build_c): lint_braces 전처리 — 누락 } 자동감지+수정
+SSOT shared/hexa-lang/ml-next-level.json: done 159→179 (total 179), todo 0
+QA-LoRA/RLHF Pipeline/Sophia/Linear Attention/Video Encoder/Tokenizer/
+- workflow_rules 최상위 키 추가 (status_values/display_exclude/go_cycle_flow)
+- self/ml/physics_informed_nn.hexa + test (18 tests PASS) — 2-layer MLP
+- self/ml/randomized_smoothing.hexa + test (19 tests PASS) — linear
+- self/ml/randomized_smoothing.hexa + test (19 tests PASS) — linear
+- #169 Sched Sample (57) #170 Consistency (42) #171 Contrastive (39)
+- codegen_c2.hexa: ForStmt 일반 케이스가 hexa_iter_get 방출
+test_zero_plusplus 는 syntax error 로 별도 처리(미흡수).
+- #193 Mamba-2 SSD       45 tests — Structured State Space Duality (recurrent==chunked, quadratic 쌍대)
+- #183 BNNS Activation Kernels: 8 activations + 3 norms + 5 elem-wise + 5 reductions (59 tests)
+- #275 PowerSGD: low-rank GEMM compression + QR orthogonalize + error feedback (28 tests)
+- #269 Model Soup: uniform + greedy soup over linear-regression fine-tunes (15 tests)
+- #284 Homomorphic Inference — shift/scale CT + poly ReLU + 2-layer fwd (19 tests)
+- #190 GraphRAG: knowledge graph + community detect + BFS retrieval (30 tests)
+- self/ml/deeponet.hexa + test (19 tests PASS) — 2-layer MLP (tanh hidden,
+G4  += -= *= /= %= compound assignment (with array/map index targets)
+- #160 Hyena (118) #161 Byte Latent (49) #162 Mixture of Agents (35)
+- Add nested Index detection in emit_expr → hexa_arr_unbox call
+- V8-style inline cache + type-dispatch prologue + codegen guard
+- interpreter.hexa: ForStmt에 tag=="map" 분기 (get_map_keys)
+- self/ml/dp_sgd.hexa + test (15 tests PASS) — per-sample MSE
+- self/ml/dp_sgd.hexa + test (15 tests PASS) — per-sample MSE
+- Fix 9 hexa_cc parse errors: split single-line semicolons, flatten multi-line array literals
+- #277 DARTS NAS: K-op mixed edge + bilevel w/alpha SGD + argmax discretization (23 tests)
+- #182 Mac Serve: OpenAI /v1/chat/completions + SSE streaming + batching (75 tests)
+feat: @contract compile-time elim + @symbolic algebraic simplification (ROI #1, #3)
+- #271 SWA: running-mean weight avg + cyclic LR schedule + SGD loop (22 tests)
+- 백업 바이너리 (hexa.backup_*, .patched, .pre_fix*, .test, *.bin.o)
+- self/ml/graph_transformer.hexa + test (20 tests PASS) — adjacency from
+  forward, MSE single/dataset, antiderivative integral operator generator.
+- self/ml/mech_interp_circuits.hexa + test (14 tests PASS) — micro-DAG
+- self/ml/mech_interp_circuits.hexa + test (14 tests PASS) — micro-DAG
+#10 C runtime map O(n) strcmp → FNV-1a hash table with open addressing
+- self/ml/latent_ode.hexa + test (21 tests PASS) — linear/tanh latent
+  D=8) → mask-token fill → decoder → MSE on masked patches only.
+- self/ml/sparsegpt_wanda.hexa + test (32 tests PASS) — Wanda score
+- self/ml/sparsegpt_wanda.hexa + test (32 tests PASS) — Wanda score
+DANN notes: @hot on the mutation-heavy train step triggered the known
+G1  ?? null coalescing operator (lexer+parser+interp+codegen+runtime)
+SSOT: 6 items running→done (cluster E), updated in cluster-H merge
+ml: #180~#185 Mac 서빙 스택 완료 (6 modules, 394 tests PASS)
+Sliding Window Attention/Audio Encoder/Activation Checkpointing/
+- #192 SteerLM           53 tests — 다차원 속성 조건 생성 (helpfulness/correctness/coherence/complexity/verbosity)
+- #195 RWKV Linear RNN   35 tests — WKV time-mix + channel-mix (이미 #120-179에서 모듈 커밋, SSOT만 done 갱신)

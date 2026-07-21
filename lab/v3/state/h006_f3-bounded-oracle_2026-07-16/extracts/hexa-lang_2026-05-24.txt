@@ -1,0 +1,34 @@
+오늘 pod 7rhh18i1h1klcp 가 SAVE_POD=1 RETAINED 로그 후에도 user-side carryover sweep 에 의해 train 완료 전 terminate → result.json 손실 + ~$1-2 burn 의 사후. 직접 원인은 운영자측이지만 F1-F4 누적 ergonomics 가 sweep 의사결정을 흐림.
+형식을 사용하도록 수정됨. 추적용 Status 마커만 추가 (코드 변경 없음 ·
+stage-1 hexa_v2 가 `defer` 를 reserved keyword 로 거부 → cycle.hexa 가 빌드 자체 안 되던 main HEAD 상태 우회. 별도 issue 가 아니라 main 자체가 회귀.
+stage-1 hexa_v2 가 `defer` 를 reserved keyword 로 거부 → cycle.hexa 가 빌드 자체 안 되던 main HEAD 상태 우회. 별도 issue 가 아니라 main 자체가 회귀.
+  트랜스파일러에서도 동일 FAIL — 본 PR 무관 (해당 파일은 CI 하네스 미등록)
+PROBE r15 cycle 2 SURGICAL 시도 → architectural BLOCKED. resolver fix 가 아니라 codegen flat-hoist 재설계 필요 (_gen2_collect_lets_stmt + ident rewrite over 7 AST node families + self-host fixpoint regression guard).
+canonical-equivalent 텍스트가 == 불일치 / hash 상이 / .char_count() 상이 (정규화 미수행) — 측정 evidence + canonical 비교(5/6 codepoint-exact).
+`chr(N)` 의 interp ↔ compiled 비대칭 패치가 두 층의 변경으로 이미 해소된 상태.
+측정상 C-구조는 이미 옳으나 comptime-const fold 가 loop-var shadow 를 invalidate 안 해 본문이 stale 상수 인쇄(P1 버그) — D18 invalidate + D17 scope mark/restore 합성으로 fix.
+범주별) + HEXA-LANG.log.md 도메인 로그에 이번 세션 완료 작업 체크박스 append.
+RTSC V1-V4 + h3cl EOS 세션에서 ad-hoc로 때운 계산을 고갈-브레인스토밍 27건으로 도출.
+hexa_v2가 재빌드된 적이 없어서였음(stale 트랜스파일러로 테스트). clean 재빌드
+inbox doc only · 코드 변경 0건. 머지 후 P0-P5 독립 PR 체인으로 실제 wiring.
+검증 (compiled-path, hexa cc --regen으로 트랜스파일러 재생성 + 런타임 재컴파일):
+2개를 추가한다. 둘 다 순수 `fn(int)->int` 닫힌형이지만 기존 화이트리스트
+PROBE.log.md 체크박스가 머지 현실을 안 따라가 SSOT stale → flip + cycle 2 closure entry.
+표현 시그니처가 없어 🟢 NUMERICAL 게이트를 충족 불가 → atom 등록 차단.
+  — 이 파일이 문서화했던 "str(enum) 모듈-컨텍스트 의존 quirk" 가 본 PR 로
+fix patch 가 아니라 design-only RFC 초안임을 명확히 표시 — PR #735 4-draft 묶음과 동일 패턴.
+verify 계산기 dispatch 화이트리스트에 RFC 046 위상(topological) 정수 닫힌형
+10 inbox/patches 파일에 Status 한 줄씩 동기화 (H1 직후 삽입, 기존 Status 라인 보존).
+  (reserved name 만 `u_` prefix). 모든 decl/fwd-decl/use 사이트가 이 한 함수를 경유.
+`#ifdef HEXA_ENUM_NAMES_TABLE` 가드로 PR-1 단독에서는 진정한 no-op (C 컴파일러가
+g5 게이트 미충족: hexa verify 계산기가 정수 정수론 닫힌형(fn(int)->int)만 지원,
+cycle re-triage 가 이 패치를 live P0 로 다시 잡는 것을 막기 위해 archive/ 로 이동
+  (cycle 12 truncation 회피로 분할). 잔여 surface 2건이 다음 사이클로 분리됨:
+dispatcher 에 float NUMERICAL path 를 추가했으니, 이제 정수 fn 도 확장 가능.
+스택. 인박스 패치에 남아있던 3개 bio-physical identity 를 _recompute_float 에 추가하고
+r=qs+pt)을 atlas atom으로 등록 시도. 두 fn 모두 순수 정수 입출력 닫힌형이나
+n6 텍스트 파싱), 본 PR 의 atlas_cli 변경은 다음 atlas_cli rebuild 사이클에서
+  (Hangul/CJK/emoji 입력 정상화) — Option A + Option C 분리가 실사용 검증됨.
+dead code 지만, 스택의 base layer 로 PR-2/3 가 의존하는 codegen 표면을 먼저 안정화.
+PR 들은 각각 독립 lane 으로 filed 되어 cross-link 추적을 위한 단일 진입점이
+  flag `i` → `(?i)` 프리픽스 baking, `m` no-op, 그 외 거절. 컴파일타임 검증

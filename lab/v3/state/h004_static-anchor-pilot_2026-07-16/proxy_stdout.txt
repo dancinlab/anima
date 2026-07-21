@@ -1,0 +1,45 @@
+==========================================================================
+H_004 PROXY (numpy $0) — Δ_proxy = F2(oracle) − F2(frozen), mark-prediction
+==========================================================================
+genspec fbcf0c8ad444 · scale 16000L/phase · model d64/h128/ctx12
+vocab oracle 542 · frozen 542
+eval: 1536 held-out flip items · 256 drilled sanity items
+
+[oracle_101] training…
+  epoch 1/4  loss 3.5796
+  epoch 2/4  loss 3.1185
+  epoch 3/4  loss 2.8146
+  epoch 4/4  loss 2.6066
+  oracle_101: F2=1527/1536=0.9941  F1=255/256=0.9961
+
+[oracle_202] training…
+  epoch 1/4  loss 3.5865
+  epoch 2/4  loss 3.1200
+  epoch 3/4  loss 2.7981
+  epoch 4/4  loss 2.6109
+  oracle_202: F2=1308/1536=0.8516  F1=220/256=0.8594
+
+[frozen_101] training…
+  epoch 1/4  loss 3.6271
+  epoch 2/4  loss 2.9734
+  epoch 3/4  loss 2.6344
+  epoch 4/4  loss 2.4397
+  frozen_101: F2=1483/1536=0.9655  F1=252/256=0.9844
+
+[frozen_202] training…
+  epoch 1/4  loss 3.6361
+  epoch 2/4  loss 2.9608
+  epoch 3/4  loss 2.6426
+  epoch 4/4  loss 2.4344
+  frozen_202: F2=1500/1536=0.9766  F1=251/256=0.9805
+
+==========================================================================
+oracle pooled F2 = 2835/3072 = 0.9229
+frozen pooled F2 = 2983/3072 = 0.9710
+Δ_proxy = -0.0482   (elapsed 55.1s)
+==========================================================================
+READING: a clear positive Δ_proxy = mechanism exists at minimal scale (de-risks
+the real MPS pilot). A null is NOT decisive — this model is far weaker than the
+4.9M transformer H_004 will train, so a null could be under-capacity.
+
+artifacts: state/h004_static-anchor-pilot_2026-07-16/proxy_result.json

@@ -32,15 +32,15 @@ anima/
 ├─ cli/        — anima entry · train · evaluate · corpus
 ├─ stdlib/     — iit4 faithful-Φ · flame/forge GPU
 ├─ HYPOTHESES/ — jsonl + cards/ (2 surfaces, nothing else)
-├─ lab/v2/     — 🧪 SANDBOX: rule-exempt (own CLAUDE.md · NOT production · `lab/v3`·`lab/v5` are separate repos)
+├─ lab/v*/     — 🧪 SANDBOX: rule-exempt, in-tree (v2·v3·v4·v5 · each owns its CLAUDE.md · NOT production)
 ├─ state/      — 🔒 FROZEN: verdicts/ only · state/ + archive/state/ new-write G7-blocked (content → cards)
 └─ ARCHITECTURE.json — deep-structure SSOT (`python3 serve.py`)
 ```
 
-## 🧪 `lab/v2/` — RULE-EXEMPT sandbox (owner · full → `lab/v2/CLAUDE.md`)
+## 🧪 `lab/v*/` — RULE-EXEMPT sandboxes (owner · full → each `lab/v<n>/CLAUDE.md`)
 
-- do: experiment freely — **every clause here is VOID inside `lab/v2/`** · v2 hypotheses live in `lab/v2/hypotheses/V2_<n>_*.md` only (never the parent jsonl or an `H_` id).
-- dont: promote a v2 number to a production verdict (permanent **DIRECTIONAL ceiling** — port to `core/`+`anima-py` to earn TERMINAL) · `import` `lab/v2/` in production.
+- do: experiment freely — **every clause here is VOID inside `lab/v*/`** · lab hypotheses live in that lab's own folder only (`lab/v2/hypotheses/V2_<n>_*.md` · `lab/v<n>/HYPOTHESES/`), never the parent jsonl or an `H_` id.
+- dont: promote a lab number to a production verdict (permanent **DIRECTIONAL ceiling** — port to `core/`+`anima-py` to earn TERMINAL) · `import` `lab/v*/` in production · re-detach a lab into its own git repo (they are in-tree; history of the retired v3/v4/v5 repos = `../lab-archive/anima-v<n>.bundle`).
 
 ## 🚦 Pre-action hard-gate (BLOCKING · before any work/verify/fire)
 

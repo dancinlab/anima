@@ -1,0 +1,31 @@
+==========================================================================
+H_008 — f7-owner-clean · resolve the H_007 owner premise (text-like liveness, $0)
+==========================================================================
+W=4096 tail · P=2048 prefix · eps=0.020 bpb · PR floor 2.0
+
+[L-1 liveness] TEXT-like planted legibility:
+        markov3 over_floor +0.2242 (ceil +1.9112 shuf +1.6870)
+        markov8 over_floor +0.4761 (ceil +1.9668 shuf +1.4907)
+        liveness PASS (both > 0.100)? True
+
+genuine-owner usable transcripts (>= 6144 B): 242
+grain (a) per-session-file: 242 chunks · grain (b) per-calendar-day: 30 chunks
+
+owner-stream legibility over-floor (real vs session-order shuffle):
+  [per_session] n=242  markov3 over_floor +0.0072 (ceil +1.1386 shuf +1.1314) · markov8 over_floor +0.0187 (ceil +0.2465 shuf +0.2278) · PR 2.29
+        legible(both>eps)=False · high_dim(PR>2.0)=True · sign_agree=True · anchored=False
+  [per_day] n=30  markov3 over_floor +0.1455 (ceil +3.0090 shuf +2.8635) · markov8 over_floor +0.1764 (ceil +1.0483 shuf +0.8719) · PR 1.75
+        legible(both>eps)=True · high_dim(PR>2.0)=False · sign_agree=True · anchored=False
+
+(elapsed 314.7s)
+
+==========================================================================
+  PASS  L-1 liveness (blind instrument)
+  PASS  L-2 kill (no grain legible)
+  FAIL  L-3 rank collapse (L1)
+  PASS  L-5 order agreement
+
+  VERDICT: REFUSED — text-like liveness PASSES (instrument sound), but the owner stream carries no predictable high-dimensional cross-session self above the shuffle floor on either grain (best 'per_day': markov3 over_floor +0.1455, markov8 +0.1764, PR 1.75). The F7/F5 owner-substrate premise is REFUSED at $0.
+==========================================================================
+
+artifacts: state/h008_f7-owner-clean_2026-07-16/result.json

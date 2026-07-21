@@ -1,0 +1,52 @@
+spec(lang): adopt SPEC.yaml/md SSOT — native compiler + atlas static embed + strict lint + ε self-proof
+feat(compiler/discover): atlas auto-discovery — staging step (RFC-017 ε)
+  citation.hexa   3 sites  HX8001-8003 in _check_implements_arg / _walk_item
+check pass. @implements remains owned by citation.hexa (not double-emitted
+- atlas self-discovery (ε): in-house prover only, auto-register on pass,
+- memory: arena 1.x → borrow check 2.x; tracing GC permanently rejected
+                                HX0001 (lex), HX1042 (atlas), HX9001 (@grace)
+tier-0 targets (Decision 1 in SPEC.yaml). Naive register mapping; no real
+feat(compiler/check): annotation handlers — @law / @grace / @discover
+- transition hexa_interp → native compiler (interpreter retires after stage3)
+    merges with first-wins dedup (Decision 5d), records duplicates side-table,
+First @verify-gated check pass — equational rewrite engine + deterministic
+const declarations, so the compiler binary carries the atlas in rodata with
+                                    regen via tool/atlas_embed_gen.hexa)
+- bootstrap: existing hexa_interp as stage0 → stage1 → stage2 → stage3 fixed point
+  compiler/ir/hir.hexa          typed AST after S1-S5/S8 — HExpr/HItem with
+    Walks Item.annotations. Item is discoverable iff BOTH @discover(kind=...)
+Next: A1 (parser + AST atlas tagging), A2 (atlas n6 merger inside compiler).
+  4. Σ (vendor, canonical-IR) edges ≥ 6 (φ-axis projection cross-check)
+  sys_exit(N) builtin       would require hexa_interp change (out of scope)
+regenerate via `hexa run tool/atlas_embed_gen.hexa <root>`. Next phase A4
+SPEC.yaml linker section: v1=ELF-only clarification, mach_o_arm64 + full
+                                — English templates only (Decision 3)
+feat(stdlib/hal): v1.19.0 — falsifier_ai_native_check.hexa (F-AI-NATIVE axis preregister)
+  5. Σ (vendor·stage·IR) reachable states ≥ 18 floor (≤ J₂′=48 ceiling)
+    atlas_ref                            → STMT_ASSIGN with Operand kind=global
+RFC-017/018/019 lock the direction; SPEC.yaml is the single source of truth and
+emulator; GPGPU → GPU runtime FFI; AI-native → RTL synthesis + tape-out.
+  compiler/parse/ast.hexa       untyped AST: Module, Item, Expr, Annotation,
+  - stage0 enum equality routes through tag_of() since stage0 cannot compare
+will pin ATLAS_HASH into the compiler binary and switch static_atlas() from
+      skipped — owned by citation.hexa (already validates atlas binding)
+T2 tier — cross-checks J₂′ = σ·τ = 48 dispatch-state combination
+  parses on a clean checkout per RFC-017 §3.6; A4 will wire the real pin
+  parser → ... → annotations → equational(S6) → discover(staging)
+  parser → S1 → S2 → S3-4 → S5 → S8 → annotations → S6 (THIS, opt-in)
+                                tables live in codegen/<target>.hexa (Decision 1)
+  - expressions: literals (int/float/string/bool), ident, atlas refs (filling
+Generates a hexa source file embedding the parsed atlas index as compile-time
+cascaded — never registered the `bind()` definition, so all 3 test cases
+- working test coverage exists at self/test_enum_variant.hexa with break-
+layer. Success path unchanged — no sentinel written when as/ld succeed.
+    On miss emits HX1042 with full atlas_hash/kind/node_id substitution.
+    ident DefId resolution without pulling from bind.hexa — keeps this
+sample-eval counter-example search. Per RFC-017 §3.1 S6 + §5 (no Z3).
+Adds first T2 numerical fixture for the AI-native silicon axis. Closes
+- atlas.n6 statically baked into compiler binary (rodata, hash-pinned)
+fix(compiler/check/bind): rename `scope` keyword conflict — Scopes→BindScope
+feat(compiler/atlas): phase A4 — wire static_atlas() to real embedded fixture
+  - parse_assignment (lowest-precedence right-assoc) added to expression chain
+  + HX3001 (type mismatch)            ← forward-staged for upcoming B3 phase
+  compiler/ir/mir.hexa          SSA CFG with explicit arena_id on every Local

@@ -1,0 +1,33 @@
+Default-OFF byte-neutral (HEXA_ZEROC_OWN_START unset -> all #ifdef preprocess away). Mechanism PROVEN
+Goal workflow own-_start CRT scaffold, default-OFF HEXA_ZEROC_OWN_START (x86_64-linux). runtime_emit_full
+# no-verify-ok stdlib _rt_int_to_dec_str 1-line correctness fix — no structure/dataflow/module change (ARCHITECTURE N/A); other lint items (CLAUDE.md sections·ARCH-BIG-CELL·COMMONS-PROSE) are pre-existing repo-wide doc debt not introduced by this change (#4355)
+# no-verify-ok runtime self-host scaffold v2, regen-safe payload guards, default-OFF; summer release_runtime_compile_gate pre-validation before PR
+-DHEXA_ZEROC_OWN_START (compile the v2 scaffold #4390) + -nostartfiles (link own _start). Unset -> both
+own _start). Env HEXA_ZEROC_OWN_START=0 force-overrides OFF. Builds on v2 scaffold #4390 + link-gate #4391.
+GREEN byte-neutral. GATE-ON (-DHEXA_ZEROC_OWN_START) hit only runtime.c:91 'hxlcl_exit undeclared' +
+다세션 flip campaign wiring. build_selfhost.sh hexat build gated on HEXA_ZEROC_OWN_START=1 ->
+# no-verify-ok runtime native-layer self-host scaffold; default-OFF byte-neutral, mechanism standalone-proven on summer; byteeq gated by CI
+HEXA_ZEROC_OWN_START=1 -> -DHEXA_ZEROC_OWN_START so the shipped runtime.a CARRIES own _start (+
+-> default-ON). darwin stays OFF (Mach-O dyld/LC_MAIN ceiling). Env HEXA_ZEROC_OWN_START=0 overrides.
+# no-verify-ok runtime native-layer self-host evolution; x86_64 select verified by PRE-PUSH smoke, arm64 pselect6 reference-matched + arm64-byteeq-CI-gated; byteeq gated by CI
+# no-verify-ok runtime native-layer self-host evolution; sc2 reuse (existing symbol) + compile-smoke; byteeq gated by CI
+decl is at ~325). Add static fwd-decl in the #ifdef block before _hx_start_c. Design confirmed regen-safe
+다세션 flip 종점. build_selfhost.sh defaults HEXA_ZEROC_OWN_START ON when uname=Linux+x86_64
+# no-verify-ok runtime native-layer self-host evolution; exit_group verified by PRE-PUSH whole-process exit-status smoke; byteeq gated by CI
+# no-verify-ok runtime native-layer self-host evolution; recv/send verified by PRE-PUSH O2+O0 loopback payload smoke; byteeq gated by CI
+(runtime_emit_full.hexa ~2715). runtime_core.c is #include'd (2740) after this block, so its getpid()
+# no-verify-ok runtime native-layer self-host evolution; hxlcl_rand verified by PRE-PUSH range+determinism+uniformity smoke; byteeq gated by CI
+# no-verify-ok runtime emitter self-host evolution; NRs + conventions verified by PRE-PUSH smoke; byteeq gated by CI
+# no-verify-ok runtime_core emitter self-host evolution; NR verified by PRE-PUSH smoke; byteeq gated by CI
+# no-verify-ok runtime native-layer self-host evolution; proc-ns verified by PRE-PUSH errno-match smoke (unshare exercised unprivileged); byteeq gated by CI
+# no-verify-ok runtime.c self-host perf change; byteeq-reconverge + correctness-smoke verified; gated by CI
+# no-verify-ok runtime.c self-host perf change; byteeq-reconverge + correctness-smoke verified; gated by CI
+# no-verify-ok runtime.c self-host build-flag floor-drop; byteeq + nm-UND-dump + perf gated by CI + summer
+# no-verify-ok own-start runtime.a build-half gate, default-OFF byte-neutral, CI byteeq 3-target validates
+block. Byteeq 3-target already passed with the old placement (unistd.h + libc present); this only repairs
+5-category residual workflow LAND-NOW rung. hxlcl_mmap's libc mmap delegate (runtime_emit_full.hexa
+# no-verify-ok runtime native-layer self-host evolution; getdents64 verified by PRE-PUSH entry-set==libc-readdir smoke; byteeq gated by CI
+# no-verify-ok runtime native-layer self-host evolution; getdents64 verified by PRE-PUSH entry-set==libc-readdir smoke; byteeq gated by CI
+# no-verify-ok runtime native-layer self-host evolution; direct-inline mmap verified by PRE-PUSH O2+O0 smoke; byteeq gated by CI
+# no-verify-ok runtime native-layer self-host evolution; execve verified by PRE-PUSH fork+exec smoke; byteeq gated by CI
+# no-verify-ok runtime native-layer self-host evolution; flock semantics verified by PRE-PUSH smoke; byteeq gated by CI

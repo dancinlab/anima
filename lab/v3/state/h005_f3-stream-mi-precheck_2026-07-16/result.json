@@ -1,0 +1,96 @@
+{
+ "streams": {
+  "hexa-lang": {
+   "days": 102,
+   "gzip": {
+    "ceiling": 0.3046875,
+    "shuffle": 0.30859375,
+    "over_floor": -0.00390625,
+    "dayspec": 0.26953125
+   },
+   "ppm": {
+    "ceiling": 1.0914299556517912,
+    "shuffle": 0.9487484871320202,
+    "over_floor": 0.14268146851977104,
+    "dayspec": 0.20298577277865704
+   },
+   "markov6": {
+    "ceiling": 0.18961463712783289,
+    "shuffle": 0.13076241323421556,
+    "over_floor": 0.05885222389361733,
+    "dayspec": 0.10813066982369701
+   },
+   "participation_ratio": 1.619065994281486,
+   "all3_anchored": false,
+   "order_aware_anchored": true,
+   "order_aware_agree": true
+  },
+  "anima": {
+   "days": 44,
+   "gzip": {
+    "ceiling": 0.359375,
+    "shuffle": 0.328125,
+    "over_floor": 0.03125,
+    "dayspec": 0.26953125
+   },
+   "ppm": {
+    "ceiling": 0.9614661808283849,
+    "shuffle": 0.7409389841138632,
+    "over_floor": 0.2205271967145217,
+    "dayspec": 0.14089053087137327
+   },
+   "markov6": {
+    "ceiling": 0.27128923121216264,
+    "shuffle": 0.2281945992304255,
+    "over_floor": 0.04309463198173713,
+    "dayspec": 0.07874108129163293
+   },
+   "participation_ratio": 1.3253337602089144,
+   "all3_anchored": true,
+   "order_aware_anchored": true,
+   "order_aware_agree": true
+  },
+  "sidecar": {
+   "days": 21,
+   "gzip": {
+    "ceiling": 0.2265625,
+    "shuffle": 0.29296875,
+    "over_floor": -0.06640625,
+    "dayspec": 0.03125
+   },
+   "ppm": {
+    "ceiling": 0.431130820931485,
+    "shuffle": 0.447382504948437,
+    "over_floor": -0.016251684016951984,
+    "dayspec": 0.0650090892393429
+   },
+   "markov6": {
+    "ceiling": 0.14945751672494278,
+    "shuffle": 0.16177718839406907,
+    "over_floor": -0.012319671669126286,
+    "dayspec": 0.03099899057456046
+   },
+   "participation_ratio": 1.8868508205521897,
+   "all3_anchored": false,
+   "order_aware_anchored": false,
+   "order_aware_agree": true
+  }
+ },
+ "liveness": {
+  "n_pairs": 29,
+  "ceiling_med": 7.7890625,
+  "ceiling_mean": 7.790140086206897,
+  "dayspec_med": 6.66015625,
+  "base_bpb_med": 7.89453125,
+  "participation_ratio": 1.9737695676832745
+ },
+ "strict_anchored_streams": [
+  "anima"
+ ],
+ "order_aware_only_streams": [
+  "hexa-lang"
+ ],
+ "liveness_ok": true,
+ "n_real_streams": 3,
+ "verdict": "ANCHORED (F3 licensed) — stream(s) ['anima'] clear the shuffle floor on ALL THREE estimators (strict pre-registered P-4); ['hexa-lang'] confirm on the order-aware pair (gzip at its LZ resolution floor there). delta_min := ceiling/2 for the F3 twin."
+}

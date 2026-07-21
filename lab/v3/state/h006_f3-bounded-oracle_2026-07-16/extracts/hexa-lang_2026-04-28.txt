@@ -1,0 +1,38 @@
+  malformed inputs (e.g. "not valid json", "{a", "a") — uncatchable from stdlib
+- L1: runtime json_parse hard-errors with `to_int: not an integer: "..."` on many
+- json_parse_safe → [ok, value] tuple, json_parse_or_throw 명시 fail-loud
+  · hexa_exec_stream      (runtime.c:3182) → int (exit code)        ≈ proposed exec_status streaming
+rfc(stdlib-json): cross-sister python3 removal — raw 91 L1-L4 honest contract + 10/10 selftest PASS
+- docs/stdlib_json_rfc_2026_04_28.md: full RFC with §1 motivation, §2 inventory,
+- L2: json_parse("") returns int 0 (not void) — wrapper now short-circuits.
+feat(stdlib): canonical shell_escape + flags helpers (Tier-A from hexa-lang strengthening ω-cycle)
+  · hexa_exec_with_status (runtime.c:3235) → [stdout, exit_code]   ≈ proposed exec_both
+· convergence/hexa_lang_upstream_2026_04_28_anima_eeg_gaps.convergence — gap 6 entry
+- self/main.hexa, self/hexa_full.hexa, self/runtime.c, self/module_loader.hexa
+feat(stdlib/A19): v2 encode/decode CLI exposure — resolves aa42d4e4 dispatcher gap (per-file CLI single-file mode HONEST identity-revert 99.7%+ via raw 142 D2)
+  · hexa_exec_capture     (runtime.c:6373) → [out, err, rc]         (3-tuple superset)
+docs(issues/proposed): 4 stdlib/runtime upstream proposals (raw 144-147 backfill)
+Companion full-corpus measurement: aggregate 32.39% via composite min(a18_d631a902, a19_v2, identity) — far below 78.05% baseline (53c711eb a25 v2 dispatcher PRESERVED as authoritative). raw 137 v8 strengthening commit DEFERRED HARD (gap 46.26pp to 78.65% threshold). Three honest C3 retractions logged in /Users/ghost/core/anima/state/format_witness/2026-04-28_a19v2_cli_full_9.92mb_measured.jsonl.
+- decode: detects "# a19:s2 " header; identity passthrough when absent (typical CLI single-file case); errors when header present without sidecar dict (CLI single-file mode CANNOT reconstruct cross-file dict)
+ref: anima ω-cycle witness ↑pending (Task #22 subagent a2e04fb8 still emitting; this commit captures Tier-A first since selftest passing + autonomous default per raw 102)
+raw 137 cmix-ban MAINTAINED (deterministic dict + integer score + lex tie-break). raw 18 self-host fixpoint preserved (interp/AOT 9/9 byte-identical).
+feat(tui-L4): self/tui/widget/{box,text,list,input}.hexa — widget tree (kick T1.A Layer 4)
+· .roadmap — RFC-006 entry priority P1→P2 + scope updated. RFC-007 entry added P1.
+· proposals/rfc_006_exec_return_type.md — rewritten in-place with Correction Notice
+Original commit 2cb2b95c remains in git history for audit trail. raw#10 honest +
+  references whose actual content is the working-tree diff this commit lands.
+  · F1.1 header parse · F1.2 pre-seed corpus-filter · F1.3 vocab pre-seed
+  - nexus meta_engine_evolution (53KB, 23 rows): 4.36% → 4.36% (A9 reverted; downstream A4+A12 already strip text)
+rfc(RFC-009): AOT bool coercion bug — int_returning_fn() == int_literal silent-false (P0; RFC-005 family)
+LoC: 1218 (HEAD 35f592c5 v2-only) -> 2485 working tree (+1267 LoC, 3 wire variants + dispatcher min-of-7).
+  F5  3 platform × 6 cell matrix              [Mac 6/6 + Linux portable + Windows out of scope]
+  lsp_handle_response(method, params_json) -> string ("modal"|"list"|"text"|"unknown"|"error")
+· proposals/rfc_007_exec_lint_rule.md — NEW (P1, ~40 LoC, 1-2h). Standalone parser/lint
+rfc(stdlib): project_python() helper invocation primitive — anima-eeg venv-drift gap-7
+Research failure root cause: did not search runtime.c symbol table for hexa_exec_*
+fix(stdlib): A13 simple pipe split — orphan-quote handling for post-A12 streams
+to read_file + json_parse builtins (4/4 selftest PASS) to drop python3 dependency
+feat(stdlib/A17): F-A17-4 array-swap memory mitigation — A18 e789a5f9 pattern
+- runtime builtin (file_exists, mkdir 등) 와 별개 namespace 로 fs_exists
+raw 9 hexa-only · raw 65 + 68 idempotent (production case) · raw 91 honest
+feat(stdlib/A26): subsequent-tick LIVE FIRE — AOT build LANDED + escape sweep harness + honest C3 retraction (F-A26-4 memory TRIP, F-A26-6 escape minimality TRIP)

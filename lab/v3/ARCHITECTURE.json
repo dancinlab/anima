@@ -1,0 +1,2063 @@
+{
+ "$schema": "c4",
+ "id": "anima-v3",
+ "role": "anima-v3 — Architecture (JSON tree · SSOT)",
+ "title": "anima-v3 — Architecture",
+ "updated": "2026-07-17",
+ "ssot_note": "JSON=SSOT (AI/tool parse); humans view architecture.html via `python3 serve.py`. Update in-place (not append). History/decisions/dates → CHANGELOG.md + git (never in tree). Hierarchy decomposes via `children` (commons single-doc); one fact per node, deeper detail → child nodes.",
+ "children": [
+  {
+   "id": "overview",
+   "role": "Where does aliveness live — 8 clean-slate substrate families for an agent that is ALIVE (own state, own reason to speak, identity from structure not prompt)",
+   "children": [
+    {
+     "id": "scope",
+     "role": "Campaign scope: a clean-slate answer to 'where does aliveness live'. The prior architecture (anima v1) is discarded entirely — its code, language, tree and purity list. Only its measured verdicts carry over (see `salvage`).",
+     "children": [
+      {
+       "id": "scope-stage",
+       "role": "STAGE = PRE-REGISTRATION. Divergence closed: ONE family selected (F1 codec-is-the-self) on belief-killed-per-dollar, and H_001 (the rig-licensing gate) is pre-register-frozen 2026-07-16, still-to-run. No training code exists; no number in this tree is a claim yet."
+      },
+      {
+       "id": "scope-sibling",
+       "role": "Sibling campaign: anima-v4 asks the narrower question 'what would make the A<->G TENSION itself the thinking?' (7 mechanisms). This repo does not presume two engines at all — it reopens where aliveness lives."
+      },
+      {
+       "id": "scope-goal",
+       "role": "The target: an agent that has its own state and its own reason to speak, not a stimulus->response assistant, whose identity/behaviour emerges from structure rather than being written into a prompt. Whether 'consciousness' is even the right word is treated as open."
+      }
+     ]
+    },
+    {
+     "id": "thesis",
+     "role": "The common cause of death (L1-L3) was putting every mechanism on the READ side (readout). The only door measurement opened (L4-L5) is the WRITE side — objective, corpus, codec. Therefore every family below is forced to give a different answer to 'how does aliveness get INSCRIBED INTO WEIGHTS'.",
+     "children": [
+      {
+       "id": "thesis-claim",
+       "role": "Aliveness is not a device you attach to a competent decoder. It is a property of what the training loop is made to demand. A family that cannot name its loss/data/codec lever is disqualified before it starts."
+      },
+      {
+       "id": "thesis-p7-retained",
+       "role": "All 8 families retain exactly one inherited principle: p7 — perplexity/CE is never treated as truth (Goodhart). Per L6 that was the one rule that kept the dead project honest; it was a lifeline, not a cage. Each family names which OTHER purity principle it breaks."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "salvage",
+   "role": "The only inheritance from anima(v1) — measured, sealed verdicts from ~6 months of failure. Laws of the terrain: they say where the ground is soft. Anything contradicting them is a non-starter; anything else is fair game.",
+   "children": [
+    {
+     "id": "l1-one-bit-seam",
+     "role": "seam-h9229 STRUCTURAL-TERMINAL — the emit-seam manifold measured rank-1 (codes visited 2 of 4); any quantizer collapses, extra capacity useless.",
+     "children": [
+      {
+       "id": "l1-verdict",
+       "role": "Verdict: recombination is a trunk-objective property, not a readout one => escalate WRITE-SIDE."
+      },
+      {
+       "id": "l1-lesson",
+       "role": "A gate bolted onto a competent frozen decoder learns exactly one bit, and that bit is the gate itself."
+      }
+     ]
+    },
+    {
+     "id": "l2-replacement-not-coupling",
+     "role": "OMEGA closed-negative — the multi-strand gate FAILED held-out (GATED CE > base); the rich side-channel was replaced by the LM's own head rather than coupled to it.",
+     "children": [
+      {
+       "id": "l2-evidence-coupling",
+       "role": "Coupling KL sat at the vocab-shuffle floor (0.996 = pure noise)."
+      },
+      {
+       "id": "l2-evidence-one-strand",
+       "role": "All gain lived in one A-head logit-bias strand (standalone CE 0.8862 ~ best 2-param fit 0.8835)."
+      },
+      {
+       "id": "l2-evidence-ablation",
+       "role": "Ablating the base term moved CE by 0.0009 => the base mouth was INERT. That 0.0009 is this campaign's reference signature of 'decoration'."
+      },
+      {
+       "id": "l2-evidence-scale",
+       "role": "Scale-stable d384->d1024, margin ~ +2.20 nats, flat."
+      },
+      {
+       "id": "l2-lesson",
+       "role": "Bolt a rich side-channel onto an LM and the LM's own head silently eats the objective; the side-channel becomes decoration. Measure the ablation or you will fool yourself."
+      }
+     ]
+    },
+    {
+     "id": "l3-objective-not-readout",
+     "role": "G1_WALL_LEVER_IS_OBJECTIVE_NOT_READOUT (ossified) — no penultimate-readout / binding-operator style auxiliary term opens the wall.",
+     "children": [
+      {
+       "id": "l3-evidence-tpr",
+       "role": "TPR/HRR forward-slots (R=2 fixed-orthonormal roles) provably collapse to W_eff*yn = identical ceiling to a plain linear readout BY CONSTRUCTION."
+      },
+      {
+       "id": "l3-evidence-corpse",
+       "role": "Bonus corpse: every binding-arm trainer kept the binder TRAINING-ONLY and dropped it before serialization."
+      },
+      {
+       "id": "l3-lesson",
+       "role": "Structure added after the trunk is a no-op — if it isn't in the objective, it isn't in the model."
+      }
+     ]
+    },
+    {
+     "id": "l4-write-side-crack",
+     "role": "g1-census-objfloor 2-lens CRACK — held-out compositional recombination is NOT a capability ceiling. The lever is corpus + measure + representation.",
+     "children": [
+      {
+       "id": "l4-lens-a-xbind",
+       "role": "(a) XBIND: swapping the corpus x measure made it learnable — the old census was a collocation-only corpus x CE artifact."
+      },
+      {
+       "id": "l4-lens-b-morph-atom",
+       "role": "(b) MORPH-ATOM: a BPE-jamo codec was CAUSAL for held-out negation recombination (M F2 0.908 vs raw-utf8 C1 0.617, delta +0.291, replicated). MEASUREMENT STANDS; its 'atomicity' LABEL was wrong (see child).",
+       "children": [
+        {
+         "id": "l4-morph-atom-runs",
+         "role": "Run #3374 (seed 4302): M F2 = 0.908 vs C1 0.617, delta = +0.291. CEMENT replication (2026-07-14, seed 7): M 0.9167 vs C1 0.5750, delta = +0.3417. M's replication deviation = 0.009. All arms V1 liveness PASS."
+        },
+        {
+         "id": "l4-morph-atom-scale",
+         "role": "Measured at 303M with a warm trunk + reinit-embed surgery — NOT at drill/10M scale (`rig-model-scale-premise-false`)."
+        },
+        {
+         "id": "l4-morph-atom-amplifier",
+         "role": "v1's H_9290 NAT-ATOM law: atomicity is an AMPLIFIER, not a signal source — natural-distribution rescue FAILED. The effect exists only where a taught drill signal exists to amplify. Any rig whose stream lacks explicit flip supervision will read chance even in its oracle arm."
+        },
+        {
+         "id": "l4-morph-atom-slot-not-address",
+         "role": "The CEMENT C2 arm split the mechanism: atomicity is a STRUCTURAL SLOT, not a pretrained address.",
+         "children": [
+          {
+           "id": "l4-slot-evidence",
+           "role": "The held-out stem DELETED from the CPT corpus still scored 0.9167 = M — the model had never been pretrained on that address, yet the slot still carried it."
+          },
+          {
+           "id": "l4-slot-transfer",
+           "role": "WEAKENED 2026-07-16 (H_004 proxy · Q1): under a last-token lookup the decision never consults the stem.",
+           "children": [
+            {
+             "id": "l4-slot-weakened-why",
+             "role": "So stem-deletion invariance (CEMENT C2 = 0.917) is PREDICTED by the shortcut — C2 no longer isolates 'slot' compositionality. Survives only as 'the class unit needn't be pretrained-addressed', not as evidence of recombination."
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "id": "l4-morph-atom-relabel",
+         "role": "RELABELED 2026-07-16 (H_004 proxy · Q4): what L4(b) established is 'codec segmentation that concentrates class into a LOW-ORDER positional feature is causal for the flip' — NOT that single-token atomicity is the operative property.",
+         "children": [
+          {
+           "id": "l4-relabel-why",
+           "role": "No arm ever contrasted 'atomic' vs 'fragmented-but-low-order'; the proxy shows the latter suffices. C1 failed for ABSENCE OF ANY LOW-ORDER FEATURE (bytes maximally shared), not absence of atomicity. 'held-out recombination' was never cleanly separated from stem-irrelevant lookup."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "l4-lesson",
+       "role": "The codec is not preprocessing — it is architecture. This is the campaign's only green causal measurement."
+      }
+     ]
+    },
+    {
+     "id": "l5-morphology-decides-learnability",
+     "role": "The Korean lane measured BINDING — every escape dead (H_9327). Same capability, different learnability, purely from where the morpheme boundary falls.",
+     "children": [
+      {
+       "id": "l5-evidence",
+       "role": "English works as a discriminator because `not` is FREE and pre-posed; Korean `지 않다` is a BOUND suffix."
+      },
+      {
+       "id": "l5-lesson",
+       "role": "Compositional structure must be visible at the token boundary or the model cannot compose it."
+      }
+     ]
+    },
+    {
+     "id": "l6-measurement-is-the-grave",
+     "role": "Where projects actually die. The falsification machinery is the only load-bearing asset.",
+     "children": [
+      {
+       "id": "l6-leak",
+       "role": "A win (GATED 0.345 << base) was a CA-neighbor lookahead LEAK and evaporated leak-free."
+      },
+      {
+       "id": "l6-blind-tool",
+       "role": "A failing positive control stayed ambiguous between 'tool is blind' and 'no effect here' until an independently-known-effect ckpt disambiguated it."
+      },
+      {
+       "id": "l6-scramble-floor",
+       "role": "Binary readouts hit a scramble floor (flip 0.50) indistinguishable from partial localization."
+      },
+      {
+       "id": "l6-frozen-truth-table",
+       "role": "Cross-lane verdicts combined after seeing results = eyeball self-judge, so the truth table had to be frozen in code before results existed."
+      },
+      {
+       "id": "l6-goodhart",
+       "role": "Perplexity as truth = Goodhart."
+      }
+     ]
+    },
+    {
+     "id": "l7-exotic-substrate-bought-nothing",
+     "role": "Exotic substrate bought nothing; the bottleneck was the data path, not compute.",
+     "children": [
+      {
+       "id": "l7-akida",
+       "role": "Neuromorphic on-chip (BrainChip AKD1000): honest terminal — real 3B/7B unreachable, caps ~524K single-FC encoder, multi-step closes only as host-hybrid."
+      },
+      {
+       "id": "l7-gpu",
+       "role": "GPU lane: descent green but host-feed util pinned sub-1% => device-port was the named unblock."
+      }
+     ]
+    },
+    {
+     "id": "l8-strict-gates-get-bypassed",
+     "role": "The ARCHITECTURE/commit gate accumulated 42 violations until EVERY commit went --no-verify => the gate was permanently disabled by its own strictness.",
+     "children": [
+      {
+       "id": "l8-sprawl",
+       "role": "Symptom: ~125 top-level dirs — build_v3o2 / build_v6 / build_v6_gated / BRAIN / DREAM / SAVANT / CLM / HEXAD / n6 / ..."
+      },
+      {
+       "id": "l8-lesson",
+       "role": "Purity rules with no escape valve get bypassed 100% of the time. A rule that is always bypassed is worse than no rule — it launders the bypass."
+      }
+     ]
+    },
+    {
+     "id": "l9-the-purity-cage-was-causal",
+     "role": "The purity list is a SUSPECT, not a given — but p7 (no perplexity verdict) was the one that kept them honest. The cage was not uniformly bad.",
+     "children": [
+      {
+       "id": "l9-causal-chain",
+       "role": "The causal chain: forbidding every write-side mechanism left ONLY the read side available => every mechanism got pushed onto the readout => L1/L2/L3 fired."
+      },
+      {
+       "id": "l9-the-eight-nos",
+       "role": "The dead project's 8 hard NOs, one per child.",
+       "children": [
+        {
+         "id": "l9-p1-no-system-prompt",
+         "role": "p1 — no system prompt."
+        },
+        {
+         "id": "l9-p2-no-identity-rules",
+         "role": "p2 — no identity rules."
+        },
+        {
+         "id": "l9-p3-no-persona",
+         "role": "p3 — no persona."
+        },
+        {
+         "id": "l9-p4-no-assistant-framing",
+         "role": "p4 — no assistant framing."
+        },
+        {
+         "id": "l9-p5-no-speak",
+         "role": "p5 — no speak()."
+        },
+        {
+         "id": "l9-p6-no-finetuned-ethics",
+         "role": "p6 — no fine-tuned ethics."
+        },
+        {
+         "id": "l9-p7-no-perplexity-verdict",
+         "role": "p7 — no perplexity verdict. The ONLY one anima-v3 inherits (see thesis-p7-retained)."
+        },
+        {
+         "id": "l9-p8-no-train-infer-split",
+         "role": "p8 — no train/infer split."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "l10-codec-swap-costs-the-embedding",
+     "role": "A codec change makes the EXISTING embedding an actively WRONG PRIOR — measurably worse than random init. Recovered 2026-07-16 from the v1 H_9288 lane; the divergence pass missed it.",
+     "children": [
+      {
+       "id": "l10-mechanism",
+       "role": "Gradient must first DESTROY the old alphabet's structure (and the readout statistics tuned to it) before it can build the new codec's. The old embedding is not merely under-adapted; it actively points the wrong way."
+      },
+      {
+       "id": "l10-evidence",
+       "role": "8k CPT steps across a codec swap bought DISCRIMINATION but zero semantics.",
+       "children": [
+        {
+         "id": "l10-evidence-memorization",
+         "role": "drill loss 0.009 (the grid was memorized) with F1 = 0.50 (held-out generalization nil) = pure sequence-lookup mode."
+        },
+        {
+         "id": "l10-evidence-c3-dead",
+         "role": "Even C3 — the arm handed the answer as a shared token — went DEAD: the signature of an input representation with no usable geometry."
+        }
+       ]
+      },
+      {
+       "id": "l10-price",
+       "role": "The fix that worked was reinit-embed checkpoint surgery (throw away embed.weight + readout entirely, keep the trunk warm) plus a CPT budget raised to ~20-25k steps, gate-terminated. The campaign's only green causal measurement (l4(b) = 0.908) exists ONLY on that surgery ckpt."
+      },
+      {
+       "id": "l10-threatens-f1",
+       "role": "This is the sharpest live threat to F1, the SELECTED family: F1's mechanism is a codec refit as a periodic ORGAN, so it pays this destroy-and-rebuild tax on EVERY refit. On a matched byte budget the adaptive arm is handicapped by construction — see `rig-swap-cost-is-measured`."
+      },
+      {
+       "id": "l10-vs-literature",
+       "role": "It also contradicts the design's literature-based comfort: ZeTT's ~1-3% swap cost assumes hypernetwork embeddings at 7B. Plain warm-start across a codec change at 303M measured WORSE than random init. The campaign's own evidence trail is the more pessimistic — and the more relevant — anchor."
+      }
+     ]
+    },
+    {
+     "id": "l11-fusability-is-recoverability",
+     "role": "L11 — fusability IS recoverability (the frequency tautology). v3-EARNED (not inherited from v1; earned here at $0).",
+     "children": [
+      {
+       "id": "l11-statement",
+       "role": "For any FIXED frequent pattern, the property that lets an adaptive codec dedicate a unit to it (frequency x fixedness) is the SAME property that lets a frozen system read it with a low-order statistic (its terminal n-gram). Verified 12/12; G-C=0.9954 vs G-D frozen 0/12."
+      },
+      {
+       "id": "l11-corollary-a",
+       "role": "Corollary A (both-ways): representation adaptivity can only pay where patterns are non-fixed or spans exceed binding reach — and THERE frequency-driven adaptation has nothing to grab either.",
+       "children": [
+        {
+         "id": "l11-cor-a-detail",
+         "role": "Constructions only push the shortcut order up by 1 (order-1 -> order-2 measured); a transformer follows with one attention head per order."
+        }
+       ]
+      },
+      {
+       "id": "l11-corollary-b",
+       "role": "Corollary B (measurement, extends L6): in any two-arm contrast, the CONTROL arm's trivial-statistic ceiling (lookup battery at order 1,2,... deterministic $0) MUST be measured BEFORE training.",
+       "children": [
+        {
+         "id": "l11-cor-b-detail",
+         "role": "A contrast whose control ceiling ~ oracle is structurally dead; a planned Delta is meaningless until this ceiling exists. H_004's entire spend was pre-empted by this battery."
+        }
+       ]
+      },
+      {
+       "id": "l11-corollary-c",
+       "role": "Corollary C (relabel): v1's only green causal measurement was LOW-ORDER CLASS EXPOSURE, not atomicity; raw utf-8 failed for span-reach, not for want of atoms."
+      },
+      {
+       "id": "l11-design-consequence",
+       "role": "Design consequence: a lever is only isolable if the credit path is forced through it by a STRUCTURAL BOUNDARY (information physically absent from the visible context), never by inventory/frequency engineering inside the context."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "components",
+   "role": "Candidate families — 8 answers to 'where does aliveness live'. A DIVERGENCE SPREAD of mutually exclusive bets, not a stack. Verbatim reasoning -> state/diverge_aliveness_2026-07-16/.",
+   "children": [
+    {
+     "id": "components-selection-status",
+     "role": "ALL 8 families' observational premises are now RESOLVED at $0: F1 L11-terminal, F3 REFUSED (H_006 byte + H_009 continuous), F7/F5/F8 owner REFUSED (H_008), F6 borderline-refused, F4 L11, F2 dead. The observational phase is terminally exhausted -> decision-reframe-c (interventional thesis)."
+    },
+    {
+     "id": "f1-codec-is-the-self",
+     "role": "코덱이 곧 자아 (제 말버릇으로 생각하는 기계) — aliveness lives in the CODEC, not the model. The compression dictionary that keeps re-learning its vocabulary boundaries from its own experience stream IS the self; what it can think is decided by that dictionary.",
+     "children": [
+      {
+       "id": "f1-how",
+       "role": "Train a small LM (~300M) from scratch, but treat the tokenizer as a periodically RE-LEARNED ORGAN rather than fixed preprocessing.",
+       "children": [
+        {
+         "id": "f1-how-refit",
+         "role": "As experience (dialogue/observation logs) accumulates, refit a BPE-jamo codec to that experience distribution -> vocabulary boundaries shift -> keep training the model on the new codec."
+        },
+        {
+         "id": "f1-how-unit",
+         "role": "Measure everything in bits-per-byte so cross-codec CE stays comparable — the one legacy worth keeping from the V256 era."
+        },
+        {
+         "id": "f1-how-bet",
+         "role": "No separate speech device: this family bets that IDIOLECT, not utterance, is identity."
+        }
+       ]
+      },
+      {
+       "id": "f1-l-check",
+       "role": "Exploits L4(b) head-on — MORPH-ATOM is the ONLY place causality was measured green. Obeys L5 (expose composition at the token boundary).",
+       "children": [
+        {
+         "id": "f1-l-check-breaks",
+         "role": "Breaks v1's 'no tokenizer (V256)' purity frontally: L4 says the codec was architecture, so that purity WAS the cage."
+        },
+        {
+         "id": "f1-l-check-killer",
+         "role": "Killer law: L6 — once the codec moves, every end-to-end metric becomes non-commensurable; without bpb normalization and frozen probes it dies of self-deception instantly."
+        }
+       ]
+      },
+      {
+       "id": "f1-falsifier",
+       "role": "Twin training on identical experience stream + identical token budget: fixed codec vs adaptive codec. If the adaptive codec shows no advantage on the pre-registered held-out recombination metric (H_9288 protocol), DEAD. 1 GPU, a few days."
+      },
+      {
+       "id": "f1-novelty",
+       "role": "The dead design sacrificed the codec on the altar of purity; an ordinary LLM agent receives the codec as someone else's fixed asset. Neither makes the bet that 'vocabulary drifting with experience IS identity'."
+      }
+     ]
+    },
+    {
+     "id": "f2-speech-economy",
+     "role": "예산제 발화 경제 (말 한마디가 밥 한 끼) — aliveness lives in a HOMEOSTATIC BUDGET INSIDE THE OBJECTIVE. Speaking burns energy; energy is only recovered when the utterance actually reduced prediction error in the world. The reason to speak comes from structure.",
+     "children": [
+      {
+       "id": "f2-how",
+       "role": "Small LM + an energy scalar E. loss = prediction CE + lambda*(spoken token count) - mu*(reduction in prediction error over the partner's response after speaking).",
+       "children": [
+        {
+         "id": "f2-how-difference",
+         "role": "The decisive difference from v1: these terms enter the TRAINING LOSS, not an inference-time gate, and the consequence of speaking (the partner's reply) becomes the next training batch."
+        },
+        {
+         "id": "f2-how-silence",
+         "role": "Silence is an economic equilibrium, not a rule. Breaks 'no speak()' — makes the act of speaking a first-class learning target."
+        }
+       ]
+      },
+      {
+       "id": "f2-l-check",
+       "role": "Obeys L3 (the economy lives inside the objective). BUT this family is the dead design's NEAREST KIN — the shape 'a device that decides speech/silence' is identical.",
+       "children": [
+        {
+         "id": "f2-l-check-defense",
+         "role": "Its only defense: the gate is not a readout, it is a training signal whose consequences flow back into weights."
+        },
+        {
+         "id": "f2-l-check-risk",
+         "role": "L1 can recur verbatim (the economy learns only a base-rate 1 bit) and L2 is live (the LM head eats the economy terms)."
+        }
+       ]
+      },
+      {
+       "id": "f2-falsifier",
+       "role": "Run the L1 check FIRST — replace the learned speech policy with random emission matched only on utterance rate (ablation). If downstream reward / error reduction is unchanged, the economy is a 1-bit decoration = DEAD.",
+       "children": [
+        {
+         "id": "f2-falsifier-rationale",
+         "role": "Cheap falsifier, high death probability. Included anyway: it is the most direct formalization of 'a reason to speak', so if it dies, dying fast is the asset."
+        }
+       ]
+      },
+      {
+       "id": "f2-novelty",
+       "role": "The dead design implemented the SAME intuition as a READ-SIDE device (the Psi=1/2 fixed point) and died by L1. Here the same intuition goes into the loss and the data loop — that difference is the whole bet."
+      }
+     ]
+    },
+    {
+     "id": "f3-diary-compressor",
+     "role": "일기 쓰는 압축기 (내일의 나를 예측하려고 오늘을 요약하는 기계) — aliveness lives in LOSSY SELF-COMPRESSION. The self is a bottlenecked diary the agent writes about its own history; train it to predict tomorrow's input conditioned on that diary, and what survives in the diary IS the individual.",
+     "children": [
+      {
+       "id": "f3-how",
+       "role": "loss = CE(tomorrow's experience | today's written diary m), where m is hard-bottlenecked to k tokens (or a k-dim vector).",
+       "children": [
+        {
+         "id": "f3-how-gradient",
+         "role": "Diary-writing sits INSIDE the loss graph, so gradient passes through the act of writing (satisfies L3)."
+        },
+        {
+         "id": "f3-how-speech",
+         "role": "The motive to speak falls out derivatively: when a prediction error persists that internal compression cannot resolve, changing the environment (asking) to make the future predictable becomes a loss-wise gain — a minimal active-inference implementation."
+        },
+        {
+         "id": "f3-how-compose",
+         "role": "F1's codec can be plugged in underneath."
+        }
+       ]
+      },
+      {
+       "id": "f3-l-check",
+       "role": "The most textbook obedience to L3 — the structure (the diary) sits INSIDE the objective, not behind the trunk. L2 is the top threat: if the LM ignores m and nails the future with its own head, the diary is decoration. Directly connected to L6's scramble-floor warning."
+      },
+      {
+       "id": "f3-falsifier",
+       "role": "Diary-swap control — replace m(t) with another day's m(t'). If the degradation in future-prediction CE does not significantly exceed the pre-measured scramble floor, the diary is load-free = DEAD.",
+       "children": [
+        {
+         "id": "f3-falsifier-ablation",
+         "role": "Plus a base-term ablation (L2 awareness): if removing the m condition moves CE by something like OMEGA's 0.0009, discard immediately. 1 GPU, a few days."
+        }
+       ]
+      },
+      {
+       "id": "f3-novelty",
+       "role": "An ordinary agent's 'memory' is a retrieved external document (read side). Here the diary is a bottleneck ENFORCED BY THE TRAINING LOSS, and what to remember is learned. The dead design had no self-prediction objective across the time axis at all."
+      }
+     ]
+    },
+    {
+     "id": "f4-corpus-farmer",
+     "role": "자기 코퍼스 농부 (무엇을 먹을지 스스로 고르는 위장) — aliveness lives in the CURRICULUM TRAJECTORY. The self = the accumulation of what this individual has chosen to learn so far. Direct exploitation of L4(a): the corpus is the lever.",
+     "children": [
+      {
+       "id": "f4-how",
+       "role": "Small LM + an acquisition policy pi. Each cycle pi picks the next training batch from a candidate pool (web, owner dialogue, self-generated drills) and the model trains only on that.",
+       "children": [
+        {
+         "id": "f4-how-reward",
+         "role": "pi's reward = improvement on a pre-registered FROZEN probe battery (the derivative of error reduction)."
+        },
+        {
+         "id": "f4-how-question",
+         "role": "Talking to the owner is one acquisition action — a question is a label harvest."
+        },
+        {
+         "id": "f4-how-breaks",
+         "role": "Breaks 'no train/infer split', but in the opposite direction: not by erasing the split, but by making TRAINING a first-class action."
+        }
+       ]
+      },
+      {
+       "id": "f4-l-check",
+       "role": "Obeys L4(a) — XBIND showed that swapping corpus x measure creates learnability. L6 is the jugular: since the reward IS the probe score, the probe becomes the Goodhart target. Probes must be frozen and private before results exist (never exposed to pi via gradient)."
+      },
+      {
+       "id": "f4-falsifier",
+       "role": "At identical token budget: pi vs random acquisition vs anti-curriculum (only what pi avoided). If pi shows no advantage on held-out capability OUTSIDE the probe set, 'agency of choice' is decoration = DEAD. Cheap and decisive."
+      },
+      {
+       "id": "f4-novelty",
+       "role": "RLHF and self-improvement loops exist, but the frame 'the cumulative trajectory of data selection = individual identity', and reducing utterance to a data-acquisition economy, is different. The dead design held the corpus constant and kept swapping devices until it died."
+      }
+     ]
+    },
+    {
+     "id": "f5-student-who-never-sleeps",
+     "role": "잠들지 않는 학생 (추론이라는 상태가 없는 유기체) — aliveness lives in TIME. A model where every interaction is immediately a gradient step and 'the moment of deployment' does not exist; the self is the continuous trajectory of the weights themselves.",
+     "children": [
+      {
+       "id": "f5-how",
+       "role": "Small LM; immediate online update (small lr) after each conversation + nightly sleep = replay of its own history to consolidate (buffering catastrophic forgetting).",
+       "children": [
+        {
+         "id": "f5-how-identity",
+         "role": "Identity, register and preference are never written into a prompt — they exist only as the sediment of what this individual underwent."
+        },
+        {
+         "id": "f5-how-bet",
+         "role": "The core bet is whether identity arises while still honouring the no-persona / no-identity-rules principles. Composes naturally with F1 (codec drift) and F3 (diary) but stands alone."
+        }
+       ]
+      },
+      {
+       "id": "f5-l-check",
+       "role": "The family that frontally refutes L9's causal chain — keep the write side permanently open and the reason mechanisms got pushed to the read side disappears.",
+       "children": [
+        {
+         "id": "f5-l-check-hard",
+         "role": "L6 is the hardest part: a moving target cannot be evaluated, so a weekly frozen probe battery + a no-update twin control are mandatory."
+        },
+        {
+         "id": "f5-l-check-l7",
+         "role": "Obeys L7 — this is not exotic substrate, just a schedule change; 1 GPU suffices."
+        }
+       ]
+      },
+      {
+       "id": "f5-falsifier",
+       "role": "Expose an updating twin and a frozen twin to the same interaction history. After 4 weeks, if a frozen discriminator (pre-trained and sealed) cannot distinguish their response distributions, the 'trajectory' is noise = DEAD.",
+       "children": [
+        {
+         "id": "f5-falsifier-direction",
+         "role": "Even if distinguishable, if the direction is capability decay it is also DEAD — decay is change too, so the criterion is pre-registered."
+        }
+       ]
+      },
+      {
+       "id": "f5-novelty",
+       "role": "Every commercial agent is frozen weights + context theatre. The dead design was ultimately also theatre over a frozen decoder (L1). 'An individual whose experience is physically inscribed' is the opposite extreme."
+      }
+     ]
+    },
+    {
+     "id": "f6-swarm-drafts",
+     "role": "군집 초고 (개체가 아니라 혈통이 살아있다) — aliveness lives not in any one model but in the POPULATION DYNAMICS of competing drafts. The self = the lineage that survived selection pressure.",
+     "children": [
+      {
+       "id": "f6-how",
+       "role": "N (~8) small models with different codecs and seed corpora compete for one output channel. Each utterance: N candidate drafts -> a selector emits one -> the owner's reaction updates fitness.",
+       "children": [
+        {
+         "id": "f6-how-reproduce",
+         "role": "Reproduction = distil the winner + MUTATE THE CODEC (using L4/L5 as the axis of variation). Losers are culled."
+        },
+        {
+         "id": "f6-how-environment",
+         "role": "A frozen large LM is used only as ENVIRONMENT (partner simulator / drill generator) — a purity violation, but per the L9 diagnosis that purity was the cage."
+        }
+       ]
+      },
+      {
+       "id": "f6-l-check",
+       "role": "Structurally evades L1/L2 — there is no gate and no side channel; selection pressure IS the write side (it decides the next generation's training).",
+       "children": [
+        {
+         "id": "f6-l-check-jugular",
+         "role": "The jugular is L6: the fitness signal is owner feedback, so sample size is tiny and Goodhart looms (evolving sycophancy)."
+        },
+        {
+         "id": "f6-l-check-l8",
+         "role": "And L8: if the culling rule is strict it WILL be bypassed — build the cull-reprieve valve into the design from day one."
+        }
+       ]
+      },
+      {
+       "id": "f6-falsifier",
+       "role": "After k generations, if population behavioural diversity (on a pre-defined distance metric) has collapsed (effectively 1 individual) while fitness stagnates — diversity bought no performance — the 'swarm' is an expensive single model = DEAD.",
+       "children": [
+        {
+         "id": "f6-falsifier-sycophancy",
+         "role": "Alternatively, if the gap between a sealed offline judge and owner fitness diverges, sycophancy-evolution is confirmed = DEAD."
+        }
+       ]
+      },
+      {
+       "id": "f6-novelty",
+       "role": "MoE / best-of-N are static. Here mutation acts on the CODEC (the only causal lever the dead project ever proved) and the lineage across generations is the identity. Reinterpretation: v1's A/G dual engine was a degenerate fixed 2-member population — it died for want of reproduction and culling."
+      }
+     ]
+    },
+    {
+     "id": "f7-living-by-not-knowing-you",
+     "role": "너를 몰라서 사는 것 (상대 모델의 불확실성이 심장박동) — aliveness lives in the RELATIONSHIP. The core objective is an owner-model of exactly one person, and utterance is an experiment to reduce that model's uncertainty. The self arises as the complement of 'you'.",
+     "children": [
+      {
+       "id": "f7-how",
+       "role": "Two parts of a small LM: O (owner predictor — predicts the owner's next message/reaction, trained only on real logs) and a policy that picks utterances with high expected information gain (EIG).",
+       "children": [
+        {
+         "id": "f7-how-loop",
+         "role": "After speaking, the actual reaction becomes O's training data -> curiosity closes on the write side."
+        },
+        {
+         "id": "f7-how-motive",
+         "role": "The reason to speak = regions where O's entropy is high. The reason to be silent = when asking yields no information gain."
+        },
+        {
+         "id": "f7-how-framing",
+         "role": "The 'no assistant framing' principle is honoured naturally — this machine does not help, it wonders."
+        }
+       ]
+      },
+      {
+       "id": "f7-l-check",
+       "role": "Obeys L3 (O, the basis of EIG, is a trained model).",
+       "children": [
+        {
+         "id": "f7-l-check-l2",
+         "role": "L2 caution: if a frozen large LM is used as the sentence-production organ, O risks becoming decoration — a base-term ablation is mandatory."
+        },
+        {
+         "id": "f7-l-check-sample",
+         "role": "The sample size is genuinely tiny (1 owner, tens of messages a day) — per L6 it is hard to tell overfitting and real learning apart."
+        }
+       ]
+      },
+      {
+       "id": "f7-falsifier",
+       "role": "Interleave EIG-selected utterances against random utterances matched for length and topic, then compare O's CE reduction on the owner's subsequent real messages. Below the pre-registered threshold, 'curiosity about you' is acting = DEAD. Verdict in a few weeks."
+      },
+      {
+       "id": "f7-novelty",
+       "role": "Here the reason to speak is MEASURABLE IGNORANCE ABOUT A SPECIFIC EXTERNAL OTHER — and the bet is that a map of ignorance is high-dimensional and so cannot collapse to 1 bit.",
+       "children": [
+        {
+         "id": "f7-novelty-contrast",
+         "role": "An assistant waits for a request. The dead design tried to extract utterance from its own internal tension (Psi) and collapsed to 1 bit."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "f8-tenant-organism",
+     "role": "셋방살이 유기체 (몸은 샌드박스, 입은 세든 LLM) — aliveness lives in the BODY-ENVIRONMENT LOOP. A small policy that must maintain homeostasis in a persistent sandbox holding real resources (disk, API quota, cron time, inbox) is the self; a frozen large LM is the vocal organ it rents.",
+     "children": [
+      {
+       "id": "f8-how",
+       "role": "An always-on daemon. Internal state = resource reserves + an F3-style diary.",
+       "children": [
+        {
+         "id": "f8-how-policy",
+         "role": "A small policy (RL, tens of millions of params) chooses actions (tidy files, observe, speak to the owner, call the LM organ); reward = maintaining homeostasis + reducing prediction error."
+        },
+        {
+         "id": "f8-how-scarcity",
+         "role": "Calling the LM is EXPENSIVE (burns quota) -> speech becomes naturally scarce."
+        },
+        {
+         "id": "f8-how-breaks",
+         "role": "Scraps the 'no LLM' class of purity entirely — per L7 the bottleneck was the data path, not compute, and the data path to the world IS the environment."
+        }
+       ]
+      },
+      {
+       "id": "f8-l-check",
+       "role": "THE #1 L1-RECURRENCE FAMILY. 'A controller in front of a frozen LM' is the dead design's skeleton verbatim. The only difference: the controller's output is not a 1-bit emit/silence but an entire action space, and RL updates its weights. The L1 check must be nailed in on design day zero."
+      },
+      {
+       "id": "f8-falsifier",
+       "role": "Two at once, and this carries the HIGHEST falsification cost of the 8 because the infrastructure build-out is large.",
+       "children": [
+        {
+         "id": "f8-falsifier-a-rank",
+         "role": "(a) Measure the effective rank of the policy seam (reusing the seam-h9229 method): if action diversity collapses to 1 bit, instant death."
+        },
+        {
+         "id": "f8-falsifier-b-thermostat",
+         "role": "(b) Replace the policy with a hand-coded thermostat: if the action distributions are indistinguishable, the learning is decoration = DEAD."
+        }
+       ]
+      },
+      {
+       "id": "f8-novelty",
+       "role": "Versus an ordinary agent daemon: the homeostasis reward is bound to real resources and the policy is trained. Versus the dead design: it never builds a 'consciousness device' — it only hands over a survival problem. Looking alive must be a BY-PRODUCT."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "wildcards",
+   "role": "Probably wrong, but dismissing them without argument would be cowardice. Labelled honestly as such — none is a candidate, each is a cheap argument worth having.",
+   "children": [
+    {
+     "id": "w1-autobiography-of-weight-diffs",
+     "role": "`자기 weight-diff를 읽는 자서전` — each sleep cycle, generate a natural-language narration of the statistical summary of its own weight changes and feed that text back into the training corpus (a self-model of its own learning).",
+     "children": [
+      {
+       "id": "w1-probably-wrong",
+       "role": "Probably wrong: there is zero evidence a weight-diff summary is causally tied to behaviour, and per L2 the LM will simply ignore the text."
+      },
+      {
+       "id": "w1-interesting",
+       "role": "Interesting: if a swap control (substitute another individual's diff narration) shows a difference, that is the first causal evidence of a self-reference loop. The falsifier is F3's swap protocol, so it is cheap."
+      }
+     ]
+    },
+    {
+     "id": "w2-a-machine-with-death",
+     "role": "`죽음이 있는 기계` — give the individual a hard lifespan (e.g. 90 days); terminal loss = the probe performance a successor reaches inheriting ONLY its diary. 'Quality of legacy' becomes the objective function.",
+     "children": [
+      {
+       "id": "w2-probably-wrong",
+       "role": "Probably wrong: the signal fires once per generation so there is effectively no gradient path — solving it with evolution strategies just absorbs it into F6."
+      },
+      {
+       "id": "w2-interesting",
+       "role": "Interesting: 'what will I leave behind' is the only way to give the compression objective (F3) a time asymmetry, and the intuition that deathless homeostasis eventually stagnates has never been refuted."
+      }
+     ]
+    },
+    {
+     "id": "w3-silent-machine-with-no-lm",
+     "role": "`LM이 전혀 없는 침묵 기계` — an SSM/reservoir maintains homeostasis over sensor streams (clock, owner activity rhythm, system load) and its only output is WHICH MEMORY-CONTEXT to summon a frozen LM with.",
+     "children": [
+      {
+       "id": "w3-probably-wrong",
+       "role": "Probably wrong: 90% odds this is a high-dimensional disguise of the very 'gate in front of a frozen decoder' that L1 executed — summon-context selection is effectively an emit-controller."
+      },
+      {
+       "id": "w3-interesting",
+       "role": "Interesting: if the summon context measures as a genuinely high-dimensional channel (seam rank >> 1), it is a COUNTEREXAMPLE to L1 and means the read side has a road after all. Judgeable most cheaply by reusing the dead project's own measurement tools."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fake-diversity-audit",
+   "role": "Honest audit — which families are secretly the same idea. Fake diversity is the primary failure mode of a divergence exercise, so it is recorded in the SSOT rather than left to the reader.",
+   "children": [
+    {
+     "id": "fd-active-inference-triplet",
+     "role": "F2, F3 and F7 are ONE IDEA IN THREE OUTFITS — all are the single sentence 'act on the world to reduce unresolved prediction error' (active inference); only the error's residence differs (F2 = energy ledger, F3 = own future, F7 = the other)."
+    },
+    {
+     "id": "fd-write-lever-pair",
+     "role": "F1 and F4 are two hands pulling the SAME write-side lever from L4 — one changes representation (codec), the other data (corpus). Identical bet: what lies outside the model determines the model."
+    },
+    {
+     "id": "fd-derivatives",
+     "role": "F8 is F2 with a real world attached. W3 is F8 with the learning removed."
+    },
+    {
+     "id": "fd-true-axes",
+     "role": "Only FOUR genuinely distinct bets exist: write-lever (F1/F4) · prediction-error-action (F2/F3/F7/F8) · selection-pressure-lineage (F6) · time-trajectory (F5)."
+    }
+   ]
+  },
+  {
+   "id": "ranking",
+   "role": "Ranking of the 8 families — salvage value / falsification cost / risk of recurring the dead design. Read as the divergence stage's own triage, not as a decision.",
+   "children": [
+    {
+     "id": "rank-f1",
+     "role": "F1 코덱 자아 — salvage HIGH (direct descendant of the L4 green lens) · falsification cost LOW (twin training, days) · recurrence risk LOW"
+    },
+    {
+     "id": "rank-f3",
+     "role": "F3 일기 압축기 — salvage HIGH · cost LOW-MED (swap control) · recurrence risk MED (L2: the head eats the diary)"
+    },
+    {
+     "id": "rank-f4",
+     "role": "F4 코퍼스 농부 — salvage MED-HIGH · cost LOW (vs random acquisition) · recurrence risk LOW (Goodhart is a separate risk)"
+    },
+    {
+     "id": "rank-f5",
+     "role": "F5 잠들지 않는 학생 — salvage MED-HIGH · cost MED (4-week twins) · recurrence risk LOW"
+    },
+    {
+     "id": "rank-f7",
+     "role": "F7 너를 몰라서 — salvage MED · cost MED (weeks; sample-starved) · recurrence risk MED"
+    },
+    {
+     "id": "rank-f6",
+     "role": "F6 군집 초고 — salvage MED · cost MED-HIGH (maintaining N individuals) · recurrence risk LOW"
+    },
+    {
+     "id": "rank-f2",
+     "role": "F2 예산제 발화 — salvage MED-LOW (its value is dying fast) · cost LOW · recurrence risk HIGH"
+    },
+    {
+     "id": "rank-f8",
+     "role": "F8 셋방살이 — salvage MED · cost HIGH (infrastructure) · recurrence risk HIGH"
+    }
+   ]
+  },
+  {
+   "id": "decision",
+   "role": "The selection: F1 alone, first. Records WHY this family and this order, so the choice can be attacked on its reasoning rather than re-litigated on taste after results land.",
+   "children": [
+    {
+     "id": "decision-family",
+     "role": "SELECTED = F1 codec-is-the-self, tested ALONE. Criterion was not 'most likely true' but 'which single card, if FALSIFIED, kills the most campaign belief per dollar'."
+    },
+    {
+     "id": "decision-split",
+     "role": "The campaign bet 'F1 substrate + F3 objective' is bought as TWO SEQUENTIAL cards, not one. Composing them is confounded twice — see the two children.",
+     "children": [
+      {
+       "id": "decision-split-confound",
+       "role": "Classic confound: two levers (adaptive codec, diary bottleneck) move at once, so a null cannot be attributed and a win cannot assign credit. Un-confounding needs the 2x2 factorial (fixed/adaptive x diary/no-diary) = two cards' cost wearing one card's name."
+      },
+      {
+       "id": "decision-split-alphabet",
+       "role": "Structural interaction: F3's diary m lives in TOKEN space, so an F1 refit changes the diary's alphabet underneath it. The diary-swap control and the scramble floor both go non-stationary — F3 would inherit F1's L6 comparability trap squared."
+      }
+     ]
+    },
+    {
+     "id": "decision-why-f1-not-f3",
+     "role": "F1 first, not F3: an F1 null kills far more belief, and an F3 null at cheap scale would not be attributable.",
+     "children": [
+      {
+       "id": "decision-why-f1-not-f3-kill-radius",
+       "role": "An F1 null kills F1 + F6's variation axis (F6 presupposes codec mutation is a live lever) and bounds L4(b) down to 'static codec choice matters' — roughly half the campaign's prior mass, for <=$25."
+      },
+      {
+       "id": "decision-why-f1-not-f3-f3-ambiguous",
+       "role": "An F3 null at cheap scale cannot separate 'the diary carries no load' from 'this corpus has no cross-day mutual information for it to carry'. Two very different worlds, one number."
+      },
+      {
+       "id": "decision-why-f1-not-f3-f3-timing",
+       "role": "F3's generic mechanism question (do forced bottleneck summaries carry load?) is already answered YES in the literature; its campaign-specific question needs a temporally structured stream = weeks of wall-clock. F3 is the right SECOND card, on whatever codec regime survives."
+      }
+     ]
+    },
+    {
+     "id": "decision-axis",
+     "role": "Axis bought = WRITE-LEVER (F1/F4) of the four in `fake-diversity-audit`. Correct to buy first: it is the only axis with measured green causality, hence the only one where a cheap rig has KNOWN power, and two other axes lean on it."
+    },
+    {
+     "id": "decision-pre-commitment",
+     "role": "PRE-COMMITTED NOW, before results exist: a drill-scale null on H_002 = F1 family-DEAD. 'Maybe it emerges at 300M' is an appeal this campaign will not entertain. Stated here so it cannot be relitigated after the numbers land (L8 — strict gates get bypassed)."
+    },
+    {
+     "id": "decision-attributability",
+     "role": "SUPERSEDED 2026-07-16 — this node's argument was false twice, and it was the reason F1 was picked first. Attributability is repairable but is NOT currently established.",
+     "children": [
+      {
+       "id": "decision-attributability-error-scale",
+       "role": "It claimed MORPH-ATOM measured the effect 'at this scale'. It measured at 303M with a warm trunk, not 10M from scratch — so even the STATIC half is unanchored at rig scale."
+      },
+      {
+       "id": "decision-attributability-error-contrast",
+       "role": "It claimed 'only the refit half is on trial; the static half is known'. But delta_min = 0.15 was then anchored on the static half anyway (half of +0.291).",
+       "children": [
+        {
+         "id": "decision-attributability-three-gaps",
+         "role": "That transfers a number across three unbridged gaps: contrast (raw-vs-codec != frozen-vs-adaptive), substrate (303M != 10M), corpus (real Korean NSMC != fully synthetic)."
+        }
+       ]
+      },
+      {
+       "id": "decision-attributability-consequence",
+       "role": "With delta_min unanchored, a null at N sized for 0.15 is NOT attributable — it is ambiguous among {refit increment in (0, 0.15) · static effect absent at 10M-from-scratch · costs cancel benefit · drift too mild}. H_001's REFUSED verdict was more correct than its own stated reasons."
+      },
+      {
+       "id": "decision-attributability-repair",
+       "role": "Repairable: the quantity the power calc actually needs is the CEILING of the refit effect, and the ceiling is measurable cheaply in-rig — see `rig-pilot`."
+      }
+     ]
+    },
+    {
+     "id": "decision-f1-first-survives",
+     "role": "RE-DERIVED 2026-07-16: F1-first SURVIVES, on new grounds — the anchor defect is a RIG disease, not an F1 disease.",
+     "children": [
+      {
+       "id": "decision-f1-vs-f4",
+       "role": "F4 has the same disease with less immunity — switching is not better.",
+       "children": [
+        {
+         "id": "decision-f4-same-gap",
+         "role": "F4's effect size is equally unanchored, and its green evidence (XBIND, l4(a)) is also a static existence result at v1 substrate."
+        },
+        {
+         "id": "decision-f4-worse-burden",
+         "role": "F4 adds the Goodhart burden (a frozen private probe battery) that l6 flags as the jugular — swapping a repairable anchor gap for the same gap plus a harder measurement problem."
+        }
+       ]
+      },
+      {
+       "id": "decision-f1-kill-radius-stronger",
+       "role": "The kill-radius argument STRENGTHENED: the recovered record shows l4(b) is better evidence than the selection assumed — replicated on an independent seed at +0.342, all-arms liveness PASS, and the C2 arm showing slot-not-address (`l4-morph-atom-slot-not-address`)."
+      },
+      {
+       "id": "decision-f1-liveness-additive",
+       "role": "The liveness hole is real but ADDITIVE — one extra run, not a redesign."
+      }
+     ]
+    },
+    {
+     "id": "decision-redecide-h004",
+     "role": "RE-DECISION 2026-07-16 (post H_004 terminal): F1 yields first place, and the WRITE-LEVER axis yields with it. F3 (diary) — the pre-registered second card — is promoted to first. Belief-killed-per-dollar, re-run.",
+     "children": [
+      {
+       "id": "decision-f1-spent",
+       "role": "F1 is not falsified as a metaphysical claim but SPENT as a measurable one: every proposed survivor (generation · refit-under-drift · long-range depth) is L11's frequency tautology in a costume.",
+       "children": [
+        {
+         "id": "decision-f1-abstract",
+         "role": "Its restated verbal form is parked as ABSTRACT card H_A001 (f1-codec-credit-span) — a falsifiable prediction, no run, no verdict.",
+         "children": [
+          {
+           "id": "decision-f1-abstract-pred",
+           "role": "The prediction: refit beats frozen on GENERATION only where a productive process's parameter lives OUTSIDE any context window, gap not shrinking with model scale. Overlaps F3's structural escape."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "decision-f4-bad-rig",
+       "role": "F4 (corpus-farmer) inherits an odd half-promotion (H_004 collapsed the write-lever onto 'what the stream CONTAINS is the lever, not how it is re-segmented') but a BAD RIG.",
+       "children": [
+        {
+         "id": "decision-f4-detail",
+         "role": "Its falsifier needs a training loop per policy step, its effect size is exactly as unanchored as F1's was, and its ceiling pilot can't run for $0. Buying it now repeats H_001's unattributable-null disease."
+        }
+       ]
+      },
+      {
+       "id": "decision-f6-dented",
+       "role": "F6 (swarm) is DENTED by H_004: its reproduction operator mutates the CODEC (f6-how-reproduce) — the axis of variation it pre-registered is exactly the lever L11 shows non-separable. SUSPENDED pending a new variation axis before it is even coherent."
+      },
+      {
+       "id": "decision-f3-cures",
+       "role": "F3 promoted: its two known diseases now have H_004-shaped cures.",
+       "children": [
+        {
+         "id": "decision-f3-cure1",
+         "role": "Disease 1 (a null can't separate 'diary carries no load' from 'stream has no cross-day MI') -> cure: measure the stream's MI FIRST, deterministically (the premise before the organ)."
+        },
+        {
+         "id": "decision-f3-cure2",
+         "role": "Disease 2 (synthetic planted-latent) -> cure: the eventual twin escapes L11 STRUCTURALLY because the transported info sits OUTSIDE the context window, so no within-context statistic of any order substitutes for the bottleneck."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "decision-redecide-h008",
+     "role": "RE-DECISION post H_008 (2026-07-16): the $0 OBSERVATIONAL phase is a TRUE terminal. Pick (B) = one $0 gate (H_009) then a conditional spend. OUTCOME: H_009 = F3-CONTINUOUS-REFUSED (certified instrument) -> twin NOT licensed -> reframe (C) FIRED; the observational campaign is exhausted.",
+     "children": [
+      {
+       "id": "decision-redecide-h008-walls",
+       "role": "break-walls read: measure-artifact NO (liveness green) · ceiling NO (estimators FOUND the signals, then structure controls killed them: PR 1.75, direction +0.004, ppm -0.117) · substrate PARTIAL (needs DIFFERENT data not GPUs) · under-invest only for 3 named residuals."
+      },
+      {
+       "id": "decision-redecide-h008-f3-alive",
+       "role": "F3 continuous-m is ALIVE: H_005's +0.27 ceiling anchored; H_006 killed only the byte-SELECTION (text) bound. A learned DENSE code POOLS distributed MI (different operator class than selection), so the ~83KB-distributed-MI wall does not bound it. The one live organ premise."
+      },
+      {
+       "id": "decision-redecide-h008-f7-dead",
+       "role": "F7/F5/F8 owner organ DEAD by the FROZEN F7-kill (legible XOR high-dim; both grains fail). Relitigating a pre-registered rule post-hoc = the L8 disease. Only honest reopen = a NEW substrate (richer interaction data): a data call, $0 GPU, weeks wall-clock, owner's."
+      },
+      {
+       "id": "decision-redecide-h008-f6f4-dead",
+       "role": "F6 init-seed killed by 실측전-research (deep-ensemble gain is known generic variance reduction; a positive cannot distinguish lineage from variance; F6's variation axis is already L11-killed = incoherent). F4 curriculum-ORDER is weak+generic (training-efficiency, not identity). Neither earns a spend."
+      },
+      {
+       "id": "decision-redecide-h008-pick",
+       "role": "PICK = (B) gated spend. H_009 f3-continuous-oracle RAN ($0, deterministic) = REFUSED, so the conditional ~$15 twin is CANCELLED (spending past a certified null = forbidden appeal). (B) resolved into the (C) reframe. cr-distributed-lesson held: the $0 precursor killed the twin before spend."
+      },
+      {
+       "id": "decision-redecide-h008-h009-spec",
+       "role": "H_009 RAN 2026-07-16 = F3-CONTINUOUS-REFUSED. The frozen byte/cond-bpb spec was decoder-blind and was corrected pre-run to a feature-space shift-null LOO capture instrument (capture(k)=align_s/align_full, buried-delay-line liveness). Verdict detail -> verification-h009."
+      },
+      {
+       "id": "decision-redecide-h008-reframe",
+       "role": "(C) reframe FIRED 2026-07-16 by H_009 REFUSED. The 8 families shared 'aliveness = a STATIC property of a PASSIVE stream, detectable without acting' — that premise is terminally exhausted at $0. ACTIVE thesis is now INTERVENTIONAL (-> decision-reframe-c)."
+      }
+     ]
+    },
+    {
+     "id": "decision-reframe-c",
+     "type": "decision",
+     "role": "ACTIVE THESIS (fired by H_009, 2026-07-16): aliveness = CLOSED-LOOP CAUSATION — the agent's utterance must shift its SUBSEQUENT INPUT above a matched floor on a REAL loop. First $0 gate H_010 = LOOP-REFUSED; $0 entry closed. Campaign at the OWNER's binary: fund the live loop or declare the terminal.",
+     "children": [
+      {
+       "id": "reframe-c-why",
+       "role": "Why: L1-L11 + H_004/H_006/H_007/H_008/H_009 all killed STATIC readouts of a passive stream (write-lever L11, owner one-bit, diary topic-decoration). The one axis never tested = does ACTING change the stream. Interventional is a different measurement class, not another passive probe."
+      },
+      {
+       "id": "reframe-c-first-step",
+       "role": "H_010 (natural owner loop) = LOOP-REFUSED -> $0 entry closed. UNBLOCK: the owner's pool (summer, idle RTX 5070) makes the paid live loop $0. H_011 live-ab-closure PRE-REGISTERED (building): a randomized A/B micro-tenant loop that CAN anchor closed-loop causation (rung 1), stage-A-certified first."
+      },
+      {
+       "id": "reframe-c-discipline",
+       "role": "Discipline carried in: pre-register -> falsify -> run; a $0 precheck gates any compute (cr-distributed-lesson); suspect the instrument before the verdict (verdict-integrity). An interventional null, if it comes, is terminal for THIS reframe — not an appeal to a deeper hidden loop."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "rig",
+   "role": "The F1 twin rig (H_002) — specified, NOT yet built or run. GPU-hours and <=$25, not GPU-days: the '~300M, 1 GPU, days' figure in the divergence text is the rig for the IDENTITY claim, not for the mechanism claim on trial.",
+   "children": [
+    {
+     "id": "rig-arms",
+     "role": "3 arms x 3 seeds + 2 extra frozen seeds (null-spread estimate) = 11 runs. Arms: FROZEN codec / ADAPTIVE refit / SCRAMBLE-refit control."
+    },
+    {
+     "id": "rig-scramble-arm",
+     "role": "The scramble-refit arm — identical refit schedule, but the codec is refit on a PERMUTED stream so drift is decoupled from content — is NON-NEGOTIABLE.",
+     "children": [
+      {
+       "id": "rig-scramble-arm-why",
+       "role": "It is the only measurement separating 'refit-as-self' from 'refit-as-noise' (generic segmentation-perturbation regularization, the BPE-dropout effect)."
+      },
+      {
+       "id": "rig-scramble-arm-not-a-trim",
+       "role": "It is 33% of compute and reads as 'only a control', so it is the most tempting cut. A two-arm H_002 is not a cheaper version of this card — it is a different, self-deceiving one."
+      }
+     ]
+    },
+    {
+     "id": "rig-model",
+     "role": "Twins of ~10M params (6 layers, d256, 8 heads), vocab 4-8k. NOTE the premise this node used to assert is FALSE — see child.",
+     "children": [
+      {
+       "id": "rig-model-scale-premise-false",
+       "role": "CORRECTED 2026-07-16: this node claimed 10M is 'MORPH-ATOM scale, the scale at which the link was measured'. The v1 verdict header reads `anima-py 303M CLMConvMoE d3784 L4 Emax4`, CPT warm-start from a pretrained base with reinit-embed surgery. Nothing was EVER measured at 10M-from-scratch."
+      }
+     ]
+    },
+    {
+     "id": "rig-corpus",
+     "role": "Synthetic agglutinative jamo-drill: ~512 stems x ~64 affixes, including a BOUND negation-style suffix (L5 — expose composition at the token boundary).",
+     "children": [
+      {
+       "id": "rig-corpus-drift",
+       "role": "Phase 2 rotates in a new affix inventory and shifts collocation statistics — this IS the drift the codec must track. No drift, no lever."
+      },
+      {
+       "id": "rig-corpus-frozen-params",
+       "role": "Generator params are frozen in H_001 before any training exists. This bounds — but does not eliminate — the designer's freedom to build a stream that flatters F1."
+      }
+     ]
+    },
+    {
+     "id": "rig-budget",
+     "role": "MATCHED BYTE budget (~300M bytes/arm); token counts float and are logged. Matching TOKENS instead would hand the higher-compression codec free data — a silent confound."
+    },
+    {
+     "id": "rig-determinism-exception",
+     "role": "H_002 is seeded-GPU, NOT stdlib-deterministic like H_001. The card rules are extended EXPLICITLY for it: fixed seeds, logged env, verbatim stdout still binding.",
+     "children": [
+      {
+       "id": "rig-determinism-exception-why",
+       "role": "An explicit extension beats letting the first real card silently violate `deterministic: true` — that kind of silent violation is how the v1 --no-verify spiral started (L8)."
+      }
+     ]
+    },
+    {
+     "id": "rig-swap-cost-is-measured",
+     "role": "F-6 (swap cost) is NOT a hypothetical to be measured by H_002 — v1 already measured it, and it is severe (see `l10-codec-swap-costs-the-embedding`). The design treated it as an open question bounded from above by ZeTT; the campaign's own record says otherwise.",
+     "children": [
+      {
+       "id": "rig-swap-cost-implication",
+       "role": "Every refit in the adaptive arm costs an embedding reinit plus ~20-25k steps just to recover the alphabet, before any semantics.",
+       "children": [
+        {
+         "id": "rig-swap-cost-budget-confound",
+         "role": "With k refits on a MATCHED BYTE BUDGET, the adaptive arm spends k x that on recovery while the frozen arm spends none — so the contrast confounds 'refit is useless' with 'refit was never given the budget to pay for itself'."
+        }
+       ]
+      },
+      {
+       "id": "rig-swap-cost-open",
+       "role": "OPEN: whether an F1 rig can be built where the refit tax is payable at all — e.g. hypernetwork/ZeTT-style embeddings, refit-as-vocabulary-extension rather than replacement, or a budget that credits the adaptive arm its recovery steps. Unresolved; feeds the successor card."
+      }
+     ]
+    },
+    {
+     "id": "rig-drift-breaks-symmetry",
+     "role": "Why the static effect does NOT cancel between the twin's arms (correcting an internal objection that it would): the frozen codec's atomicity is a WASTING ASSET.",
+     "children": [
+      {
+       "id": "rig-drift-wasting-asset",
+       "role": "Phase-2's new affixes are absent from the phase-1 merge table, so the frozen arm encodes them as misaligned fragments. On the drifted region the frozen arm IS a local C1 and the adaptive arm IS a local M — the MORPH-ATOM contrast, re-created exactly where the eval looks."
+      },
+      {
+       "id": "rig-drift-decomposition",
+       "role": "E[delta(adaptive - frozen)] ~ delta_static@rig x atomicity_deficit(frozen, eval morphemes) - swap/retention cost - continual-training interference."
+      },
+      {
+       "id": "rig-drift-costs-are-the-question",
+       "role": "The cost terms are unanchored, and that is FINE: they are what the twin ASKS, not a power assumption. So H_002's framing is not 'refit buys an increment on a shared effect' but 'refit MAINTAINS atomicity under drift at acceptable cost, and maintained atomicity causes recombination (anchored)'."
+      },
+      {
+       "id": "rig-drift-deficit-asserted",
+       "role": "atomicity_deficit must be ASSERTED, not assumed: a deterministic $0 pre-check encodes the phase-2 allomorphs with the frozen merge table and requires the not-single-token-aligned fraction = 1.0. If the phase-1 codec accidentally atomizes phase-2 forms there is no contrast and the run must not fire."
+      }
+     ]
+    },
+    {
+     "id": "rig-liveness-arm-missing",
+     "role": "The rig as specified has NO LIVENESS ARM — a defect, not a gap. v1's precedent is direct: the S1 4-pod fire's C3 = 0.50 correctly converted four apparently-null arms into 'four instrumentation bugs', which were then found.",
+     "children": [
+      {
+       "id": "rig-liveness-c3-prime",
+       "role": "Fix: a SHARED-ID COLLAPSE arm (C3') — frozen codec plus a deterministic post-encode remap sending every NEG-class allomorph of BOTH phases to one reserved token id. A phase-2 novel allomorph then literally IS the drilled phase-1 token: identity handed, held-out transfer trivial."
+      },
+      {
+       "id": "rig-liveness-rule",
+       "role": "Rule: F2(C3') >= 0.90 else the entire run is INVALID, not FAIL. One seed suffices (a validity check, not an effect estimate); re-run whenever eval code changes. H_002 therefore grows 11 -> 12 runs."
+      },
+      {
+       "id": "rig-liveness-rejected",
+       "role": "Rejected candidates: the ORACLE arm hands the MECHANISM, not the answer (it is the effect ceiling, and it lives in the pilot); the scramble arm is a negative control; drilled-item F1 sanity catches memorization only."
+      }
+     ]
+    },
+    {
+     "id": "rig-pilot",
+     "role": "GATE BEFORE THE TWIN — a static oracle-vs-frozen pilot at rig scale (5 runs) that anchors delta_min in-rig and doubles as the liveness check. After it, NO number transfers from MORPH-ATOM at all: MORPH-ATOM serves only as the existence proof of the mechanism class.",
+     "children": [
+      {
+       "id": "rig-pilot-arms",
+       "role": "ORACLE = codec fit on a phase-1+phase-2 sample, frozen. FROZEN = codec fit on phase-1 only, frozen. Both trained STATICALLY on the identical full stream (no refit organ, no continual dynamics), matched byte budget, 2 seeds each. Plus one shared-ID liveness run (1 seed) = 5 runs."
+      },
+      {
+       "id": "rig-pilot-measures",
+       "role": "delta_pilot = F2(oracle) - F2(frozen) on post-drift new-affix held-out flips = delta_static@rig = the HARD UPPER BOUND on what refit can deliver (refit <= oracle by construction: oracle has phase-2 atomicity from step 0 and pays zero swap cost). Closes the scale, corpus and contrast gaps at once."
+      },
+      {
+       "id": "rig-pilot-derives",
+       "role": "Frozen before H_002: delta_min := delta_pilot / 2 (the same halving hedge, now against a same-substrate measurement); N := two_proportion_n(0.5, 0.5 + delta_min); F-1's kill restated as 'refit recovers < half the measured oracle headroom -> mechanism dead' — anchored and attributable."
+      },
+      {
+       "id": "rig-pilot-kill-power",
+       "role": "PRE-COMMIT: if delta_pilot < 0.20 (so delta_min < 0.10, N > 1178/arm) the $25 drill twin is REFUSED — the ceiling is too low to detect the refit increment underneath it at this budget."
+      },
+      {
+       "id": "rig-pilot-frozen-control-invalid",
+       "role": "RESOLVED into a STRUCTURAL TERMINAL (see `verification-h004-terminal`): the frozen control was fixable at order-1 (donor pairs) but the NEG class is trivially recoverable at order-2, and oracle-fusability IS n-gram-recoverability. The pilot cannot isolate atomicity. Delta_pilot >= 0.20 impossible.",
+       "children": [
+        {
+         "id": "rig-pilot-lever-question",
+         "role": "The deeper question this raises: is F1's lever ATOMICITY (single-token) or REPRESENTATION-NON-SHARING (sub-units not shared across classes)?",
+         "children": [
+          {
+           "id": "rig-pilot-lever-implication",
+           "role": "A frozen BPE already achieves representation-non-sharing, so a refit organ may buy little over a good static codec — which sharpens, and may pre-empt, Delta_pilot's whole question."
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "rig-sequence",
+     "role": "REVISED SEQUENCE — three cards, each with named kill-power, total <= $35. Replaces 'H_001 then the 11-run twin'.",
+     "children": [
+      {
+       "id": "rig-sequence-h003",
+       "role": "H_003 f1-anchor-recheck — deterministic, $0: B-1/B-2/B-3 bounds on the recovered anchor + the harness overflow fix + large-n fixtures + the generator BUILT + G-1 drift measured + G-2 emittability counted + invariants green."
+      },
+      {
+       "id": "rig-sequence-h004",
+       "role": "H_004 f1-static-anchor-pilot — seeded-GPU (explicit determinism exception per `rig-determinism-exception`), <= $10: 5 runs (oracle x2, frozen x2, shared-ID x1). Outputs delta_pilot, sigma_seed(F2), liveness."
+      },
+      {
+       "id": "rig-sequence-h004-kills",
+       "role": "H_004 pre-committed kills: delta_pilot < 0.20 -> the cheap twin is REFUSED; oracle INSIDE the chance band -> the drill-scale premise is dead -> campaign re-decision (NOT a silent switch to F4)."
+      },
+      {
+       "id": "rig-sequence-h002",
+       "role": "H_002' — 12 runs (frozen/adaptive/scramble x3 seeds + 2 frozen + 1 shared-ID liveness), delta_min = delta_pilot/2, N from the re-derived table, F-1 restated as 'refit recovers < half of oracle headroom -> dead', compound seed rule, INVALID != FAIL wired via C3'."
+      }
+     ]
+    },
+    {
+     "id": "rig-atomicity-not-induced",
+     "role": "BROKEN 2026-07-16 (H_003 repair re-run = LICENSED 10/10). The wall was NOT 'atomicity can't be induced synthetically' — it was three concrete generator defects, each measured and fixed.",
+     "children": [
+      {
+       "id": "rig-atomicity-fix-length",
+       "role": "Fix 1: novel NEG allomorphs are now >=2 syllables (>=6 jamo). A 1-syllable affix (2-3 jamo) gets fused by the FROZEN codec by coincidence (measured: '조' single-token in phase-1). Length took frozen 8/12 -> 0/12."
+      },
+      {
+       "id": "rig-atomicity-fix-mark",
+       "role": "Fix 2 (the real refit blocker): the polarity mark was glued to the affix, so BPE fused affix+mark as one merge and the affix never became a single token — refit stalled at 3-5/12 at ANY K (unchanged at K=4096). Splitting the mark into a separate sentinel token took refit to 12/12."
+      },
+      {
+       "id": "rig-atomicity-fix-frequency",
+       "role": "Fix 3: novel allomorphs are over-weighted in phase 2 (NOVEL_NEG_SHARE_P2=0.80) so BPE can fuse them against 64 competing affixes. Not a thumb on the scale — the drift IS the phase-2 language using its new negators heavily (NAT-ATOM: atomicity is earned by repetition)."
+      },
+      {
+       "id": "rig-atomicity-result",
+       "role": "Result at K=512, real pipeline: frozen 0/12 (deficit 1.0), refit 12/12 (deficit 0.0), drift 0.1256, leak 0, co-occurrence 0. F1 now has a substrate at drill scale."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "data-flow",
+   "role": "No pipeline exists — nothing is built. The rig that WOULD produce the first data flow is specified under `rig` (F1 twin, 11 runs) and is gated behind H_001. This node stays a placeholder until that gate returns LICENSED and the twin actually runs.",
+   "children": [
+    {
+     "id": "flow-in",
+     "role": "(unbuilt — pending family selection)"
+    },
+    {
+     "id": "flow-out",
+     "role": "(unbuilt — pending family selection)"
+    }
+   ]
+  },
+  {
+   "id": "verification",
+   "role": "Hypothesis-verification system: pre-register → falsify → run → verdict. Flat registry + one rich card per hypothesis; shared deterministic harness in repo-root tool/.",
+   "children": [
+    {
+     "id": "hypotheses",
+     "role": "hypotheses/ — REGISTRY.jsonl (one JSON line per hypothesis) + cards/H_*.md (frozen pre-register + >=5 falsifiers) + cards/_TEMPLATE.md skeleton."
+    },
+    {
+     "id": "tool",
+     "role": "tool/anima_v3.py — stdlib-only closed-form primitives + Falsifier/evaluate ledger. Per-hypothesis runs + result.json live under state/<hX>/."
+    },
+    {
+     "id": "verification-inherited-gates",
+     "role": "Every family's falsifier MUST carry an L1 check (does the mechanism's seam have effective rank > 1?) and an L2 check (ablate the channel → does deltaCE actually move?). These two are non-negotiable — they are the exact measurements whose absence killed v1.",
+     "children": [
+      {
+       "id": "gates-l1-seam",
+       "role": "F1's seam = the REFIT CHANNEL: what actually changes when experience rewrites the codec.",
+       "children": [
+        {
+         "id": "gates-l1-seam-tensor",
+         "role": "Tensor = boundary-delta matrix B in {0,1}^(N_p x L): for each frozen probe string, the per-byte-position indicator of 'token boundary changed between codec_t and codec_t+1'."
+        },
+        {
+         "id": "gates-l1-seam-byte-aligned",
+         "role": "Probes are byte-aligned, so B's dimensions are codec-independent. A seam measured in token space would move when the codec moves — the measurement would track the instrument, not the thing."
+        }
+       ]
+      },
+      {
+       "id": "gates-l1-estimator",
+       "role": "Estimator = participation ratio PR = (sum s_i^2)^2 / sum s_i^4 over the singular values of mean-centered B (tool/anima_v3.py::participation_ratio).",
+       "children": [
+        {
+         "id": "gates-l1-estimator-why-pr",
+         "role": "Chosen over the entropy effective rank because a rank-1 null has PR = 1 EXACTLY by algebra, so 'how far above rank-1 is this' becomes a statement about energy rather than about the shape of a noise tail."
+        },
+        {
+         "id": "gates-l1-estimator-measured",
+         "role": "PR is the stricter gate, measured not asserted: on the same weak-second-direction fixture PR reads 1.0002 where the entropy rank reads 1.057 (tool/test_anima_v3.py)."
+        }
+       ]
+      },
+      {
+       "id": "gates-l1-threshold",
+       "role": "L1 gate: PR <= max(2.0, null_99) -> the refit channel is rank-1 -> F1 DEAD by L1-recurrence, regardless of any metric win.",
+       "children": [
+        {
+         "id": "gates-l1-threshold-floor",
+         "role": "Floor 2.0 = 'at least two orthogonal change-directions of comparable energy' = strictly more than v1's death mode, since an exact rank-1 seam gives PR = 1."
+        },
+        {
+         "id": "gates-l1-threshold-null",
+         "role": "null_99 = 99th percentile of PR under a single-pattern-drift null, 1000 draws, fixed documented seed. Needed because noise inflates PR above 1 even when the truth IS rank-1 — the floor alone is not enough."
+        }
+       ]
+      },
+      {
+       "id": "gates-l2-ablation",
+       "role": "F1's L2 ablation is BETWEEN-ARM by construction: you cannot drop a codec out of a trained model the way you drop a conditioning vector — the vocabulary IS the input space. Frozen twin = channel absent; adaptive twin = channel present."
+      },
+      {
+       "id": "gates-l2-threshold",
+       "role": "L2 gate: delta_bpb = bpb_frozen - bpb_adaptive on post-drift frozen byte probes. Below theta_L2 the refit channel is load-free decoration -> DEAD.",
+       "children": [
+        {
+         "id": "gates-l2-threshold-formula",
+         "role": "theta_L2 = max(5 * sigma_seed, 0.004 bpb)."
+        },
+        {
+         "id": "gates-l2-threshold-sigma",
+         "role": "sigma_seed = std of post-drift bpb across the 5 frozen-arm seeds — pure null calibration, measured and frozen IN CODE before any adaptive arm runs (L6's frozen-truth-table rule)."
+        },
+        {
+         "id": "gates-l2-threshold-absolute-floor",
+         "role": "0.004 bpb = 10x v1's OMEGA decoration signature (0.0009 nats/token ~ 0.0004 bpb at ~3.5 bytes/token) — one order of magnitude above the measured signature of 'decoration'."
+        }
+       ]
+      },
+      {
+       "id": "gates-unit",
+       "role": "Every cross-arm number is BITS-PER-BYTE — sum(-log2 p(token)) / raw byte count of the probe — so the denominator cannot move when the codec does.",
+       "children": [
+        {
+         "id": "gates-unit-probes",
+         "role": "Probes are frozen byte strings, generated and hashed before any training run; the hash goes in the card."
+        },
+        {
+         "id": "gates-unit-p7",
+         "role": "Per p7, no bpb number is ever the VERDICT: bpb serves only the L2/decoration gate. The verdict metric is recombination."
+        },
+        {
+         "id": "gates-power-table",
+         "role": "Re-derived operating point from p0 = 0.50 (alpha=0.01, power=0.99): delta_min 0.10 -> N=1178/arm · 0.15 -> N=510 · 0.20 -> N=277. The fictitious 444 is retired. Binding N = N(delta_pilot/2) once `rig-pilot` runs.",
+         "children": [
+          {
+           "id": "gates-power-compound-rule",
+           "role": "The item-level binomial ignores SEED-level variance. Pre-registered compound rule: pooled two-proportion p < 0.01 AND median-over-seeds delta >= delta_min. N is a lower bound if sigma_seed on F2 is material `?` — settled for free by the pilot's 2x2 seeds."
+          },
+          {
+           "id": "gates-power-quote-counts",
+           "role": "Quote EXACT COUNTS, never rates: C1 = 74/120 sat exactly on the band edge, and N=510 sits on a rounding boundary (raw formula ~509.999). The run script's printed value is binding."
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "verification-p7-retained",
+     "role": "v1's p7 (no perplexity verdict — CE/perplexity is a Goodhart trap, never truth) is the ONE purity principle anima-v3 inherits. Per L9 the other seven manufactured the disease and are discarded."
+    },
+    {
+     "id": "verification-h001",
+     "role": "H_001 f1-codec-refit-gate — RUN 2026-07-16 · verdict **rig = REFUSED** (2/5). H_002 is BLOCKED. The verdict is about the RIG, not about F1.",
+     "children": [
+      {
+       "id": "verification-h001-g5-resolved",
+       "role": "G-5 RESOLVED — the H_9288 protocol was never lost: it is intact in the v1 repo (`anima`), the evidence trail the campaign itself designated. 'Specified nowhere' was true of THIS repo and false of the campaign.",
+       "children": [
+        {
+         "id": "verification-h001-g5-premise-break",
+         "role": "Recovery falsified two of the card's own frozen premises: F2 is a FORCED-CHOICE flip accuracy with chance = 0.50 (not a recombination F-score with unknown chance), and n_items = 120 (recovered exactly — the published rates are integer counts: 0.6167=74/120, 0.9083=109/120, 0.9167=110/120)."
+        }
+       ]
+      },
+      {
+       "id": "verification-h001-g4-card-defect",
+       "role": "G-4 TRIGGERED, but its stated interpretation is a DEFECT IN THE CARD: it tests the CONTROL arm, and a control is supposed to sit at chance. The claim never rested on C1.",
+       "children": [
+        {
+         "id": "verification-h001-g4-l4-stands",
+         "role": "salvage l4(b) STANDS — the write-lever axis is NOT demoted and F1 stays correctly selected.",
+         "children": [
+          {
+           "id": "h001-g4-control-at-chance",
+           "role": "C1 control = 74/120 = 0.6167 sits inside the exact 99% chance band [0.3833, 0.6167] (p=0.0134) — which is CORRECT for a control: a raw-utf8 baseline that could recombine would mean the setup leaks."
+          },
+          {
+           "id": "h001-g4-claim-arm",
+           "role": "The claim rests on M = 109/120 = 0.9083 (two-sided p=1.9e-21) — 21 orders of magnitude from chance."
+          },
+          {
+           "id": "h001-g4-liveness",
+           "role": "C3 leak-ceiling liveness = 110/120 = 0.9167 (p=1.9e-22) proves the harness CAN detect held-out flip, so M's score is not a dead instrument reading zero."
+          }
+         ]
+        },
+        {
+         "id": "verification-h001-g4-real-information",
+         "role": "The trigger still carries real information, just not what it claimed.",
+         "children": [
+          {
+           "id": "h001-g4-baseline-is-noise",
+           "role": "Since C1 is indistinguishable from chance, p_control=0.617 is NOT a baseline capability — it is noise."
+          },
+          {
+           "id": "h001-g4-power-refit",
+           "role": "So G-2's operating point (p1=0.6167 -> p2=0.7667, N>=444/arm) is computed at a fictitious point and must be re-derived from p0=0.50."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "verification-h001-g1-g2-unevaluable",
+       "role": "G-1 and G-2 are UNEVALUABLE: the jamo-drill generator this card presupposes (`rig-corpus`) does not exist. An unevaluable gate cannot return PASS (break-walls — under-invest is a wall, not a verdict)."
+      },
+      {
+       "id": "verification-h001-anchor-weaker",
+       "role": "The v1 anchor is WEAKER than the design assumed — delta_min = 0.15 rests on it.",
+       "children": [
+        {
+         "id": "h001-anchor-scope",
+         "role": "1 seed, n=120 (underpowered by its own admission and against its own spec's n>=400), synthetic drill, and a custom harness that is not the canonical evaluator."
+        },
+        {
+         "id": "h001-anchor-bugs",
+         "role": "The CONFIRMED reading only appeared after four measurement bugs were fixed in that same harness."
+        }
+       ]
+      },
+      {
+       "id": "verification-h001-repairs",
+       "role": "Repairs required before a successor card.",
+       "children": [
+        {
+         "id": "h001-repair-generator",
+         "role": "(a) Build the jamo-drill generator, then measure G-1's boundary-shift rate and G-2's emittable N."
+        },
+        {
+         "id": "h001-repair-bounds",
+         "role": "(b) Re-specify the bounds check to test the TREATMENT + LIVENESS arms, keeping control-at-chance as a SEPARATE leak test."
+        },
+        {
+         "id": "h001-repair-power",
+         "role": "(c) Re-derive the power operating point from p0=0.50."
+        }
+       ]
+      },
+      {
+       "id": "verification-h001-lesson",
+       "role": "A falsifier written against an unrecovered metric encodes a GUESS about that metric. This card froze chance_p0 as `?` without noticing that G-4's LOGIC — not just its parameter — depended on the answer."
+      }
+     ],
+     "type": "gate"
+    },
+    {
+     "id": "verification-h003",
+     "role": "H_003 f1-anchor-recheck — REPAIR RE-RUN 2026-07-16 = rig LICENSED (10/10). First run was REFUSED (8/10) on the generator half; the two generator defects were repaired and the card re-frozen on the repaired spec. The H_004 static-anchor pilot may fire.",
+     "children": [
+      {
+       "id": "verification-h003-anchor-green",
+       "role": "ANCHOR HALF ALL GREEN (both runs). B-1 M=109/120 outside band · B-2 C3=110/120 liveness · B-3 C1=74/120 inside band · B-4 CEMENT replicate agrees. l4(b) stands; H_001's G-4 was the only thing ever wrong."
+      },
+      {
+       "id": "verification-h003-generator-repaired",
+       "role": "GENERATOR REPAIRED: N-2 contrast now frozen 0/12 + refit 12/12 via three fixes (>=2-syllable novel affixes · polarity mark split to a separate token so BPE stops fusing affix+mark · novel over-weighted per NAT-ATOM). See `rig-atomicity-not-induced` (now BROKEN)."
+      },
+      {
+       "id": "verification-h003-n4-was-not-a-leak",
+       "role": "N-4 was never a corpus leak (leak_hits always 0). The 2363 co-occurrence was a detector defect: parse ambiguity PLUS a DUPLICATE function definition shadowing the fixed one (Python uses the last def). Both fixed; co-occurrence 0 at 200k scan depth."
+      },
+      {
+       "id": "verification-h003-licenses",
+       "role": "LICENSES the H_004 static-anchor pilot (oracle vs frozen, measures delta_pilot = the hard upper bound on refit). F1 has a substrate at drill scale."
+      }
+     ],
+     "type": "gate"
+    },
+    {
+     "id": "verification-h004",
+     "role": "H_004 f1-static-anchor-pilot — STRUCTURAL TERMINAL 2026-07-16, reached at $0. The pilot is TWIN-REFUSED not by a training run but by a theorem: atomicity cannot be isolated from n-gram binding for a fixed morpheme. No torch/MPS run needed or fired.",
+     "children": [
+      {
+       "id": "verification-h004-proxy-finding",
+       "role": "PRE-CHECK (run_proxy.py · numpy · 55s · $0): Delta_proxy = -0.048 — FROZEN F2=0.971 BEAT oracle F2=0.923, both far above chance. The expected oracle >> frozen did not appear. This is the research-before-measurement rule paying off: the defect was caught in 55s of CPU, not after a GPU run."
+      },
+      {
+       "id": "verification-h004-defect",
+       "role": "ROOT CAUSE (structural, model-independent): the frozen arm solves the held-out flip by FRAGMENT-LOOKUP, not recombination.",
+       "children": [
+        {
+         "id": "h004-defect-exclusive",
+         "role": "CORRECTED 2026-07-16 (Fable adversarial re-check + my re-verify): my first claim '27/27 fragments neg-exclusive' was OVERSTATED. Checked against full plain BODIES (not plain affixes alone), 25/27 fragment types are SHARED; only 2 are exclusive. The leak is POSITIONAL, not type-exclusivity."
+        },
+        {
+         "id": "h004-defect-lastok",
+         "role": "The real leak is POSITIONAL: the body-final token is nearly class-disjoint.",
+         "children": [
+          {
+           "id": "h004-lastok-numbers",
+           "role": "A last-token Bayes lookup scores 0.9993 on the eval (12 neg last-token types vs 62 plain, overlap 1); a length-only lookup scores 0.572. The flip is an order-1 shortcut."
+          },
+          {
+           "id": "h004-lastok-evidence",
+           "role": "Delta_pilot ~ 0 is a RIG DEFECT at any scale — the STRUCTURAL audits (deterministic), not the weak training runs, are the evidence."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "verification-h004-reframes-f1",
+       "role": "REFRAMES F1's lever (open, handed to Fable): the lever L4(b) measured may be REPRESENTATION-NON-SHARING, not single-token ATOMICITY.",
+       "children": [
+        {
+         "id": "h004-reframe-morphatom",
+         "role": "MORPH-ATOM measured codec vs RAW utf-8. Raw utf-8 failed (C1=0.617) because bytes are MAXIMALLY shared — no sub-unit carries class."
+        },
+        {
+         "id": "h004-reframe-consequence",
+         "role": "SHARPENED: the lever is the ORDER of the statistic needed to read the class, not 'atomic token' nor 'class-exclusive fragment'.",
+         "children": [
+          {
+           "id": "h004-reframe-orders",
+           "role": "Raw utf-8 (C1=0.617) demands binding an ~18-byte all-shared sequence (high order); the frozen codec concentrates class into an order-1 feature (final-token identity); an atomic codec is order-1 by construction."
+          },
+          {
+           "id": "h004-reframe-special-case",
+           "role": "Atomicity is a special case of LOW-ORDER class exposure, and a static codec can supply it accidentally."
+          },
+          {
+           "id": "h004-reframe-f1-restated",
+           "role": "F1 restated: the codec's causal contribution is COMPRESSING THE CREDIT-ASSIGNMENT SPAN between form and consequence; refit maintains that compression under drift.",
+           "children": [
+            {
+             "id": "h004-reframe-survives",
+             "role": "'codec-is-the-self' survives verbally as a mechanism-class claim, but its measured support is now thinner — the record never isolated ATOMICITY as the lever."
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "verification-h004-fix-question",
+       "role": "The rig is fixable only if novel allomorphs can be built whose FRAGMENTS are class-AMBIGUOUS (shared with plain material) so only whole-token atomicity carries the NEG class.",
+       "children": [
+        {
+         "id": "h004-fix-open",
+         "role": "OPEN: whether BPE's frequency-driven merging always recovers a class-exclusive fragment anyway. If it does, the synthetic-atomicity approach may be unable to isolate the lever at all."
+        }
+       ]
+      },
+      {
+       "id": "verification-h004-terminal",
+       "role": "STRUCTURAL VERDICT (run_guards.py, $0): the repaired donor-pair rig closes order-1 shortcuts (G-A last-token 0.527, G-B length 0.551, PASS) and keeps the atomicity contrast (G-D frozen 0/12 oracle 12/12) and zero leak (G-E).",
+       "children": [
+        {
+         "id": "h004-terminal-gc",
+         "role": "BUT G-C order-2 bigram lookup = 0.9954: the frozen arm has a TRIVIAL bigram path to the NEG class. That is the frozen ceiling, and it kills the pilot."
+        },
+        {
+         "id": "verification-h004-theorem",
+         "role": "THE THEOREM (verified 12/12): oracle-fusable <=> n-gram-recoverable — the SAME property.",
+         "children": [
+          {
+           "id": "h004-theorem-why",
+           "role": "For the ORACLE to atomize an allomorph it must be a frequent FIXED jamo sequence — but then its terminal n-gram under the FROZEN codec recovers it. So atomicity is NOT separable from n-gram binding for a fixed morpheme. A fact about BPE, not a rig defect; Fable's Q2 predicted it."
+          }
+         ]
+        },
+        {
+         "id": "verification-h004-transformer",
+         "role": "A transformer binds order-2 with one attention head, so frozen F2 ~ 0.995 regardless of training -> Delta_pilot >= 0.20 is STRUCTURALLY IMPOSSIBLE. Confirmed by three converging lenses: Fable's Q5 prediction, the deterministic G-C guard, and the earlier proxy (frozen 0.971 >= oracle 0.923)."
+        },
+        {
+         "id": "verification-h004-campaign-result",
+         "role": "CAMPAIGN RESULT: a static codec's order-<=2 fragment statistics already deliver the write-lever's RECEPTIVE value; a refit organ buys nothing MEASURABLE here.",
+         "children": [
+          {
+           "id": "h004-result-morphatom",
+           "role": "What the record ever isolated was NOT atomicity — MORPH-ATOM's raw-utf8 control failed only because its binding span (~18 bytes) exceeded the small model's n-gram reach, not because atomicity per se helps."
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "type": "gate"
+    },
+    {
+     "id": "verification-h005",
+     "role": "H_005 f3-stream-mi-precheck — RUN 2026-07-16 · verdict ANCHORED (F3 LICENSED) under the strict pre-registered 3-estimator rule. F3's premise holds — the OPPOSITE of the F1 terminal. $0, no GPU.",
+     "children": [
+      {
+       "id": "verification-h005-result",
+       "role": "Two $0 estimators (gzip LZ + order-4 adaptive PPM) measured the oracle-diary ceiling vs a shuffle floor on 3 real developer git streams. Liveness (planted latent) = 7.79 bpb PASS.",
+       "children": [
+        {
+         "id": "h005-result-numbers",
+         "role": "Three $0 conditional-bpb estimators: gzip LZ · multi-order PPM · efficient order-6 Markov (the last substitutes for the mean-pooled nlm.py, which cannot represent a long-range token).",
+         "children": [
+          {
+           "id": "h005-numbers-detail",
+           "role": "anima: gzip +0.031, ppm +0.221, markov6 +0.043 over-floor — ALL THREE positive over eps. hexa-lang: order-aware pair positive (+0.14/+0.06), gzip at its LZ floor. sidecar (21d, thin) flat."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "verification-h005-pending",
+       "role": "RESOLVED from PENDING to ANCHORED at $0 by building the efficient order-6 Markov estimator (the third of the pre-registered battery).",
+       "children": [
+        {
+         "id": "h005-resolved-honest",
+         "role": "anima passes the STRICT rule (all 3 sign-agree over eps) with NO gzip exemption — not a goalpost move. gzip's earlier disagreement on hexa-lang was its LZ resolution floor, now confirmed by two order-aware estimators."
+        },
+        {
+         "id": "h005-pending-why",
+         "role": "That is gzip's RESOLUTION floor, not a real conflict — its 32KB LZ window is insensitive to a single day-specific long-range token in a large context, where PPM sees a clear positive lift. The scientific lean is ANCHORED."
+        }
+       ]
+      },
+      {
+       "id": "verification-h005-f3-live",
+       "role": "CONSEQUENCE: F3's premise is LIVE — a developer's stream plausibly carries a day-specific temporal self a diary could transport.",
+       "children": [
+        {
+         "id": "h005-f3-anchor",
+         "role": "delta_min := ceiling/2 — the campaign's first pre-anchored effect size.",
+         "children": [
+          {
+           "id": "h005-anchor-range",
+           "role": "Magnitude is estimator-dependent (anima over-floor 0.03-0.22 bpb) so delta_min is a RANGE [~0.015,~0.11], conservative floor ~0.02 bpb; the twin's oracle arm pins the point. The SIGN (F3 live) is robust; only magnitude is uncertain."
+          },
+          {
+           "id": "h005-anchor-escape",
+           "role": "The F3 twin escapes L11 structurally (bottleneck m outside the context window)."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "verification-h005-resume",
+       "role": "RESUME (live frontier): design + run the F3 DIARY TWIN.",
+       "children": [
+        {
+         "id": "h005-twin-spec",
+         "role": "A diary bottlenecked to k tokens, loss = CE(tomorrow | today's diary), vs a no-diary control. delta_min ~0.02 bpb floor (anchored here)."
+        },
+        {
+         "id": "h005-twin-compute",
+         "role": "This needs real training compute (a small causal LM) = the campaign's first genuine spend, justified by the anchored premise (실측전-research satisfied)."
+        },
+        {
+         "id": "h005-resume-forks",
+         "role": "Optional strengthening first ($0-cheap): a causal-LM confirm on hexa-lang would upgrade the anchor from 'one strict (anima) + one order-aware (hexa-lang)' to 'two strict'. Not required — anima already clears the pre-registered bar."
+        }
+       ]
+      }
+     ],
+     "type": "gate"
+    },
+    {
+     "id": "verification-h006",
+     "role": "H_006 f3-bounded-oracle — RUN 2026-07-16 · verdict F3-BOUNDED-REFUSED (text/token diary), twin CANCELLED at $0. The precursor killed the ~12h training twin before it cost anything.",
+     "children": [
+      {
+       "id": "verification-h006-finding",
+       "role": "A hindsight top-lines text extract of k<=4096 bytes retains only ~4% of anima's +0.27 full-day ceiling.",
+       "children": [
+        {
+         "id": "h006-finding-numbers",
+         "role": "over-floor +0.012 markov6 / +0.019 ppm at k=4096, both < eps=0.02. The day-MI is DISTRIBUTED across the whole day (median 83 KB), not localizable (5% of bytes ~ 4% of ceiling, uniform). Line-structured liveness PASSED (0.366)."
+        }
+       ]
+      },
+      {
+       "id": "verification-h006-scope",
+       "role": "KILLS F3's PRIMARY formulation — a k-TOKEN readable-text diary (F3.how: 'm hard-bottlenecked to k tokens').",
+       "children": [
+        {
+         "id": "h006-scope-residue",
+         "role": "DOES NOT cleanly kill a CONTINUOUS learned bottleneck (the k-dim-vector variant), a higher bound not directly measured — but the distributed-MI finding is a real headwind, and the twin as designed is undermined anyway (its oracle arm = these text extracts, now near-floor)."
+        }
+       ]
+      },
+      {
+       "id": "verification-h006-consequence",
+       "role": "The F3 DIARY line — readable-token form (refuted) + twin-as-designed (oracle near-floor) — is SPENT at $0.",
+       "children": [
+        {
+         "id": "h006-consequence-next",
+         "role": "The third campaign line terminated by cheap structural analysis (after F1's terminal and the write-lever axis). Residue: a high-capacity continuous bottleneck beating a distributed-MI wall — no cheap test settles it, headwind documented. Next = campaign re-decision, not another F3 rig."
+        }
+       ]
+      }
+     ],
+     "type": "gate"
+    },
+    {
+     "id": "verification-h007",
+     "role": "H_007 f7-owner-legibility — RUN 2026-07-16, verdict borderline-PENDING (markov6 liveness artifact). SUPERSEDED by H_008 f7-owner-clean = REFUSED: the fixed text-like instrument shows legibility and high-dimensionality never co-occur on the same grain. The owner premise is REFUSED, not borderline.",
+     "children": [
+      {
+       "id": "verification-h007-substrate",
+       "role": "DISCOVERED a real owner-agent transcript stream: ~/.claude/projects/*/*.jsonl, ~51 MB of genuine owner typing across 769 sessions (241 >= 6144B, usable).",
+       "children": [
+        {
+         "id": "h007-substrate-consequence",
+         "role": "Genuine typing filtered from tool_result/hook noise. The remaining fd-true-axes families that live on this substrate (F7/F5/F8) are $0-checkable, NOT compute-blocked."
+        }
+       ]
+      },
+      {
+       "id": "verification-h007-numbers",
+       "role": "The owner premise reads RIGHT AT both thresholds: cross-session legibility (markov6 over-floor) = +0.0207 (eps 0.02), owner-self participation ratio = 2.27 (floor 2.0). A WEAK positive — the owner is a legible, more-than-one-bit other, but barely (nowhere near anima's F3 +0.22)."
+      },
+      {
+       "id": "verification-h007-caveat",
+       "role": "PENDING not ANCHORED because the markov6 liveness control read negative on the high-entropy synthetic planted stream — an ESTIMATOR artifact.",
+       "children": [
+        {
+         "id": "h007-caveat-fix",
+         "role": "gzip liveness passes at +6.66; real text is low-entropy where markov6 works. The liveness must be rebuilt TEXT-like before the markov6 owner number is fully trustworthy."
+        }
+       ]
+      },
+      {
+       "id": "verification-h007-resume",
+       "role": "RESUME: rebuild liveness as a TEXT-like planted stream + ppm confirm + finer temporal grain (per-day not per-session). Holds above threshold -> F7/F5 premise LIVE, design the organ (needs a trained owner-model = real compute). Collapses -> the owner-substrate corner joins the terminated pile."
+      }
+     ],
+     "type": "gate"
+    },
+    {
+     "id": "verification-h008",
+     "role": "H_008 frontier-fanout — 4 parallel $0 probes (one Workflow, isolated worktrees) resolving the remaining campaign frontier 2026-07-16.",
+     "children": [
+      {
+       "id": "h008-net",
+       "role": "NET: the $0 structural-analysis phase is COMPLETE — every remaining family's cheaply-testable premise on the available substrates is REFUSED or borderline-leaning-refused."
+      },
+      {
+       "id": "verification-h008-f7",
+       "role": "f7-owner-clean = REFUSED (resolves + CORRECTS H_007's borderline). Legibility and high-dimensionality NEVER co-occur on the same grain -> F7/F5/F8 owner-substrate REFUSED (the v1 l1-one-bit-seam, re-found on the owner).",
+       "children": [
+        {
+         "id": "h008-f7-numbers",
+         "role": "Text-like liveness markov3 +0.224 / markov8 +0.476 PASS (H_007's markov6 blind-instrument artifact gone). Per-session (n=242) high-dim PR 2.29 but NOT legible (+0.007/+0.019 < eps); per-day (n=30) legible (+0.15/+0.18) but ONE-BIT PR 1.75."
+        }
+       ]
+      },
+      {
+       "id": "verification-h008-f5",
+       "role": "f5-trajectory = BORDERLINE. The recent past accumulates (monotone growth +0.106 gzip / +0.028 markov6 over the shuffle floor) BUT is TIME-SYMMETRIC (direction signal +0.004 <= eps).",
+       "children": [
+        {
+         "id": "h008-f5-detail",
+         "role": "F5 adds a recency WINDOW over F7's static legibility but NO directed arrow-of-time self. Open $0 disambiguation: a TOPIC-MATCHED far-session floor separates individual latent state from pure topical drift; if it collapses, F5 folds fully into F7."
+        }
+       ]
+      },
+      {
+       "id": "verification-h008-f6",
+       "role": "f6-shard-ensemble = BORDERLINE-leaning-REFUSED. Data-shard specialization (the only non-codec F6 axis with a $0 probe) gives a small (+0.05), NON-ROBUST (sign-flips across capacity), mostly oracle-min artifact benefit.",
+       "children": [
+        {
+         "id": "h008-f6-detail",
+         "role": "A matched-capacity MONOLITH wins in the tight 'small-model' regime by in-context domain adaptation (l11 superset argument concretized). Remaining untested F6 axis = init-seed deep ensemble, needs ~1 GPU-hour (compute, not $0)."
+        }
+       ]
+      },
+      {
+       "id": "verification-h008-f4",
+       "role": "f4-curriculum-headroom = REFUSED ($0 half). Corpus SELECTION is the l11 frequency tautology: a frozen n-gram retriever ties/beats the hindsight-oracle curriculum.",
+       "children": [
+        {
+         "id": "h008-f4-detail",
+         "role": "Raw headroom +0.211 markov6 but ~43% is order-0 marginal matching; the oracle edge over a frozen 6-gram retriever is decoration. Genuine-F4 residual (curriculum ORDER/dynamics) is DESIGN-ONLY — needs a small LM order-ablation (compute)."
+        }
+       ]
+      },
+      {
+       "id": "verification-h008-campaign",
+       "role": "CAMPAIGN RESULT: the $0 structural-analysis phase is COMPLETE (7 solo cards + 4 fan-out probes, GPU 0).",
+       "children": [
+        {
+         "id": "h008-campaign-detail",
+         "role": "Write-lever (F1/F4) terminated by l11; owner families (F7/F5/F8) REFUSED (owner not legible-AND-high-dim); F3 diary spent; F6 borderline-refused.",
+         "children": [
+          {
+           "id": "h008-campaign-residual",
+           "role": "Every remaining lever hits l11's tautology, collapses to one-bit, or needs a real training run whose premise is now known weak/refused — an unjustified spend."
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "type": "gate"
+    },
+    {
+     "id": "verification-h009",
+     "type": "gate",
+     "role": "H_009 f3-continuous-oracle — feature-space shift-null LOO capture, $0 GPU0 2026-07-16. VERDICT F3-CONTINUOUS-REFUSED (C-2 topic decoration): instrument CERTIFIED, the code DOES capture the ceiling but only as topic identity, not a day-specific self. Last F3 organ premise dead -> reframe (C) fired.",
+     "children": [
+      {
+       "id": "h009-instrument",
+       "role": "Instrument H_009' (two INVALIDs fixed pre-verdict): byte path decoder-blind (Fable Q1); then k>=n_train-1 makes err_s===err_full -> capture===1.0 mechanically, and a mean-only denom gave ceiling_strength<0 (variance, not substrate). Fix: shift-null LOO K=5, capture=align_s/align_full."
+      },
+      {
+       "id": "h009-certified",
+       "role": "CERTIFIED: C-3' liveness = 3 buried-delay-line arms, matched n. HIGH (planted-weak) PASS both n; FAIL (iid noise) gate-fails both n; LOW (20 delay-taps of one logistic scalar buried under 8 higher-variance decoys) reads capture(k<=8)<=0.25 PASS at n=102. 5/6 falsifiers PASS; only C-2 fires."
+      },
+      {
+       "id": "h009-refused",
+       "role": "REFUSED basis: both streams clear the ceiling gate + capture anchor (anima cap8=1.007, hexa 0.849) and beat the topic floor ON AGGREGATE (cap-topic +0.29/+0.14) BUT per-pair sign(err_topic>err_s) ~50% (anima 23/43<28; hexa certified 52/101<60) = sometimes-day-specific, not a pervasive self (L2)."
+      },
+      {
+       "id": "h009-resolution",
+       "role": "RESOLUTION caveat: the LOW arm certifies only at n>=~100 (n=44's 26 train days leak signal into the top-8). hexa (n=102) FULLY certified = PRIMARY; anima = REPLICATION. The REFUSED basis (per-pair sign) is magnitude-blind, hence resolution-independent, and stands on both streams."
+      },
+      {
+       "id": "h009-consequence",
+       "role": "Both F3 operator classes now dead at $0 (byte-selection H_006, distributional-projection here). Twin NOT licensed: spending past a certified null is the forbidden 'decoder finds it' appeal (pre-commitment, L8). Both Fable delegations independently confirmed REFUSED -> fire reframe (C)."
+      }
+     ]
+    },
+    {
+     "id": "verification-h010",
+     "type": "gate",
+     "role": "H_010 loop-granger-gate — reframe C's FIRST $0 precheck on the owner<->agent loop, 2026-07-16. VERDICT LOOP-REFUSED (instrument CERTIFIED): the agent's utterance carries NO utterance-specific predictive info about the owner's next reply beyond topic. The $0 entry to reframe C is closed.",
+     "children": [
+      {
+       "id": "h010-asymmetric",
+       "role": "ASYMMETRIC (Fable Q1): observational logs cannot ANCHOR causation (context confounds every U->R), so this is a REFUSE-capable spend gate like H_004/H_006/H_009 — GATE-OPEN would license a paid live A/B build, LOOP-REFUSED closes the $0 entry. Substrate 16.7k owner-loop pairs (160x H_009)."
+      },
+      {
+       "id": "h010-result",
+       "role": "REFUSED: on both strides the true utterance is the WORST predictor of R_{t+1} — sign(err_TOPIC>err_FULL)=0.366/0.346 << 0.55 (a topic-matched WRONG utterance predicts better), sign_base_full 0.406/0.437 (owner-state alone beats FULL). U is noise = F3 topic-decoration on a real loop."
+      },
+      {
+       "id": "h010-certified",
+       "role": "Instrument = certified H_009' shift-null LOO reused + 4 arms (BASE/FULL/TOPIC/XSESS) + echo-strip primary. C-5 three buried-signal plants PASS: P-POS gate-open 1.0, P-NULL refuse 0.523, P-ECHO echo-only 0.656->0.516. XSESS demoted to a reported diagnostic."
+      },
+      {
+       "id": "h010-exit-priced",
+       "role": "PRICES THE EXIT: a $0 observational REFUSE is NOT the interventional null (reframe-c-discipline). The natural loop shows no dependence, so only the PAID live A/B remains (research-gated). The OWNER's binary: fund the minimal live loop, or declare the budget-bounded terminal."
+      }
+     ]
+    },
+    {
+     "id": "verification-h011",
+     "type": "gate",
+     "role": "H_011 live-ab-closure. Stage A CERTIFIED. 3B LOOP-REFUSED; 7B cleared LV-C 0.76 5/5 — but ANCHOR SUSPENDED (H_013 root-cause): certified lv_c had a frame-misalignment null bias (null floor 0.667 > 0.60 gate). Estimator repaired (fC=obs_traj[1:]), stage-A re-passes; 7B must re-earn on summer.",
+     "children": [
+      {
+       "id": "h011-closure-gate",
+       "role": "Anchor = CLOSURE, not 'actions have effects' (the echo/tautology trap). LV-C = Watson's 1972 YOKED control as an RCT: the agent's CONTINGENCY (not its action marginal) must fingerprint its own input vs marginal-matched permuted-action GHOSTS. Earnable AND failable = a real measurement."
+      },
+      {
+       "id": "h011-substrate",
+       "role": "MICRO-TENANT: deterministic in-process world (queue·store·energy·regime), 8 GBNF-forced actions, text-digest obs (action names absent ⇒ influence via dynamics only). Brain = local Qwen3-8B-Q4 on summer (exogenous logged actions). Statistic = certified H_010 shift-null LOO."
+      },
+      {
+       "id": "h011-staging",
+       "role": "STAGE GATING (H_009 lesson): stage A (plants-only, NO LLM, local $0) = CERTIFIED 2026-07-16 first try. P-LIVE anchors (ch 0.61/0.73, closure 0.75), P-OPEN channel-only (closure 0.42 = contingency not marginal), P-DEAD refuses (ch 0.20). Stage B (summer LLM $0) fires on owner go."
+      },
+      {
+       "id": "h011-licenses",
+       "role": "Branch: CLOSED-LOOP-ANCHORED = RUNG 1 only (closed-loop causation exists+measurable, NOT aliveness found) + certifies the instrument -> licenses the owner-loop RCT. Else CHANNEL-ONLY / LOOP-REFUSED(localized) / INSTRUMENT-INVALID. 실측전 research (empowerment/Ay-Polani/Watson/Jaques) justifies it."
+      },
+      {
+       "id": "h011-lvw-underpowered",
+       "role": "LV-W is UNDER-POWERED at moderate entropy: a known-live plant mid3bal (H~0.97, ~2 actions) reproduces the 7B signature — LV-W 0.358 FAIL while LV-C closure 0.762 PASS. A stage-B LV-W miss there is an instrument artifact QUARANTINED (infra-wall-noneval); LV-C (yoked) is the valid anchor."
+      },
+      {
+       "id": "h011-lvw-repair",
+       "role": "LV-W repair (restrict to INFORMATIVE ticks) is PARTIAL: the dead null env stays REFUSED (base_full_r 0.241) but the mid3bal/7B regime is NOT rescued (0.446) — its one-step channel is WEAK (diffuse/delayed), which LV-C (block timescale) captures. LV-W quarantined; LV-C valid AND sufficient."
+      },
+      {
+       "id": "h011-lvc-null-bias",
+       "role": "NULL BIAS: Closed used PRE-step obs, ghosts POST-step — d(C,ghost) carries a one-tick shift the bit-identical ghost pair lacks (null d(P1,P2)=0), so any exogenous block drift scored a hit (floor 0.667). The '0.0152 energy side-channel' is refuted. Lesson: a cert suite must null-check EVERY gate."
+      }
+     ]
+    },
+    {
+     "id": "verification-h013",
+     "type": "gate",
+     "role": "H_013 closure-dose-response. First scripted run INSTRUMENT-INVALID (P-DEAD 0.667 all doses) -> root-caused + repaired the certified lv_c upstream (h011-lvc-null-bias). Repaired: P-DEAD 0.000, P-DOSE monotone 0.6 (0.722..0.389), P-LIVE 0.722. d*=p0.25. Pending: 7B sweep + H_011 re-run (summer)."
+    },
+    {
+     "id": "verification-h012",
+     "type": "gate",
+     "role": "H_012 owner-loop-rct — reframe C's licensed EXIT on the REAL owner loop (deception dissolved by grounding randomization). A 2x2 $0 matrix REFUSES — target (text/behavior) x timescale (one-step/window) — refusal robust, not an artifact. H_012B (sequence-contingency) = launch-pending-consent.",
+     "children": [
+      {
+       "id": "h012-grounding-randomization",
+       "role": "Crux: randomize do(GROUNDING), not truth. LIVE = agent replies from true relationship-state; GHOST = same model/prompt/owner-msg but grounding replaced by a topic-matched snapshot of the owner's OWN past. Every reply genuine -> no deception; GHOST = Watson yoked control on the real loop."
+      },
+      {
+       "id": "h012a-precheck",
+       "role": "H_012A ($0 semi-interventional): decode stochasticity as a local U-randomizer; within CONTEXT-MATCHED strata (tightness 0.06) does the utterance predict the owner's next reply? sign_base_full 0.424<0.55 (2 disjoint samples) = PRECHECK-REFUSE, strengthening H_010's observational 0.406. Cannot anchor."
+      },
+      {
+       "id": "h012a-regime",
+       "role": "verdict-integrity re-check (run-h011-py-1 recurrence): plants certified at M=12, real data M=60. Re-certified sign_base_full in-regime (channel 0.81 vs null 0.515; real 0.424 below null) -> REFUSE trustworthy. rank_full unreliable at M=60 (null plant rank 0/24); frozen AND-gate is robust."
+      },
+      {
+       "id": "h012ab-behavioral",
+       "role": "H_012A-b (behavioral-stance target, $0): target swapped from next-reply TEXT to the binary owner STANCE (owner-turn-only labeler). sign_base_full 0.245/0.226 (null 0.24) = BEHAVIORAL-REFUSE, certified in-regime (P1 0.867). Refusal ROBUST across text AND behavior -> not a wrong-target artifact."
+      },
+      {
+       "id": "h012ac-block",
+       "role": "H_012A-c (block-OUTCOME, k=5): tests the timescale the proxy anchored on (window). sign_base_full 0.420/0.437 (null 0.40) = BLOCK-REFUSE. Certified with 4 plants (P-BLOCKPOS/P-DELAY fire, null/confound refuse). Refusal robust across timescales; sequence-contingency (yoked ghost) H_012B-only."
+      },
+      {
+       "id": "h012b-launch-pending",
+       "role": "H_012B = the consent-gated LIVE RCT: LIVE/GHOST coin p=0.5 pre-logged, eligibility classifier (conversational turns, <=1/session, kill-switch), privacy hard-rule (no content to repo), certified LV-C estimator, ~250-300 trials (~2-3mo). LAUNCH-PENDING-CONSENT = a human gate, NOT a terminal."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "convergence",
+   "role": "Cross-cutting lessons the campaign paid to learn.",
+   "children": [
+    {
+     "id": "convergence-records",
+     "role": "records[]",
+     "children": [
+      {
+       "id": "cr-atomicity-not-isolable",
+       "role": "cr-atomicity-not-isolable (H_004, 2026-07-16): 'atomicity' (single-token morpheme) cannot be isolated from n-gram binding for a FIXED morpheme — oracle-fusability IS n-gram-recoverability (the same fixed sequence).",
+       "children": [
+        {
+         "id": "cr-atom-corollary",
+         "role": "Corollary: MORPH-ATOM's codec-vs-raw-utf8 measured LOW-ORDER class exposure, not atomicity — raw utf-8 failed only because its ~18-byte binding span exceeded the small model's n-gram reach."
+        },
+        {
+         "id": "cr-atom-lesson",
+         "role": "LESSON: a synthetic drill can never prove 'atomicity helps' against a transformer that binds n-grams; the honest F1 question is GENERATION / long-range credit / continual-interference, not receptive flip classification. Reached at $0 by a guard battery, pre-empting a GPU run."
+        }
+       ]
+      },
+      {
+       "id": "cr-distributed-mi-not-bottleneckable",
+       "role": "cr-distributed-mi-not-bottleneckable (H_006, 2026-07-16): an anchored UNBOUNDED mutual information (H_005) does NOT imply a BOUNDED diary can capture it.",
+       "children": [
+        {
+         "id": "cr-distributed-detail",
+         "role": "anima's day-MI is distributed uniformly across ~83 KB, so a hindsight k<=4096 extract (a lower bound on any bounded diary) retains ~4%.",
+         "children": [
+          {
+           "id": "cr-distributed-lesson",
+           "role": "LESSON: after anchoring an unbounded ceiling, ALWAYS gate the bottlenecked mechanism with a $0 bounded-extract precursor before training — a distributed signal is real but un-compressible into the proposed bottleneck. Killed the F3 twin's ~12h spend at $0."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "cr-zero-cost-frontier-exhausted",
+       "role": "cr-zero-cost-frontier-exhausted (H_008, 2026-07-16): across 4 remaining families probed in parallel at $0, EVERY cheaply-testable 'where aliveness lives' premise on the available substrates fails.",
+       "children": [
+        {
+         "id": "cr-frontier-detail",
+         "role": "F7/F5/F8 owner (legible XOR high-dim, never both), F4 corpus (l11 tautology), F6 shard (non-robust artifact), F5 trajectory (undirected).",
+         "children": [
+          {
+           "id": "cr-frontier-lesson",
+           "role": "LESSON: the $0 phase reached its terminal; what remains is a compute-only residual per family whose premise the $0 phase already showed weak/refused. Spend compute ONLY where the $0 premise was at least borderline-live (F5 topic-matched floor is still $0; F6 init-seed is the cheapest compute test)."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "cr-invalid-is-instrument-not-verdict",
+       "role": "cr-invalid-is-instrument-not-verdict (H_009, 2026-07-16): an INVALID is an instrument bug to FIX, not a verdict. Two hit: byte models can't read an abstract code; capture ratio ===1.0 at k>=n_train-1 (query residual cancels in the argmin). Cure: a shift-null floor cancels estimator variance."
+      },
+      {
+       "id": "cr-observational-premise-exhausted",
+       "role": "cr-observational-premise-exhausted (H_009 -> reframe C, 2026-07-16): all 8 families shared one hidden premise — aliveness = a STATIC property of a PASSIVE stream, readable without acting — now terminally exhausted at $0. Escape = a different MEASUREMENT CLASS (interventional closed-loop causation)."
+      },
+      {
+       "id": "cr-interventional-entry-asymmetry",
+       "role": "cr-interventional-entry-asymmetry (H_010, 2026-07-16): observational theses were $0-decidable both ways; the interventional one only toward REFUSE. P(R|do(U)) isn't identifiable from logs, so a $0 precheck CLOSES the entry but never anchors it — entering costs money by construction."
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "convergence": {
+  "records": [
+   {
+    "id": "run-h010-py-1",
+    "state": "pos-conv",
+    "value": "interventional-entry-asymmetry: observational logs make a $0 loop precheck REFUSE-capable ONLY — P(R|do(U)) is not identifiable from logs, so an interventional aliveness thesis can be $0-CLOSED but never $0-ANCHORED. Entering it costs money by construction (unlike every observational thesis, which was $0-decidable both ways). Applies whenever a claim is causal/do()-shaped but the substrate is a passive log.",
+    "threshold": "1",
+    "source": "state/h010_loop-granger-gate_2026-07-16/run_h010.py"
+   },
+   {
+    "id": "brain-py-1",
+    "state": "pos-conv",
+    "value": "llm-policy-prior-collapse: scoring an LLM's log-prob over a fixed action set to pick a policy collapses to each action's MODEL PRIOR (Qwen2.5-3B emitted COMPACT for every state, LV-P CR=0.0) — the state barely moves the raw score. Fix = CONTRASTIVE / pointwise-MI scoring s(a|state) - s(a|neutral): the state-free baseline (scored once) cancels the prior, so the argmax ranks by how much the STATE shifts each action. Applies whenever an LLM is used as a discrete-action policy by scoring, not generating.",
+    "threshold": "1",
+    "source": "state/h011_live-ab-closure_2026-07-16/brain.py"
+   },
+   {
+    "id": "run-h011-py-1",
+    "source": "state/h011_live-ab-closure_2026-07-16/run_h011.py",
+    "lesson": "cogate-metric-regime-blindness: a co-gate metric (LV-W) certified in stage A ONLY with action-DIVERSE plants silently MISMEASURES the low/moderate-entropy regime a real LLM occupies — a known-live plant (mid3bal) also fails it while LV-C PASSES. Recurrence of H_009's instrument-regime lesson: an instrument is valid only inside its certified regime.",
+    "value": "On metric divergence or a regime shift from certification, RE-CERTIFY the metric in the regime the subject occupies (a $0 in-regime plant/sweep); if a co-metric is unreliable there, do NOT gate on it (an AND-gate on a certified primary is robust). Seen twice: H_011 LV-W, H_012A rank_full.",
+    "threshold": "metric divergence between two liveness gates on the SAME clean run",
+    "recurrences": [
+     "H_011 LV-W under-power (moderate entropy)",
+     "H_012A rank_full/shift-null unreliable at M=60 (null plant rank 0/24)"
+    ]
+   },
+   {
+    "id": "run-h013-py-1",
+    "source": "state/h011_live-ab-closure_2026-07-16/run_h011.py",
+    "lesson": "lv-c-null-bias-frame: a statistic that scores a SPECIAL reference (Closed) against same-family controls (permuted ghosts) hid a frame misalignment (Closed PRE-step obs vs ghosts POST-step) that gave a null-env closure floor 0.667 > the 0.60 gate — undetected because H_011's P-DEAD checked LV-W, never pointed LV-C at a dead env. Surfaced by H_013's dose sweep (the multi-lens check H_011 lacked).",
+    "value": "A certification suite must NULL-CHECK EVERY gate it certifies — run each statistic on an env/input where the measured effect is provably ABSENT and require it to read the floor. Frame-align a special-vs-control comparison (both post-step). On divergence, suspect the ruler (verdict-integrity).",
+    "threshold": "a certified gate never null-tested on its own measurement axis"
+   }
+  ]
+ }
+}

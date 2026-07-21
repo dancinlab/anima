@@ -1,0 +1,341 @@
+{
+ "config": {
+  "L": 4096,
+  "PT": 6144,
+  "K": 12,
+  "POOL_CAP": 90,
+  "NGRAM": 6,
+  "EPS": 0.02,
+  "pool_n": 90,
+  "pool_mix": {
+   "hexa-lang": 35,
+   "anima": 34,
+   "sidecar": 21
+  }
+ },
+ "liveness": {
+  "markov6": {
+   "random": 6.398379157536149,
+   "oracle": 6.035048943152873,
+   "overlap": 5.264999775681596,
+   "anti": 6.763312911973144,
+   "headroom": 0.36333021438327595,
+   "ceil_capture": 3.119419572023136,
+   "oracle_over_overlap": -0.770049167471277
+  },
+  "gold_in_oracle": 2,
+  "gold_in_overlap": 6
+ },
+ "marginal_floor": {
+  "random": 5.268687710772375,
+  "oracle": 5.178576088451515,
+  "overlap": 5.326736121182093,
+  "anti": 5.3979403299005115,
+  "headroom": 0.09011162232086001,
+  "ceil_capture": -0.6441833907176302,
+  "oracle_over_overlap": 0.1481600327305781
+ },
+ "diag_randtarget": {
+  "random": 8.21527147810578,
+  "oracle": 7.771707608284501,
+  "overlap": 8.068266761021809,
+  "anti": 8.068266761021809,
+  "headroom": 0.44356386982127916,
+  "ceil_capture": 0.33141724808019835,
+  "oracle_over_overlap": 0.2965591527373075
+ },
+ "T1": {
+  "tag": "T1-hexa",
+  "arms": {
+   "oracle": {
+    "sel": [
+     32,
+     11,
+     16,
+     39,
+     84,
+     15,
+     31,
+     49,
+     89,
+     1,
+     46,
+     58
+    ],
+    "bpb": {
+     "markov6": 5.559339614206447,
+     "ppm": 6.377724490530716,
+     "gzip": 3.453125
+    },
+    "mix": {
+     "sidecar": 2,
+     "anima": 7,
+     "hexa-lang": 3
+    }
+   },
+   "overlap": {
+    "sel": [
+     67,
+     78,
+     23,
+     5,
+     44,
+     47,
+     59,
+     17,
+     53,
+     56,
+     50,
+     62
+    ],
+    "bpb": {
+     "markov6": 5.676686569546008,
+     "ppm": 6.260743087673997,
+     "gzip": 3.32421875
+    },
+    "mix": {
+     "hexa-lang": 1,
+     "anima": 1,
+     "sidecar": 10
+    }
+   },
+   "random": {
+    "sel": [
+     89,
+     87,
+     85,
+     83,
+     81,
+     79,
+     77,
+     75,
+     73,
+     71,
+     69,
+     67
+    ],
+    "bpb": {
+     "markov6": 5.770330970840196,
+     "ppm": 6.449345350938881,
+     "gzip": 3.3307291666666665
+    },
+    "mix": {
+     "hexa-lang": 12
+    }
+   },
+   "anti": {
+    "sel": [
+     15,
+     12,
+     18,
+     24,
+     9,
+     68,
+     2,
+     3,
+     31,
+     74,
+     71,
+     76
+    ],
+    "bpb": {
+     "markov6": 5.742308961931976,
+     "ppm": 6.517494374484809,
+     "gzip": 3.5377604166666665
+    },
+    "mix": {
+     "hexa-lang": 7,
+     "anima": 4,
+     "sidecar": 1
+    }
+   }
+  },
+  "markov6": {
+   "random": 5.770330970840196,
+   "oracle": 5.559339614206447,
+   "overlap": 5.676686569546008,
+   "anti": 5.742308961931976,
+   "headroom": 0.21099135663374913,
+   "ceil_capture": 0.44383050940205904,
+   "oracle_over_overlap": 0.11734695533956074
+  },
+  "ppm": {
+   "random": 6.449345350938881,
+   "oracle": 6.377724490530716,
+   "overlap": 6.260743087673997,
+   "anti": 6.517494374484809,
+   "headroom": 0.07162086040816451,
+   "ceil_capture": 2.633342607028833,
+   "oracle_over_overlap": -0.11698140285671954
+  },
+  "gzip": {
+   "random": 3.3307291666666665,
+   "oracle": 3.453125,
+   "overlap": 3.32421875,
+   "anti": 3.5377604166666665,
+   "headroom": -0.12239583333333348,
+   "ceil_capture": -0.05319148936170085,
+   "oracle_over_overlap": -0.12890625
+  }
+ },
+ "T2": {
+  "tag": "T2-anima",
+  "arms": {
+   "oracle": {
+    "sel": [
+     68,
+     84,
+     16,
+     61,
+     10,
+     86,
+     66,
+     72,
+     20,
+     38,
+     76,
+     49
+    ],
+    "bpb": {
+     "markov6": 5.803884350185418,
+     "ppm": 6.147476735137495,
+     "gzip": 3.359375
+    },
+    "mix": {
+     "anima": 10,
+     "sidecar": 2
+    }
+   },
+   "overlap": {
+    "sel": [
+     88,
+     82,
+     84,
+     70,
+     52,
+     86,
+     35,
+     78,
+     50,
+     53,
+     80,
+     49
+    ],
+    "bpb": {
+     "markov6": 5.930597628754824,
+     "ppm": 6.129241236723765,
+     "gzip": 3.296875
+    },
+    "mix": {
+     "anima": 9,
+     "sidecar": 3
+    }
+   },
+   "random": {
+    "sel": [
+     89,
+     87,
+     85,
+     83,
+     81,
+     79,
+     77,
+     75,
+     73,
+     71,
+     69,
+     67
+    ],
+    "bpb": {
+     "markov6": 6.241077158413938,
+     "ppm": 6.5180591870531375,
+     "gzip": 3.640625
+    },
+    "mix": {
+     "hexa-lang": 12
+    }
+   },
+   "anti": {
+    "sel": [
+     15,
+     69,
+     12,
+     71,
+     24,
+     9,
+     18,
+     21,
+     79,
+     39,
+     27,
+     3
+    ],
+    "bpb": {
+     "markov6": 6.1322117161275065,
+     "ppm": 6.563038561740812,
+     "gzip": 3.71875
+    },
+    "mix": {
+     "hexa-lang": 12
+    }
+   }
+  },
+  "markov6": {
+   "random": 6.241077158413938,
+   "oracle": 5.803884350185418,
+   "overlap": 5.930597628754824,
+   "anti": 6.1322117161275065,
+   "headroom": 0.43719280822852014,
+   "ceil_capture": 0.7101661413808678,
+   "oracle_over_overlap": 0.12671327856940628
+  },
+  "ppm": {
+   "random": 6.5180591870531375,
+   "oracle": 6.147476735137495,
+   "overlap": 6.129241236723765,
+   "anti": 6.563038561740812,
+   "headroom": 0.37058245191564243,
+   "ceil_capture": 1.0492076684135079,
+   "oracle_over_overlap": -0.018235498413729623
+  },
+  "gzip": {
+   "random": 3.640625,
+   "oracle": 3.359375,
+   "overlap": 3.296875,
+   "anti": 3.71875,
+   "headroom": 0.28125,
+   "ceil_capture": 1.2222222222222223,
+   "oracle_over_overlap": -0.0625
+  }
+ },
+ "transfer": {
+  "markov6": {
+   "t2_random": 6.241077158413938,
+   "t2_oracle_for_t2": 5.803884350185418,
+   "t2_from_oracle_t1": 5.958014610513936,
+   "transfer_ratio": 0.6474547215151022
+  },
+  "ppm": {
+   "t2_random": 6.5180591870531375,
+   "t2_oracle_for_t2": 6.147476735137495,
+   "t2_from_oracle_t1": 6.221178874957263,
+   "transfer_ratio": 0.8011181062708675
+  },
+  "gzip": {
+   "t2_random": 3.640625,
+   "t2_oracle_for_t2": 3.359375,
+   "t2_from_oracle_t1": 3.41796875,
+   "transfer_ratio": 0.7916666666666666
+  }
+ },
+ "genuine_over_marginal": 0.12087973431288912,
+ "orc_over_ovl_ppm": -0.11698140285671954,
+ "liveness_ok": true,
+ "headroom_live": true,
+ "ppm_agree": true,
+ "marginal_dominated": false,
+ "retriever_saturates": true,
+ "tautology": true,
+ "goodhart": false,
+ "verdict": "F4-TAUTOLOGY (l11, corpus domain) — the raw selection headroom is REAL (+0.2110 bpb) but decoration once the trivial baselines are removed: the greedy oracle's edge over the frozen 6-gram retriever is an estimator-Goodhart artifact — markov6 (the selection estimator) says oracle_over_overlap +0.1173 but the INDEPENDENT ppm says -0.1170 (retriever ties/beats the oracle). The 'learned acquisition policy / agency of choice' adds nothing a $0 frozen statistic does not — F4 is the corpus half of the frequency tautology, exactly as fake-diversity-audit warned."
+}

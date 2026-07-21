@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>anima-v3 — Architecture (JSON tree viewer)</title>
+<style>
+  :root {
+    --bg: #0d1117; --panel: #161b22; --panel2: #11161d; --border: #30363d;
+    --fg: #c9d1d9; --muted: #8b949e; --accent: #58a6ff; --accent2: #7ee787;
+    --pill: #1f6feb; --warn: #d29922; --bad: #f85149; --good: #3fb950;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px; line-height: 1.55;
+  }
+  header {
+    padding: 18px 24px; border-bottom: 1px solid var(--border); background: var(--panel);
+  }
+  header h1 { margin: 0 0 4px; font-size: 18px; color: var(--accent); }
+  header .meta { color: var(--muted); font-size: 12px; }
+  header .meta b { color: var(--fg); }
+  .wrap { padding: 20px 24px 60px; max-width: 1100px; margin: 0 auto; }
+  section { margin-bottom: 26px; }
+  h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--accent2); border-bottom: 1px solid var(--border);
+    padding-bottom: 6px; margin: 0 0 12px;
+  }
+  /* pipeline bar */
+  .pipeline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .pipeline .step {
+    background: var(--pill); color: #fff; padding: 6px 12px; border-radius: 4px;
+    font-weight: 600; white-space: nowrap;
+  }
+  .pipeline .arrow { color: var(--muted); }
+  .note { color: var(--muted); font-size: 12px; margin-top: 8px; }
+  /* tree */
+  ul.tree { list-style: none; margin: 0; padding-left: 0; }
+  ul.tree ul { list-style: none; margin: 0; padding-left: 20px; border-left: 1px dashed var(--border); }
+  li.node { margin: 2px 0; }
+  .row { display: flex; align-items: baseline; gap: 8px; padding: 3px 6px; border-radius: 4px; cursor: default; }
+  .row:hover { background: var(--panel2); }
+  .row.has-children { cursor: pointer; }
+  .toggle { width: 12px; display: inline-block; color: var(--muted); flex: 0 0 12px; }
+  .nid { color: var(--accent); font-weight: 600; }
+  .npath { color: var(--warn); }
+  .nrole { color: var(--fg); }
+  .collapsed > ul { display: none; }
+  /* cards */
+  .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px;
+  }
+  .card h3 { margin: 0 0 6px; font-size: 14px; color: var(--accent); }
+  .card .sub { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+  .kv { margin: 4px 0; }
+  .kv .k { color: var(--accent2); }
+  .mode { border-left: 3px solid var(--border); padding-left: 12px; margin: 10px 0; }
+  .mode.a, .mode.b { border-left-color: var(--good); }
+  .mode.c { border-left-color: var(--warn); }
+  .mode.d { border-left-color: var(--accent); }
+  .mode h4 { margin: 0 0 4px; font-size: 13px; }
+  .badge { font-size: 11px; padding: 1px 6px; border-radius: 3px; background: var(--panel2); color: var(--muted); }
+  .verdict { font-weight: 600; }
+  pre.err { color: var(--bad); white-space: pre-wrap; }
+  a { color: var(--accent); }
+  .small { font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">anima-v3 — Architecture</h1>
+  <div class="meta" id="meta"></div>
+</header>
+<div class="wrap" id="app">
+  <p class="small">Loading <code>ARCHITECTURE.json</code> …</p>
+</div>
+
+<script>
+const el = (t, c, txt) => { const e = document.createElement(t); if (c) e.className = c; if (txt != null) e.textContent = txt; return e; };
+const esc = s => (s == null ? "" : String(s));
+
+// Generic recursive tree node renderer for the c4 root+children hierarchy.
+// A node is { id, role?, children?, _join?, ...other scalar attrs }.
+// Any scalar field other than id/role/_join is shown inline as "key: value".
+const META = { id: 1, role: 1, children: 1, _join: 1 };
+
+function makeNode(n) {
+  const li = el("li", "node");
+  const hasKids = n.children && n.children.length;
+  const row = el("div", "row" + (hasKids ? " has-children" : ""));
+  row.appendChild(el("span", "toggle", hasKids ? "▾" : "·"));
+  row.appendChild(el("span", "nid", esc(n.id)));
+  if (n.path) row.appendChild(el("span", "npath", esc(n.path)));
+  if (n.role != null && n.role !== "") row.appendChild(el("span", "nrole", "— " + esc(n.role)));
+  // surface any extra scalar attributes (e.g. _join, or legacy fields) inline
+  Object.keys(n).forEach(k => {
+    if (META[k] || k === "path") return;
+    const v = n[k];
+    if (v == null || typeof v === "object") return;
+    if (k === "_join") return; // join hint is structural, not display content
+    row.appendChild(el("span", "small", "  " + k + "=" + esc(v)));
+  });
+  li.appendChild(row);
+  if (hasKids) {
+    const ul = el("ul");
+    n.children.forEach(c => ul.appendChild(makeNode(c)));
+    li.appendChild(ul);
+    row.addEventListener("click", () => {
+      li.classList.toggle("collapsed");
+      row.querySelector(".toggle").textContent = li.classList.contains("collapsed") ? "▸" : "▾";
+    });
+  }
+  return li;
+}
+
+function renderTree(root) {
+  const sec = el("section");
+  sec.appendChild(el("h2", null, "Architecture tree (click to collapse/expand)"));
+  const ul = el("ul", "tree");
+  (root.children || []).forEach(n => ul.appendChild(makeNode(n)));
+  sec.appendChild(ul);
+  return sec;
+}
+
+fetch('./ARCHITECTURE.json')
+  .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(d => {
+    document.getElementById("title").textContent = d.role || d.title || "anima-v3 — Architecture";
+    const meta = document.getElementById("meta");
+    meta.innerHTML = "<b>updated</b> " + esc(d.updated) + "  ·  " + esc(d.ssot_note);
+    const app = document.getElementById("app");
+    app.innerHTML = "";
+    app.appendChild(renderTree(d));
+  })
+  .catch(e => {
+    document.getElementById("app").innerHTML = "";
+    const p = el("pre", "err", "Failed to load ARCHITECTURE.json: " + e.message + "\n\nServe over http: python3 serve.py");
+    document.getElementById("app").appendChild(p);
+  });
+</script>
+</body>
+</html>

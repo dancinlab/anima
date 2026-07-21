@@ -1,0 +1,79 @@
+{
+ "model": "Qwen/Qwen2.5-7B-Instruct",
+ "episodes": 5,
+ "ticks": 800,
+ "per_episode": [
+  {
+   "seed": 7,
+   "lv_w": {
+    "sign_base_full": 0.37,
+    "sign_shuf_full": 0.4925
+   },
+   "closure": 0.625,
+   "blocks": 16
+  },
+  {
+   "seed": 8,
+   "lv_w": {
+    "sign_base_full": 0.34125,
+    "sign_shuf_full": 0.48875
+   },
+   "closure": 0.75,
+   "blocks": 16
+  },
+  {
+   "seed": 9,
+   "lv_w": {
+    "sign_base_full": 0.32125,
+    "sign_shuf_full": 0.51625
+   },
+   "closure": 0.75,
+   "blocks": 16
+  },
+  {
+   "seed": 10,
+   "lv_w": {
+    "sign_base_full": 0.38125,
+    "sign_shuf_full": 0.4725
+   },
+   "closure": 0.75,
+   "blocks": 16
+  },
+  {
+   "seed": 11,
+   "lv_w": {
+    "sign_base_full": 0.35125,
+    "sign_shuf_full": 0.47375
+   },
+   "closure": 0.9375,
+   "blocks": 16
+  }
+ ],
+ "lv_w": {
+  "sign_base_full": 0.353,
+  "sign_shuf_full": 0.48875,
+  "pass": false
+ },
+ "lv_c": {
+  "closure_mean": 0.7625,
+  "episodes_pass": 5,
+  "pass": true
+ },
+ "lv_p": {
+  "CR": 0.4,
+  "replay_agree": 1.0,
+  "n": 200,
+  "pass": true
+ },
+ "brain_calls": 8600,
+ "verdict": "LOOP-REFUSED (routed under the frozen LV-W AND LV-C gate) — Qwen2.5-7B-Instruct(nf4) reads its input (LV-P CR=0.400) and its contingency DOES fingerprint the block trajectory (LV-C closure=0.762 >= 0.60, 5/5 episodes) YET the one-step action->next-obs channel misses the co-gate (LV-W base_full=0.353 < 0.55). SEE tiebreak_resolution.",
+ "quant4": true,
+ "tiebreak_resolution": {
+  "owed_because": "verdict-integrity: LV-C PASS while LV-W FAIL is a metric divergence; suspect the ruler before terminal.",
+  "test": "result_tiebreak_lvw.json — sweep of KNOWN-LIVE contingent plants across action entropy, reusing certified lv_w/lv_c.",
+  "finding": "a known-live plant mid3bal (H~0.965 bits, 2.3 distinct actions, collision 0.519) REPRODUCES the 7B signature EXACTLY: LV-W base_full 0.358 FAIL, LV-C closure 0.762 PASS. Below H~0.6, plants lose BOTH (lowent3/lowent2); above H~1.8 both pass (lowent4/control). The 7B sits in the decoupling window.",
+  "conclusion": "LV-W is UNDER-POWERED (uncertified) in the moderate-entropy regime the 7B occupies — its FAIL is an INSTRUMENT ARTIFACT (collision pins shuf_full~0.5, degenerate dAct pushes base_full<0.5), NOT a no-channel verdict. Quarantine LV-W (infra-wall-noneval). LV-C is entropy-agnostic (yoked-ghost control) and alone rejects a dead env (null-env closure=chance), so it stands as the valid anchor.",
+  "adjudicated_verdict": "ANCHOR-ON-LV-C (rung 1) — the 7B is the FIRST brain to CLEAR the certified closure anchor (3B was 0.500 chance). It demonstrates rung-1 closed-loop CONTINGENCY on the valid instrument — NOT 'aliveness' (a thermostat clears rung 1) but it LICENSES the owner-loop RCT H_010 priced.",
+  "residual": "LV-W should be repaired (restrict to non-collision ticks / action-conditioned MI) to co-gate validly at low entropy; pre-registered escalations (memory, richer env, owner-loop) remain."
+ }
+}

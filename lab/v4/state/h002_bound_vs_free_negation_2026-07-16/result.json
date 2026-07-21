@@ -1,0 +1,180 @@
+{
+  "metrics": {
+    "panel_n": 100,
+    "panel_composition": {
+      "bound_지못하": 20,
+      "bound_지않": 40,
+      "free_못": 20,
+      "free_안": 20
+    },
+    "per_arm": {
+      "M_s4302": {
+        "bound": {
+          "n": 60,
+          "d_acc": 1.0,
+          "mean_margin": 2.9072
+        },
+        "free": {
+          "n": 40,
+          "d_acc": 0.95,
+          "mean_margin": 1.7969
+        },
+        "gap_d_acc_free_minus_bound": -0.05,
+        "gap_margin_free_minus_bound": -1.1103,
+        "reported_d_acc": 0.98,
+        "recomputed_d_acc": 0.98,
+        "codec": "codec.json",
+        "what": "FIXED jamo-BPE codec"
+      },
+      "M_s7": {
+        "bound": {
+          "n": 60,
+          "d_acc": 1.0,
+          "mean_margin": 3.0587
+        },
+        "free": {
+          "n": 40,
+          "d_acc": 0.925,
+          "mean_margin": 2.2453
+        },
+        "gap_d_acc_free_minus_bound": -0.075,
+        "gap_margin_free_minus_bound": -0.8134,
+        "reported_d_acc": 0.97,
+        "recomputed_d_acc": 0.97,
+        "codec": "codec.json",
+        "what": "FIXED jamo-BPE codec, seed 7"
+      },
+      "C1_s4302": {
+        "bound": {
+          "n": 60,
+          "d_acc": 1.0,
+          "mean_margin": 1.7727
+        },
+        "free": {
+          "n": 40,
+          "d_acc": 1.0,
+          "mean_margin": 1.833
+        },
+        "gap_d_acc_free_minus_bound": 0.0,
+        "gap_margin_free_minus_bound": 0.0603,
+        "reported_d_acc": 1.0,
+        "recomputed_d_acc": 1.0,
+        "codec": "raw",
+        "what": "NO CODEC — raw utf-8"
+      },
+      "C1_s7": {
+        "bound": {
+          "n": 60,
+          "d_acc": 1.0,
+          "mean_margin": 1.2037
+        },
+        "free": {
+          "n": 40,
+          "d_acc": 1.0,
+          "mean_margin": 1.139
+        },
+        "gap_d_acc_free_minus_bound": 0.0,
+        "gap_margin_free_minus_bound": -0.0647,
+        "reported_d_acc": 1.0,
+        "recomputed_d_acc": 1.0,
+        "codec": "raw",
+        "what": "NO CODEC — raw utf-8, seed 7"
+      },
+      "C2_s4302": {
+        "bound": {
+          "n": 60,
+          "d_acc": 1.0,
+          "mean_margin": 1.9085
+        },
+        "free": {
+          "n": 40,
+          "d_acc": 0.975,
+          "mean_margin": 0.9532
+        },
+        "gap_d_acc_free_minus_bound": -0.025,
+        "gap_margin_free_minus_bound": -0.9553,
+        "reported_d_acc": 0.99,
+        "recomputed_d_acc": 0.99,
+        "codec": "codec.json",
+        "what": "codec, held stem scrubbed from CPT"
+      },
+      "C3_s4302": {
+        "bound": {
+          "n": 60,
+          "d_acc": 0.9833,
+          "mean_margin": 1.8817
+        },
+        "free": {
+          "n": 40,
+          "d_acc": 1.0,
+          "mean_margin": 1.9608
+        },
+        "gap_d_acc_free_minus_bound": 0.0167,
+        "gap_margin_free_minus_bound": 0.0791,
+        "reported_d_acc": 0.99,
+        "recomputed_d_acc": 0.99,
+        "codec": "codec_c3.json",
+        "what": "LEAK CEILING — negators share one id"
+      }
+    },
+    "nsmc_counts": {
+      "bound_지않": 5114,
+      "free_안": 892,
+      "free_못": 484,
+      "bound_지못하": 389
+    },
+    "freq_ratio_bound_to_free": 5.73,
+    "no_codec_gap_d_acc": 0.0,
+    "no_codec_gap_margin": 0.0603,
+    "d_acc_gap_headroom": {
+      "M_s4302": 0.0,
+      "M_s7": 0.0,
+      "C1_s4302": 0.0,
+      "C1_s7": 0.0,
+      "C2_s4302": 0.0,
+      "C3_s4302": 0.0167
+    },
+    "recompute_max_err": 0.0
+  },
+  "falsifiers": [
+    {
+      "name": "F-002-1-bound-penalty-in-margin-on-any-arm",
+      "triggered": false,
+      "status": "PASS"
+    },
+    {
+      "name": "F-002-1b-DIRECTION-any-arm-finds-bound-harder",
+      "triggered": false,
+      "status": "PASS"
+    },
+    {
+      "name": "F-002-2-bound-is-rarer",
+      "triggered": false,
+      "status": "PASS"
+    },
+    {
+      "name": "F-002-3-BOUNDS-recompute-disagrees",
+      "triggered": false,
+      "status": "PASS"
+    },
+    {
+      "name": "F-002-4-NEGATIVE-CONTROL-leak-ceiling-shows-a-gap",
+      "triggered": false,
+      "status": "PASS"
+    },
+    {
+      "name": "F-002-5-panel-too-thin",
+      "triggered": false,
+      "status": "PASS"
+    },
+    {
+      "name": "F-002-6-d-acc-key-would-have-been-admissible",
+      "triggered": false,
+      "status": "PASS"
+    }
+  ],
+  "n_pass": 7,
+  "n_total": 7,
+  "all_pass": true,
+  "verdict": "SUPPORTED"
+}

@@ -1,0 +1,35 @@
+==============================================================================
+H_009' — f3-continuous-oracle · shift-null LOO capture in feature space ($0)
+==============================================================================
+
+[C-3' liveness] plants at n=44 (anima) and n=102 (hexa-lang):
+  n=44: HIGH gate=True cap8=+0.8400 pass=True · FAIL gate_ok=False pass=True
+         LOW(gating=False) gate=True sweep[k2=+0.7033 k4=+0.7401 k8=+1.0607] pass=False
+  n=102: HIGH gate=True cap8=+1.1792 pass=True · FAIL gate_ok=False pass=True
+         LOW(gating=True) gate=True sweep[k2=+0.2305 k4=-0.0098 k8=+0.1375] pass=True
+  liveness_ok = True
+
+[anima] days=44 train=26 pairs=43 shifts=37 numrank=150 valid_k=[2, 4, 8] (primary 8)
+    CEILING gate: rank_full=0/37 (<= 2? True) · align_full=+0.0303 p=+0.0000
+    capture(k): k2=+0.8927 · k4=+0.9726 · k8=+1.0074
+    capture(8)=+1.0074 (anchor 0.25) · topic_capture=+0.7170 · rawweight cap=+0.8192
+    align_s(8)=+0.0305 rank_s=0 · sign(err_topic>err_s)=23/43
+
+[hexa-lang] days=102 train=61 pairs=101 shifts=95 numrank=190 valid_k=[2, 4, 8, 16] (primary 8)
+    CEILING gate: rank_full=0/95 (<= 2? True) · align_full=+0.0735 p=+0.0000
+    capture(k): k2=+0.5246 · k4=+0.7865 · k8=+0.8485 · k16=+0.9401
+    capture(8)=+0.8485 (anchor 0.25) · topic_capture=+0.7061 · rawweight cap=+0.8840
+    align_s(8)=+0.0624 rank_s=0 · sign(err_topic>err_s)=52/101
+
+------------------------------------------------------------------------------
+  PASS  C-3' liveness
+  PASS  C-6 ceiling gate
+  PASS  C-4 monotonicity
+  PASS  C-5' reweight agreement
+  PASS  C-1 kill (s no better than shift)
+  FAIL  C-2 topic decoration
+
+  VERDICT: F3-CONTINUOUS-REFUSED — a hindsight rank-k continuous code does NOT clear its own anchor/floors (topic(cap-topic=+0.2904,sign=23/43)) against a certified-live instrument. hexa-lang (FULLY-certified n=102) CONFIRMS: gate=True, cap-topic=+0.1424, sign=52/101 -> refused=True. The s-over-topic advantage exists on AGGREGATE (cap-topic margin > 0) but the per-pair sign ~50% shows it is concentrated in a MINORITY of day-pairs = a sometimes-day-specific code, not a pervasive day-specific self (L2 replacement-not-coupling). Both operator classes now dead (byte-selection H_006, distributional-projection here). Fire the pre-registered reframe (C).
+==============================================================================
+
+artifacts: state/h009_f3-continuous-oracle_2026-07-16/result.json

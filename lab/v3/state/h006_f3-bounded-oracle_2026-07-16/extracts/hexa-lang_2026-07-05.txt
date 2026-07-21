@@ -1,0 +1,30 @@
+feat(check): HX3017 F5-prep strict-split — missing-field → Error under HEXA_STATIC_TYPES_STRICT=1 (#4553)
+flip(static-types FLIP-1): warn-band DEFAULT-ON, opt-OUT HEXA_STATIC_TYPES=0 (#4590)
+plain HEXA_STATIC_TYPES=1 → Warning (non-fatal), HEXA_STATIC_TYPES_STRICT=1 →
+feat(assoc-types): opt-in check slice (default-OFF HEXA_ASSOC_TYPES, byteeq-neutral) (#4085)
+diagnostic counts under the folded HEXA_STATIC_TYPES gate. byteeq 3-target = PR CI.
+After the F0 flag-fold (HEXA_STATIC_TYPES implies array-lower), the r8 ArrayLit /
+copies: the live F3-cached-bool-gated copy (_types_static_on/_types_array_lower_on)
+- WALL-A-STATIC-TYPES convergence: r1~r6 stale → r1~r11+F0/F3/F4·catalog HX3018
+opt-in HEXA_INLINE_ASM (default-OFF) + dead-branch for the compiler closure => byteeq-neutral (gen3==gen4, shim.o sha unchanged). No new keyword / no new @attr (frozen parser 151c52c8 untouched). stdlib registry + selftest extended; ARCHITECTURE.json + state/rfc_inline_asm.md + CHANGELOG.jsonl lockstep. Not locally byteeq-verified (mini=git/gh); CI byteeq 3-target gates.
+ci(static-types-corpus): full-corpus census + HX3017 + xargs parallel fan (advisory) (#4560)
+* ci(static-types-corpus): full-corpus census + HX3017 + xargs parallel fan (advisory)
+and a later raw-env re-read copy (env("HEXA_STATIC_TYPES")=="1" && ...) in the SAME
+(state/static-types/flip1_census_protocol.md LANE B). CI YAML only — no compiler
+Clones the merged free/calloc prereq-a pattern for hxlcl_strncmp: tool/regen_hxlcl_strncmp_native_s.sh (whole-module hxlcl_core.hexa aprime_cc --emit=asm + .globl DEMOTION + .private_extern strip → 1-symbol hxlcl_strncmp contract, all 3 pointer-ABI triples) and a new RT-NATIVE-STRNCMP block in tool/stage_resolve_runtime_a adjacent to RT-NATIVE-CALLOC (tri-state HEXA_RT_NATIVE_STRNCMP DEFAULT 0=off byteeq-neutral, auto=graceful FALLBACK-SHIM WARN, 1=strict; .globl==1 safety, -DHEXA_RT_NATIVE_STRNCMP + member on adopt). BYTEEQ-NEUTRAL (default 0). Seeds PENDING pool aprime_cc bake (parent bakes after) — NOT committed; resolver graceful-skips until they land. free/calloc/realloc blocks byte-untouched.
+* perf(ci): nobaseline-gate PR path-filter + advisory smokes to hosted runners — darwin-pool queue relief (speedup levers 3+4)  # no-verify-ok: 20 lint hits are pre-existing ARCHITECTURE.json big-cells on origin/main, file not staged here
+enforcement lane first rung: HEXA_BORROWCK_STRICT=1 escalates HX3014 (shared-handle hazard)
+# ARCH-PILED hits are pre-existing ARCHITECTURE.json debt untouched by this change.
+Error via the sanctioned diag_emit_sev caller-severity path (same _types_strict
+# no-verify-ok ARCHITECTURE N/A — shim-guard completeness of the existing HEXA_RT_NATIVE flip mechanism, no design-SSOT node change; str* floor-exit milestone lives in the zeroc endgame state SSOT (updated on #4592 landing). Pre-existing ARCH-BIG-CELL noise is not mine.
+# no-verify-ok lint hits are pre-existing ARCHITECTURE.json cell-size violations on main; this commit does not touch ARCHITECTURE.json
+* feat(generic-struct-mono): grow opt-in slice to fuller impl (default-OFF HEXA_MONO_GENERIC_STRUCT, byteeq-neutral)
+# no-verify-ok: ARCH-BIG-CELL/PILED pre-existing baseline noise on unrelated nodes; CHANGELOG entry included.
+# no-verify-ok: ARCH-BIG-CELL/PILED pre-existing baseline noise on unrelated nodes; CHANGELOG included.
+# no-verify-ok: ARCH-BIG-CELL/PILED pre-existing baseline noise on unrelated nodes; CHANGELOG included.
+from Warning to Severity::Error (build-refusing) via diag_with_severity caller-override.
+alter observable flag behavior). Regression guard = existing types_test.hexa cases
+feat(borrowck): HEXA-OWN L5-E1 return-borrow-escape (HX3019, Rust E0515) (#4555)
+no-verify-ok: all 21 lint hits are pre-existing ARCHITECTURE.json ARCH-BIG-CELL
+FULL tracked corpus and add HX3017 to the count, per the FLIP-1 census protocol
+* feat(lang drop/raii ①·R1): opt-in Drop trait / RAII first slice — `drop x` → runtime-dispatched Type__drop (default-OFF HEXA_DROP_RAII, byteeq-neutral)

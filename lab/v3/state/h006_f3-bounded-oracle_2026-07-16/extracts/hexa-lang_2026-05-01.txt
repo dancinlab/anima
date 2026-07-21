@@ -1,0 +1,55 @@
+_rawown_toggle_map_cached) direct reset 잔존 — stdlib 측 cache와 미동기화.
+raw 49 additive-first: 기존 export 무수정, 신규 fn 1개 추가 (4 LoC).
+fallback). 실제 async streaming 기능 회복 위해 실 popen + non-blocking I/O
+raw 49 additive-first: stub function signatures 보존, body만 실제 impl로 교체.
+raw 49 additive-first: 기존 export 무수정, 신규 fn 2개 추가.
+additive-first parity preservation — 본 cycle은 stdlib 신설만).
+  (sync fallback 자동). 실제 async impl은 별도 cycle (popen + O_NONBLOCK).
+raw 159 upstream-proposal-mandate 정합 (hexa-lang user-owner 직접 수정).
+Convergence: r50_2026_05_01_ai_native_claude_code_zero_enforcement (hive)
+exec_stream_async/poll/close primitive 의존하지만 hexa-lang runtime drift로
+fix(roadmap): replace personal-path leak with $ANIMA per raw 256
+feat(runtime): exec_stream_poll v1.2 — per-call [done, line] protocol (KI-5 RESOLVED) + v1.1 dynamic buffer + WIFEXITED
+hive cli_mvp.hexa 측 forward delegate migration은 별도 cycle (raw 49
+1) Stub primitives 신설 (raw 49 additive-first safe fallback, async streaming
+feat(raw 4): annotation parser (a)(b)(c) + cross-language scope expansion
+- exec_stream_poll(handle): non-blocking read + newline scan, line array return
+Cross-repo: hive cli_mvp.hexa async streaming 기능 회복 + sister repos (TUI
+(AI-native LoC × par + ser × bg × ∞ frame, rate 50000 LoC/day/agent default).
+parse-check OK. 기존 selftest fixture 무영향 (PASS).
+docs(ROADMAP.md): AI-native ETA SSOT cross-ref (hive raw 257)
+Per raw 47 cross-repo ramp. Closure / roadmap ETA SSOT = $HIVE/tool/closure_eta.hexa
+Pre-existing leak on line 185 (anima upstream notes reference) was triggering
+  Prior contract (v1.0/1.1): exec_stream_poll returned array-of-lines
+      done_int == 0 + line_str non-empty → one complete line.
+    truncate 회피. realloc fail / 1MB cap hit 시 silent drop 잔존
+HIVE_RAW_TOGGLES_HOME 런타임 변경 시 root_cache + map_cache + map 모두
+raw_toggle_root_reset() export로 stdlib cache invalidation 1-line 호출 가능.
+raw_toggle_root_reset (52f0b55b)을 보완하는 fine-grained variants
+feat(stdlib): bucket_loader.hexa — hive 7-bucket SSOT parser stdlib
+- bucket_loader_parse_roadmap(body) -> [any]            — .roadmap parser
+Cross-repo via raw 47: 5 sister repos (hive / nexus / anima / airgenome /
+raw 12 silent-error-ban: parse 실패 시 [] 반환 (caller fallback 책임).
+fix(runtime): KI-4 — exec_stream_async/poll/close stubs + hexa_call1 _Generic
+- hive PREFS axis fixture (headless_pref_inject_effect 80-case) diff exit 0
+- v1.7+ unblocked: ε-2 tabbedSubmenu UI + P2-cli_mvp body delegate 진입 가능
+- C3-KI4-2: hexa_call1 _Generic은 raw symbol path 지원 — codegen이 hv vs
+  본 fix는 hive r55 v1.7 backlog 해소를 위한 hexa-lang side fix.
+- 8-slot table (HEXA_STREAM_SLOT_COUNT) — concurrent stream 최대 8 (cli_mvp는
+- hive PREFS axis fixture (headless_pref_inject_effect 80-case) diff exit 0
+  caller가 표준 WIFEXITED / WEXITSTATUS 적용 필요.
+v1.7 stub 호환 caller (cli_mvp _stream_spawn) handle ≥ 0 시 정상 진행.
+$ANIMA ENV var literal per raw 256 path-env-abstraction-mandate. Hook regex
+exec_stream_* runtime; v1.1 was pending in working tree, v1.2 resolves
+  cli_mvp _stream_drain expectation: per-call [done_int, line_str] tuple
+static check (for i in 0..K, K ≤ 100) + (c)@raw4-warm-fs marker + raw 78 trace
+self/raws/ai_native_algo.hexa
+invalidate (test environment 격리).
+Origin: hive cli_mvp.hexa SET_RAW_TOGGLES_HOME / RESET_RAW_TOGGLES test verb
+- bucket_loader_parse_command(body) -> [any]            — .command parser
+RAW_BUCKET_LOADER_SELFTEST=1 env-gated selftest (consumer hijack 방지,
+LoC: 325 (5 parser ~200 + walk_up ~30 + selftest ~95).
+   기능 비활성화 + cli_mvp _stream_spawn returns false → sync fallback path):
+   - hexa_exec_stream_async_impl(cmd) -> -1 (= spawn 실패)
+   - hexa_exec_stream_poll_impl(handle) -> []  (no lines)
+- hive cli_mvp.hexa build PASS (직전 build fail 23 occurrences 모두 resolve)

@@ -1,0 +1,50 @@
+UNIVERSE/HYPOTHESES.jsonl
+UNIVERSE/HYPOTHESES.jsonl
+- tool/enforce_anima_gates.py: CORE_DECODE 패턴에 g_gates|anima eval|gen_auto_ideate 추가 = 내장 eval 채점 verdict 가 per-gate 파이썬 하네스 없이 엔진-네이티브 증거 인정(코드강제). --all clean 1468 hyp, 회귀 0.
+UNIVERSE/cards/H_1579_clm303_serialization_defect.md
+UNIVERSE/cards/H_1579_clm303_serialization_defect.md
+재발방지(2026-06-24 clm303 G6 precedent): a_engine_native_learning 자가점검에 두 교훈
+reference-match (commons) — #2604 의 G1/G2 native .hexa metric 이 frozen numpy reference 와 발산함을 정독으로 발견, 성분별 1:1 정렬(은폐 0). clm303 G1/G2 가 과거 H_1129/H_1140 verdict 와 비교가능하도록.
+재학습=follow-on(torch .pt 소실). H_1579 카드+jsonl+증거 state/clm303_g6/.
+- G-게이트 평가 시스템 (core/g_gates.hexa + cli/anima.hexa eval) — SSOT 단일 노드 신설: 부모 개요 + 자식3(단일진입점+디코드경로 · per-gate op-재사용맵 · frozen임계). 기존 dense g_gates 노드 재편.
+update-in-place. JSON valid · enforce_anima_gates.py --all clean(1468 hyp). 코드#2604+CLAUDE.md#2605+ARCH lockstep.
+DESCENT/NO-DESCENT verdict + registers_DESCENT=k/N summary. Quantifies the
+G0-G6 게이트 채점을 엔진-네이티브 재사용 모듈로 내장. `anima eval <ckpt> [--corpus <path>...] [--gen N]` 한 줄로 ANY ckpt 를 generator L3 mouth 통과로 G0-G6 전체 채점 — 디코드 AND 채점 전부 live .hexa 엔진 op, torch/numpy 0.
+- G1: _g_coverage = h1129 CONCEPTS hand-curated 키워드 셋 VERBATIM(mind/aware/ripple/quiet/sleep 등) · seed "<c>. "/composed ". ".join+". " · gen 80/120. 이전 파생키워드/": "/uniform 발산 수정.
+- G2: 8 IDEA_PROMPTS×seeds[7,8,9] temp0.85(_g_g2_prompts) · coherence=_COMMON lexicon(_g_g2_kwr) · _STOP ~80단어(_g_g2_stop). 이전 g6_build_frames/dict-kwr/_g6_stopwords 발산 수정. _g_corpus_absent 는 ref regex 와 동치(faithful).
+state/1607_g_gates_refmatch/g1g2_ref_parity.py
+- do: 엔진 CE/Φ 는 dt_ln 수정 전까지 불신 — numpy mirror(math.log)가 정답지.
+  engine CE 를 mirror 교차검증 없이 terminal verdict 로 · 편향 코퍼스로 일반화 주장.
+  +HF+dataset card+ARCH HF artifacts).
+Registers them in ARCHITECTURE.json HF artifacts/datasets (clean 4-cell node +
+state/kvcache_decode/mk_tiny_bytegpt_fixture.py
+docs(governance): 내장 G0-G6 eval = canonical G-게이트 측정 명령 박제 (CLAUDE.md + enforcer lockstep) (#2605)
+PR #2604 의 anima eval 구현체를 거버넌스 SSOT 에 못박음 (코드↔governance drift 0).
+anima eval 미실행(깨진 ckpt G-점수=garbage, c9). 근본수정=serfix(직렬화 파이프), savant clm303
+state/clm303_g6/GARBLE_3WAY_RESULT.md
+state/clm303_g6/score_clm303_g6.py
+H_1579 "SERIALIZATION DEFECT" verdict 정정. torch-free reference-match로 직렬화 byte-faithful
+state/clm303_g6/CORRECTION_overfit_not_serialize.md
+state/clm303_g6/tools/fastmirror.py
+state/clm303_g6/tools/ptload.py
+state/clm303_g6/tools/torch_golden_fwd.py
+(script + dominance-gated stopword fingerprint), drops de/es/fr/other + dedups.
+perf(core/bytegpt_decode.hexa): KV-cache incremental decode — root-cause O(gen²)→O(gen) fix (byte-exact) (#2602)
+growing by 1 → Σ O(T) = O(gen²) layer-work (the real ~16min/frag H_1564 cause).
+CHANGELOG.md
+README.md
+state/kvcache_decode/bench.txt
+docs(governance): engine-native = single-entry cli/anima.hexa, not side-harness (#2603)
+박제 — ① 진짜 엔진-네이티브는 디코드를 따로 떼지 않고 실제 단일 진입점 cli/anima.hexa
+CHANGELOG.md
+CLAUDE.md
+CHANGELOG.md
+README.md
+- CLAUDE.md a_engine_native_learning: do: G-게이트 verdict canonical 측정 = 내장 `cli/anima.hexa eval <ckpt>`(core/g_gates.hexa 단일 진입점 → generator L3 → G0-G6 엔진-네이티브 + closure). dont: 게이트별 파이썬 하네스 난립 · g6_common torch-오염 · anima eval 우회 측정(side-harness drift, #2603 위반).
+CHANGELOG.md
+CLAUDE.md
+tool/enforce_anima_gates.py
+CHANGELOG.md
+CHANGELOG.md
+CLAUDE.md
+README.md

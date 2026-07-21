@@ -1,0 +1,38 @@
+fix(cloud-dft): --resume phon-branch — walltime-killed pod recovers, never destroyed (#2382)
+feat(qforge): M5.5 — density-dependent self-consistent PW SCF 오케스트레이터 (engine-chain blocker B 절반) (#2412)
+fix(runtime): hexa_exec/hexa_exec_with_status — growable output buffer (was 8KB-capped + empty-on-overflow) (#2420)
+                                          all absorbers (atlas register --auto-pr, drill, loop --dfs)
+  atlas register --from-drill --seed "<text>" [--auto-pr]  drill verdict → embed (PR-only)
+                                          register → pr — direct fold-to-live forbidden
+Published vectors: hash160("")→b472a266… · "abc"→bb1be98c… · "hello"→b6a9c8c2…  KAT 4/4 PASS.
+* fix(compiler/check): N5-pre STEP3 — skip arity check for dynamic HexaVal callee (HX3002 regression)
+fix(runtime): exec() — bounded-poll drain instead of read-to-EOF (popen-safe pipe-leak fix) (#2350)
+  atlas register --from-verify <fn> <n> <v> [--auto-pr]    in-memory node-gen → embed (PR-only)
+fix(compiler/emit): N5-sym pt1 — ABI-prefix _-prefixed external refs (macho_arm64) (#2335)
+Fix: grow the output buffer by doubling as data arrives (alloc-new + memcpy; arena-safe, no
+inbox(dft-run): corrupt phonon-recover salvage — 2nd robustness gap after scp-255 (#2461)
+fix(ci): release runtime.a — regen runtime_core.c from SSOT emitter (frozen-dough seam이 exec-leak fix를 binary에서 동결시킴) (#2364)
+feat(stdlib/crypto/secp256k1): self-contained 256-bit field over p — add/sub/mul + special-form reduce + Fermat inverse (PR1) (#2386)
+* feat(emit): native obj-emit PAGE21/PAGEOFF12 relocs for cstring addressing + N_SECT value fix (N5 data-addressing PR-B)
+feat(flame): H_911 recompute — cross-lingual semantic linkage vs count (F-CLM-MULTILING-SEMANTIC 🟡) (#2348)
+하드웨어 절반(확률적 비결정 갱신 · 저비트 양자화 · 소자잡음 RETAIN)은 HONEST-DEFER.
+fix(cloud): normalize ph.in fildyn/fildvscf/outdir abs→relative on --resume (q_points crash) (#2296)
+feat(cli): tool-drawer COMMANDS SSOT — cmd_absorbed_help + cmd_tool_list render from it (S4) (#2340)
+fix(cloud-dft): pod-side self-resume loop — detach survives walltime w/o controller --resume (#2358)
+라우팅되던 문제를 수정. pod registry 에 이미 기록된 provider 를 조회하는 공용
+feat(qforge): PBE GGA 상관 + screening front-end XC 배선 (gate blocker #1, PR2) (#2404) (#2405)
+docs(flame): FLAME.tape += n_clm_convmoe_port_gap — 4 missing ops for CLM-ConvMoE port (#2287)
+  atlas-verify [--domain D] [--tier N]     Verdict ledger — 86 entries Stage 1+2+3 hexa-native
+  (b) held-out gain — 동일 init / 동일 step / 동일 optimizer 의 CE-only baseline 대비
+forge f232_korean_encoding_sweep 의 BLOCKED 원인인 stdlib/codec CJK 코덱 부재를 해소.
+expert-stream #2369 · self-play #2376🔴 · conv1d=im2col #2359). 하드웨어/GPU falsifier
+(Ceperley-Alder) 상관 에너지의 두 정준 parametrization 을 closed-form 으로 구현:
+feat(qforge): L3 α²F assembler ↔ QE el-ph cross-validation (YH10, rel-ε=9.8e-5) (#2380)
+feat(QFORGE-PERF): land remaining baseline + closure work (stack recovery off main) (#2442)
+* feat(emit): native obj-emit gains __TEXT,__cstring section + .LCstr* N_SECT symbol defs (N5 data-addressing PR-A)
+* feat(emit): native obj-emit gains __TEXT,__cstring section + .LCstr* N_SECT symbol defs (N5 data-addressing PR-A)
+  분리됨 — 각 sister repo 의 자체 도구로 위치. invoke via `hexa run <sister>/path/main.hexa <verb>`.
+  HexaVal hexa_map_set_v(HexaVal m, HexaVal key, HexaVal val){return hexa_map_set(m, hexa_to_cstring(key), val);}
+paper(complexity-integration-triad): Structure Beyond Density — closed-form substrate-complexity triad (#2311)
+* ci: retrigger faithful-nobaseline (linux-arm64 exit 143 = SIGTERM/timeout, not code fail; darwin+x86_64 green)
+feat(emit): native obj-emit __DATA,__data globals + __TEXT,__const float pool (N5 data-addressing PR-C) (#2457)

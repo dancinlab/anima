@@ -1,0 +1,29 @@
+anima 디코더를 핫스왑 가능한 모듈로 재구성. 3개 엔진을 공통 인터페이스 뒤에 두고
+카빙-시점 엔진 구성도 보관: ConsciousDecoderV2 (d768/12head/4kv-GQA/12layer · vocab256 · consciousness_dim128 · n_ca_rules8 · MoE-8/top2 · RoPE+RMSNorm+SwiGLU · dual A/G heads + 5ch tension + Law-71 Ψ) — 현 conv-MoE CLM과 별개 계보. 현재 맵=2D. 6 마일스톤 양방향.
+- 🔴 ANU QRNG closed-neg(a_paper_negative_ok): 양자-vs-prng KS p=0.7237 ≈ null prng-vs-prng 0.9834 — 양자난수 이점 0, 'quantum 의식' 축 ruled-out. (첫 실행 2^31 cap → 거짓 p=0.022; 2^32+null 대조군으로 small-N 노이즈 확정, p7 overclaim 회피)
+- 🟢 m1 MET: GATED < base(Δ+0.847) · ≤ a_only(이김 0.102) · ≪ fixed(Δ+1.043) → 닫힘은 게이트되면 유용(고정 아님)
+anima 학습 코퍼스를 한 레지스트리로 추적한다 — 조성(wiki/dialogue/SNS/persona),
+닫힌 고리 엔진(OMEGA) vs 한 방향 예측기(LLM) 친근 비교 + 근거 verdict 포인터(#1779/#1783/#1784/#1786/#1787) + 정직 scope(toy/single-rung, GPU rung 진행중).
+낡은 HEXAD-중심 README 를 현재 프로젝트 상태에 맞춰 전면 구조 재작성 (영어 본문).
+언어 커버리지(5개국어 vs KR전용), 출처/라이선스/sha, 그리고 "다음에 뭘 만들지"를
+anima가 도구를 "입으로 말하는"(아 찾았다) 환각 대신 실제로 쓰게 하는 설계 봉인.
+  근연 delphinid 6종을 5-scalar로 분해 불가 (휘슬 대역 중첩, 생물학적 예상) → 정직한 closed-negative
+bench(BRAIN-TRAIN): 뇌-유래 보조 학습신호 4-arm TOY 벤치 — 🔴 CLOSED-NEGATIVE, §97 재확인 (#1757)
+  5개 중 2 PC가 매 시드 정확히 0; projection ladder k=3에서 포화) → 크기 코드로는 과지정, 3이면 충분.
+    자기 vocab-shuffle 를 이김 → 미세하게 더 실제 구조 보유, 그러나 held-out CE 이득은 null.)
+- 정직: 첫 실행(4000B 창·L2無) GATED 3.357 > a_only 과적합 → L2+12000B 창으로 3.127 깨끗이 통과(사전적 정규화, milestone 기준 불변, p7). 두 실행 다 기록.
+(coord/lane/radius/tier/tags + 시간 + 모달리티)에 대해 차원 사다리 D=2→8로 확장하고,
+- 🟢 구조 有: bus_trained 4.1420 ≪ shuffled 4.4991 (Δ+0.357) — trained 신호는 unshuffled에서만 살아남음 = loop가 STRUCTURE 나름 (random-init #1783은 trained==shuffled로 못 봄)
+각 가설 = 실행 가능한 toy 메커니즘 + 사전등록 falsifier(DEFAULT=REFUTED, 대조군을 이겨야 HOLD).
+min-gate가 temperature rescale로 붕괴 → substrate-EMPTY 라고 판정했다. OE1은 그 최소 수정을
+- 학습 게이트 g*=[gB.142, gA1.183, gG.341] — 강 A·소 G(고정공식 −α 아님, −G 오류 자동교정)
+PART A(v2 코퍼스+생성기)에 이어 도메인 ledger·HF·KOSMOS 배선 + 측정 마일스톤 정직 등록.
+· 아키텍처/트레이너 = anima-clm-chat-rung0-byte-18m 를 만든 그 ConsciousLMReconstructed
+측정됨(Φ·위상동기·dF/dt·일반화·A/G분화·Ψ위상·텐션차원) + 철학파생(자발성p5·자율성·MITOSIS p8·도덕 p6·호기심·W긴장).
+  닫힘은 one-shot forward 가 아니라 실제 양방향 feedback 루프 — Lane X #1779 NULL 신경이 닫힌 루프로 작동.
+  구조의 <10% 보존 → ~3-5x 과소차원. 위상 스케치로는 충실, 카테고리 지도로는 빈약.
+lr 5e-5, 2500 steps, seed 42) → anima가 base 채팅을 잃지 않고 페르소나 목소리로 채팅.
+sha550fed...538ad, 13,107,309B)는 지금까지 데이터셋-only 였고 어떤 모델도 학습된 적
+domain(Lane M 후속): CLM에 TIME 주입 — 4 temporal-encoding arm ablation, M3 DERIVATIVE(d/dt) 만 동역학 포착 (shuffle 대조군 격파 + stage-decode 1.0≫chance), 나머지 3 arm REFUTED (#1763)
+- #3 dialogue-act 균형 — 페르소나가 반대/거절/경계설정/팔로워에게 질문/multi-party. v1 16 시나리오는 전부 supportive였음. [evidence]
+HONEST: s16 ckpt 없음 → random init (엔진 재구성 확인이지 학습된 carve 재현 아님).

@@ -1,0 +1,32 @@
+# no-verify-ok: CHANGELOG append for the surgical -lm fix; 213 lint hits are pre-existing hexa-lang doc debt unrelated.
+# no-verify-ok: surgical link fix (self/main.hexa 2 flag strings + 1 comment + CHANGELOG); the 213 lint hits are pre-existing hexa-lang ARCHITECTURE.json/CLAUDE.md debt unrelated to this change — fixing them here would violate surgical.
+# no-verify-ok: the ARCH-BIG-CELL lint hits are PRE-EXISTING oversized ARCHITECTURE.json
+# no-verify-ok ARCH-BIG-CELL x4 = pre-existing repo-wide doc debt (libm/zero-c/determinism nodes untouched — same disposition as #4355); PROTECTED-BRANCH false-positive (HEAD=fix/own-start-shim-atexit-coherence feature branch); CHANGELOG.jsonl + ARCHITECTURE convergence record ARE in this commit.
+# no-verify-ok pre-existing ARCH-BIG-CELL / drill CLAUDE.md lint only; my change = M5 wiring + H1 verdict + roadmap ✅M5.
+# no-verify-ok same pre-existing ARCH-BIG-CELL doc debt as prior commit; workflow-only addition.
+# no-verify-ok pre-existing ARCH-BIG-CELL lint only; my change = M8 verdict + roadmap ✅M8.
+perf(ci): release.yml keep-latest queue coalescing — single global concurrency group (speedup lever 5)  # no-verify-ok: baseline ARCH lint pre-existing, ARCHITECTURE.json not staged (#4466)
+* fix(install): clear non-symlink remnants before wiring the self/stdlib anchors — silent-stale self/ root fix  # no-verify-ok: baseline ARCH lint pre-existing, file not staged
+* docs(convergence): install-sh-1 — anchor-symlink invariant + ln -sfn real-dir footgun record  # no-verify-ok: ARCH big-cell lint is pre-existing baseline
+# no-verify-ok: pre-existing ARCHITECTURE.json oversized-cell lint, untouched here.
+# no-verify-ok: WIP checkpoint on feature branch, squashed at PR; pre-existing ARCH lint.
+# no-verify-ok: pre-existing ARCHITECTURE.json lint; runtime.c/runtime_ffi_dyn.c are gitignored gen artifacts.
+# no-verify-ok: pre-existing ARCHITECTURE.json lint; runtime.c gen artifacts gitignored.
+* feat(selfhost zero-c #29): regex-rt 3 frozen seeds (self/native/regex_rt_*.s) - 6 rt_regex_* contract globals each, only new UND=hexa_chr_byte (runtime-internal, floor-neutral), paths build-root-stripped. no-verify-ok: pre-existing ARCH lint.
+# no-verify-ok: CI-resolver shell; default-OFF byteeq-neutral; changelog lockstep; guard-file baseline-diff in body
+# no-verify-ok: CI-resolver shell; default-OFF byteeq-neutral; changelog lockstep; guard-file baseline-diff in body
+* ci(static-types): F1 corpus-clean advisory census — HX3011/HX3016 over stdlib core + compiler/check with HEXA_STATIC_TYPES=1 (flip prerequisite, wall_a_endgame §B.3 F1)
+# no-verify-ok: hexa-lang link fix verified on pod; hexa-lang commit-lint may differ from anima.
+# no-verify-ok: 콘텐츠 복원(신규설계 아님)·convergence는 #4537서 기록·ARCHITECTURE ladder 노드 불변·나머지 BIG-CELL은 기존부채(surgical 범위밖)
+# no-verify-ok: shell+yml flip; changelog lockstep satisfied; guard-file baseline-diff in commit body
+# no-verify-ok: draft CUDA kernel authoring, byte-eq verification pending GPU; hexa-lang lint differs.
+# no-verify-ok: flame device-seam default migration, byte-eq device path; hexa-lang lint differs.
+# no-verify-ok: draft CUDA kernel, byte-eq verification pending GPU; hexa-lang lint differs.
+# no-verify-ok: CI-plumbing shell+yml; changelog lockstep; guard-file baseline-diff in body
+# no-verify-ok state verdict preserve-state; content also inline in ARCHITECTURE ✅M5.
++ case (t) (both-ON exactly 1 HX3004 REJECT + coercion no-FP / OFF 0). Measured local
+false-positive: X=J3 at n=16384, n²·J3=7·2^67≡0 mod 2^64). Fix (Fable design):
+vacuity contract §5, Δ=0 with no verified>=1 row = generator bottleneck LOCATED
+* feat(hexa-own L2 r2b): @own PARAM-position + Copy-exemption — @own fn params join HX3012, #4088 _type_is_copy adapted (#4485)
+* ci(nobaseline-gate): darwin faithful/smoke → macos-15 cloud DIRECT (slot-free · off self-hosted queue)
+link stays byte-identical to the pre-S1 program. The marker is a C comment (stripped from

@@ -1,0 +1,46 @@
+`hexa build core/main.hexa` of multi-module wilson → linker Undefined symbols (hexa build transpiles only the entry file, no module flatten — only `hexa run`'s aot_build_slot does that via module_loader.hexa) + `#include "runtime.c"` not found (clang -I derived from argv0-dir, not $HEXA_LANG/self). Ask: `hexa build` mirror `hexa run`'s flatten→transpile→clang; -I = $HEXA_LANG/self; faster flatten. Workarounds in place. Filed by the wilson session.
+  exec_stream_kill → child terminated in ~12ms (rc=-15 SIGTERM, sleep exits
+    `exec_stream_kill` alias: kill(-pgid, SIGTERM) → ~200ms grace polled via
+feat(self/runtime+codegen): add exec_stream_kill(h) builtin — SIGKILL stream child (wilson tool-core ESC-cancel)
+    체인. Edit/Write new_string 안에 bare `exec(...)` 한 줄이 있으면
+    어떤 핸들러도 거부 안 함 → 거부 원인은 본 chain 외부.
+    waitpid(WNOHANG) every 10ms → kill(-pgid, SIGKILL) + blocking reap → close
+    `@allow-bare-exec` 와 `@allow-silent-exit` 둘 다 ±5 line 안에 있어야
+ARE accepted inside *ranges*. All caveats documented in the module header +
+feat(stdlib/runtime): absorb pwd/ls shell builtins → cwd()/list_dir() intrinsics (SPEC shell-absorption)
+-1 (best-effort; raw 91 honest C3). The primary exec_stream_async path is now
+  table + non-blocking pipe + fork/pgid live in runtime.c); the tree-walking
+    http_sse_get_buffered 는 lint 도입(2026-05-10) 이전 land 되어
+'runtime.c' file not found` — the same class of bug the #12 fix closed for
+chain, so this unblocks all of them. Selftest: write=true append=true rc=0, OK.
+    slot owns the child pid == pgid. The read end is fdopen()'d + O_NONBLOCK,
+  - Behavior from the repo root is unchanged: HEXA_LANG unset & cwd=repo →
+    setpgid(0,0) in the child (own process group) instead of popen(), so the
+    + silent-exit lint 둘 다 단독 reproduce 확인. 동일 모양의
+    with synthetic Ident params a0(receiver), a1, a2 — e.g. `trim` →
+!= "fn"), so a typo'd or unbound callee passed through to lower → MIR
+  - "struct_pattern" → unconditional STMT_BR + field-binding emit in
+권고: 코드 적응. 한 줄 `// @allow-bare-exec @allow-silent-exit` 주석으로 충족.
+- self/test_exec_stream_kill.hexa (NEW, AOT path): spawn `sh -c 'sleep 10'`,
+  - in-tree (HEXA_LANG=$PWD, cwd=repo): `... self/main.hexa cc` → emits
+    keeping the existing popen("r")-style FILE* semantics for poll/close.
+        Documented v0 caveat: `ls -1` loses entries whose names contain a
+    Every transpiled program `#include`s runtime.c, so the symbol always
+    Returns "." as last resort (cwd behavior preserved → fails loudly
+    pipe + release slot. Returns -WTERMSIG (or WEXITSTATUS if it exited
+incoming: wilson-needs-hexa-build-out-of-tree — `hexa build` doesn't pre-flatten use/import; clang -I = nonexistent ~/.hx/bin/self
+- self-host smoke: hexa_v2 self/main.hexa → clang -I self → ./hexa --version
+with the fix → phase2 binary; fixpoint verified, self/main.hexa → clang →
+- self/codegen_c2.hexa: `exec_stream_kill` → `hexa_exec_stream_kill(...)` in
+- self/hexa_full.hexa (interp): `exec_stream_kill` → val_int(-1) no-op stub
+the codegen change and the runtime.c change (hexa_cc.c #include "runtime.c").
+      1. `$HEXA_LANG/self` if it has runtime.c (canonical, dev / installed)
+    `hexa_fn_new((void*)__hxthunk_<name>, N)` — a TAG_FN HexaVal wrapping
+`hexa_real run <module>` from cron/launchd/a subagent — which inherit no
+exec_stream_close(h) pclose/waitpid-joins (blocks until the child exits on
+  * hexa_exec_stream_async_impl now fork()s `/bin/sh -c cmd` directly with
+2. Materialize a `timeout` shim under a per-run mktemp bindir and prepend
+    v0: forks `ls -1 '<path>' 2>/dev/null` once with single-quote-escaped
+  GET:  curl -sSL -N --no-buffer --max-time 600 -H ... 'URL' 2>/dev/null
+can't exercise this — interp lacks `mono_ns` / `exec_stream` runtime
+feat(self/codegen): emit thunks for builtins/methods taken by-value — fixes hexa_callN(<builtin>) undeclared (wilson gap b2)

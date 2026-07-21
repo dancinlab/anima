@@ -1,0 +1,30 @@
+================================================================================
+H_010 — loop-granger-gate · owner<->agent loop, utterance-specific dependence ($0)
+================================================================================
+
+[C-5 liveness] three plants (P-POS gate-open · P-NULL refuse · P-ECHO echo-only):
+  P-POS: {"sign_topic_full": 1.0, "sign_base_full": 0.8776041666666666, "rank_full": 1, "pass": true}
+  P-NULL: {"sign_topic_full": 0.5233333333333333, "pass": true}
+  P-ECHO: {"unstripped": 0.65625, "stripped": 0.515625, "pass": true}
+  liveness_ok = True
+
+[extract] scanning transcripts ...
+  9889 loop pairs across 129 sessions (>= 12 pairs each)
+  primary N=2000 · replication N=2000 (stride 4)
+
+[primary] n=2000 sess=95
+    LC-1 ceiling: rank_full=0/24 (<=2?) · sign(base>full)=0.406 (>= 0.55?)
+    LC-2 topic(PRIMARY): sign(topic>full)=0.366 (pair >= 0.55?) · session_frac=0.232/95 (>= 0.6?)
+    LC-3 echo: unstripped sign(topic>full)=0.358 (vs stripped 0.366)
+    LC-4 floors: sign(xsess>full)=0.519 · sign(base>xsess)=0.331
+
+[replication] n=2000 sess=95
+    LC-1 ceiling: rank_full=1/24 (<=2?) · sign(base>full)=0.437 (>= 0.55?)
+    LC-2 topic(PRIMARY): sign(topic>full)=0.346 (pair >= 0.55?) · session_frac=0.116/95 (>= 0.6?)
+    LC-3 echo: unstripped sign(topic>full)=0.348 (vs stripped 0.346)
+    LC-4 floors: sign(xsess>full)=0.489 · sign(base>xsess)=0.391
+
+--------------------------------------------------------------------------------
+  VERDICT: LOOP-REFUSED — the true utterance does NOT predict the owner's next reply above the topic-matched floor on the natural loop (LC-1 rank_full=0/sign_base_full=0.406; LC-2 pair sign(topic>full)=0.366<0.55). The owner replies on-topic to anything relevant (topic decoration, the F3 pattern in loop clothing). The $0 entry to reframe C is closed; only the paid live A/B intervention remains (research-gated).
+================================================================================
+artifacts: state/h010_loop-granger-gate_2026-07-16/result.json

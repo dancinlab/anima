@@ -1,0 +1,37 @@
+perf(lower/hir_to_mir): direct-index CFG helpers — axis-③ self-emit round-2 (#4782)
+→ every ElfRel.sym_idx identical → byte-identical .o → gen3≡gen4. The cache never changes a value, only a
+≈ 6e8 string-compares on the compiler self-source (~20k distinct × ~25k symbols). aiden measured emit_asm as
+byte-identical MIR → byte-identical .o → gen3≡gen4 trivially GREEN. Round-3 rungs if a phase still survives:
+delta); byteeq compares emitted .text so gen3≡gen4 holds. COMPLETING STEP (pool follow-up): regenerate the 30
+# no-verify-ok byteeq-neutral lookup pre-seed (first-match == scan; fallback kept; insert-only)
+Byteeq NEUTRAL: a name resolves to _find_elf_sym_by_name's first (== only) match — every definable name is
+same first-match sym_idx the flat scan did (as proven for #4784) → identical relocs → gen3≡gen4.
+scan did → byte-identical .o + relocs on every input that compiles today. gen3≡gen4 holds. nested-bucket push
+not needed to clear this wall): hir_to_mir CFG per-stmt scans (id==index direct-index), _lookup_label_x86,
+# no-verify-ok byteeq-neutral algorithmic speedup (direct-index == scan result; guarded fallback)
+fix(lower/hir_to_mir): m12 t5 tag-fuse widen — last crash-census miscompile (#4788)
+Byteeq NEUTRAL: pre-seed inserts first-wins in obj.symbols order == _find_elf_sym_by_name's ascending first-match
+pipeline is asm-text (system as) / C-transpile, so 3-target byteeq + shipping are untouched, gen3≡gen4 holds.
+the surviving wall (RC=124, .o never produced) after #4779+#4782 (RSS plateau + lower_ast_to_hir CFG cleared).
+'distinct callee names ~tens' is false on the compiler self-source — distinct = ~5k fns + ~15-20k unique
+perf(emit/elf x86_64): pre-seed reloc symidx cache — axis-③ self-emit round-3 (#4784)
+(name→symidx pre-seed) and removed the _symc_names/_symc_idx declarations. Result:  → the aprime native build dies at clang. #4783's commit carried  and bypassed the aprime build gate (measured by the aiden ③ self-emit agent). FIX: convert the
+(thousands of blocks/stmts each). FIX: _new_block pushes block ids monotonically (0,1,2,…) into _lr_blocks and
+Byteeq NEUTRAL: the direct index returns the exact same block the scan would (same stmt/succ/pred placement) →
+O(stmts·blocks) + O(edges·blocks) per fn, a quadratic that explodes on the compiler self-source's large fns
+bucket push), so all three reloc passes share the pre-seeded _symh_* cache. Byteeq: the bucket returns the
+native-obj route → all multiplies acted as identity (aiden measured churn:199 for c2; the asm-text/as route was
+bucket the SAME cache by a 1024-way FNV-1a hash (mirroring codegen's proven _x86_strtab_hash, widened),
+direct O(1) index, keeping the original scan as a guarded provable-safety fallback (never taken today).
+reassign (= the miscompile fix landing); deterministic → gen3≡gen4 reconverges → byteeq 3-target expected GREEN.
+_lr_ctx_clear resets per fn, so a block's id == its _lr_blocks INDEX by construction — replace the scan with a
+special-cased the NAME env→hexa_env_var regardless of the local, so codegen and S3 disagreed. FIX: rename
+ELF seeds (19 *_x86_64.s @progbits + 19 *_arm64-linux.s %progbits; 10 Mach-O excluded). Byteeq-safe (0-byte
+reference-match gap before a growth-through-global path bites. Byteeq: native-lowering-only (shipping is
+Fable+census root-cause of the self-emit superlinear blowup (RSS 7.5→17.7GB, RC=124 timeout, .o never
+perf(emit/elf x86_64): bucket the reloc name-cache — axis-③ self-emit OOM wall (#4779)
+genuinely green on CI while the pool build was inert — a dangerous CI-green-only class.
+.LCstrN, so every reloc probe scans O(distinct) → np·O(distinct) ≈ 10^10 runtime string-compares (hours). FIX:
+lookup path; the fallback is kept as an unconditional safety net. aiden verify: emit_asm completes + .o produced
+Byteeq-safe: native-only encoder arm, dead unless --backend=native x86_64 obj emit; asm-text/C-transpile/byteeq
+produced): the per-insn encoder COMPLETES (0 ENCODE-MISS) then parks in pack_lir_x86_64's Pass-2/Pass-3 reloc

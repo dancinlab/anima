@@ -1,0 +1,25 @@
+==================================================================================
+H_012A — owner-loop-rct precheck · SAMPLER-TWIN (context-matched, semi-interventional, $0)
+==================================================================================
+
+[certify] within-context plants (P-POS channel · P-NULL refuse · P-ECHO echo-only):
+  P-POS: {"n": 320, "M": 12, "sign_base_full": 0.6844, "sign_base_full_unstripped": 0.6844, "rank_full": 1, "n_shifts": 24, "align_full": 10.286, "ctx_tightness": 0.827, "pass": true}
+  P-NULL: {"n": 300, "M": 12, "sign_base_full": 0.4733, "sign_base_full_unstripped": 0.4733, "rank_full": 11, "n_shifts": 24, "align_full": 0.026, "ctx_tightness": 0.816, "pass": true}
+  P-ECHO: {"unstripped": 0.6687, "stripped": 0.5062, "pass": true}
+  certify_ok = True
+
+[extract] scanning transcripts (content stays on disk) ...
+  10170 loop pairs across 135 sessions (>= 12 each)
+  primary N=2000 · replication N=2000 (stride 5)
+
+[primary] n=2000 M=60 ctx_tightness=0.06 (matched pool distRt / global; <1 = tighter)
+    sign(base>full)=0.424 (>= 0.55?) · rank_full=1/24 (<=2?) · align_full=3.683
+    (H_010 observational baseline: sign_base_full 0.406 — REFUSED)
+
+[replication] n=2000 M=60 ctx_tightness=0.066 (matched pool distRt / global; <1 = tighter)
+    sign(base>full)=0.423 (>= 0.55?) · rank_full=0/24 (<=2?) · align_full=6.556
+    (H_010 observational baseline: sign_base_full 0.406 — REFUSED)
+
+  VERDICT: PRECHECK-REFUSE — even semi-interventionally (context matched, utterance quasi-random) the utterance carries no reply-predictive info beyond context (sign_base_full 0.424 < 0.55, rank 1/24) — consistent with H_010's observational REFUSE. A cheap negative that LOWERS the odds before spending owner consent on H_012B. Replicates=True.
+==================================================================================
+artifact: state/h012_owner-loop-rct_2026-07-17/result_h012a.json

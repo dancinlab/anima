@@ -1,0 +1,46 @@
+fix(codegen/arm64): STMT_UNOP handler — `-x` / `!x` were nopped (interp-retire R3)
+fix(codegen/arm64): array/map subscript lowering — STMT_ASSIGN op=index (interp-retire R3)
+feat(codegen): module-level mutable globals — native storage + cross-fn access (interp-retire R3)
+feat(codegen/arm64): operand materialization complete — stage-1 .s assembles (0 asm errors)
+feat(flame): Phase 1 — tensor_lib + autograd_lib LANDED (3/3 PASS, compiled-native)
+fix(lower): synthesize param_names annotation — fn arg binding (interp-retire R2)
+feat(codegen/arm64): builtin→runtime ABI rename map (18 verified) — ld unresolved 36→13
+feat(codegen/arm64): +3 verified builtin renames (env/append_file/file_size) — ld 13→10
+feat(codegen/arm64): PC-relative address materialization (adrp+add) — −1246 asm errors
+feat(flame): Phase 2-A — nn_lib Linear + RMSNorm fwd/bwd (4/4 PASS) + Phase 1 honesty fix (4/4 PASS)
+feat(codegen/arm64): A′ assembles clean — asm errors 21457→0, .o 1.57MB [structural, S4-gated]
+fix(codegen/arm64): map exit builtin → hexa_exit (was calling libc exit w/ HexaVal ABI)
+feat(codegen/arm64+runtime): S4 builtin box-lowering — ld undef 10 → 1 (only _main)
+docs(plan): interp-retire R3 — five further codegen fixes, t_batch22 0 -> 29/31
+fix(lower): assign reuses existing local id — loop-carried mutation (interp-retire R2)
+feat(codegen/arm64): Path A S1-S3 — full A′ HexaVal-16B emission core [structural]
+docs(plan): interp-retire — R1 proven, R2 two root-cause fixes, R3 next blocker
+feat(codegen/arm64): Path A S1 — HexaVal-sized (16B) spill slots [foundation]
+refactor(codegen/arm64): F1 — extract _arm_strtab_collect_fn (per-MFunc interning) [stream]
+feat(flame): Phase 2 COMPLETE — Attention-core lands (7/7 layers, 17/17 PASS)
+feat(rfc 034): farr reverse-mode autograd (CE + AdamW) — anima HEXAD Phase 5 unblock
+feat(codegen-thumb): field-access STMT_ASSIGN — hexa_map_get (mirror x86_64/arm64)
+feat(codegen-thumb): struct_lit STMT_ASSIGN — map-backed (mirror x86_64/arm64)
+perf(codegen/arm64): _arm_index_of O(1) fast-path — kills O(N²) stage-1 [S4]
+feat(codegen-x86_64): array_lit STMT_ASSIGN — hexa_array_new + per-elem push
+feat(codegen-arm64): field-access STMT_ASSIGN — hexa_map_get (mirror x86_64)
+feat(lower): struct_lit MIR carries type+field-name keys (codegen contract)
+feat(codegen): generalized nested mutable index-assign lowering + hexa_abs decl — unblock anima HEXAD R2-Bcg (#51)
+docs(rfc 034): farr reverse-mode autograd (CE + AdamW) — anima HEXAD Phase 5 unblock
+feat(codegen-thumb): array_lit STMT_ASSIGN — mirror of x86_64/arm64 (Thumb EABI)
+feat(codegen-x86_64): struct_lit STMT_ASSIGN — map-backed (map_new + map_set)
+docs(compile-only): Track-A wall broken → first self-compile, residual 2774→217 (−92%)
+feat(compiler): F3 — --stream gate routes arm64 asm through codegen_emit_streaming
+feat(lower): enum_path lowered as map-backed value — reuses struct_lit codegen
+fix(build_dispatch): separate-TU runtime.c link — unblocks dispatcher rebuild
+feat(field-access): MIR reshape op=field + key arg; x86_64 codegen (map_get)
+RFC 034 scope (minimal): tape-based reverse-mode AD over packed-double farr
+merge(stage2-verify): RFC 034/035/036 farr autograd + bf16 + phi_rs + safetensors_mmap_* decls into main
+feat(parser+codegen): synthetic fn main from top-level stmts + ends_with builtin → _main resolves [S4]
+feat(runtime): array/str/tensor slice-family compiled-path C decls — unblock anima HEXAD R2-B (#50)
+fix(bind): complete builtin prelude — mirror legacy 156-name registry (<callee> 594)
+feat(codegen): F2 — codegen_emit_streaming, fused per-fn lower/codegen/emit [stream]
+docs(compile-only)+test: substrate blocker ROOT-CAUSED to new-compiler codegen O(n²)
+feat(runtime): F6 step 1 — hexa_val_free_tree, recursive free of malloc'd Val trees
+feat: break/continue loop control in the compile path (−62 HX2001, +real codegen)
+scaffold(flame): stdlib/flame/ design + campaign preservation hub (DESIGN, no impl)

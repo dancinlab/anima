@@ -1,0 +1,38 @@
+r10 measured on aiden RTX5070 sm_120 (nvcc 13.0): FP16 fused 0.11~0.21× speedup
+- packed_gemv: force the existing _hx_k_packed_gemv_offset own kernel regardless
+* feat(cuda-own r2): HEXA_OWN_GEMM guards on matmul_t·outer·packed_gemv (FP64 cuBLAS 7→1)
+aiden RTX5070 sm_120 측정: r8 FP32-scalar 추월(1.28~1.57×)이 양 경로를
+* test(sh-array-write): full int-op stub set (cmp/add/sub/mul/div) for alloc seed in micro-gate
+* fix(fold-gate): dt_erf golden RE-PIN — native string→f64 parse (#3689) correctly-rounded
+_hx_k_cast_d2f), launches the parity own-GEMM, casts back — same cast-in/out ABI as
+- CLAUDE.md reference-first: cuBLAS 독립 실증 (census r3 속도천장 falsified)
+the cublasGemmEx path, FP64 inputs never mutated. 3-way TF32 split: HEXA_TF32_OWN=1
+Emitted runtime's farr GPU host wrappers reference _hx_farr_table/_hx_farr_count
+* ci: re-trigger pull_request workflows now base=main (nobaseline + grace + no-hardcode were filtered at push-time when base was sh-str-scan-r2)
+* feat(forge/cuda): own TF32 mma.sync PARITY kernel wired to production — cublasGemmEx 1->0 (HEXA_TF32_OWN, census r3)
+- 변경 범위 = bench/clm_train_bench.hexa 1파일 (타 bench/stdlib/runtime 무영향)
+* chore(valop): build-host dispatch script for rt_add_native seed regen + micro-byteeq
+__hx_payload_fmul from 1.0) in a SINGLE fmul/fdiv → correctly-rounded == strtod
+수정(DUAL-RUNTIME): build_runtime_a_from_source 가 기본 build/runtime.a=CPU(toolchain 링크·libcuda-free·GPU-less 실행) + HEXA_CUDA=1 시 별도 build/runtime.cuda.a 추가 빌드. stage_precompile_package 가 소비자 tarball runtime.a 로 runtime.cuda.a swap. release.yml -cuda job LIBS=CPU-only(-lm -ldl·cuBLAS strip), CUDA_HOME 만 헤더용, Package HEXA_CUDA unset, Verify=dual-runtime 단언.
+docs(dojo): forge cuBLAS 7→0 + sm_120 parity 정정 — stale H100 'parity 미달성' 프레임에 HW-귀속 정정 + byte-eq GPU 학습 env 스위치(HEXA_OWN_GEMM/HEXA_TF32_OWN) 안내 (#3732)
+feat(forge): own-FP64 GEMM 3지점 배선 — HEXA_OWN_GEMM=1 시 production FP64 cuBLAS 7→1 (forge cuBLAS 독립) (#3718)
+* feat(rt-native): num-core PARSE half — hexa_as_num string→int native seed (sh-num-native, C #else kept)
+docs(ARCHITECTURE): forge FP16 HW 귀속 정정 + sm_120 reference-first 레버 (CUTLASS 리서치) (#3703)
+* docs(arch): FORGE-UTILGREEN 도메인 retire — 단일 SSOT (cuBLAS 7→0/beyond-parity → GPU 흡수)
+* perf(emit/x86_64): memoize symbol-name resolution in reloc passes — kill O(relocs*symbols) (#3712)
+- beyond-parity = FP4 mma.sync.kind::f8f6f4 (sm_120 신규·cuBLAS 미제공 deterministic FP4)
+* chore(valop): dispatch sources generated runtime.c from prebuilt worktree for micro-byteeq
+첫 r10 박제(0.11~0.21× CLOSED-NEG)는 P@V scalar unfair 중간버전. agent 가 P@V 도
+- outer    (out[R,C]=u⊗v): reuse _hx_k_gemm with K=1 → ZERO reduction → bit-exact
+__hx_to_double thunk falls back to strtod — so byte-eq HOLDS FOR EVERY INPUT (fast:
+-> own parity (no cuBLAS), else cublasGemmEx, default FP64 cublasDgemm. All additive,
+function call. The literal is evaluated in place — no fn-arena return boundary —
+aiden prebuilt runtime.a is stale (rt_map_set_inplace_native undefined) → hexa run
+Stage 1 — leaf (byte-eq-safe by construction: fresh op strings, dead until used):
+      M=(0.944,0,0) — the moment physically rotated (impossible for collinear).
+build verification) still emitted cuda LIBS without -L<lib>/stubs. On a GPU-less
+  of the rows-size cuBLAS crossover gate (FP64 dtype only; fp32/bf16 slices keep
+The prior seed regen used aiden's prebuilt aprime_cc which PREDATES #3714 (arm64
+#3713 frozen seed 가 stale-runner 트랩을 풀자 다음 층 노출: edge run 27860639944 -cuda job 이 Stage 0(hexa_v2 self-compile)서 'libcuda.so.1: cannot open shared object' exit 127.
+* feat(rt-native): num-float PARSE half — __hx_to_double string→f64 native seed (sh-num-float, Clinger fast-path, C #else kept)
+feat(rt-native): str r2 — rt_str_starts_with_native → native (prefix scan, C #else kept) (#3684)

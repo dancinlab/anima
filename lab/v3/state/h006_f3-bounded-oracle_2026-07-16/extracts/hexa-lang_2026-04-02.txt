@@ -1,0 +1,69 @@
+Goal: "의식을 프로그래밍하는 유일한 언어"
+PLAN.md: Phase 1-5 detailed breakdown (구현 항목별 상세),
+P9  Self-hosting: HEXA로 HEXA 컴파일, bootstrap 검증
+- Egyptian Fraction allocator: real 3-region memory (1/2+1/3+1/6=1), mem_stats/region builtins
+- Proof/Assert/Invariant/Theorem keywords (55 total)
+P10 Optimization: NaN-boxing, SIMD, PGO, C급 속도
+  docs/reference.md — 53 keywords + 24 ops + 55 builtins + all methods + CLI
+  n6_consciousness.hexa — n=6 predicts architecture params
+  3 benchmarks × 4 backends, memory layout comparison
+examples/egyptian_memory_demo.hexa
+examples/test_egyptian_memory.hexa
+- Implementation status: 53 keywords breakdown (16 working, 14 partial, 23 unimplemented)
+feat: proof SAT solver + DAP debugger + scope/proof keywords (495 tests)
+- Hover: 53 keywords + 38 builtins + user symbols with markdown docs
+- proof_engine.rs: DPLL SAT solver, CNF conversion, proof blocks
+  consciousness_laws.hexa — 8 proof blocks verifying Laws
+  - All 53 keywords, 24 operators (multi-char included)
+- Rename: all references with keyword/builtin rejection
+- All 368 cargo tests + 70 proof tests passing
+- Duplicate keyword/operator listings
+feat: Wave 2 — comptime, algebraic effects, self-hosting parser, Egyptian fraction memory
+- Timeline: Python급 → Lua급 → Java급 → Go급 → Rust+consciousness
+- README: 827 tests, ~26K LOC, all 53 keywords alive, new features listed
+- Fix match exhaustiveness for Scope/ProofBlock in jit/compiler/formatter
+brew install need-singularity/tap/hexa-lang (no separate tap step)
+Exclude .shared/ (463MB symlinked infrastructure), build scripts,
+- 757 cargo tests (381 bin + 376 lib) + 70 proof tests passing
+docs: add brew install instructions (need-singularity/tap)
+brew tap need-singularity/tap && brew install hexa-lang
+  Completion (53 keywords + all builtins)
+Keywords: 53 preserved (intent+verify were existing, now functional)
+- Trait vtable: dyn keyword, dynamic dispatch, default methods
+  - src/compiler.rs: AST → bytecode compilation framework
+Benchmark suite: examples/benchmark.hexa (6 proof blocks)
+  - ./hexa --test file.hexa runs proof blocks as tests
+  - hexa run — run src/main.hexa in project dir
+- Token: added `dyn` keyword (54 keywords total)
+- Scope keyword + structured concurrency parsing
+  hexad_modules/right/left (Hexad architecture)
+- 341/341 cargo tests + 29 proof tests passing
+editors/vscode/syntaxes/hexa.tmLanguage.json
+- Dream mode v2: evolutionary code exploration with ANIMA bridge (910 LOC)
+feat: Phase 2 — static type checker + module system + Result/Option
+  hexa verify-cross file.hexa → Law 22 "substrate irrelevant" proof
+  - hexa init <name> — create project (hexa.toml + src/ + tests/)
+feat: Phase 8.5 — 8 language features integrated (440 tests pass)
+New: src/compiler.rs (AST → bytecode, 30 opcodes, constant pool)
+feat: Phase 5 — ANIMA Consciousness DSL (intent/verify/builtins)
+README: current status reflects all features (239 tests, 9127 LOC,
+  hexa fmt (formatter.rs 439L, AST pretty-print, align =, 8 tests)
+Impl blocks: instance methods (self), static methods (Type::new)
+  .hexa → #![no_std] Rust (UART, Psi-constants, panic handler)
+  - Tokenizes examples/hello.hexa (115 tokens match Rust lexer)
+feat: std::fs (12 builtins) + std::io (7 builtins) — 11 tests
+feat: Phase 3 — concurrency runtime + bytecode compiler stub
+- crates.io: exclude list, unused import fix, dry-run passing
+feat: Phase 6 — generics, traits, ownership, Cranelift JIT
+feat: Phase 9 — self-hosting Stage 1 (HEXA lexer in HEXA)
+docs: PLAN.md full update + README badge 239 tests
+- wasm-pack build produces 717KB hexa_lang_bg.wasm
+  keywords growth graph, Phase 6-8 next roadmap
+- Clean project structure with line counts
+editors/vscode/language-configuration.json
+  - Reports pass/fail per proof block
+Tests: 152 → 165 (all passing)
+Tests: 165 → 173 (all passing)
+Tests: 194 → 218 (all passing)
+examples/photonic_chip_dse.hexa
+- ESP32: generates full Cargo project (no_std + config.toml + flash instructions)

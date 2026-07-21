@@ -1,0 +1,46 @@
+docs(selfhost): reconcile "no C-transpile" overclaim — honest self-host status in ARCHITECTURE.md + CLAUDE.md (#3353)
+ARCHITECTURE.md/CLAUDE.md 상단의 "no LLVM and no C-transpile" 단언이 어제자
+C-transpile fallback delegate 잔존 + ~5.5k LOC libc/syscall floor(RFC 061/g5 §7 영구허용,
+(M3 open)인 부트스트랩 floor. ARCHITECTURE.md/CLAUDE.md 에서 by-policy/permanent/RFC·g5 인용
+porting — self-host = native-emit fixpoint + irreducible libc/syscall floor (as Go/Rust).
+- .harness/ 규칙(enforcement.hardcore·severity·keywords·prefs·recommend) + git hooks(pre-commit lint · pre-push verify) + .claude/settings.json hooks
+build/artifacts/*dispatch.tmp.c 트랜스파일 산출물과 모순(c9). "no LLVM anywhere" 유지 +
+docs: fold project.tape governance into CLAUDE.md, retire .tape (md 단일화) (#3349)
+domain(RUNTIME-PORT): close M3 — 151 BORDERLINE all KEEP, runtime C floor at irreducible minimum (self-host 3/3) (#3360)
+이미 main 에 완료 랜딩(N5 byte-eq fixpoint gen3≡gen4, promote-default, 멀티타깃)이나
+g5: scf_pw_spin_selftest PASS (closure regression: V_xc^σ(ζ=0)≡unpol — exch 1e-12,
+  - self/runtime.h: rt_read_f32_at prototype (transpiled user.c not implicit-decl).
+※ 머지 전 검토: 기존 CLAUDE.md 에 트리 누락 시 docs lint 가 차단함 → 트리 섹션 보강 필요할 수 있음.
+promote shim delegates `build`) to obj→hexa_ld, gated on full-corpus byte-eq (not this
+~90%-irreducible). RUNTIME-PORT M1–M5 all closed; floor (~5.5k LOC) at engineering-
+feat(selfhost): hexa build → native gen3+hexa_ld by default (clang/ld-free) — self-host [2] productization (#3361)
+screening.hexa: qforge_vx_lda_spin (V_x^σ=−(6ρ_σ/π)^⅓) · qforge_ex_endens_spin.
+(~/.hx/self/native/selfhost), the full build pipeline runs with ZERO system as/clang/ld:
+g5: cah6 fast-path ≡ restricted BIT-IDENTICAL (e_total −10.7157, m=0.0, 12 evals,
+R_X86_64_PC32 against the inner label. asm path unchanged, native-emit only.
+* feat(selfhost): hexa build → native gen3+hexa_ld by default (clang/ld-free) — close self-host [2] productization
+전부 제거, "still shrinking · 정책 아님 · HEXA-SELFHOST+ 메타 bar 진짜 미충족" 으로 교정.
+docs(selfhost): retract fabricated "policy-accepted permanent C" claim for runtime.c floor (c9) (#3354)
+[float]->farr conversion. The leak is therefore BELOW the application layer — davidson's
+converges (~5s/iter) but m~0 — ecut is ~1/20 of the 90Ry the Co 3d needs, so the d-shell
+ρ_σ=Σ_k w_k Σ_b f|ψ|². Per-k H_bare cached once (bare-H reuse, .diag direct → no
+  qforge_anderson_next on each spin's own history; ≤0 → linear) — cuts metal SCF
+LE IEEE-754 f32 DIRECTLY into a fresh native farr (hexa_farr_zeros double[] handle,
+- ARCHITECTURE.md/CHANGELOG.md/CLAUDE.md stub(없을 때만) + scripts/scratch/
+Verified on summer (x86_64, gcc 13.3.0): tool/build_native_linux_x86_64 stage5
+Make CLAUDE.md the single markdown governance SSOT and retire project.tape.
+  TAPE-AUDIT.md; add AGENTS.md (fixes README -> AGENTS.md broken link)
+  table for compiler S0-S8 pipeline / stdlib / atlas / hx / linker,
+inbox/patches/cloud-idle-reap-consult-provider-status.md
+CLAUDE-MD violations = 0.
+직전 #3353 이 self/runtime*.c 를 "RFC 061 §4.1 / g5 §7 가 영구 허용한 floor" 로 적었으나
+ZERO portable hexa leaves — 70 freestanding libc / 41 GPU-device dispatch+mmap / 33 libm
+re-integration over the Co ONCV r-grid × npw² dominates (npw≳120 for Co 3d); dispatch
+chore(harness): upgrade engine bca79d1 → 01d7648 + worktree gc + docs enforce (#3347)
+self-host 완성 캠페인 잔여 1/3. x86_64 cc_native compiled print("hi") to garbage
+V_H[ρ↑+ρ↓] shared, V_xc^σ spin-resolved) · doubled PW_HAM_UP/DN apply slots ·
+self-consistent magnetization (RTSC_14 "non-magnetic clean base" claim vs Stoner m>0).
+Root cause of the 32^3 OOM: per-call farr alloc/free in the FFT helpers fragmented the
+is compute-walled by hexa's interpreted numerical core on mini — matvec acceleration
+dispatched with this path.
+scripts/harness

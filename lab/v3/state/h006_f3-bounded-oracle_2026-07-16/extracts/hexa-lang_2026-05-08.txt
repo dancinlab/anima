@@ -1,0 +1,53 @@
+F-HAL-1 closure 33% → 67% (calc_peripherals.hexa T1 ✓ + numerics_module_topology.hexa T2 ✓).
+F-HAL-2 closure 33% → 67% (calc_lifecycle.hexa T1 ✓ + numerics_lifecycle_dispatch.hexa T2 ✓).
+must cover the canonical HW-5 set (gpio/i2c/spi/uart/adc) — invariant
+feat(stdlib/hal): v0.3.0 — F-HAL-3/4/5 T2 numerics → sat-1 ✓ (every falsifier ≥ 67%)
+- numerics_module_topology: σ-slot contiguity {0..11}, Σ max_handles
+    - Σ max_handles = 88 (cross-confirms numerics_module_topology T2)
+Provenance: all 3 scripts mirror the v0.2.0 numerics_module_topology +
+  • calc_lifecycle.hexa — F-HAL-2 T1 algebraic. Asserts the τ=4
+F-HAL closure unchanged at 67% × 5 (sat-1 ✓ holds); v0.5.0 widens the
+  v0.3.0 entry: per-script summary + closure delta (33% → 67% × 3) +
+Adds second per-PDK silicon backend stub for the AI-native (Beyond-GPU)
+  - v1.3.0: T3b run-tier activation; lifts F-HAL closure 67% → 100%
+Replicates the T3 scaffold + compile-tier model for the second vendor
+Closes the T1 (algebraic) tier of the two outstanding falsifiers and
+  A peripheral surface (`gpio_write(pin, val)`) now resolves to ARM,
+  F-HAL-3   T1 ✓ T2 ☐ T3 ☐   33%   (calc_peripherals — φ-dichotomy sub-claim)
+on the AI-native silicon axis — paper-tier area / freq / voltage table,
+    point to the new scripts; status block now reports T1 ✓ for all 5.
+F-HAL closure unchanged at 67% × 5 (sat-1 ✓). v0.6.0 widens HW vendor
+F-HAL closure unchanged at 67% × 5 (sat-1 ✓). v0.7.0 widens HW vendor
+  • calc_peripherals.hexa — F-HAL-1 / F-HAL-3 T1 algebraic. Asserts
+Three new T2 (numerical / fixture) scripts that close F-HAL-3, F-HAL-4,
+F-HAL closure unchanged at 67% × 5 (sat-1 ✓). Per recipe §3, T3 ✓
+  v1.9.0  — backend/ai_native/<vendor>.hexa (per-PDK paper backends).
+F-HAL closure unchanged at 67% × 5 (sat-1 ✓). Lifting per-falsifier
+            run both harnesses; capture sentinels. Lifts F-HAL T3 ✓.
+F-HAL-5 from 33% to 67% closure. Combined with v0.2.0's F-HAL-1/2 T2,
+feat(stdlib/hal): v0.11.0 — intr peripheral across 5 vendors / 4 distinct controller ISAs
+                 — ESP32 architecture is distinct from DesignWare-class.
+                                          files present + harness_main.c
+Per-vendor stubs (all paper-tier; FFI to runtime libs is downstream):
+feat(stdlib/hal): v1.3.0 — T3b1 compile-tier verified live (arm-none-eabi-gcc 16.1.0 builds rp2040 harness)
+feat(stdlib/hal): v0.12.0 — dma peripheral across 5 vendors / 4 distinct DMA architectures
+feat(stdlib/hal): v1.2.0 — T3 (HW-bench) tier scaffold for rp2040 cross-compile harness
+feat(stdlib/hal): v0.2.0 — T2 numerics for F-HAL-1/2 + 4 stm32h7 backend stubs
+  - rp2040/dma.hexa   — single 12-ch controller 0x50000000. Distinctive
+    default budget, J₂×τ=96 upper bound, intr/dma extend to J₂=24,
+Total embedded backend stub count: 50 → 55. (compute.hexa from v0.13.0
+- numerics_lifecycle_dispatch: dispatch table aggregate score ≥ 12·3
+README + CHANGELOG bumped to v0.2.0. F-HAL-3/4/5 still 33% (T2 deferred
+  Reads each <module>.hexa, extracts the `let PHI_KIND = "..."` literal
+                        duty (highest of 5 vendors) → 16-bit DAC at
+Architecture coverage milestone: v0.11.0 covers 4 distinct controller
+  density ~8 M-gate/mm² (~16x SKY130; from public ~173 M-tx/mm² A14
+    against stream.wikimedia.org/v2/stream/recentchange and captures
+feat(stdlib/hal): v1.10.0 — backend/ai_native/tsmc_n5.hexa TSMC N5 PDK paper backend (2nd PDK)
+feat(stdlib/hal): v0.4.0 — rp2040 second HW backend (canonical HW-5 parity)
+  - esp32s3/pwm.hexa  — LEDC 0x60019000; 8 ch × 4 timers; 1..20-bit duty.
+  → 6 distinct CPU classes / 4 ISAs (ARM × 2, Xtensa × 2, RISC-V × 2).
+  - rp2040/timer.hexa   — single TIMER 0x40054000, 4 alarms, 64-bit µs;
+(AD5675R / MCP4922 / DAC8552) via stdlib/hal/spi — out of v0.10.0 scope.
+this lifts ALL FIVE HAL falsifiers to ≥67% — the **sat-1 threshold**.
+  - esp32/pwm.hexa    — LEDC 0x3FF59000; 16 channels (8 HS + 8 LS) × 8

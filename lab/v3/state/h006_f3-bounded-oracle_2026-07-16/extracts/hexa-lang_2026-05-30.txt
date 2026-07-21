@@ -1,0 +1,39 @@
+feat(deck): RTSC 런북 launch emission → concurrent-fill 재사용 (#2096/#2101 · d_parallel_fire) (#2110)
+feat(deck/rtsc): §4b 기본 발사 = 후보별 독립 pod (d_parallel_fire 1순위) · CONCURRENT-FILL 은 pack_one_pod opt-in (#2125)
+의 기존 stdlib/deck/fill_emit_test.hexa FAIL(콜드시드 무관·content assertion) 때문에 복원
+* feat(deck/rtsc): §4b 기본 발사 = 후보별 독립 pod (d_parallel_fire 1순위) · pack_one_pod=true 만 CONCURRENT-FILL
+* test(deck/rtsc): orchestration selftest — fallback 판별을 emitted heading 으로 정밀화
+feat(cloud): dft-run defaults to 1 deck/pod — bin-pack is opt-in (--bin-pack) + warn (#2204)
+- import "stdlib/cloud/fill_plan.hexa" (deck 은 import만; cloud 본체는 cloud agent 소유)
+dft-run 이 deck-gen(stdlib/deck/rtsc.hexa)이 굽는 레이아웃을 그대로 소비하도록
+init constructor에 신규 _hexa_init_malloc_tuning() emit. HEXA_FARR_TRIM=1 시 startup 1회
+feat(stdlib/record): 타임스탬프 run-record emit 레이어 — exports/<domain>/<slug>/<ts>/ (7e45e583 cap3) (#2154)
+* docs(hexa-train-floor): malloc.h shim fix verdict + log — ubu-2 clang/gcc clean (M1/M3 RSS 측정 🟠 unblock)
+fix(cloud): mpirun emitter 전부 root-MPI + single-thread BLAS env 일관화 (f06b0a4c·055b38f8) (#2117)
+docs(unshadow): typed-repr RFC + reopen backlog — unboxed array (A) + monomorphic struct (B) (#2148)
+verdict-only deliverable. seed-refresh/#2104 trim-fix와 동일한 stale-local-artifact 패턴.
+feat(stdlib/cloud/fill_plan): DISK-headroom 예산 차원 추가 — disk-bound 동시 수 클램프 (#2101)
+    못 할 때만"). disk-aware fill_plan_disk 수학은 그대로 — 플래그 뒤로만 격리.
+기본 emit 의 separate-pods 산문이 "§4b-fallback" 을 opt-in 포인터로 언급하므로
+* fix(runtime/emit): malloc.h × libc-rename shim 충돌 해소 — Linux-glibc 빌드 회귀 (#2119/#2123)
+variable-shape compiler emission = multi-session(nvptx_target.hexa 단일-타일 intrinsic만 emit,
+feat(easy): `hexa easy scaffold` — 친근(이지) 설명 .easy.md 빵틀 emitter (PR1/3) (#2205)
+docker-runner-push.yml: paths filter 의 dead `self/runtime.c`·`hexa_cc.c` → `hexa_cc_seed.c`
+- gen2_flat_struct_typedef: per-type flat typedef + flat ctor (positional, 시그니처 동일)
+bench 정제(per-iter construction + data-dep 으로 const-fold 차단해 실 wall Δ 분리).
+- 콜드 hexat(stale 시드 빌드 트랜스파일러)로 현 emitter SSOT 에서 전 runtime
+fix(self): dispatch_absorbed 스크립트 해석에 install-wiring·conventional checkout fallback 추가 (#2183)
+* feat(codegen): escape→stack-alloc 분석기 + 비-escape flat-struct 스택 배치 (UNSHADOW F2 공간축)
+  fragment threading 이 이미 hand-emit 완결, F-RFC067-TILE-LOOP-NUMERIC 도 그 경로로 PASS(PR #191)
+feat(tool): build_hexa_cloud.hexa --install — codesign + backup + 디스패치 설치 (9c04af5a) (#2112)
+는 레버 아님). element-kind 증명·box/unbox 경계 규율은 axis B(monomorphic struct) 기반.
+.dockerignore 컨텍스트 문제(2일+ pre-existing · Dockerfile-level · push-only)로 본 dead-ref
+  (cloud가 bin/hexa-cloud spawn 하는 것과 동일), fallback cwd → tool/verify_cli.hexa interp.
+- codegen 소비 측 threading 은 이미 완결(nvptx_target.hexa:1791-1806 이 s.args[i].local_id
+콜드시드로 stale-local 벽 우회 → host hexa 0 의존으로 #2168/#2159 LIVE 토대 구축
+정착·link error 0). 그러나 RSS 측정 경로가 mallopt-mmap fix(#2119/#2123)가 추가한
+  본체가 B9-gitignored self/runtime.c, committable emitter 부재 → 다음 regen 대기).
+#2185(dead-ref sweep) 머지 후 docker-runner-push 의 "Smoke — interp can transpile a tiny
+조사(read-only): struct=hexa_struct_pack_map 해시맵(codegen:8043)·field=hexa_map_get_ic
+verdict(verify): Identity-7 migdal_ratio rebuild 검증 — gitignored artifact, 커밋 불가 (verdict-only) (#2150)
+* feat(UNSHADOW): 🔵 typed monomorphic struct layout — flat C-struct + offset field access (codegen arm + 벤치)

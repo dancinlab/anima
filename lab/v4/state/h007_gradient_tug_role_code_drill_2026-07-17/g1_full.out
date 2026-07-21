@@ -1,0 +1,13 @@
+==============================================================================
+H_007 mech-5 G-1 kill-only smoke — device=mps d=64 steps=(1500, 2000) drill=384 f2=192
+==============================================================================
+
+--- training A-tug …
+  A-tug: f2_dacc=0.5677 | probe_subj=0.9655 (free-ingredient diagnostic) | cos_frac_neg_early=0.4667 cos_mean_early=0.0046 cos_min=-0.2064
+
+--- training C-dup …
+  C-dup: f2_dacc=0.4948 | probe_subj=0.9655 (free-ingredient diagnostic) | cos_frac_neg_early=0.1 cos_mean_early=0.2762 cos_min=-0.162
+
+==============================================================================
+G-1 VERDICT: PROCEED-CANDIDATE — role-specific conflict (conflict_diff 0.2716 ≥ τ=0.05: A-tug cos_mean_early 0.0046 vs C-dup 0.2762, resolves late) AND faithful role-binding gain: f2 d_acc A-tug 0.5677 > C-dup 0.4948 (sep +0.0729). NOT a d=384 result (G3-0b: smoke passing ≠ proof); sets τ=0.05, E[A-tug d_acc]≈0.5677 for the G-2 freeze.
+wrote g1_smoke_result.json

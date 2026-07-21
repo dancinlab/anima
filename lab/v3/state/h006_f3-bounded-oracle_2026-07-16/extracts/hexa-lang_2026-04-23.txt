@@ -1,0 +1,52 @@
+   - 1-pass: continuous_scan + stale 3d + gap_proposer + roadmap_banner sync
+(gen2_method_builtin @2401 에만 있고 gen2_expr fallback @3572 는 빠져 있어
+codegen_c2.hexa fix: gen2_expr 내부 dispatch 에 .center 누락이었음
+이미 runtime.c:5857 + codegen_c2.hexa:3353 에 존재. 내가 write_file 만 알고
+  - "메타/로드맵 엔진에 commit/push" = hx_continuous_scan + roadmap_engine
+fix(roadmap): remove stray {} prefix on first line (commit 39eb8310 follow-up)
+  self/codegen_c2.hexa: dispatch real_args/script_path → hexa_real_args/
+  rebuild is a follow-up chore — codegen gate changes are in source
+  dispatch of the new builtins will take effect only after roadmap 66
+Step 3 (runtime.c 정의 제거 + codegen 심볼 플립) 은 다음 세션.
+argv builtins without disturbing the 40+ existing args()[2..] call sites
+codegen_c2. Rebuild bootstrap confirms v3 = v4 byte-identical — self-
+Replaces the manual [2..] argv slice with the canonical real_args() API
+Replaces stub. Walks tool/*.hexa, normalizes each line (strip leading
+feat: sleep mode + gap_breakthrough + roadmap_banner + audit doc — 야간 자율 운용
+chore(state/proposals): test entry cleanup + inventory sync (c5818ca7 follow-up)
+feat(tool/hx_meta_gap_proposer): v1 real logic — git/raw-audit signal mining
+바이너리 rebuild 필요 (self/native/codegen_c2_v2.c 재생성 + stage0/1
+   - 10 repo 전수조사: meta tool (hx_23 · ag_18 · n6_15), roadmap tool
+    force-add, stage 되면 "chore(meta): continuous-scan sweep <ts>..."
+feat(m2/roadmap-68): AOT dispatch for now/push — shim-removal prereq
+  세션에서 즉시 visible, Claude 가 무시 후 다른 작업 시작 억제.
+  · tool/roadmap_banner.hexa — .roadmap 상단 advisory banner add/remove/sync
+fix(stage0): {} empty-map parse + starts_with/ends_with/contains free-fn dispatch
+  docs/unified_meta_roadmap_cross_repo_20260423.md (12 repo × 6축 매트릭스
+feat: meta + roadmap engine — auto commit/push + ack hint shim 경로 수리
+- self/codegen_c2.hexa — in both codegen_c2() @~808 and codegen_c2_full()
+- self/native/hexa_cc.c regenerated via `./hexa cc --regen`; self/native/
+Plus rolls timestamp-only updates to the 8 state/hx_*.json scan outputs
+  AOT-cache shortcut (codegen_c2 -> hexa_v2 1.4MB): all three present.
+                        hexa_script_path (AOT), + is_builtin markers.
+chore(state/proposals): hxa-005 done manual fix — earlier 'done' 서브커맨드 python heredoc 실패로 state 미갱신
+소스 수정 commit → inbox done transition. 바이너리 rebuild 외부 세션 대기.
+exec("printf >> ...") 사용 없음 (python3 heredoc 으로 JSON 전체 rewrite 중).
+에서 .center 추가 후 M1-lite 5함수 중 pad_*/center 는 커버됐으나 repeat
+feat: close 3-gap automation loop — declare_scanner + inbox stale + go preflight
+Recurrence prevention: tool/hx_bare_hexa_scan.hexa — scans all tool/*.hexa,
+chore(bootstrap): rebuild build/hexa_v2_linux post Phase C.2 + runtime_tmpdir
+chore(state/proposals): hxa-007 done — void welcome advisory 인지 완료
+  self/linter.hexa:12 / codegen_c2.hexa:324,369,5595 / hexa_full.hexa:6301 /
+  무조건 노출. 60s TTL (noise 완화). opt-out: NEXUS_BLOCKER_QUIET=1.
+feat(m5): tool/build_hexa_cli_linux.hexa — cross-build hexa CLI for linux
+                  atomic unlock/relock via tool/roadmap_with_unlock.hexa).
+  inventory 의 prio>=95 non-done entry 를 [BLOCKER:<repo>] 블록으로
+--selftest, exits 1 if any offender. Wire into continuous_scan for daily
+- Gated both FMA-fusion sites — the CompoundAssign `x += a*b` rewrite
+  .roadmap 64-69: self-host parent + M1-M5 entries codified (raw#1 uchg
+then x86_64-linux-musl-gcc -static -I self builds the ELF. Flags follow
+  that miss the method-form dispatch at line 15683+. Mirrors runtime.c
+Since 2026-04-20 the `hexa build` driver refuses to write output under
+self/module_loader.hexa:ml_dirname walks a path string with `path[i]`.
+  self/hexa_full.hexa:  interpreter dispatch mirroring the two names.

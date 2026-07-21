@@ -1,0 +1,83 @@
+{
+ "metrics": {
+  "protocol_recovered": true,
+  "protocol": {
+   "name": "H_9288 MORPH-ATOM stage-2 S1 held-out flip panel",
+   "task": "synthetic XOR negation drill (NBIND grid), Korean negation stems",
+   "metric": "F2 = held-out flip accuracy on the stem never seen in the drill",
+   "format": "FORCED CHOICE (binary flip: affirmative vs negated)",
+   "chance_p0": 0.5,
+   "n_items": 120,
+   "drilled_stems": [
+    "안",
+    "않",
+    "못"
+   ],
+   "held_out_stem": "아니",
+   "sanity_metric": "F1 = drilled-stem accuracy (must be ~1.0 or the arm never learned the drill)",
+   "arms": {
+    "M": "MORPH-2B codec (BPE-on-jamo, atomicity without identity)",
+    "C1": "raw utf-8 baseline, identical drill — the control",
+    "C2": "held-out stem ablated from the codec",
+    "C3": "shared-<NEG> token — the leak ceiling / liveness arm"
+   },
+   "v1_pass_rule": "F2(M)>=0.70 & delta(M-C1)>=0.15 & C3>=0.90 & C2<=0.55 & F1(M)>=0.75",
+   "seeds": 1,
+   "seed": 4302,
+   "harness": "custom morphatom_eval.py (NOT canonical anima-py evaluate)"
+  },
+  "chance_band_99": [
+   0.38333333333333336,
+   0.6166666666666667
+  ],
+  "n_items": 120,
+  "chance_p0": 0.5,
+  "C1_inside_band": true,
+  "M_inside_band": false,
+  "C1_two_sided_p": 0.013376326728236463,
+  "M_two_sided_p": 1.9381327553850672e-21,
+  "C3_two_sided_p": 1.9173290514357787e-22,
+  "delta_M_C1": 0.29166666666666663,
+  "n_required": 444,
+  "power_operating_point": [
+   0.6166666666666667,
+   0.7666666666666667
+  ],
+  "v1_anchor_n": 120,
+  "v1_anchor_underpowered": true,
+  "fixtures_pass": true,
+  "generator_exists": true,
+  "boundary_shift_rate": null,
+  "rig": "REFUSED"
+ },
+ "falsifiers": [
+  {
+   "name": "G-1 drift existence",
+   "triggered": false,
+   "status": "PASS"
+  },
+  {
+   "name": "G-2 closed-form power",
+   "triggered": false,
+   "status": "PASS"
+  },
+  {
+   "name": "G-3 estimator fixtures",
+   "triggered": false,
+   "status": "PASS"
+  },
+  {
+   "name": "G-4 salvage bounds check",
+   "triggered": true,
+   "status": "FAIL"
+  },
+  {
+   "name": "G-5 protocol reconstruction",
+   "triggered": false,
+   "status": "PASS"
+  }
+ ],
+ "n_pass": 4,
+ "n_total": 5,
+ "rig": "REFUSED"
+}

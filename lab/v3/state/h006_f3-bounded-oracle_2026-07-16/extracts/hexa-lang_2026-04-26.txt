@@ -1,0 +1,48 @@
+feat(self-host): SH3 phase 2.A — multi-store lifts ≤7-byte cap (256B)
+feat(self-host): SH3 phase 2.B — println(IntLit) compile-time int→str
+feat(self-host): SH3 phase 1 ACCEPTANCE — first end-to-end zero-clang native
+preserve the historical fallback behavior so legitimate preprocessor misses
+Phase 11 verification caught curl/wget writing through native_gate via the
+plan(self-host): SH3 attempts 1.B — AST exposure resolved, in-process bridge
+feat(raw3): document hexa-lang owner-self-verify pattern + verify hash consistency
+chore(governance): trim hexa-lang/.own to self-hosting only (own#1 + own#3)
+cmd_run wrapped the module_loader preprocessor in exec() which discards rc, so
+JSON because pretty was producing empty/garbage output). This restores the
+- Pre-fix smoke (locked live): exit 3, caught_pattern=no — defect confirmed
+mirrors refuse_raw6's is_under_hive_repo precedent) and a path-substring
+Issue: hexa-lang owns self/raw_loader.hexa (the parser FOR raw-format DSL) yet had 0/15 canonical self-format files at root — meta-circular dogfooding gap (parser-owner doesn't consume own format).
+- tool/roadmap_critical_path.hexa: dropped airgenome bridge fns (_ag_bin/_ag_available/_ag_touch) + caller at line 542 (~37 lines, _sh_q preserved — used by surviving fns)
+feat(sbpl): scope self-edit allowance to dev toggle (raw.hexa_lang_improvement gate)
+chore(governance): own#1 + own#3 declare triad pattern (raw:enforcement-triad dep)
+fix(cmd_run): propagate module_loader fail-loud (exit 2) instead of warn-fallback
+feat(raw7): port raw_7.list reader from hive scanner (file-based + expiry-aware)
+and downgraded to "warn: module_loader preprocess failed, falling back to raw
+Note: the brief's premise "transpile produces a 24KB src.c in ~2.6s" actually
+- Unlocked live (chflags nouchg → witness → re-lock): caught_pattern=yes,
+  > /Users/ghost/core/hexa-lang/stdlib/anima_audio_worker.py (abs fallback)
+  SH3 todo    — hexa-source → IR frontend bridge (real self-host wedge)
+chore(raw_cli): drop .loop suffix from verify summary (hive raw#17 retire)
+SBPL syntax verified via sandbox-exec -f native.sb /usr/bin/true (exit 0).
+Phase 12 verification caught curl/wget writing to banned paths despite our
+  hexa run tool/raw_all.hexa --only own:hexa-lang-self-host        exit 0
+working-tree changes" sweep): HEXA_AOT_CC=<cmd> overrides the C compiler;
+covered by L0 agent pre_tool_guard + L0' sandbox-exec (macOS) + the CLI's
+uchg-locked build/hexa_interp (false positive caught_pattern=no, exit 3).
+= explicit author intent) requires .gitignore'd files to be exempt. This
+hexa scripts + hive --dev compiles) this produced 1-30s+ queueing delays
+  already covered by L15744 union return val_str(""). Removed dead line.
+docs(enforce): document macOS SIP host L1 gap + alternatives (sandbox-exec / EndpointSecurity / status quo)
+- tool/llm_verdict_watcher.hexa, tool/ai_config_ban_lint.hexa: header annotated as retired (producer dead)
+fix(native_gate): hook fopen/fopen64/freopen family (close curl libc-internal PLT bypass)
+fix(interp): ω-stdlib-3 — file_size dispatch arm stat-based (multi-GB + binary safe)
+feat(interp+runner): ω-interp-4 array_alloc fast-path + ω-runner-5 busybox unblock
+chore(governance): retire hexa-lang/.raw -> absorb into .own; pin .raw-ref to hive
+returns EPERM at the open() syscall boundary. Compiles diag.c via debian:12-slim
+* .own — own#3 gains `proof self/raw_cli.hexa verify --target hexa-lang/.own`
+perf(aot-layers): cut script-edit recompile 4.3s→1s via 3-stage content cache
+Falsifier: anima --root scan reports 0 violations (was 2). Selftest unchanged.
+feat(catalog): add event-loop as 4th canonical @logic entry (raw#36 alignment)
+- with this primitive (Phase B):         35.6 ms/pair  → 4.2× over Phase 3
+- new io-drain rule (keywords: net_read/daemon/tcp/peer/FIN/signal/drain/...)
+- _solve guards event-loop as classify-only (no executable invoke for revive)
+  $ hexa tool/audit_shim_ssot.hexa --witness     # exit 0 (caught + restored)

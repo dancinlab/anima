@@ -1,0 +1,44 @@
+runtime.c 기존 comment 가 "interp 도 ref eq" 이라 잘못 기록돼 있었으나
+    hexa_throw 호출. 필요 시 hexa_void/arr 리턴 (never 실행). 파일 앞쪽에
+- state/proposals/inventory.json: hxa-20260424-003 (go_shadow path_drift, from nexus) + hxa-20260424-004 (JSON parse helpers missing, lang_gap floor=95)
+조합일 때 double 변환 후 비교. `!=` 도 `!hexa_eq(...)` 로 파생되므로 자동
+스캐너가 '--selftest' 명시 분기를 찾아 카운트. main() 상단에 marker 분기
+는 기존대로 newline 으로 종결 (continuation 안 함) — 꼭 필요한 Dot 만
+    (free tier availability 불확정; 러너 큐 불가해도 main gate 녹색 유지.
+§4 우선순위 1-6 전부 DONE 마킹 (Linux 빌드 / implicit run / M1-lite /
+- +args top-level env_define (interpret() init L18112-18130): binds [script_path, user_args...] by skipping the 2-prefix that hexa_set_args dup-inserts. Previously `args` identifier was unbound in .hexa scripts → args.len() returned void, silently caught.
+→ 매치되면 그 결과 반환. 매치 안 되면 기존 에러 경로. 이전 커밋 ce11fe3f
+    = 0.0 로 모두 수렴, 결국 intern pointer 비교로 떨어져 무의미한 순서
+    2-arg `.find(sub, start)` 은 문자열 전용 의미이므로 그대로 유지.
+hexa-lang 의 자호스팅 경로가 Banach fixed-point 실증 단계에 도달함.
+`[3,1,2].sort()` 이 AOT 에서 `[0,0,0]` 반환 + 원본 array 도 zeroed 되는
+기존 tool/build_hexa_cli_linux.hexa (Hexa 스크립트) 는 CI 에서 재사용
+Rebuild: ./build/hexa_stage0 tool/build_stage0.hexa → build/hexa_stage0.real
+perf: `./hexa run` 호출당 mktemp fork 1회 제거 (~1ms × N callsite).
+고는 수정 불가. 이를 coverage 분모에서 제외하여 mutable 대상의 실측 커버리
+알려진 남은 엣지: wildcard `_` 실행 결과가 void 로 평가되는 경우 — 별도
+fix(interp): `.to_string()` universal fallback — align AOT codegen rewrite (T48)
+inbox: intake hxa-20260424-006 lang_gap (hexa runtime ARGS_VOID + to_i64 missing)
+enforce/tool: cross_repo_blocker floor + H-DIAG3/H-SILENT + chorus helper + inbox intake
+  - 기존 커밋 d2da6daa 의 single-line workaround 는 유지 (양쪽 다 작동)
+   (아래 자리에 별도 `??=` 처리 branch 가 있지만 첫 `?` arm 이 먼저
+fix(codegen): gen2_expr fallback — route unhandled methods to gen2_method_builtin
+→ **meta 부동점 관측**. 이번 세션 전 T34 flake + match_pattern 버그 +
+fallback 추가 — val_to_string(obj) 로 처리. int/float/bool/array 등 모든
+    을 current stage0 과 동일 경로 (`build/hexa_stage0_pending`) 로 생성.
+binding 처리 필요 (binding 이면 scrutinee 를 _ 로 env_set). 후속.
+array `.find(fn(x) { x == 3 })` 이 AOT 에서 -1 반환하던 silent bug.
+- tool/proposal_inbox.hexa: _submit_one auto-bumps to 95 when category matches blocker sub-cats; accepts new --priority-reason arg; prints [FLOOR-AUTOBUMP]
+작업 필요 — 별도 증분. 본 tool 은 build 마다 호출하면 drift 재도입 시 즉시
+지를 보고. 100% 목표 달성을 위해 attestation 을 강제로 깨는 anti-pattern 방
+비-Newline 토큰 확인. Dot 이면 개행 소비 후 Dot branch 로 진입, 아니면
+그러나 pattern 은 AST 노드 (IntLit kind, value="1" 등) — .tag 필드 자체가
+op == "+=" 로 비교해서 모든 분기 fall-through → `/* compound + */` C 주석
+매트릭스. 이미 실측 통과한 build_hexa_cli_linux.hexa 파이프라인 (508KB
+비교 → 항상 false → ??= 가 empty string 일 때도 branch 안 들어감 →
+Periodic tool-scan / drift-detector rewrites. 본 세션 변경점은 각 파일의
+이전 커밋 38b93560 이 parse_postfix 에서 `Newline → Dot` 연속 패턴을
+hexa_v2 로 self/hexa_full.hexa 를 다시 transpile + clang 한 결과가 현재
+fix(parser): `let X =\nexpr` — p_skip_newlines() after Eq (root cause of {})
+수정: parse_let() 에서 `p_expect("Eq")` 직후 `p_skip_newlines()` 호출.
+로 잘못 라우팅되어 -1 반환. 별도 polymorphic fix 필요 (후속).

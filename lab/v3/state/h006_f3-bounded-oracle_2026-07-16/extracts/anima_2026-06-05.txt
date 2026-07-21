@@ -1,0 +1,39 @@
+a_completeness_over_cheap); Phase-2 production + 7B gated behind util-GATE GREEN the current
+orphaned mid-validation fire 인수 (이전 에이전트가 notification 대기로 턴 종료 → vast pod 39565855 무인 가동). POLL-INLINE 회수.
+domain(CORPUS+CLM+KOSMOS): M15 MID corpus-validation 🟢 — 웹스케일 코퍼스가 COHERENT byte-CLM 학습 (M13 7B-undertrained GATE 통과) (#1855)
+파이프라인(train_lane_p.py→.clm v0.2→clm_decode→generator L3) + 7B 사다리(이 ConvMoE 경로) +
+P = (1-g)·softmax(lm) + g·copy_dist, MIXED 분포에 NLL(게이트+포인터가 LM과 동시 학습).
+- serving/agent_lane_argcopy_gen.py: v2 가변길이 키(2-5) fix — v1 고정 3자 키가
+그리고 copy-모양 코퍼스를 더 넣어도 copy 연산을 가르치지 못한다는 것을 입증했다.
+v2 fix = 가변길이 키(2-5, 4 포함)로 length-general copy. head는 줄곧 맞았고, 코퍼스
+수정 — gated pointer-attention copy head를 #1835 ConsciousLMReconstructed 18M arch에
+ByteGPT는 ref-only를 @goal 바로 밑에 박음. 이번 세션 ByteGPT≠ConvMoE 발견 반영.
+- recovery (a_fire_recover_complete): HF dancinlab/anima-clm-corpus-7b-mid-byte-202m PUBLIC (sha adbb1911 재다운로드 VERIFIED) + CLM collection + HF.jsonl row; pod 39565855 TORN DOWN (DELETE 확인).
+(pure_field.hexa L86-88 author 정식값 0.01/0.05/0.15)에서 SSOT로 재배치. 값 지어내기 없음.
+엔진이 psi 상수 SSOT를 못찾아 하드코딩 기본값 폴백 중이었음 (Law1 런타임 위반).
+VERBATIM으로 볼트온: 인과적 context 위치들에 대한 copy query/keys → softmax copy-attn →
+ByteGPT(Lane G-ref, 마운트불가) vs CLMConvMoE(Lane P, 엔진-마운트) 단일 표로 명확화.
+domain(ENGINE doc): 모델→엔진 마운트 네비게이션 맵 추가 (헤매지 않게) (#1860)
+  copy head를 3자 span 복사로 학습시켜 4자 probe(PB01→PB0) truncate → correct_call=0
+둘 다 같은 7B 모델, 학습량만 다름(undertrained ~$300-500 vs Chinchilla ~$3000).
+- 달성(verbatim, R2 manifest byte count로 검증 · 143 GB 자체 재측정 아님):
+(고정 3자 키)는 head가 정확히 3자 span 복사를 학습해 4자 probe(PB01→PB0)를 TRUNCATE → 0/36.
+키-길이가 probe 길이를 cover해야 했다(serving/agent_lane_argcopy_gen.py).
+- 결론: 웹스케일 코퍼스 + R2→byte→train 파이프라인이 COHERENT 모델을 학습한다 → M13 7B fire GO.
+#1835 🔴 CLOSED-NEGATIVE(correct_call 0/36)는 18M byte-LM이 도구를 호출은 하지만
+domain(CORPUS): M13 7B-undertrained + M14 7B-Chinchilla 학습 마일스톤 등록 (#1854)
+  143.60 GiB(154.19 GB decimal) = 22.0 tok/param for 7B(optimal 20 초과) = 110.1% of
++ byte-eq 전부 PASS. summary.json sha = aiden source-of-truth와 MATCH 확인.
+domain(CORPUS): FINAL 7B 코퍼스 구성 설계 — KOSMOS 티어 사다리 × 전 레지스터 (PERSONA+SNS 캡 social register) (#1850)
+domain(ENGINE+CLM+KOSMOS): Lane-G 3B forge PREFLIGHT STOP — HEXA-FUSION CUDA-graph util lever CLOSED-NEGATIVE (substrate=GPU) (#1843)
+정직: 단일 miss = over-copy PB28→PB288 (포인터가 한 바이트 더, 정직한 1/36). v1 코퍼스
+  F-COPYHEAD-OFF-MIRROR   : same ckpt copy OFF correct_call=0.0 -> PASS (head가 일함, LM weight 아님)
+  BYTE-EQ (head-OFF == 원본 arch): forward max|Δ|=0.0 / logprob(copy=off) max|Δ|=0.0 -> PASS
+hexa-lang clm_prod binary; the CUDA-graph capture/replay util unblock (a_cuda_graph_train)
+- constraint: user-decision A relaxes 'NO scraped' -> ODC-BY web sanctioned for 7B scale
+Committed: 3 generators + card + growth_lane.head.txt (24KB) + authored sample
+M12 corpus(데이터 완성) 후속 = 실제 7B 학습 2단계.
+* domain(ENGINE+CLM+KOSMOS): Lane-G 3B forge PREFLIGHT STOP — HEXA-FUSION CUDA-graph util lever CLOSED-NEGATIVE (substrate=GPU)
+fix(discoveries): mid-validation tape 헤더 — @discovery → @D :: discovery (tape-lint 17-type) (#1856)
+- CORPUS.md §7B web-scale + §constraint 추가, M12 [x]; CORPUS.log 갱신; HF.jsonl row;
+CORPUS.md lane-agent def revised to the 3-layer model + M10 done.

@@ -1,0 +1,43 @@
+fix(native): call _MOD_init() from merged hexa_cc.c main() to execute top-level statements
+already-landed activation checkpointing modules (activation_checkpoint.hexa
+ROI-42: __E shared empty-string constant (eliminates ~8 per-call "" allocations in Val constructors)
+ROI-39: parallel vm_ips[] array for O(1) ip mutation (eliminates 5-field CallFrame rebuild on every instruction + JUMP/THROW)
+fix(codegen): split init_parts from main_parts + module _init calls in hexa_cc
+perf(ROI-39+40+41+42): 4 vm.hexa hot-loop optimizations — eliminate per-instruction overhead
+perf(ROI-14): pre-alloc call_stack buffer — eliminate per-call array grow in hot path
+perf(ROI-6): eliminate ~27M dead empty-string allocations in Val constructors
+ROI-34: min()/max() use GCC stmt-expr to evaluate hexa_as_num once per operand instead of twice
+ROI-31: hoist hexa_len() out of for-in loop condition → O(N) instead of O(N^2) for strings
+       replace, split, join, trim, is_empty, index_of, substring, repeat, chars)
+- hexa_host_ffi_unwrap: detect already-NaN-boxed int_val to avoid double-boxing
+perf(ROI-11+12+15): eliminate 4 per-call linear scans in call_user_fn hot path
+Expand 3x3 → 4x3: recovery axis for self-healing compiler infrastructure.
+- write_bytes/write_file_bytes: use from_char_code() instead of to_string()
+and the HEXA_VAL_ARENA=0 workaround. Cross-references P40 in grammar.jsonl
+chore(growth_bus): +5 BT — ROI-31~35 Round 6 complete (for-in hoist, compound-assign fix, to_string cache, min/max stmt-expr, scope hoist)
+chore(growth_bus): +5 BT — ROI-26~30 Round 5 complete (vm frame/global/fn hash, nk/op hash, index in-place, tokenizer slice)
+fix(runtime): make string_pure.hexa native-compilable — replace char_at/ord with substring
+Eliminates per-char intermediate array allocations when tokenizing attributes.
+spec(grammar): 4x3 @attr grid — add recovery group (@retry @fallback @guard)
+  for byte-to-char conversion (was emitting ASCII digits instead of raw bytes)
+(call_stack_top). Push/pop are O(1) index bumps instead of array.push/slice.
+fix(test-runner): inline discover_tests at top level to avoid arena rewind
+  - self/parser.hexa: 6-kind @attribute branch (@cli/@flag/@doc/@schema/@gate/@memo); captures raw paren tokens → p_pending_annotations; parse_fn_decl/parse_async_fn consume pending and attach (+69/-4)
+Previous commit e562919 was created by a sibling Claude Code session during parallel work and auto-absorbed staged changes from this session under an unrelated message:
+ROI-32: compound-assign -=, *=, /=, %= route through hexa_sub/mul/div/mod instead of raw .i field access — fixes silent float garbage
+chore(growth_bus): +5 BT — ROI-16~20 Round 3 complete (lazy hash, impl hash, keyword table, exec_stmt dead code, callback O(1))
+ROI-35: interpreter for-in scope hoist — push/pop scope once, rebind with env_set per iteration
+  * S1-D3a/b, regen fixpoint, arena disable, short-circuit &&||, hxcuda Conv1D bf16 HEXA-SPEAK
+- Pointer FFI functions use uint64_t (ptr_read/offset/deref/struct_unpack/free/callback)
+perf(C10): activation checkpoint bench — depths 8/16/24/32 x {none,sqrt,every}
+fix(runtime): NaN-boxing pointer sign-extension — HX_INT_U for all FFI/ptr ops
+@bench(bound="compute"|"memory"|"io") absorbs physical limit classification.
+Two new modules prove HEXA can emit native executables without clang/as/ld:
+docs(grammar): add P15 pitfall — let mut required (bare mut parse error)
+fix(codegen): emit hexa_void/bool for nil/true/false literals in C codegen
+- lora_adapter (#100): A@B detect + batch injection, max_abs_diff 2.13e-14
+chore(growth_bus): +11 BT — ROI-36~46 Round 7 complete (runtime hotpath, vm dispatch, codegen, interpreter guards)
+Follow-up commit 17eb1779 dogfooded @pure/@compile_trace/@self_check on parser/ast/lexer (11 lines, 3 files).
+refactor(runtime): HX_MAKE_* constructors + T33b scope-pop heapify + ARM64 cleanup attr
+codegen_c2: __attribute__((cleanup)) for __hexa_try_top — fixes ARM64 try/catch hang.
+chore(growth_bus): +4 BT — ROI-21/23/24/25 vm stack+rc, codegen hash, map_set O(1)

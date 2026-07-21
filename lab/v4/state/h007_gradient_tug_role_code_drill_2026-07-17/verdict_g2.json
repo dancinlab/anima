@@ -1,0 +1,52 @@
+{
+  "verdict": "HARNESS BROKEN — f2(C-perm) outside [0.45,0.55]; permuted-gold arm did not collapse to chance",
+  "per_seed": {
+    "0": {
+      "F1_delta": -0.0104,
+      "A_tug": 0.9896,
+      "C_dup": 1.0,
+      "C_shuf": 1.0,
+      "C_scaf": 0.8073,
+      "C_perm": 0.5938,
+      "liveness_f1": 1.0,
+      "Pconflict_diff": 0.3285,
+      "F4_effrank_ge2": true,
+      "F4_probe_subj": 0.9655,
+      "F4_probe_obj": 0.8621,
+      "F4_cos_dirs": 0.1188,
+      "F5_delta_projF4": 0.0,
+      "F5_delta_projRand": 0.0,
+      "F5_cdup_delta_projF4": 0.0,
+      "F6_delta": -0.0104
+    },
+    "1": {
+      "F1_delta": 0.0052,
+      "A_tug": 0.9375,
+      "C_dup": 0.9323,
+      "C_shuf": 0.8646,
+      "C_scaf": 0.9531,
+      "C_perm": 0.5208,
+      "liveness_f1": 1.0,
+      "Pconflict_diff": 0.3659,
+      "F4_effrank_ge2": true,
+      "F4_probe_subj": 0.9828,
+      "F4_probe_obj": 0.8276,
+      "F4_cos_dirs": 0.0895,
+      "F5_delta_projF4": 0.0104,
+      "F5_delta_projRand": 0.0,
+      "F5_cdup_delta_projF4": 0.0,
+      "F6_delta": 0.0729
+    }
+  },
+  "precond_ok": true,
+  "harness_bad": true,
+  "f3_leak": true,
+  "pconf_ok": true,
+  "f4_ok": true,
+  "f5_ok": false,
+  "f6_ok": false,
+  "f1_deltas": [
+    -0.0104,
+    0.0052
+  ]
+}

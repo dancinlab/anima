@@ -1,0 +1,67 @@
+{
+ "knn": 5,
+ "sign_pair": 0.55,
+ "M_cap": 60,
+ "N_cap": 2000,
+ "N_min_inf": 200,
+ "certify": {
+  "P1_pos": {
+   "n": 700,
+   "M": 60,
+   "n_informative": 700,
+   "stance_rate": 0.4843,
+   "sign_base_full": 0.8671,
+   "null_p95": 0.4957,
+   "beats_null": true,
+   "pass": true
+  },
+  "P1_noise_floor": {
+   "P1_clean_sign": 0.8671,
+   "P1_noise_signs": {
+    "noise_15": 0.6629,
+    "noise_30": 0.4814
+   }
+  },
+  "P2_null": {
+   "n": 700,
+   "M": 60,
+   "n_informative": 700,
+   "stance_rate": 0.4871,
+   "sign_base_full": 0.3543,
+   "null_p95": 0.3757,
+   "beats_null": false,
+   "pass": true
+  },
+  "P3_confound": {
+   "n": 700,
+   "M": 60,
+   "n_informative": 630,
+   "stance_rate": 0.5,
+   "sign_base_full": 0.0,
+   "null_p95": 0.0,
+   "beats_null": false,
+   "pass": true
+  },
+  "P4_label_leak_safe": true,
+  "ok": true
+ },
+ "primary": {
+  "n": 2000,
+  "M": 60,
+  "n_informative": 1852,
+  "stance_rate": 0.606,
+  "sign_base_full": 0.2446,
+  "null_p95": 0.2414,
+  "beats_null": false
+ },
+ "replication": {
+  "n": 2000,
+  "M": 60,
+  "n_informative": 1775,
+  "stance_rate": 0.6025,
+  "sign_base_full": 0.2259,
+  "null_p95": 0.2338,
+  "beats_null": false
+ },
+ "verdict": "BEHAVIORAL-REFUSE — even on the behavioral stance target the utterance does not predict the owner's next-turn stance above the shift-null band (sign 0.245/0.226 vs null 0.241/0.234). The refusal is ROBUST ACROSS TARGETS (text AND behavior) — not a wrong-target artifact. Quotable with the P1 noise floor {'noise_15': 0.6629, 'noise_30': 0.4814}. Strengthens H_010+H_012A."
+}

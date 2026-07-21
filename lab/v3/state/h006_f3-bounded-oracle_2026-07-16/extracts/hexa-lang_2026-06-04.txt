@@ -1,0 +1,45 @@
+feat(hexa-fusion): consolidate verified CUDA-OWN stack onto main (L3-c/d GREEN + clm·llm own-GEMM correct + tiled) (#2697)
+[OWN-GEMM-FIRED] probe. UNMEASURED: GPU A/B vs cuBLAS oracle (correctness tol + perf).
+  sortedKeys withoutEscapingSlashes, byte-exact) → the 3 "wrote …" lines +
+* feat(hexa-fusion): L3-d glue-block megakernel (gelu2+pack+router → 1, block 2, build-ready UNMEASURED) + megakernel design verdict
+→ 비용 누수. 기존 orphan 축(provider-alive 인데 registry-부재)은 이걸 못 잡는다
+lift → L3-b/c can stack. Supersedes the prior INCONCLUSIVE-on-util verdict. (#2669)
+[L3B-FIRED] PROVEN ≥1 (1× under the gelu2 arm, 0× otherwise). byte-eq PASS — CE
+* cloud(rent): 영속 /workspace 볼륨 기본값 + --ephemeral opt-out + warn (@L3) (#2675)
+- 수정된 bind() (소스 경로): nonmut repro → HX2006 @5:5 1건, let mut → 0건.
+GELUs → one launch) adds +1.01pp MEAN with zero numeric change. Reported per g5.
+title / options / [multi] strip+flag · verb koreanLabel-prefix match (해석 →
+  (root→mid→apex · root→xdisc, no per-domain .demi → every constituent
+  FUSE=0: [L3A-FIRED] 0× · util MEAN 10.31% PEAK 62% · CE 4.46624→3.64669
+inbox(codegen): non-mut let loop counter write silently dropped → hang (from anima #1795) (#2663)
+* demi(synthesize): @L6 KEYSTONE — (synthesize, rtsc) --deck → hexa qforge run VERBATIM (#2662)
+- rerent_cap_test.hexa → no_autorent_test.hexa 로 교체: 로테이션 캡 머신리 부재 +
+조용히 DROP → 슬롯이 갱신 안 됨 → 무한 루프 / hang, 컴파일 진단 0건.
+비-`mut` `let` write 에 HX2006 발행 → silent runtime hang 이 가시적 진단으로.
+groupnorm_gelu instead of the host GN→GELU loop. OFF / nonzero-offset → the host
+  top-level `let X=E` 마다 합성 init-assign 을 merged main 에 주입하므로
+에이전트 사망마다 새 vast pod 를 자동 렌트 → SAVANT orphan pod 3개
+  FUSE=1: [L3A-FIRED] 1× · util MEAN 13.57% PEAK 100% · CE 4.46624→3.64669
+  base   (no fuse)     |  0×   |  0×   |  7.5268%  |  63% | 4.46624→3.64669
+  - api-mode test/ask with NO key configured → the honest "키 없음" error
+fix(cloud): AUTOMATIC 재렌트 폐기 — pod-loss FAIL-LOUD, --force-new 는 수동 단발 렌트로만 유지 (#2686)
+2026-06-02 사고: 서버 전역 rate-limit 폭주 중 디스패치된 에이전트가 계속 죽었고,
+  단계에서 로컬 환경 실패(내 변경 도달 전) — 환경 이슈, #2663 무관.
+768224 B. Transpile on summer (module_loader flatten 3612L → hexat 3285L → closure→
+  엔드포인트(_runpod_post) 재사용. no-key/HTTPS실패/non-array → ok=0 (caller
+* demi(cli): stack4 — owner-gate atlas WRITE subverbs (Swift atlasCmd parity) (#2639)
+gelus, max|Δ|=0). Cumulative util-Δ: base→l3a +1.67pp, l3a→l3a+l3b +1.01pp (total
+(groupnorm #1 → gelu #1, the only GN-output-directly-gelu'd adjacency — the other
+kernel _hx_k_gemm (one thread per output (m,n), naive k=0..K accumulation), env-gated
+BIT-IDENTICAL (4.46624→3.64669) across all three arms (fused gelu2 == two separate
+  authoritative provider list 에서 매번 재조회 — 절대 fabricate 안 함.
+  - atlas/write-owner-passthrough (DEMIURGE_OWNER=1 register → hexa atlas, rc 3)
+- bind_test.hexa: (a)0 (b)(c)HX2001 유지 (d)#2663 비-mut→HX2006(warning S2)
+Both surfaces read one DEMIURGE_REPO INDEX.demi fixture → machine-independent
+  l3a+l3b (+GELU2=1)   |  1×   |  1×   | 10.2136%  | 100% | 4.46624→3.64669
+  - no-section6: a domain map lacking a Design-options header → mapless line
+feat(cli): add `hexa demi` subcommand — path-free demiurge CLI entry (#2684)
+  ≡ RecordLoader.exportsRoot) → write <id>.usda (geo_usda · #21 builder,
+feat(miscompile-zero): env-gated STRING lane in diff fuzzer — 🟢 CLEAN 2-reg ptr,len string ABI (150 seeds) (#2679)
+feat(cloud): pod-attribution ownership split — hexa cloud는 raw rent-result FACT만 EMIT (pod-ops-only) (#2692)
+* cloud(reconcile): `cloud pods` 가 authoritative myself.pods 로 능동 reconcile (@L2) (#2672)

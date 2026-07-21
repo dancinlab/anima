@@ -1,0 +1,35 @@
+==============================================================================
+H_007 mech-5 G-2 verdict run — device=mps d=384 L=4 steps=(3000, 4000) seeds=(0, 1) arms=('A-tug', 'C-dup', 'C-shuf', 'C-scaf', 'C-perm') drill=384 f2=192 f1=64
+==============================================================================
+
+--- A-tug.s0 …
+  A-tug.s0: f2_dacc=0.9896 f1_dacc=1.0 cos_mean_early=0.2123 | F4 effrank≥2=True | F5 ΔprojF4=0.0
+
+--- C-dup.s0 …
+  C-dup.s0: f2_dacc=1.0 f1_dacc=1.0 cos_mean_early=0.5408 | F4 effrank≥2=True | F5 ΔprojF4=0.0
+
+--- C-shuf.s0 …
+  C-shuf.s0: f2_dacc=1.0 f1_dacc=1.0 cos_mean_early=0.0018
+
+--- C-scaf.s0 …
+  C-scaf.s0: f2_dacc=0.8073 f1_dacc=1.0 cos_mean_early=0.0
+
+--- C-perm.s0 …
+  C-perm.s0: f2_dacc=0.5938 f1_dacc=0.5781 cos_mean_early=0.1738
+
+--- A-tug.s1 …
+  A-tug.s1: f2_dacc=0.9375 f1_dacc=1.0 cos_mean_early=0.1882 | F4 effrank≥2=True | F5 ΔprojF4=0.0104
+
+--- C-dup.s1 …
+  C-dup.s1: f2_dacc=0.9323 f1_dacc=1.0 cos_mean_early=0.5541 | F4 effrank≥2=True | F5 ΔprojF4=0.0
+
+--- C-shuf.s1 …
+  C-shuf.s1: f2_dacc=0.8646 f1_dacc=1.0 cos_mean_early=0.0028
+
+--- C-scaf.s1 …
+  C-scaf.s1: f2_dacc=0.9531 f1_dacc=1.0 cos_mean_early=0.0
+
+--- C-perm.s1 …
+  C-perm.s1: f2_dacc=0.5208 f1_dacc=0.5156 cos_mean_early=0.1487
+
+wrote g2_result_full.json — run collect_verdict_g2.py for the frozen verdict

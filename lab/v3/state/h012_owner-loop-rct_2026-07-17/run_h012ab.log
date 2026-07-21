@@ -1,0 +1,23 @@
+====================================================================================
+H_012A-b — behavioral-stance target · wrong-target-artifact check (context-matched, $0)
+====================================================================================
+
+[certify] stance-estimator plants (P1 channel+noise floor · P2 null · P3 confound · P4 leak):
+  P1_pos: {"n": 700, "M": 60, "n_informative": 700, "stance_rate": 0.4843, "sign_base_full": 0.8671, "null_p95": 0.4957, "beats_null": true, "pass": true}
+  P2_null: {"n": 700, "M": 60, "n_informative": 700, "stance_rate": 0.4871, "sign_base_full": 0.3543, "null_p95": 0.3757, "beats_null": false, "pass": true}
+  P3_confound: {"n": 700, "M": 60, "n_informative": 630, "stance_rate": 0.5, "sign_base_full": 0.0, "null_p95": 0.0, "beats_null": false, "pass": true}
+  P1 noise floor (detectable-effect calibration): {"noise_15": 0.6629, "noise_30": 0.4814}
+  P4_label_leak_safe = True · certify_ok = True
+
+[extract] scanning transcripts (content stays on disk) ...
+  9962 loop pairs across 131 sessions
+
+[primary] n=2000 M=60 informative=1852 stance_rate=0.606
+    sign_base_full=0.245 vs null_p95=0.241 (threshold 0.55) -> beats_null=False
+
+[replication] n=2000 M=60 informative=1775 stance_rate=0.6025
+    sign_base_full=0.226 vs null_p95=0.234 (threshold 0.55) -> beats_null=False
+
+  VERDICT: BEHAVIORAL-REFUSE — even on the behavioral stance target the utterance does not predict the owner's next-turn stance above the shift-null band (sign 0.245/0.226 vs null 0.241/0.234). The refusal is ROBUST ACROSS TARGETS (text AND behavior) — not a wrong-target artifact. Quotable with the P1 noise floor {'noise_15': 0.6629, 'noise_30': 0.4814}. Strengthens H_010+H_012A.
+====================================================================================
+artifact: state/h012_owner-loop-rct_2026-07-17/result_h012ab.json

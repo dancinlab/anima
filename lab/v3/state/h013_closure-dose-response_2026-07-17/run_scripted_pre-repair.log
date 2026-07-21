@@ -1,0 +1,15 @@
+==================================================================================
+H_013 closure-dose-response — is the F8 anchor DOSE-ROBUST or TOY-FRAGILE? (scripted)
+==================================================================================
+
+[certify] scripted plants (P-DOSE monotone · P-LIVE p=1.0 anchor · P-DEAD null refuses):
+    p=1.00  closure=0.722  env_contingency=0.628
+    p=0.75  closure=0.889  env_contingency=0.565
+    p=0.50  closure=0.833  env_contingency=0.476
+    p=0.25  closure=0.667  env_contingency=0.377
+    p=0.10  closure=0.833  env_contingency=0.078
+  P-DOSE monotonicity=0.111 ok=False · P-LIVE(p=1)=0.722 ok=True · P-DEAD ok=False
+  certify_ok = False
+
+  VERDICT: INSTRUMENT-INVALID — a scripted plant failed; fix before any substrate verdict.
+artifact: state/h013_closure-dose-response_2026-07-17/result_scripted.json

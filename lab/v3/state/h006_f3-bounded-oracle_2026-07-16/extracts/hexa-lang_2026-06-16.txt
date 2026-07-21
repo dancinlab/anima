@@ -1,0 +1,38 @@
+breakthrough(zero-C Z2a): 컴파일러가 runtime_hi_gen.c 없이 빌드+동작 — native rt_str_* byte-id 패리티 검증 (#3384)
+ARCHITECTURE.md(헤더+self-host status) · README.md · M3 verdict(append-stamp, 삭제 아님)
+14종 신규 obj 인코딩이 전체 컴파일러 자기-emit 무회귀 = byte-eq 졸업 leg PASS(Darwin arm64).
+양쪽 zero C. gated auto-enable(Darwin arm64; x86_64-linux 는 codegen 성숙까지 C 유지).
+Extend the ARCHITECTURE.md/CLAUDE.md honesty reconciliation (#3353/#3354) to
+rt_str_* 를 native object(build/rt_hi_native.o, frozen .s seed)에서 공급 — aprime_cc+runtime.a
+인과: 파일0 ⇐ darwin native seed AND linux standalone .c-free(#else제거⇐cross 재설계⇐linux codegen⇐pod) AND ~420fn 전수.
+lib-only runtime_hi native 컴파일 → rt_hi.o(_main 없음). build_aprime.sh gated 경로
+=_fmt_operand 우회 or x86_64 전용 렌더. arm64 무영향(smoke exit42, leg A #3412 보존). 다음=렌더 경로.
+패리티(c2): aprime_z2a vs aprime_cc_z2 4소스 byte-identical .s 4/4 → native rt_str_* = C 동일.
+native 컴파일러 역량 실측: typed/untyped/extern fn 전부 native 컴파일, runtime_hi.hexa→native .s.
+검증: 재현 cmp g0,0 FAIL→mov r10,[rip+g0];cmp r10,0 cross-as OK · RUNG2 무회귀 · arm64 smoke exit42.
+docs: RT-NATIVE 전략 정정 — goal=파일제거(bl=0 아님), 진짜경로=글루헬퍼 포함 전수 seed-link 포팅(Z2a 패턴), typed-lowering 아님 (#3408)
+_fmt_operand reg.name/label '' → 빈렌더. resolve 빈값 경로 코드리뷰 미규명 → MIR kind 덤프 필요(c2).
+arm64_darwin STMT_CALL 특수케이스 __hx_tag(v)→_hv_load+box(inline, bl 없음) · bind 화이트리스트
+Z4 setjmp=Darwin 이미 naked-asm(zero C, cycle 86)→honest-keep. Z2a frozen .s seed 추가.
+binop / 가 const_int 만 materialize → 미처리 kind fallback imm 0 → idiv 0(invalid).
+RT-NATIVE Z2a DONE: runtime_hi_gen.c 제거 (arm64-darwin, ls self/*.c 3→2) (#3390)
+아키텍처: HEXA_RT_SELFEMIT 모드(런타임 심볼 외부링크) 이미 존재. 3 self/*.c 는 gitignored 중간물.
+RT-NATIVE Z2a x86_64-linux POD(aiden): x86_64 codegen 버그로 BLOCKED — pod 진짜 블로커 실증 (#3388)
+검증: 4 inline cmp/cset, RUN exit 4, smoke PASS, additive→fixpoint 보존. 비교 dispatch 포팅 unblock.
+x86_64 obj 직접 serialize(2216/2440B)+runtime.a 링크+실행 전부 동작. 메모리 RUNG2 미impl=stale.
+종착: leg B = linux native codegen 성숙(pod)+전수 = 다세션+pod 필수. gitignore 트릭 금지(c9).
+(HEXA_ZEROC_RT_HI=1, 기본 off): #include 제거 + rt_hi.o 링크. aprime_z2a 빌드 smoke PASS.
+런타임 native, OS/ABI floor 제외(Go/Rust 동형). ARCHITECTURE 명문화. RT-NATIVE 2/8.
+test 가 const_int 만 materialize → 미처리 kind fallback imm 0 → test 0,0 invalid.
+Honest (c9): this is a mechanism characterization + partial argument, NOT a full
+docs: RT-NATIVE Z2c 정확현황 — hexa-rt-stdlib 이미 활성(하이브리드), 잔여=C-body fn+부트스트랩 플로어+pod byte-eq (#3410)
+docs: RT-NATIVE byte-eq leg 양타깃 졸업(#3432) + leg B unblock(x86_64 codegen 성숙→standalone native 전환) (#3433)
+검증: add/sub/mul=42 · inline·bl 0 · smoke PASS · additive→fixpoint 보존. 산술 dispatch 포팅 unblock.
+측정(c9): runtime_core.c 8082L, dead 0, #else 548L, 위임 85 fn 활성. 파일0=전수+standalone 재설계.
+int-leaf primitive 완성(eq/nz/lt/gt/le/ge). arm64_darwin cset 파라미터화 + bind + codegen.hexa.
+검증: asm/obj exit=8 (8/8 케이스 C strcmp 부호 일치) · rt_strcmp bl=0 = zero C-string dep.
+leg A 양타깃(arm64 #3412 native obj + x86_64 asm byte-eq+as-clean) 확립. 남은=leg B(파일0).
+fresh build/aprime_cc_z2 로 런타임 .hexa SSOT native 컴파일 측정:
+필요. 포트 behavior C 일치 검증. 다음=UNLOCK-2b → dispatch core fully C-free → 통합. 검증물 only.
+검증(결정적): __hx_syscall0(24)=getuid=501=id -u 일치 · asm·obj 동일 · svc emit · udf=0 · smoke PASS.
+Status: 🟡 OPEN (full proof unresolved in this environment; verified n≤2e6 +

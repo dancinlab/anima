@@ -1,0 +1,55 @@
+      module's public surface set (sorted unique top-level pub fn / fn /
+- Git log search for shell/escape/sha mismatch/curl unquoted surfaces no
+      * darwin-native byte-canonical pipeline (HXC stdlib, ~28 files)
+    parses top-level non-pub `fn NAME(` decls via batched grep, flags any
+dispatcher that falls through to a numerical CPU reference on non-CUDA hosts.
+Modules touched (58): every file under stdlib/ matching *.hexa that is not
+- self/ml/model_registry.hexa: shape_lookup(id) with canonical configs
+5 waves grouped by file-overlap and semantic dependency, with a linear
+feat(tool): private_fn_collision_lint — catches cross-module non-pub fn name collisions
+  - self/ scan times out under docker interp (1848 files, ~30k raw fn lines
+docs(SAFE-2): _shell_escape 3-way collision damage audit (FU-7 follow-up)
+the byte level (2-byte container, identical layout to F16). Higher-level
+change) and called out as historical naming. Runtime tests still pass
+API surface preserved: ag_var(Tensor), ag_const(Tensor), ag_op(...),
+the analytic 2x+cos(x) (1e-7) and central-difference oracle (h=1e-4)
+- tool/pkg/registry.tsv: qmirror entry (22nd package) — github.com/need-singularity/qmirror standalone
+feat(tool/docs_gen): stdlib docstring extractor + 58-module doc tree (F-DOCS-1)
+feat(stdlib/safetensors): HuggingFace safetensors read+write (F-SAFETENSORS-1)
+    of their host file (the resolver header-zone scan window) — no header
+    //                          shipped to sister-repos as stable surface)
+for any pattern where a hexa script shells out to itself or the test infra
+- f3474de6 Issue 1+3 fix: aliased import runtime dispatch + explicit error
+  parser.hexa and matches against hexa_full.hexa. For hexa_cc.c, requires
+Findings on the live tree (informational, NOT introduced by this commit):
+ag_backward(y), ag_grad(x) — but ag_grad now returns a Tensor, ag_value
+Adds canonical fixture convention `fixtures/<module>/golden_<case>.json`
+Adds tool/hexa_to_py.py — a hand-written hexa->Python transpiler that
+    BEHAVIOR SURPRISE: cert/writer._shell_escape did NOT add the outer
+    in module_loader concat is non-deterministic across edits, so this
+    parser scoped to the ATP module's vocabulary (let, return, calls,
+target primitive layers are no longer hand-written templates — the
+    not worth introducing import edges between unrelated subsystems.
+- self/ml/{arch_dispatch,cpu_forward_tiny,model_registry}.hexa — ML stub triplet
+_shell_escape across stdlib/cert/writer, stdlib/http, and stdlib/net/http_client
+which doesn't currently emit from parser.hexa — both sources are independent
+via flatten_imports) and hexa_cc.c is the codegen output of `hexa cc --regen`
+grads (saved holds tape ids but backward computes locals with raw arithmetic
+- test/t_parser_ssot_lint.sh — 3 assertions: lint runs and emits expected
+Rewrite of B4's scalar tape autograd (8d64e3ba) to operate on stdlib/tensor
+- No file in the tree co-imports stdlib/cert/* AND any http module, direct
+  (b) errors if @version is unchanged vs last git tag (or HEAD~1) but the
+by is_leaf flag; only the reverse walk writes grads (no leaf clobber from
+The interpreter is fast-enough for most code, but tight integer hot paths
+Fixes silent-void resolution of `import "x.hexa" as alias` calls. Symbols
+    stdlib/http2._h2_shell_escape and stdlib/websocket._ws_shell_escape
+    both would have produced malformed curl commands — the http calls
+would bypass the resolver but get docker-routed by the shim — exactly
+use a map-backed Fisher-Yates as a workaround). Behaviour is currently
+    from net/ (resolver simplicity, per its own comment); cert version
+dim — matching the cblas convention used by stdlib/linalg/ffi.hexa.
+backend, mac-local cc -O2 -dynamiclib, and an automated selftest that
+correct on the live interpreter (mutation works, out-of-bounds writes
+no PyObjects leak on import/attribute/call/OOM failures. CMake build
+  alias dispatch, multi-fn alias, and unregistered-alias diagnostic.
+    would emit unquoted URLs (shell injection / parse error), or the

@@ -1,0 +1,47 @@
+CLAUDE.md HX8 — 규약 추가. 직접 파이프라인 호출 금지.
+목적: shared/convergence/<project>.json 파일 SSOT 제거 → 소스 주석 블록이
+shared/convergence/<project>.json 파일 SSOT 제거 → 소스 주석 블록이 SSOT.
+    만 있었으나 emitter side 가 추가됨으로써 소스 코드 경로는 완성.
+`char_code` / `join` 와 동일 패턴으로 TAG_FN shim 추가.
+2026-04-15 T63 세션에서 stage0 재빌드 5-10초 주기 반복으로 flatten+hexa_v2+clang+cc1+linker 자식 6-8개 누적 × 동시 claude 세션 → macOS xpcproxy 폭주 → load 24→112. 빌드 자체가 아니라 **재스폰 빈도**가 원인.
+merge feat/dict-literal-codegen → main: subcommand CLI + stage0 rebootstrap + bc VM + @convergence scanner (234 commits)
+증상: `[T; N]` 같은 unsupported syntax 에서 parse_stmt 가 p_expect_ident/
+  Fix: 두 SSOT 에 Index 분기 추가 (array-path: new_items rebuild + array_store
+불가. hexa 는 고정 크기 배열을 first-class type 로 안 갖지만, syntax
+fix(rt#36-E): T54 — block-body lambda free-var scan builtin/known-proto 제외
+  len 축소, capacity 유지) + hexa_array_set (in-place .items 수정)
+직접 SSOT. drift 0 + git diff 에 convergence 변화 자동 반영.
+Staged binary at /tmp/hexa_v2.parser_fix (NOT deployed live). Live
+    - 10 000 shadow-path float round-trips (bit-exact via dbits)
+  소비, 첫 번째 비-플래그 토큰을 파일 경로로. HEXA_VM env 와 OR 게이팅으로
+- 동일 driver 를 test_codegen_c2_extended.hexa run_c2() 가 호출 → contains = false
+  을 제공하지만 bc_vm 쪽은 그 경로를 쓰지 않고 매번 새 배열 생성.
+T58  Cell registry — LOAD_UPVAL deref + STORE_UPVAL write-through + pre-scan hoist set
+병렬 발사한 4개 agent 중 unique deliverable 1개(divergence triage)만 커밋.
+- self/convergence_scan.hexa (신규 481줄) — 라인 기반 @convergence-start/end
+bin/build.sh: hexa 패키지 자체 설치 훅. pre-built 바이너리 매칭 우선
+merge feat → main: CLAUDE.md source-embedded convergence 블록 추가 (4121b12)
+feat(parser): UX — consecutive identical "Parse error at L:C: msg" 중복 제거
+fix(hexa_v2): void 170KB 번들 transpile 해소 — 10.88GB→134MB, 91s→0.4s
+void sys_pty accumulator 가 `chr(b)` 사용 (int byte → 1-char str). 기존
+  - tag→runtime helper 매핑표 (11 tags × 슬롯 × 생성자 × 헬퍼)
+검증: gcc -c -fsyntax-only -Wno-int-conversion self/runtime.c → 0 error
+- self/convergence_scan.hexa — 라인 기반 블록 스캐너 (481 줄).
+    bench_fib_K30 의 for-range 는 VM 미지원이라 while-loop 동형)
+  - self/bc_emitter.hexa — 병렬 에이전트 STORE_UPVAL emit 배선
+compile. Binary staged at /tmp/hexa_v2.bt74 — NOT auto-deployed over
+검증: /tmp/test_conv.sh 기존 cl.json 포맷과 동일 emit.
+- T54 source_landed 메모 — 4b32877 pre-commit 사이드이펙트로 이미 트리에 있는 상태 명시
+- rt#36-E #3 UPVAL + hexa run silent 회귀는 sub-agent rate limit로 이번 사이클 차단
+void 170KB 번들 40분+ 빌드 해소 로드맵 A (B4) 착수. 업계 선례 비교(Rust
+  근본 원인: self/interpreter.hexa + self/hexa_full.hexa 의 AssignStmt 분기가
+2026-04-15 베이스라인 검증 결과: tiny test (let/println/int/str) AOT 체인
+print/println/len builtin 이면 callee name 을 free var 리스트에 추가하지
+- docs/rt-36-bytecode-design.md §18.2 — 게이트 통과 표, 메모리 델타,
+void_main.hexa flatten (4569 LOC, 170KB) 빌드 시 hexa_v2 가 10.88GB RSS 할당
+rt#36-d VM/Interpreter divergence triage 의 trivial fix 2건을 묶어 랜딩.
+다음 단계: cl 바이너리 @convergence-* 블록 이식 → cl.json 삭제.
+  - SH-P3-1 baseline source 재발 소실 방지 (build/ 전체 ignore 회피)
+forward decl: 170 라인 부근 (hexa_array_slice_fast 직후, RT-P3-1 섹션)
+  │  bench      │ int  │ VM   │ speedup│ 게이트  │ 판정 │
+- self/main.hexa — hexa convergence dump|dump-meta <file> 서브커맨드.

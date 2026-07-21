@@ -1,0 +1,22 @@
+{
+  "verdict": "K1 (CLOSE) — band/stability/plateau/validity condition(s) failed: band: C-dup k=48 s=0 f2=0.5365 ∉ [0.6,0.8] · band: C-dup k=48 s=1 f2=0.5417 ∉ [0.6,0.8]. No midpoint, no third seed, no non-validity rerun. Campaign stays CONCLUDED on mech-1.",
+  "fails": [
+    "band: C-dup k=48 s=0 f2=0.5365 ∉ [0.6,0.8]",
+    "band: C-dup k=48 s=1 f2=0.5417 ∉ [0.6,0.8]"
+  ],
+  "k1b": [],
+  "cdup": {
+    "48.0": 0.5365,
+    "48.1": 0.5417,
+    "96.0": 0.651,
+    "96.1": 0.6875
+  },
+  "final_reading": {
+    "stamp": "K1 CLOSE (2026-07-17) — the band exists but is TOO NARROW to satisfy the four-point clause.",
+    "measured": "C-dup instrumented, both seeds, all validity 1.0 + plateau OK: k=96 s0 0.651 / s1 0.6875 (BOTH in band [0.60,0.80], cross-seed |Δ|=0.0365 ≤ 0.10 — k* itself is clean and stable); k=48 s0 0.5365 / s1 0.5417 (BOTH below the 0.60 floor, cross-seed |Δ|=0.0052 — reproducible, not noise).",
+    "reading": "The pre-registered four-point clause (k* AND its factor-2 neighbor in-band at BOTH seeds) fails at k=48. The control's sample-efficiency curve is a CLIFF, not a knee: it crosses the entire band [0.60,0.80] between k=48 (0.54) and k=192 (0.92), with only k=96 inside. A band that exists at exactly one budget cannot anchor F1 — the knee-not-cliff guard fired exactly as designed (Fable's $0 prediction: 'k=48 is the honest modal K1'; measured LOWER than the 0.596 interpolation).",
+    "rules_honored": "No midpoint drill (k=64/72), no third seed, no non-validity rerun — all pre-registered bans. The re-instrumented k=96 reads REPLACED the phase-a read (0.7448 → 0.651) under replacement-not-selection, even though the replacement is worse.",
+    "consequence": "H_008 CLOSES. The campaign's ONE non-twin reopen door is now shut BY MEASUREMENT, not by argument. anima-v4 stays CONCLUDED on mech-1's terminal finding (write-side FIELD-FORMAT causal; thesis PARTIAL — placement proven, autonomy unreached).",
+    "what_would_reopen": "Not a re-tune of this knob: the cliff is a property of the substrate+panel (24 arbitrary lexeme→class labels are either memorized-and-generalized or not, with almost no intermediate regime). A scaled successor (≥8M / jamo-word substrate / non-templatic register) could re-ask the budget question with a gentler learning curve — recorded in CAMPAIGN_RESULT.md §4."
+  }
+}

@@ -1,0 +1,54 @@
+raw 47 cross-repo-trawl-witness (6 sister repos) + raw 159 hexa-lang-upstream-proposal-mandate.
+- static-link / setuid / direct-syscall 우회 (musl-static binary, suid bit, syscall() 직접) LD_PRELOAD 무영향
+- argv_skip 의 기존 4 prefix 무효화 안 됨 (OR-extension)
+Spec source: hive cli_mvp.hexa lines 1771-1923 (_raw_toggles_* family).
+add-primitive to document + lint + cross-repo migrate. 2nd in-place RFC scope correction
+- proposals/rfc_011_exec_date_to_native_time_migration.md (NEW, 216 LoC)
+proposals/rfc_011_exec_date_to_native_time_migration.md
+feat(LD_PRELOAD raw 1/argv_skip/hxnccl): native_gate raw 1 enforce + argv_skip selftest fix + CMake uninstall
+- raw 91 C3 한계: static-link / setuid / direct syscall / macOS DYLD_INSERT
+- native_gate 의 6-axis (path / write / append / rename / unlink / chmod) 모두 EPERM
+Pre-write fact-check (raw 91 honest C3) discovered native time primitives ALREADY EXIST
+- proposals/rfc_010_typed_i32_map.md (NEW, 166 LoC — sibling-staged, co-landed for index coherence)
+  "module_loader / runtime patches go in hexa-lang sibling repo, never hive".
+- known prefix list 에 `/hexa_interp.real` + `/hexa.real` 2 신규 추가 (line 42)
+- add_custom_target(uninstall ...) + cmake_uninstall.cmake (신규, 31 LoC)
+- cmake regen 후 uninstall target 잔존 verify (/tmp/hxnccl_test)
+files separately PASS `hexa parse <file>` static check).
+X native_gate.c — raw 1 file-lock LD_PRELOAD enforce (F2 top priority):
+- 신규 syscall interceptors: unlink / unlinkat / chmod / fchmodat / renameat2
+  - .raw/.own write/append/rename/unlink/chmod 모두 EPERM
+- allowlist: node_modules/, packages/, infrastructure/, libs/, archive/
+- raw 144 envp 64KB 보수적 (실제 16KB-100KB 변동) — false-positive < false-negative trade
+- raw 22 explicit array (write 당 0 syscall cheap) vs sentinel-file pattern (fstatat per-write, data-driven) — MVP explicit, 향후 sentinel helper layer 가능
+  1. fstatat per-write ~100ns (Linux dentry-cache negative lookup), opt_out()
+exception). raw 169 surgical scope: argv_skip.hexa + native_gate.c only.
+raw 169 surgical scope: only stdlib/anima_audio_worker.{hexa,py} touched
+docs(rfc 011 + 010): exec("date +%s") → native time primitive migration mandate
+  word delete + trailing-whitespace cleanup) per cross-repo memory directive
+raw 79 parallel-DAG fanout — V/X/Z agents 결과 통합 (cross-repo commit 분리).
+- 신규 helpers: matches_raw1_path / refuse_raw1_write / refuse_raw1_mutate /
+- 기존 open/openat/creat/rename/renameat 에도 raw 1 deny 통합
+- hxnccl uninstall 은 source-level 변경이라 CMake regen 안전
+feat(stdlib+native_gate): argv_skip robust prefix + raw 22 sentinel-file pattern
+raw 34 STRENGTHEN-existing enforcement, raw 91 honest C3 disclosed.
+feat(raw 9 hexa-only final closure): anima_audio_worker .py -> .hexa embed
+LoC, 6345 bytes) is now a string literal inside stdlib/anima_audio_worker.hexa
+  - hexa check stdlib/anima_audio_worker.hexa  -> 0 violation(s)
+- hive: 48 unmigrated, 1 native-adopted (cli_mvp.hexa:2036+:2242 hot-path BLOCKED)
+- proposals/_index.md (RFC bundle 2026-04-29 + 2026-04-30 entries)
+proposals/_index.md
+proposals/rfc_010_typed_i32_map.md
+state/proposals/inventory.json
+Selftest: stdlib/test/test_parse.hexa — 24/24 fixtures PASS (inline self-
+  downstream dispatch for word-delete + trailing-whitespace cleanup.
+  / /proc/self/mem 우회 미커버. host macOS 는 raw 1 이 chflags uchg 로 enforce.
+- raw 6 hive-only scope (`/core/hive/` substring) — cross-repo 확장 별 cycle (raw_6.list cross-port)
+GG argv_skip robust prefix (self/stdlib/argv_skip.hexa, +54 LoC):
+- Covers all 36 build/ variants (hexa_interp_linux_arm64, hexa_interp_t31_arena_off,
+  AT_SYMLINK_NOFOLLOW) check. Operator-flippable lock without recompile.
+  2. parent-only scope chosen over ancestor-walk (O(depth) syscalls per write
+raw 9 hexa-only: native_gate.c is raw 35 LD_PRELOAD canonical impl (.c
+Working tree copies remain due to macOS sandbox file-protection
+LoC, flatten_imports_py): the persistent audio-worker python source (200
+Proposal:

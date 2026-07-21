@@ -1,0 +1,49 @@
+hooks 도 모두 폐기 하고 작성 금지처리 os-level enforce ai-native error
+- prompt_scan.hexa: 매칭 루프 후 omega override 강제 + [OMEGA]/[DRILL] 동적 분기 + banner 에 omega 라인 추가
+`use` 가 누락되어 런타임 undefined — 해당 블로커는 독립적이며 bootstrap
+신규 git init 으로 만들어진 .git/hooks 는 watcher 60s 주기 안에서
+  dispatch probe 에도 동일 원칙 적용 필요 시 참고용 기록
+증상: 사용자가 omega 같은 등록된 명령을 호출해도 "기본 명령어 인데 인지 못함"
+  nexus 측은 해결됨. advisory 로 floor 95 자동 승격 — 타 repo 의 remote
+self-parsing OK. 단 bootstrap 이 Apr-19 이전 버전(parse error "use ...")이면
+drill+omega 동시 감지 시 drill 우선 dispatch 되던 라우팅 버그 정정.
+ban 분기 추가. /core/hive/ 안에서만 적용 (다른 repo 는 raw_6.list 확장 대기).
+같은 인지 disconnect 발생. 실제 commands.json 에는 등록되어 있으나
+각 단계에서 self/hexa_full.hexa 존재를 확인해 잘못된 분기 방지.
+message". 폐기는 sweep 으로, 작성 금지는 chflags uchg 로, ai-native
+fix(tool/build_stage0): _av 인덱싱 + scratch_stable 정합 — 자가 빌드 회귀 수정
+  - rules: NEXUS_SURGE_MAX cap, Mac 로컬 금지, engine 분기 정책
+기존: `let hexa_dir = dirname(_av[1])/..` — _av[1]이 AOT 캐시 exe path이거나
+`use "..."` flatten 후 /tmp/.hexa-runtime/ 임시 경로로 돌아올 때 hexa_dir이
+scratch_stable 호출은 기존대로 tool/tmp_scratch.hexa 의존 — 이 파일은
+사용자 명시 (2026-04-25): ".git/hooks/pre-commit 의존도 없이 진행, git
+SSOT 게이트가 omega keyword 인지 + auto-invoke 라우팅하도록 등록.
+   - 결과: 컨테이너 안 nexus 부재 시 stderr 에러 도배 0 (PASS)
+- tool/ai_native_scan.hexa: whitelist 분기 완전 제거 (4 토큰 → 0)
+     tool/run_stability_c3.hexa:23 등과 동일 canonical pattern
+  세션에서 commit dfbd2ee1 로 자연 해결됨, done 플립
+배경: nexus@ee5da9cd 에 cmd_omega() 신규 추가, "앞으로의 메인" 명령 격상.
+fix(prompt_scan): ladder commands SSOT 안내 — omega/canon/forge/molt 등 누락 추가
+이번 commit 으로 Mac safety landing 정책 hexa-lang 측 마무리. 4 의미 단위:
+- Korean-locale 호스트에서 `free -m` 이 "메모리:" 로 출력 → /^Mem:/ awk
+세션이 design/abstraction_ceiling.md §6 finding 만 갱신하고 끝나는 패턴
+모든 활성 코드 경로의 stage0/stage1 토큰을 의미적 이름으로 교체.
+is_under_hive_repo() short-circuit 으로 hexa-lang 자체 코드는 영향 없음.
+  - rules: NEXUS_DREAM_MAX cap (기본 3, 최대 10), Mac 로컬 금지, signal extraction 우선순위
+  - rules: drill D2 fail-fast 가드 동일, omega 명시 시 drill 로 silent fallback 금지
+에 빠져 있어 tool/ 안 위반 (p7_7_fixpoint_check, fixpoint_v3_v4) 이 manual full-repo
+마지막 commit 에 "omega-saturation:fixpoint" marker 강제. 같은 finding
+raw#8 (file-naming) 의 stage[0-3] 면제 whitelist 를 완전히 제거하고
+키워드 commit 후 같은 cycle 안에 implementation 미완 시 block.
+feat(gate): forge 명령 등록 — L10 bootstrap SSOT (nexus@119972ef)
+은 user 입력에 paren/backtick/$ 가 포함되면 shell 단계에서
+AG10 banner line 327 의 commands 안내 문자열이 stale:
+ai_native_scan _roots_str 에 tool, gate 추가 — 이전 scope (self/scripts/tests/bench)
+- ~/Library/LaunchAgents/ 6 plist (sandbox rename() EPERM) — 사용자 ! 명령 필요
+scope 확장으로 새로 노출된 3 위반 (vendored / convention 영역) 은 prune:
+- main: warn/sweep 모드에서 lock 항상 적용 (idempotent), strict 는
+방지. drill engine + tool/nxs_002_composite.py 수반 강제.
+  - imperative_markers: "세팅" 추가 (drill 과 동일)
+   - hexa (신규 bash wrapper) — hive resolver 위임, NO_REROUTE recursion guard
+대신 미리 hive 의 sandbox_deny_enrich enrich 호출, cause+remedy 단일 라인
+으로 design-only commit 이 3회 누적 시 hard block — implementation 강제.

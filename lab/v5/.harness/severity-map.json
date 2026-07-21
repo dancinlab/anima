@@ -1,0 +1,53 @@
+{
+  "_doc": "severity map — fallback escalated to block, low unknown_threshold. Installed by `sidecar init`.",
+  "fallback": "block",
+  "unknown_threshold": 5,
+  "rules": {
+    "lint_rule": {
+      "L0-LOCKDOWN": "block",
+      "STALE": "block",
+      "TOOLKIT-DRIFT": "warn",
+      "CHANGELOG-MISSING": "block",
+      "PROTECTED-BRANCH": "block",
+      "DOC-SCATTER": "block",
+      "DOC-NO-QUICKREF": "block",
+      "CLAUDE-MD-MISSING": "block",
+      "CLAUDE-MD-NO-DESC": "block",
+      "CLAUDE-MD-NO-TREE": "block",
+      "CLAUDE-MD-SECTION-MISSING": "block",
+      "CLAUDE-MD-TREE-NO-DESC": "warn",
+      "SHADOW-DESC": "warn",
+      "COMMONS-PROSE": "block",
+      "COMMONS-NO-DODONT": "block",
+      "COMMONS-DODONT-INCOMPLETE": "block",
+      "DODONT-LONG": "block",
+      "ARCH-BIG-CELL": "block",
+      "ARCH-PILED": "block",
+      "ARCH-HISTORY": "block",
+      "ARCH-ID-MISSING": "block",
+      "ARCH-ID-DUPE": "block",
+      "ARCH-ID-FORMAT": "block",
+      "ARCH-SCHEMA-UNRECOGNIZED": "warn",
+      "ARCH-NOOP": "block",
+      "FOLDER-GUIDE-MISSING": "block",
+      "HELP-BACKTICK": "block",
+      "CONVERGENCE-MALFORMED": "block",
+      "CMD-DESC-LONG": "block",
+      "INJECT-OVERSIZED": "block",
+      "INJECT-NON-ENGLISH": "block",
+      "CLAUDE-MD-OVERSIZED": "block",
+      "CLAUDE-MD-HISTORY": "block",
+      "COMMONS-OVERSIZED": "block"
+    },
+    "build_kind": {
+      "bash_nonzero": "block",
+      "tsc_error": "block",
+      "test_fail": "block",
+      "lint_error": "block",
+      "build_fail": "block"
+    },
+    "runtime_signal": {
+      "unknown": "block"
+    }
+  }
+}

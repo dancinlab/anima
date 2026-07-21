@@ -1,0 +1,48 @@
+- self/verify_g12_g13.hexa 신규 — 5건 어서션 PASS (hexa 바이너리 검증 완료)
+feat(selfhost): 100% 골화 — lexer O(n²) fix, codegen fallthrough→error, grammar sync
+feat(selfhost): 100% 골화 — lexer O(n²) fix, codegen fallthrough→error, grammar sync
+fix(ml): alphabeta — axpy 미탑재 바이너리 호환, mat_add_inplace 폴백
+fix(ml): alphabeta — axpy 미탑재 바이너리 호환, mat_add_inplace 폴백
+into a single prior block") that the bench/dfs_breakthrough.py experiment
+- 주의: 컴파일러 경로 빌트인 화이트리스트 미수정 → VM 호출 시 'undefined' 발생 가능 (후속 작업)
+- 주의: 컴파일러 경로 빌트인 화이트리스트 미수정 → VM 호출 시 'undefined' 발생 가능 (후속 작업)
+R14 준수 — HX 규칙/L0-L1/sync 블록 인라인 제거, shared/ JSON 참조만 유지.
+R14 준수 — HX 규칙/L0-L1/sync 블록 인라인 제거, shared/ JSON 참조만 유지.
+코드 수정 없이 PASS, 블로커 제로. self/nexus_port/ 신규 경로.
+코드 수정 없이 PASS, 블로커 제로. self/nexus_port/ 신규 경로.
+feat(perf): T1/T2 CPU 물리 한계 100% 골화 + 누적 ossification 번들
+feat(grammar): G8-G13 100% 골화 완료 — 17 회귀 테스트 PASS
+docs(token-forge): A_hybrid integration design note in proxy/server.py
+Add inline DESIGN NOTE block documenting the planned A_hybrid context
+docs(roadmap): 루프 종료 — T1+T2 모두 인터프리터 속도 천장으로 불가
+docs(roadmap): 루프 종료 — T1+T2 모두 인터프리터 속도 천장으로 불가
+Phase B v2 56ms 대비 1.4x 오버헤드로 전체 트랜스포머 블록 복원.
+Phase B v2 56ms 대비 1.4x 오버헤드로 전체 트랜스포머 블록 복원.
+7개 lint 규칙: P1(세미콜론), P3(exec no try-catch), P5(상대경로),
+7개 lint 규칙: P1(세미콜론), P3(exec no try-catch), P5(상대경로),
+- build_hexa.sh 신규 (cargo-free 파이프라인 PoC, 6 블로커 식별)
+- 잔여 95%→100%: argv 누수 1개 (codegen_c2 + runtime.c ~10-20 LOC)
+roadmap_tracker rt_run_default 하드코딩 제거, todo_ref/todo 키를
+feat(meta): convergence/breakthroughs/roadmap 메타 슬롯 작성 — CLAUDE.md 참조 매칭
+SSOT 분리: 수렴=convergence, 실측=breakthroughs, 계획=roadmap. 중복 금지 (R5/R14).
+feat(meta): convergence/breakthroughs/roadmap 메타 슬롯 작성 — CLAUDE.md 참조 매칭
+SSOT 분리: 수렴=convergence, 실측=breakthroughs, 계획=roadmap. 중복 금지 (R5/R14).
+feat(self): P5 셀프컴파일 — hexa_v2 네이티브 컴파일러 빌드 + 3/4 fixpoint
+feat(self): P5 셀프컴파일 — hexa_v2 네이티브 컴파일러 빌드 + 3/4 fixpoint
+L0 승인: 유저 명시적 요청 ("문법 개선", "모두 fix go", "L0 차단 해제")
+L0 승인: 유저 명시적 요청 ("문법 개선", "모두 fix go", "L0 차단 해제")
+- 등록 3곳 완료: interpreter(구현) + env(define_builtin) + compiler(is_builtin).
+- 등록 3곳 완료: interpreter(구현) + env(define_builtin) + compiler(is_builtin).
+fix(parser): G1/G2 — 튜플 반환·배열 타입 어노테이션 전 위치 확장
+fix(parser): G1/G2 — 튜플 반환·배열 타입 어노테이션 전 위치 확장
+feat(builtin+ml): block_forward_chain — N layer loop in Rust, single scratch alloc
+feat(builtin+ml): block_forward_chain — N layer loop in Rust, single scratch alloc
+feat(grammar): hexa-grammar/ 심링크 + hook 개선 + autofix 경로 업데이트
+feat(grammar): hexa-grammar/ 심링크 + hook 개선 + autofix 경로 업데이트
+G5(struct-in-if), method(잘못된 메서드명 16종), type(배열 혼합타입),
+G5(struct-in-if), method(잘못된 메서드명 16종), type(배열 혼합타입),
+silu_inplace 손코딩 + 수동 push 루프 제거 → 빌트인 silu+hadamard.
+silu_inplace 손코딩 + 수동 push 루프 제거 → 빌트인 silu+hadamard.
+- hexa_array_push: copy+malloc → in-place realloc (메모리 10GB→<500MB)
+- hexa_array_push: copy+malloc → in-place realloc (메모리 10GB→<500MB)
+fix(build): MKL 명시적 threaded layer link (PyTorch 동일 전략)

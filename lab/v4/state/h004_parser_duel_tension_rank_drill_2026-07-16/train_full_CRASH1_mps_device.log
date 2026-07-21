@@ -1,0 +1,43 @@
+FULL RUN — H_004 G-2 d=384 ×2seed ×5arm (~5h)…
+  training A-duel.s0 (CPT 8000 + drill 2500, d=384)…
+Traceback (most recent call last):
+  File "/Users/mini/dancinlab/anima-v4/state/h004_parser_duel_tension_rank_drill_2026-07-16/train_h004.py", line 509, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Users/mini/dancinlab/anima-v4/state/h004_parser_duel_tension_rank_drill_2026-07-16/train_h004.py", line 505, in main
+    return run_full(device, cpt_steps=8000, drill_steps=2500, tag="full", seeds=(0, 1))
+  File "/Users/mini/dancinlab/anima-v4/state/h004_parser_duel_tension_rank_drill_2026-07-16/train_h004.py", line 452, in run_full
+    model, ce = train_arm(arm, seed, (torch, M, cfg, Struct), {"f2": f2, "f1": f1},
+                ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                          drill, cpt_win, (cpt_steps, drill_steps), device)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mini/dancinlab/anima-v4/state/h004_parser_duel_tension_rank_drill_2026-07-16/train_h004.py", line 296, in train_arm
+    tok, tgt, struct, mask = _drill_batch(model, torch, batch, arm, seed, device, pad)
+                             ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mini/dancinlab/anima-v4/state/h004_parser_duel_tension_rank_drill_2026-07-16/train_h004.py", line 258, in _drill_batch
+    st, gold, _ = _struct_for(model, torch, item, arm, 0, idx, len(seq))
+                  ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mini/dancinlab/anima-v4/state/h004_parser_duel_tension_rank_drill_2026-07-16/train_h004.py", line 161, in _struct_for
+    emb = model.node_embed(torch.tensor(Ta, dtype=torch.float32))    # (n,64)
+  File "/Users/mini/dancinlab/anima-v4/state/h004_parser_duel_tension_rank_drill_2026-07-16/train_h004.py", line 115, in node_embed
+    h = (T.unsqueeze(-1) * self.r_out(b)).sum(1) + (T.t().unsqueeze(-1) * self.r_in(b)).sum(1)
+                           ~~~~~~~~~~^^^
+  File "/Users/mini/dancinlab/anima-v4/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/mini/dancinlab/anima-v4/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/Users/mini/dancinlab/anima-v4/.venv/lib/python3.14/site-packages/torch/nn/modules/sparse.py", line 189, in forward
+    return F.embedding(
+           ~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<5 lines>...
+        self.sparse,
+        ^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mini/dancinlab/anima-v4/.venv/lib/python3.14/site-packages/torch/nn/functional.py", line 2615, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Placeholder storage has not been allocated on MPS device!

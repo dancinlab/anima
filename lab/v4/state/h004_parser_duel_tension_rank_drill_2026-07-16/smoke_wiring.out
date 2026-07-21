@@ -1,0 +1,18 @@
+/Users/mini/dancinlab/anima-v4/state/h004_parser_duel_tension_rank_drill_2026-07-16/train_h004.py:322: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:823.)
+  dmax = float((emb0 - emb1).abs().max())
+======================================================================
+H_004 G-2 driver — SMOKE (wiring only, $0)
+======================================================================
+  WIRING-1 f2'': 20 eojeols == 20 nodes ✓
+  WIRING-1 drill: 20 eojeols == 20 nodes ✓
+  WIRING-1 f1': 5 eojeols == 5 nodes ✓
+  WIRING-2 slots: 앞/뒤 = 3 bytes, tile gold_pattern ✓
+  WIRING-2 untrained d_acc(item)= 0.333 (expect ~0.5)
+  WIRING-3 T[0,1] sign-flip moves node_embed by 1.1808 (>0 ✓) · C-scaf struct constant across positions (=mlp(0), invariant to T): True ✓
+  WIRING-5 rank1_tiebreak nnz=2 (expect 2), all on row 0: True ✓
+  WIRING-5 C-plc Π reproducible: True · spectrum preserved: True ✓
+  WIRING-4 overfit A-duel on 16 drill items × 600 steps (d=64)…
+  WIRING-4 A-duel drill-subset d_acc = 1.0 (target ≥ 0.9; drill CE 0.076)
+
+SMOKE: wiring GREEN — alignment · injection-path (A-duel overfits) · slots · arm-tensors verified

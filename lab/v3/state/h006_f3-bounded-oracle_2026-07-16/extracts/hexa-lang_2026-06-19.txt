@@ -1,0 +1,29 @@
+근본원인은 self/codegen.hexa 의 packed-f64 AUTO-FIRE 가 call-argument escape 를 누락한 것(#3620 989fedd6d 기머지)으로 확정. escaping [float] 리터럴이 contiguous double[] 로 패킹되고 callee 가 boxed 16B-HexaVal stride 로 읽어 garbage tag → 'cannot multiply non-numeric operand'. 검증 캡처: x86_64-linux(aiden v0.241.8) 실제 sternheimer_selftest PASS + N=80 matrix-free repro OK; darwin-arm64 local(post-#3620 hexat) repro-branch sternheimer_selftest 전체(A~F degen) PASS + 리터럴-escape repro OK + 생성 C 가 boxed array_new 확인. #3620 PR CI = darwin-arm64 byteeq gen3≡gen4/miscompile-zero/STP-LDP guard/faithful 3타깃 전부 SUCCESS. 안정 v0.241.6~.10 전부 #3620 포함(v0.241.10 darwin-arm64 asset post-fix). BLOCKER 는 QFORGE 가 쓰던 #3620 이전 darwin-arm64 stale prebuilt — 최신 stable 재설치로 해소. arm64 native(--emit)은 ldp/stp 16B atomic 으로 애초 무결. 소스픽스 기머지로 NO new code change.
+`build/hexat` link fails with `undefined reference to rt_map_contains_native /
+emitter). Any .hexa using read_f32_at then failed to link (undefined reference),
+  ar 로 runtime.a 에 fold(RT-NATIVE 시드 패턴 동형). NO-OP-SAFE 폴백. 6곳
+* fix(C-transpile): RT-NATIVE drop-guard — drop program-C body of native-runtime.a-provided symbols (sys_exit multiple-definition regression)
+fix(C-transpile): RT-NATIVE drop-guard — sys_exit multiple-definition link regression (hexa cloud, v0.241.11) (#3691)
+* fix(install): shim exports HEXA_PREBUILT_RUNTIME at persisted runtime.a (reaches the currently-shipped binary)
+* feat(install): standalone-rtlink — install.sh resolves native-seed runtime.a via stage_resolve_runtime_a (consumer build links rt_{array,map}_*_native)
+* fix(C-transpile): apply RT-NATIVE drop-guard to codegen_full (LIVE transpile path)
+ing(resolved): QFORGE val-arena fn-value tag-corruption — root-cause = #3620 (packed-f64 call-arg escape), stale-prebuilt blocker (#3672)
+durable 근본원인 — regex/json/contains_key dyld 크래시(v0.241.x)는 stale run-cache:
+  build_runtime_a_from_source 가 runtime.c -DHEXA_CUDA -I$CINC 컴파일 + 두 객체를
+unchanged on every target; arm64 merely compiles -DHEXA_RT_ALLOC_NATIVE=1 + links
+Guards: respects a user-set HEXA_PREBUILT_RUNTIME; only exports when the archive
+* fix(rt-native measure-8): native arm64-linux arena seed used Darwin/XNU syscall ABI + x86_64 syscall numbers — root-cause of #3597 SIGSEGV
+feat(install): standalone-rtlink — install.sh resolves native-seed runtime.a (consumer links rt_*_native, 0 residual) [edge] (#3632)
+* fix(rt-native map-construct): regen 3-target seeds with set_inplace + gate hv_eq padding-insensitive + regen source-path normalize
+멈춤은 목표달성(🏁) 또는 측정된 닫힌-음성 벽(🧱)일 때뿐 · 근본원인 머지까지.
+feat(rt-native FS-R1): FS write-half first native seed — rt_write_bytes → fs_write_all_native (C #else kept) (#3668)
+directive 를 'reference 알고리즘 차용 > 파라미터 튜닝' 측정 증거로 강화. docs-only.
+docs(governance): CLAUDE.md reference-first 구현 directive 추가 (commons c23 hexa 적용) (#3645)
+하드 redefinition error. 중복 블록 제거(canonical 1개) → 무수정 클린 컴파일.
+근본원인 픽스: runtime_cuda_emit.hexa 가 _hx_dt_exp_dev 디바이스 함수를 2회
+Seeds (3x .s) regen + byteeq gen3==gen4 3-target + shipping smoke on aiden/ghost.
+install.sh (consumer path completion, additive): add prefer_musl() -- scoped to
+build sets HEXA_LANG=$HX_SRC) and $HX_BIN/build (consumer build resolves hxroot
+* test(t56b): external /usr/bin/time RSS w/ baseline subtraction; boxed witness via read_bytes_at int[] (bytes_to_f32_le crashes transpiler — separate bug)
+fix(codegen · c17): QFORGE packed-f64 call-arg escape — _expr_escapes_name 이 node.args 스캔 (태그깨짐 root-cause) (#3620)
+모든 구현·개선·조사를 벽(🧱)에 닿을 때까지 미는 정책을 거버넌스 SSOT 에 명문화.

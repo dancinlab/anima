@@ -1,0 +1,65 @@
+{
+ "doses": [
+  1.0,
+  0.75,
+  0.5,
+  0.25,
+  0.1
+ ],
+ "owner_contingency": 0.42,
+ "closure_sign": 0.6,
+ "certify": {
+  "P_DOSE_curve": [
+   {
+    "p": 1.0,
+    "closure": 0.7222,
+    "env_contingency": 0.6278,
+    "closure_pass": true
+   },
+   {
+    "p": 0.75,
+    "closure": 0.8889,
+    "env_contingency": 0.565,
+    "closure_pass": true
+   },
+   {
+    "p": 0.5,
+    "closure": 0.8333,
+    "env_contingency": 0.4761,
+    "closure_pass": true
+   },
+   {
+    "p": 0.25,
+    "closure": 0.6667,
+    "env_contingency": 0.3767,
+    "closure_pass": true
+   },
+   {
+    "p": 0.1,
+    "closure": 0.3889,
+    "env_contingency": 0.0783,
+    "closure_pass": false
+   }
+  ],
+  "P_DOSE_monotonicity": 0.6,
+  "P_DOSE_ok": true,
+  "P_LIVE_p1_closure": 0.7222,
+  "P_LIVE_ok": true,
+  "P_DEAD_curve": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "P_DEAD_ok": true,
+  "ok": true
+ },
+ "d_star": {
+  "p": 0.25,
+  "closure": 0.6667,
+  "env_contingency": 0.3767,
+  "closure_pass": true
+ },
+ "verdict": "SCRIPTED-REFERENCE OK — the estimator is certified (P-DOSE monotone, P-LIVE anchors, P-DEAD refuses) and the god-view dose curve is logged. Run --model on summer to place the 7B (the actual DOSE-ROBUST vs TOY-FRAGILE verdict)."
+}

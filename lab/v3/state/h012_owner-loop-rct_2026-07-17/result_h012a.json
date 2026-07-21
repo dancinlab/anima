@@ -1,0 +1,71 @@
+{
+ "knn": 5,
+ "sign_pair": 0.55,
+ "M_cap": 60,
+ "M_frac": 0.04,
+ "N_cap": 2000,
+ "certify": {
+  "P-POS": {
+   "n": 320,
+   "M": 12,
+   "sign_base_full": 0.6844,
+   "sign_base_full_unstripped": 0.6844,
+   "rank_full": 1,
+   "n_shifts": 24,
+   "align_full": 10.286,
+   "ctx_tightness": 0.827,
+   "pass": true
+  },
+  "P-NULL": {
+   "n": 300,
+   "M": 12,
+   "sign_base_full": 0.4733,
+   "sign_base_full_unstripped": 0.4733,
+   "rank_full": 11,
+   "n_shifts": 24,
+   "align_full": 0.026,
+   "ctx_tightness": 0.816,
+   "pass": true
+  },
+  "P-ECHO": {
+   "unstripped": 0.6687,
+   "stripped": 0.5062,
+   "pass": true
+  },
+  "ok": true
+ },
+ "total_pairs": 10170,
+ "total_sessions": 135,
+ "primary": {
+  "n": 2000,
+  "M": 60,
+  "sign_base_full": 0.424,
+  "sign_base_full_unstripped": 0.4415,
+  "rank_full": 1,
+  "n_shifts": 24,
+  "align_full": 3.683,
+  "ctx_tightness": 0.06
+ },
+ "replication": {
+  "n": 2000,
+  "M": 60,
+  "sign_base_full": 0.4235,
+  "sign_base_full_unstripped": 0.4335,
+  "rank_full": 0,
+  "n_shifts": 24,
+  "align_full": 6.556,
+  "ctx_tightness": 0.066
+ },
+ "replicates": true,
+ "verdict": "PRECHECK-REFUSE — even semi-interventionally (context matched, utterance quasi-random) the utterance carries no reply-predictive info beyond context (sign_base_full 0.424 < 0.55, rank 1/24) — consistent with H_010's observational REFUSE. A cheap negative that LOWERS the odds before spending owner consent on H_012B. Replicates=True.",
+ "regime_certification": {
+  "why": "verdict-integrity (convergence run-h011-py-1): plants certified at M=12/tightness~0.8; real data is M=60/tightness 0.06 — a different regime. Re-certified in-regime.",
+  "sign_base_full_at_M60": {
+   "P-POS": 0.81,
+   "P-NULL": 0.515,
+   "real_primary": 0.424
+  },
+  "finding": "sign_base_full SEPARATES cleanly at M=60 (channel 0.81 vs null 0.515; threshold 0.55) and the real data (0.424) sits BELOW the null level -> REFUSE is trustworthy on the certified primary. rank_full/shift-null is UNRELIABLE at M=60 (a NULL plant scored rank 0/24 = false significance), so the real data's rank_full=1 is a spurious shift-null artifact, NOT signal. The frozen gate's AND (sign>=0.55 AND rank<=2) is robust: sign fails, so no false UPGRADE; REFUSE rests on sign alone.",
+  "lesson": "recurrence of run-h011-py-1 — a co-metric (shift-null rank) is regime-unreliable; the in-regime plant re-check caught it before terminal."
+ }
+}

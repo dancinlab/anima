@@ -1,0 +1,76 @@
+  tool/build_dispatch.hexa` 처럼 상대경로로 호출되면 file 인자가
+  (pre-existing missing fn in hive/packages/coding-agent/hexa/cli_mvp.hexa
+  적용 → 캐시 exe (`<root>/.hexa-cache/<hash>/exe`) 의 argv[1] 을 읽는
+  같은 false 에러로 종료.
+attr_format/core/attr_format_main.hexa
+  - tool/tui_app_selftest.hexa : exit=0 (dispatch contract intact)
+  - tool/tui_input_selftest.hexa : exit=0 (parser-level)
+.hexa-cache/<hash>/exe 의 RSS 를 0.5-6 GB 까지 기록 (28건+, 2026-04-27 ~
+- _hx_mem_cap_bytes: 2 GB → 768 MB. Self-hosted compile (41-file flatten +
+  가 1→5 GB 를 단일 30s 윈도우 안에 관통하던 케이스에서 overshoot bound 를
+    3) clang -O2 hexa_cc.c.new → /tmp/hexa_v2.new (1.49MB)
+fix(should_cache 2026-05-05): denylist matches relative paths — argv[1]-dependent tools (build_dispatch 등) AOT 캐시 미스매치 해소
+  본질은 native runtime 의 argv[0]→argv[1] 자동 복제 (runtime.c:4143-
+- fn eprintln(s: str) -> void   // analog of println, writes to stderr
+attr_ecosystem/core/attr_ecosystem_main.hexa
+attr_ecosystem/module/attr_falsifier.hexa
+attr_ecosystem/module/attr_user_verbatim_record_exempt.hexa
+attr_format/core/router.hexa
+attr_format/core/source.hexa
+grammar_format/core/grammar_format_main.hexa
+grammar_format/module/grammar_v3.hexa
+grammar_format/module/grammar_v5.hexa
+proposals/composability_a1_a5_b2_b5/b5_selftest_contract.md
+     dispatch_fn impls (cli_mvp _dispatch etc.) don't need to opt-in.
+  - hive headless_mode_lint --selftest : 5/5 markers + 5/5 fixtures
+self/tui/input.hexa
+2026-05-05). 기존 2 GB 기본 cap 은 한 번도 발동 못 함 — 외부 watcher 가
+  계층 (cap 발동 → exit(77) graceful, watcher SIGKILL 은 진정한 backstop).
+플래그로 합법화 가능.
+    1) hexa_v2 (old) transpile lexer/parser/type_checker/codegen_c2 → /tmp/_*.c
+  ./self/native/hexa_v2 self/tui/app.hexa /tmp/app.c
+  `/test/`, ...) 가 leading slash 를 요구하지만, `./hexa
+proposal: core.io.eprintln + stderr_write (stderr explicit channel) (#48)
+- fn stderr_write(s: str) -> int // returns bytes written or -1
+stderr_warn fn (2 hits) using shell escape `exec("echo ... >&2")` —
+Reference impl: ~30-50 LOC backed by `write(2)` syscall on stderr fd 2.
+string / interleave with println).
+3. Macro that wraps println with redirect — not idiomatic.
+own 5 status: C-hit 2 (Track AE roadmap_op.hexa stderr_warn) + B-bench
+§6.6 DEFERRED (pattern_matcher forward-looking, C-hit 0).
+proposals/rfc_015_core_io_eprintln.md
+Migrate 3 features (attr_ecosystem, attr_format, grammar_format) from
+- 28 file moves via git mv (preserves history)
+- 7 sweep edits: 203 path occurrences updated across configs, docs, proposals, hexa sources
+attr_ecosystem/core/registry.hexa
+attr_ecosystem/core/source.hexa
+attr_ecosystem/module/attr_env_required.hexa
+attr_ecosystem/module/attr_migration_quarantine.hexa
+attr_ecosystem/module/attr_sister.hexa
+attr_format/core/registry.hexa
+attr_format/module/attr_v1.hexa
+attr_format/module/attr_v2.hexa
+attr_format/module/attr_v3.hexa
+attr_format/module/attr_v4.hexa
+attr_format/module/attr_v5.hexa
+config/attr_format_sources.json
+grammar_format/core/registry.hexa
+grammar_format/core/router.hexa
+grammar_format/core/source.hexa
+grammar_format/module/grammar_v1.hexa
+grammar_format/module/grammar_v2.hexa
+grammar_format/module/grammar_v4.hexa
+proposals/composability_a1_a5_b2_b5/b2_sentinel_structured.md
+merge(divergence resolution 2026-05-05): integrate PR #47/#48 stdlib (float/json/PE/eprintln) with layout migration
+Origin main: PR #47 (rfc_012/_013/_014 stdlib proposals) + PR #48 (rfc_015 eprintln).
+INCIDENT (2026-05-05)
+  hive-hexa-bin (AOT'd hive coding-agent) orphaned to PPID=1 after
+  millions/sec. Final state: RSS 36GB, CPU 86%.
+     syscall error, 0 timeout, 1 POLLIN ready.
+     callers can route to clean exit instead of treating as timeout.
+  3. self/tui/app.hexa app_run: exit on ["eof"] BEFORE dispatch — so
+  (every 64 iters, exit if PPID==1). Call site commented in app.hexa
+self/build_c.hexa
+self/codegen_c2.hexa
+self/env.hexa
+VERIFY

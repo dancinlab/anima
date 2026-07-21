@@ -1,0 +1,50 @@
+   self/codegen_c2.hexa ~ line 3937 — extended existing intercept that maps
+when building the pool plugin chain. Wilson worked around at the call sites
+feat(interp): RFC 035 — whole-NM-step C-kernel dispatch in hexa_full.hexa
+    invocations) — runs cleanly, NO OOM (previously OOMed at ~25 iters).
+   self/runtime.c — additive (existing async/poll/close/kill untouched).
+  chain.hexa (164)       — engine CSV parse + per-engine drill dispatch
+  dispatch. Added an `if name == "float" { return "hexa_to_float(...)" }`
+all 3 touched files); cmd_promote mirrors the existing cmd_append_witness pattern and
+cmd_build: raise module_loader RSS cap to 4096 MB (silent raw-src fallback fix)
+    hexa_net_select(fds_array, timeout_ms) → ready_fds   (POSIX select(2))
+   now_ms). Initialized at startup via new _hexa_init_time_fn_shims() called
+PREREQUISITE (also this commit): extract Pauli math from the HexaVal-taking
+- Unix domain socket (AF_UNIX) skeleton present in headers (sys/un.h) but
+When a formula/constant-bearing fn isn't atlas-bound (HX8004), or cites an L node the atlas
+  round.hexa (206)       — single-round chain (smash→free→absolute→…→resonance)
+runtime: TAG_FN shims for time builtins + bidi-stdio exec_stream primitives (APPLIED)
+- header: "native-compiled, atlas-aware, strict-lint language toolchain" + in-house
+   self/runtime.c — HexaVal globals + TAG_FN init shim, matching the pattern
+   inited to -1 in async path; filled by _open path). hexa_exec_stream_close
+registrations. That works for ≤4-arg builtins (codegen emits hexa_callN),
+codegen changes (self/codegen_c2.hexa) — require hexa_v2 rebuild to take
+the new builtins to .hexa code (regenerate hexa_cc.c from codegen_c2.hexa,
+Patch reports updated with `## Status — APPLIED (2026-05-13)` sections:
+   for previously-OK `pub fn` symbols in other plugins). Bisected: revert
+| ⚠ partial (size cap) | 1 | gaia — 200 OK but body 2.27 MB exceeds 15s probe budget. Bridge's 4096-byte cap means runtime is fine — measurement artifact only |
+- new ATLAS / STRICT LINT block at the bottom: atlas P/C/L/E embed (rodata, 0ms, hash-pinned);
+Source-only — `~/.hx/bin/hexa` reflects this after the next toolchain rebuild (`hexa cc` /
+No behaviour/severity/stage change; template + explain text only (no test asserts on message
+CI). Subcommand list itself unchanged. Filed from a downstream (wilson) session at the repo
+  hexa_pty_open()                          -> map {master, slave, slave_name} | {error}
+stdlib/os/mount + stdlib/os/namespace: Linux syscall wrappers (P0 #3+#4 of cpu port)
+Additive — existing 2-/3-arg public surface untouched; existing pool_request_to /
+  drill.hexa (212)       — main entry + arg parsing + round loop orchestration
+    drill/drill.hexa            --seed "<expr>" [--rounds N] [--engine mk9|mk10]
+pool_recv_any / pool_broadcast_to delegate to the new cancellable variants with
+pattern where a void-returning fn pushes a struct literal into a caller-owned
+tool/hexa_annot: AST upgrade — 29 grep-MVPs → lexer-based AST (-4700 LOC)
++ 4 fix strategies; this commit takes option A (runtime promotion). Wilson's
+exec_stream_write primitive — popen 'r' mode lets us read child stdout but
+Both filed-and-pending patches from wilson now have fixes in place. Both are
+   wilson `hexa build` failed at clang link ("redefinition as different kind
+compiler: Phase 3 spine — A9 drill + A19 chain (overlay write integrated)
+  engine=mk10). transcendental_closure sidecar deferred — mkx_engine.hexa
+  [smoke] listen fd=3 / set_nonblock OK / select 0 ready (expected timeout)
+                     their respective arities (0/1/3/4/5); _is_builtin_name
+  - self/native/hexa_v2 + hexa_cc.c — regenerated via `hexa cc --regen` +
+Convert relative `import "./...hexa"` to absolute `use "compiler/<x>/<y>"`
+  T2 FAILED (ansatz_pack handle returned -1 — kernel input-length check;
+Bridge .hexa header comments updated with new cache metadata (source URL,
+     - hexa_exec_stream_write(h, data)  → write to child stdin; handles

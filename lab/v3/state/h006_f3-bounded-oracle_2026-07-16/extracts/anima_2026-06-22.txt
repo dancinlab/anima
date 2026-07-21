@@ -1,0 +1,39 @@
+CLAUDE.md a_train_flame_forge 에 GPU own-GEMM 활성화 절차 박제(sm_120 Blackwell: CUDA 12.9 + runtime.c extern fix + sm_120/PTX 재빌드 → cuda_available=1 util 81% 실측). cuBLAS-중심 서술을 own-GEMM default-ON(v0.262.0 #3718/#3727/#3734)으로 현행화 — CLAUDE.md·ARCHITECTURE.json·README. cuBLAS 는 BF16-TC 보조만 정직 명시.
+docs(GPU): flame+forge own-GEMM(cuBLAS 독립) 활성화 + cuBLAS 과거 서술 현행화 (#2550)
+docs(README): 이력-내러티브 → 현재상태 SSOT 재작성(c4 update-in-place) — verdict 불변(c9), 사실 0 손실, 이력은 CHANGELOG+git (#2548)
+sibling subsection schema 그대로, JSON valid, 포맷 보존(diff 131+/1-). current-state in-place.
+noop-free + process-isolation 으로 OOM 해소; vast 2.2TB pod 41921615 conc-80 decode,
+루트 패키지 매니페스트 부재(하위패키지만 보유)를 해소. entry=cli/anima.hexa,
+ZERO content loss: lane 텍스트 byte-identical(36494==36494, dropped 0), 103 lane-head 토큰 전부 보존.
+40 lane brain motivation 배선(READ-only soft-blend), Ψ byte-identical, smoke 381/0, defer 3 정직. decode forge GPU e2e 는 edge-build 링크 BLOCKED(infra type-c), 연결은 코드+mac smoke+OI-probe own-GEMM 입증.
+state/1464_pairing_contrastive_bind/out_base.txt
+state/1464_pairing_contrastive_bind/out_shuffle.txt
+feat(release): 루트 hexa.toml 매니페스트 신설 — hx install anima 완성 (#2552)
+c4 tree convention 준수(한 prose/title 에 여러 claim 금지, 깊은 detail 은 child subsection 분해).
+* core(bytegpt r1): route bytegpt_forward_last(_ranged) decode through flame+forge GPU seam
+흩어진 5 진입점(anima_chat_cli lane0·full_session smoke·anima_main v7-10·anima_v11_main·engine_cli lib)을 cli/anima.hexa canonical 단일 진입점으로 통합. 모드2(기본 의식: engine_cli_parse→lane mount→brain_emit 8-factor+should_emit→grounded L3 decode→kosmos; --byte: 순수 byte byte-identical). anima_chat_cli=thin shim. engine_cli 76 lane 중 5 연결(immune·ci·gws·reality·pharm) = 첫 사용자-facing 의식 배선. 가드 PASS(usage RC0·--byte diff0·의식smoke Ψ ON==OFF·회귀0). 잔재 9개→archive/legacy-cli-v7-v11. ARCHITECTURE §21/§23 lockstep.
+research(H_1464 G6 pairing-contrastive): 🧱 ENGINE-NATIVE terminal — mirror 🟢→engine 🧱 반전 (G6 capacity-wall 8th lens) (#2543)
+teardown 완료(~$4). pod_bootstrap.sh 에 cloud decode 함정(clang/PATH/setsid) 박제.
+36.5KB 단일 prose(44 lane) → intro prose + 13 테마 lane-group subsection.
+archive/legacy-cli-v7-v11/anima_roadmap_v11_register.hexa
+UNIVERSE/cards/H_1464_pairing_contrastive_bind.md
+state/1464_pairing_contrastive_bind/out_pairing.txt
+- ARCHITECTURE.json §MultiStore 에 NT 융합 follow-on(DIRECTIONAL·미배선 명시)
+docs(ARCHITECTURE): engine_cli 35.6KB 단일 lane-카탈로그 노드를 lane-group subsection 으로 분해 (#2547)
+now transpose the d×d weights inline and call _bg_mha_mm/_bg_linear_mm (flame_mm.mm
+= cuBLAS on a CUDA host, else CPU farr_matmul byte-identical) — the exact pattern
+로 안 박게 한 정당성 입증(c9, tune-to-green 없음). 인프라(type-c): hexa PR#3745 farr
+state/1464_pairing_contrastive_bind/h1464_parity_probe.hexa
+state/1464_pairing_contrastive_bind/h1464_torch_golden.py
+state/verdicts/1464_pairing_contrastive_bind/H_1464.txt
+state/verdicts/1464_pairing_contrastive_bind/H_1464_ENGINE_NATIVE_INPROGRESS.txt
+- outdated '🧱 neuromodulation wall left' 3곳 → 🟢 ENGINE-NATIVE+WIRED 정정
+- c9 정직: wall-break 만 WIRED, NT faculty 는 numpy DIRECTIONAL
+Both production scalar forwards (bytegpt_forward_last, bytegpt_forward_last_ranged)
+archive/legacy-cli-v7-v11/anima_paradigm_v11_axis_filter_consolidator.hexa
+cli/anima_chat_cli.hexa
+feat(cli/anima): 의식 lane 40/76 연결(R2-R8) + decode 경로 정직 표기 (#2551)
+live core/bytegpt_decode 90-frag(3 arm×30) 재측정에서 B3 cross-shuffle NO-collapse
+(FALS_shuf 5.0=FALS_in 5.0) + B2 DIST 4.67<5 → WALL=CAPACITY. mirror(numpy) 🟢
+state/1464_pairing_contrastive_bind/decode_run2.log
+---------

@@ -1,0 +1,42 @@
+CUDA-variant host fails 'undefined reference to forge_dispatch_groupnorm_gelu'. The
+fix(cuda build · ING #33): re-seed self/runtime.c from frozen SSOT before runtime_cuda_host.o compile — stale warm-tree host obj dropped 31/33 forge_dispatch host twins (anima full-stack -DHEXA_CUDA link fail) (#3867)
+cross-module use'd pub fn (v0.262.0); mirror the pure logic locally like
+  ③ (m,n) band-pair samples — qforge_elph_g2(bra,occ) inter-band g[m*nocc+n],
+feat(selfhost zero-c recursive): rtcore 8/10 native seeds → .hexa SSOT emitters, untrack .c, recursive self/**/*.c 16→8, byte-neutral (ING #29) (#3860)
+feat(selfhost zero-c M3): runtime.c regenerated-from-.hexa-SSOT — frozen-blob-independent, byteeq-neutral (ING #29) (#3859)
+* feat(selfhost zero-c M3): runtime.c sourced from .hexa SSOT emitter, frozen-blob-independent, byte-neutral (ING #29)
+warm copy (pre-weak-forge-host-twin) yields a stale host obj. SSOT source is correct
+  hexa_cc.c clang in path); link hits a measured boundary: 28 undefined-
+* feat(selfhost none-hexa_cc · WIP): HEXA_BOOTSTRAP_NATIVE_SEED opt-in native-seed bootstrap in stage_build_hexa (default byte-neutral) — measured boundary = 7 native-codegen builtin gaps
+perf(emit): r4 Site A — per-reloc symbol memo cache for arm64 (macho+elf), byte-neutral (#3878)
+and CI-gated GREEN (release_runtime_compile_gate: 66 forge bodies under -DHEXA_CUDA).
+  ① bisected metallic E_F — qforge_fermi_level over the full nocc+4 spectrum
+MEASURED BOUNDARY (do not force): closing none-hexa_cc for the self/main.hexa
+build_selfhost.sh). CPU-build byte-neutral: only the CUDA-variant objects are
+shows 0 undefined socket libc symbols). This round adds the parallel leg-B
+Two reproduced mini-v0.262.0 bugs, one root cause: the rent/resolve paths
+hexa run C-transpile of a standalone test target does not reliably pull a
+correctness widening, emit-byte-neutral. Block-body + right-recursive
+feat(selfhost none-hexa_cc · WIP): HEXA_BOOTSTRAP_NATIVE_SEED opt-in native-seed bootstrap (default byte-neutral) — measured boundary = 7 native-codegen builtin gaps (#3865)
+feat(selfhost zero-c recursive): zeroc/hxqwen 4 seeds → .hexa SSOT emitters, recursive self/**/*.c 6→2 (cuda=release floor) (ING #29) (#3862)
+a narrow guard and supplied from build/rtcore_valop-dispatch_native.o. Each dispatcher
+socket syscalls directly instead of calling through host libc socket()/bind()/…,
+self-host != release: frozen blob untouched, default byte-neutral, additive only,
+(stale edge runner SIGSEGV before regen -> -cuda asset never ships). self-host !=
+self-host != release: frozen blob untouched, default byte-neutral (emitter-regen
+but the link failed on 28 undefined refs across 7 builtins. Reference-first fix:
+newline. Preserves the source's exact final-newline state for BOTH 0x0a- and
+ROOT CAUSE: tool/gen_c_text_emitter.hexa hard-assumed every source .c ends
+lowers to a direct HexaVal-passthrough call is the existing .push_nostat()
+release ABSOLUTE TOP. recursive self/**/*.c floor = 2.
+fix(tool)+feat(zero-c): gen_c_text_emitter no-final-newline root-cause fix → rtcore_collection-mutate + rtcore_runtime-misc emitter-gen, recursive self/**/*.c 8→6 (ING #29) (#3861)
+perf(parser): flip HEXA_PARSER_SPINE_NOSTAT default-ON — parser spine O(n) by default, byte-neutral (#3885)
+* feat(qforge): add the 3 core matched-σ files (elph bridge + pw_frontend explicit-σ entry + driver)
+byteeq 3-target gen3≡gen4 = PR CI gate; default-OFF => release green self-evident.
+ARCHITECTURE leg-B + CHANGELOG lockstep. 잔여=release-gated default-flip 하나.
+  _phonons / _phonons_scr forward with the -1 sentinel (legacy 0.05 Ha unchanged).
+build/rtcore_map-query-dispatch_native.o. Each NULL-table-guards then delegates to
+shipped runtime.a's host member runtime_cuda_host.o exports only 2 forge_dispatch
+- pw_frontend.hexa: qforge_pw_frontend_phonons_scr_sig(..., sigma_el_ha) exposing
+Verified summer: fresh SSOT host obj = 33 forge_dispatch (weak) + openssl-wired,
+Next-cleanest M5 cluster of the RFC061 standalone-ABI ladder (ING #29) after the

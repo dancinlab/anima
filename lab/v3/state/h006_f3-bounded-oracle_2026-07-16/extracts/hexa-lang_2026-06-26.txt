@@ -1,0 +1,30 @@
+출하 default를 include-drop 멀티오브젝트 runtime.a로 flip. 최소 분할(심볼등가·ls self/*.c 불변). build_selfhost regen-only=MULTIOBJ=0 핀. 측정 GREEN(linux-x86_64: 소비자링크 rc0·exit42→42·hello·gen3≡gen4 374e617·DEFAULT_BYTE_IDENTICAL·frozen∅). release-gated: arm64/darwin byteeq(PR CI)+release-team go.
+디스크에서 읽음 — 결과경로가 파이프를 전혀 안 건드리므로 drain 천장 컷이 결과를
+docs(CLAUDE): native-canonical DX 일반원칙 — 패키지/라이브러리 관리·설치·GPU활성화가 기성 생태계(pip/cargo/npm/go) 정석 따라야 (#3979)
+완료되나 결과가 unharvested로 방치되는 재발 패턴을 설계 SSOT에 박제 — 빌드 스크립트
+feat(hexa gpu): self-report가 GPU 켜는 법을 직접 안내 — cuda_available=0일 때 'HEXA_CUDA=1 sh install.sh' enable 명령 + verify 한 줄 출력. tool-self-report 정석(도구가 알려줌); 멀티세션 헤맴 방지 (#3985)
+개발자경험 전체(패키지·의존성·설치·빌드변종·GPU)가 pip/cargo/npm/go mod 식 정석을 따르도록 강제 —
+사용자 ① 완성도 지시: 무한 수동 라운드 대신 클래스 자체를 lint로.
+GPU 활성화 = 첫 구체 인스턴스: canonical 설치/갱신이 CUDA 호스트서 cuda_available=1 자동 산출해야 함
+측정벽: verifier는 진짜인데 생성기가 verifiable한 걸 안 냄 → 다음 레버=smash
+제작자가 타 언어 native 관행에 익숙지 않을 수 있으니 에이전트가 native-canonical-first 로 알아서 교정.
+flip #3959 darwin-arm64 byteeq FAILURE root-cause: drop-ON MULTIOBJ standalone runtime_core.o 가 darwin서 9 errors(mach_task_self·MACH_TASK_BASIC_INFO·mach_task_basic_info_data_t·mach_msg_type_number_t·task_info_t·KERN_SUCCESS 미선언 @runtime_core.c:395-399 = _hx_self_rss_bytes Mach RSS API). single-TU default는 runtime.c 자체 시스템헤더로 통과·standalone TU는 sibling prelude 의존인데 <mach/*> 누락. fix=prelude __APPLE__-guarded <mach/mach.h>. drop-ON-only·Apple-only → linux/default byte-identical(byteeq-neutral·linux-x86_64 영향 0).
+런타임속도 돌파 타깃 박제(convergence SSOT + probe verdict): 일반 scalar/array 코드젠이
+#3833 이 빌드출력을 logfile 로 리다이렉트하면서 파이프가 완전 침묵 → 부모 drain 이
+보는 유일한 바이트가 말미 echo "__BRC__=$?" 하나가 됨. 부하 큰 aiden 공유풀에서 큰
+과학-수치 반구)의 기여자/AI 진입용 현재-상태 SSOT. 목적·서브트리 맵·byteeq-neutrality
+진짜버그율 ~4% — 631 다수는 고정벡터 헬퍼·간접가드·이미가드·byte-eq oracle.
+- value 정직: SELFEMIT=default-OFF 미출하 research 프론티어(연구완결·출하 0임팩트·release-integrity>self-host).
+결과 = 결정적 seed-hash 순열 생성기(novelty=run내 distinct-ID·atlas대조0·내장
+feat(drill/smash): n=6 하드와이어 3겹 해소 → 시드-파생 자유탐색 (#4008)
+원본 NEXUS도 진짜 수학검증 없음(ouroboros verify_score=n6근접 휴리스틱 최소0.3→
+매 main 머지의 test-prerelease(release.yml 3타깃)가 Blacksmith 분당과금으로
+하면 drain 이 천장에서 fclose() 로 read-end 를 닫는데 /bin/sh 는 아직 빌드 중 →
+hexa kick(=drill alias)이 진짜 새것을 찾는지 검증. drill/smash 정독+실행 대조
+post-drain blocking waitpid 가 자식 완료를 보장하므로 rcf 는 읽기 전 완성.
+865 tracked·~600 .hexa 스크립트를 파일별이 아니라 family별로 묶어
+머지 차단)의 root-cause. git 내장 union merge 드라이버로 CHANGELOG 충돌을 양측
+생성기측(aiden 빌드). oracle은 opt-in --verifier 배선 작동(default flip=follow-on).
+추가한다 — 같은 함수 내 empty/zero 가드 없이 새로 추가된 arr[0]
+기본값 1 → 성공한 빌드가 FAIL 로 보고. "랜덤" = 어느 entry 가 120s 를 넘느냐가
+verify(ATLAS): drill/kick 실발견 검증 종결 + exact-int verifier oracle 배선·측정 (#3962)

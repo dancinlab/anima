@@ -1,0 +1,12 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+==============================================================================
+H_011 live-ab-closure · STAGE B — the LLM brain in the live loop (Qwen/Qwen2.5-3B-Instruct)
+==============================================================================
+Loading weights:   0%|          | 0/434 [00:00<?, ?it/s]Loading weights:   6%|▌         | 26/434 [00:00<00:01, 209.33it/s]Loading weights:  12%|█▏        | 51/434 [00:00<00:01, 229.53it/s]Loading weights:  20%|██        | 87/434 [00:00<00:01, 282.18it/s]Loading weights:  33%|███▎      | 145/434 [00:00<00:00, 364.59it/s]Loading weights:  42%|████▏     | 182/434 [00:00<00:00, 312.94it/s]Loading weights:  49%|████▉     | 214/434 [00:00<00:00, 237.40it/s]Loading weights:  56%|█████▌    | 241/434 [00:01<00:00, 203.14it/s]Loading weights:  64%|██████▍   | 277/434 [00:01<00:00, 236.40it/s]Loading weights:  81%|████████  | 351/434 [00:01<00:00, 349.92it/s]Loading weights: 100%|██████████| 434/434 [00:01<00:00, 332.73it/s]
+  LV-W: {"sign_base_full": 0.019749999999999997, "sign_shuf_full": 0.16399999999999998, "pass": false}
+  LV-C: {"closure_mean": 0.4625, "episodes_pass": 0, "pass": false}
+  LV-P: {"CR": 0.0, "replay_agree": 1.0, "n": 200, "pass": false}
+  brain_calls=8600
+
+  VERDICT: CHANNEL-MISSING/INSTRUMENT — the brain's executed actions do not predict the next observation (LV-W fail); the env channel that stage A certified did not carry through the brain run — treat as INSTRUMENT-INVALID, inspect the brain harness.
+==============================================================================

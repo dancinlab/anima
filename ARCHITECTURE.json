@@ -5717,8 +5717,16 @@
           },
           {
             "name": "lab/ 흡수 계기 — v3·v4 산 결과의 engine-native 이식 (H_9805~9809)",
-            "detail": "별개 실험장 lab/{v2,v3,v4,v5} 대조 결과: v2 는 프로덕션이 추월해 전량 흡수 완료. v3·v4 는 미흡수라 5 레인 병렬 이식. lab 수치는 영구 DIRECTIONAL — 이식된 것은 RIG 와 설계지, 결과가 아니다.",
+            "detail": "실험장 lab/{v2,v3,v4,v5} 대조 결과: v2 는 프로덕션이 추월해 전량 흡수 완료. v3·v4 는 미흡수라 5 레인 병렬 이식. lab 수치는 영구 DIRECTIONAL — 이식된 것은 RIG 와 설계지, 결과가 아니다.",
             "children": [
+              {
+                "name": "lab/v* = IN-TREE 실험장 (중첩 repo 폐기)",
+                "detail": "네 실험장 모두 부모가 직접 추적한다. v3·v4·v5 의 중첩 git repo 를 폐기하고 편입 — 각 repo 가 추적하던 255/159/58 파일 그대로(drift 0). 다시 별도 repo 로 분리하지 말 것."
+              },
+              {
+                "name": "폐기된 v3·v4·v5 repo 히스토리 보존처",
+                "detail": "커밋 33·85·35 개 전량이 `../lab-archive/anima-v<n>.bundle` 에 있다(clone 복원으로 커밋수·HEAD sha·파일수 3/3 일치 검증). v5 는 원격이 없어 이 번들이 유일본."
+              },
               {
                 "name": "core/tension_field.py (H_9805)",
                 "detail": "v4 H_004 흡수. 쓰기측 per-edge parse-disagreement 場을 trunk 앞단 주입 — 프로덕션 긴장이 스칼라(conflict_scalar) rank-1 이음매인 것의 탈출로. train --tension-field {duel,rank1,off} · evaluate --tension-rank-audit. 🔌 런타임 배선 CLOSED(decode 가 TFLD 판독+임베딩 직후 적용)."
