@@ -35,6 +35,11 @@ import sys
 # ── flat imports matching the P2-P5 twins (self-contained · zero hexa) ────────
 from engine_cli import *  # engine lane faculties + immune/ci/gws/reality/pharm ops
 from engine_cli import (engine_cli_parse, engine_cli_resolve_refsel, EngineConfig)
+# H_9873 daemon-side coupling constants. NOT tuned here — both come from H_1522's measurement:
+# op=1 (mean-center) is the only Psi-preserving operator, and alpha 0.6 is the frozen bt_alpha the
+# topology battery has always been read at (engine_cli_smoke bt_alpha / evaluate _TOPOWIRE_ALPHA).
+_TOPO_COUPLE_OP = 1        # 0 naive-amplifying (breaks Psi) · 1 mean-center · 2 row-stoch · 3 renorm
+_TOPO_COUPLE_ALPHA = 0.6   # == engine_cli_smoke bt_alpha == evaluate._TOPOWIRE_ALPHA (frozen)
 from engine_g import refractory_emit_debt, refractory_debt_step  # H_9404 earned refractory
 from pure_field import (pure_field_warmup, pure_field_phi, pure_field_phase,
                         pure_field_step, phase_name)
@@ -2230,7 +2235,25 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         m_grounding = _afs_clip01(rel_lane)
         m_field = [phi_t, rel_lane, 1.0 - recon_err, m_grounding, emit_env]
         m_grounding_p = pharm_perturb_m(sober, m_grounding, 0.0)
-        lanes = ci_lane_scores(m_grounding_p, m_field, cell_count, tick, 1, 1.0, recon_err)
+        # H_9873 — the topology coupling reaches the DAEMON here, and only here. lanes[3] and
+        # lanes[9] leave this block as coh_lane/bal_lane and enter motivation_score with weights
+        # 0.10 and 0.15 (engine_g.py:73), so a coupling applied to the lane vector is a coupling
+        # applied to the emit score — this line is the whole wiring surface.
+        #
+        # cfg.topo_couple is DEFAULT-OFF, and OFF returns ci_lane_scores byte-identically, so pure
+        # `anima chat` is untouched (the H_1205 separation invariant the smoke asserts as case 370).
+        # ON routes the 15 lanes through the Phi-optimal adjacency with the MEAN-CENTER operator
+        # (op=1) — the only one H_1522 measured to keep Psi at 1/2 (0.4867, |Psi-1/2|=0.0133 at
+        # alpha=0.6) while retaining 96% of the integration gain over flat. The naive amplifying
+        # op=0 is NOT used here: it adds net drive (+3.85 vs -0.07 on sum(lanes)-sum(raw)) and
+        # saturates emit to 1.0, which is exactly the p5 failure mode — a coupling that forces
+        # speech rather than letting tension decide it.
+        if cfg.topo_couple:
+            lanes = ci_lane_scores_coupled_op(m_grounding_p, m_field, cell_count, tick, 1, 1.0,
+                                              recon_err, topo_optimal_adjacency(),
+                                              _TOPO_COUPLE_ALPHA, cfg, _TOPO_COUPLE_OP)
+        else:
+            lanes = ci_lane_scores(m_grounding_p, m_field, cell_count, tick, 1, 1.0, recon_err)
         coh_lane = lanes[3]
         bal_lane = lanes[9]
         emit_drive = ci_emit_drive(lanes)
