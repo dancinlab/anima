@@ -98,7 +98,13 @@ def _key_fn_of(lane_type):
     """lane_type -> address function. 6 = lane_type 3 semantics (W_g fusion + majority-null
     centering) with the order-aware key; every other lane keeps the shipped mean, so existing
     checkpoints are byte-identical."""
-    return "roll" if int(lane_type) in (6, 7, 8) else "mean"
+    # NOTE lane_type 8 (H_9888 dual read) is NOT in this set: it is orthogonal to the address
+    # function and ships with the DEFAULT mean key, exactly as the trainer builds it. Putting it
+    # here silently made the reader address with `roll` while training addressed with `mean` — the
+    # lane learned (train store-acc .97) and then read chance through the .clm, which is what a
+    # train/infer key mismatch looks like from the outside. A dual+roll lane, if it is ever wanted,
+    # gets its own id rather than a second meaning for this one.
+    return "roll" if int(lane_type) in (6, 7) else "mean"
 
 
 def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, audit=None,
@@ -232,14 +238,30 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
             # Symmetric by construction, because the target function (xor) is symmetric — an
             # order-sensitive combiner could pass by memorising which mention came first.
             ra, rb = store.get("mention_rows", (None, None))
+            v_dtype = yn.dtype
             if ra is None or rb is None:
                 raise ValueError("store_apply: lane_type 8 needs store['mention_rows'] = (row_A, row_B) "
                                  "— build the panel with `corpus storebind --compose 2` (it carries "
                                  "mention_a/mention_b) and let the caller map them to window rows")
             v_pair = []
-            for rr in (int(ra), int(rb)):
-                q_m = yn[rr] @ clms["W_q"]
-                a_m = _softmax(q_m @ K.T * scale) - (1.0 / n_slot)
+            # A 1-slot panel is the A=B case (the corpus emits mention_a == mention_b), so its
+            # oracle hands the SAME slot to both reads rather than refusing.
+            _t0 = store.get("target_slot")
+            _tg = (_t0, store.get("target_slot_b", _t0) if store.get("target_slot_b") is not None else _t0)
+            for _i, rr in enumerate((int(ra), int(rb))):
+                if oracle:
+                    # C0-e for a TWO-read lane: hand each read its own address. Without this the
+                    # positive control silently measures the ordinary path (the oracle argument was
+                    # accepted and ignored), so a dead fusion and a dead address look identical.
+                    if _tg[_i] is None:
+                        raise ValueError("store_apply: lane_type 8 oracle needs target_slot AND "
+                                         "target_slot_b")
+                    a_m = np.zeros(n_slot, dtype=v_dtype)
+                    a_m[int(_tg[_i])] = 1.0
+                    a_m = a_m - (1.0 / n_slot)
+                else:
+                    q_m = yn[rr] @ clms["W_q"]
+                    a_m = _softmax(q_m @ K.T * scale) - (1.0 / n_slot)
                 v_pair.append(a_m @ V_slots)
             vA, vB = v_pair
             v = np.concatenate([vA + vB, (vA - vB) * (vA - vB)])
