@@ -1488,7 +1488,7 @@ class TrainShell(nn.Module):
         # not detach — the trunk logit is never in the answer-CE graph). The non-answer rows keep the
         # ordinary trunk LM CE (the trunk learns the prompt spelling + query formation via yn_q).
         if sb is not None:
-            x_s, y_s, K, pols, tgt = sb
+            x_s, y_s, K, pols, tgt, mrows = sb                  # mrows:(Bs,2) H_9888 mention rows
             out_s = model(x_s)                                  # (targets None → CE assembled here, fp32)
             logits_s = out_s["logits"].float()                 # (Bs, V, T)
             pen_s = out_s["pen_trunk"].float()                 # (Bs, d, T) pre-slot trunk penultimate
@@ -1510,8 +1510,20 @@ class TrainShell(nn.Module):
             else:
                 _fy = _pf.float()[:, :, Ts - 1]
                 yn_fresh = _fy.detach() if sb_tap_grad != "shared" else _fy
+            # H_9888 dual read: tap the trunk AT each mention. gather along T with the per-item rows
+            # the cell computed; a lane that needs them and did not get them raises rather than
+            # silently reading the answer row twice.
+            yn_a = yn_b = None
+            if getattr(model.clms, "dual", False):
+                if int(mrows.min()) < 0:
+                    raise SystemExit("[store-bridge] --clms-dual needs a compose panel carrying "
+                                     "mention_a/mention_b (build with `corpus storebind --compose 2`)")
+                _ia = mrows[:, 0].view(Bs, 1, 1).expand(Bs, pen_s.shape[1], 1)
+                _ib = mrows[:, 1].view(Bs, 1, 1).expand(Bs, pen_s.shape[1], 1)
+                yn_a = pen_s.gather(2, _ia).squeeze(-1)         # (Bs,d) trunk state at mention A
+                yn_b = pen_s.gather(2, _ib).squeeze(-1)         # (Bs,d) trunk state at mention B
             store_logits, att = model.clms(yn_q, K, pols, oracle_slot=osl, need_att=True,
-                                           yn_fresh=yn_fresh)   # (Bs,V),(Bs,n_slot)
+                                           yn_fresh=yn_fresh, yn_a=yn_a, yn_b=yn_b)   # (Bs,V),(Bs,n_slot)
             ce_ans = F.cross_entropy(store_logits, y_s[:, Ts - 1])
             # non-answer trunk CE (prompt spelling): every row but qpos, standard next-byte LM.
             ce_tok = F.cross_entropy(logits_s[:, :, :Ts - 1].transpose(1, 2).reshape(-1, V),
@@ -1532,7 +1544,8 @@ class TrainShell(nn.Module):
             # differentiated, so it is a FUNCTIONAL failure of the fusion) is dissolved. Skipped when already
             # oracle (osl==tgt → identical). 0 → byte-identical.
             if sb_oracle_aux > 0.0 and not sb_oracle:
-                store_logits_orc = model.clms(yn_q, K, pols, oracle_slot=tgt)
+                store_logits_orc = model.clms(yn_q, K, pols, oracle_slot=tgt,
+                                              yn_a=yn_a, yn_b=yn_b)
                 ce_orc = F.cross_entropy(store_logits_orc, y_s[:, Ts - 1])
                 loss = loss + sb_oracle_aux * ce_orc
                 aux["sb_orc_ce"] = float(ce_orc.detach())
@@ -1624,8 +1637,19 @@ class StoreBindCell:
             K = np.stack([_clms._entity_key(key_emb_np, e, _key_fn)
                           for e in ents]).astype(np.float32)          # (n_slot, d_k)
             tgt = int(r["target_slot"])                              # H_9423 Stage1.5: query-entity slot (oracle-train)
+            # H_9888 mention rows: the window is prompt-aligned (left-padded to T), so a prompt byte
+            # p lands on row T - len(prompt) + p. A dual-read lane taps the trunk THERE instead of at
+            # the answer position. Rows are -1 when the manifest carries no mentions (every non-compose
+            # panel), and the lane refuses to run rather than silently reading row -1.
+            _off = T - len(prompt)
+            _ma = int(r.get("mention_a", -1)); _mb = int(r.get("mention_b", -1))
+            m_a = (_off + _ma) if _ma >= 0 else -1
+            m_b = (_off + _mb) if _mb >= 0 else -1
+            if m_a >= 0 and not (0 <= m_a < T and 0 <= m_b < T):
+                sys.exit(f"[store-bridge] mention row out of window (T={T}, rows={m_a},{m_b})")
             self.ex.append((x, y, torch.from_numpy(K), torch.tensor(pols, dtype=torch.long),
-                            torch.tensor(tgt, dtype=torch.long)))
+                            torch.tensor(tgt, dtype=torch.long),
+                            torch.tensor([m_a, m_b], dtype=torch.long)))
         n_blocks = len(self.ex) // n_slot
         vb = max(1, int(n_blocks * val_frac))
         self.train_n = max(n_slot, (n_blocks - vb) * n_slot)          # [0,train_n) train · rest val
@@ -2958,6 +2982,11 @@ def main():
                          "cleanly, THEN switch to softmax address (+ --store-addr-weight learns W_q on the "
                          "differentiated val). Fixes the val-read seed-fragility addr-loss alone left. 0=off.")
     ap.add_argument("--clms-r", type=int, default=128, help="CLMS GELU-MLP fusion bottleneck")
+    ap.add_argument("--clms-dual", action="store_true",
+                    help="H_9888 (lane_type 8): read the store TWICE, once at each mention, through "
+                         "the SAME W_q (no new query parameters), and fuse the two values "
+                         "permutation-invariantly as [vA+vB ; (vA-vB)^2]. One query and one softmax "
+                         "cannot address a two-element set; this asks whether two can.")
     ap.add_argument("--clms-vonly", action="store_true",
                     help="H_9885 (lane_type 7): hold the g half of the CLMS fusion input at ZERO so the "
                          "answer can only be a function of the retrieved store value. This REMOVES "
@@ -3690,7 +3719,7 @@ def main():
                         slw=a.slw, slw_n_slot=a.slw_n_slot, slw_k=a.slw_k,
                         clms=bool(a.store_bridge or a.freeze_trunk),
                         clms_n_slot=a.clms_n_slot, clms_d_k=a.clms_d_k,
-                        clms_d_s=a.clms_d_s, clms_r=a.clms_r, clms_d_g=a.clms_d_g, clms_val_center=a.store_val_center, clms_fangate=a.store_fangate, clms_key_fn=a.clms_key_fn, clms_vonly=a.clms_vonly,
+                        clms_d_s=a.clms_d_s, clms_r=a.clms_r, clms_d_g=a.clms_d_g, clms_val_center=a.store_val_center, clms_fangate=a.store_fangate, clms_key_fn=a.clms_key_fn, clms_vonly=a.clms_vonly, clms_dual=a.clms_dual,
                         clms_fresh_k=_fresh_k, clms_fresh_L=_fresh_L,
                         clms_key_seed=a.clms_key_seed, clms_lam0=a.clms_lam0,
                         mbnd=bool(a.mouth_binder), mbnd_rank=a.bind_rank,
@@ -3905,10 +3934,11 @@ def main():
     def get_store_batch():
         idx = torch.randint(0, sb_cell.train_n, (Bs_global,), generator=sb_gen)   # all ranks identical
         sl = idx[rank * Bs_local:(rank + 1) * Bs_local].tolist()
-        xs, ys, Ks, Ps, Ts_ = zip(*[sb_cell.ex[i] for i in sl])
+        xs, ys, Ks, Ps, Ts_, Ms = zip(*[sb_cell.ex[i] for i in sl])
         return (torch.stack(xs).to(device), torch.stack(ys).to(device),
                 torch.stack(Ks).to(device), torch.stack(Ps).to(device),
-                torch.stack(Ts_).to(device))                          # H_9423 Stage1.5 target_slot
+                torch.stack(Ts_).to(device),                          # H_9423 Stage1.5 target_slot
+                torch.stack(Ms).to(device))                           # H_9888 mention rows (B,2)
 
     # H_9803 — deterministic document sampler for the ideation sub-batch. Its own generator so
     # turning the lane on does not perturb the main batch draw (which would confound every

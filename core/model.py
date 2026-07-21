@@ -137,6 +137,8 @@ class CLMConfig:
     clms_val_center: bool = False  # H_9710 RV-3 majority-null centering (lane_type 3)
     clms_key_fn: str = "mean"      # H_9852 address function: mean (shipped) | roll (lane_type 6)
     clms_fangate: bool = False     # H_9696 CLMS-FAN (lane_type 4): value-from-key + learned query gate
+    clms_dual: bool = False        # H_9888 dual read (lane_type 8): two mention-conditioned reads
+                                   # through the SAME W_q, fused permutation-invariantly
     clms_vonly: bool = False       # H_9885 v-only fusion (lane_type 7): hold the g half of the fusion
                                    # input at 0 so the answer can only be a function of the retrieved
                                    # store value. REMOVES capacity — that is what makes a pass mean
@@ -448,7 +450,8 @@ class CLMConvMoE(nn.Module):
                                    d_g=cfg.clms_d_g, val_center=cfg.clms_val_center, fangate=cfg.clms_fangate, key_fn=cfg.clms_key_fn,
                                    fresh_k=int(getattr(cfg, "clms_fresh_k", 0)),
                                    fresh_L=int(getattr(cfg, "clms_fresh_L", 3)),
-                                   vonly=bool(getattr(cfg, "clms_vonly", False)))
+                                   vonly=bool(getattr(cfg, "clms_vonly", False)),
+                                   dual=bool(getattr(cfg, "clms_dual", False)))
         # H_9698 MBND mouth-binder lane (co-trained). None => byte-identical (no lane). CORE-owned
         # (core/mbnd.py); lazily imported. Unlike CLMS this one IS applied in this forward — it needs
         # no runtime data, only the frame's own causal bank of hiddens.
