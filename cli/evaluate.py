@@ -1221,6 +1221,7 @@ def evaluate_usage():
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("  anima evaluate <ckpt> --fan-bind [--fan-smp 16] [--gen 40]")
     print("  anima evaluate <ckpt> --fan-bind --mouth-binder [--mouth-binder-order-scramble]   # H_9698 R6")
+    print("  anima evaluate <ckpt> --fan-bind --fan-concepts-real <corpus.txt>   # H_9698 real-input panel swap")
     print("  anima evaluate <ckpt> --fan-bind --fan-dump emis.jsonl   # H_9746 emission census (판정 불변)")
     print("      H_9745: --fan-bind now ALSO reports a PAIRED verdict — exact McNemar + Tango TOST on")
     print("      bind_delta (composition-isolating), the statistic's OWN pedestal. The legacy line")
@@ -7072,6 +7073,102 @@ def fan_bind_calibration(known):
     return {"checks": checks, "pass": all(ok for _, ok in checks)}
 
 
+# ════════════════════════════════════════════════════════════════════════
+# H_9698 real-input deepening (H_9854 ledger audit) — REAL-CORPUS concept panel
+#
+# Everything --fan-bind measures rides on _rho_fan_concepts(): five HAND-WRITTEN strings whose
+# content-word sets are DISJOINT BY CONSTRUCTION (consciousness/cells · tension/minds · memory/
+# meaning · silence/information · engine/dreams). That is hand-made geometry, and the whole point
+# of the H_9854 ledger audit is that a result read on planted, effectively-orthogonal input can
+# die when the input is real and near-collinear. This swaps ONLY the input source: the panel is
+# drawn from a real corpus and every arm, control, bar, threshold and seed stays byte-identical.
+# ════════════════════════════════════════════════════════════════════════
+
+_FAN_REAL_LEN_LO = 28    # the FROZEN panel's realized byte-length range: min = "the engine dreams
+_FAN_REAL_LEN_HI = 37    # when alone" (28) · max = "tension ripples between distant minds" (37).
+_FAN_REAL_READ_CAP = 4 * 1024 * 1024   # bounded corpus prefix ⇒ the rule is deterministic
+
+
+def fan_real_concepts(path, known, n=5):
+    """Build the concept panel from a REAL corpus under a FROZEN selection rule.
+
+    The rule is: THE FIRST n QUALIFYING SENTENCES IN FILE ORDER. No ranking, no scoring, no
+    search over the corpus, no per-pair filtering — anything else would be a tune-to-green knob
+    on the input. A sentence qualifies iff it passes the gates the instrument ALREADY applies to
+    its own panel, plus one matched covariate:
+
+      (1) len(bytes) in [28,37] — the frozen panel's OWN realized range. Concept length is a
+          MEDIATING covariate, not decoration: the CLM mouth right-aligns the seed into a fixed
+          T=24 window, so concept length decides how much of the "if cA, then cB: " frame the
+          model actually sees. An unmatched length would move the measurement as well as the
+          input, and the swap would no longer be a swap (control-must-match-mediating-covariate).
+      (2) printable ASCII, no digits — the frozen panel is lowercase ASCII prose and the frozen
+          detector's word splitter is ASCII-only.
+      (3) rho_fan_frame_guard passes on the frame this concept would build — the instrument's own
+          leak guard (no `measurable` word inside the frame · the frame is not already falsifiable).
+      (4) >=1 content word under the detector's own gate (len>=3 ∧ in known ∧ not a stopword) —
+          a concept with none is unscoreable and _fan_bind_J would return None for every pair.
+
+    DELIBERATELY NOT FILTERED: pairwise content-word disjointness. Forcing it would rebuild the
+    hand-made geometry under a new name. _fan_bind_J already drops a degenerate pair (returns
+    None) exactly as documented, and the caller reports the realized n.
+    """
+    stop = _rho_fan_stopwords()
+    with open(path, "rb") as fh:
+        raw = fh.read(_FAN_REAL_READ_CAP)
+    txt = raw.decode("utf-8", "replace")
+    for sep in ("!", "?", "\n", "\r", "\t"):
+        txt = txt.replace(sep, ".")
+    picked = []
+    seen = set()
+    for cand in txt.split("."):
+        s = cand.strip()
+        b = s.encode("utf-8", "surrogateescape")
+        if not (_FAN_REAL_LEN_LO <= len(b) <= _FAN_REAL_LEN_HI):
+            continue
+        if any((ch < 32 or ch > 126) for ch in b):
+            continue
+        if any(48 <= ch <= 57 for ch in b):
+            continue
+        low = s.lower()
+        if low in seen:
+            continue
+        frame = "if " + s + ", then " + s + ": "
+        if rho_fan_frame_guard([frame], known):
+            continue
+        if not [w for w in _rho_fan_words(s) if len(w) >= 3 and w in known and w not in stop]:
+            continue
+        seen.add(low)
+        picked.append(s)
+        if len(picked) >= n:
+            break
+    if len(picked) < n:
+        raise SystemExit("--fan-concepts-real: only %d/%d qualifying sentences in the first %d "
+                         "bytes of %s — the corpus prefix does not carry a panel (NOT a result "
+                         "to tune around)." % (len(picked), n, _FAN_REAL_READ_CAP, path))
+    return picked
+
+
+def _fan_panel_cosine(W, panel):
+    """Pairwise cosine of the REAL 303M penult pooled reps of a concept panel. REPORT-ONLY —
+    no arm, no bar, no threshold reads this. It exists because the H_9854 audit's recurring
+    mechanism is exactly this quantity: planted codes are effectively orthogonal, real
+    representations are near-collinear, and a discrimination that silently assumed orthogonality
+    dies on real input. core/decode.py::clm_penult_pooled_W is the canonical rep tap."""
+    import numpy as _np
+    from decode import clm_penult_pooled_W
+    vecs = [_np.asarray(clm_penult_pooled_W(W, c), dtype=_np.float64) for c in panel]
+    cos = []
+    for a in range(len(vecs)):
+        for b in range(a + 1, len(vecs)):
+            na = float(_np.linalg.norm(vecs[a]))
+            nb = float(_np.linalg.norm(vecs[b]))
+            cos.append(float(vecs[a] @ vecs[b] / (na * nb)) if na > 0.0 and nb > 0.0 else 0.0)
+    cos.sort()
+    return {"n_pairs": len(cos), "mean": (sum(cos) / len(cos)) if cos else 0.0,
+            "min": cos[0] if cos else 0.0, "max": cos[-1] if cos else 0.0}
+
+
 def _mcnemar_p_1sided(b, c):
     """One-sided exact McNemar = paired sign test on discordant counts (b comp-hit/shuf-miss,
     c comp-miss/shuf-hit). H0: composed and shuffled pairings are exchangeable ⇒ each discordant
@@ -7299,7 +7396,41 @@ def fan_bind_run(argv):
               % ("  · ORDER-SCRAMBLE control" if mb_scr else ""))
     else:
         set_mouth_binder(on=False)
+    # ── H_9698 REAL-INPUT swap. Default absent ⇒ byte-identical. The scorer
+    # certification above deliberately runs on the FROZEN panel FIRST and is NOT re-run here: it
+    # certifies the DV predicate, and re-anchoring it on the new panel would move a bar instead
+    # of only the input (burned-gate-reanchor-is-tune-to-green). `known` is rebuilt after the
+    # swap for the SAME reason the frozen panel's own words are in it — the panel feeds the
+    # dictionary, not a threshold. ──
+    _real_path = (evaluate_strval(argv[1:], "--fan-concepts-real", "")
+                  if "--fan-concepts-real" in argv[1:] else "")
+    if _real_path:
+        from rho_fan import set_rho_fan_concepts, RHO_FAN_CONCEPTS_FROZEN
+        _panel = fan_real_concepts(_real_path, known, n=len(RHO_FAN_CONCEPTS_FROZEN))
+        set_rho_fan_concepts(_panel)
+        known = _rho_fan_dict_load()
+        _sha = hashlib.sha256("\n".join(_panel).encode("utf-8")).hexdigest()[:12]
+        print("  [input] REAL-CORPUS concept panel from %s (first-%d-in-file-order · len∈[%d,%d]"
+              " · frozen rule) · panel_sha=%s"
+              % (_real_path, len(_panel), _FAN_REAL_LEN_LO, _FAN_REAL_LEN_HI, _sha))
+        for _i, _c in enumerate(_panel):
+            print("     c%d (%2dB) %r" % (_i, len(_c.encode("utf-8")), _c))
+    else:
+        from rho_fan import set_rho_fan_concepts
+        set_rho_fan_concepts(None)
     mouth = _Mouth(ckpt)
+    if _real_path and mouth.kind == "clm":
+        # REPORT-ONLY geometry readout (no bar reads it): the H_9854 audit's mechanism, measured
+        # on THIS ckpt's real penult reps for both panels.
+        from rho_fan import RHO_FAN_CONCEPTS_FROZEN as _FZ
+        _gp = _fan_panel_cosine(mouth.W, _panel)
+        _gf = _fan_panel_cosine(mouth.W, list(_FZ))
+        print("  [geometry · report-only] real 303M penult pooled-rep pairwise cosine "
+              "(clm_penult_pooled_W):")
+        print("     FROZEN hand-made panel : n=%d mean=%.4f min=%.4f max=%.4f"
+              % (_gf["n_pairs"], _gf["mean"], _gf["min"], _gf["max"]))
+        print("     REAL-corpus panel      : n=%d mean=%.4f min=%.4f max=%.4f"
+              % (_gp["n_pairs"], _gp["mean"], _gp["min"], _gp["max"]))
     _dump_path = evaluate_strval(argv[1:], "--fan-dump", "") if "--fan-dump" in argv[1:] else ""
     _dump = [] if _dump_path else None
     r = eval_fan_bind(mouth, g, known, n_smp, dump=_dump)
@@ -11381,7 +11512,7 @@ _KNOWN_FLAGS = frozenset((
     # synthetic-LCG swap). ONE flag, no tuning argument — n/seed/alpha are frozen constants.
     "--topowire-real",
     "--fan-bind", "--fan-smp",
-    "--mouth-binder", "--mouth-binder-order-scramble",
+    "--mouth-binder", "--mouth-binder-order-scramble", "--fan-concepts-real",
     "--fan-dump",
     "--cascade-null",
     "--state-census", "--kmax",

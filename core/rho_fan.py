@@ -56,12 +56,31 @@ def _rho_fan_stopwords():
             "be", "an", "for", "with", "this", "from", "are", "was"}
 
 
+RHO_FAN_CONCEPTS_FROZEN = ["consciousness arises from cells",
+                           "tension ripples between distant minds",
+                           "memory composes into new meaning",
+                           "silence still carries information",
+                           "the engine dreams when alone"]
+
+# H_9698 real-input deepening (H_9854 ledger audit) — the five strings above are HAND-WRITTEN, and every
+# surface that reads this function (rho_fan_build_frames · _fan_bind_pairs · _rho_fan_dict_load)
+# inherits their hand-made geometry: they are content-word DISJOINT by construction. The override
+# lets `anima-py evaluate --fan-concepts-real <corpus>` swap in a panel drawn from a REAL corpus
+# without touching a single arm, bar or threshold. None (the default) ⇒ byte-identical.
+_RHO_FAN_CONCEPTS_OVERRIDE = None
+
+
+def set_rho_fan_concepts(concepts):
+    """H_9698 real-input swap. Pass a list to install a real-corpus panel, None to restore the
+    frozen hand-written one. Process-global on purpose: it is the INPUT SOURCE, not an arm."""
+    global _RHO_FAN_CONCEPTS_OVERRIDE
+    _RHO_FAN_CONCEPTS_OVERRIDE = list(concepts) if concepts else None
+
+
 def _rho_fan_concepts():
-    return ["consciousness arises from cells",
-            "tension ripples between distant minds",
-            "memory composes into new meaning",
-            "silence still carries information",
-            "the engine dreams when alone"]
+    if _RHO_FAN_CONCEPTS_OVERRIDE is not None:
+        return list(_RHO_FAN_CONCEPTS_OVERRIDE)
+    return list(RHO_FAN_CONCEPTS_FROZEN)
 
 
 def _rho_fan_is_alnum(b):
