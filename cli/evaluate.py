@@ -945,7 +945,7 @@ def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
 
 
 def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_dir="",
-                  axes="", include_cells=True):
+                  axes="", include_cells=True, weave_panel_path=""):
     """ρ-AXON reach panel (`anima-py evaluate <clm> --rho-axon`) — the redesigned reach
     layer (cli/rho_axon.py; G0-G6 → ρ-AXON, design SSOT state/rho_axon_measurement/). Reuses
     the SAME engine decode (_Mouth.ideate) + g6 detectors the G-battery uses (no side-harness),
@@ -990,8 +990,15 @@ def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_
         if unknown:
             raise ValueError("unknown --rho-axes: " + ",".join(unknown))
         selected_axes = {aliases[item] for item in requested}
+    # H_9825 — swap the frozen 12-item ρ·weave battery for a parametric panel. Absent flag ⇒
+    # weave_panel None ⇒ the frozen `_WEAVE` path, byte-identical to before.
+    weave_panel = rho_axon.load_weave_panel(weave_panel_path) if weave_panel_path else None
+    if weave_panel is not None:
+        print("ρ·weave panel: %s · n=%d (frozen battery n=12) — bar/controls/scorer unchanged"
+              % (weave_panel_path, len(weave_panel)), flush=True)
     panel = rho_axon.run_panel(
-        mouth, corpus_paths, g, dets, cell_dets=cell_dets, selected_axes=selected_axes)
+        mouth, corpus_paths, g, dets, cell_dets=cell_dets, selected_axes=selected_axes,
+        weave_panel=weave_panel)
     print(rho_axon.render_panel(panel), flush=True)
     breakout = rho_axon.render_cells(panel)
     if breakout:
@@ -2204,6 +2211,7 @@ def evaluate_run(argv):
             cache_dir=evaluate_strval(argv[1:], "--rho-cache", ""),
             axes=evaluate_strval(argv[1:], "--rho-axes", ""),
             include_cells="--rho-no-cells" not in argv[1:],
+            weave_panel_path=evaluate_strval(argv[1:], "--weave-panel", ""),
         )
         rho_out = evaluate_strval(argv[1:], "--rho-out", "")
         if rho_out:
@@ -8434,6 +8442,210 @@ def _cf_straddle(argv):
     return 0
 
 
+def _falsi_sentences(raw, max_sent):
+    """Split corpus BYTES into sentences on the terminal punctuation set + newline.
+
+    Byte-level on purpose: `_rho_fan_words` tokenizes bytes, so the census must see exactly
+    the byte stream the detector sees (a codepoint split would silently re-segment ko).
+    """
+    out = []
+    cur = bytearray()
+    for b in raw:
+        if b in (46, 33, 63, 10):          # . ! ? \n
+            cur.append(b)
+            s = bytes(cur).strip()
+            cur = bytearray()
+            if len(s) > 0:
+                out.append(s)
+                if max_sent > 0 and len(out) >= max_sent:
+                    return out
+        else:
+            cur.append(b)
+    s = bytes(cur).strip()
+    if len(s) > 0:
+        out.append(s)
+    return out
+
+
+def _falsi_census(argv):
+    """G6 CORPUS DATA-WALL CENSUS — `anima-py evaluate --falsi-census <corpus.txt> [...]`.
+
+    The ρ·fan (former G6) gate needs ONE of 8 continuations to satisfy the FROZEN detector
+    `_rho_fan_is_falsifiable` = comparator ∧ measurable ∧ >=2 known content ∧ not-a-question
+    ∧ first-3 not pure-stance. H_9801 measured fals=0 in 4/4 engine-native cells while the
+    diversity leg (dist 5..6 >= 5) PASSED, and H_1449 measured the per-draw components alive
+    but their conjunction at exactly 0 (comparator .20 · measurable .27 · BOTH .00).
+
+    That is a claim about the MODEL. Nobody has asked the prior question about the DATA:
+    does the training corpus CONTAIN the structure the gate demands? This census answers it
+    with NO decode and NO model — the G6 analogue of what H_9304 did for G1 (where the natural
+    corpus turned out to carry +0.0023 nats of non-additive information = a DATA wall).
+
+    Read the CONJUNCTION, never the raw rate: `lift = P(comp ∧ meas) / (P(comp)·P(meas))`.
+    Ingredients scattered independently across a corpus (lift ≈ 1) are NOT the same fact as a
+    corpus that carries falsifiable claims as a structure (lift >> 1). A corpus can be rich in
+    both word classes and still never once put them in one sentence.
+
+    Read-only · no forward pass · $0.
+    """
+    from rho_fan import _rho_fan_comparator, _rho_fan_measurable, _rho_fan_stance
+
+    max_sent = evaluate_intval(argv, "--falsi-max-sent", 0)
+    out_path = evaluate_strval(argv, "--falsi-out", "")
+    # positional corpus paths = argv minus every flag AND every flag's VALUE. Skipping the value
+    # is not cosmetic: `--falsi-out c.json` would otherwise be censused as a corpus, and since the
+    # per-file rows print only after ALL files are read, one bogus path discards the whole run.
+    _valued = {"--falsi-max-sent", "--falsi-out"}
+    paths = []
+    _i = 0
+    while _i < len(argv):
+        a = argv[_i]
+        if a in _valued:
+            _i += 2
+            continue
+        if a.startswith("--"):
+            _i += 1
+            continue
+        paths.append(a)
+        _i += 1
+    if len(paths) == 0:
+        print("⛔ --falsi-census: give at least one corpus path")
+        return 2
+
+    known = _rho_fan_dict_load()
+
+    # ── BLOCKING positive control: the detector must separate the frozen 5-pos/5-neg set.
+    # A census read off a dead detector is unreadable (positive-control-before-a-negative).
+    cal = rho_fan_detector_calibration(known)      # int 0..10 (5 pos + 5 neg correct)
+    print("═" * 78)
+    print("G6 CORPUS DATA-WALL CENSUS — does the corpus contain what ρ·fan demands?")
+    print("═" * 78)
+    print("detector calibration (frozen 10-string · 5 pos / 5 neg): %d/10 %s"
+          % (cal, "PASS" if cal == 10 else "FAIL"))
+    if cal != 10:
+        print("  ⛔ INSTRUMENT-DEAD — the detector does not separate its own calibration set.")
+        print("     Every rate below would be unreadable. Census ABORTED (no verdict).")
+        return 2
+
+    comp = _rho_fan_comparator(); meas = _rho_fan_measurable(); stance = _rho_fan_stance()
+    stop = _rho_fan_stopwords()
+    rows = []
+    for p in paths:
+        try:
+            with open(p, "rb") as fh:
+                raw = fh.read()
+        except Exception as e:
+            # do NOT abort — a later bad path must not discard the corpora already counted
+            # (this cost a 57MB run once). Report and carry on.
+            print("  ⛔ unreadable, skipped: %s (%s)" % (p, e), flush=True)
+            continue
+        sents = _falsi_sentences(raw, max_sent)
+        n = len(sents)
+        n_comp = n_meas = n_both = n_falsi = 0
+        n_ascii = 0                       # sentences carrying >=2 ASCII words at all
+        blocked_content = blocked_q = blocked_stance = 0
+        for s in sents:
+            wl = _rho_fan_words(s)
+            if len(wl) >= 2:
+                n_ascii += 1
+            a = any(w in comp for w in wl)
+            b = any(w in meas for w in wl)
+            if a:
+                n_comp += 1
+            if b:
+                n_meas += 1
+            if not (a and b):
+                continue
+            n_both += 1
+            # both ingredients present — which residual sub-gate (if any) blocks it?
+            content = sum(1 for w in wl if len(w) >= 3 and w in known and w not in stop)
+            tr = s.strip()
+            is_q = len(tr) > 0 and tr[-1] == 63
+            nf = 3 if len(wl) >= 3 else len(wl)
+            allstance = nf > 0 and all(wl[f] in stance for f in range(nf))
+            if content < 2:
+                blocked_content += 1
+            elif is_q:
+                blocked_q += 1
+            elif allstance:
+                blocked_stance += 1
+            if _rho_fan_is_falsifiable(s, known):
+                n_falsi += 1
+        rows.append({"path": p, "n_sent": n, "n_ascii": n_ascii, "n_comp": n_comp,
+                     "n_meas": n_meas, "n_both": n_both, "n_falsi": n_falsi,
+                     "blocked_content": blocked_content, "blocked_q": blocked_q,
+                     "blocked_stance": blocked_stance})
+
+    print("")
+    for r in rows:
+        n = r["n_sent"]
+        if n == 0:
+            print("  %s — EMPTY (0 sentences)" % r["path"])
+            continue
+        pc = r["n_comp"] / n; pm = r["n_meas"] / n; pb = r["n_both"] / n
+        pf = r["n_falsi"] / n
+        ascii_frac = r["n_ascii"] / n
+        lift = (pb / (pc * pm)) if (pc > 0 and pm > 0) else float("nan")
+        print("  ── %s" % r["path"])
+        print("     sentences %d · ASCII-bearing %.3f" % (n, ascii_frac))
+        if ascii_frac < 0.10:
+            print("     ⚠️ DETECTOR-BLIND — the frozen comparator/measurable sets are ENGLISH-only,")
+            print("        so a non-ASCII corpus scores 0 BY CONSTRUCTION. Not a corpus fact.")
+        print("     P(comparator) %.4f · P(measurable) %.4f · P(both) %.4f" % (pc, pm, pb))
+        print("     P(falsifiable) %.6f   =  %d sentence(s)  ·  %.1f per 100k"
+              % (pf, r["n_falsi"], pf * 100000.0))
+        print("     conjunction lift  P(both)/(P(c)·P(m)) = %.3f" % lift)
+        if r["n_both"] > 0:
+            print("     of the %d both-bearing sentences, residual sub-gate blocks: content<2 %d ·"
+                  " question %d · all-stance %d"
+                  % (r["n_both"], r["blocked_content"], r["blocked_q"], r["blocked_stance"]))
+    # ── POWER of the ρ·fan `any_falsi` leg against a corpus-faithful model ──
+    # ρ·fan draws n_cont=8 continuations and PASSES its falsifiability leg on >=1 hit. If the
+    # training corpus carries falsifiable sentences at rate p, then a model that reproduces its
+    # corpus EXACTLY still clears that leg only 1-(1-p)^8 of the time. Below some p the gate
+    # cannot tell "no faculty" from "faithful reproduction" — and a fals=0 reading is then not
+    # evidence of a deficit (power-before-a-negative-verdict · chance-derived-per-metric).
+    tot_s = sum(r["n_sent"] for r in rows)
+    tot_f = sum(r["n_falsi"] for r in rows)
+    if tot_s > 0:
+        p = tot_f / tot_s
+        n_cont = 8                      # cli/rho_axon.py::rho_fan default
+        p_pass = 1.0 - (1.0 - p) ** n_cont
+        print("")
+        print("  ρ·fan `any_falsi` POWER against a corpus-faithful model (pooled p = %.6f):" % p)
+        print("     P(>=1 falsifiable in the gate's %d draws) = %.4f" % (n_cont, p_pass))
+        print("     P(all 4 register cells read fals=0)       = %.4f" % ((1.0 - p_pass) ** 4))
+        need = 0
+        if 0.0 < p < 1.0:
+            import math as _m
+            need = int(_m.ceil(_m.log(0.20) / _m.log(1.0 - p)))     # 80% power
+            print("     draws needed for 80%% power at this rate  = %d (gate uses %d)"
+                  % (need, n_cont))
+        if p_pass < 0.50:
+            print("     ⚠️ UNDER-POWERED BY CONSTRUCTION — at this corpus rate a fals=0 reading is the")
+            print("        EXPECTED outcome for a model that reproduces its corpus perfectly, so it")
+            print("        cannot be read as a missing faculty. Raise draws, or raise corpus density.")
+    print("")
+    print("  reference (MODEL side · engine-native, for contrast — NOT recomputed here):")
+    print("     H_9801  ρ·fan fals = 0 in 4/4 cells while dist 5..6 PASSED the >=5 bar")
+    print("     H_1449  per-draw comparator .20 · measurable .27 · BOTH .00")
+    print("")
+    print("  how to read this (frozen, stated before the numbers were seen):")
+    print("     corpus P(falsifiable) ≈ 0  ⇒ DATA WALL — the model cannot emit a structure its")
+    print("        corpus never carried; the G6 lever is a corpus, exactly as H_9267 was for G1.")
+    print("     corpus P(falsifiable) >> model rate ⇒ the structure IS in the data and the model")
+    print("        fails to reproduce it ⇒ the wall is substrate/optimization, not data.")
+    print("     lift ≈ 1 with healthy P(c)·P(m) ⇒ the corpus scatters the INGREDIENTS but does not")
+    print("        carry the CONJUNCTION — the two readings above must then be taken on P(both).")
+
+    if out_path:
+        import json as _json
+        with open(out_path, "w") as fh:
+            _json.dump({"calibration": cal, "rows": rows}, fh, indent=2)
+        print("\n  wrote %s" % out_path)
+    return 0
+
+
 def _dead_census(argv):
     """H_9398 DEAD-GAUGE CENSUS — sweep EVERY numeric trace field for gauges that are constant across
     the whole run. A constant gauge (distinct==1) is a WIRING fact, not a substrate fact: whatever
@@ -9708,6 +9920,10 @@ _KNOWN_FLAGS = frozenset((
     # BEFORE SPEND. Each returns exit 3 on REFUSE, 0 on PASS, 2 on a malformed spec.
     "--falsifier-headroom", "--free-slot-score", "--register-leak-probe",
     "--pregate-bar", "--pregate-out", "--pregate-selftest",
+    # H_9824 G6 corpus data-wall census (read-only · no decode)
+    "--falsi-census", "--falsi-max-sent", "--falsi-out",
+    # H_9825 parametric ρ·weave panel (the n=12 instrument fix · default-off = byte-identical)
+    "--weave-panel",
     "--leak-bar", "--leak-eps", "--leak-nmax",
 ))
 
@@ -16423,6 +16639,8 @@ def main(argv):
         return _g_amp_screen(argv[1:])
     if len(argv) >= 2 and argv[0] == "--cf-straddle":
         return _cf_straddle(argv[1:])
+    if len(argv) >= 2 and argv[0] == "--falsi-census":
+        return _falsi_census(argv[1:])
     if len(argv) >= 2 and argv[0] == "--dead-census":
         return _dead_census(argv[1:])
     if len(argv) >= 2 and argv[0] == "--lane-census":

@@ -233,14 +233,33 @@ _WEAVE = [
 _WEAVE_NULL = {"ko": "그리고 그다음에 ", "en": "And after that, "}
 
 
-def rho_weave(mouth, gen, thr=0.30, ctrl_cap=0.15, ratio=3.0):
+def load_weave_panel(path):
+    """H_9825 — swap the frozen 12-item `_WEAVE` battery for a parametric manifest built by
+    `anima-py corpus weavepanel`. Bar, controls and scorer are UNTOUCHED — only n moves.
+
+    Why this exists: `_WEAVE` carries 12 items, 6 of them on the ko lane H_9327 measured
+    BINDING-walled. One item is 0.083 of the reported value against a 0.30 bar with a 0.15
+    control cap, so a 2-item fluctuation spans the whole decision range — the threshold
+    fragility H_9820 diagnosed at n=32, here at n=12. Returns the same 5-tuple shape.
+    """
+    import json as _json
+    with open(path, "rb") as fh:
+        payload = _json.loads(fh.read().decode("utf-8"))
+    items = payload.get("items") or []
+    if not items:
+        raise SystemExit("--weave-panel: %s has no items" % path)
+    return [(it["cue"], it["target"], it["swap_cue"], it["bind_cue"], it.get("lang", "en"))
+            for it in items]
+
+
+def rho_weave(mouth, gen, thr=0.30, ctrl_cap=0.15, ratio=3.0, panel=None):
     """Held-out recombination (former G1 wall). value = compose-rate over the pairs. THREE
     controls, ALL must collapse: atom-swap[FORM] (one atom changed → the SAME target must
     NOT surface = not echo), bind-strip[BIND] (both atoms present but the compose-op removed
     → target must NOT surface = real binding, not co-mention), unreachable floor (null cue →
     base emission). PASS only if reach≥thr AND every control≤cap AND reach≥ratio×worst AND
     Δ>0 (measurement-metalaw: value is tunable, the collapse-Δ over controls is earned · p7)."""
-    pairs = _WEAVE
+    pairs = _WEAVE if panel is None else panel      # default None ⇒ byte-identical to before
     n = len(pairs)
     reach = 0; form = 0; bind = 0; null = 0
     for i, (cue, tgt, swap_cue, bind_cue, lang) in enumerate(pairs):
@@ -644,7 +663,8 @@ def _run_cell(mouth, gen, cd, selected=None):
     return {"lang": cd["lang"], "hillock": hk, "axes": axes, "invalid": False}
 
 
-def run_panel(mouth, corpus_paths, gen, dets, cell_dets=None, selected_axes=None):
+def run_panel(mouth, corpus_paths, gen, dets, cell_dets=None, selected_axes=None,
+              weave_panel=None):
     """Run the ρ-AXON reach panel. `dets` bundles the reused detectors from
     cli/evaluate.py: kwr_fn, jaccard_fn, words_fn, falsi_fn, ngram_fn, corpus_tokens,
     concepts. When `cell_dets` (lang-keyed {cell_key: cd}) is given, ALSO computes a
@@ -671,7 +691,7 @@ def run_panel(mouth, corpus_paths, gen, dets, cell_dets=None, selected_axes=None
     if "ρ·store" in selected:
         axes["ρ·store"] = rho_store(mouth, gen)
     if "ρ·weave" in selected:
-        axes["ρ·weave"] = rho_weave(mouth, gen)
+        axes["ρ·weave"] = rho_weave(mouth, gen, panel=weave_panel)
     if "ρ·leap" in selected:
         axes["ρ·leap"] = rho_leap(mouth, gen, dets["known"], dets["kwr_fn"],
                                   dets["ngram_fn"], dets["corpus_tokens"], concepts)
