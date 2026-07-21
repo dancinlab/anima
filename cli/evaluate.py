@@ -3134,15 +3134,87 @@ def store_retr_probe_run(argv):
 # --hippo-aux`) — is deliberately NOT landed here: that is the arm that would create the
 # write path, and it may not be built before this read-side number says the completion is
 # worth carrying at all.
-def _hippo_world(n_chains, chain_len, dim, active, seed):
+_HIPPO_REPS_CACHE = {}
+
+
+def _hippo_item_names(n):
+    """N distinct ASCII nonce entities, deterministic and collision-free by construction
+    (CVCVC over disjoint letter cycles). Used ONLY as the text whose real penultimate the
+    trunk is asked for — never scored as text."""
+    C, V = "bdfgklmnprstvz", "aeiou"
+    out = []
+    for i in range(n):
+        out.append(C[i % len(C)] + V[(i // 2) % len(V)] + C[(i // 3) % len(C)]
+                   + V[(i // 5) % len(V)] + C[(i // 7) % len(C)])
+    return out
+
+
+def _hippo_real_codes(ckpt, n_items, dim, active, seed):
+    """REAL-REPRESENTATION source (the H_9838 deepening): instead of hippo_lane's planted
+    integer fixture, take the production trunk's own penultimate for each entity and run the
+    SAME DG pipeline over it — dg_decorrelate → dg_codes.
+
+    WHY THIS IS THE DECIDING ARM, not a nicety: fixture_codes plants codes that are already
+    near-orthogonal, so a positive there bounds only the CA3 arithmetic. hippo_lane's own
+    header warns the opposite holds in vivo — "Raw single-token 303M reps are near-collinear
+    (a dominant shared direction) which masquerades as ..." — so pattern separation has real
+    work to do here and the transitive result is free to FAIL. Same engine ops as the
+    py-canonical measurement path (core/decode.clm_penult_pooled_W, a_eval_py_canonical);
+    no new forward is invented.
+
+    Cached per (ckpt, n_items) — the trunk forward is the expensive part and the load ladder
+    re-asks for the same entities."""
+    import numpy as np
+    import hippo_lane as HL
+    import decode as clm
+    key = (ckpt, n_items)
+    if key not in _HIPPO_REPS_CACHE:
+        W = clm.clm_load_weights(ckpt)
+        names = _hippo_item_names(n_items)
+        reps = np.stack([np.asarray(clm.clm_penult_pooled_W(W, nm), dtype=np.float64)
+                         for nm in names])
+        _HIPPO_REPS_CACHE[key] = reps
+        del W
+    reps = _HIPPO_REPS_CACHE[key]
+    return HL.dg_codes(HL.dg_decorrelate(reps), dim, active, seed)
+
+
+def _hippo_separation(codes, n_chains, chain_len):
+    """Mechanism diagnostic for the kWTA arm: mean code overlap WITHIN a chain vs ACROSS
+    chains. This is what "pattern separation" is supposed to buy, measured directly instead
+    of inferred from whether the lesion moved the DV.
+
+    It exists because the measured kWTA lesion did NOT collapse the treatment (H_9838 first
+    run: kwta_off 0.8750 at the certifying load, separation_delta +0.0625 at hops=2 and
+    −0.1250 at hops=3). Two readings fit that: separation is not needed, OR the codes are
+    already separated before kWTA so the lesion has nothing to remove. Only this number
+    tells them apart."""
+    import numpy as np
+    A = np.asarray(codes, dtype=np.float64)
+    A = A / (np.linalg.norm(A, axis=1, keepdims=True) + 1e-12)
+    G = A @ A.T
+    N = n_chains * chain_len
+    same, diff = [], []
+    for i in range(N):
+        for j in range(i + 1, N):
+            (same if i // chain_len == j // chain_len else diff).append(float(G[i, j]))
+    m_s = float(sum(same) / len(same)) if same else 0.0
+    m_d = float(sum(diff) / len(diff)) if diff else 0.0
+    return {"within_chain": m_s, "across_chain": m_d, "margin": m_s - m_d}
+
+
+def _hippo_world(n_chains, chain_len, dim, active, seed, ckpt=""):
     """The PREMISE world: n_chains DISJOINT directed chains of chain_len items each, coded
-    by hippo_lane's deterministic integer fixture (no float RNG, byte-stable).
+    by hippo_lane's deterministic integer fixture (no float RNG, byte-stable), or — with
+    --hippo-reps — by the production trunk's REAL penultimate for that many entities.
 
     Only ADJACENT edges are ever stored, so every hop>=2 pair is a relation the store was
     never told — exactly the A→B, B→C ⊢ A→C setting. Chains are disjoint so reachability
     is chain-local and a distractor drawn from another chain is PROVABLY unreachable."""
     import hippo_lane as HL
-    codes = HL.fixture_codes(n_chains * chain_len, dim, active, seed)
+    n = n_chains * chain_len
+    codes = (_hippo_real_codes(ckpt, n, dim, active, seed) if ckpt
+             else HL.fixture_codes(n, dim, active, seed))
     edges = [(c * chain_len + p, c * chain_len + p + 1)
              for c in range(n_chains) for p in range(chain_len - 1)]
     return codes, edges
@@ -3188,7 +3260,7 @@ def _hippo_arm(codes, edges, dim, hops, kwta, n_chains, chain_len, shuffle_rng=N
             "n_queries": len(hits), "pool": npool}
 
 
-def _hippo_battery(n_chains, chain_len, seeds, geoms, kwta_f, hop_list):
+def _hippo_battery(n_chains, chain_len, seeds, geoms, kwta_f, hop_list, ckpt=""):
     """Run every arm over seeds x geometries at ONE store load, and reduce to the conservative
     headline: MIN over configs for the positive/treatment arms, MAX for the pedestals. A number
     that survives only at one seed or one code density is therefore unreportable."""
@@ -3196,12 +3268,15 @@ def _hippo_battery(n_chains, chain_len, seeds, geoms, kwta_f, hop_list):
     rows = []
     for sd in seeds:
         for (dm, ac) in geoms:
-            codes, edges = _hippo_world(n_chains, chain_len, dm, ac, sd)
+            codes, edges = _hippo_world(n_chains, chain_len, dm, ac, sd, ckpt=ckpt)
             k = kwta_f or ac
             r = {"cfg": {"seed": sd, "dim": dm, "active": ac, "kwta": k},
                  "pos": _hippo_arm(codes, edges, dm, 1, k, n_chains, chain_len),
                  "ped1": _hippo_arm(codes, edges, dm, 1, k, n_chains, chain_len,
                                     shuffle_rng=np.random.default_rng(9838 + sd)),
+                 # mechanism diagnostic, not a DV: is the kWTA lesion a no-op because
+                 # separation is unnecessary, or because the codes were already separated?
+                 "sep": _hippo_separation(codes, n_chains, chain_len),
                  "hop": {}}
             for h in hop_list:
                 r["hop"][h] = {
@@ -3219,7 +3294,11 @@ def _hippo_battery(n_chains, chain_len, seeds, geoms, kwta_f, hop_list):
     inv_bar, floor_bar = max(4.0 * chance, 0.15), max(2.0 * chance, 0.15)
     status = ("INSTRUMENT-DEAD" if pos_min < 0.90 else
               "INVALID" if ped_max > inv_bar else "CERTIFIED")
-    return {"n_chains": n_chains, "n_items": n_chains * chain_len,
+    sep_margin = max(r["sep"]["margin"] for r in rows)
+    return {"code_source": "real-penult" if ckpt else "planted-fixture",
+            "separation_margin_max": sep_margin,
+            "separation": rows[0]["sep"],
+            "n_chains": n_chains, "n_items": n_chains * chain_len,
             "n_edges": n_chains * (chain_len - 1), "pool": rows[0]["pos"]["pool"],
             "chance": chance, "positive_min": pos_min, "pedestal_max": ped_max,
             "invalid_bar": inv_bar, "floor_bar": floor_bar, "status": status,
@@ -3283,6 +3362,7 @@ def hippo_transitive_selftest_run(argv):
     seed_f = evaluate_intval(argv, "--hippo-seed", 0)
     chains_f = evaluate_intval(argv, "--hippo-chains", 0)
     chain_len = evaluate_intval(argv, "--hippo-chain-len", 4)
+    reps_ckpt = evaluate_strval(argv, "--hippo-reps", "")
     out_path = evaluate_strval(argv, "--out", "")
 
     dim0, act0 = dim_f or 256, act_f or 8
@@ -3304,7 +3384,14 @@ def hippo_transitive_selftest_run(argv):
     print("  seeds=%s · geometries(dim,active)=%s · robust=%s · READ-SIDE ONLY (no write path "
           "into the emit-drive lane)" % (list(seeds), geoms, robust))
 
-    loads = [_hippo_battery(nc, chain_len, seeds, geoms, kwta_f, hop_list) for nc in ladder]
+    if reps_ckpt:
+        print("  code source: REAL penultimate from %s (core/decode.clm_penult_pooled_W → "
+              "dg_decorrelate → dg_codes) — planted fixture NOT used." % reps_ckpt)
+    else:
+        print("  code source: planted integer fixture (hippo_lane.fixture_codes) — DIRECTIONAL "
+              "toy bound; --hippo-reps <ckpt> reads the production trunk's own representations.")
+    loads = [_hippo_battery(nc, chain_len, seeds, geoms, kwta_f, hop_list, ckpt=reps_ckpt)
+             for nc in ladder]
     print("  ① CERTIFICATION LADDER — the treatment is read at the LARGEST certifying load; "
           "the load is picked by the CONTROL arms, never by the treatment number.")
     print("    %-6s %-6s %-6s %-7s | %-22s | %-24s | %s"
@@ -3316,6 +3403,14 @@ def hippo_transitive_selftest_run(argv):
                  L["positive_min"], "PASS" if L["positive_min"] >= 0.90 else "FAIL",
                  L["pedestal_max"], L["invalid_bar"],
                  "PASS" if L["pedestal_max"] <= L["invalid_bar"] else "FAIL", L["status"]))
+
+    print("  ② SEPARATION DIAGNOSTIC — mean code overlap within-chain vs across-chain "
+          "(explains whether the kWTA lesion has anything to remove):")
+    for L in loads:
+        sp = L["separation"]
+        print("    %-6d items  within=%.4f  across=%.4f  margin=%+.4f  (%s)"
+              % (L["n_items"], sp["within_chain"], sp["across_chain"], sp["margin"],
+                 L["code_source"]))
 
     ok = [L for L in loads if L["status"] == "CERTIFIED"]
     if not ok:
@@ -10521,7 +10616,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-parity-selftest", "--parity-tol",              # H_9826 torch<->numpy CLMS parity
     # H_9838 CA3 multi-step transitive completion (core/hippo_lane.py · ckpt-free · read-side)
     "--hippo-transitive-selftest", "--hippo-hops", "--hippo-kwta-k", "--hippo-seed",
-    "--hippo-dim", "--hippo-active", "--hippo-chains", "--hippo-chain-len",
+    "--hippo-dim", "--hippo-active", "--hippo-chains", "--hippo-chain-len", "--hippo-reps",
     "--fan-bind", "--fan-smp",
     "--mouth-binder", "--mouth-binder-order-scramble",
     "--fan-dump",
