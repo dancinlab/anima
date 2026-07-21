@@ -397,7 +397,7 @@ def _wd_num(k):
     return tens[base] + "-" + _WP_NUM[k % 10]
 
 
-def build_weavepanel(families, max_items, seed):
+def build_weavepanel(families, max_items, seed, seen_slice=False):
     """H_9825 — parametric held-out recombination panel (the ρ·weave n=12 instrument fix).
 
     The frozen `_WEAVE` battery in cli/rho_axon.py carries TWELVE items, six of them on the ko
@@ -452,8 +452,15 @@ def build_weavepanel(families, max_items, seed):
         elif fam == "rule-compound":
             # panel takes the pairs where (i+j) % 5 == 0 — a fixed, reproducible slice; the drill
             # gets the complement, so panel pairs are never demonstrated while the RULE is.
+            # POSITIVE CONTROL (`--weave-seen`): the SEEN slice — the very pairs the drill
+            # demonstrated. Five arms were read as negatives without ever checking that the model
+            # can produce the answer for a pair it WAS taught; if it cannot, the instrument is dead
+            # and every one of those negatives is unreadable, not a result
+            # (positive-control-before-a-negative).
             n = len(_WP_STEM)
-            grid = [(x, y) for x in range(n) for y in range(n) if x != y and (x + y) % 5 == 0]
+            want = 0 if not seen_slice else 1
+            grid = [(x, y) for x in range(n) for y in range(n)
+                    if x != y and ((x + y) % 5 == 0) == (want == 0)]
             for k, (x, y) in enumerate(grid):
                 sx, sy = grid[(k + 1) % len(grid)]
                 a, b = _WP_STEM[x], _WP_STEM[y]
@@ -1191,7 +1198,7 @@ def _parse_args(argv):
             # H_9825 weavepanel: parametric ρ·weave panel (the n=12 instrument fix).
             #   --weave-families f1,f2   default = all five
             #   --weave-max N            0 = no cap
-            "weave_families": "", "weave_max": 0, "wd_coverage": 0.0,
+            "weave_families": "", "weave_max": 0, "wd_coverage": 0.0, "weave_seen": False,
             # H_9837 falsidrill: --falsi-ablate = the matched-surface structure-off arm
             "falsi_ablate": False, "falsi_vocab_n": 400, "falsi_prompt_form": False,
             # H_9839 dreamgen: --dream-target = the dream node's COMPOSITION LAW (the DV) ·
@@ -1355,6 +1362,8 @@ def _parse_args(argv):
             opts["bind_k"] = int(argv[i + 1]); i += 2               # H_9810 bindpanel conjuncts
         elif a == "--weave-families":
             opts["weave_families"] = argv[i + 1]; i += 2            # H_9825 weavepanel families
+        elif a == "--weave-seen":
+            opts["weave_seen"] = True; i += 1                      # H_9869 positive control
         elif a == "--wd-coverage":
             opts["wd_coverage"] = float(argv[i + 1]); i += 2       # H_9865 pair-hold-out coverage
         elif a == "--weave-max":
@@ -7258,7 +7267,8 @@ def main():
         if not opts["out"]:
             print("anima-py corpus weavepanel: --out panel.json is required", file=sys.stderr)
             sys.exit(2)
-        items, audit = build_weavepanel(opts["weave_families"], opts["weave_max"], opts["seed"])
+        items, audit = build_weavepanel(opts["weave_families"], opts["weave_max"], opts["seed"],
+                                        seen_slice=opts.get("weave_seen", False))
         regen = "anima-py corpus " + " ".join(argv)
         if audit["violations"]:
             # A panel that leaks its target into the cue, or whose atom-swap keeps the true
