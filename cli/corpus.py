@@ -428,6 +428,239 @@ def build_falsidrill(n_lines, seed, ablate):
     return text, audit
 
 
+# ── H_9839 dreamgen — the dream node's COMPOSITION LAW as the manipulated variable ──
+#
+# WHY THIS FORMAT EXISTS, and why no existing one answers it. `core/dream_compose.py`'s own header
+# states what the production dream node is: two co-replayed anchors blended by "coord midpoint ·
+# tension5 mean · radius max · lane=dream" — "a designed geometric law (NOT a learned semantic
+# insight, c9)" — with `text` left EMPTY (a NARRATIVE hook). A midpoint is ADDITIVE by
+# construction: every child coordinate is a per-axis average, so nothing in the child depends on
+# the PAIR beyond what each parent already supplies alone. That is precisely the place H_9304
+# measured non-additive information +0.0023 nats (TOST-equivalent to 0). So the question this
+# format makes measurable is: does swapping the dream TARGET from a geometric blend to the
+# derivation of a DECLARED composition rule (the H_9267 XBIND notion) manufacture cross-boundary
+# joint information in the DATA — before any GPU is rented?
+#
+# ARMS (`--dream-target`). The three treatment arms share ONE RNG stream: the anchors, the
+# coordinates, the tension5 vectors, the radii and the declared rule are byte-identical across
+# them at a fixed --seed. The ONLY thing that varies is how the dream's `text=` payload is
+# derived — which is exactly the card's DV.
+#   midpoint     PRE-REGISTERED FAILURE BASELINE. The production geometric law, extended to the
+#                text lane by the SAME law: child token k = pool_k[(idx_A_k + idx_B_k)//2], the
+#                per-axis midpoint of the parents' token indices, computed by calling the
+#                production `dc_vec_mid` itself. (Production leaves text="" — an empty payload is
+#                unreadable by construction and would make the baseline vacuous, so the baseline
+#                is the geometric law's own extension to the lane under test. Stated, not hidden.)
+#   rule-derived TREATMENT. The night DECLARES a 3-slot selector rule (`RULE ABA`) in its header;
+#                child token k = the token in slot k of parent A or parent B as the rule selects.
+#                The child is then a SELECTION from the pair under a declared rule: neither parent
+#                alone, nor the rule alone, determines it.
+#   shuffled     MARGINALS-MATCHED CONTROL. Byte-identical dream lines to `rule-derived` (same
+#                multiset, asserted by sha), re-attached to the WRONG night by a deterministic
+#                rotation. Composition destroyed, marginals preserved. Must collapse.
+#   planted      POSITIVE CONTROL for the corpus geometry (NOT a treatment arm). The night's body
+#                carries a fresh high-entropy block and the NEXT night opens with that block
+#                verbatim — the corpus-shaped analogue of `mi_compress.plant_crossboundary`. If
+#                mi-screen does not FIRE on this arm, this corpus family's block layout is
+#                unreadable by the screener and NO arm's number may be interpreted
+#                (positive-control-before-reading-a-negative).
+#   pedestal     ZERO-TRUTH PEDESTAL (NOT a treatment arm). Byte-for-byte the same construction
+#                with the carry-over REMOVED — the next night opens with its OWN fresh block. Must
+#                REFUSE. If it fires, the reading is manufactured (phi-estimator-needs-zero-truth-
+#                pedestal).
+#
+# WHY THE STREAM IS SHAPED LIKE A NIGHT. `stream_mi` asks whether segment t's BODY predicts
+# segment t+1's PREFIX beyond what t's last `win` bytes already give. So the layout is, per night:
+#   [dreams composed from the PREVIOUS night's anchors] [NIGHT header + RULE] [this night's
+#   ANCHOR declarations] [drift filler >= win bytes]
+# — which is `dc_compose_window`'s own semantics (anchors replayed in window w are composed into
+# dream nodes) written down as a stream. Nights are separated by a BLANK LINE, so
+# `MI.segments_from_path` segments on the corpus's own record separator at EVERY geometry; that is
+# what makes the `--mi-robust` sweep a test of win/span and NOT a re-cut of the night structure
+# (with `--mi-seg-lines` the /8 geometry would slice nights into eighths and destroy the very
+# structure under test). The night's byte size is a FROZEN module constant, never a flag, so no
+# knob in this builder can move the verdict (no tune-to-green).
+_DG_STAGE = 3                # N3 — `dc_stage_replay_budget(3)` = 7 replayed anchors = 21 pairs
+_DG_COORD_D = 6              # anchor coordinate dimensionality
+_DG_POOL = 64                # tokens per text slot: the body narrows 64 -> 7, a readable amount
+_DG_FILLER_LINES = 150       # FROZEN: sets the drift tail (>= W_TAIL bytes). NOT a flag.
+_DG_PLANT_LINES = 24         # FROZEN: control block size (>= P_PRED bytes at the primary geometry)
+_DG_PLANT_WIDTH = 96
+_DG_C = "bdfgklmnprstvz"
+_DG_V = "aeiou"
+_DG_STRIDE = 1097            # prime, coprime to 14^3·5^2 — keeps `_dg_pool` a bijection
+# The declared rule is a 3-slot parent selector, and the CONSTANT selectors AAA/BBB are excluded
+# on purpose: under them the child is a verbatim copy of ONE parent and the other contributes
+# nothing, so a quarter of the nights would not be pair-determined at all — the very property
+# `rule-derived` exists to have. Only the six mixed selectors are drawn.
+_DG_RULES = ("AAB", "ABA", "ABB", "BAA", "BAB", "BBA")
+# ORDER IS THE GATE ORDER, not a preference: the two controls are listed first because the
+# treatment rows may not be read until both certify (the run_mi_screen battery idiom, one level up).
+_DG_TARGETS = ("planted", "pedestal", "midpoint", "rule-derived", "shuffled")
+
+
+def _dg_pool(n, offset):
+    """FROZEN deterministic CVCVC nonce enumeration (same idiom as storebind's builtin pool).
+
+    Nonces, not English: real words carry corpus-external statistics a compressor can exploit
+    unevenly across arms, which would put a confound exactly on the DV. The index map is
+    mixed-radix and therefore injective, so disjoint `offset` ranges give disjoint pools.
+
+    The `* _DG_STRIDE` is not decoration. Straight mixed-radix varies the LOWEST digit fastest,
+    so a 64-long run shares its last three letters (`zibab`/`rebab`/...) and only two characters
+    per token actually discriminate. A copy across a segment boundary would then be two bytes
+    wide, and the treatment arm would be handicapped by the alphabet rather than by the law under
+    test. The stride is coprime to the radix product (14·5·14·5·14 = 2^3·5^2·7^3), so the map
+    stays a bijection while spreading every digit."""
+    out, i = [], offset
+    nc, nv = len(_DG_C), len(_DG_V)
+    period = nc * nc * nc * nv * nv
+    while len(out) < n:
+        k = (i * _DG_STRIDE) % period
+        out.append(_DG_C[k % nc] + _DG_V[(k // nc) % nv] + _DG_C[(k // (nc * nv)) % nc]
+                   + _DG_V[(k // (nc * nc * nv)) % nv] + _DG_C[(k // (nc * nc * nv * nv)) % nc])
+        i += 1
+    return out
+
+
+def _dg_vec(v):
+    return ",".join("%.4f" % x for x in v)
+
+
+def _dg_block_lines(rnd):
+    """A high-entropy block, rendered as lines — the control arms' carried quantity."""
+    return ["".join(chr(33 + rnd(94)) for _ in range(_DG_PLANT_WIDTH))
+            for _ in range(_DG_PLANT_LINES)]
+
+
+def build_dreamgen(nights, target, seed):
+    """H_9839 — emit one arm of the dream-composition-law corpus. Returns (text, audit).
+
+    The audit is BLOCKING (the falsidrill idiom): it re-reads the emitted stream and refuses to
+    ship a corpus whose blocks the judge cannot segment, whose anchors do not clear the tail at
+    the primary geometry, or whose pair count is under `mi_compress.MIN_PAIRS` — every one of
+    those would turn an unreadable instrument into a fake corpus negative."""
+    import mi_compress as MI          # the JUDGE's own frozen geometry — never re-declared here
+    from dream_compose import (dc_make_anchor, dc_stage_replay_budget, dc_compose_window,
+                               dc_vec_mid)
+
+    rnd = _wp_rand(seed)
+    budget = dc_stage_replay_budget(_DG_STAGE)      # read from core, not re-stated
+    pools = [_dg_pool(_DG_POOL, 0), _dg_pool(_DG_POOL, 1000), _dg_pool(_DG_POOL, 2000)]
+    fill = _dg_pool(64, 3000)
+    planted_arm = target in ("planted", "pedestal")
+
+    heads, carry, body_end = [], [], []
+    for t in range(nights):
+        rule = _DG_RULES[rnd(len(_DG_RULES))]
+        anchors, idx = [], {}
+        for k in range(budget):
+            ii = (rnd(_DG_POOL), rnd(_DG_POOL), rnd(_DG_POOL))
+            a = dc_make_anchor("a%03d.%d" % (t, k),
+                               [rnd(10000) / 10000.0 for _ in range(_DG_COORD_D)],
+                               "wake", rnd(10000) / 10000.0,
+                               [rnd(10000) / 10000.0 for _ in range(5)],
+                               " ".join(pools[s][ii[s]] for s in range(3)))
+            a["replay_window"] = t
+            anchors.append(a)
+            idx[a["id"]] = ii
+        head = ["NIGHT %03d STAGE %d BUDGET %d RULE %s" % (t, _DG_STAGE, budget, rule)]
+        for a in anchors:
+            head.append("ANCHOR %s coord=%s t5=%s r=%.4f text=%s"
+                        % (a["id"], _dg_vec(a["coord"]), _dg_vec(a["tension5"]),
+                           a["radius"], a["text"]))
+        plant = _dg_block_lines(rnd) if planted_arm else None
+        if plant:
+            head += ["PLANT " + p for p in plant]
+        # the body ends here; everything after is drift filler, which is what the tail sees.
+        body_end.append(len("\n".join(head)) + 1)
+        head += ["DRIFT %04d %s" % (n, " ".join(fill[rnd(len(fill))] for _ in range(5)))
+                 for n in range(_DG_FILLER_LINES)]
+        heads.append(head)
+
+        if planted_arm:
+            src = plant if target == "planted" else _dg_block_lines(rnd)
+            carry.append(["CARRY " + p for p in src])
+            continue
+        lines = []
+        for d in dc_compose_window(anchors, _DG_STAGE, t):
+            ia, ib = idx[d["parent_a"]], idx[d["parent_b"]]
+            if target == "midpoint":
+                # the PRODUCTION law, applied to the text lane: a per-axis midpoint.
+                sel = [int(dc_vec_mid([ia[s]], [ib[s]])[0]) for s in range(3)]
+            else:
+                sel = [(ia[s] if rule[s] == "A" else ib[s]) for s in range(3)]
+            lines.append("DREAM %s coord=%s t5=%s r=%.4f text=%s"
+                         % (d["id"], _dg_vec(d["coord"]), _dg_vec(d["tension5"]), d["radius"],
+                            " ".join(pools[s][sel[s]] for s in range(3))))
+        carry.append(lines)
+
+    m = max(0, nights - 1)
+    order, shift = list(range(m)), 0
+    if target == "shuffled" and m >= 2:
+        # deterministic rotation: 0 fixed points for any shift != 0 (mod m), and a half-period
+        # shift puts a dream's true parents as far from its host night as the stream allows.
+        shift = max(2, m // 2) % m or 1
+        order = [(i + shift) % m for i in range(m)]
+    blocks = []
+    for t in range(nights):
+        lines = list(carry[order[t - 1]]) if t >= 1 else []
+        lines += heads[t]
+        blocks.append("\n".join(lines))
+    text = "\n\n".join(blocks) + "\n"
+
+    # ── BLOCKING audit — re-read from the emitted string, never from the builder's intent ──
+    raw = text.encode("utf-8")
+    segs = [b for b in raw.split(b"\n\n") if b.strip()]
+    lens = [len(b) for b in segs]
+    prefix = [len(("\n".join(carry[order[t - 1]]) + "\n").encode("utf-8")) if t >= 1 else 0
+              for t in range(nights)]
+    margins = [lens[t] - (prefix[t] + body_end[t]) for t in range(min(len(lens), nights))]
+    dream_lines = sorted(l for b in blocks for l in b.split("\n")
+                         if l.startswith("DREAM ") or l.startswith("CARRY "))
+    # the geometry witness is DREAM-only: a control arm's CARRY line has no `text=` field, so
+    # including it would make the two shas coincide by construction and witness nothing.
+    geom = sorted(l.split(" text=")[0] for l in dream_lines if l.startswith("DREAM "))
+    audit = {
+        "arm": target, "nights": nights, "seed": seed, "budget": budget,
+        "bytes": len(raw), "lines": text.count("\n"),
+        "n_segments": len(segs), "n_pairs": max(0, len(segs) - 1),
+        "min_block_bytes": min(lens) if lens else 0, "max_block_bytes": max(lens) if lens else 0,
+        "min_body_tail_margin_bytes": min(margins) if margins else 0,
+        "sep_blank_lines": raw.count(b"\n\n"), "sep_triple": raw.count(b"\n\n\n"),
+        "shuffle_shift": shift,
+        "shuffle_fixed_points": sum(1 for i, j in enumerate(order) if i == j) if target == "shuffled" else None,
+        "carry_multiset_sha": hashlib.sha256("\n".join(dream_lines).encode("utf-8")).hexdigest()[:16],
+        "geometry_field_sha": hashlib.sha256("\n".join(geom).encode("utf-8")).hexdigest()[:16],
+        "judge_geometry": {"W_TAIL": MI.W_TAIL, "P_PRED": MI.P_PRED, "MIN_PAIRS": MI.MIN_PAIRS},
+        "violations": [],
+    }
+    if audit["sep_triple"]:
+        audit["violations"].append(
+            "%d triple newline(s) present — segments_from_path would switch separator and re-cut "
+            "the stream" % audit["sep_triple"])
+    if audit["n_segments"] != nights:
+        audit["violations"].append("blank-line split yields %d segment(s) for %d night(s) — the "
+                                   "judge would not see the night as the record unit"
+                                   % (audit["n_segments"], nights))
+    if audit["min_block_bytes"] < MI.W_TAIL + MI.P_PRED:
+        audit["violations"].append(
+            "shortest night is %dB < win+span %dB — segments_from_path DROPS it and the arm "
+            "silently loses power" % (audit["min_block_bytes"], MI.W_TAIL + MI.P_PRED))
+    if audit["min_body_tail_margin_bytes"] <= MI.W_TAIL:
+        audit["violations"].append(
+            "anchors sit only %dB before the block end (win=%d) — they would fall in the TAIL, "
+            "which both conditionings already carry, so the ceiling is 0 by construction"
+            % (audit["min_body_tail_margin_bytes"], MI.W_TAIL))
+    if audit["n_pairs"] < MI.MIN_PAIRS:
+        audit["violations"].append("%d pair(s) < MIN_PAIRS %d — underpowered by the judge's own "
+                                   "constant" % (audit["n_pairs"], MI.MIN_PAIRS))
+    if target == "shuffled" and audit["shuffle_fixed_points"]:
+        audit["violations"].append("%d fixed point(s) in the shuffle — not a derangement"
+                                   % audit["shuffle_fixed_points"])
+    return text, audit
+
+
 def _parse_args(argv):
     fmt = argv[0] if argv else ""
     # H_9643 --held-out-frac: hold out a FRACTION of the (i,j) pair grid instead of the single
@@ -486,6 +719,10 @@ def _parse_args(argv):
             "weave_families": "", "weave_max": 0,
             # H_9837 falsidrill: --falsi-ablate = the matched-surface structure-off arm
             "falsi_ablate": False,
+            # H_9839 dreamgen: --dream-target = the dream node's COMPOSITION LAW (the DV) ·
+            #   --dream-nights = the number of nights = mi-screen segments (a POWER knob only:
+            #   it moves the pair count, never the block geometry, which is a frozen constant).
+            "dream_target": "midpoint", "dream_nights": 24,
             # H_9809 ngram-audit (--ngram-recoverable-audit · absorbs lab/v3 H_004's theorem
             # "oracle-fusable <=> n-gram-recoverable" as a production audit flag):
             #   --ngram-recoverable-audit  arm the audit (required by fmt `ngram-audit`)
@@ -653,6 +890,13 @@ def _parse_args(argv):
             opts["wake_ticks"] = int(argv[i + 1]); i += 2            # H_9842 stream truncation
         elif a == "--wake-eps":
             opts["wake_eps"] = float(argv[i + 1]); i += 2            # H_9842 read threshold
+        elif a == "--dream-target":
+            opts["dream_target"] = argv[i + 1]; i += 2              # H_9839 dreamgen DV
+            if opts["dream_target"] not in _DG_TARGETS:
+                raise SystemExit("--dream-target must be one of %s (got %r)"
+                                 % ("|".join(_DG_TARGETS), opts["dream_target"]))
+        elif a == "--dream-nights":
+            opts["dream_nights"] = int(argv[i + 1]); i += 2         # H_9839 power knob
         elif a == "--ngram-recoverable-audit":
             opts["ngram_recoverable_audit"] = True; i += 1          # H_9809 ngram-audit
         elif a == "--bind-legacy-lengths":
@@ -5794,8 +6038,20 @@ def main():
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
                    "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "consult-variants",
                    "routeaudit", "atoms", "c34", "storebind", "g6bind", "counterfactual-decl",
-                   "bindpanel", "weavepanel", "falsidrill"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind|counterfactual-decl|bindpanel|weavepanel|ngram-audit> --out PATH")
+                   "bindpanel", "weavepanel", "falsidrill", "dreamgen"):
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind|counterfactual-decl|bindpanel|weavepanel|dreamgen|ngram-audit> --out PATH")
+        print("      dreamgen --lang en --out c.txt --dream-target "
+              "{planted|pedestal|midpoint|rule-derived|shuffled} [--dream-nights 24] [--seed 7]")
+        print("             H_9839 — the dream node's COMPOSITION LAW as the manipulated variable.")
+        print("             core/dream_compose.py blends two co-replayed anchors by coord midpoint")
+        print("             — its own header calls that 'a designed geometric law (NOT a learned")
+        print("             semantic insight, c9)' — and a midpoint is ADDITIVE by construction,")
+        print("             which is where H_9304 measured non-additive information ~ 0. Arms:")
+        print("             midpoint (the pre-registered FAILURE baseline) · rule-derived (the")
+        print("             child is the derivation of a DECLARED rule over the pair) · shuffled")
+        print("             (identical marginals, pairing destroyed) + two INSTRUMENT controls,")
+        print("             planted (must FIRE) and pedestal (must REFUSE), which gate the read.")
+        print("             Judge: anima-py corpus mi-screen --corpus c.txt --mi-robust (no ckpt).")
         print("      weavepanel --out panel.json [--weave-families f1,f2] [--weave-max N] [--seed 7]")
         print("             H_9825 — the parametric ρ·weave held-out recombination panel. The frozen")
         print("             `_WEAVE` battery is TWELVE items (6 on the ko lane H_9327 walled), so one")
@@ -6199,6 +6455,66 @@ def main():
                  audit["carriers"], len(audit["held_out_leak"])))
         print("  every eval-concept word is held out — the claim is measured at exposure 0 on its")
         print("  own axis (convergence corpus-py-1 (F)); the ablation arm is the structure-off control.")
+        print("  regen: " + regen)
+        sys.exit(0)
+
+    if fmt == "dreamgen":
+        # H_9839 — the dream node's COMPOSITION LAW as the manipulated variable. Judged by
+        # `anima-py corpus mi-screen --mi-robust`, which needs NO ckpt and no GPU.
+        if not opts["out"]:
+            print("anima-py corpus dreamgen --out c.txt --lang en "
+                  "--dream-target {planted|pedestal|midpoint|rule-derived|shuffled} "
+                  "[--dream-nights 24] [--seed 7]", file=sys.stderr)
+            print("      H_9839 — swaps core/dream_compose.py's geometric midpoint (its own header:")
+            print("      'a designed geometric law (NOT a learned semantic insight, c9)') for the")
+            print("      derivation of a DECLARED composition rule, and emits both plus a")
+            print("      marginals-matched shuffle. A midpoint is ADDITIVE by construction, which")
+            print("      is exactly where H_9304 measured non-additive information ~ 0.")
+            print("      GATE ORDER IS FROZEN: run `planted` (must FIRE) and `pedestal` (must")
+            print("      REFUSE) through mi-screen FIRST; the three treatment rows may not be read")
+            print("      unless both certify. Judge each arm with:")
+            print("        anima-py corpus mi-screen --corpus c.txt --mi-robust --out j.json")
+            print("      Do NOT pass --mi-seg-lines here: nights are separated by a BLANK LINE, so")
+            print("      segments_from_path already cuts on the corpus's own record unit at every")
+            print("      geometry; re-cutting into N-line blocks would slice the night apart.")
+            sys.exit(2)
+        if opts["lang"] != "en":
+            raise SystemExit(
+                "corpus dreamgen: --lang en is required (got %r). EN-FIRST owner directive: the "
+                "Korean lane is BINDING and every escape measured dead (H_9327), and EN is the "
+                "discriminator. No ko variant is emitted rather than a silently dead one."
+                % opts["lang"])
+        text, audit = build_dreamgen(opts["dream_nights"], opts["dream_target"], opts["seed"])
+        regen = "anima-py corpus " + " ".join(argv)
+        if audit["violations"]:
+            print("anima-py corpus dreamgen: CORPUS INVALID — %d violation(s):"
+                  % len(audit["violations"]), file=sys.stderr)
+            for v in audit["violations"]:
+                print("  · " + v, file=sys.stderr)
+            sys.exit(2)
+        with open(opts["out"], "w", encoding="utf-8") as fh:
+            fh.write(text)
+        with open(opts["out"] + ".audit.json", "w", encoding="utf-8") as fh:
+            json.dump({"audit": audit, "regen": regen}, fh, ensure_ascii=False, indent=1)
+        print("anima-py corpus dreamgen [arm=%s] -> %s" % (audit["arm"], opts["out"]))
+        print("  nights %d · segments %d · pairs %d (MIN_PAIRS %d) · bytes %d · lines %d"
+              % (audit["nights"], audit["n_segments"], audit["n_pairs"],
+                 audit["judge_geometry"]["MIN_PAIRS"], audit["bytes"], audit["lines"]))
+        print("  block bytes %d..%d · body->tail margin >= %dB (win %d) · %d dream(s)/night "
+              "= C(%d,2)"
+              % (audit["min_block_bytes"], audit["max_block_bytes"],
+                 audit["min_body_tail_margin_bytes"], audit["judge_geometry"]["W_TAIL"],
+                 audit["budget"] * (audit["budget"] - 1) // 2, audit["budget"]))
+        print("  --dream-nights moves the SEGMENT/pair count (the judge's power), never the block")
+        print("  geometry: nights x %d dream items, each night a fresh anchor draw, so it is not a"
+              % (audit["budget"] * (audit["budget"] - 1) // 2))
+        print("  repeat-exposure knob (corpus-py-3). Block size is a frozen constant, not a flag.")
+        print("  carry multiset sha %s · geometry-field sha %s"
+              % (audit["carry_multiset_sha"], audit["geometry_field_sha"]))
+        print("  → witnesses: rule-derived and shuffled at the SAME --seed must share the carry")
+        print("    multiset sha (identical marginals, pairing destroyed); midpoint and")
+        print("    rule-derived must share the geometry-field sha (identical coord/t5/r — only")
+        print("    the text= payload, i.e. the composition LAW, differs).")
         print("  regen: " + regen)
         sys.exit(0)
 
