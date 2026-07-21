@@ -2958,6 +2958,11 @@ def main():
                          "cleanly, THEN switch to softmax address (+ --store-addr-weight learns W_q on the "
                          "differentiated val). Fixes the val-read seed-fragility addr-loss alone left. 0=off.")
     ap.add_argument("--clms-r", type=int, default=128, help="CLMS GELU-MLP fusion bottleneck")
+    ap.add_argument("--clms-vonly", action="store_true",
+                    help="H_9885 (lane_type 7): hold the g half of the CLMS fusion input at ZERO so the "
+                         "answer can only be a function of the retrieved store value. This REMOVES "
+                         "capacity rather than adding it — the composed wall's last live account is "
+                         "that the trunk path g alone fits the trained rows, so v never earns gradient.")
     ap.add_argument("--clms-key-seed", type=int, default=9423, help="CLMS frozen key_emb table seed")
     ap.add_argument("--clms-lam0", type=float, default=1.0, help="CLMS lam init (store_only scale)")
     ap.add_argument("--clms-key-fn", choices=("mean", "roll"), default="mean",
@@ -3685,7 +3690,7 @@ def main():
                         slw=a.slw, slw_n_slot=a.slw_n_slot, slw_k=a.slw_k,
                         clms=bool(a.store_bridge or a.freeze_trunk),
                         clms_n_slot=a.clms_n_slot, clms_d_k=a.clms_d_k,
-                        clms_d_s=a.clms_d_s, clms_r=a.clms_r, clms_d_g=a.clms_d_g, clms_val_center=a.store_val_center, clms_fangate=a.store_fangate, clms_key_fn=a.clms_key_fn,
+                        clms_d_s=a.clms_d_s, clms_r=a.clms_r, clms_d_g=a.clms_d_g, clms_val_center=a.store_val_center, clms_fangate=a.store_fangate, clms_key_fn=a.clms_key_fn, clms_vonly=a.clms_vonly,
                         clms_fresh_k=_fresh_k, clms_fresh_L=_fresh_L,
                         clms_key_seed=a.clms_key_seed, clms_lam0=a.clms_lam0,
                         mbnd=bool(a.mouth_binder), mbnd_rank=a.bind_rank,
