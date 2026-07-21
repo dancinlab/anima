@@ -214,11 +214,19 @@ def build_weavedrill(n_lines, seed):
     lines = []
     # eval panel grids: arith-add i,j in 2..10 · arith-mul i,j in 2..5 · the fixed color/direction
     # triples. The drill uses the COMPLEMENT of each, so no panel pair is ever demonstrated.
-    add_pairs = [(i, j) for i in range(11, 21) for j in range(11, 21) if i + j <= 40]
-    mul_pairs = [(i, j) for i in range(6, 11) for j in range(2, 5) if i * j <= 40]
-    mix_drill = [("green", "red", "brown"), ("yellow", "black", "olive"),
-                 ("white", "blue", "sky"), ("orange", "blue", "brown")]
-    dir_drill = [("east", "north", "northeast"), ("west", "south", "southwest")]
+    # The drill grid must clear the panel's TARGET vocabulary, not just its cues. First build
+    # used operands 11..20 — which ARE panel targets (sums 4..20) — so the model saw those words
+    # constantly and emitted them at eval regardless of the cue. That is exactly the measured
+    # signature: reach 0.094 and atom-swap 0.094, delta 0.000 (H_9863). Operands now start at 21,
+    # where no number word can also be a panel answer.
+    add_pairs = [(i, j) for i in range(21, 31) for j in range(21, 31) if i + j <= 60]
+    mul_pairs = [(i, j) for i in range(21, 31) for j in (21, 22) if i * j <= 700]
+    # colour/direction drills must avoid the panel's ANSWER words too (orange/green/purple/grey/
+    # pink/teal and the four compass compounds), not merely its cue pairs — the same
+    # target-vocabulary leak that flattened reach-vs-atom-swap on the arithmetic families.
+    mix_drill = [("copper", "ivory", "silver"), ("cobalt", "ivory", "beige"),
+                 ("copper", "cobalt", "olive"), ("ivory", "cobalt", "amber")]
+    dir_drill = [("up", "left", "upleft"), ("down", "right", "downright")]
     fams = []
     if add_pairs:
         fams.append("add")
@@ -245,13 +253,27 @@ def build_weavedrill(n_lines, seed):
         lines.append(cue + " " + tgt + " .")
     text = "\n".join(lines) + "\n"
 
-    # BLOCKING audit: not one panel operand pair may appear in the drill, or the eval stops being
-    # held-out and becomes retrieval.
+    # BLOCKING audits: no panel cue may be reproduced, and no panel ANSWER word may appear at all.
     panel_items, _ = build_weavepanel("", 0, seed)
     panel_cues = {it["cue"] for it in panel_items}
     leak = [l for l in lines if any(c in l for c in panel_cues)]
+    # TARGET-VOCABULARY overlap: any word the panel uses as an ANSWER must not appear anywhere in
+    # the drill. If it does, the drill trains the model to emit that word, and the model scores on
+    # panel items whose answer happens to be it WITHOUT reading the cue — reach and atom-swap rise
+    # together and the collapse-delta goes to zero (measured in H_9863).
+    panel_targets = {it["target"] for it in panel_items}
+    drill_words = set()
+    for l in lines:
+        for w in l.replace(".", " ").split():
+            drill_words.add(w)
+    tgt_overlap = sorted(panel_targets & drill_words)
     audit = {"n_lines": len(lines), "families": fams, "panel_cue_leak": len(leak),
-             "violations": []}
+             "panel_target_overlap": tgt_overlap, "violations": []}
+    if tgt_overlap:
+        audit["violations"].append(
+            "%d panel TARGET word(s) appear in the drill (%s...) — the drill would teach the model "
+            "to emit panel answers without reading the cue, collapsing reach-vs-atom-swap to 0"
+            % (len(tgt_overlap), ",".join(tgt_overlap[:6])))
     if leak:
         audit["violations"].append(
             "%d drill line(s) reproduce a PANEL cue verbatim — the eval would become retrieval"
@@ -261,7 +283,12 @@ def build_weavedrill(n_lines, seed):
 
 def _wd_num(k):
     """number word for the drill grid (panel words plus the 11..40 range it never uses)."""
-    tens = {20: "twenty", 30: "thirty", 40: "forty"}
+    tens = {20: "twenty", 30: "thirty", 40: "forty", 50: "fifty", 60: "sixty",
+            70: "seventy", 80: "eighty", 90: "ninety"}
+    if k >= 100:
+        # products reach the hundreds once the multiplier clears the panel's 2..5 grid
+        h, r = divmod(k, 100)
+        return _WP_NUM[h] + "-hundred" + ("" if r == 0 else "-" + _wd_num(r))
     if k <= 20:
         return _WP_NUM[k]
     if k in tens:
@@ -7096,8 +7123,9 @@ def main():
         with open(opts["out"] + ".audit.json", "w") as fh:
             json.dump({"audit": audit, "regen": regen, "seed": opts["seed"]}, fh, indent=1)
         print("anima-py corpus weavedrill → %s" % opts["out"])
-        print("  lines %d · families %s · panel-cue leak %d"
-              % (audit["n_lines"], ",".join(audit["families"]), audit["panel_cue_leak"]))
+        print("  lines %d · families %s · panel-cue leak %d · panel-target overlap %d"
+              % (audit["n_lines"], ",".join(audit["families"]), audit["panel_cue_leak"],
+                 len(audit["panel_target_overlap"])))
         print("  operand grids are DISJOINT from the eval panel's, so every panel item stays")
         print("  0-exposure on its own pair — the drill teaches the OPERATION, not the answers.")
         print("  regen: " + regen)
