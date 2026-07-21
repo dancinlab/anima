@@ -2,6 +2,7 @@
 """EARNED — the certified corpus-level operator instrument, wired into the engine CLI.
 
     anima-py evaluate --earned <corpus.tsv> [--out <f.json>] [--min-occ N] [--k-perm N] [--seeds a,b,c]
+                                            [--null parametric|real|shuffle]
 
 WHAT IT MEASURES. Given a natural corpus whose rows carry (text, B, T) -- where B is a binary
 context bit and T is an outcome label ANNOTATED OUTSIDE THE TOKEN STREAM -- it asks, with no model
@@ -53,6 +54,15 @@ So: a ranking claim is much weaker than an equivalence claim, and this instrumen
 you make one from a single draw. It runs `--seeds` (default 3), prints the per-seed spread, and
 refuses to call any point "smaller/larger than" another whose interval it overlaps.
 See ARCHITECTURE convergence `earned-instrument-wire-1`.
+
+`--null real` — THE INPUT SWAP (H_9325 deepening, under the H_9854 ledger audit). Everything above is calibrated on the
+SYNTHETIC arms of `synth()`: one stem per row, 200 stems of uniform frequency, rows i.i.d. A real
+corpus row carries SEVERAL stems that all share ONE T, stem frequency is Zipf, and B co-occurs with
+the very stems that mark it. `--null real` regenerates the null world AND both control arms under
+that real covariance instead of the toy's, changing NOTHING else -- same estimand, same bars
+(G_ALIVE_BAR, DELTA_EQ), same decision rule, same seed policy. On the synthetic arms the two nulls
+coincide by construction (one item per row), so the swap is surgical: only the real corpus's own
+structure enters.
 """
 import hashlib
 import json
@@ -117,7 +127,14 @@ def load_corpus(path):
     return rows
 
 
-def build_cells(rows, min_occ, script):
+def build_cells(rows, min_occ, script, with_rows=False):
+    """Explode corpus ROWS into (stem, B, T) items.
+
+    with_rows=True also returns, per item, the index of the SOURCE ROW it came from. That index is
+    the real corpus's covariance structure made explicit: one row contributes as many items as it
+    has kept stems, and every one of them carries THE SAME T. The synthetic control arms have no
+    such structure (one row = one item), which is exactly why a null calibrated on them can be
+    mis-calibrated here (`--null real`)."""
     from collections import Counter
     cnt = Counter()
     for text, _b, _t in rows:
@@ -126,18 +143,24 @@ def build_cells(rows, min_occ, script):
     keep = {s for s, c in cnt.items() if c >= min_occ}
     sid = {s: i for i, s in enumerate(sorted(keep))}
     items = []
-    for text, b, t in rows:
+    ridx = []
+    for ri, (text, b, t) in enumerate(rows):
         for s in set(_stems(text, script)):
             if s in keep:
                 items.append((sid[s], b, t))
+                ridx.append(ri)
     # Shape the empty case explicitly. A corpus the stem extractor cannot read at all (wrong script,
     # or every stem below min_occ) yields NO rows, and `np.asarray([])` is 1-D -- which used to make
     # the DATA-SPARSE guard below unreachable: make_heldout crashed on items[:, 0] first. A crash is
     # not a verdict, and "the instrument threw" reads as an infra hiccup rather than what it is --
     # the corpus cannot pose the question (H_9677).
     if not items:
-        return np.zeros((0, 3), dtype=np.int64), sid
-    return np.asarray(items, dtype=np.int64), sid
+        empty = np.zeros((0, 3), dtype=np.int64)
+        return (empty, sid, np.zeros(0, dtype=np.int64)) if with_rows else (empty, sid)
+    it = np.asarray(items, dtype=np.int64)
+    if with_rows:
+        return it, sid, np.asarray(ridx, dtype=np.int64)
+    return it, sid
 
 
 def _ce(z, t):
@@ -266,22 +289,8 @@ def _stratified_shuffle_B(B, T, rng):
 
 
 
-def _parametric_null(items, heldout, rng):
-    """THE NULL. Resample T from the FITTED ADDITIVE MODEL (alpha + gamma): interaction is exactly
-    zero in the null world, while the marginal prediction structure is kept intact.
-
-    Why the shuffle null is wrong. Permuting B destroys the A-B pairing but ALSO the A-marginal
-    geometry the fit sees. So when alpha_A is noise -- stems carrying no real latent polarity -- the
-    OBSERVED arm suffers a pathology (a delta fitted on garbage alpha makes held-out WORSE) that the
-    shuffle null does not reproduce, and the difference leaks straight into EARNED. Measured: on a
-    formal-symbolic corpus whose stems were T-irrelevant, shuffle-nulled EARNED came back at -1.000
-    nats -- a SIGN FLIP, i.e. an artifact, not a finding (H_9323). A parametric null regenerates T
-    from alpha-hat + gamma-hat over the SAME stems, so both arms carry the pathology and it cancels.
-
-    This null is strictly harder to beat, and that is the point: it grants the additive model
-    everything it can explain and asks only whether anything is left over."""
-    A, B, T = items[:, 0], items[:, 1], items[:, 2]
-    tr = ~heldout
+def _fit_additive(A, B, T, tr):
+    """alpha_A (from the B=0 TRAIN rows) + gamma_B. The additive world, and nothing else."""
     nA = int(A.max()) + 1
     eps = 1.0
     pos = np.zeros(nA); tot = np.zeros(nA)
@@ -296,30 +305,111 @@ def _parametric_null(items, heldout, rng):
         p = (T[sel].sum() + eps) / (sel.sum() + 2 * eps)
         return float(np.log(p / (1 - p)))
     base = _g(tr)
-    g0, g1 = _g(tr & (B == 0)) - base, _g(tr & (B == 1)) - base
+    return alpha, _g(tr & (B == 0)) - base, _g(tr & (B == 1)) - base
+
+
+def _row_mean(x, rowidx, nrow):
+    s = np.zeros(nrow); c = np.zeros(nrow)
+    np.add.at(s, rowidx, x); np.add.at(c, rowidx, 1.0)
+    return s / np.maximum(c, 1.0)
+
+
+def real_design_arm(items, rowidx, rng, mode):
+    """A CONTROL ARM REBUILT ON THE REAL DESIGN — the input swap, not a new bar.
+
+    `synth()` plants the answer into a TOY design: one stem per row, 200 stems of uniform frequency,
+    rows i.i.d. On a real corpus the design is nothing like that — a row carries several stems that
+    all share ONE T (row clustering), stem frequency is Zipf, alpha is estimated from as few as
+    min_occ rows, and B co-occurs with the very stems that mark it. So a null/pedestal certified on
+    `synth()` is certified on a covariance the real corpus does not have.
+
+    This function keeps the REAL (A, B, row) design byte-for-byte and only regenerates T:
+        mode="additive" -> T drawn per ROW from the fitted additive model  => truth interaction is
+                           EXACTLY ZERO, on the real covariance. This is G-PEDESTAL's question asked
+                           of real input.
+        mode="xor"      -> T = (row's MAJORITY stem polarity) XOR B, set per ROW => a planted operator
+                           living in the real design. This is G-ALIVE's question asked of real input.
+                           The row aggregation is the MEAN over the row's stems, the same aggregation
+                           the pedestal arm uses on z -- a real row has several stems and the planting
+                           must let all of them carry the operator, exactly as the instrument's own
+                           model (z = alpha_A + gamma_B + delta*B*alpha_A) assumes each of them does.
+    The bars they are read against (G_ALIVE_BAR, DELTA_EQ) are untouched."""
+    A, B, T = items[:, 0], items[:, 1], items[:, 2]
+    nrow = int(rowidx.max()) + 1
+    _, first = np.unique(rowidx, return_index=True)
+    if mode == "xor":
+        pol = rng.integers(0, 2, size=int(A.max()) + 1)
+        pol_row = _row_mean(pol[A].astype(np.float64), rowidx, nrow) > 0.5
+        b_row = np.zeros(nrow, dtype=np.int64)
+        b_row[rowidx[first]] = B[first]
+        t_row = (pol_row.astype(np.int64) ^ b_row)
+    else:
+        alpha, g0, g1 = _fit_additive(A, B, T.astype(np.float64), np.ones(len(A), dtype=bool))
+        z = alpha[A] + np.where(B == 1, g1, g0)
+        zr = _row_mean(z, rowidx, nrow)
+        p = np.clip(1.0 / (1.0 + np.exp(-np.clip(zr, -12, 12))), 1e-9, 1 - 1e-9)
+        t_row = (rng.random(nrow) < p).astype(np.int64)
+    out = items.copy()
+    out[:, 2] = t_row[rowidx]
+    return out
+
+
+def _parametric_null(items, heldout, rng, rowidx=None):
+    """THE NULL. Resample T from the FITTED ADDITIVE MODEL (alpha + gamma): interaction is exactly
+    zero in the null world, while the marginal prediction structure is kept intact.
+
+    Why the shuffle null is wrong. Permuting B destroys the A-B pairing but ALSO the A-marginal
+    geometry the fit sees. So when alpha_A is noise -- stems carrying no real latent polarity -- the
+    OBSERVED arm suffers a pathology (a delta fitted on garbage alpha makes held-out WORSE) that the
+    shuffle null does not reproduce, and the difference leaks straight into EARNED. Measured: on a
+    formal-symbolic corpus whose stems were T-irrelevant, shuffle-nulled EARNED came back at -1.000
+    nats -- a SIGN FLIP, i.e. an artifact, not a finding (H_9323). A parametric null regenerates T
+    from alpha-hat + gamma-hat over the SAME stems, so both arms carry the pathology and it cancels.
+
+    This null is strictly harder to beat, and that is the point: it grants the additive model
+    everything it can explain and asks only whether anything is left over.
+
+    rowidx is not None (`--null real`) = THE INPUT SWAP. The draw is made once per SOURCE ROW and
+    broadcast to every item that row produced, so the null world carries the real corpus's row
+    clustering instead of the toy's independent items. Interaction is still exactly zero — only the
+    covariance the null is generated under changes. Independent per-item draws under-disperse a
+    clustered corpus, which shrinks sd_null (and therefore G-POWER's MDE) and shifts the null mean
+    that EARNED subtracts; that is the same family of defect that killed H_9838/H_9839, where a null
+    fitted to planted (near-orthogonal) geometry did not survive real (near-collinear) input."""
+    A, B, T = items[:, 0], items[:, 1], items[:, 2]
+    tr = ~heldout
+    alpha, g0, g1 = _fit_additive(A, B, T, tr)
 
     z = alpha[A] + np.where(B == 1, g1, g0)      # additive world; interaction exactly 0
-    p = np.clip(1.0 / (1.0 + np.exp(-np.clip(z, -12, 12))), 1e-9, 1 - 1e-9)
-    return (rng.random(len(T)) < p).astype(np.int64)
+    if rowidx is None:
+        p = np.clip(1.0 / (1.0 + np.exp(-np.clip(z, -12, 12))), 1e-9, 1 - 1e-9)
+        return (rng.random(len(T)) < p).astype(np.int64)
+    nrow = int(rowidx.max()) + 1
+    zr = _row_mean(z, rowidx, nrow)
+    pr = np.clip(1.0 / (1.0 + np.exp(-np.clip(zr, -12, 12))), 1e-9, 1 - 1e-9)
+    return (rng.random(nrow) < pr).astype(np.int64)[rowidx]
 
 
-def earned(items, heldout, rng, k_perm, null="parametric", kernel="r0", kappa=1.0):
+def earned(items, heldout, rng, k_perm, null="parametric", kernel="r0", kappa=1.0, rowidx=None):
     """EARNED = observed (CE_add - CE_op) minus the null-world mean of the same quantity.
 
     null="parametric" (DEFAULT) = additive parametric bootstrap (see _parametric_null): every
     marginal pathology survives in BOTH arms and cancels.
+    null="real" = the SAME parametric bootstrap regenerated under the REAL corpus's row clustering
+    (rowidx from build_cells(..., with_rows=True)). Input swap only: same estimand, same bars.
     null="shuffle" = the legacy T-stratified permutation, kept ONLY to reproduce the already-shipped
     H_9304/9316/9317/9318 numbers byte-for-byte (reference-match)."""
     ce_a, ce_o, delta = fit_and_score(items, heldout, kernel=kernel, kappa=kappa)
     obs = ce_a - ce_o
     B, T = items[:, 1], items[:, 2]
+    ri = rowidx if null == "real" else None
     vals = []
     for _ in range(k_perm):
         if null == "shuffle":
             r = fit_and_score(items, heldout, b_vec=_stratified_shuffle_B(B, T, rng), kernel=kernel, kappa=kappa)
         else:
             it2 = items.copy()
-            it2[:, 2] = _parametric_null(items, heldout, rng)
+            it2[:, 2] = _parametric_null(items, heldout, rng, ri)
             r = fit_and_score(it2, heldout, kernel=kernel, kappa=kappa)
         vals.append(r[0] - r[1])
     nullv = np.asarray(vals)
@@ -359,7 +449,7 @@ def synth(rng, n_stems, n_rows, mode):
     return np.stack([A, B, T], axis=1)
 
 
-def seen_synergy(items, rng, k_perm=200):
+def seen_synergy(items, rng, k_perm=200, null="parametric", rowidx=None):
     """Discriminates DATA-ADDITIVE (no non-additivity at all) from OPERATOR-ABSENT (it exists but
     never transfers). Holds out HALF of each stem's B=1 rows, so the fit HAS seen that stem
     negated -- the strictly weaker question."""
@@ -371,7 +461,7 @@ def seen_synergy(items, rng, k_perm=200):
             ho[rng.choice(idx, size=len(idx) // 2, replace=False)] = True
     if ho.sum() == 0:
         return 0.0, 0
-    return earned(items, ho, rng, k_perm)[0], int(ho.sum())
+    return earned(items, ho, rng, k_perm, null, rowidx=rowidx)[0], int(ho.sum())
 
 
 def earned_run(argv):
@@ -392,7 +482,8 @@ def earned_run(argv):
     seed = evaluate_intval(argv, "--seed", 9304)
     seeds_s = evaluate_strval(argv, "--seeds", "")
     seeds = [int(x) for x in seeds_s.split(",") if x.strip()] if seeds_s else [seed, seed + 1, seed + 2]
-    null = evaluate_strval(argv, "--null", "parametric")   # "shuffle" only to reproduce shipped numbers
+    # "shuffle" only to reproduce shipped numbers · "real" = the H_9854 input swap (see below)
+    null = evaluate_strval(argv, "--null", "parametric")
     kernel = evaluate_strval(argv, "--kernel", "r0")       # r0 = gating/sign-flip · r1 = threshold/order
     kappa = float(evaluate_strval(argv, "--kappa", "1.0"))
     ci = CI_DEFAULT
@@ -402,39 +493,66 @@ def earned_run(argv):
     rows = load_corpus(path)
     script = _detect_script(rows)
     res = {"corpus": path, "corpus_sha256": sha, "rows": len(rows), "script": script,
-           "delta_eq": DELTA_EQ, "xbind_ruler": XBIND_RULER, "seed": seed, "null": null, "kernel": kernel, "kappa": kappa}
+           "delta_eq": DELTA_EQ, "xbind_ruler": XBIND_RULER, "seed": seed, "null": null,
+           "control_design": "real" if null == "real" else "synthetic",
+           "kernel": kernel, "kappa": kappa}
 
     print("=== anima evaluate --earned — corpus-level operator instrument (engine-native) ===")
     _kdesc = {"r0": "  (gating / sign-flip — the XOR class: negation·concession·irony · 1 global scalar)",
               "r1": "  (threshold / order on the SUM — 1 global scalar · MEASURED BLIND on order truth)",
               "r2": "  (general order on the DIFFERENCE — buys |A|+|B| DOF ⇒ G-DOF gate is mandatory)"}
     print("kernel: " + kernel + _kdesc.get(kernel, ""))
-    print("null:   " + null + ("  (additive parametric bootstrap — the marginal pathology cancels in both arms)" if null == "parametric" else "  ⚠️ LEGACY shuffle null — reference-match only; it leaks a marginal pathology into EARNED (H_9323)"))
+    _ndesc = {"parametric": "  (additive parametric bootstrap — the marginal pathology cancels in both arms)",
+              "real": "  (REAL-INPUT swap: the null AND both control arms are regenerated under the "
+                      "corpus's own row clustering — same bars, same decision rule · H_9325)",
+              "shuffle": "  ⚠️ LEGACY shuffle null — reference-match only; it leaks a marginal "
+                         "pathology into EARNED (H_9323)"}
+    print("null:   " + null + _ndesc.get(null, ""))
     print("corpus: " + path + "  sha=" + sha[:16] + "…  rows=" + str(len(rows)) +
           "  script=" + script)
     print("        B-rate=%.3f   (B and T are corpus labels; T is OUTSIDE the token stream)"
           % float(np.mean([b for _, b, _ in rows])))
     print("")
 
+    # ---- the item table. Built HERE (no rng touched) because `--null real` regenerates the two
+    #      control arms on this same real design; `--null parametric|shuffle` never reads it early.
+    items, sid, rowidx = build_cells(rows, min_occ, script, with_rows=True)
+    if null == "real":
+        if kernel != "r0":
+            print("--null real is defined for kernel r0 only (the real-design positive control plants "
+                  "a GATING operator); rerun with --kernel r0.", file=sys.stderr)
+            return 2
+        if len(sid) == 0 or len(items) == 0:
+            print("G-POWER     stems = 0  →  INVALID (DATA-SPARSE) — NOT a KILL")
+            res["stems"] = 0
+            res["verdict"] = ("INVALID (DATA-SPARSE) — stem extractor read 0 stems (script=%s); "
+                              "the operator question cannot be posed on this corpus" % script)
+            _emit(res, out)
+            return 0
+
     # ---- G-ALIVE (positive control) — a blind instrument proves nothing -------------------
     # The positive control must plant the operator class the KERNEL claims to express -- certifying
     # an order kernel on an XOR truth proves nothing about order.
     alive_mode = "order" if kernel in ("r1", "r2") else "xor"
-    sx = synth(rng, 200, 60000, alive_mode)
+    _real = null == "real"
+    _dsg = "REAL-design" if _real else "synthetic"
+    sx = real_design_arm(items, rowidx, rng, alive_mode) if _real else synth(rng, 200, 60000, alive_mode)
     ho_x, _ = make_heldout(sx, rng)
-    e_x, _, _, _, d_x = earned(sx, ho_x, rng, min(200, k_perm), null, kernel, kappa)
+    e_x, _, _, _, d_x = earned(sx, ho_x, rng, min(200, k_perm), null, kernel, kappa,
+                               rowidx if _real else None)
     alive = e_x >= G_ALIVE_BAR
-    print("G-ALIVE     synthetic %-8s (planted operator)  EARNED=%+.5f  delta=%+.2f  bar>=+%.2f  %s"
-          % (alive_mode.upper(), e_x, d_x, G_ALIVE_BAR,
+    print("G-ALIVE     %s %-8s (planted operator)  EARNED=%+.5f  delta=%+.2f  bar>=+%.2f  %s"
+          % (_dsg, alive_mode.upper(), e_x, d_x, G_ALIVE_BAR,
              "PASS" if alive else "FAIL — THE INSTRUMENT IS BLIND on this operator class"))
 
     # ---- G-PEDESTAL (zero-truth) — this is what caught two estimand defects ---------------
-    sa = synth(rng, 200, 60000, "additive")
+    sa = real_design_arm(items, rowidx, rng, "additive") if _real else synth(rng, 200, 60000, "additive")
     ho_a, _ = make_heldout(sa, rng)
-    e_a, _, _, _, d_a = earned(sa, ho_a, rng, min(200, k_perm), null, kernel, kappa)
+    e_a, _, _, _, d_a = earned(sa, ho_a, rng, min(200, k_perm), null, kernel, kappa,
+                               rowidx if _real else None)
     ped = abs(e_a) <= DELTA_EQ
-    print("G-PEDESTAL  synthetic ADDITIVE (truth = 0)     EARNED=%+.5f  delta=%+.2f   |.|<=%.2f   %s"
-          % (e_a, d_a, DELTA_EQ, "PASS" if ped else "FAIL — THE INSTRUMENT IS BIASED"))
+    print("G-PEDESTAL  %s ADDITIVE (truth = 0)     EARNED=%+.5f  delta=%+.2f   |.|<=%.2f   %s"
+          % (_dsg, e_a, d_a, DELTA_EQ, "PASS" if ped else "FAIL — THE INSTRUMENT IS BIASED"))
 
     # ---- G-DOF (r2 only) — does the EXTRA CAPACITY hallucinate a held-out gain? ---------------
     # r2 buys |A|+|B| degrees of freedom. That is the whole danger of going relational: a richer
@@ -451,7 +569,6 @@ def earned_run(argv):
         res["G_DOF"] = {"earned_additive_full_dof": e_a, "pass": bool(dof_ok)}
 
     # ---- G-POWER (census + null sd, measured BEFORE the effect is read) -------------------
-    items, sid = build_cells(rows, min_occ, script)
     res["stems"] = len(sid)
     if len(sid) == 0:
         print("G-POWER     stems = 0  →  INVALID (DATA-SPARSE) — NOT a KILL")
@@ -475,13 +592,15 @@ def earned_run(argv):
     per = []
     for sd_i in seeds:
         ho_i, nst_i = make_heldout(items, np.random.default_rng(sd_i))
-        e_i, nm_i, sdn_i, null_i, d_i = earned(items, ho_i, np.random.default_rng(sd_i), k_perm, null, kernel, kappa)
+        e_i, nm_i, sdn_i, null_i, d_i = earned(items, ho_i, np.random.default_rng(sd_i), k_perm,
+                                               null, kernel, kappa, rowidx)
         per.append({"seed": sd_i, "earned": e_i, "delta": d_i, "cells": int(ho_i.sum()),
                     "sd_null": sdn_i, "null_mean": nm_i, "null": null_i})
     e_vals = np.asarray([p["earned"] for p in per])
     e_n = float(e_vals.mean())
     spread = float(e_vals.max() - e_vals.min())
     ho, nst = make_heldout(items, np.random.default_rng(seeds[0]))
+    null_mode = null      # `null` is rebound to the null DISTRIBUTION on the next line (pre-existing)
     nm, sd, null, d_n = per[0]["null_mean"], per[0]["sd_null"], per[0]["null"], per[0]["delta"]
     res["heldout_cells"] = int(ho.sum())
     mde = 3 * sd
@@ -513,7 +632,7 @@ def earned_run(argv):
     # ---- MAIN BAR ------------------------------------------------------------------------
     lo, hi = np.percentile(null - nm, [(100 - ci) / 2, 100 - (100 - ci) / 2])
     ci_lo, ci_hi = e_n + lo, e_n + hi
-    seen, n_seen = seen_synergy(items, np.random.default_rng(seed + 1), 200)
+    seen, n_seen = seen_synergy(items, np.random.default_rng(seed + 1), 200, null_mode, rowidx)
     print("")
     print("held-out EARNED = %+.5f nats   %.1f%% CI [%+.5f, %+.5f]   delta=%+.2f  (0=additive, -2=flip)"
           % (e_n, ci, ci_lo, ci_hi, d_n))
