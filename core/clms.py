@@ -74,11 +74,31 @@ def find_qpos(tok):
     return t_list
 
 
-def _entity_key(key_emb, entity):
-    """Content address for an entity name = mean of the frozen per-byte embedding rows. Generalizes to
-    held-out entities (a new key built from seen bytes). key_emb is (256, d_k)."""
+def _entity_key(key_emb, entity, key_fn="mean"):
+    """Content address for an entity name, built from the frozen per-byte embedding rows so it
+    generalizes to held-out entities (a new key from seen bytes). key_emb is (256, d_k).
+
+    key_fn="mean" (lane_type 1-5, the shipped address) is a plain row mean, which carries NO order
+    term — entities sharing a normalised byte histogram get one key exactly, and equal keys give
+    equal attention mass for every query, so training cannot separate them (H_9850).
+
+    key_fn="roll" (lane_type 6) rotates each row by its byte POSITION before averaging, so order
+    enters the address. Parameter-free — same frozen table, nothing new to learn — and it dominated
+    every candidate on collisions, crowding and the exact-W ceiling in the H_9852 screen. Rotation
+    wraps at d_k, so positions p and p+d_k rotate alike; entity names are far shorter than d_k."""
     ids = np.frombuffer(entity.encode("ascii"), dtype=np.uint8)
-    return key_emb[ids].mean(axis=0)
+    if key_fn == "mean":
+        return key_emb[ids].mean(axis=0)
+    if key_fn == "roll":
+        return np.mean([np.roll(key_emb[b], i) for i, b in enumerate(ids)], axis=0)
+    raise ValueError("_entity_key: unknown key_fn %r (known: mean, roll)" % (key_fn,))
+
+
+def _key_fn_of(lane_type):
+    """lane_type -> address function. 6 = lane_type 3 semantics (W_g fusion + majority-null
+    centering) with the order-aware key; every other lane keeps the shipped mean, so existing
+    checkpoints are byte-identical."""
+    return "roll" if int(lane_type) == 6 else "mean"
 
 
 def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, audit=None,
@@ -129,8 +149,9 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
     key_emb = clms["key_emb"]
     ents = store["entities"]
     pols = np.asarray(store["pols"], dtype=np.int64)
-    K = np.stack([_entity_key(key_emb, ents[i]) for i in range(n_slot)])   # (n_slot, d_k)
     lane_type = int(clms.get("lane_type", 1))
+    _kf = _key_fn_of(lane_type)                                            # 6 = order-aware (H_9852)
+    K = np.stack([_entity_key(key_emb, ents[i], _kf) for i in range(n_slot)])   # (n_slot, d_k)
     if lane_type == 4:
         # H_9696 CLMS-FAN: free ideation carries no polarity, so the value cannot be val[pols]. The
         # slot's value is projected out of the slot's OWN key — the lane retrieves "which word I am
@@ -179,10 +200,10 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
                           "target": int(ts) if ts is not None else -1,
                           "a_max": float(np.max(a)),
                           "a_ent": _ent})
-        if lane_type == 3:                                                # RV-3 majority-null centering (H_9710)
+        if lane_type in (3, 6):                                           # RV-3 majority-null centering (H_9710)
             a = a - (1.0 / n_slot)                                        # v≡0 at uniform a → shortcut basin gone
         v = a @ V_slots                                                   # (d_s,) = Σ (aᵢ−c)·val[polᵢ]
-        if lane_type in (2, 3, 4, 5):
+        if lane_type in (2, 3, 4, 5, 6):
             g = h @ clms["W_g"]                                           # (d_g,) op-gate bottleneck (H_9423)
             z = _gelu(np.concatenate([v, g]) @ clms["W_h"] + clms["b_h"]) # (r,) [v; g] fusion (v un-diluted)
         else:                                                             # lane_type 1 legacy: [v; h] fusion
@@ -190,14 +211,14 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
         s = z @ clms["W_out"]                                             # (V,)
         if fuse == "odd":                                                 # H_9760 odd-symmetrized fusion:
             v_neg = -v                                                    #   s_odd = ½(s(v,g) − s(−v,g)) cancels the
-            if lane_type in (2, 3, 4, 5):                                 #   even (op-gate g-path) prior that emits a
+            if lane_type in (2, 3, 4, 5, 6):                                 #   even (op-gate g-path) prior that emits a
                 z_neg = _gelu(np.concatenate([v_neg, g]) @ clms["W_h"] + clms["b_h"])  # polarity-invariant constant on
             else:                                                         #   op=0 (H_9744 flip-coh gap). For lane_type 3
                 z_neg = _gelu(np.concatenate([v_neg, h]) @ clms["W_h"] + clms["b_h"])  # (Σ(aᵢ−1/n)=0 ⟹ v_flip≡−v) this
             s = 0.5 * (s - z_neg @ clms["W_out"])                         #   makes fixed-address flip-coherence = 1.
         elif fuse == "pairodd":                                           # H_9775 Π-equivariant pair-odd: full-row odd
             v_neg = -v                                                    #   (H_9760) killed the g/b argmax because it
-            if lane_type in (2, 3, 4, 5):                                 #   subtracted the even level that made g/b the
+            if lane_type in (2, 3, 4, 5, 6):                                 #   subtracted the even level that made g/b the
                 z_neg = _gelu(np.concatenate([v_neg, g]) @ clms["W_h"] + clms["b_h"])  # top logits. Here out[c∉{g,b}]=
             else:                                                         #   ½(s⁺+s⁻) PRESERVES that even level (argmax
                 z_neg = _gelu(np.concatenate([v_neg, h]) @ clms["W_h"] + clms["b_h"])  # stays g/b = readable) while
@@ -314,7 +335,7 @@ def pack_clms(w: dict) -> bytes:
         out += struct.pack("<BIIIIII", 4, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
                            int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
         order = _ARR_ORDER_V4
-    elif lane_type in (2, 3):   # 2 = W_g fusion (H_9423) · 3 = 2 + majority-null centering (H_9710 RV-3)
+    elif lane_type in (2, 3, 6):  # 2 = W_g fusion (H_9423) · 3 = 2 + majority-null centering (H_9710 RV-3) · 6 = 3 + order-aware key (H_9852)
         out += struct.pack("<BIIIIII", lane_type, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
                            int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
         order = _ARR_ORDER_V2
@@ -364,14 +385,14 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
     if lane_type == 5:                                    # H_9720-ⓐ fresh lane: W_fresh · W_q_fresh (pack order)
         clms["W_fresh"] = take(d * fresh_k, (d, fresh_k))
         clms["W_q_fresh"] = take(fresh_k * d_k, (fresh_k, d_k))
-    if lane_type in (2, 3, 4, 5):
+    if lane_type in (2, 3, 4, 5, 6):
         clms["W_g"] = take(d * d_g, (d, d_g))
     if lane_type == 4:                                     # H_9696: value-from-key + learned gate
         clms["W_v"] = take(d_k * d_s, (d_k, d_s))
         clms["W_gate"] = take(d, (d,))
     if lane_type != 4:                                     # lane 4 has no polarity table (W_v replaces it)
         clms["val"] = take(2 * d_s, (2, d_s))
-    w_h_in = (d_s + d_g) if lane_type in (2, 3, 4, 5) else (d_s + d)
+    w_h_in = (d_s + d_g) if lane_type in (2, 3, 4, 5, 6) else (d_s + d)
     clms["W_h"] = take(w_h_in * r, (w_h_in, r))
     clms["b_h"] = take(r, (r,))
     clms["W_out"] = take(r * V, (r, V))
@@ -386,9 +407,10 @@ def clms_weights_from_torch(mod) -> dict:
     def n(t):
         return t.detach().cpu().numpy().astype("<f4")
     out = {
-        "lane_type": (5 if int(getattr(mod, "fresh_k", 0)) > 0 else       # 5=H_9720-ⓐ fresh query lane
+        "lane_type": (6 if getattr(mod, "key_fn", "mean") == "roll" else  # 6=H_9852 order-aware key (3+roll)
+                      (5 if int(getattr(mod, "fresh_k", 0)) > 0 else       # 5=H_9720-ⓐ fresh query lane
                       (4 if getattr(mod, "fangate", False) else
-                       (3 if getattr(mod, "val_center", False) else 2))),  # 4=CLMS-FAN · 3=RV-3 · 2=W_g
+                       (3 if getattr(mod, "val_center", False) else 2)))),  # 4=CLMS-FAN · 3=RV-3 · 2=W_g
         "n_slot": mod.n_slot, "d_k": mod.d_k, "d_s": mod.d_s,
         "d_g": mod.d_g, "r": mod.r, "key_seed": mod.key_seed,
         "fresh_k": int(getattr(mod, "fresh_k", 0)), "fresh_L": int(getattr(mod, "fresh_L", 3)),
@@ -435,8 +457,9 @@ if _HAS_TORCH:
 
         def __init__(self, d, V, n_slot=8, d_k=64, d_s=64, r=128,
                      key_seed=9423, key_emb=None, lam0=1.0, d_g=64, val_center=False, fangate=False,
-                     fresh_k=0, fresh_L=3):
+                     fresh_k=0, fresh_L=3, key_fn="mean"):
             super().__init__()
+            self.key_fn = key_fn          # H_9852 address function (mean | roll)
             self.d, self.V, self.n_slot = d, V, n_slot
             self.d_k, self.d_s, self.r, self.key_seed = d_k, d_s, r, key_seed
             self.d_g = d_g                                          # H_9423 fusion-bottleneck (lane_type 2)
@@ -511,7 +534,7 @@ if _HAS_TORCH:
             # + addr-loss compose. need_att=False → byte-identical to the prior single-return signature.
             return (out, att) if need_att else out
 
-    def parity_selftest(tol=2e-5, seed=9826, q_scale=8.0, verbose=True):
+    def parity_selftest(tol=2e-5, seed=9826, q_scale=8.0, key_fn="mean", verbose=True):
         """H_9826 — does the numpy inference mirror still equal the torch trainer?
 
         The lane is written TWICE: CLMSModule.forward trains it, store_apply serves it. Until now
@@ -542,7 +565,8 @@ if _HAS_TORCH:
         d, V, n_slot, d_k, d_s, r = 32, 48, 8, 16, 16, 24
         _torch.manual_seed(seed)
         rng = np.random.default_rng(seed)
-        mod = CLMSModule(d, V, n_slot=n_slot, d_k=d_k, d_s=d_s, r=r, lam0=0.7).double()
+        mod = CLMSModule(d, V, n_slot=n_slot, d_k=d_k, d_s=d_s, r=r, lam0=0.7,
+                         val_center=(key_fn == "roll"), key_fn=key_fn).double()
         mod.eval()
         with _torch.no_grad():
             mod.W_q.weight.mul_(q_scale)          # well-scaled point: the address path must matter
@@ -557,7 +581,8 @@ if _HAS_TORCH:
         logits = rng.standard_normal((5, V))
         qpos = [2]
 
-        K = np.stack([_entity_key(w["key_emb"], e) for e in ents])          # (n_slot, d_k)
+        _kf = _key_fn_of(w["lane_type"])          # the guard must use the lane's OWN address fn
+        K = np.stack([_entity_key(w["key_emb"], e, _kf) for e in ents])     # (n_slot, d_k)
         with _torch.no_grad():
             ref = mod(_torch.from_numpy(yn[qpos]),                          # (1,d)
                       _torch.from_numpy(K)[None, :, :],                     # (1,n_slot,d_k)
@@ -590,7 +615,8 @@ if _HAS_TORCH:
             out_rows.append((nm, dv, caught))
         ok = ok_par and ok_point and ok_catch
         if verbose:
-            print("  tolerance = %.1e   (torch fp64 vs numpy fp64) · q_scale = %.1f" % (tol, q_scale))
+            print("  tolerance = %.1e   (torch fp64 vs numpy fp64) · q_scale = %.1f · key_fn = %s "
+                  "(lane_type %d)" % (tol, q_scale, _kf, w["lane_type"]))
             print("    %-24s max|delta| = %.3e   %s" %
                   ("parity (uncorrupted)", par, "PASS" if ok_par else "FAIL <-- mirror diverged"))
             print("    %-24s a_max = %.4f (uniform %.4f)   %s" %
