@@ -7237,13 +7237,35 @@ def topo_func_integration_flat(x):
     return topo_func_integration(x, _topo_zeros(15), 0.0)
 
 
-def ci_lane_scores_coupled(m, m_field, cells, seen, intent, dt, recon_err, adj, alpha, cfg):
-    """engine_cli.hexa:9035."""
+def ci_lane_scores_coupled_op(m, m_field, cells, seen, intent, dt, recon_err, adj, alpha, cfg, op):
+    """engine_cli.hexa:9035 (H_9872 — the lane coupling with a SELECTABLE operator).
+
+    H_1521 wired the lane coupling through the naive topo_apply = X.(I+alpha.A_hat)^T, whose
+    largest eigenvalue is 1+alpha > 1, so it ADDS net drive and Psi saturates 0.5 -> 1.0. H_1522
+    then built and measured three Psi-preserving operators, but wired them only into the
+    MEASUREMENT function ci_psi_balance_op — the lane-coupling path kept calling the broken one
+    (H_9871 census). This entry point lets the caller pick, so the fix is reachable from the
+    place the coupling actually happens.
+
+    op: 0 naive-amplifying (H_1521, kept for byte-identity) | 1 mean-center | 2 row-stochastic
+        | 3 magnitude-renorm. H_1522 measured max feasible alpha keeping |Psi-1/2| <= 0.05 at
+        1.0 / 0.3 / 0.1 / 0.0 respectively, so 0 is the only one that breaks immediately.
+    """
     raw = ci_lane_scores(m, m_field, cells, seen, intent, dt, recon_err)
     if not cfg.topo_couple:
         return raw
-    coupled = topo_apply([raw], adj, alpha)
+    coupled = topo_apply_op([raw], adj, alpha, op)
     return coupled[0]
+
+
+def ci_lane_scores_coupled(m, m_field, cells, seen, intent, dt, recon_err, adj, alpha, cfg):
+    """engine_cli.hexa:9035.
+
+    Unchanged surface: delegates with op=0, so every existing caller stays byte-identical
+    (the H_1521 self-test and the smoke both assert against this path).
+    """
+    return ci_lane_scores_coupled_op(m, m_field, cells, seen, intent, dt, recon_err,
+                                     adj, alpha, cfg, 0)
 
 
 def ci_emit_decision(lanes):
