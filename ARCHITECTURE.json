@@ -5717,8 +5717,24 @@
           },
           {
             "name": "lab/ 흡수 계기 — v3·v4 산 결과의 engine-native 이식 (H_9805~9809)",
-            "detail": "실험장 lab/{v2,v3,v4,v5} 대조 결과: v2 는 프로덕션이 추월해 전량 흡수 완료. v3·v4 는 미흡수라 5 레인 병렬 이식. lab 수치는 영구 DIRECTIONAL — 이식된 것은 RIG 와 설계지, 결과가 아니다.",
+            "detail": "실험장 lab/{v2,v3,v4,v5} 대조 결과: v2 는 메커니즘만 흡수 완료(계기 2건 미흡수 — 자식 노드). v3·v4 는 미흡수라 5 레인 병렬 이식. lab 수치는 영구 DIRECTIONAL — 이식된 것은 RIG 와 설계지, 결과가 아니다.",
             "children": [
+              {
+                "name": "v2 흡수 정정 — '전량' 아님: 메커니즘 흡수 · 계기 2건 미흡수",
+                "detail": "설계(내용주소 store·frozen 함수형 키·operator-gating concat·GELU-MLP readout·store_only shortcut-cut·λ·ORACLE·C2 4통제(derangement key-shuffle 포함)·블록 회전·0-shot leak assert·(op,pol) 분할·BOLT arm)는 전량 흡수, 일부는 추월(fuse odd/pairodd·addr-loss·addr-census). 그러나 계기 2건은 origin/main 재검증서 부재 확정."
+              },
+              {
+                "name": "미흡수 ① bridge-faithful slot-retrieval probe (v2 M15)",
+                "detail": "frozen trunk 가 store 를 주소지정할 수 있는 천장을 수치화(V2_7 상시측정: frozen 0.5134~0.5724 vs cotrained 0.9998~1.0). --store-addr-census 는 기하 선별기라 대체 불가. 증거: origin/main --store-* 16개 전수에 없음 · slot-retr grep 0 hit. 이식처 cli/evaluate.py."
+              },
+              {
+                "name": "미흡수 ② torch↔numpy CLMS parity selftest (v2 M14)",
+                "detail": "학습(torch CLMSModule)과 추론(numpy store_apply) 두 구현이 주석으로만 동기화됨(core/clms.py:431 'Op order MIRRORS'). origin/main 재검증: parity 언급 9건 전부 주석, 실행 검사 0(def/assert parity 없음). 조용한 op-order 발산이 판정을 양방향으로 움직여도 잡히지 않는다."
+              },
+              {
+                "name": "부분흡수 — BOLT lr 그리드·순차 게이트·macro-void·검정력",
+                "detail": "M16 --freeze-trunk 는 단일 lr(v2 규칙상 bolt-on 반증 증거로 부적격) · M12 순차게이트는 core/pregates.py 가 사전등록 산술만 덮고 store verdict 를 시퀀싱하지 않음(ORACLE=운영자 플래그) · M11 (op,pol) 분할은 있으나 macro-void 규칙 부재 · M13 은 falsifier_reachable 로 대체 경로."
+              },
               {
                 "name": "lab/v* = IN-TREE 실험장 (중첩 repo 폐기)",
                 "detail": "네 실험장 모두 부모가 직접 추적한다. v3·v4·v5 의 중첩 git repo 를 폐기하고 편입 — 각 repo 가 추적하던 255/159/58 파일 그대로(drift 0). 다시 별도 repo 로 분리하지 말 것."
