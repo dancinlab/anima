@@ -1,9 +1,10 @@
 # H_9844 — 압축-MI 로 코퍼스·꿈데이터의 비가법 정보를 학습 전에 $0 로 잰다 (R12-7 · ⭐ 가장 싼 결정적 레버)
 
-**status:** 🔧 **INSTRUMENT LANDED + 첫 실측** (2026-07-21 · `anima-py corpus mi-screen` 배선 · 계기 CERTIFIED · 과학 판정은 아직 0)
+**status:** 🔬 **INSTRUMENT LANDED + 실제-입력 교체 완료** (2026-07-21 · `anima-py corpus mi-screen` 배선 ·
+계기 CERTIFIED · 절차 코퍼스 3종 + **303M 이 실제 학습한 4칸 chat 코퍼스 4/4 전부 READ=none** · DIRECTIONAL)
 **source:** R12 뇌부위 census (2026-07-21) — `origin/main` `core/` 12개 모듈 실측 후 1모듈=1레버로 등록.
 상위 설계 노드 = ARCHITECTURE `C2 RECOMBINE` 아래 `🧠 뇌부위 census`. R11(H_9830~9836)의 후속.
-**wired:** yes — `anima-py corpus mi-screen --corpus PATH [--mi-seg-lines N] [--mi-robust] [--mi-win/--mi-span/--mi-estimator/--mi-eps] [--out J]`
+**wired:** yes — `anima-py corpus mi-screen [--corpus PATH | --mi-chat-cell CELL] [--mi-seg-lines N] [--mi-robust] [--mi-win/--mi-span/--mi-estimator/--mi-eps] [--out J]`
 
 ## 실측 — 이 모듈은 **이미 프로덕션에 있고 아무도 이 용도로 안 쓰고 있다**
 
@@ -159,3 +160,161 @@ anima-py corpus mi-screen --corpus /tmp/mi_en.txt --mi-seg-lines 60  --mi-robust
 anima-py corpus mi-screen --corpus /tmp/mi_dt.txt --mi-seg-lines 60  --mi-robust --out dt.json
 anima-py corpus mi-screen --corpus /tmp/mi_sb.txt --mi-seg-lines 500 --mi-robust --out sb.json
 ```
+
+---
+
+## 🔬 심화: 입력을 **실제 4칸 chat 코퍼스**로 교체했다 — 착륙한 결론은 살아남았고, 새 위험이 하나 드러났다 (2026-07-21 · 같은 날)
+
+이 카드가 스스로 적어둔 미결 타깃(`NEXT: 4칸 chat 코퍼스`)을 실행했다. **바꾼 것은 입력 하나뿐이다.**
+팔 · 동봉 통제(`plant_crossboundary` / `plant_null_stream`) · 바(`eps=0.02`) · `--mi-robust` 3-기하
+최솟값 규칙 · 동결 게이트 순서 — 전부 불변.
+
+### 왜 이 교체가 의무였나 (H_9838 선례)
+
+앞선 census 3종(`flat`·`derivtrace`·`storebind`)은 **줄 단위로 절차 생성**된 스트림이라
+"블록 경계를 넘는 정보가 없다"는 결론이 **거의 동어반복**이었다 — 이 카드의 정직 범위 ①이 이미
+그렇게 적어뒀다. 같은 날 **H_9838** 이 그 위험의 값을 매겼다: 심어둔 정수 fixture 위에서 12× 우연의
+헤드라인 양성(양성통제 + 참값-0 받침대 + 3 seed × 3 기하 + 독립 재현)을 착륙시켰는데, **코드 출처만**
+프로덕션 trunk 의 실제 penultimate 표현으로 갈아끼우자 참값-0 받침대가 터지고(값-셔플 0.3750 > 바
+0.3077) 판정이 **INVALID** 이 됐다. 심어둔 코드는 사실상 직교(within .0469 / across .0117)인데 실제
+표현은 2.2배 겹쳤다(.0625 / .0260) — **손으로 만든 유리한 기하가 결과를 제조**하고 있었다.
+절차 코퍼스도 정확히 같은 종류의 손으로 만든 세계다.
+
+### 배선 — `--mi-chat-cell` (입력 소스 플래그)
+
+```
+anima-py corpus mi-screen --mi-chat-cell {ko-general|en-general|ko-sns|en-sns|all} [반복 가능]
+```
+
+PUBLIC HF 데이터셋(`dancinlab/anima-corpus-<cell>`)을 stdlib `urllib` 로 한 번 받아
+`$ANIMA_CORPUS_CACHE`(기본 `./.corpus_cache` · `cli/train.py::resolve_corpus_path` 와 같은 캐시 루트)에
+저장하고, **평범한 `--corpus` 경로로** 넘긴다. 이 줄 아래로는 계기가 입력 출처를 알지 못한다 — 그게
+요점이다. 받지 못한 셀은 **보고만 하고 대체·창작하지 않는다**(`honesty`). VERSION 0.20.111→0.20.112 (G5).
+
+### ① 회귀 0 — 플래그 착륙 **후** 옛 경로가 카드의 숫자를 그대로 낸다
+
+통제(입력과 무관하므로 7회 실행 전부 동일해야 하고, 실제로 전부 동일했다):
+
+| 통제 | gzip | ppm | markov6 | 카드 기재값 |
+|---|---|---|---|---|
+| `plant_crossboundary` (양성) | **+6.6640625** | **+0.7672949821539197** | **+5.972620150319223** | +6.664 / +0.767 / +5.973 ✅ |
+| `plant_null_stream` (참값 0 받침대) | **0.0** | **+0.0018651470619639454** | **+0.0035809337633700977** | 0.000 / +0.002 / +0.004 ✅ |
+
+3-기하 census(`--mi-robust` 최솟값 · eps=0.02):
+
+| 코퍼스 | bytes | robust gzip / ppm / markov6 | spread | READ | 카드 기재값과 대조 |
+|---|---|---|---|---|---|
+| `flat --lang en` | 798,570 | **−0.0078** / **−0.0023** / **−0.0102** | .0391 / .0052 / .0499 | none | −0.0078/−0.0023/−0.0102 · .039/.005/.050 ✅ |
+| `derivtrace` | 1,215,724 | **−0.0098** / **−0.0055** / **−0.0144** | .0410 / .0115 / .0568 | none | −0.0098/−0.0055/−0.0144 · .041/.012/.057 ✅ |
+| `storebind` | 544,134 | **+0.0000** / **−0.0022** / **+0.0019** | .0195 / .0049 / .0090 | none | +0.0000/−0.0022/+0.0019 · .020/.005/.009 ✅ |
+
+플래그를 넣기 **전/후** `flat` 실행의 결과 JSON 은 `reaudit.argv`(자기 커맨드를 그대로 기록하는 필드)를
+빼면 **완전히 동일**했다 — 회귀 0.
+
+### ② 새 경로 — 실제 4칸 chat 코퍼스 (303M 이 실제로 학습한 데이터)
+
+셀은 **4/4 전부 받았다**(HF PUBLIC · 일반 https · 토큰 불요). 두 general 셀의 sha256 은 HF LFS oid 와
+일치한다(`19e6ac9e…` / `66140944…`). 통제는 4/4 실행 전부 CERTIFIED(위 표와 동일 값).
+
+**기하는 셀마다 따로 계산했다** — ko 는 ~3 B/char 라 같은 `--mi-seg-lines` 가 셀마다 전혀 다른 바이트
+부하가 된다(`a_korean_byte_budget`). 사전등록 규칙(결과를 보기 **전**에 고정, 4칸에 동일 적용):
+`--mi-seg-lines = round(8000 / 셀의 바이트-per-줄)` — 즉 착륙한 절차 census 와 **같은 블록 스케일**
+(base 블록 ≈ 8 kB ≈ 1.3 × (win+span)=6144 B)에서 읽는다. 실측 바이트/줄:
+ko-general 176.2 → **46** · en-general 214.9 → **38** · ko-sns 128.8 → **62** · en-sns 193.2 → **42**.
+
+| 셀 | bytes | sha256(앞12) | seg-lines | usable 세그먼트 (기하 1/2/3) | underpowered | **robust** gzip / ppm / markov6 | spread | **READ** | 기하의존 |
+|---|---|---|---|---|---|---|---|---|---|
+| `ko-general` | 60,000,356 | `19e6ac9e34d1` | 46 | 4723 / 8601 / 29132 | False/False/False | **−0.0156** / **−0.0003** / **+0.0010** | .0469/.0184/.0469 | **none** | gzip·markov6 |
+| `en-general` | 60,049,637 | `661409443270` | 38 | 5077 / 9473 / 31443 | False/False/False | **−0.0156** / **+0.0010** / **+0.0043** | .0156/.0125/.0185 | **none** | 없음 |
+| `ko-sns` | 6,183,822 | `c836e9fc948e` | 62 | 571 / 1114 / 3846 | False/False/False | **+0.0000** / **+0.0006** / **−0.0007** | .0078/.0026/.0085 | **none** | 없음 |
+| `en-sns` | 1,326,111 | `49f347c72416` | 42 | 96 / 185 / 668 | False/False/False | **−0.0234** / **+0.0092** / **+0.0106** | .0547/.0145/.0258 | **none** | gzip·markov6 |
+
+### 🔑 새로 드러난 것 — **실제 텍스트에서 단일-기하 신기루가 더 심하다**
+
+기하별 원시 over_floor (위 robust 는 이 셋의 최솟값):
+
+```
+셀            기하 4096/2048              기하 2048/1024              기하 512/256
+ko-general    gz−0.0156 pp−0.0003 mk+0.0010   gz−0.0078 pp+0.0077 mk+0.0136   gz+0.0312 pp+0.0181 mk+0.0478  ← gz·mk 통과
+en-general    gz−0.0156 pp+0.0010 mk+0.0043   gz−0.0078 pp+0.0074 mk+0.0102   gz+0.0000 pp+0.0134 mk+0.0228  ← mk 통과
+ko-sns        gz+0.0039 pp+0.0032 mk+0.0078   gz+0.0078 pp+0.0022 mk−0.0007   gz+0.0000 pp+0.0006 mk+0.0009  ← 전부 미달
+en-sns        gz−0.0234 pp+0.0154 mk+0.0106   gz+0.0195 pp+0.0236 mk+0.0364   gz+0.0312 pp+0.0092 mk+0.0224  ← 두 기하서 통과
+```
+
+**절차 코퍼스에서는 3종 중 2종이 단일-기하 양성을 냈지만, 실제 자연어에서는 4칸 중 3칸이 낸다.**
+그리고 방향이 계통적이다 — 블록이 작아질수록 over_floor 가 **모든 셀에서 단조 증가**한다(작은 블록 =
+측정 창 두 개가 파일 안에서 물리적으로 더 가까움 = 국소 연속성). 즉 `--mi-robust` 가 없었다면 이번
+실측은 "**anima 의 실제 학습 데이터가 교차경계 정보를 담고 있다**"는 헤드라인 양성 3/4 로 착륙했을
+것이다. 게이트가 그 4개를 전부 거부했다. 이 게이트는 절차 코퍼스에서 스스로를 잡으려고 만들었는데,
+**실제 데이터에서 더 크게 값을 했다**.
+
+### 판정 — **READ = none (4/4 셀). 착륙한 결론은 살아남았고, 범위는 좁아진 게 아니라 넓어졌다.**
+
+H_9838 과 달리 이 계기는 입력 교체에서 **깨지지 않았다**. 이유는 구조적이다: H_9838 의 신호는 **심어둔
+코드의 기하**에서 나왔고 실제 표현에는 그 기하가 없었지만, H_9844 의 착륙 결과는 **음성 census**였고
+동봉 통제는 입력과 **무관**하다(양성통제·받침대는 자기 스트림을 스스로 만든다) — 그래서 교체가
+바꿀 수 있었던 것은 오직 코퍼스 행뿐이었고, 그 행이 절차 코퍼스와 **같은 답**을 냈다.
+
+바뀐 것은 **주장의 세기**다. 착륙 시점의 정직 범위 ①("대상이 절차생성 코퍼스라 결론이 동어반복에
+가깝다")이 **해소됐다**: 이제 이 null 은 손으로 만든 스트림이 아니라 **303M 이 실제로 학습한 자연어
+67.5 MB** 에서 나온 것이다.
+
+**이것이 R11/R12 학습 레버들에 청구하는 값:**
+
+1. "코퍼스에 결합정보는 있는데 모델이 못 읽는다"는 전제는 **4칸 chat 코퍼스에서 지지되지 않는다**.
+   모델을 한 번도 통과시키지 않고 얻은 코퍼스 사실이며, H_9304 가 모델을 통해 잰 +0.0023 nats 와
+   **부호도 크기도 나란하다** — 이제 독립적인 두 경로가 같은 곳을 가리킨다.
+2. ⟹ **데이터면 레버는 추출형이 아니라 생성형이어야 한다.** 대조군이 이미 이 카드 옆에 있다:
+   H_9839 의 rule-derived 꿈 데이터는 같은 계기·같은 게이트에서 robust gzip **+0.1641** / markov6
+   **+0.2396** 으로 eps 를 한참 넘겼다(READ 성립). **없는 것을 읽게 만드는 목적함수는 없고,
+   만들어 넣은 것은 읽힌다.**
+3. ⟹ **차단되는 지출**: "4칸 chat 코퍼스 안의 재조합 결합구조를 목적함수로 표면화한다"를 전제로 한
+   303M CPT/co-train 발사는 **발사 전에 $0 로 반증됐다**. 그 전제를 쓰는 레버는 (a) 먼저 읽히는
+   코퍼스를 만들거나(H_9839 계열), (b) 자기 전제를 이 스크리너로 통과시킨 뒤에만 GPU 를 쓴다.
+
+### 재현
+
+```
+# 옛 경로 (회귀 확인 · 카드의 착륙 숫자와 대조)
+anima-py corpus flat       --out /tmp/mi_en.txt --lang en --seed 7
+anima-py corpus derivtrace --out /tmp/mi_dt.txt --lang en --seed 7
+anima-py corpus storebind  --out /tmp/mi_sb.txt --lang en --seed 7
+anima-py corpus mi-screen --corpus /tmp/mi_en.txt --mi-seg-lines 60  --mi-robust --out old_en.json
+anima-py corpus mi-screen --corpus /tmp/mi_dt.txt --mi-seg-lines 60  --mi-robust --out old_dt.json
+anima-py corpus mi-screen --corpus /tmp/mi_sb.txt --mi-seg-lines 500 --mi-robust --out old_sb.json
+
+# 새 경로 (실제 입력 · 셀마다 seg-lines 다름 · ko 3 B/char)
+anima-py corpus mi-screen --mi-chat-cell ko-general --mi-seg-lines 46 --mi-robust --out real_ko_gen.json
+anima-py corpus mi-screen --mi-chat-cell en-general --mi-seg-lines 38 --mi-robust --out real_en_gen.json
+anima-py corpus mi-screen --mi-chat-cell ko-sns     --mi-seg-lines 62 --mi-robust --out real_ko_sns.json
+anima-py corpus mi-screen --mi-chat-cell en-sns     --mi-seg-lines 42 --mi-robust --out real_en_sns.json
+```
+
+로컬 CPU · GPU 0 · ckpt 0 · $0. general 셀 1개당 ~55 CPU-min, sns 셀은 1~6분.
+
+### ⚠️ 정직 범위 (이 판정이 **아닌** 것)
+
+1. **압축 추정기는 하한이다.** null 은 *읽을 수 있음*의 부재를 한정하지 *존재*의 부재를 증명하지
+   않는다 — 착륙 때와 동일한 제약이고, 입력을 바꿔도 그대로다.
+2. **블록 절단은 자연 텍스트의 문서 경계가 아니다.** 4칸 코퍼스도 `b"\n\n"` 이 **0회**다(실측 4/4 셀).
+   문단/문서 구분자가 없어 `--mi-seg-lines` 는 줄-레코드를 임의로 자른다. 문서 경계에 정렬된 절단이
+   다른 답을 낼 가능성을 **이 실행은 배제하지 못한다** — 이게 남은 가장 큰 구멍이다.
+3. **블록 감쇠가 크고 무작위가 아니다.** 자연 텍스트는 줄 길이가 치우쳐 `win+span` 미달 블록이
+   드롭된다(en-sns base 96/164 · ko-general base 4723/7403). 짧은 줄이 많은 블록이 계통적으로
+   빠진다. 계기는 이 감쇠를 `segmented_as` 에 그대로 보고하고 패딩하지 않는다.
+4. **ko 셀은 맥락이지 레버가 아니다** — 연구 코퍼스의 한국어 레인은 🧱 BINDING-dead(H_9327). 다만
+   원시 바이트 위의 압축 추정기는 언어 무관이라 값 자체는 그대로 보고한다.
+5. **DIRECTIONAL** — 코퍼스 사실이지 학습 판정이 아니다. 그리고 **한 블록 스케일(~8 kB)** 에서의
+   판정이다.
+
+### 🚫 여기서 하면 안 되는 것 (사전 차단)
+
+`--mi-seg-lines` / `--mi-win` / `--mi-eps` 를 어떤 조합이 eps 를 넘을 때까지 훑는 것은 **정의상
+tune-to-green** 이고, 위 "단일-기하 신기루" 표가 그게 얼마나 쉬운지 보여준다(작은 블록만 고르면
+3/4 칸이 양성이다). 살릴 각도가 있다면 **사전등록된 별도 H** 로만 — 이 카드에서는 돌리지 않았다.
+후보 2개를 여기 등록만 해둔다:
+- **(F1) 문서경계 정렬 절단**: 4칸 코퍼스의 원본 HF 행 경계를 세그먼트로 삼아 재측정. 정직 범위 ②를
+  정면으로 겨눈다. 사전등록 필요: 세그먼트 정의 · 기하 스윕 · 동일 eps.
+- **(F2) 블록 스케일 사다리**: `--mi-seg-lines` 를 결과와 무관하게 사전 고정한 4개 스케일
+  (2 kB·8 kB·32 kB·128 kB)에서 전 4칸을 돌려 over_floor(블록크기) 곡선 자체를 보고. 최솟값 규칙은
+  유지하되 신기루의 **함수 형태**를 재는 것이 목적이며, 어느 스케일도 헤드라인이 되지 않는다.
