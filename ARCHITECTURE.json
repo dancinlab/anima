@@ -5928,7 +5928,11 @@
                         "detail": "read_clms 가 elif lane_type in (2,3,4) 라 6 이 legacy 헤더(d_g 없음)로 떨어져 W_g (d,0)·W_h/b_h/W_out 잘못된 폭으로 로드 = 추론서 lane 무작동(roll ckpt 가 네 조작 전부 0.5312 flat). 내 왕복 확인이 lane_type 만 봤는데 그건 첫 바이트라 잘못된 헤더로도 보존된다 — lane_type 비교는 왕복 검사가 아니다. 근본수정 codec_roundtrip_selftest 가 배열 모양까지 대조(수정 전 코드서 5건 검출 실증)."
                       },
                       {
-                        "name": "🔴 첫 재학습 회차 = INSTRUMENT-DEAD (H_9853)",
+                        "name": "🟢 R2 판정 — roll 이 이긴다(적대 낙폭 2.6배 감소)",
+                        "detail": "버그 2건 수정 후 재측정(engine-native evaluate --store · held-out 128 · 8000 steps+oracle warmup · 단일변수): mean 균등 0.8359 적대 0.6953(낙폭 -0.1406) vs roll 균등 0.8828 적대 0.8281(낙폭 -0.0547). roll 이 네 팔 전부 우세 + 적대 강건성 2.6배. roll 은 nearest=nocollide(충돌 0 예측 일치). 새 파라미터 0. H_9852 스크린이 판정으로 승격. DIRECTIONAL(단일 seed)."
+                      },
+                      {
+                        "name": "🔴 첫 재학습 회차 = INSTRUMENT-DEAD (폐기 · 깨진 lane)",
                         "detail": "pool(summer CUDA)서 키함수만 다른 두 팔 학습 후 evaluate --store held-out 128: mean(lane3) 균등 0.5469/적대 0.5391 · roll(lane6) 균등 0.5312/적대 0.5312 = 네 칸 전부 우연 ⟹ 두 lane 다 미학습이라 비교 불가. 같은 경로가 store303 서 0.9688 이므로 평가 무죄·내 학습 레시피가 죽음. 유력 사인=원본 base(slw_restored) 미확보로 다른 trunk 대체."
                       },
                       {
