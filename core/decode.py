@@ -682,9 +682,18 @@ def _gn_capture(sink):
     _GN_CAP = sink
 
 
-def nn_groupnorm_fwd(x, gamma, beta, T, C, G, xp=None, gn_key=None):
+def nn_groupnorm_fwd(x, gamma, beta, T, C, G, xp=None, gn_key=None, per_position=False):
     """gn_lib.hexa::nn_groupnorm_fwd — eps=1e-5. x:[T,C]. Returns y:[T,C].
     Here G is always 1 (=> normalize over all C per the whole [T,C] group).
+
+    per_position=True (H_9875 · mirrors core/model.py::PerPositionGroupNorm, which reshapes
+    (B,C,T) -> (B*T,C,1) before GroupNorm) reduces over the cg channels of ONE row instead of the
+    whole [T,cg] block, so m = cg and position t's output depends on position t alone. That is the
+    difference between a sequence-global bus and a causal-safe norm: with the default reduction a
+    byte at position 0 moves the statistics that every later position — including the query byte —
+    is divided by. A ckpt trained with --trunk-norm position scored through the default reduction
+    is not that model, which is why the trainer refuses to call such a score engine-native. Default
+    False keeps every existing .clm byte-identical.
     The μ/σ² scalar reduction is pulled to a host python float ONCE per group
     (a single device->host sync of one scalar) so the bit-exact 40-iter Newton
     `_gn_sqrt` runs in plain host float64 — identical numerics to the CPU path,
@@ -696,6 +705,22 @@ def nn_groupnorm_fwd(x, gamma, beta, T, C, G, xp=None, gn_key=None):
     m = float(cg * T)
     x = x.reshape(T, C)
     y = xp.empty_like(x)
+    if per_position:
+        # Per-row statistics (m = cg). _GN_FREEZE/_GN_CAP are sequence-global instruments and are
+        # NOT defined for this reduction, so they are refused rather than silently misapplied.
+        if _GN_FREEZE is not None or _GN_CAP is not None:
+            raise ValueError("nn_groupnorm_fwd: --gn-freeze / gn-cap are sequence-global "
+                             "instruments and have no meaning under per-position normalization")
+        mp = float(cg)
+        for grp in range(G):
+            c0 = grp * cg
+            sl = x[:, c0:c0 + cg]
+            mu_r = sl.sum(axis=1) / mp
+            d_r = sl - mu_r.reshape(T, 1)
+            var_r = (d_r * d_r).sum(axis=1) / mp
+            inv_r = xp.asarray([1.0 / _gn_sqrt(float(v) + eps) for v in var_r]).reshape(T, 1)
+            y[:, c0:c0 + cg] = gamma[c0:c0 + cg] * (d_r * inv_r) + beta[c0:c0 + cg]
+        return y
     for grp in range(G):
         c0 = grp * cg
         sl = x[:, c0:c0 + cg]
@@ -842,6 +867,9 @@ def _load_ext(rb, off):
     vals = np.frombuffer(rb, dtype='<f4', count=n, offset=off).astype(np.float64)
     off += n * 4
     return vals, off
+
+
+_TRUNK_NORM = "global"     # H_9875 · set per-ckpt by clm_load_weights from the CNRM trailer
 
 
 def clm_load_weights(path):
@@ -993,6 +1021,16 @@ def clm_load_weights(path):
     # the hypothesis IS that the trunk must compute OVER the field rather than read it off the top.
     from tension_field import read_tfld
     W["tfld"], off = read_tfld(rb, off, W["d"])
+
+    # ── optional "CNRM" trunk-norm marker (H_9875 · chain END, 1 payload byte) ──
+    # Absent => "global" => byte-identical to every .clm written before this lane existed. Present
+    # with payload 1 => the trunk was trained with per-position normalization, and the decode above
+    # must reduce per row or it is scoring a different model (the trainer used to warn that no such
+    # lane existed; this is that lane).
+    W["trunk_norm"] = "global"
+    if len(rb) - off >= 5 and bytes(rb[off:off + 4]) == b"CNRM":
+        W["trunk_norm"] = "position" if int(rb[off + 4]) == 1 else "global"
+        off += 5
 
     # ── GPU device residency (a_gpu_default_no_optin: DEFAULT-ON, no opt-in flag) ──
     # Upload the GEMM/elementwise weight tensors to the device ONCE here (a full
@@ -1151,6 +1189,7 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None, tap_depth=None, ta
         # W["n_factions"] is 0 (absent CLMF) for every pre-H_9643 ckpt => G=1 => byte-identical.
         _gf = W.get("n_factions", 0) or 1
         hn = nn_groupnorm_fwd(h, W["tgG"][li], W["tgB"][li], T, d, _gf, xp,
+                              per_position=(W.get("trunk_norm", "global") == "position"),
                               gn_key=("trunk", li))
         hg = nn_gelu_fwd(hn, xp)
         xt = xt + hg.reshape(T, d)
@@ -1185,7 +1224,8 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None, tap_depth=None, ta
     y = nn_moe_router_fwd(logits_r, ex_out, T, E, d, xp)          # [T, d]
     # final groupnorm — H_9643: G follows the faction split (absent CLMF => 0 => G=1 => unchanged)
     _gf = W.get("n_factions", 0) or 1
-    yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, _gf, xp, gn_key=("out",))
+    yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, _gf, xp, gn_key=("out",),
+                          per_position=(W.get("trunk_norm", "global") == "position"))
     return yn
 
 
