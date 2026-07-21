@@ -4087,9 +4087,13 @@ def main():
         print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
         print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
         if getattr(a, "trunk_norm", "global") == "position":
-            print("  ⚠️ trunk_norm=position — the .clm decode path implements GLOBAL GN semantics; "
-                  "any engine-native score of this ckpt is semantically WRONG until a decode lane "
-                  "exists. torch-side numbers are DIRECTIONAL screens only.", flush=True)
+            # H_9875 — the decode lane now exists, so the ckpt carries a CNRM marker telling the
+            # loader which reduction its weights were fitted under. Without the marker an
+            # engine-native score of this ckpt would silently measure a different model.
+            S.append_trunknorm_trailer(out_path, "position")
+            print("  CNRM trailer appended (trunk_norm=position) — the .clm decode path reduces "
+                  "per position for this ckpt; engine-native scores are semantically correct.",
+                  flush=True)
         if getattr(a, "serialize_parity", ""):
             try:
                 serialize_parity(model, out_path, a.serialize_parity, device,

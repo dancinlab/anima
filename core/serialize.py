@@ -1079,3 +1079,21 @@ def _trailer_chain_end(raw: bytes, off: int, d: int, V: int) -> int:
         _, off = rd(raw, off, d, V)
     _, off = read_tfld(raw, off, d)
     return off
+
+# ── "CNRM" trunk-norm marker (H_9875) ────────────────────────────────────────────
+# One byte at the very end of the trailer chain: 1 = the trunk was trained with per-position
+# normalization (core/model.py::PerPositionGroupNorm), 0/absent = the legacy sequence-global
+# GroupNorm. It is a MARKER, not weights — the decode path needs to know which reduction the
+# weights were fitted under, and without it an engine-native score of a position-norm ckpt silently
+# measures a different model. Never appended for global-norm ckpts, so every existing .clm and
+# every default build stays byte-identical.
+CNRM_MAGIC = b"CNRM"
+
+
+def append_trunknorm_trailer(path: str, trunk_norm: str) -> str:
+    """Append the CNRM marker to a .clm. No-op for the legacy 'global' mode (byte-identical)."""
+    if trunk_norm != "position":
+        return path
+    with open(path, "ab") as f:
+        f.write(CNRM_MAGIC + bytes([1]))
+    return path
