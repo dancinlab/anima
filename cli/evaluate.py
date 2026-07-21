@@ -945,7 +945,8 @@ def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
 
 
 def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_dir="",
-                  axes="", include_cells=True, weave_panel_path="", fals_draws=0):
+                  axes="", include_cells=True, weave_panel_path="", fals_draws=0,
+                  grow_window=False):
     """ρ-AXON reach panel (`anima-py evaluate <clm> --rho-axon`) — the redesigned reach
     layer (cli/rho_axon.py; G0-G6 → ρ-AXON, design SSOT state/rho_axon_measurement/). Reuses
     the SAME engine decode (_Mouth.ideate) + g6 detectors the G-battery uses (no side-harness),
@@ -958,7 +959,8 @@ def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_
     stat = os.stat(ckpt)
     namespace = "%s:%d:%d" % (os.path.abspath(ckpt), stat.st_size, stat.st_mtime_ns)
     mouth = _MemoMouth(
-        _IsolatedMouth(ckpt) if isolated else _Mouth(ckpt), cache_dir, namespace)
+        _IsolatedMouth(ckpt) if isolated else _Mouth(ckpt, grow_window=grow_window),
+        cache_dir, namespace)
     en_corpus_tokens = _g_load_corpus_tokens(corpus_paths)
     # aggregate dets = the FROZEN en bar (UNTOUCHED — en byte-identity guaranteed structurally)
     dets = {"known": known, "concepts": _rho_fan_concepts(),
@@ -2207,6 +2209,11 @@ def evaluate_run(argv):
 
     # H_9200 ρ-AXON — the redesigned reach layer (G0-G6 → ρ-AXON). Same engine decode,
     # a different panel; branch early so the G0-G6 summary below is skipped.
+    # H_9877 — the CLM mouth right-aligns the seed into a fixed T=24 window unless this is set,
+    # so a 33-byte composed cue loses its FIRST operand before the model ever sees it. Fix-W
+    # (H_9804/H_6189) already existed for the G0-G6 battery and was never threaded into ρ-AXON;
+    # defined here so the ρ-AXON branch below can read it.
+    grow_window = "--grow-window" in argv[1:]
     if _RHO_AXON:
         rho_panel = eval_rho_axon(
             ckpt, corpus, gen,
@@ -2216,6 +2223,7 @@ def evaluate_run(argv):
             axes=evaluate_strval(argv[1:], "--rho-axes", ""),
             include_cells="--rho-no-cells" not in argv[1:],
             weave_panel_path=evaluate_strval(argv[1:], "--weave-panel", ""),
+            grow_window=grow_window,
             fals_draws=evaluate_intval(argv[1:], "--fan-draws", 0),
         )
         rho_out = evaluate_strval(argv[1:], "--rho-out", "")
@@ -2226,7 +2234,6 @@ def evaluate_run(argv):
             print("wrote: " + rho_out)
         return 0
 
-    grow_window = "--grow-window" in argv[1:]
     seed_class = evaluate_strval(argv[1:], "--seed-class", "composed")
     if seed_class not in ("composed", "atomic"):
         print("ERROR: --seed-class must be 'composed' (default) or 'atomic', got %r" % seed_class)
