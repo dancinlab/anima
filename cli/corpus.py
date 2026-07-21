@@ -122,7 +122,77 @@ def _wp_emit(fam, carriers, a, b, tgt, sa, sb, s_tgt):
         bind = bind_t.format(a=a, b=b)
         out.append({"cue": cue, "target": tgt, "swap_cue": swap, "bind_cue": bind,
                     "lang": "en", "family": fam, "carrier": ci,
-                    "swap_target": s_tgt})
+                    "swap_target": s_tgt, "a": a, "b": b})
+    return out
+
+
+def weavepanel_atom_exposure(items, corpus_paths):
+    """H_9838 — count each panel item's ATOMS in the training corpus, with WORD BOUNDARIES.
+
+    Declared as the open prerequisite when the panel landed (H_9827): a ρ·weave item whose atoms
+    the model never saw does not measure a composition failure, it measures atom absence. The
+    claim axis is composition, so exposure on the ATOM axis must be > 0 for the item to be
+    readable at all (convergence corpus-py-1 (F)).
+
+    Boundary-counted, never substring: `art` occurs inside `start`, `five` inside `fives`, and a
+    raw `count()` exposure gate passes atoms the model never read as words — that exact defect
+    was reintroduced the day after it was first recorded (corpus-py-1 (G)/(I)).
+    """
+    import re as _re
+    need = set()
+    for it in items:
+        for w in _rho_words_en(it["cue"]) + [it["target"], it.get("a", ""), it.get("b", "")]:
+            if len(w) >= 2:
+                need.add(w)
+    counts = {w: 0 for w in need}
+    for cp in corpus_paths:
+        with open(cp, "rb") as fh:
+            raw = fh.read()
+        text = raw.decode("utf-8", "replace").lower()
+        for w in need:
+            counts[w] += len(_re.findall(r"\b" + _re.escape(w) + r"\b", text))
+    # OPERANDS and CARRIER are separate exposure axes and must not be pooled: an absent operand
+    # makes the item unreadable for a COMPOSITION claim, while an absent carrier word puts the
+    # probe in an out-of-distribution basin — a different defect with a different fix
+    # (corpus-py-1 (8) carrier census / (12) untrained-carrier OOD basin).
+    rows = []
+    for it in items:
+        ops = [w for w in (it.get("a", ""), it.get("b", "")) if len(w) >= 2]
+        cue_ws = set(_rho_words_en(it["cue"]))
+        carrier_ws = [w for w in cue_ws if w not in ops and len(w) >= 2]
+        omin = min([counts.get(w, 0) for w in ops]) if ops else 0
+        cmin = min([counts.get(w, 0) for w in carrier_ws]) if carrier_ws else 0
+        rows.append({"cue": it["cue"], "target": it["target"], "family": it["family"],
+                     "operand_min_occ": omin, "carrier_min_occ": cmin,
+                     "target_word_occ": counts.get(it["target"], 0),
+                     "readable": omin > 0, "carrier_seen": cmin > 0})
+    n = len(rows)
+    op_dead = [r for r in rows if not r["readable"]]
+    car_dead = [r for r in rows if r["readable"] and not r["carrier_seen"]]
+    tgt_dead = [r for r in rows if r["readable"] and r["target_word_occ"] == 0]
+    return {"n": n, "readable": n - len(op_dead),
+            "operand_absent": len(op_dead), "carrier_absent": len(car_dead),
+            "target_absent": len(tgt_dead),
+            "operand_absent_examples": [r["cue"] for r in op_dead[:6]],
+            "carrier_absent_examples": [r["cue"] for r in car_dead[:6]],
+            "rows": rows}
+
+
+def _rho_words_en(text):
+    """lowercase ASCII alnum split — same tokenization the frozen detector uses on EN."""
+    out = []
+    cur = []
+    for ch in text:
+        o = ord(ch)
+        if 48 <= o <= 57 or 97 <= o <= 122:
+            cur.append(ch)
+        elif 65 <= o <= 90:
+            cur.append(chr(o + 32))
+        else:
+            if cur:
+                out.append("".join(cur)); cur = []
+    if cur:
+        out.append("".join(cur))
     return out
 
 
@@ -6149,7 +6219,14 @@ def main():
             for v in audit["violations"][:20]:
                 print("  · " + v, file=sys.stderr)
             sys.exit(2)
-        payload = {"items": items, "audit": audit, "regen": regen, "seed": opts["seed"]}
+        # H_9838 — atom-exposure audit (the prerequisite H_9827 declared open). Only runs when
+        # --corpus is given; without it the panel ships unaudited and says so.
+        exposure = None
+        if opts["corpus"]:
+            exposure = weavepanel_atom_exposure(items, opts["corpus"])
+            audit["atom_exposure"] = {k: v for k, v in exposure.items() if k != "rows"}
+        payload = {"items": items, "audit": audit, "regen": regen, "seed": opts["seed"],
+                   "atom_exposure": exposure}
         with open(opts["out"], "w") as fh:
             json.dump(payload, fh, indent=1)
         print("anima-py corpus weavepanel → %s" % opts["out"])
@@ -6163,6 +6240,28 @@ def main():
         sd = (0.30 * 0.70 / n) ** 0.5 if n else 0.0
         print("  binomial sd at the frozen 0.30 bar: %.4f  (n=12 → 0.1323 · one item = %.4f)"
               % (sd, 1.0 / n if n else 0.0))
+        if exposure is not None:
+            print("  atom exposure (boundary-counted · %d corpus file(s)):" % len(opts["corpus"]))
+            print("    OPERAND axis  readable %d/%d  (absent %d — those measure atom absence,"
+                  % (exposure["readable"], exposure["n"], exposure["operand_absent"]))
+            print("                  NOT composition failure, and must be dropped or the corpus fixed)")
+            print("    CARRIER axis  unseen frames %d  (an untrained carrier is an OOD basin,"
+                  % exposure["carrier_absent"])
+            print("                  not a clean probe · corpus-py-1 (12))")
+            print("    TARGET-WORD absent %d  ⚠️ this counts the target WORD, not the composed"
+                  % exposure["target_absent"])
+            print("                  FACT. A target word occurring is normal and says nothing about")
+            print("                  whether the cue→target association is held out — that check is")
+            print("                  NOT implemented here. Reported so it is not mistaken for one.")
+            print("    (one --corpus flag per file; extra bare paths are ignored)")
+            for c in exposure["operand_absent_examples"]:
+                print("      operand-absent · " + c)
+            for c in exposure["carrier_absent_examples"]:
+                print("      carrier-absent · " + c)
+        else:
+            print("  ⚠️ atom exposure NOT audited — pass --corpus <path>... to check that each")
+            print("     item's atoms occur in the training corpus (an item whose atoms are absent")
+            print("     measures atom absence, not composition · corpus-py-1 (F)).")
         print("  regen: " + regen)
         sys.exit(0)
 
