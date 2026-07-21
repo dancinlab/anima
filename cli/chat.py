@@ -471,6 +471,21 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     backend = gen_auto_backend(ckpt)
     _pln("L3 mount        : mouth=" + gen_mouth_kind(ckpt)
          + " loaded=" + _ts(backend["loaded"]) + "  ckpt=" + ckpt)
+    if not backend["loaded"]:
+        # A daemon with no mouth still RUNS: generate() falls through to a synthetic
+        # "[null-gen] phase=... motiv=..." template whose only moving parts are two numbers.
+        # Every store probe over that template degenerates, so emit rate, gate margins,
+        # self-inhibition and decay ratios all become artifacts of the placeholder rather
+        # than measurements of the substrate. That is a DEFECT for any behavioural reading
+        # and benign ONLY for a plumbing smoke test — so say it loudly, the way a dead GPU
+        # path does (decode.py [GPU-WASTED]), instead of leaving it to the quiet mount line
+        # above. H_9886 lost 21 sessions of measurement to exactly this.
+        print("[MOUTH-NULL] L3 is EMPTY (%s) — the daemon is running with NO model and every "
+              "candidate utterance is the synthetic [null-gen] placeholder. Behavioural "
+              "numbers from this run (emit rate, gate margin, self-inhibition, decay) are "
+              "PLACEHOLDER ARTIFACTS, not measurements — this is a plumbing smoke test. "
+              "Mount a checkpoint:  anima-py chat <ckpt.clm>" % backend["reason"],
+              file=sys.stderr)
 
     # ── REMEMBER (seed) — substrate memory as a .kosmos anchor (single entry) ─
     kdir = "/tmp/anima_kosmos"
