@@ -2498,6 +2498,32 @@ def main():
                          "gates (arms differ · stage multisets identical) across a --sleep-ticks "
                          "sweep, print the realized sequences as JSON and EXIT — no model, no "
                          "corpus, no device. Non-zero exit if the battery does not certify.")
+    # ── H_9843 .kosmos STORE CARRY (the H_9838 supply line · core/kosmos_carry.py) ──────────────
+    # H_9838 builds its CA3 store INSIDE one training run. If the .kosmos anchor store does not
+    # survive between runs, that store can never ACCUMULATE — it is rebuilt from zero every time.
+    # These flags carry a store across runs and CERTIFY the carry before any spend.
+    #
+    # ⚠ NOT an identity lever. `a_kosmos` reads .kosmos as identity persistence; H_9789 measured
+    # the self-anchor VOID. Nothing here reads on identity — this is DATA plumbing only.
+    # ⚠ SEQUENCING: meaningful only AFTER H_9838 is positive. There is no consumer of a carried
+    # store in the loop below today, so a certified carry is an ADMISSIBILITY statement about the
+    # format, never a capability result. Default off ⇒ the golden path is byte-identical.
+    ap.add_argument("--kosmos-carry", type=str, default="",
+                    help="H_9843: DIRECTORY holding the .kosmos anchor store to carry into this "
+                         "run (core/kosmos_io.load_anchors takes a dir_path — a store is a "
+                         "directory of anchors, not one file). Certified before any spend.")
+    ap.add_argument("--kosmos-carry-mode", choices=["ro", "append"], default="ro",
+                    help="H_9843: 'ro' (default) reads the store and touches nothing. 'append' "
+                         "additionally writes ONE run-provenance anchor so the store ACCUMULATES "
+                         "one record per run; pre-existing files are never rewritten (the reader "
+                         "is NOT the writer's inverse — see --kosmos-carry-audit).")
+    ap.add_argument("--kosmos-carry-audit", action="store_true",
+                    help="H_9843: run the carry preflight, print the JSON report and EXIT before "
+                         "any model/CUDA/corpus work ($0, no ckpt). Controls run FIRST (planted "
+                         "pairing must FIRE, structure-free + shuffled pedestals must REFUSE) and "
+                         "the store row is withheld unless both certify.")
+    ap.add_argument("--kosmos-carry-out", type=str, default="",
+                    help="H_9843: also write the carry report JSON here.")
     ap.add_argument("--ddp-find-unused", action="store_true",
                     help="DDP debug/escape-hatch: pass find_unused_parameters=True to DDP. Off "
                          "by default — the current objective set fires every head every step "
@@ -2595,6 +2621,56 @@ def main():
             sys.exit(_rc)
         print("\n  (gate PASS is an ADMISSIBILITY statement only — it does not predict the run "
               "will be green, and it is not a result.)\n")
+
+    # ══ H_9843 — .kosmos STORE CARRY preflight (the H_9838 supply line) ═════════════════════════
+    #
+    # Placed next to the H_9808 gate and for the same reason: before the DDP re-exec, before any
+    # CUDA allocation, before a corpus byte is read. A store that cannot be carried intact makes
+    # every downstream use of it undecidable, and that is knowable at t=0 for $0.
+    #
+    # ORDER IS FROZEN inside core/kosmos_carry.py: ① the shipped controls (a planted key→value
+    # pairing that MUST be retrieved; a structure-free store and a SHUFFLED pairing that MUST NOT
+    # be) ② the format-fidelity diff ③ the carried store's own readout + its shuffle control
+    # ④ the append write, never before the measurement. The geometry sweep is INTERNAL and frozen
+    # (4 (dim, seed) cells, certify-at-all, headline = the minimum) so no CLI knob can move a
+    # verdict — the defect H_9844 self-caught when over_floor flipped sign with the block size.
+    if a.kosmos_carry:
+        import json as _kjson
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
+            os.path.abspath(__file__))), "core"))
+        import kosmos_carry as _kc
+
+        # The fingerprint identifies THIS run (pid + wall clock), so two runs of the same
+        # command append two distinct provenance anchors instead of overwriting one.
+        _fp = "run pid=%d at=%s | argv=%s | store=%s | mode=%s | steps=%s | seed=%s" % (
+            os.getpid(), time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            " ".join(sys.argv[1:]), a.kosmos_carry, a.kosmos_carry_mode, a.steps, a.seed)
+        # Scratch dir for the re-emit diff. Keyed by the STORE (not the pid) so repeated runs
+        # reuse one directory instead of leaving a new one behind every time, and so the
+        # byte-diff behind the fidelity numbers stays inspectable (a_all_paths_no_leak).
+        _scratch = os.path.join(
+            os.environ.get("TMPDIR", "/tmp"),
+            "anima_kosmos_carry_reemit_" + _kc.store_key(a.kosmos_carry))
+        _rep = _kc.carry_preflight(a.kosmos_carry, a.kosmos_carry_mode, _fp, _scratch)
+        print("=" * 78)
+        print("H_9843 — .kosmos STORE CARRY preflight (supply line for H_9838 · NOT identity)")
+        print("=" * 78)
+        print(_kjson.dumps(_rep, ensure_ascii=False, indent=2))
+        if a.kosmos_carry_out:
+            with open(a.kosmos_carry_out, "w", encoding="utf-8") as _f:
+                _f.write(_kjson.dumps(_rep, ensure_ascii=False, indent=2) + "\n")
+        _ok = _rep.get("status") in ("CERTIFIED", "CERTIFIED-COPY-ONLY")
+        print("\nVERDICT: " + str(_rep.get("status")) + " — " + str(_rep.get("why", "")))
+        if not _ok:
+            print("\n  NOT STARTING THIS RUN — an uncertified carry makes every downstream use of "
+                  "this store undecidable.")
+            sys.exit(_kc.REFUSE)
+        # The carried store is certified but has NO consumer in the loop below: H_9838's CA3 lane
+        # is not landed. Say so out loud rather than implying a wire that does not exist.
+        print("  (certified ≠ consumed: no training-loop reader of a carried store exists until "
+              "H_9838 lands. This preflight certifies the FORMAT, not a capability.)")
+        if a.kosmos_carry_audit:
+            sys.exit(_kc.PASS)
 
     # ══ §7 DDP launch: torchrun self-re-exec + worker init + N==1 short-circuit ══
     #   Runs FIRST (before any CUDA allocation). os.execvpe replaces the process, so the
