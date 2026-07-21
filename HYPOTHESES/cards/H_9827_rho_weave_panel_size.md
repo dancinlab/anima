@@ -85,4 +85,4 @@ anima-py evaluate <ckpt.clm> --rho-axon --weave-panel weave.json
 ## Cross-links
 
 [[H_9820]] 임계 DV 취약성 진단(동기) · [[H_9817]] 예산사다리가 이 계기를 요구 ·
-[[H_9327]] ko lane BINDING(패널 절반이 죽은 축인 이유) · [[H_9826]] 같은 캠페인의 G6 코퍼스 census
+[[H_9327]] ko lane BINDING(패널 절반이 죽은 축인 이유) · [[H_9828]] 같은 캠페인의 G6 코퍼스 census
