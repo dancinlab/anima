@@ -1,8 +1,35 @@
 # H_9832 — workspace 의 typed compose/falsify 를 **입의 전방경로**에 넣는다 (R11-3)
 
-**status:** 🧭 PROPOSED (R11 · lab full 발산 · **DIRECTIONAL 설계**, 판정 아님)
+**status:** 🔴 **RETRACTED (2026-07-21 · 등록 당일 · self-caught)** — 이 카드가 딛고 선 부품이
+**프로덕션에 없다**. 죽은 계보 재생성.
 **source:** sol `#3 typed workspace compose/falsify forward lane` (fable 의 data-face 논거가 지지 · NOVEL-to-fable)
 **wired:** no — 미구현.
+
+## ⛔ 철회 사유 (먼저 읽을 것)
+
+`core/cognitive_workspace.py` 는 **origin/main 에 존재하지 않는다.** 커밋
+`6762f11b7 remove(workspace): require model-native G1 G6` 이 workspace 계층 **17개 core 모듈**과
+chat/evaluate/corpus 의 모든 workspace 플래그·전용 테스트·CI·문서를 삭제했다. CHANGELOG 원문:
+
+> "G1/G6 성공을 **모델·엔진 자체 출력에서만** 인정하기 위해 Python 이 통제 문법, typed 후보,
+> 반증 대안, structured renderer/fallback, 증거 ledger 와 proof 를 생성·선택하던 workspace 계층을
+> 제거했다. (…) 이전 0.20.58–0.20.87 의 workspace PASS 기록은 **시스템 orchestration 의 역사일 뿐
+> 모델-native G1/G6 통과로 승계하지 않는다.**"
+
+즉 오너는 **바로 이 각도를 이미 실행하고 죽였다.** 그리고 그 사유는 lab full 의 두 모델이
+독립적으로 경고한 자기반론과 **동일하다** — "바깥의 typed 실행기가 답을 계산했다".
+
+**내 오류 3단:** ① lab full 브리프의 kill-list 에 workspace 제거를 넣지 않았다(census 누락 ·
+`lab-full-killlist-must-sweep-adjacent-dead-lineage` 가 경고한 바로 그 실패) → ② sol 이
+**34 커밋 뒤처진 로컬 체크아웃**의 파일을 읽고 설계했다(stale-branch 함정) → ③ 나는 그 인용을
+검증 없이 카드로 승격했다. 계보 census 는 브리프 작성 시점이지 사후가 아니다.
+
+**살릴 수 있는 잔여물:** typed 2항 join 자체는 H_9830 이 **모델-native 경로**(CLMS store lane)로
+이미 담고 있다. workspace 를 되살리는 각도는 **금지** — 되살리면 G1/G6 통과가 정의상 승계 불가다.
+
+---
+
+## (이하 철회된 원문 — 기록 보존)
 
 ## Question
 
