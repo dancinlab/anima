@@ -1,8 +1,27 @@
 # H_9834 — 접지된 "어느 후보인가" 선택기로 G6 의 신용할당을 친다 (R11-5)
 
-**status:** 🧭 PROPOSED (R11 · lab full 발산 · **DIRECTIONAL 설계**, 판정 아님)
+**status:** 🟠 **BLOCKED-ON-DEAD-DEPENDENCY (2026-07-21 · 등록 당일 · self-caught)** — 학습 보상원이
+삭제된 부품이다. 아래 정정을 먼저 읽을 것.
 **source:** sol `#2 grounded BG "WHICH candidate" selector` — **NOVEL**(fable 은 G6 확률 부여 자체를 거부)
 **wired:** no — 미구현.
+
+## ⛔ 정정 — 보상원이 프로덕션에 없다
+
+원 설계는 `CognitiveWorkspace.test` 의 접지/미반증 보상으로 `VBasalGate` 를 학습시킨다. 그런데
+`core/cognitive_workspace.py` 는 `6762f11b7 remove(workspace): require model-native G1 G6` 에서
+**삭제됐다**(17 core 모듈 일괄 · 사유 = G1/G6 은 모델·엔진 자체 출력에서만 인정 · workspace PASS
+기록은 **승계 불가**). 상세 → H_9832 (RETRACTED).
+
+⟹ **이 카드는 보상 신호를 모델-native 로 갈아끼우기 전엔 발사 불가.** 선택기 골격
+(`--brain-loop bg-select` · K 후보 · oracle_pool_recall 선행 DV · 4 통제)은 유효하나, 보상을
+외부 심볼릭 판정기에서 받으면 **양성이 나와도 G6 통과로 승계되지 않는다** — 삭제 사유가 그것이다.
+모델-native 대체 후보는 `core/rho_fan.py` 의 엔진-네이티브 채점 op 뿐이며, 그것을 학습 보상으로
+쓰는 것은 **게이트 자기표본 재사용**(`burned-gate-no-refreeze-sequential-gating`) 위험이 있어
+별도 설계가 필요하다. 그 설계 없이는 OPEN 이 아니라 BLOCKED.
+
+---
+
+## (이하 원문)
 
 ## Question
 

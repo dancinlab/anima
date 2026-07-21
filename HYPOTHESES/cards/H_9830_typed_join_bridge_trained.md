@@ -14,8 +14,25 @@ dream·KOSMOS)는 학습 루프에 **부재**하고, 유일한 예외가 `--tens
 
 유효 가설은 좁다: **연산자↔선언 런타임 브리지(H_9359 가 지목한 벽의 정체)를 학습 중에도
 런타임과 동일하게 배선**한다. store 조회는 거리 무관 ⟹ RF 독립성 증명(D>RF 인 두 개념은 수학적
-독립)을 구조적으로 무력화한다. 읽기 경로는 이미 in-vivo WIRED(H_9775 pairodd) — **학습으로 그
-다리를 써본 적이 한 번도 없다**는 것이 read-side EARNED TERMINAL 과 겹치지 않는 이유다.
+독립)을 구조적으로 무력화한다. 읽기 경로는 이미 in-vivo WIRED(H_9775 pairodd).
+
+## ⚠️ 자기정정 (2026-07-21 · 등록 당일 · 원장 대조로 self-caught)
+
+등록 시 적었던 **"학습으로 그 다리를 써본 적이 한 번도 없다"** 는 **거짓**이다. `cli/train.py` 는
+이미 CLMS store lane 을 co-train 하는 **13개 노브**를 갖고 있다 — `--store-bridge`(H_9423) ·
+`--store-addr-weight`(H_9672 주소 직접감독) · `--store-query-src fresh`(H_9720 EN-disjoint fresh 질의) ·
+`--store-query-tap-grad`(H_9720 C2 detach 절제) · `--store-ans-delay`(H_9692 RV-2) ·
+`--store-oracle-aux/train/warmup`(H_9691/H_9423) · `--store-fangate`(H_9696 R4) ·
+`--store-val-center`(H_9710 RV-3) · `--clms-*`. **대규모 측정 캠페인이 이미 존재한다.**
+
+**살아남는 진짜 novelty 는 훨씬 좁다 — 두 가지뿐:**
+1. **2항(two-operand) join** — 기존 lane 은 전부 **단일 주소 값읽기**(하나의 부모 → 하나의 값)다.
+   H_9775 pairodd 도 g/b **쌍**이지 두 독립 부모의 **결합**이 아니다.
+2. **거리 D ≫ RF 를 DV 축으로 삼는 스윕** — 기존 노브에 `--store-win`(창 크기)은 있으나
+   **RF 대비 거리를 조작변인으로 사전등록한 측정은 없다**.
+
+⟹ 이 카드는 "다리를 학습시킨다"(이미 함)가 아니라 **"이미 학습되는 다리를 2항 결합에,
+RF 를 넘는 거리에서 쓰게 한다"** 로 좁혀 읽어야 한다. 넓게 읽으면 H_9672/H_9720 재생성이다.
 
 ## Intervention (flag 형태 · 미구현)
 
@@ -75,4 +92,4 @@ seed 다수결(≥2/3) 사전등록 — H_9672 선례(s7 0.99 vs s11 0.50)가 �
 
 하나라도 빠지면 돌파가 아니라 scaffold/data/gate artifact 다.
 
-**related:** H_9359 · H_9775 · H_9720 · H_9672 · H_9304 · H_9827 · H_9831 · H_9833
+**related:** H_9672 · H_9720 · H_9692 · H_9691 · H_9696 · H_9423 · H_9359 · H_9775 · H_9720 · H_9672 · H_9304 · H_9827 · H_9831 · H_9833
