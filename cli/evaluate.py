@@ -2668,6 +2668,66 @@ def store_parity_selftest_run(argv):
     return 0 if ok else 1
 
 
+def _store_adversarial_entries(entries, key_emb, mode, seed):
+    """Refill every entry's NON-TARGET slots from the ckpt's own key geometry (H_9850).
+
+    Shipped manifests draw slots with `rng.sample` (cli/corpus.py `_sb_emit_block`), so a store
+    score measured on one is a score under a FRIENDLY draw: two mutually-confusable entities
+    almost never land in the same 8-slot store. This rebuilds the same entries under a hostile
+    draw so the gap becomes measurable instead of invisible.
+
+    Single moving part: WHICH entities occupy the non-target slots. The target keeps its slot and
+    the polarity vector is copied byte-identical, so the majority-polarity shortcut ceiling and
+    the (op, pol) cell balance are matched between arms.
+
+    mode: nearest   — the highest-cosine keys to the target (hardest block obtainable)
+          nocollide — nearest, minus EXACT key collisions; the difference from `nearest`
+                      attributes the drop to general crowding vs exact collision (`_entity_key`
+                      is a mean over byte rows, so anagrams share one key to fp32 rounding)
+          redraw    — a fresh uniform draw (control for the cost of re-composition alone)"""
+    import numpy as np
+    import clms as _clms
+    pool = sorted({e for it in entries for e in it["store"]["entities"]})
+    if len(pool) < 2:
+        return entries
+    K = np.stack([_clms._entity_key(key_emb, e) for e in pool]).astype(np.float64)
+    Kn = K / (np.linalg.norm(K, axis=1, keepdims=True) + 1e-12)
+    cos = Kn @ Kn.T
+    at = {e: i for i, e in enumerate(pool)}
+    rng = np.random.default_rng(seed)
+    out = []
+    for it in entries:
+        ents = list(it["store"]["entities"])
+        ts = it.get("target_slot")
+        if ts is None or not (0 <= ts < len(ents)):
+            out.append(it)
+            continue
+        tgt = ents[ts]
+        need = len(ents) - 1
+        cand = [p for p in pool if p != tgt]
+        if mode == "nocollide":
+            cand = [p for p in cand if cos[at[tgt], at[p]] < 0.99999]
+        if len(cand) < need:
+            out.append(it)                      # too small a pool to rebuild honestly — leave it
+            continue
+        if mode == "redraw":
+            pick = list(rng.choice(np.array(cand), need, replace=False))
+        else:
+            order = np.argsort(-cos[at[tgt], np.array([at[p] for p in cand])])
+            pick = [cand[j] for j in order[:need]]
+        new = list(ents)
+        k = 0
+        for s in range(len(ents)):
+            if s != ts:
+                new[s] = pick[k]
+                k += 1
+        assert new[ts] == tgt and len(set(new)) == len(new)
+        e2 = dict(it)
+        e2["store"] = {**it["store"], "entities": new}   # pols copied byte-identical
+        out.append(e2)
+    return out
+
+
 def _retr_probe_core(H, K, tr, te, iters=1200, lr=0.05, seed=0):
     """Bridge-FAITHFUL slot-retrieval probe (H_9825 · ported from lab/v2 probe_decode.py:84).
 
@@ -6138,6 +6198,30 @@ def store_run(argv):
     if not W.get("ok"):
         print("ERROR: ckpt not decodable (clm): " + ckpt)
         return 1
+    # H_9850 --store-adversarial: refill each entry's NON-TARGET slots from this ckpt's own
+    # key geometry instead of the manifest's uniform draw. Every shipped manifest draws slots
+    # with rng.sample (cli/corpus.py _sb_emit_block), so every store number to date was taken
+    # under a friendly draw and adversarial placement had never been measured.
+    #   nearest   — the m−1 keys closest to the target (hardest block that could be drawn)
+    #   nocollide — same, minus EXACT key collisions (attributes the drop to crowding vs collision;
+    #               _entity_key is a mean over byte rows, so anagrams share one key exactly)
+    #   redraw    — a fresh uniform draw (control: isolates the cost of re-composition itself)
+    # The target keeps its slot AND the polarity vector is left byte-identical, so the
+    # majority-polarity shortcut ceiling is matched and the only moving part is WHICH entities
+    # occupy the other slots.
+    store_adv = evaluate_strval(argv[1:], "--store-adversarial", "off")
+    if store_adv not in ("off", "nearest", "nocollide", "redraw"):
+        print("ERROR: --store-adversarial must be off|nearest|nocollide|redraw, got %r" % store_adv)
+        return 1
+    if store_adv != "off":
+        if W.get("clms") is None:
+            print("ERROR: --store-adversarial needs a CLMS trailer (key_emb) on the ckpt")
+            return 2
+        entries = _store_adversarial_entries(
+            entries, W["clms"]["key_emb"], store_adv,
+            evaluate_intval(argv[1:], "--store-ctrl-seed", 9423))
+        print("  [--store-adversarial %s] non-target slots refilled from the ckpt's own key "
+              "geometry · target slot + polarity vector untouched" % store_adv)
 
     # H_9724 · --store-component-swap {val,readout,wq,trunk,...} --store-swap-from <other.clm>
     # EVALUATION-ONLY causal surgery (Sol EA-6). H_9672's T3 is address-robust across seeds
@@ -10032,6 +10116,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-addr-audit", "--store-telemetry", "--weave-null", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
     "--store-query", "--store-fuse", "--store-readout",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
+    "--store-adversarial",                                  # H_9850 hostile slot placement
     "--store-retr-probe", "--retr-probe-selftest", "--retr-probe-iters",   # H_9825 retrieval ceiling
     "--retr-probe-center", "--retr-probe-nway",              # H_9825 deconfound · live-lane re-read
     "--store-parity-selftest", "--parity-tol",              # H_9826 torch<->numpy CLMS parity
