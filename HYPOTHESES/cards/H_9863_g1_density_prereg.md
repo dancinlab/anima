@@ -1,6 +1,7 @@
 # H_9863 — G1 밀도 개입 (사전등록 · 발사 전 동결)
 
-**status:** ⛔ **INVALID (선결 ②③) · 표 밖 관측은 🔴 ECHO-KILL** — 사전등록한 통제가
+**status:** 🟡 **PARTIAL (수리 후 · 선결 3/3 통과 · 동결표 최초 적용)** ·
+(이전 팔) ⛔ INVALID · 🔴 ECHO-KILL — 사전등록한 통제가
 정확히 제 일을 했다.
 원 표기 → 🔒 PRE-REGISTERED (선결·판정표 **발사 전** 동결) · 코퍼스 검증 완료
 **wired:** yes — `anima-py corpus weavedrill` ([[H_9862]]) → `train` → `evaluate --rho-axon --rho-axes weave,form --weave-panel wp.json`
@@ -114,3 +115,64 @@ anima-py train --init py303_full.clm --d 3784 --L 4 --e0 3 --emax 3 --no-mitosis
   --corpus mixg1.txt --steps 2000 --seq-len 512 --batch-size 4 --seed 7
 anima-py evaluate <ckpt> --rho-axon --rho-axes weave,form --rho-no-cells --weave-panel wp.json
 ```
+
+
+---
+
+## ✅ 수리 후 재발사 ([[H_9864]] 정답-어휘 분리 적용) — **선결 3/3 통과**
+
+드릴 14.8% · `panel-cue leak 0 · panel-target overlap 0` · CPT 2000 step · val_CE → 1.718 DESCENT.
+
+```
+HILLOCK LIVE
+CARRY   ρ·form   PASS  val=1.0 Δ=1.0 · self-shuffle=0.0     ← 선결 ②③ 통과
+BRANCH  ρ·weave  FAIL  val=0.057 Δ=0.005
+                       atom-swap=0.052 · bind-strip=0.005 · unreachable=0.000
+```
+
+| 선결 (발사 전 동결) | 결과 |
+|---|---|
+| ① `HILLOCK` LIVE | **PASS** |
+| ② `ρ·form` 축 == PASS | **PASS** ← G1 에서 처음 |
+| ③ `self-shuffle ≤ 0.05` | **0.0** PASS |
+
+⟹ **3/3 통과 = 동결표를 적용할 자격이 G1 에서 처음으로 성립.**
+
+### 🟡 판정: PARTIAL
+
+동결표 해당 칸: *reach > 0.0142 ∧ `ρ·weave` FAIL ∧ 통제 3종 ≤ 0.15*
+
+- reach **0.057** > BASE 95% 상한 **0.0142** ✅ (**4.0배**)
+- 통제 3종 0.052 / 0.005 / 0.000 — 전부 0.15 이하 ✅
+- `ρ·weave` PASS 요건 `reach ≥ 0.30` — **미달**
+
+### ⚠️ 그러나 이 PARTIAL 은 얇다 — Δ 가 0.005 다
+
+**정직한 독해**: `atom-swap 0.052` 가 `reach 0.057` 의 **91%** 다.
+[[H_9864]] 의 어휘 분리로 에코가 **줄었지만**(0.094 → 0.052) **사라지지 않았다.**
+조성으로 귀속 가능한 성분은 **Δ = 0.005** 뿐이고, 이는 212 항목에서 **약 1항목**이다.
+
+⟹ 동결표는 PARTIAL 을 가리키지만, 그 안의 신호는 **1항목 수준**이다.
+`ρ·weave` 의 `ratio ≥ 3×worst` 요건(0.057 vs 0.156 필요)에서도 크게 미달한다.
+**"조성이 나타나기 시작했다" 로 읽는 것은 과대주장**이며,
+정확한 진술은 *"에코를 절반으로 줄였고 남은 신호는 1항목 규모"* 다.
+
+### 🔑 두 팔 대조가 알려주는 것
+
+| | 이전 (어휘 중복) | 수리 후 |
+|---|---|---|
+| reach | 0.094 | 0.057 |
+| atom-swap | **0.094** (=reach) | 0.052 (91%) |
+| **Δ** | **0.000** | **0.005** |
+| `ρ·form` | FAIL 0.2 | **PASS 0.0** |
+
+**어휘 중복을 없애자 reach 가 오히려 내려갔다**(0.094 → 0.057). 이전 값의 대부분이
+**에코였음**을 직접 확인해 준다 — [[H_9864]] 의 진단이 실측으로 지지된다.
+그리고 **형식 손상도 사라졌다**(`self-shuffle 0.2 → 0.0`) ⟹ [[H_9856]] 이 G6 에서 본
+*"비율↑ 이 형식을 깬다"* 긴장은 **불가피한 것이 아니라 코퍼스 결함의 부산물**이었다.
+
+### 다음 (이 판정이 지정하는 것)
+
+[[H_9863]] 이 이미 남긴 진단이 유효하다: **담체당 답 분포가 좁아 담체→답 지름길**이 남아 있다.
+다음 개입은 **원자 의존성을 강제**해야 한다 — 같은 담체에 여러 원자쌍을 붙여 답이 원자에 따라
+달라지는 것을 학습시킨다. 2 seed 요건도 그대로다.
