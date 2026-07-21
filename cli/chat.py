@@ -38,7 +38,12 @@ from engine_cli import (engine_cli_parse, engine_cli_resolve_refsel, EngineConfi
 # H_9873 daemon-side coupling constants. NOT tuned here — both come from H_1522's measurement:
 # op=1 (mean-center) is the only Psi-preserving operator, and alpha 0.6 is the frozen bt_alpha the
 # topology battery has always been read at (engine_cli_smoke bt_alpha / evaluate _TOPOWIRE_ALPHA).
-_TOPO_COUPLE_OP = 1        # 0 naive-amplifying (breaks Psi) · 1 mean-center · 2 row-stoch · 3 renorm
+# 0 naive-amplifying (breaks Psi) · 1 mean-center · 2 row-stoch · 3 renorm.
+# Env-overridable on the same footing as the alpha below: H_9880 closed the
+# mean-center lane on a SIGN property, and deciding whether the rest of the
+# family shares it needs the other ops reachable from the daemon, not just
+# from a fixture.
+_TOPO_COUPLE_OP = int(os.environ.get("ANIMA_TOPO_OP", "1"))
 _TOPO_COUPLE_ALPHA = float(os.environ.get("ANIMA_TOPO_ALPHA", "0.6"))
 # 0.6 == engine_cli_smoke bt_alpha == evaluate._TOPOWIRE_ALPHA (the frozen default, unchanged).
 # H_9879 made it readable from the environment because H_9878 excluded alpha BY CALCULATION and
