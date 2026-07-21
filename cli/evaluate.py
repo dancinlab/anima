@@ -2800,6 +2800,72 @@ def _nway_from_ranks(ranks, n_te, m):
     return float(tot / len(ranks))
 
 
+_KEY_FNS = ("mean", "roll", "phase", "bigram")
+
+
+def _key_fn(name, key_emb, entity):
+    """Candidate content-address functions, all built from the SAME frozen per-byte table with
+    ZERO new parameters, so any of them is a drop-in for `_entity_key` (H_9852).
+
+    mean   — production today: `key_emb[ids].mean(0)`. A mean over rows carries no order term,
+             so entities sharing a normalised byte histogram share one key exactly (H_9850).
+    roll   — the same rows, each rotated by its byte POSITION before averaging. Order enters
+             through the rotation; norm scale is preserved; nothing is learned.
+    phase  — position-dependent cosine phase (RoPE-shaped) applied before averaging.
+    bigram — averages adjacent-pair mixes, so consecutive order is carried.
+
+    roll/phase wrap at d_k, so two positions p and p+d_k rotate alike — irrelevant for entity
+    names far shorter than d_k, and stated rather than hidden."""
+    import numpy as np
+    ids = np.frombuffer(entity.encode("ascii"), dtype=np.uint8)
+    ke = np.asarray(key_emb, dtype=np.float64)
+    if len(ids) == 0:
+        return np.zeros(ke.shape[1])
+    if name == "mean":
+        return ke[ids].mean(axis=0)
+    if name == "roll":
+        return np.mean([np.roll(ke[b], i) for i, b in enumerate(ids)], axis=0)
+    if name == "phase":
+        d = ke.shape[1]
+        j = np.arange(d)
+        out = np.zeros(d)
+        for i, b in enumerate(ids):
+            out += ke[b] * np.cos(i / (10000.0 ** (2 * (j // 2) / d)))
+        return out / len(ids)
+    if name == "bigram":
+        if len(ids) < 2:
+            return ke[ids].mean(axis=0)
+        return np.mean([ke[a] + 0.5 * np.roll(ke[b], 1) for a, b in zip(ids[:-1], ids[1:])], axis=0)
+    raise ValueError("_key_fn: unknown key function %r (known: %s)" % (name, ",".join(_KEY_FNS)))
+
+
+def _key_geometry(K, m=8):
+    """Three numbers that decide whether an address function is worth a retrain, computed from the
+    key codebook ALONE — no training, no dump, no forward pass.
+
+      collisions — groups of entities sharing one key (exact address failure; unfixable by any
+                   query, since equal keys give equal attention mass for every q · H_9850)
+      cos        — mean pairwise cosine = how crowded the address space is (near-key crowding is
+                   what actually cost the live lane −0.109 under adversarial placement)
+      gram       — the exact-W m-way retrieval ceiling (H_9825): the best any estimator could do
+                   on this codebook at the lane's own cardinality
+
+    A SCREEN, not a verdict: it says how well-conditioned the address SPACE is, never what a
+    trained lane would score. Swapping the key function changes what training must learn, so only
+    a retrain + `evaluate --store` can settle the lane."""
+    import numpy as np
+    import collections
+    b = collections.defaultdict(int)
+    for r in np.round(K, 6):
+        b[r.tobytes()] += 1
+    coll = sum(1 for v in b.values() if v > 1)
+    Kn = K / (np.linalg.norm(K, axis=1, keepdims=True) + 1e-12)
+    cos = Kn @ Kn.T
+    off = cos[~np.eye(len(K), dtype=bool)]
+    return {"collisions": int(coll), "cos": float(off.mean()),
+            "gram": _gram_nway(K, np.arange(len(K)), m), "n": int(len(K))}
+
+
 def _gram_nway(K, te, m):
     """The EXACT-W reference: with W = R⁺ the ORACLE score matrix reduces to the key Gram K·Kᵀ,
     so m-way accuracy on the key codebook ALONE — no fit, no dump, no seed — upper-bounds what
@@ -2845,6 +2911,65 @@ def _retr_probe_center(H, tr, mode):
     if mode != "train-mean":
         raise ValueError("--retr-probe-center must be 'none' or 'train-mean' (got %r)" % mode)
     return H - H[tr].mean(axis=0, keepdims=True)
+
+
+def key_geometry_screen_run(argv):
+    """`anima-py evaluate <clm> --key-geometry-screen [--key-fns mean,roll,...] [--screen-pool <f>]`
+    — the H_9852 $0 design screen for the content-address function.
+
+    H_9850 proved the shipped address is order-blind and that no query can separate two entities
+    that share a key, so the only fix is a different address function — which costs a retrain.
+    This screens candidates BEFORE that spend, from the key codebook alone: collisions, crowding
+    (mean pairwise cosine) and the exact-W retrieval ceiling, all with zero new parameters since
+    every candidate reuses the ckpt's own frozen per-byte table.
+
+    SCREEN, NOT A VERDICT (a_engine_native_learning): it reports how well-conditioned the address
+    SPACE is. What a trained lane would score is a different question that only a retrain plus
+    `evaluate --store` can answer — swapping the key changes what training has to learn."""
+    import numpy as np
+    ckpt = argv[0]
+    names = [x.strip() for x in
+             (evaluate_strval(argv[1:], "--key-fns", ",".join(_KEY_FNS)) or "").split(",") if x.strip()]
+    bad = [n for n in names if n not in _KEY_FNS]
+    if bad:
+        print("ERROR: unknown --key-fns %s (known: %s)" % (",".join(bad), ",".join(_KEY_FNS)))
+        return 1
+    pool_path = evaluate_strval(argv[1:], "--screen-pool", "")
+    print("=== anima evaluate --key-geometry-screen — H_9852 $0 address-function screen ===")
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt); return 1
+    if W.get("clms") is None:
+        print("ERROR: the screen needs a CLMS trailer (key_emb) on the ckpt"); return 2
+    key_emb = W["clms"]["key_emb"]
+    if pool_path:
+        pool = sorted({w.strip().lower() for w in open(pool_path, encoding="utf-8") if w.strip()})
+    else:
+        man = None
+        for f in ("--store", "--screen-manifest"):
+            p = evaluate_strval(argv[1:], f, "")
+            if p:
+                man = json.load(open(p, encoding="utf-8")); break
+        if man is None:
+            print("ERROR: give --screen-pool <one-entity-per-line> or --store <manifest>"); return 2
+        ent = man.get("entries", man.get("held_out", []))
+        pool = sorted({e for it in ent for e in it["store"]["entities"]})
+    if len(pool) < 8:
+        print("ERROR: pool has %d entities — need >=8 for an 8-way ceiling" % len(pool)); return 2
+    print("  pool=%d entities  ckpt=%s" % (len(pool), ckpt))
+    print("  %-10s %11s %11s %12s" % ("key-fn", "collisions", "mean-cos", "GRAM-8way"))
+    rows = {}
+    for nm in names:
+        K = np.stack([_key_fn(nm, key_emb, e) for e in pool])
+        g = _key_geometry(K, 8)
+        rows[nm] = g
+        print("  %-10s %11d %11.4f %12.4f%s"
+              % (nm, g["collisions"], g["cos"], g["gram"], "   <- shipped" if nm == "mean" else ""))
+    print("  [SCREEN · DIRECTIONAL] lower collisions + lower cos + higher gram = a better-conditioned "
+          "address SPACE. It never says what a trained lane would score (that needs a retrain + "
+          "evaluate --store); it only decides whether that retrain is worth firing.")
+    print(json.dumps({"ckpt": ckpt, "n": len(pool), "rows": rows}, ensure_ascii=False))
+    return 0
 
 
 def store_retr_probe_run(argv):
@@ -10390,6 +10515,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-query", "--store-fuse", "--store-readout",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--store-adversarial",                                  # H_9850 hostile slot placement
+    "--key-geometry-screen", "--key-fns", "--screen-pool", "--screen-manifest",   # H_9852
     "--store-retr-probe", "--retr-probe-selftest", "--retr-probe-iters",   # H_9825 retrieval ceiling
     "--retr-probe-center", "--retr-probe-nway",              # H_9825 deconfound · live-lane re-read
     "--store-parity-selftest", "--parity-tol",              # H_9826 torch<->numpy CLMS parity
@@ -17291,6 +17417,10 @@ def main(argv):
     # retrieval against ORACLE (positive) and NULL (zero-truth) arms. DIRECTIONAL, never cements.
     if "--store-retr-probe" in argv or "--retr-probe-selftest" in argv:
         return store_retr_probe_run(argv)
+    # --key-geometry-screen: H_9852 $0 screen of candidate address functions (collisions ·
+    # crowding · exact-W ceiling) from the key codebook alone, before paying for a retrain.
+    if "--key-geometry-screen" in argv:
+        return key_geometry_screen_run(argv)
     # --store-parity-selftest: H_9826 — the store lane is written twice (torch trainer vs numpy
     # inference mirror) and was synchronised by a comment only. Asserts they agree AND that a
     # resampled tensor is caught, so the guard is known to be able to fail. Needs the [train] extra.
