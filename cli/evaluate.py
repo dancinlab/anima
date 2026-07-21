@@ -7526,6 +7526,15 @@ def store_run(argv):
     ckpt = argv[0]
     man_path = evaluate_strval(argv[1:], "--store", "")
     oracle = "--store-oracle" in argv
+    # H_9888 dual-read controls (pre-registered · compose panels only). collapse forces the second
+    # read onto the FIRST mention (aB:=aA) — a lane that passes with the heads collapsed never used
+    # two addresses. wrong-second swaps the second read onto a mention from a DIFFERENT item, so the
+    # pair summary is built from an unrelated slot. Both must fall to chance for a positive to mean
+    # two-address retrieval rather than extra fusion capacity.
+    dual_ctrl = evaluate_strval(argv[1:], "--store-dual-ctrl", "")
+    if dual_ctrl not in ("", "collapse", "wrong-second"):
+        print("ERROR: --store-dual-ctrl must be 'collapse' or 'wrong-second', got %r" % dual_ctrl)
+        return 1
     if "--store-oracle-pair" in argv:
         # H_9875 pair-oracle: the 2-conjunct analogue of C0-e. Splits "addressing is the wall"
         # from "the answer never became a function of the stored value" on a compose panel.
@@ -7752,6 +7761,26 @@ def store_run(argv):
         pols = list(st["pols"])
         tslot = it.get("target_slot")
         tslot_b = it.get("target_slot_b")     # H_9875 compose-2 panels only (absent elsewhere)
+        # H_9888 mention rows — the window is prompt-aligned (_seed_to_tok left-pads to T), so a
+        # prompt byte p sits on row T - len(prompt) + p. Mirrors StoreBindCell's offset exactly; a
+        # panel without mentions yields None and the dual lane refuses rather than guessing a row.
+        _ma, _mb = it.get("mention_a"), it.get("mention_b")
+        if _ma is None or _mb is None:
+            mrows = None
+        else:
+            _o = T - len(prompt)
+            mrows = (_o + int(_ma), _o + int(_mb))
+            if dual_ctrl == "collapse":
+                mrows = (mrows[0], mrows[0])          # aB := aA — one address, read twice
+            elif dual_ctrl == "wrong-second":
+                # second read lands on the OTHER item's mention offset (same window geometry, wrong
+                # content). Deterministic in idx so the control is reproducible.
+                _alt = entries[(idx + 1) % len(entries)]
+                _am, _ap = _alt.get("mention_b"), _alt.get("prompt", prompt)
+                if _am is not None:
+                    _r = (T - len(_ap)) + int(_am)
+                    if 0 <= _r < T:
+                        mrows = (mrows[0], _r)
         n_slot = len(ents)
         if len(set(ents)) != n_slot:
             dup_entities += 1                         # loud, never silent — derangement fixed-point-leak risk
@@ -7763,10 +7792,10 @@ def store_run(argv):
             ents2 = [ents[perm[i]] for i in range(n_slot)]   # entities-only derange · pols/target_slot fixed
             fixed_points_total += sum(1 for i in range(n_slot) if ents2[i] == ents[i])
             store = {"entities": ents2, "pols": pols, "target_slot": tslot,
-                     "target_slot_b": tslot_b}
+                     "target_slot_b": tslot_b, "mention_rows": mrows}
         elif mode == "flip":
             store = {"entities": ents, "pols": [1 - p for p in pols], "target_slot": tslot,
-                     "target_slot_b": tslot_b}
+                     "target_slot_b": tslot_b, "mention_rows": mrows}
         elif mode == "neutral":
             rng = np.random.default_rng(ctrl_seed * 100003 + idx + 7)
             # length-matched nonce filler (control-must-match-mediating-covariate): CVCVC not in this entry
@@ -7776,13 +7805,13 @@ def store_run(argv):
                         + cons[int(rng.integers(0, 14))] + vow[int(rng.integers(0, 5))]
                         + cons[int(rng.integers(0, 14))])
             store = {"entities": [_nonce() for _ in range(n_slot)], "pols": pols,
-                     "target_slot": tslot, "target_slot_b": tslot_b}
+                     "target_slot": tslot, "target_slot_b": tslot_b, "mention_rows": mrows}
         else:
             store = {"entities": ents, "pols": pols, "target_slot": tslot,
-                     "target_slot_b": tslot_b}
+                     "target_slot_b": tslot_b, "mention_rows": mrows}
         if mode == "flip":
             base = _predict({"entities": ents, "pols": pols, "target_slot": tslot,
-                             "target_slot_b": tslot_b})
+                             "target_slot_b": tslot_b, "mention_rows": mrows})
             flip = _predict(store)
             if base is None or flip is None:
                 continue
@@ -11510,7 +11539,7 @@ _KNOWN_FLAGS = frozenset((
     "--bridge-trace", "--flip0", "--theta",
     "--store-mix", "--store-lambda", "--manifest",
     "--store-component-swap", "--store-swap-from",
-    "--store", "--store-oracle", "--store-oracle-pair",
+    "--store", "--store-oracle", "--store-oracle-pair", "--store-dual-ctrl",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
     "--store-addr-audit", "--store-telemetry", "--weave-null", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
     "--store-query", "--store-fuse", "--store-readout",

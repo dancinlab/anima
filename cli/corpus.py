@@ -3013,10 +3013,16 @@ def _sb_emit_block(rng, entities, store_slots, balanced=False):
         op_s = "is" if op == 0 else "not"
         prompt = "%s %s => " % (op_s, entity)          # query pos = last prompt byte (bridge query)
         lines.append(prompt + _SB_ANSWER[ans])
+        # H_9888 mention taps — a 1-slot line is the A=B case of a composed line: both reads land on
+        # the same mention, so vA=vB and the pair summary degenerates to [2v ; 0]. Emitting them here
+        # is what lets the SAME lane carry the 1-slot control (without it the dual lane could only
+        # ever be scored on composed panels, and its precondition gate would be unmeasurable).
+        _end = len(op_s) + 1 + len(entity) - 1
         # row schema = the CLMS-lane INPUT contract (core/clms.py store_apply + evaluate --store):
         #   store = the 8-slot {entities, pols} injected at the query · target_slot = the queried slot
         #   (oracle one-hot) · gold = answer byte · op kept for the polarity/operator class split.
         rows.append({"prompt": prompt, "gold": _SB_ANSWER[ans], "entity": entity,
+                     "mention_a": _end, "mention_b": _end,
                      "store": {"entities": list(names), "pols": list(pols)},
                      "target_slot": slot, "op": op})
     return lines, rows
@@ -3080,6 +3086,11 @@ def _sb_emit_compose_block(rng, entities, store_slots, drop_b=False, drop_a=Fals
         op_s = "is" if op == 0 else "not"
         prompt = "%s %s and %s => " % (op_s, names[a], names[b])
         lines.append(prompt + _SB_ANSWER[ans])
+        # H_9888 mention taps: byte index (into the prompt) of the LAST byte of each named entity.
+        # A dual-read lane queries the trunk state AT the mention rather than at the answer position,
+        # so it needs to know where each mention ends; the reader turns these into window rows.
+        end_a = len(op_s) + 1 + len(names[a]) - 1
+        end_b = end_a + len(" and ") + len(names[b])
         ents = list(names)
         if drop_b:
             ents[b] = _SB_COMPOSE_FILLER               # B's fact removed; prompt/gold untouched
@@ -3087,6 +3098,7 @@ def _sb_emit_compose_block(rng, entities, store_slots, drop_b=False, drop_a=Fals
             ents[a] = _SB_COMPOSE_FILLER               # A's fact removed; prompt/gold untouched
         rows.append({"prompt": prompt, "gold": _SB_ANSWER[ans], "entity": names[a],
                      "entity_b": names[b],
+                     "mention_a": end_a, "mention_b": end_b,
                      "store": {"entities": ents, "pols": list(pols)},
                      "target_slot": a, "target_slot_b": b, "op": op,
                      "compose": 2, "xor": pols[a] ^ pols[b]})
