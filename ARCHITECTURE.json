@@ -5829,6 +5829,10 @@
                   {
                     "name": "in-vivo 4팔 — 하락의 범인은 충돌이 아니라 근접-키 혼잡",
                     "detail": "evaluate --store · store303_s2000.clm · pols 바이트 동일 유지(다수결 지름길 통제 일치) · 단일변수=비정답 슬롯. 원본 0.9688 · 재추출통제 0.9609(재구성 무해) · 적대 0.8594(-0.109) · 적대-충돌제외 0.8672(회복 7%뿐) ⟹ 혼잡이 범인. lane 은 붕괴 안 함(0.8594 >> 우연 0.5)."
+                  },
+                  {
+                    "name": "🔩 계기 승격 — --store-adversarial (수제 매니페스트 폐기)",
+                    "detail": "anima-py evaluate <clm> --store <m> --store-adversarial {off|nearest|nocollide|redraw} 가 ckpt 자신의 키로 비-정답 슬롯만 런타임 재구성. 검증: 손수제와 128/128 동일 · nearest 가 0.8594 정확 재현 · 잘못된 값 3종 rc=1 거부 · 부재시 off 로 기존 경로 불변. 재추출 통제 2 seed 0.9609/0.9453 ⟹ 균등 재구성 -0.008~-0.024 vs 적대 -0.109."
                   }
                 ]
               },
