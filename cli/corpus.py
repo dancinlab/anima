@@ -416,7 +416,51 @@ _FD_CARRIERS_ABL = [
 ]
 
 
-def build_falsidrill(n_lines, seed, ablate):
+def falsidrill_mine_vocab(corpus_paths, n_want, held_out, banned):
+    """H_9857 — mine drill nouns FROM the training corpus instead of a 40-word hand list.
+
+    H_9856 falsified the carrier explanation for the rho·form damage (carriers 3 -> 12 left
+    self-shuffle at 0.40). The remaining lead is vocabulary breadth: ~40 nouns repeated over
+    24,000 lines pushes the output onto a handful of short common words, and a byte-shuffle of a
+    short common word lands on another dictionary word often enough to lift the self-shuffle
+    control. Mining from the corpus fixes breadth AND keeps every drill word in-distribution.
+
+    Word-boundary tokenized, dictionary-checked, and filtered against the held-out eval concepts
+    and the detector's own comparator/measurable sets (a drill noun that IS a detector word would
+    make the ablation arm leak).
+    """
+    import re as _re
+    from rho_fan import _rho_fan_dict_load, _rho_fan_stopwords
+    known = _rho_fan_dict_load()
+    stop = _rho_fan_stopwords()
+    freq = {}
+    for cp in corpus_paths:
+        with open(cp, "rb") as fh:
+            text = fh.read().decode("utf-8", "replace").lower()
+        # NOUNS ONLY. Plain frequency ranking pulled in `most`/`very`/`following` and produced
+        # ungrammatical drill lines ("when very increases", "the ratio of alchemical") — the same
+        # broken-English failure that would trade falsifiability for fluency. `the X of` is a
+        # strong, cheap noun frame: the slot after a determiner and before `of` is a noun in
+        # essentially every English sentence that matches.
+        for w in _re.findall(r"\bthe ([a-z]{4,}) of\b", text):
+            if w in known and w not in stop and w not in held_out and w not in banned:
+                freq[w] = freq.get(w, 0) + 1
+    # drop PLURALS — the carriers put the noun in a singular-verb slot ("sides causes ..."), so a
+    # plural silently injects an agreement error into every line it appears in. A word is treated
+    # as a plural only when stripping the `s` leaves another dictionary word, which keeps
+    # `analysis`/`process` (no `analysi`/`proces`) while removing `sides`/`rules`.
+    ranked = sorted(freq.items(), key=lambda kv: (-kv[1], kv[0]))
+    out = []
+    for w, _ in ranked:
+        if w.endswith("s") and len(w) >= 4 and w[:-1] in known:
+            continue
+        out.append(w)
+        if len(out) >= n_want:
+            break
+    return out
+
+
+def build_falsidrill(n_lines, seed, ablate, vocab=None):
     """H_9837 — EN drill corpus dense in falsifiable claims (or its matched-surface ablation).
 
     Returns (text, audit). The audit is BLOCKING: it re-runs the production detector over every
@@ -428,6 +472,8 @@ def build_falsidrill(n_lines, seed, ablate):
     _s.path.insert(0, __file__.rsplit("/", 2)[0] + "/core")
     from rho_fan import _rho_fan_is_falsifiable, _rho_fan_dict_load, _rho_fan_words
 
+    subj_pool = vocab if vocab else _FD_SUBJ
+    obj_pool = vocab if vocab else _FD_OBJ
     comp_vi = _FD_COMP_VI_ABL if ablate else _FD_COMP_VI
     comp_vt = _FD_COMP_VT_ABL if ablate else _FD_COMP_VT
     comp_a = _FD_COMP_A_ABL if ablate else _FD_COMP_A
@@ -435,11 +481,11 @@ def build_falsidrill(n_lines, seed, ablate):
     rnd = _wp_rand(seed)
     lines = []
     for i in range(n_lines):
-        subj = _FD_SUBJ[rnd(len(_FD_SUBJ))]
-        alt = _FD_SUBJ[rnd(len(_FD_SUBJ))]
+        subj = subj_pool[rnd(len(subj_pool))]
+        alt = subj_pool[rnd(len(subj_pool))]
         while alt == subj:
-            alt = _FD_SUBJ[rnd(len(_FD_SUBJ))]
-        o = _FD_OBJ[rnd(len(_FD_OBJ))]
+            alt = subj_pool[rnd(len(subj_pool))]
+        o = obj_pool[rnd(len(obj_pool))]
         cvi = comp_vi[rnd(len(comp_vi))]
         cvt = comp_vt[rnd(len(comp_vt))]
         ca = comp_a[rnd(len(comp_a))]
@@ -454,7 +500,7 @@ def build_falsidrill(n_lines, seed, ablate):
     hits = sum(1 for l in lines if _rho_fan_is_falsifiable(l, known))
     leaked = sorted({w for l in lines for w in _rho_fan_words(l) if w in _FD_HELD_OUT})
     carriers = len(_FD_CARRIERS_ABL if ablate else _FD_CARRIERS)
-    audit = {"n_lines": len(lines), "falsifiable": hits,
+    audit = {"n_lines": len(lines), "falsifiable": hits, "vocab": len(subj_pool),
              "falsifiable_rate": (hits / len(lines)) if lines else 0.0,
              "arm": ("ablation" if ablate else "real"), "carriers": carriers,
              "held_out_leak": leaked, "violations": []}
@@ -907,7 +953,7 @@ def _parse_args(argv):
             #   --weave-max N            0 = no cap
             "weave_families": "", "weave_max": 0,
             # H_9837 falsidrill: --falsi-ablate = the matched-surface structure-off arm
-            "falsi_ablate": False,
+            "falsi_ablate": False, "falsi_vocab_n": 400,
             # H_9839 dreamgen: --dream-target = the dream node's COMPOSITION LAW (the DV) ·
             #   --dream-nights = the number of nights = mi-screen segments (a POWER knob only:
             #   it moves the pair count, never the block geometry, which is a frozen constant).
@@ -1072,6 +1118,8 @@ def _parse_args(argv):
             opts["weave_max"] = int(argv[i + 1]); i += 2            # H_9825 weavepanel cap
         elif a == "--falsi-ablate":
             opts["falsi_ablate"] = True; i += 1                     # H_9837 structure-off arm
+        elif a == "--falsi-vocab-n":
+            opts["falsi_vocab_n"] = int(argv[i + 1]); i += 2        # H_9857 mined vocab size
         elif a == "--wake-buffer-cap":
             opts["wake_caps"].append(int(argv[i + 1])); i += 2       # H_9842 repeatable cap sweep
         elif a == "--replay-source":
@@ -6728,7 +6776,21 @@ def main():
         if not opts["out"]:
             print("anima-py corpus falsidrill: --out c.txt is required", file=sys.stderr)
             sys.exit(2)
-        text, audit = build_falsidrill(opts["n_blocks"], opts["seed"], opts.get("falsi_ablate", False))
+        vocab = None
+        if opts["corpus"]:
+            # H_9857 — mine the drill nouns from the training corpus itself: breadth (the live
+            # lead for the rho·form damage) plus in-distribution guarantee, in one move.
+            banned = set(_FD_COMP_VI) | set(_FD_COMP_VT) | set(_FD_COMP_A) | set(_FD_MEAS) \
+                | set(_FD_COMP_VI_ABL) | set(_FD_COMP_VT_ABL) | set(_FD_COMP_A_ABL) \
+                | set(_FD_MEAS_ABL) | set(_FD_DIR)
+            vocab = falsidrill_mine_vocab(opts["corpus"], opts.get("falsi_vocab_n", 400),
+                                          _FD_HELD_OUT, banned)
+            if len(vocab) < 50:
+                print("anima-py corpus falsidrill: mined only %d words — too narrow to fix the "
+                      "breadth lead; give a bigger --corpus" % len(vocab), file=sys.stderr)
+                sys.exit(2)
+        text, audit = build_falsidrill(opts["n_blocks"], opts["seed"],
+                                       opts.get("falsi_ablate", False), vocab=vocab)
         regen = "anima-py corpus " + " ".join(argv)
         if audit["violations"]:
             print("anima-py corpus falsidrill: CORPUS INVALID — %d violation(s):"
@@ -6741,9 +6803,9 @@ def main():
         with open(opts["out"] + ".audit.json", "w") as fh:
             json.dump({"audit": audit, "regen": regen, "seed": opts["seed"]}, fh, indent=1)
         print("anima-py corpus falsidrill → %s  (arm=%s)" % (opts["out"], audit["arm"]))
-        print("  lines %d · falsifiable %d (%.4f) · carriers %d · held-out leak %d"
+        print("  lines %d · falsifiable %d (%.4f) · carriers %d · vocab %d · held-out leak %d"
               % (audit["n_lines"], audit["falsifiable"], audit["falsifiable_rate"],
-                 audit["carriers"], len(audit["held_out_leak"])))
+                 audit["carriers"], audit.get("vocab", 0), len(audit["held_out_leak"])))
         print("  every eval-concept word is held out — the claim is measured at exposure 0 on its")
         print("  own axis (convergence corpus-py-1 (F)); the ablation arm is the structure-off control.")
         print("  regen: " + regen)
