@@ -1275,7 +1275,7 @@ def evaluate_usage():
     print("      silently loses its leading bytes and measures a different prompt).")
     print("  anima evaluate <ckpt> --xfan <manifest.json> --out <file.json> [--arm main|ctrl] [--n-sampled 16]")
     print("      (held-out XFAN one-to-many fan coverage C · G6 reopen lane · card H_9271)")
-    print("  anima evaluate --earned <corpus.tsv> [--out <f.json>] [--min-occ 100] [--k-perm 1000] [--seeds a,b,c] [--null parametric|shuffle] [--kernel r0|r1]")
+    print("  anima evaluate --earned <corpus.tsv> [--out <f.json>] [--min-occ 100] [--k-perm 1000] [--seeds a,b,c] [--null parametric|real|shuffle] [--kernel r0|r1]")
     print("      (corpus-level operator instrument — does a natural corpus CONTAIN non-additive")
     print("       information that TRANSFERS to a held-out cell? no model, no training. TSV rows =")
     print("       text<TAB>B<TAB>T, where T is a label OUTSIDE the token stream — else the measure is")
