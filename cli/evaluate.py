@@ -3791,6 +3791,326 @@ def salience_toggle_read_run(argv):
             json.dumps(rep, ensure_ascii=False, indent=2))
         print("  wrote %s" % out_path)
     return 0 if real_bars["green"] else 3
+# ── H_1521 TOPOLOGY LIVE-WIRING — REAL-INPUT RE-READ (--topowire-real) ──────────────────────
+# H_1521 landed 🟠 MIXED: the gated cross-lane coupling is WIRED on the live emit path
+# (default-OFF byte-identical), P4 said "optimal > brain > flat" on a functional integration
+# readout, and P3 said the coupling DESTABILIZES Ψ=½. EVERY one of those numbers was produced
+# over `_topo_lane_pop()` — a synthetic in-engine LCG (seed 5120, n=150) whose 11 substrate
+# drivers are drawn INDEPENDENTLY. That independence is exactly the "planted codes are
+# effectively orthogonal" geometry the H_9854 ledger audit identified as the thing real
+# representations do not have (real reps are near-collinear).
+#
+# THE SWAP (input source ONLY — arms, controls, bars, thresholds, alpha, n, seed policy all
+# UNCHANGED): the 11 per-trial substrate drivers stop coming from the LCG and start coming
+# from a REAL 303M penultimate pooled representation (core/decode.clm_penult_pooled_W, the
+# canonical rep API) of a REAL corpus line. To keep the swap surgical, each driver channel is
+# RANK-transformed across the realized population, so its MARGINAL is exactly the uniform the
+# LCG produced; the ONLY thing that changes is the JOINT DEPENDENCE — i.e. precisely the
+# orthogonality assumption under audit. Then the identical affine range maps of
+# `_topo_lane_pop` feed the identical live `ci_lane_scores`.
+#
+# FROZEN ORDER (controls first — if a control fails on real input, that IS the finding and the
+# treatment numbers are REFUSED, never re-tuned):
+#   ① SYNTHETIC arm re-run (zero-regression against the card: P1 0.0 · P2 1.222 ·
+#      Ψ 0.5/0.5/1.0/1.0 · func 0.140/0.238/0.248)
+#   ② REAL controls: case 370 (OFF byte-identical, L2==0) · case 372 (centered Ψ_OFF == 0.5,
+#      the median-split calibration) · case 373 (FLAT adjacency = I+α·0 = the zero-truth
+#      no-op pedestal ⇒ Ψ_flat == Ψ_OFF)
+#   ③ only then the treatment: case 371 (P2 coupling-is-live) · case 374 (P3 crux) ·
+#      case 375/376 (P4 functional ordering / well-formedness)
+# Every operator called here is the SHIPPED live one from core/engine_cli.py (the py twin of
+# core/engine_cli.hexa § BrainTopology LIVE-WIRING): ci_lane_scores · ci_lane_scores_coupled ·
+# ci_lane_vector_l2_diff · ci_off_median_drive · ci_psi_balance_centered · topo_brain_adjacency
+# · topo_optimal_adjacency · _topo_zeros · topo_func_integration(_flat). Nothing is
+# re-implemented beside the engine (a_experiment_engine_native).
+_TOPOWIRE_N = 150          # == _topo_lane_pop's n. FROZEN, not a knob.
+_TOPOWIRE_SEED = 5120      # == _topo_lane_pop's LCG seed. FROZEN.
+_TOPOWIRE_ALPHA = 0.6      # == engine_cli_smoke.hexa bt_alpha. FROZEN.
+# The hand-made single probe state P1/P2 are measured on in the card (engine_cli_smoke.hexa:3583).
+# The synthetic arm uses it VERBATIM so P1/P2 reproduce; the real arm uses trial 0's real state.
+_TOPOWIRE_CARD_PROBE = (0.5, [0.3, 0.4, 0.2, 0.5, 0.1], 3, 2, 1, 0.5, 0.4)
+
+
+def _topowire_lcg(state):
+    """engine_cli_smoke.hexa:4288 `_neuropharm_lcg` — the synthetic arm's generator, verbatim."""
+    return (state * 1103515245 + 12345) & 2147483647
+
+
+def _topowire_state_from_u(u):
+    """REAL arm's substrate state — the affine range maps of `_topo_lane_pop`
+    (engine_cli_smoke.hexa:4321) applied to 11 uniforms.
+
+    The three integer drivers use `floor(u*K)`, the uniform-matched discretisation of the
+    hexa's `st % K` (which reads the LCG's raw low bits and has no analogue outside an LCG).
+    K=8 and K=2 divide 2^31, so those marginals are identical to the hexa's by construction;
+    K=12 does not, so `floor(u*12)` is the exactly-uniform version of a draw the LCG makes
+    non-uniform by 2^31 mod 12. No bar reads these marginals."""
+    m = 0.20 + 0.60 * u[0]
+    field = [0.10 + 0.80 * u[1 + i] for i in range(5)]
+    cells = min(11, int(u[6] * 12.0))
+    seen = min(7, int(u[7] * 8.0))
+    intent = min(1, int(u[8] * 2.0))
+    dt = 0.10 + 1.50 * u[9]
+    recon = 0.05 + 0.90 * u[10]
+    return m, field, cells, seen, intent, dt, recon
+
+
+def _topowire_synth_states(n=_TOPOWIRE_N, seed=_TOPOWIRE_SEED):
+    """SYNTHETIC arm — `_topo_lane_pop` (engine_cli_smoke.hexa:4321) transliterated VERBATIM,
+    including the `st % 12 / % 8 / % 2` raw-state modulos, so the card's numbers reproduce
+    exactly rather than approximately."""
+    st = seed & 2147483647
+    rows = []
+    for _ in range(n):
+        st = _topowire_lcg(st); m = 0.20 + 0.60 * (st / 2147483648.0)
+        field = []
+        for _k in range(5):
+            st = _topowire_lcg(st); field.append(0.10 + 0.80 * (st / 2147483648.0))
+        st = _topowire_lcg(st); cells = st % 12
+        st = _topowire_lcg(st); seen = st % 8
+        st = _topowire_lcg(st); intent = st % 2
+        st = _topowire_lcg(st); dt = 0.10 + 1.50 * (st / 2147483648.0)
+        st = _topowire_lcg(st); recon = 0.05 + 0.90 * (st / 2147483648.0)
+        rows.append((m, field, cells, seen, intent, dt, recon))
+    return rows
+
+
+def _topowire_real_uniforms(pooled, n):
+    """REAL arm — 11 driver channels read off the real penultimate pooled reps, then RANK
+    transformed to uniform.
+
+    Channel k reads coordinate `round(k*(d-1)/10)` of the pooled rep — evenly spaced across the
+    hidden dim, fixed by construction, no search over coordinates. The rank transform
+    u = (rank + 0.5)/n makes every channel's MARGINAL exactly the uniform the LCG produced, so
+    the synthetic and real arms are matched on marginals and differ ONLY in the joint
+    dependence structure between channels — which is the orthogonality assumption under test."""
+    d = len(pooled[0])
+    idx = [int(round(k * (d - 1) / 10.0)) for k in range(11)]
+    cols = []
+    for j in idx:
+        vals = [pooled[t][j] for t in range(n)]
+        order = sorted(range(n), key=lambda t: (vals[t], t))
+        rank = [0] * n
+        for r, t in enumerate(order):
+            rank[t] = r
+        cols.append([(rank[t] + 0.5) / float(n) for t in range(n)])
+    return [[cols[k][t] for k in range(11)] for t in range(n)], idx
+
+
+def _topowire_panel(E, pop, probe_state, alpha):
+    """The seven H_1521 cases over one lane population, with the card's bars untouched.
+
+    `probe_state` is the single substrate state P1/P2 are measured on (the card's hand-made
+    one for the synthetic arm, trial 0's real one for the real arm); `pop` is the population
+    P3/P4 are measured on."""
+    from types import SimpleNamespace
+    off = SimpleNamespace(topo_couple=False)
+    on = SimpleNamespace(topo_couple=True)
+    flat = E._topo_zeros(15)
+    brain = E.topo_brain_adjacency()
+    opt = E.topo_optimal_adjacency()
+    m, field, cells, seen, intent, dt, recon = probe_state
+    raw = E.ci_lane_scores(m, field, cells, seen, intent, dt, recon)
+    offv = E.ci_lane_scores_coupled(m, field, cells, seen, intent, dt, recon, opt, alpha, off)
+    onv = E.ci_lane_scores_coupled(m, field, cells, seen, intent, dt, recon, opt, alpha, on)
+    p1 = E.ci_lane_vector_l2_diff(offv, raw)
+    p2 = E.ci_lane_vector_l2_diff(onv, offv)
+    thr = E.ci_off_median_drive(pop)
+    psi_off = E.ci_psi_balance_centered(pop, opt, alpha, thr, off)
+    psi_flat = E.ci_psi_balance_centered(pop, flat, alpha, thr, on)
+    psi_brain = E.ci_psi_balance_centered(pop, brain, alpha, thr, on)
+    psi_opt = E.ci_psi_balance_centered(pop, opt, alpha, thr, on)
+    dev = abs(psi_opt - 0.5)
+    return {
+        "p1_off_l2": p1, "p2_on_off_l2": p2, "thr": thr,
+        "psi_off": psi_off, "psi_flat": psi_flat, "psi_brain": psi_brain, "psi_opt": psi_opt,
+        "psi_dev": dev, "psi_survives": dev <= 0.05,
+        "f_flat": E.topo_func_integration_flat(pop),
+        "f_brain": E.topo_func_integration(pop, brain, alpha),
+        "f_opt": E.topo_func_integration(pop, opt, alpha),
+        "case_370_off_byte_identical": p1 == 0.0,
+        "case_371_coupling_is_live": p2 > 0.1,
+        "case_372_psi_off_calibrated_half": psi_off == 0.5,
+        "case_373_flat_psi_unchanged": psi_flat == psi_off,
+    }
+
+
+def _topowire_finish(r, E, pop, alpha):
+    r["case_374_psi_destabilized"] = (not r["psi_survives"]) and r["psi_dev"] > 0.05
+    r["case_375_func_ordering"] = r["f_opt"] > r["f_brain"] and r["f_brain"] > r["f_flat"]
+    r["case_376_func_wellformed"] = (r["f_flat"] >= 0.0 and r["f_opt"] <= 1.0
+                                     and r["f_opt"] > 0.0 and r["f_brain"] > 0.0)
+    return r
+
+
+def topowire_real_run(argv):
+    """`anima-py evaluate <ckpt.clm> --topowire-real --corpus <real_text.txt> [--out j.json]`
+
+    H_1521's landed topology-live-wiring panel re-read with the synthetic LCG lane population
+    swapped for one built from REAL 303M penultimate pooled representations. Bars, arms,
+    controls and alpha are the card's; only the input source moves. Controls run FIRST and a
+    control failure REFUSES the treatment numbers (no tune-to-green).
+
+    Without --corpus the run is NOT-POWERED and refuses: the real arm has no carrier text and
+    the instrument will not invent any."""
+    import engine_cli as E
+    import decode as clm
+    ck = [a for a in argv if not a.startswith("--") and a.endswith((".clm", ".bin"))]
+    if not ck:
+        print("evaluate --topowire-real: needs a <ckpt.clm> positional",
+              file=sys.stderr, flush=True)
+        return 2
+    ckpt = ck[0]
+    corpus = evaluate_strval(argv, "--corpus", "")
+    out_path = evaluate_strval(argv, "--out", "")
+    alpha = _TOPOWIRE_ALPHA
+    rep = {"h": "H_1521", "ckpt": ckpt, "corpus": corpus, "alpha": alpha,
+           "n_frozen": _TOPOWIRE_N, "seed_frozen": _TOPOWIRE_SEED}
+    print("[topowire H_1521 · REAL-INPUT RE-READ] ckpt=%s alpha=%.3f n=%d"
+          % (ckpt, alpha, _TOPOWIRE_N))
+
+    # ① SYNTHETIC arm — the card's own path, re-run for zero-regression.
+    sstates = _topowire_synth_states()
+    spop = [E.ci_lane_scores(*s) for s in sstates]
+    syn = _topowire_finish(_topowire_panel(E, spop, _TOPOWIRE_CARD_PROBE, alpha), E, spop, alpha)
+    rep["synthetic"] = syn
+    print("  ① SYNTHETIC (LCG seed %d · the card's population) — ZERO-REGRESSION CHECK"
+          % _TOPOWIRE_SEED)
+    print("     P1 OFF-byte-identical L2=%.6f | P2 ON-vs-OFF L2=%.6f" % (syn["p1_off_l2"], syn["p2_on_off_l2"]))
+    print("     P3 Ψ centered: OFF=%.4f flat=%.4f brain=%.4f optimal=%.4f |Ψ_opt−½|=%.4f survives=%s"
+          % (syn["psi_off"], syn["psi_flat"], syn["psi_brain"], syn["psi_opt"],
+             syn["psi_dev"], syn["psi_survives"]))
+    print("     P4 functional: flat=%.6f brain=%.6f optimal=%.6f (opt>brain>flat=%s)"
+          % (syn["f_flat"], syn["f_brain"], syn["f_opt"], syn["case_375_func_ordering"]))
+
+    if not corpus:
+        print("  ② REAL arm REFUSED — no --corpus carrier file. NOT-POWERED.")
+        rep["status"] = "NOT-POWERED"
+        rep["why"] = "no --corpus real carrier text"
+        if out_path:
+            open(out_path, "w", encoding="utf-8").write(json.dumps(rep, ensure_ascii=False, indent=2))
+        return 3
+
+    # ② REAL arm — carriers are real corpus lines; drivers are real penult-pooled coordinates.
+    lines = []
+    with open(corpus, "r", encoding="utf-8", errors="replace") as fh:
+        for ln in fh:
+            s = ln.strip()
+            if len(s.encode("utf-8", "replace")) >= 24:
+                lines.append(s)
+            if len(lines) >= _TOPOWIRE_N:
+                break
+    n = len(lines)
+    rep["n_realized"] = n
+    print("  ② REAL carriers: %d lines (>=24 bytes) from %s" % (n, corpus))
+    if n < _TOPOWIRE_N:
+        print("     ⇒ ⛔ NOT-POWERED — the real arm needs %d carriers, got %d." % (_TOPOWIRE_N, n))
+        rep["status"] = "NOT-POWERED"
+        rep["why"] = "realized n=%d < frozen n=%d" % (n, _TOPOWIRE_N)
+        if out_path:
+            open(out_path, "w", encoding="utf-8").write(json.dumps(rep, ensure_ascii=False, indent=2))
+        return 3
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("evaluate --topowire-real: %s is not clm-decodable" % ckpt, file=sys.stderr, flush=True)
+        return 2
+    pooled = [clm.clm_penult_pooled_W(W, s) for s in lines]
+    rep["d"] = len(pooled[0])
+    ru, idx = _topowire_real_uniforms(pooled, n)
+    rep["driver_coords"] = idx
+    rstates = [_topowire_state_from_u(u) for u in ru]
+    rpop = [E.ci_lane_scores(*s) for s in rstates]
+    real = _topowire_panel(E, rpop, rstates[0], alpha)
+
+    # REPORTED-ONLY geometry diagnostic — the H_9854 mechanism (planted orthogonal vs real
+    # collinear). Gates nothing; printed so the reader can see WHY a bar moves or does not.
+    import numpy as np
+    P = np.asarray(pooled, dtype=np.float64)
+    Pn = P / (np.linalg.norm(P, axis=1, keepdims=True) + 1e-12)
+    C = Pn @ Pn.T
+    iu = np.triu_indices(n, 1)
+    rep["real_rep_mean_abs_cosine"] = float(np.abs(C[iu]).mean())
+    S = np.asarray(spop, dtype=np.float64)
+    R = np.asarray(rpop, dtype=np.float64)
+
+    def _mean_abs_lane_corr(X):
+        Xc = X - X.mean(axis=0, keepdims=True)
+        sd = Xc.std(axis=0)
+        keep = sd > 1e-6
+        Xc = Xc[:, keep] / sd[keep]
+        M = (Xc.T @ Xc) / X.shape[0]
+        k = M.shape[0]
+        return float(np.abs(M[np.triu_indices(k, 1)]).mean()), int(keep.sum())
+
+    rep["synth_lane_mean_abs_corr"], rep["synth_live_lanes"] = _mean_abs_lane_corr(S)
+    rep["real_lane_mean_abs_corr"], rep["real_live_lanes"] = _mean_abs_lane_corr(R)
+    # What the rank transform REMOVED, stated instead of hidden: the 11 driver coordinates
+    # RAW (their real level/scale, hence the common-mode component that makes pooled reps
+    # near-collinear) vs RANKED (marginals matched to the LCG, only the copula left). If the
+    # two mean |corr| are close, the pooled-rep collinearity was a common-mode offset that the
+    # driver channels never carried into this instrument in the first place.
+    DRV = np.asarray([[pooled[t][j] for j in idx] for t in range(n)], dtype=np.float64)
+    rep["real_driver_raw_mean_abs_corr"], _ = _mean_abs_lane_corr(DRV)
+    rep["real_driver_ranked_mean_abs_corr"], _ = _mean_abs_lane_corr(np.asarray(ru, dtype=np.float64))
+    print("     REPORTED geometry (gates nothing): real pooled-rep mean |cos| = %.4f · "
+          "lane-vector mean |corr| synth=%.4f (%d live lanes) real=%.4f (%d live lanes)"
+          % (rep["real_rep_mean_abs_cosine"], rep["synth_lane_mean_abs_corr"],
+             rep["synth_live_lanes"], rep["real_lane_mean_abs_corr"], rep["real_live_lanes"]))
+    print("     REPORTED driver-channel mean |corr| (11 coords): raw=%.4f ranked=%.4f "
+          "— the gap is exactly what the marginal-matching rank transform removed"
+          % (rep["real_driver_raw_mean_abs_corr"], rep["real_driver_ranked_mean_abs_corr"]))
+
+    print("  ③ REAL CONTROLS FIRST (the card's bars, unchanged)")
+    print("     case 370 OFF byte-identical  L2=%.6f == 0  → %s"
+          % (real["p1_off_l2"], "PASS" if real["case_370_off_byte_identical"] else "FAIL"))
+    print("     case 372 Ψ_OFF calibrated ½  Ψ_off=%.6f == 0.5 → %s"
+          % (real["psi_off"], "PASS" if real["case_372_psi_off_calibrated_half"] else "FAIL"))
+    print("     case 373 FLAT no-op pedestal Ψ_flat=%.6f == Ψ_off → %s"
+          % (real["psi_flat"], "PASS" if real["case_373_flat_psi_unchanged"] else "FAIL"))
+    ctrl_ok = (real["case_370_off_byte_identical"] and real["case_372_psi_off_calibrated_half"]
+               and real["case_373_flat_psi_unchanged"])
+    rep["real"] = real
+    if not ctrl_ok:
+        rep["status"] = "INVALID"
+        rep["why"] = "a frozen control failed on real input — treatment REFUSED"
+        print("  → INVALID — a frozen control failed on REAL input. Treatment numbers REFUSED.")
+        print("    (a rescue would be a PRE-REGISTERED follow-on, not a re-run of this flag)")
+        rep["reaudit"] = {"argv": ["anima-py", "evaluate"] + list(argv)}
+        if out_path:
+            open(out_path, "w", encoding="utf-8").write(json.dumps(rep, ensure_ascii=False, indent=2))
+            print("  wrote %s" % out_path)
+        return 3
+    real = _topowire_finish(real, E, rpop, alpha)
+    rep["real"] = real
+    print("  ④ REAL TREATMENT (controls held)")
+    print("     case 371 P2 coupling-is-live  L2=%.6f > 0.1 → %s"
+          % (real["p2_on_off_l2"], "PASS" if real["case_371_coupling_is_live"] else "FAIL"))
+    print("     case 374 P3 CRUX  Ψ centered: OFF=%.4f flat=%.4f brain=%.4f optimal=%.4f "
+          "|Ψ_opt−½|=%.4f (tol 0.05) survives=%s"
+          % (real["psi_off"], real["psi_flat"], real["psi_brain"], real["psi_opt"],
+             real["psi_dev"], real["psi_survives"]))
+    print("     case 375 P4 ordering  flat=%.6f brain=%.6f optimal=%.6f (opt>brain>flat) → %s"
+          % (real["f_flat"], real["f_brain"], real["f_opt"],
+             "PASS" if real["case_375_func_ordering"] else "FAIL"))
+    print("     case 376 P4 well-formed → %s" % ("PASS" if real["case_376_func_wellformed"] else "FAIL"))
+    transfers = {k: bool(syn[k]) == bool(real[k]) for k in
+                 ("case_370_off_byte_identical", "case_371_coupling_is_live",
+                  "case_372_psi_off_calibrated_half", "case_373_flat_psi_unchanged",
+                  "case_374_psi_destabilized", "case_375_func_ordering",
+                  "case_376_func_wellformed")}
+    rep["transfers"] = transfers
+    n_moved = sum(1 for v in transfers.values() if not v)
+    rep["status"] = "TRANSFERS" if n_moved == 0 else "DOES-NOT-TRANSFER"
+    print("  ⑤ SWAP VERDICT — %d/%d cases land the same way as the card's synthetic arm; %s"
+          % (len(transfers) - n_moved, len(transfers), rep["status"]))
+    for k in sorted(transfers):
+        if not transfers[k]:
+            print("     MOVED: %-38s synthetic=%s → real=%s" % (k, bool(syn[k]), bool(real[k])))
+    rep["reaudit"] = {"argv": ["anima-py", "evaluate"] + list(argv)}
+    if out_path:
+        open(out_path, "w", encoding="utf-8").write(json.dumps(rep, ensure_ascii=False, indent=2))
+        print("  wrote %s" % out_path)
+    return 0
 
 
 def store_addr_census_run(argv):
@@ -10930,6 +11250,9 @@ _KNOWN_FLAGS = frozenset((
     # H_1520 conversational-salience emit gate re-read with the PLANTED FNV-trigram key
     # geometry swapped for the REAL 303M penultimate. ONE flag, no tuning argument.
     "--salience-toggle-read",
+    # H_1521 topology-live-wiring panel re-read over a REAL 303M lane population (the
+    # synthetic-LCG swap). ONE flag, no tuning argument — n/seed/alpha are frozen constants.
+    "--topowire-real",
     "--fan-bind", "--fan-smp",
     "--mouth-binder", "--mouth-binder-order-scramble",
     "--fan-dump",
@@ -17618,6 +17941,12 @@ def main(argv):
     # opens no write path, and default-absent it changes nothing.
     if "--salience-toggle-read" in argv:
         return salience_toggle_read_run(argv)
+    # H_1521 --topowire-real: the landed topology-live-wiring panel re-read with the synthetic
+    # LCG lane population swapped for one built from REAL 303M penultimate pooled reps.
+    # Dispatches on flag PRESENCE (ckpt comes from the positional). ADDITIVE and READ-ONLY —
+    # it moves no frozen bar, opens no write path, and default-absent it changes nothing.
+    if "--topowire-real" in argv:
+        return topowire_real_run(argv)
     # ── H_9808 $0 PRE-REGISTRATION GATES ────────────────────────────────────────────────────
     # Ckpt-FREE, closed-form referees dispatched on the leading flag: they read a spec file and
     # decide ADMISSIBILITY, never a verdict. Exit 3 = REFUSE (abort before spend), 0 = PASS,
