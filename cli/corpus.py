@@ -393,6 +393,13 @@ def _parse_args(argv):
             #   --study-frac 0.05      teacher-content byte share of the replay-mix (small % · rest = base replay)
             #   --scramble-seed 11     the C2 word-shuffle seed (kept separate so C2 is reproducible)
             "transcript": None, "study_frac": 0.05, "scramble_seed": 11,
+            # H_9844 mi-screen (compression-MI corpus screener · core/mi_compress.py H_9806):
+            #   --mi-win / --mi-span   the (tail-context, predicted-prefix) byte geometry
+            #   --mi-estimator         gzip|ppm|markov6|all (all = the shipped 3-estimator battery)
+            #   --mi-eps               decoration guard in bpb — an over-floor lift below this is not read
+            # $0 · no GPU · no ckpt: measures what the STREAM carries across a segment boundary,
+            # never what a model can reach (that conflation is exactly what H_9304 could not split).
+            "mi_win": 0, "mi_span": 0, "mi_estimator": "all", "mi_eps": 0.0, "mi_seg_lines": 0,
             # H_9800 counterfactual-decl (ephemeral-declaration grounding):
             #   --stems-per-episode S   declared stems per episode (>=4, multiple of 4)
             #   --eval-episodes N       eval episodes PER STRATUM (5 strata)
@@ -524,6 +531,16 @@ def _parse_args(argv):
             opts["study_frac"] = float(argv[i + 1]); i += 2
         elif a == "--scramble-seed":
             opts["scramble_seed"] = int(argv[i + 1]); i += 2
+        elif a == "--mi-win":
+            opts["mi_win"] = int(argv[i + 1]); i += 2          # H_9844 mi-screen geometry
+        elif a == "--mi-span":
+            opts["mi_span"] = int(argv[i + 1]); i += 2
+        elif a == "--mi-estimator":
+            opts["mi_estimator"] = argv[i + 1]; i += 2         # gzip|ppm|markov6|all
+        elif a == "--mi-eps":
+            opts["mi_eps"] = float(argv[i + 1]); i += 2
+        elif a == "--mi-seg-lines":
+            opts["mi_seg_lines"] = int(argv[i + 1]); i += 2   # H_9844: line-record segmentation
         elif a == "--arm":
             opts["arm"] = argv[i + 1]; i += 2          # H_9694 g6bind: targeted|shuf
         elif a == "--stems-per-episode":
@@ -4747,6 +4764,143 @@ def run_ngram_audit(opts):
     return res
 
 
+def run_mi_screen(opts):
+    """H_9844 — compression-MI screener over core/mi_compress.py (H_9806).
+
+    WHAT IT ANSWERS, and why no existing flag answers it: every prior read of the
+    data face of the recombination wall (H_9304: non-additive information +0.0023
+    nats, TOST-equivalent to 0) went THROUGH a forward pass, which conflates what
+    the corpus CARRIES with what the model can REACH. `stream_mi` measures the
+    stream itself — gzip / PPM / order-6 Markov conditional bpb of segment t+1's
+    prefix given segment t's tail, against a DERIVED shuffle floor. No ckpt, no
+    GPU, no torch.
+
+    GATE ORDER IS LOAD-BEARING (frozen, sequential):
+      1. `battery_liveness` runs the two SHIPPED controls first —
+         `plant_crossboundary` (a known, quantified cross-boundary signal: the
+         instrument must FIRE) and `plant_null_stream` (byte-for-byte the same
+         construction with the carry-over REMOVED: the instrument must REFUSE).
+      2. Only if both certify is the corpus row reported. An uncertified battery
+         yields INSTRUMENT-DEAD / INVALID and NO corpus number — reading a stream
+         through an estimator that cannot see a planted signal (or manufactures
+         one) is exactly the failure `positive-control-before-reading-a-negative`
+         and `phi-estimator-needs-zero-truth-pedestal` were written for.
+
+    The emitted JSON carries the full re-audit fingerprint (argv, per-input sha256
+    + byte length, resolved geometry) so the verdict is re-checkable by someone who
+    was not in this session (corpus-py-1 ⑫(J)).
+    """
+    import mi_compress as MI                       # core/mi_compress.py (core/ is on sys.path)
+
+    win = opts["mi_win"] or MI.W_TAIL
+    span = opts["mi_span"] or MI.P_PRED
+    eps = opts["mi_eps"] or MI.EPS_BPB
+    want = opts["mi_estimator"]
+    if want == "all":
+        estimators = MI.ESTIMATORS
+    else:
+        estimators = tuple(e for e in MI.ESTIMATORS if e[0] == want)
+        if not estimators:
+            print("mi-screen: unknown --mi-estimator %r (have: %s, all)"
+                  % (want, ", ".join(n for n, _ in MI.ESTIMATORS)))
+            sys.exit(2)
+
+    # ── ① controls FIRST — the corpus row is refused unless both certify ──────
+    battery = MI.battery_liveness(win=win, span=span, eps=eps, estimators=estimators)
+    certified = bool(battery.get("certified"))
+    if not certified:
+        if not battery.get("plant_fires"):
+            status = "INSTRUMENT-DEAD"
+            why = ("plant_crossboundary did NOT fire — the estimator cannot see a signal that is "
+                   "known to be there, so a null read on the corpus would be a property of the "
+                   "estimator, not of the corpus.")
+        else:
+            status = "INVALID"
+            why = ("plant_null_stream did NOT refuse — the estimator reports information on a "
+                   "stream built with the carry-over removed, i.e. it MANUFACTURES signal.")
+    else:
+        status = "CERTIFIED"
+        why = "both shipped controls behaved: plant fires, null refuses."
+
+    rows = []
+    if certified:
+        for path in opts["corpus"]:
+            if opts["mi_seg_lines"]:
+                segments, how = _mi_segments_by_lines(path, opts["mi_seg_lines"], win, span)
+            else:
+                segments, how = MI.segments_from_path(path, win=win, span=span)
+            row = MI.stream_mi(segments, win=win, span=span, eps=eps, estimators=estimators)
+            row["path"] = path
+            row["segmented_as"] = how
+            row["sha256"] = _mi_sha_of(path)
+            rows.append(row)
+
+    out = {
+        "instrument": "mi-screen",
+        "hypothesis": "H_9844",
+        "engine": "core/mi_compress.py (H_9806)",
+        "status": status,
+        "why": why,
+        "battery": battery,
+        "geometry": {"win": win, "span": span, "eps": eps,
+                     "estimators": [n for n, _ in estimators]},
+        "corpus": rows,
+        "reaudit": {"argv": ["anima-py", "corpus"] + sys.argv[1:]},
+        "reading": ("`over_floor` is the headline, never a bare ceiling: it is the estimator's "
+                    "ceiling MINUS its own derived shuffle floor. over_floor <= eps on every "
+                    "estimator = this stream carries no readable cross-boundary information, "
+                    "which is a CORPUS fact and is measured without any model. DIRECTIONAL: a "
+                    "compression estimator is a lower bound on what is there, so a null bounds "
+                    "readability, not existence."),
+    }
+    if opts["out"]:
+        open(opts["out"], "w", encoding="utf-8").write(json.dumps(out, ensure_ascii=False, indent=2))
+    print(json.dumps(out, ensure_ascii=False, indent=2))
+    if not certified:
+        sys.exit(3)
+
+
+def _mi_segments_by_lines(path, per_seg, win, span):
+    """Segment a LINE-RECORD corpus into blocks of `per_seg` consecutive lines.
+
+    WHY THIS EXISTS: `MI.segments_from_path` splits a file on blank lines, but anima's own
+    procedural training corpora have ZERO blank lines (measured: `corpus flat --lang en --seed 7`
+    = 798,570 B / 6,540 lines / 0 occurrences of b"\n\n"). Without this the screener cannot
+    segment the very streams it exists to screen — it would return one unusable segment and
+    report `underpowered`. One line = one training record, so a block of N consecutive lines is
+    the corpus's own unit, not an arbitrary byte cut.
+
+    The `win + span` floor from `segments_from_path` is kept verbatim: short blocks are DROPPED,
+    never padded, and the attrition is reported in the returned `how` string."""
+    with open(path, "rb") as fh:
+        lines = fh.read().split(b"\n")
+    blocks = []
+    for i in range(0, len(lines), per_seg):
+        blob = b"\n".join(lines[i:i + per_seg])
+        if blob.strip():
+            blocks.append(("lines%06d" % i, blob))
+    keep = [(nm, b) for nm, b in blocks if len(b) >= win + span]
+    return keep, ("file:lines/%d → %d blocks · %d/%d usable (>= %dB)"
+                  % (per_seg, len(blocks), len(keep), len(blocks), win + span))
+
+
+def _mi_sha_of(path):
+    """sha256 + byte length of a screener input (a file, or a directory's files in
+    sorted order) so the emitted verdict names exactly what was measured."""
+    h = hashlib.sha256()
+    n = 0
+    if os.path.isdir(path):
+        for name in sorted(os.listdir(path)):
+            fp = os.path.join(path, name)
+            if os.path.isfile(fp):
+                b = open(fp, "rb").read()
+                h.update(name.encode("utf-8")); h.update(b); n += len(b)
+    else:
+        b = open(path, "rb").read()
+        h.update(b); n = len(b)
+    return {"sha256": h.hexdigest(), "bytes": n}
+
+
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
@@ -4763,6 +4917,25 @@ def main():
             print("      panel. Runs BEFORE any training — no checkpoint, $0.")
             sys.exit(2)
         run_ngram_audit(opts)
+        return
+    if fmt == "mi-screen":
+        if not opts["corpus"]:
+            print("anima-py corpus mi-screen --corpus PATH [--corpus PATH2 ...] "
+                  "[--mi-win 4096] [--mi-span 2048] [--mi-estimator gzip|ppm|markov6|all] "
+                  "[--mi-eps 0.02] [--mi-seg-lines N] [--out mi.json]")
+            print("      H_9844 — compression-MI screener over core/mi_compress.py (H_9806).")
+            print("      Measures what the STREAM carries across a segment boundary WITHOUT a")
+            print("      forward pass, so 'the corpus has no joint information' and 'the model")
+            print("      cannot reach it' stop being the same measurement (H_9304 could not")
+            print("      split them). Runs the SHIPPED controls FIRST — plant_crossboundary")
+            print("      (positive) and plant_null_stream (zero-truth pedestal) — and refuses")
+            print("      to report the corpus row unless both certify. $0 · no GPU · no ckpt.")
+            print("      PATH = a directory (one segment per file) or a file (blank-line split).")
+            print("      --mi-seg-lines N segments a LINE-RECORD corpus into N-line blocks —")
+            print("      anima's own procedural corpora carry ZERO blank lines, so without it")
+            print("      the screener cannot segment the streams it exists to screen.")
+            sys.exit(2)
+        run_mi_screen(opts)
         return
     if fmt == "study-replay":
         if not opts["transcript"] or not opts["corpus"] or not opts["out"]:
