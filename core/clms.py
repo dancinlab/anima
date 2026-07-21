@@ -141,7 +141,11 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
         return logits
     if query == "qpos" and not qpos:
         return logits
-    lam = float(clms["lam"]) if lam_override is None else float(lam_override)
+    # numpy 2 refuses float() on a size-1 array, and clms_weights_from_torch emits lam with
+    # shape (1,) while read_clms yields a scalar — accept both (H_9853, caught on a pool host
+    # whose numpy is newer than the dev machine's).
+    lam = (float(np.asarray(clms["lam"]).reshape(-1)[0]) if lam_override is None
+           else float(lam_override))
     if lam == 0.0:
         return logits
     dt = logits.dtype
