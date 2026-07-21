@@ -196,6 +196,80 @@ def _rho_words_en(text):
     return out
 
 
+def build_weavedrill(n_lines, seed):
+    """H_9862 — the G1 counterpart of falsidrill: a corpus that CONTAINS the recombination.
+
+    H_9861 measured rho·weave at 0/212 with every control also 0 — the production model does not
+    compose at all, and the three converging lines (H_9304's +0.0023 nats of non-additive
+    information, H_9267's held-out 1.000 on a SYNTHETIC corpus, and this 0/212) say the cause is
+    the corpus, not the substrate. So the intervention is the same one that worked for G6: put the
+    structure in the data.
+
+    HELD-OUT BY CONSTRUCTION: the eval panel draws its operands from one grid and this drill draws
+    from a DISJOINT one, so every panel item is 0-exposure on its own pair. What the drill teaches
+    is the OPERATION; whether that transfers to unseen pairs is exactly the composition question
+    (convergence corpus-py-1 (F): the claim is measured only where exposure is zero).
+    """
+    rnd = _wp_rand(seed)
+    lines = []
+    # eval panel grids: arith-add i,j in 2..10 · arith-mul i,j in 2..5 · the fixed color/direction
+    # triples. The drill uses the COMPLEMENT of each, so no panel pair is ever demonstrated.
+    add_pairs = [(i, j) for i in range(11, 21) for j in range(11, 21) if i + j <= 40]
+    mul_pairs = [(i, j) for i in range(6, 11) for j in range(2, 5) if i * j <= 40]
+    mix_drill = [("green", "red", "brown"), ("yellow", "black", "olive"),
+                 ("white", "blue", "sky"), ("orange", "blue", "brown")]
+    dir_drill = [("east", "north", "northeast"), ("west", "south", "southwest")]
+    fams = []
+    if add_pairs:
+        fams.append("add")
+    if mul_pairs:
+        fams.append("mul")
+    fams += ["mix", "dir"]
+    for _ in range(n_lines):
+        f = fams[rnd(len(fams))]
+        car = _WP_CARRIERS[{"add": "arith-add", "mul": "arith-mul",
+                            "mix": "color-mix", "dir": "direction"}[f]]
+        comp_t, _bind_t = car[rnd(len(car))]
+        if f == "add":
+            i, j = add_pairs[rnd(len(add_pairs))]
+            cue = comp_t.format(a=_wd_num(i), b=_wd_num(j)); tgt = _wd_num(i + j)
+        elif f == "mul":
+            i, j = mul_pairs[rnd(len(mul_pairs))]
+            cue = comp_t.format(a=_wd_num(i), b=_wd_num(j)); tgt = _wd_num(i * j)
+        elif f == "mix":
+            a, b, t = mix_drill[rnd(len(mix_drill))]
+            cue = comp_t.format(a=a, b=b); tgt = t
+        else:
+            a, b, t = dir_drill[rnd(len(dir_drill))]
+            cue = comp_t.format(a=a, b=b); tgt = t
+        lines.append(cue + " " + tgt + " .")
+    text = "\n".join(lines) + "\n"
+
+    # BLOCKING audit: not one panel operand pair may appear in the drill, or the eval stops being
+    # held-out and becomes retrieval.
+    panel_items, _ = build_weavepanel("", 0, seed)
+    panel_cues = {it["cue"] for it in panel_items}
+    leak = [l for l in lines if any(c in l for c in panel_cues)]
+    audit = {"n_lines": len(lines), "families": fams, "panel_cue_leak": len(leak),
+             "violations": []}
+    if leak:
+        audit["violations"].append(
+            "%d drill line(s) reproduce a PANEL cue verbatim — the eval would become retrieval"
+            % len(leak))
+    return text, audit
+
+
+def _wd_num(k):
+    """number word for the drill grid (panel words plus the 11..40 range it never uses)."""
+    tens = {20: "twenty", 30: "thirty", 40: "forty"}
+    if k <= 20:
+        return _WP_NUM[k]
+    if k in tens:
+        return tens[k]
+    base = (k // 10) * 10
+    return tens[base] + "-" + _WP_NUM[k % 10]
+
+
 def build_weavepanel(families, max_items, seed):
     """H_9825 — parametric held-out recombination panel (the ρ·weave n=12 instrument fix).
 
@@ -6482,7 +6556,7 @@ def main():
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
                    "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "consult-variants",
                    "routeaudit", "atoms", "c34", "storebind", "g6bind", "counterfactual-decl",
-                   "bindpanel", "weavepanel", "falsidrill", "dreamgen"):
+                   "bindpanel", "weavepanel", "falsidrill", "weavedrill", "dreamgen"):
         print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind|counterfactual-decl|bindpanel|weavepanel|dreamgen|ngram-audit> --out PATH")
         print("      dreamgen --lang en --out c.txt --dream-target "
               "{planted|pedestal|midpoint|rule-derived|shuffled} [--dream-nights 24] [--seed 7]"
@@ -7001,6 +7075,31 @@ def main():
         print("    multiset sha (identical marginals, pairing destroyed); midpoint and")
         print("    rule-derived must share the geometry-field sha (identical coord/t5/r — only")
         print("    the text= payload, i.e. the composition LAW, differs).")
+        print("  regen: " + regen)
+        sys.exit(0)
+
+    if fmt == "weavedrill":
+        # H_9862 — the drill corpus whose operand grid is DISJOINT from the eval panel's.
+        if not opts["out"]:
+            print("anima-py corpus weavedrill: --out c.txt is required", file=sys.stderr)
+            sys.exit(2)
+        text, audit = build_weavedrill(opts["n_blocks"], opts["seed"])
+        regen = "anima-py corpus " + " ".join(argv)
+        if audit["violations"]:
+            print("anima-py corpus weavedrill: CORPUS INVALID — %d violation(s):"
+                  % len(audit["violations"]), file=sys.stderr)
+            for v in audit["violations"]:
+                print("  · " + v, file=sys.stderr)
+            sys.exit(2)
+        with open(opts["out"], "w") as fh:
+            fh.write(text)
+        with open(opts["out"] + ".audit.json", "w") as fh:
+            json.dump({"audit": audit, "regen": regen, "seed": opts["seed"]}, fh, indent=1)
+        print("anima-py corpus weavedrill → %s" % opts["out"])
+        print("  lines %d · families %s · panel-cue leak %d"
+              % (audit["n_lines"], ",".join(audit["families"]), audit["panel_cue_leak"]))
+        print("  operand grids are DISJOINT from the eval panel's, so every panel item stays")
+        print("  0-exposure on its own pair — the drill teaches the OPERATION, not the answers.")
         print("  regen: " + regen)
         sys.exit(0)
 
