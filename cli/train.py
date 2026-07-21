@@ -205,6 +205,47 @@ def inhibition_to_dropout(inh: float) -> float:
     return max(0.0, min(0.5, inh))
 
 
+def _install_mps_dropout_shim() -> None:
+    """Work around an Apple-MPS upstream bug: torch's MPS backend compiles and
+    PERMANENTLY caches a new MPSGraph per DISTINCT scalar value fed to a value-keyed
+    op. F.dropout(x, p) on MPS lowers to bernoulli_ -> at::full({}, 1-p) ->
+    fill_scalar_mps_impl (ConstantOps.mm), whose cache key bakes in to_string(1-p).
+    The SAVANT schedule feeds a NEW continuous dropout p every step (`m.p = dp`, below),
+    so the cache grows without bound: measured ~0.72 MB/step + ~7x slowdown (isolated
+    microbench), matching the observed 45 GB / 61 k-step swap-death of a d=64 L=2 toy.
+    torch.mps.empty_cache() frees the allocator, NOT the graph cache, so it cannot even
+    mask the symptom. wd/lr scalars are runtime-fed (BinaryOps) and DO NOT leak.
+
+    Fix (root cause, at the layer we own): never feed the varying p to a VALUE-KEYED op.
+    Build the mask from `torch.rand_like(x) < keep` and rescale by `/ keep` — the uniform
+    draw carries no scalar in its graph key, and the compare and divide are BinaryOps
+    whose scalar operand is runtime-fed (the same reason wd/lr never leaked), so NO
+    fill_scalar and NO per-p graph is ever cached (measured flat ~208 MB, full speed while
+    p varies every step). The inverted-dropout mask x*[U<keep]/keep is distributionally
+    identical to F.dropout. Fresh tensors each call ⇒ no persistent scalar to mutate ⇒ no
+    autograd version-counter hazard even across the model's several dropout layers.
+
+    Device-branched: only F.dropout calls whose input lives on MPS are rerouted; CPU/CUDA
+    calls fall through to the stock kernel UNTOUCHED. This helper is invoked ONLY when
+    device == "mps", so a CPU/CUDA run never installs the shim at all → their numerics
+    stay byte-identical (train reproducibility contract). `inplace` is treated as a hint
+    (a fresh tensor is always returned — same value, autograd-safe). Idempotent."""
+    if getattr(F.dropout, "_anima_mps_shim", False):
+        return
+    _orig = F.dropout
+
+    def _shim(input, p: float = 0.5, training: bool = True, inplace: bool = False):
+        if training and p > 0.0 and input.device.type == "mps":
+            keep = 1.0 - float(p)
+            mask = (torch.rand_like(input) < keep).to(input.dtype)
+            return input * mask / keep
+        return _orig(input, p, training, inplace)
+
+    _shim._anima_mps_shim = True
+    _shim._orig = _orig
+    F.dropout = _shim
+
+
 # ════════════════════════════════════════════════════════════════════════════
 #  MITOSIS split E -> E+1 (a_mitosis_train) — continuity-preserving cell division
 #  on the live torch MoEConvLayer. Port of cli/train.hexa::train_mitosis_split /
@@ -3566,6 +3607,11 @@ def main():
         if device == "mps" and not (hasattr(torch.backends, "mps") and
                                     torch.backends.mps.is_available()):
             sys.exit("[device] --device mps requested but Apple MPS is unavailable")
+    if str(device).startswith("mps") and os.environ.get("ANIMA_MPS_DROPOUT_SHIM", "1") != "0":
+        # Apple-MPS graph-cache leak workaround (per-step SAVANT dropout p) — installed
+        # ONLY on MPS so CPU/CUDA numerics stay byte-identical. See _install_mps_dropout_shim.
+        # (env toggle exists only to A/B the leak; default ON.)
+        _install_mps_dropout_shim()
     _gpu_preflight(device, a.steps or 0)
     _budget_preflight(a.corpus, a.steps or 0, a.lr)
     objfn = OBJECTIVE_BUILDERS[a.objective](d, V, device)   # aux-head objectives allocate params
