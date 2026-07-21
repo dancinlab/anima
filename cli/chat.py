@@ -39,7 +39,13 @@ from engine_cli import (engine_cli_parse, engine_cli_resolve_refsel, EngineConfi
 # op=1 (mean-center) is the only Psi-preserving operator, and alpha 0.6 is the frozen bt_alpha the
 # topology battery has always been read at (engine_cli_smoke bt_alpha / evaluate _TOPOWIRE_ALPHA).
 _TOPO_COUPLE_OP = 1        # 0 naive-amplifying (breaks Psi) · 1 mean-center · 2 row-stoch · 3 renorm
-_TOPO_COUPLE_ALPHA = 0.6   # == engine_cli_smoke bt_alpha == evaluate._TOPOWIRE_ALPHA (frozen)
+_TOPO_COUPLE_ALPHA = float(os.environ.get("ANIMA_TOPO_ALPHA", "0.6"))
+# 0.6 == engine_cli_smoke bt_alpha == evaluate._TOPOWIRE_ALPHA (the frozen default, unchanged).
+# H_9879 made it readable from the environment because H_9878 excluded alpha BY CALCULATION and
+# the calculation was wrong: at 0.6 the coupling displaces the emit score by at most 0.0181, and
+# the smallest threshold headroom measured was 0.0342 — but displacement scales with alpha and
+# crosses that need at alpha 1.2 (0.0362) while mean-center still holds Psi (|Psi-1/2| = 0.0067).
+# An env knob, not a new CLI flag: the frozen default stays the only thing production sees.
 from engine_g import refractory_emit_debt, refractory_debt_step  # H_9404 earned refractory
 from pure_field import (pure_field_warmup, pure_field_phi, pure_field_phase,
                         pure_field_step, phase_name)
