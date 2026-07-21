@@ -2512,6 +2512,11 @@
                     "detail": "≥ **5** distinct(pairwise Jaccard < 0.5) ∧ ≥ **1** falsifiable.",
                     "children": [
                       {
+                        "name": "🎯 밀도 레버 사전등록 — 반증가능률 13배 (H_9837 · 2026-07-21 · 판정표 동결)",
+                        "detail": "H_9828 의 산술이 목표를 정한다: 코퍼스 반증가능률 0.006461 인데 ρ·fan 을 절반이라도 통과하려면 1-(1-p)^8 ≥ 0.5 ⟺ p ≥ 0.083 = 약 13배. 개입 = `anima-py corpus falsidrill [--falsi-ablate]` 로 밀도 드릴 코퍼스를 만들어 CPT(H_9267 레시피 계열: 코퍼스가 구조를 담으면 CE 목적이 배운다). 3팔 BASE/REAL/ABL. 절제군이 진짜 통제인 근거: 실제군 400/400=1.0000 vs 절제군 0/400=0.0000, 문형·길이·주제·담체수(3) 동일. 일반화 축 = 평가 개념 5개의 모든 단어가 드릴에서 held out(누수 0) ⟹ 노출 0 축에서만 주장(corpus-py-1 (F)). DV = engine-native fals-rate over 250 draws(연속·임계 아님). 선결 무효조건 2: FORGET 게이트(HILLOCK LIVE ∧ ρ·form BASE−0.10 이내 — 드릴에 없는 지층을 덮음) · dist leg ≥5(TEMPLATE-COLLAPSE 차단). 판정표 7칸 동결(BREAK/RATE-BREAK-GATE-MISS/PARTIAL/CARRIER-KILL/NEGATIVE/ANTI-LEARN/INVALID). 빌더 감사가 발사 전 자가적발 2건: 절제군 0.378 누수(템플릿의 if/whenever/than/measured 가 슬롯과 무관하게 구조 공급) · 비문 생성(품사·타동성 미분리). 환경 패리티: /usr/share/dict/words sha256 be41ad97… 고정(호스트마다 다르면 known→coherence gate 가 달라져 다른 것을 잰다).",
+                        "type": "gate"
+                      },
+                      {
                         "name": "🔧 판독가능화: `--fan-draws N` 연속 rate (H_9829 · 2026-07-21 · 동결 판정 불변)",
                         "detail": "H_9828 이 확정한 검정력 부재의 직접 수리. `anima-py evaluate <clm> --rho-axon --fan-draws N` 은 PASS 조건을 0줄 바꾸지 않고(any_falsi 는 여전히 동결 n_cont=8 draws 에서만 결정) 추가 N draws 로 연속 `fals-rate = hit/coherent ± sd` 를 보고만 한다. 추가 draw 의 seed 는 동결 수열을 이어서 (SEEDS[0]+17*j, j≥n_cont) 쓰므로 판정이 읽는 표본과 서로소 — 추정이 게이트 자신의 표본을 재사용하지 않는다. 같은 coherence gate(kwr≥cgate)를 써 분모 정의가 판정 다리와 동일. 기본 N=0 이면 추가 루프 미실행 = byte-identical. 집계 패널과 4 register 셀 전부에 배선. e2e(store_struct_toy 400KB · N=24): 집계 0/23 · en_general 0/17 · en_sns 0/16 · ko 셀 0/0(분모 0 정직표기) · 판정값은 플래그 유무와 무관하게 동일. ⚠️ 그 수치는 계기 확인이지 과학 아님(토이 ckpt · 코퍼스 rate 기준 24 draws 기대적중 0.15 ⟹ 여전히 판독불가). 판독가능한 최초 G6 관측 = py303_full.clm 에 --fan-draws 250 (pool · heavy 는 mini 금지).",
                         "type": "gate"

@@ -232,6 +232,132 @@ def _wp_rand(seed):
     return nxt
 
 
+# ── H_9837 falsidrill — raise the model's falsifiable-claim emission rate ──
+# H_9828 censused the EN training corpus at P(falsifiable) = 0.006461. rho·fan passes its
+# falsifiability leg on >=1 hit in 8 draws, so clearing it even half the time needs p >= 0.083
+# — about 13x the corpus rate. This builder is the density lever (the H_9267 recipe: when the
+# corpus carries the structure, the CE objective can learn it).
+#
+# The eval seed is `_rho_fan_concepts()[0] + ": "`. Every word of EVERY eval concept is held out
+# of this drill, so the claim being tested is "produces falsifiable claims about a concept it was
+# never drilled on" — measured at exposure 0 on its own axis (convergence corpus-py-1 (F)).
+_FD_HELD_OUT = {"consciousness", "arises", "cells", "tension", "ripples", "distant", "minds",
+                "memory", "composes", "meaning", "silence", "carries", "information",
+                "engine", "dreams", "alone", "between", "into", "still", "when", "new"}
+
+# subjects/objects — ordinary dictionary nouns, disjoint from every eval-concept word above.
+_FD_SUBJ = ["rainfall", "traffic", "sleep", "exercise", "altitude", "humidity", "sunlight",
+            "practice", "noise", "temperature", "pressure", "salt", "caffeine", "fatigue",
+            "crowding", "wind", "sugar", "vibration", "dust", "voltage"]
+_FD_OBJ = ["harvest", "delay", "recall", "endurance", "boiling", "corrosion", "growth",
+           "accuracy", "error", "expansion", "leakage", "yield", "alertness", "reaction",
+           "spread", "erosion", "decay", "wear", "fouling", "current"]
+_FD_DIR = ["rises", "falls", "climbs", "drops"]
+
+# FROZEN detector vocabulary, used verbatim — these sets ARE the definition of the target
+# structure, so drilling them is the density intervention, not a detector hack. What makes the
+# result falsifiable is the held-out concept axis plus the ablation arm below.
+# FROZEN detector vocabulary, split BY PART OF SPEECH. The first draft mixed verbs and
+# comparatives in one slot and produced ungrammatical drill lines ("salt lower a degree of
+# reaction that drops"). Training a byte-LM on broken English would trade a falsifiability gain
+# for a fluency loss and make any positive unreadable (corpus-py-1 ⑥: small-corpus CPT kills what
+# the corpus omits — here, grammar).
+_FD_COMP_VI = ["increases", "decreases"]              # intransitive — take no object
+_FD_COMP_VT = ["predicts", "causes"]                  # transitive — the carrier supplies the object
+_FD_COMP_A = ["higher", "lower", "greater", "faster", "slower", "stronger", "weaker"]
+_FD_MEAS = ["rate", "number", "count", "amount", "level", "degree", "threshold", "ratio",
+            "frequency", "probability", "magnitude", "score", "value", "quantity",
+            "duration", "speed", "size", "strength", "density"]
+
+# ABLATION vocabulary — same part of speech, same sentence shape, NOT in the detector sets.
+_FD_COMP_VI_ABL = ["shifts", "changes"]
+_FD_COMP_VT_ABL = ["shapes", "follows"]
+_FD_COMP_A_ABL = ["broader", "narrower", "wider", "softer", "rougher", "smoother", "plainer"]
+_FD_MEAS_ABL = ["mood", "colour", "texture", "flavour", "shade", "aroma", "grain",
+                "tone", "polish", "pattern", "shape", "finish", "gloss", "tint",
+                "hue", "sheen", "weave", "bloom", "sparkle"]
+
+# >=2 carriers (convergence corpus-py-1 (E)): one template makes the carrier axis collinear with
+# the falsifiability axis, so no arm could separate "learned the structure" from "learned this
+# sentence shape". `{cv}` takes a verb, `{ca}` a comparative — keeping the lines grammatical.
+_FD_CARRIERS = [
+    "if {s} {cvi} , the {m} of {o} {d} .",
+    "{s} {cvt} a {ca} {m} of {o} than {alt} does .",
+    "whenever {s} {cvi} , the measured {m} of {o} {d} .",
+]
+
+# The ablation arm needs its FRAMES ablated too, not just the slot fillers. Caught by this
+# builder's own audit: with the real frames the ablation arm still scored 0.378 falsifiable,
+# because `if`/`whenever`/`than` are themselves comparator words and `measured` is a measurable
+# word — the template supplied the conjunction no matter what went into the slots. A control that
+# leaks the very structure it removes is not a control (prereg-md-2: a control that can pass
+# without the mechanism measures the ceiling).
+_FD_CARRIERS_ABL = [
+    "as {s} {cvi} , the {m} of {o} {d} .",
+    "{s} {cvt} a {ca} {m} of {o} beside {alt} .",
+    "while {s} {cvi} , the noted {m} of {o} {d} .",
+]
+
+
+def build_falsidrill(n_lines, seed, ablate):
+    """H_9837 — EN drill corpus dense in falsifiable claims (or its matched-surface ablation).
+
+    Returns (text, audit). The audit is BLOCKING: it re-runs the production detector over every
+    emitted line and refuses to ship a corpus whose real arm is not overwhelmingly falsifiable,
+    or whose ablation arm is not overwhelmingly NOT falsifiable — a builder that silently emits
+    the wrong structure would make the whole campaign unreadable.
+    """
+    import sys as _s
+    _s.path.insert(0, __file__.rsplit("/", 2)[0] + "/core")
+    from rho_fan import _rho_fan_is_falsifiable, _rho_fan_dict_load, _rho_fan_words
+
+    comp_vi = _FD_COMP_VI_ABL if ablate else _FD_COMP_VI
+    comp_vt = _FD_COMP_VT_ABL if ablate else _FD_COMP_VT
+    comp_a = _FD_COMP_A_ABL if ablate else _FD_COMP_A
+    meas = _FD_MEAS_ABL if ablate else _FD_MEAS
+    rnd = _wp_rand(seed)
+    lines = []
+    for i in range(n_lines):
+        subj = _FD_SUBJ[rnd(len(_FD_SUBJ))]
+        alt = _FD_SUBJ[rnd(len(_FD_SUBJ))]
+        while alt == subj:
+            alt = _FD_SUBJ[rnd(len(_FD_SUBJ))]
+        o = _FD_OBJ[rnd(len(_FD_OBJ))]
+        cvi = comp_vi[rnd(len(comp_vi))]
+        cvt = comp_vt[rnd(len(comp_vt))]
+        ca = comp_a[rnd(len(comp_a))]
+        m = meas[rnd(len(meas))]
+        d = _FD_DIR[rnd(len(_FD_DIR))]
+        cars = _FD_CARRIERS_ABL if ablate else _FD_CARRIERS
+        car = cars[rnd(len(cars))]
+        lines.append(car.format(s=subj, cvi=cvi, cvt=cvt, ca=ca, m=m, o=o, d=d, alt=alt))
+    text = "\n".join(lines) + "\n"
+
+    known = _rho_fan_dict_load()
+    hits = sum(1 for l in lines if _rho_fan_is_falsifiable(l, known))
+    leaked = sorted({w for l in lines for w in _rho_fan_words(l) if w in _FD_HELD_OUT})
+    carriers = len(_FD_CARRIERS_ABL if ablate else _FD_CARRIERS)
+    audit = {"n_lines": len(lines), "falsifiable": hits,
+             "falsifiable_rate": (hits / len(lines)) if lines else 0.0,
+             "arm": ("ablation" if ablate else "real"), "carriers": carriers,
+             "held_out_leak": leaked, "violations": []}
+    if leaked:
+        audit["violations"].append(
+            "eval-concept word(s) leaked into the drill: %s — the held-out axis is destroyed and "
+            "the eval becomes retrieval" % ",".join(leaked))
+    if not ablate and audit["falsifiable_rate"] < 0.95:
+        audit["violations"].append(
+            "real arm is only %.3f falsifiable — the density intervention would be diluted"
+            % audit["falsifiable_rate"])
+    if ablate and audit["falsifiable_rate"] > 0.02:
+        audit["violations"].append(
+            "ablation arm is %.3f falsifiable — it is not a clean structure-off control"
+            % audit["falsifiable_rate"])
+    if carriers < 2:
+        audit["violations"].append("carrier axis is collinear with the falsifiability axis")
+    return text, audit
+
+
 def _parse_args(argv):
     fmt = argv[0] if argv else ""
     # H_9643 --held-out-frac: hold out a FRACTION of the (i,j) pair grid instead of the single
@@ -281,6 +407,8 @@ def _parse_args(argv):
             #   --weave-families f1,f2   default = all five
             #   --weave-max N            0 = no cap
             "weave_families": "", "weave_max": 0,
+            # H_9837 falsidrill: --falsi-ablate = the matched-surface structure-off arm
+            "falsi_ablate": False,
             # H_9809 ngram-audit (--ngram-recoverable-audit · absorbs lab/v3 H_004's theorem
             # "oracle-fusable <=> n-gram-recoverable" as a production audit flag):
             #   --ngram-recoverable-audit  arm the audit (required by fmt `ngram-audit`)
@@ -408,6 +536,8 @@ def _parse_args(argv):
             opts["weave_families"] = argv[i + 1]; i += 2            # H_9825 weavepanel families
         elif a == "--weave-max":
             opts["weave_max"] = int(argv[i + 1]); i += 2            # H_9825 weavepanel cap
+        elif a == "--falsi-ablate":
+            opts["falsi_ablate"] = True; i += 1                     # H_9837 structure-off arm
         elif a == "--ngram-recoverable-audit":
             opts["ngram_recoverable_audit"] = True; i += 1          # H_9809 ngram-audit
         elif a == "--bind-legacy-lengths":
@@ -5044,7 +5174,7 @@ def main():
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
                    "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "consult-variants",
                    "routeaudit", "atoms", "c34", "storebind", "g6bind", "counterfactual-decl",
-                   "bindpanel", "weavepanel"):
+                   "bindpanel", "weavepanel", "falsidrill"):
         print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind|counterfactual-decl|bindpanel|weavepanel|ngram-audit> --out PATH")
         print("      weavepanel --out panel.json [--weave-families f1,f2] [--weave-max N] [--seed 7]")
         print("             H_9825 — the parametric ρ·weave held-out recombination panel. The frozen")
@@ -5424,6 +5554,33 @@ def main():
               "OPERATOR; binding both needs the CLMS lane's nonlinear (GELU-MLP) readout.")
         print("  score:  anima-py evaluate <clm> --store %s" % hj)
         return 0
+
+    if fmt == "falsidrill":
+        # H_9837 — the density lever: an EN drill corpus dense in falsifiable claims, plus its
+        # matched-surface ablation arm. Consumed as a CPT corpus by `anima-py train`.
+        if not opts["out"]:
+            print("anima-py corpus falsidrill: --out c.txt is required", file=sys.stderr)
+            sys.exit(2)
+        text, audit = build_falsidrill(opts["n_blocks"], opts["seed"], opts.get("falsi_ablate", False))
+        regen = "anima-py corpus " + " ".join(argv)
+        if audit["violations"]:
+            print("anima-py corpus falsidrill: CORPUS INVALID — %d violation(s):"
+                  % len(audit["violations"]), file=sys.stderr)
+            for v in audit["violations"]:
+                print("  · " + v, file=sys.stderr)
+            sys.exit(2)
+        with open(opts["out"], "w") as fh:
+            fh.write(text)
+        with open(opts["out"] + ".audit.json", "w") as fh:
+            json.dump({"audit": audit, "regen": regen, "seed": opts["seed"]}, fh, indent=1)
+        print("anima-py corpus falsidrill → %s  (arm=%s)" % (opts["out"], audit["arm"]))
+        print("  lines %d · falsifiable %d (%.4f) · carriers %d · held-out leak %d"
+              % (audit["n_lines"], audit["falsifiable"], audit["falsifiable_rate"],
+                 audit["carriers"], len(audit["held_out_leak"])))
+        print("  every eval-concept word is held out — the claim is measured at exposure 0 on its")
+        print("  own axis (convergence corpus-py-1 (F)); the ablation arm is the structure-off control.")
+        print("  regen: " + regen)
+        sys.exit(0)
 
     if fmt == "weavepanel":
         # H_9825 — the ρ·weave n=12 instrument fix. Emits a manifest consumed by
