@@ -17394,6 +17394,17 @@
  "convergence": {
   "records": [
    {
+    "id": "bare-pip-install-torch-bypasses-the-load-bearing-pin",
+    "state": "🟢 POS-CONV",
+    "value": "**`pip install torch` 를 맨손으로 치면 pyproject 의 load-bearing 핀이 우회된다 — 내 CPT 3사이클 전부가 금지 버전에서 돌았다 (2026-07-21 · 자가적발).**\n\n`pyproject.toml` 은 `[train] = torch>=2.1,<2.13` 이고 그 상한에 이렇게 적혀 있다: *\"⚠ torch UPPER BOUND IS LOAD-BEARING — torch 2.13+cu130 SILENTLY regresses store-addr held-out address generalization on Blackwell sm_120 bf16 training (H_9734: 같은 코드/코퍼스/base/seed/recipe 인데 torch 2.11.0 은 addr 0.95 로 일반화, 2.13.0 은 0.0078 로 암기만)\"*.\n\n그런데 원격 호스트에 학습 의존성을 넣으면서 `pip install \"torch\"` 를 **맨손으로** 쳤다. extra 를 경유하지 않으니 핀이 적용되지 않고 최신 wheel(**2.13.0+cu130**)이 딸려왔다. 호스트는 RTX 5070 = **Blackwell sm_120** — H_9734 가 퇴행을 측정한 **바로 그 조합**이다.\n\n⟹ H_9856 의 CPT cycle1/2/3 은 전부 이 toolchain 에서 학습됐다. 측정(eval)은 numpy 라 무관하지만 **학습 팔은 무결성 의심**이고, 관측된 손상(`ρ·form self-shuffle`)과 그 **비단조성**(step 500/1000/2000 엔 있고 1500 엔 없음, H_9859)이 금지 버전의 산물일 가능성을 배제할 수 없다. 발화율 상승(0.0041→0.107)도 같은 의심 아래 놓인다.\n\n핀은 **코드에 있었고 문서에도 있었지만**, 의존성을 손으로 설치하는 순간 아무것도 그것을 강제하지 않았다.",
+    "threshold": "재발조건 = 원격/신규 호스트에 학습 의존성을 넣을 때 `pip install torch`(또는 임의 패키지)를 직접 치는 순간. 해결 = (A) **학습 의존성은 반드시 extra 경유**: `pip install \"anima-python[train]\"` — 핀이 붙어 있는 유일한 경로다. (B) 발사 **전에** 버전을 찍어 핀과 대조하라: `python -c \"import torch;print(torch.__version__)\"` + `grep -oE 'torch>=[0-9.]+,<[0-9.]+' pyproject.toml`. GPU 가용성(`cuda_available()`)만 확인하고 **버전은 안 보는** 하드게이트는 이 결함을 통과시킨다. (C) 이미 학습한 산출물이 있으면 **verdict-integrity 로 강등**하고 핀 안쪽 버전으로 재학습해 대조하라 — 버전이 다르면 그것은 재현이 아니라 다른 실험이다. (D) 핀 옆의 주석은 장식이 아니다 — 상한에 이유가 적혀 있으면 그 이유가 곧 재발조건이다.",
+    "linked_hypotheses": [
+     "H_9856",
+     "H_9859",
+     "H_9734"
+    ]
+   },
+   {
     "id": "forget-gate-must-read-the-axis-verdict-not-the-reinforced-value",
     "state": "🟢 POS-CONV",
     "value": "**FORGET 게이트는 val 이 아니라 축의 PASS/FAIL 과 통제값으로 걸어라 — corpus-py-1 ⑦ 이 내 사전등록 안에서 재발했다 (2026-07-21 · H_9837 REAL).**\n\nH_9837 은 밀도 드릴 CPT 의 선결 무효조건으로 '`ρ·form` 이 BASE 대비 −0.10 이내' 를 동결했다. 실측: `ρ·form` **val 1.0 → 1.0 (미동, 글자대로 통과)** 인데 축은 **PASS → FAIL**. 죽은 것은 val 이 아니라 **통제**였다 — `self-shuffle 0.0 → 0.4`(상한 0.05). 바이트를 뒤섞은 자기 출력이 form 게이트를 40% 통과한다 = 출력이 **순서 무의미한 기지단어 자루**로 변한 손상이고, 경직 템플릿(담체 3종) 드릴이면 정확히 예측되는 결과다.\n\n⟹ corpus-py-1 ⑦('코퍼스가 강화하는 지층만 재는 FORGET 은 구조적으로 항상 통과하는 위조 게이트')의 **직접 재발**. `ρ·form` 의 val = 기지단어 비율 = **드릴이 매 step 강화하는 바로 그 지층**이라 오를 수밖에 없고, 죽는 지층(shuffle 판별력)은 게이트 밖이었다. 레코드는 존재했는데 게이트를 쓰는 순간 적용되지 않았다(⑩/(I) 와 같은 계열: **레코드는 사람이 읽어야 발동한다**).\n\n부수 실측(같은 팔): 밀도가 전이되지 않았다 — 코퍼스 0.197 → 모델 0.0162(코퍼스의 **8.2%**). BASE 팔에서는 모델이 코퍼스에 충실했으므로(0.0065→0.0041), '밀도↑ ⟹ 발화율↑' 은 드릴 레짐에서 **자동이 아니다**.",

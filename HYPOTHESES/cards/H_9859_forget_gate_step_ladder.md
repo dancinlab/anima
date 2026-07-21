@@ -60,3 +60,25 @@ done
 ## Cross-links
 
 [[H_9856]] 3회 INVALID 의 원인 축 · [[H_9857]] 어휘 부분확증 · [[H_9855]] 담체 반증
+
+
+---
+
+## 🚨 verdict-integrity 강등 (2026-07-21 · 자가적발)
+
+이 카드의 **CPT 학습 팔 전부가 금지된 toolchain 에서 돌았다.**
+
+`pyproject.toml` 의 `[train]` extra 는 `torch>=2.1,<2.13` 이고 그 상한에 이유가 박혀 있다 —
+**torch 2.13+cu130 은 Blackwell sm_120 학습에서 일반화를 조용히 퇴행시킨다**
+(H_9734: 같은 코드·코퍼스·base·seed·recipe 인데 2.11.0 은 addr **0.95**, 2.13.0 은 **0.0078**).
+
+그런데 나는 원격 호스트에 `pip install "torch"` 를 **맨손으로** 쳐서 extra 를 우회했고,
+딸려온 것이 **2.13.0+cu130**, 호스트는 **RTX 5070 = Blackwell sm_120** — H_9734 가 퇴행을 측정한
+**바로 그 조합**이다.
+
+⟹ 이 카드의 학습 팔 수치는 **verdict-integrity 의심**으로 강등한다.
+측정(eval)은 numpy 경로라 무관하지만, **무엇을 측정했는지**(=그 ckpt)가 오염 가능하다.
+특히 관측된 `ρ·form` 손상과 그 **비단조성**이 금지 버전의 산물일 가능성을 배제할 수 없다.
+
+교정: 핀 안쪽(`<2.13`) 버전으로 재학습해 대조한다 — 버전이 다르면 재현이 아니라 다른 실험이다.
+재발방지는 convergence `bare-pip-install-torch-bypasses-the-load-bearing-pin` 에 등록.
