@@ -2707,9 +2707,55 @@ def _retr_probe_core(H, K, tr, te, iters=1200, lr=0.05, seed=0):
         m = b1 * m + (1 - b1) * g
         v = b2 * v + (1 - b2) * (g * g)
         W -= lr * (m / (1 - b1 ** t)) / (np.sqrt(v / (1 - b2 ** t)) + eps)
-    pred = ((Hte @ W) @ Kte.T).argmax(axis=1)
+    S = (Hte @ W) @ Kte.T
+    pred = S.argmax(axis=1)
     acc = float((pred == np.arange(len(te))).mean())
-    return {"acc": acc, "chance": 1.0 / float(len(te)), "n_train": int(n), "n_test": int(len(te))}
+    # 1-indexed rank of each entity's OWN key among all test keys. Retained so an n-way read
+    # matched to the live lane's n_slot can be derived in CLOSED FORM from the SAME fitted W
+    # (see _nway_from_ranks) — a re-read of this estimate, never a second estimate.
+    own = S[np.arange(len(te)), np.arange(len(te))][:, None]
+    ranks = (S > own).sum(axis=1) + 1
+    return {"acc": acc, "chance": 1.0 / float(len(te)), "n_train": int(n), "n_test": int(len(te)),
+            "ranks": ranks.astype(int)}
+
+
+def _nway_from_ranks(ranks, n_te, m):
+    """Exact expected m-way accuracy from the full-pool rank vector — the probability that all
+    m−1 distractors, drawn uniformly without replacement from the other n_te−1 test entities,
+    rank BELOW the target:  mean_i C(n_te − r_i, m−1) / C(n_te − 1, m−1).
+
+    This is not an approximation of a sampled group procedure: m-way argmax is subset-argmax of
+    the same score row, so the closed form IS the expectation over draws — zero sampling variance,
+    no seed, no group roster to freeze, and the fitted W stays byte-identical to the full-pool fire.
+
+    Chance is DERIVED, not assumed: under uniform ranks the expression evaluates to exactly 1/m
+    (verified numerically at n_te=64, m=8 → 0.1250000000)."""
+    from math import comb
+    if m < 2 or m > n_te:
+        raise ValueError("_nway_from_ranks: need 2 <= m <= n_test (got m=%d, n_test=%d)" % (m, n_te))
+    denom = comb(n_te - 1, m - 1)
+    tot = 0.0
+    for r in ranks:
+        tot += comb(n_te - int(r), m - 1) / denom if (n_te - int(r)) >= (m - 1) else 0.0
+    return float(tot / len(ranks))
+
+
+def _gram_nway(K, te, m):
+    """The EXACT-W reference: with W = R⁺ the ORACLE score matrix reduces to the key Gram K·Kᵀ,
+    so m-way accuracy on the key codebook ALONE — no fit, no dump, no seed — upper-bounds what
+    any estimator could reach on these keys.
+
+    It splits the two ways an ORACLE can fail. Gram ≥ bar with a fitted ORACLE below it means the
+    codebook is fine at this cardinality and the shortfall is ESTIMATION. Gram below the bar means
+    no fit quality can save it: `_entity_key` is a degenerate address function at the cardinality
+    the lane actually uses, which is a substrate result about the addressing scheme rather than a
+    dead instrument."""
+    import numpy as np
+    Kt = K[te]
+    S = Kt @ Kt.T
+    own = S[np.arange(len(te)), np.arange(len(te))][:, None]
+    ranks = (S > own).sum(axis=1) + 1
+    return _nway_from_ranks(ranks.astype(int), len(te), m)
 
 
 def _retr_probe_split(N, rng):
@@ -2759,6 +2805,7 @@ def store_retr_probe_run(argv):
     import numpy as np
     iters = evaluate_intval(argv[1:], "--retr-probe-iters", 1200)
     center = evaluate_strval(argv[1:], "--retr-probe-center", "none") or "none"
+    nway = evaluate_intval(argv[1:], "--retr-probe-nway", 0)
     rng = np.random.default_rng(29825)
 
     def _arms(H, K, tag):
@@ -2777,6 +2824,12 @@ def store_retr_probe_run(argv):
 
         raw = _triple("none")
         cen = _triple(center) if center != "none" else raw
+        # key-permute: same H, keys shuffled across entities. Destroys the content-address
+        # correspondence while preserving every norm/geometry statistic the Gaussian NULL changes.
+        # REPORTED CONTROL, never a gate (the frozen table is untouched).
+        kp_idx = rng.permutation(len(K))
+        kperm = _retr_probe_core(_retr_probe_center(H, tr, center), K[kp_idx], tr, te,
+                                 iters=iters, seed=7)
         shared = float(np.linalg.norm(H.mean(axis=0)) / (np.sqrt((H * H).sum(axis=1).mean()) + 1e-9))
         print("  [%s] n_train=%d n_test=%d  chance=%.4f  shared-template=%.1f%% of hidden norm" %
               (tag, raw[0]["n_train"], raw[0]["n_test"], raw[0]["chance"], 100.0 * shared))
@@ -2786,15 +2839,31 @@ def store_retr_probe_run(argv):
               % ("NULL   (structureless H)", raw[1]["acc"], cen[1]["acc"]))
         print("    %-38s raw=%.4f  centered=%.4f   [CEILING · DIRECTIONAL]"
               % ("LIVE   (this trunk)", raw[0]["acc"], cen[0]["acc"]))
+        print("    %-38s          centered=%.4f   [reported control · not a gate]"
+              % ("KEY-PERMUTE (address correspondence cut)", kperm["acc"]))
         print("    verdict arm = %s" % ("centered(train-mean)" if center != "none" else "raw"))
-        return cen[0], cen[1], cen[2], raw, shared
+        nw = None
+        if nway:
+            n_te = cen[0]["n_test"]
+            nw = {"m": nway,
+                  "chance": 1.0 / float(nway),
+                  "oracle": _nway_from_ranks(cen[2]["ranks"], n_te, nway),
+                  "null": _nway_from_ranks(cen[1]["ranks"], n_te, nway),
+                  "live": _nway_from_ranks(cen[0]["ranks"], n_te, nway),
+                  "kperm": _nway_from_ranks(kperm["ranks"], n_te, nway),
+                  "gram": _gram_nway(K, te, nway)}
+            print("  [%s · %d-way re-read matched to the live lane] chance=%.4f  (closed form over "
+                  "the SAME fitted W — no resampling, no seed)" % (tag, nway, nw["chance"]))
+            print("    ORACLE %.4f   GRAM-exact-W %.4f   NULL %.4f   KEY-PERMUTE %.4f   LIVE %.4f"
+                  % (nw["oracle"], nw["gram"], nw["null"], nw["kperm"], nw["live"]))
+        return cen[0], cen[1], cen[2], raw, shared, nw
 
     if "--retr-probe-selftest" in argv:
         print("=== --store-retr-probe SELFTEST (planted geometry · no ckpt) ===")
         N, d, d_k = 64, 256, 32
         Kp = rng.standard_normal((N, d_k))
         Hp = rng.standard_normal((N, d))          # structureless live arm: must read at chance
-        live, null, orc, _raw, _sh = _arms(Hp, Kp, "selftest")
+        live, null, orc, _raw, _sh, _nw = _arms(Hp, Kp, "selftest")
         ok_pos = orc["acc"] >= 0.90
         ok_null = null["acc"] <= max(4.0 * null["chance"], 0.15)
         ok = ok_pos and ok_null
@@ -2824,7 +2893,14 @@ def store_retr_probe_run(argv):
     H = np.stack([npz[e + "__last"].astype(np.float64) for e in ents])   # (N, d)
     K = np.stack([_clms._entity_key(key_emb, e) for e in ents])          # (N, d_k)
     print("  n_entities=%d  d=%d  d_k=%d  iters=%d" % (len(ents), H.shape[1], K.shape[1], iters))
-    live, null, orc, raw, shared = _arms(H, K, "ckpt")
+    live, null, orc, raw, shared, nw = _arms(H, K, "ckpt")
+    if nw is not None:
+        # SAME frozen table, applied to the arm matched to the live lane's cardinality. The
+        # constants are chance-relative, so nothing is re-frozen: ORACLE 0.90 · INVALID
+        # max(4*chance,0.15) · FLOOR max(2*chance,0.15).
+        orc, null, live = ({"acc": nw["oracle"], "chance": nw["chance"]},
+                           {"acc": nw["null"], "chance": nw["chance"]},
+                           {"acc": nw["live"], "chance": nw["chance"]})
     if orc["acc"] < 0.90:
         verdict = "INSTRUMENT-DEAD"
     elif null["acc"] > max(4.0 * null["chance"], 0.15):
@@ -2834,10 +2910,15 @@ def store_retr_probe_run(argv):
     else:
         verdict = "REACHABLE"
     print("  → %s   [DIRECTIONAL ceiling · never cements · the verdict is the 303M fire]" % verdict)
+    if nw is not None and nw["null"] > 2.0 * nw["chance"] and verdict != "INVALID":
+        print("  ⚠ NULL %.4f is >2x chance yet under the frozen gate (%.2f) — the gate is nearly "
+              "vacuous at this cardinality; read the live number with that in mind."
+              % (nw["null"], max(4.0 * nw["chance"], 0.15)))
     print(json.dumps({"ckpt": ckpt, "dump": dump_path, "n": len(ents), "chance": live["chance"],
                       "center": center, "shared_template_frac": shared,
                       "live": live["acc"], "null": null["acc"], "oracle": orc["acc"],
                       "live_raw": raw[0]["acc"], "null_raw": raw[1]["acc"], "oracle_raw": raw[2]["acc"],
+                      "nway": nw,
                       "verdict": verdict}, ensure_ascii=False))
     return 0
 
@@ -9942,7 +10023,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-query", "--store-fuse", "--store-readout",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--store-retr-probe", "--retr-probe-selftest", "--retr-probe-iters",   # H_9825 retrieval ceiling
-    "--retr-probe-center",                                  # H_9825 train-mean deconfound
+    "--retr-probe-center", "--retr-probe-nway",              # H_9825 deconfound · live-lane re-read
     "--store-parity-selftest", "--parity-tol",              # H_9826 torch<->numpy CLMS parity
     "--fan-bind", "--fan-smp",
     "--mouth-binder", "--mouth-binder-order-scramble",
