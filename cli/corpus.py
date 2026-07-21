@@ -429,6 +429,19 @@ def _parse_args(argv):
             # H_9812 --bind-legacy-lengths: rebuild the DISQUALIFIED length-coded panel as a
             # control (field-alone acc 1.0000). Default = length-matched, where the surface byte
             # length is identical whatever the gold is.
+            # H_9842 wake-coresidency (is the wake working ring buffer a co-occurrence ceiling?):
+            #   --wake-buffer-cap N    repeatable — the swept capacities (default 20,64,256; 20 = the
+            #                          hardcoded core/wake_memory.py::_working_cap() the daemon runs)
+            #   --replay-source S      working | episodic | both — `episodic` is the append-only
+            #                          (uncapped) arm = the DIRECT refutation arm for a FIFO ceiling
+            #   --wake-anchors K       anchors per frequency stratum; also the robustness knob
+            #   --wake-ticks N         truncate the stream to N ticks (0 = whole file)
+            #   --wake-eps X           a co-residency delta below this is not read
+            # $0 · no GPU · no ckpt: recombination needs two concepts to CO-OCCUR, so a C-slot FIFO
+            # bounds which pairs can ever be jointly resident. That is a STRUCTURAL fact of the
+            # shipped buffer, measurable before anyone spends a training run on it.
+            "wake_caps": [], "replay_source": "both", "wake_anchors": 24,
+            "wake_ticks": 0, "wake_eps": 0.05,
             "bind_legacy_lengths": False, "bind_task": "xor",   # H_9815 xor | hp(positive control)
             "ngram_recoverable_audit": False, "audit_train": None, "panel": None,
             "codec": None, "audit_marker": None, "audit_min_coverage": 0.10}
@@ -557,6 +570,19 @@ def _parse_args(argv):
             opts["weave_max"] = int(argv[i + 1]); i += 2            # H_9825 weavepanel cap
         elif a == "--falsi-ablate":
             opts["falsi_ablate"] = True; i += 1                     # H_9837 structure-off arm
+        elif a == "--wake-buffer-cap":
+            opts["wake_caps"].append(int(argv[i + 1])); i += 2       # H_9842 repeatable cap sweep
+        elif a == "--replay-source":
+            opts["replay_source"] = argv[i + 1]; i += 2              # working|episodic|both
+            if opts["replay_source"] not in ("working", "episodic", "both"):
+                raise SystemExit("--replay-source must be working|episodic|both (got %r)"
+                                 % opts["replay_source"])
+        elif a == "--wake-anchors":
+            opts["wake_anchors"] = int(argv[i + 1]); i += 2          # H_9842 anchors per stratum
+        elif a == "--wake-ticks":
+            opts["wake_ticks"] = int(argv[i + 1]); i += 2            # H_9842 stream truncation
+        elif a == "--wake-eps":
+            opts["wake_eps"] = float(argv[i + 1]); i += 2            # H_9842 read threshold
         elif a == "--ngram-recoverable-audit":
             opts["ngram_recoverable_audit"] = True; i += 1          # H_9809 ngram-audit
         elif a == "--bind-legacy-lengths":
@@ -4936,6 +4962,292 @@ def _mi_sha_of(path):
     return {"sha256": h.hexdigest(), "bytes": n}
 
 
+# ── H_9842 wake-coresidency ─────────────────────────────────────────────────────
+# Recombination needs two concepts to CO-OCCUR. core/wake_memory.py's working buffer is a
+# FIFO whose capacity was a HARDCODED 20 (`_working_cap()`), so two anchors more than 20
+# ticks apart can never be jointly resident — the memory-side twin of the trunk receptive
+# field bound (H_9836/H_1394: concepts at distance D > RF are mathematically independent,
+# capacity irrelevant). These helpers drive the SHIPPED buffer functions — no re-derivation,
+# no model, no ckpt — and report what fraction of anchor pairs the buffer can ever hold at
+# once, as a function of capacity, with the append-only `episodic` arm as the uncapped
+# refutation arm.
+
+_WAKE_PLANT_GAP = 50            # planted anchor spacing, in ticks (positive control)
+_WAKE_PLANT_N = 8               # planted anchors
+_WAKE_NULL_TICKS = 400          # zero-truth pedestal stream length
+_WAKE_PLANT_MIN_DELTA = 0.25    # cap_delta the plant must clear or the instrument is DEAD
+
+
+def _wake_pairs_working(stream, cap):
+    """Pairs ever JOINTLY resident in the real ring buffer at capacity `cap`.
+
+    Drives core/wake_memory.py::mem_push_ctx_capped + mem_working_window verbatim, one push
+    per tick (the daemon's own cadence — cli/chat.py:2192 pushes exactly once per tick).
+    Only anchors that NEWLY entered the window can create a new co-resident pair (if both
+    were resident at t and neither entered at t, both were resident at t-1), so pairing the
+    entrants against the current window is exhaustive, not a sample."""
+    import wake_memory as WM
+    mem = WM.mem_init()
+    seen, prev = set(), set()
+    for anchors in stream:
+        mem = WM.mem_push_ctx_capped(mem, list(anchors), cap)
+        cur = set()
+        for entry in WM.mem_working_window(mem):
+            for a in entry:
+                cur.add(a)
+        for a in (cur - prev):
+            for b in cur:
+                if a != b:
+                    seen.add((a, b) if a < b else (b, a))
+        prev = cur
+    return seen
+
+
+def _wake_pairs_episodic(stream):
+    """Pairs ever jointly resident in the APPEND-ONLY episodic log = the uncapped arm.
+
+    Drives core/wake_memory.py::mem_record_emit + mem_recent_emits verbatim; the anchors are
+    round-tripped THROUGH the record's `ctx_summary` field, so this reads what the shipped
+    log actually stores, not what the caller passed in. The episodic window only ever grows,
+    so the last tick is its maximum and one read there is exact (not a shortcut that could
+    miss a pair)."""
+    import wake_memory as WM
+    mem = WM.mem_init()
+    for ts, anchors in enumerate(stream):
+        summary = ",".join(str(a) for a in sorted(anchors))
+        mem = WM.mem_record_emit(mem, float(ts), summary, 0.0, [0.0] * 5, "WAKE", "")
+    resident = set()
+    for rec in WM.mem_recent_emits(mem, len(stream)):
+        for tok in rec["ctx_summary"].split(","):
+            if tok:
+                resident.add(int(tok))
+    out = set()
+    ordered = sorted(resident)
+    for x in range(len(ordered)):
+        for y in range(x + 1, len(ordered)):
+            out.add((ordered[x], ordered[y]))
+    return out
+
+
+def _wake_all_pairs(stream):
+    """Denominator: every pair of anchors that both occur somewhere in the stream.
+
+    Computed from the stream DIRECTLY, never through wake_memory — otherwise the episodic
+    arm would be 1.0 by definition instead of by measurement, and a log that silently
+    dropped records would still read perfect."""
+    present = set()
+    for anchors in stream:
+        present.update(anchors)
+    ordered = sorted(present)
+    return {(ordered[x], ordered[y])
+            for x in range(len(ordered)) for y in range(x + 1, len(ordered))}
+
+
+def _wake_row(stream, caps, source, eps):
+    """One co-residency row: fraction of occurring anchor pairs jointly resident, per cap."""
+    total = len(_wake_all_pairs(stream))
+    row = {"n_ticks": len(stream), "n_pairs": total, "working": {}, "episodic": None}
+    if total == 0:
+        return row
+    if source in ("working", "both"):
+        for cap in caps:
+            row["working"][str(cap)] = round(len(_wake_pairs_working(stream, cap)) / total, 4)
+    if source in ("episodic", "both"):
+        row["episodic"] = round(len(_wake_pairs_episodic(stream)) / total, 4)
+    if row["working"]:
+        lo, hi = str(min(caps)), str(max(caps))
+        row["cap_delta"] = round(row["working"][hi] - row["working"][lo], 4)
+        row["read_ceiling"] = bool(row["cap_delta"] > eps)
+        if row["episodic"] is not None:
+            row["episodic_delta"] = round(row["episodic"] - row["working"][lo], 4)
+    return row
+
+
+def _wake_plant_stream(gap, n_anchors):
+    """POSITIVE CONTROL stream — anchor i occurs ONCE, at tick i*gap, nowhere else.
+
+    Truth is known and quantified: a pair (i,j) is jointly resident at capacity C iff
+    |i-j|*gap <= C-1. With gap=50 that is 0 pairs at C=20 and 25/28 at C=256, so an
+    instrument that reads the buffer at all MUST show a large cap-dependence here."""
+    stream = [[] for _ in range(gap * n_anchors)]
+    for a in range(n_anchors):
+        stream[a * gap] = [a]
+    return stream
+
+
+def _wake_null_stream(n_ticks, n_anchors):
+    """ZERO-TRUTH PEDESTAL — every anchor is pushed on EVERY tick.
+
+    The measured quantity (cap-dependence of co-residency) is exactly 0 by construction:
+    every pair is jointly resident even at capacity 1, so no capacity can separate anything.
+    An instrument that reports a cap effect here is MANUFACTURING it."""
+    return [list(range(n_anchors)) for _ in range(n_ticks)]
+
+
+def _wake_battery(caps, eps):
+    """Run the two controls, in the frozen order, before any treatment row is computed."""
+    plant = _wake_row(_wake_plant_stream(_WAKE_PLANT_GAP, _WAKE_PLANT_N), caps, "both", eps)
+    null = _wake_row(_wake_null_stream(_WAKE_NULL_TICKS, _WAKE_PLANT_N), caps, "both", eps)
+    lo = str(min(caps))
+    plant_fires = bool(plant.get("cap_delta", 0.0) >= _WAKE_PLANT_MIN_DELTA)
+    null_refuses = bool(abs(null.get("cap_delta", 1.0)) <= eps
+                        and null["working"].get(lo, 0.0) >= 1.0 - eps)
+    return {
+        "plant_crossboundary": plant, "plant_null_stream": null,
+        "plant_fires": plant_fires, "null_refuses": null_refuses,
+        "certified": bool(plant_fires and null_refuses),
+        "plant_geometry": {"gap_ticks": _WAKE_PLANT_GAP, "n_anchors": _WAKE_PLANT_N,
+                           "min_delta_to_fire": _WAKE_PLANT_MIN_DELTA},
+    }
+
+
+def _wake_anchor_strata(path, k, n_ticks):
+    """Tokenise a line-record corpus into ticks + three frequency strata of anchors.
+
+    ONE TICK = ONE LINE (the corpus's own record unit, same reading `--mi-seg-lines` uses).
+    Anchors are WHITESPACE-DELIMITED tokens, never substrings — `text.count(stem)` inflates
+    a stem with every longer word containing it (corpus-py-1 ⑩, bit this repo three times).
+    Frequency strata exist because anchor choice is a knob that could pick the verdict: the
+    most frequent tokens recur every few lines (small gaps ⇒ co-residency ~1 at any cap) and
+    the rarest recur across the whole file. Reporting one stratum would be tune-to-green, so
+    all three are reported and the headline requires them to agree."""
+    lines = open(path, "r", encoding="utf-8", errors="replace").read().split("\n")
+    if n_ticks:
+        lines = lines[:n_ticks]
+    toks = [ln.split() for ln in lines]
+    freq = collections.Counter()
+    for t in toks:
+        freq.update(set(t))
+    recurring = [w for w, c in freq.most_common() if c >= 2]
+    strata = {}
+    if len(recurring) >= 3 * k:
+        mid = len(recurring) // 2
+        strata["top"] = recurring[:k]
+        strata["mid"] = recurring[mid - k // 2: mid - k // 2 + k]
+        strata["rare"] = recurring[-k:]
+    return strata, toks, len(recurring)
+
+
+def _wake_stream_for(toks, anchors):
+    ids = {w: i for i, w in enumerate(anchors)}
+    return [[ids[w] for w in dict.fromkeys(t) if w in ids] for t in toks]
+
+
+def run_wake_coresidency(opts):
+    """H_9842 — is the wake working ring buffer a co-occurrence ceiling for recombination?
+
+    WHAT IT ANSWERS, and why no existing flag answers it: every recombination read so far
+    (H_9304 data wall, H_9836 receptive-field bound) asked what the TRUNK can join. The
+    memory side was never measured because its capacity was a hardcoded constant, so there
+    was nothing to sweep. This flag makes the capacity a variable (core/wake_memory.py's new
+    `mem_push_ctx_capped` seam · default path byte-identical) and measures, over the SHIPPED
+    buffer functions, what fraction of anchor pairs can ever be jointly resident.
+
+    GATE ORDER IS LOAD-BEARING (frozen, sequential), mirroring `run_mi_screen`:
+      1. `_wake_battery` runs the two controls FIRST — `plant_crossboundary` (anchors at a
+         known 50-tick spacing: the instrument must FIRE, i.e. show a large cap-dependence)
+         and `plant_null_stream` (every anchor on every tick, so cap-dependence is zero by
+         construction: the instrument must REFUSE).
+      2. Only if both certify is a corpus row reported. Otherwise INSTRUMENT-DEAD / INVALID
+         and NO corpus number (positive-control-before-reading-a-negative ·
+         phi-estimator-needs-zero-truth-pedestal).
+
+    NO-TUNE-TO-GREEN: the anchor-set size is a knob that can move the answer, so the whole
+    treatment is re-run at K and K//2 and the headline is refused unless every stratum AND
+    every knob setting agree (`knob_dependent` / `stratum_dependent` name the disagreement
+    instead of hiding it — the defect H_9844 had to add a gate for).
+    """
+    caps = sorted(set(opts["wake_caps"])) or [20, 64, 256]
+    eps = opts["wake_eps"]
+    source = opts["replay_source"]
+
+    # ── ① controls FIRST — no corpus row is computed unless both certify ──────
+    battery = _wake_battery(caps, eps)
+    if not battery["certified"]:
+        if not battery["plant_fires"]:
+            status = "INSTRUMENT-DEAD"
+            why = ("plant_crossboundary did NOT fire — anchors planted %d ticks apart show no "
+                   "capacity dependence, so the measurement is not reading the ring buffer."
+                   % _WAKE_PLANT_GAP)
+        else:
+            status = "INVALID"
+            why = ("plant_null_stream did NOT refuse — a stream where every anchor is on every "
+                   "tick has zero capacity-dependence by construction, so a non-zero reading "
+                   "means the instrument manufactures one.")
+    else:
+        status = "CERTIFIED"
+        why = "both controls behaved: the planted spacing fires, the saturated stream refuses."
+
+    rows = []
+    if battery["certified"]:
+        for path in opts["corpus"]:
+            knobs = []
+            for k in (opts["wake_anchors"], max(4, opts["wake_anchors"] // 2)):
+                strata, toks, n_recurring = _wake_anchor_strata(path, k, opts["wake_ticks"])
+                if not strata:
+                    knobs.append({"k": k, "underpowered": True, "n_recurring": n_recurring})
+                    continue
+                per_stratum = {}
+                for name in ("top", "mid", "rare"):
+                    per_stratum[name] = _wake_row(_wake_stream_for(toks, strata[name]),
+                                                  caps, source, eps)
+                knobs.append({"k": k, "n_recurring": n_recurring, "strata": per_stratum,
+                              "reads_ceiling": {n: per_stratum[n].get("read_ceiling")
+                                                for n in per_stratum}})
+            usable = [x for x in knobs if not x.get("underpowered")]
+            reads = [bool(v) for x in usable for v in x["reads_ceiling"].values()]
+            row = {"path": path, "sha256": _mi_sha_of(path), "per_knob": knobs}
+            if not reads:
+                row["verdict"] = "UNDERPOWERED"
+            elif all(reads):
+                row["verdict"] = "CEILING-REAL"
+            elif not any(reads):
+                row["verdict"] = "CEILING-DEAD"
+            else:
+                row["verdict"] = "SPLIT"     # some stratum/knob reads it, some does not
+            row["knob_dependent"] = bool(len(usable) > 1 and any(
+                usable[0]["reads_ceiling"].get(n) != usable[1]["reads_ceiling"].get(n)
+                for n in usable[0]["reads_ceiling"]))
+            rows.append(row)
+
+    out = {
+        "instrument": "wake-coresidency",
+        "hypothesis": "H_9842",
+        "engine": "core/wake_memory.py (mem_push_ctx_capped · mem_working_window · "
+                  "mem_record_emit · mem_recent_emits — the shipped functions, driven verbatim)",
+        "status": status,
+        "why": why,
+        "battery": battery,
+        "geometry": {"caps": caps, "replay_source": source, "eps": eps,
+                     "anchors_per_stratum": opts["wake_anchors"], "ticks": opts["wake_ticks"]},
+        "corpus": rows,
+        "reaudit": {"argv": ["anima-py", "corpus"] + sys.argv[1:]},
+        "scope": ("STRUCTURAL, not behavioural: this measures what the buffer CAN hold jointly, "
+                  "never whether a model would use it. Two hard limits. (a) The live daemon "
+                  "pushes a CLOCK TRIPLET, not content — cli/chat.py:2192 is "
+                  "mem_push_ctx(wake_mem, [tick, stage, cell_count]) (H_9422) — so a "
+                  "content-anchor stream is COUNTERFACTUAL: it measures the ceiling a "
+                  "content-carrying percept would meet, and that percept does not exist yet. "
+                  "(b) wake_memory has ZERO train entry point (ARCHITECTURE R12 census), so a "
+                  "co-residency ceiling bounds a replay lane nobody has built; it is a "
+                  "pre-condition on H_9841/H_9839, not a training result."),
+        "reading": ("`working[C]` = fraction of anchor pairs (both anchors occur in the stream) "
+                    "that are jointly resident in the cap-C FIFO at some tick. `episodic` = the "
+                    "same over the append-only log = the uncapped refutation arm (1.0 by "
+                    "construction ⟹ any working[C] < 1.0 is a capacity ceiling and nothing "
+                    "else). `cap_delta` = working[max cap] - working[min cap]. CEILING-REAL "
+                    "requires cap_delta > eps in EVERY stratum at EVERY knob setting; SPLIT "
+                    "means the reading depends on which anchors you look at, and a SPLIT is a "
+                    "result about the stream's gap distribution, not a licence to pick a "
+                    "stratum."),
+    }
+    if opts["out"]:
+        open(opts["out"], "w", encoding="utf-8").write(json.dumps(out, ensure_ascii=False, indent=2))
+    print(json.dumps(out, ensure_ascii=False, indent=2))
+    if not battery["certified"]:
+        sys.exit(3)
+
+
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
@@ -4952,6 +5264,31 @@ def main():
             print("      panel. Runs BEFORE any training — no checkpoint, $0.")
             sys.exit(2)
         run_ngram_audit(opts)
+        return
+    if fmt == "wake-coresidency":
+        if not opts["corpus"]:
+            print("anima-py corpus wake-coresidency --corpus PATH [--corpus PATH2 ...] "
+                  "[--wake-buffer-cap 20 --wake-buffer-cap 64 --wake-buffer-cap 256] "
+                  "[--replay-source working|episodic|both] [--wake-anchors 24] "
+                  "[--wake-ticks 0] [--wake-eps 0.05] [--out wake.json]")
+            print("      H_9842 — is the wake working ring buffer a co-occurrence ceiling?")
+            print("      Recombination needs two concepts to CO-OCCUR, and core/wake_memory.py's")
+            print("      working buffer is a FIFO whose capacity was a HARDCODED 20, so anchors")
+            print("      more than 20 ticks apart can never be jointly resident — the memory-side")
+            print("      twin of the trunk receptive-field bound (H_9836). --wake-buffer-cap makes")
+            print("      the capacity a swept variable (repeat the flag); --replay-source episodic")
+            print("      is the append-only UNCAPPED arm = the direct refutation arm.")
+            print("      Controls run FIRST and the corpus row is refused unless both certify:")
+            print("      plant_crossboundary (anchors 50 ticks apart · must FIRE) and")
+            print("      plant_null_stream (every anchor every tick · must REFUSE).")
+            print("      Anchors are reported in THREE frequency strata (top/mid/rare) at TWO")
+            print("      anchor-set sizes, because picking one stratum would let the knob pick")
+            print("      the verdict. $0 · no GPU · no ckpt · no forward pass.")
+            print("      COST: the episodic arm drives the shipped mem_record_emit, which COPIES")
+            print("      the whole log on every append (O(ticks^2)) — use --wake-ticks to cap a")
+            print("      long stream (~6.5k ticks = ~6s; 56k ticks would not finish in minutes).")
+            sys.exit(2)
+        run_wake_coresidency(opts)
         return
     if fmt == "mi-screen":
         if not opts["corpus"]:

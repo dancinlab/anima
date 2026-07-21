@@ -158,6 +158,7 @@ import serialize as S                                # core/serialize.py — ser
 import verify_clm_v2 as VC                            # core/verify_clm_v2.py — clm_decodable / descent
 # ByteGPT .pt -> .bin serializer is folded into the SAME unified core/serialize.py.
 import serialize as BGS                               # core/serialize.py — serialize(pt_path, bin_path)
+import dream_lib as DR                                # core/dream_lib.py — H_9840 5-stage session + Process-S/C
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1616,6 +1617,238 @@ class IdeationFanCell:
                              f"(need blank-line-separated blocks of >=3 lines: context + >=2 futures)")
 
 
+# ══ H_9840 — SLEEP-SCHEDULE curriculum (SLP lane) ═══════════════════════════════════════════
+#
+# WHY THIS EXISTS: core/dream_lib.py already carries a 90-tick 5-stage session
+# (WAKE 60 · N1 10 · N2 10 · N3 7 · REM 3) plus the two-process homeostat (Process-S adenosine
+# build/clear, Process-C circadian). That table IS the shape of a curriculum scheduler, and until
+# now the trainer never read it — its only consumer was the daemon (cli/chat.py). This lane makes
+# the training step's wake/sleep phase come from the substrate's own session table instead of a
+# hard-coded constant (a_autonomy_over_hardcode), so the alternation is a substrate fact rather
+# than a trainer knob.
+#
+# SCOPE / HONESTY (card H_9840): a SLEEP step here REHEARSES windows already consumed while awake
+# (the trainer-side reading of core/imagination_replay.py's working-ring rehearsal). There is no
+# consolidation OBJECTIVE yet — that is H_9833 (sleep-consolidate). Replay without one is only
+# resampling seen material, so this lane is SUBORDINATE to H_9833 and must not be read as a
+# consolidation result on its own.
+_SLP_STAGE_INITIAL = ("W", "1", "2", "3", "R")
+
+
+class SleepSchedule:
+    """Per-step WAKE/SLEEP phase source over core/dream_lib.py's stage table (H_9840).
+
+    ARMS
+      dream-lib         — phase = dr_stage_at(tick) in dream_lib's OWN order: one long WAKE bout,
+                          then a CONSOLIDATED sleep bout N1→N2→N3→REM.
+      fixed-alternating — THE CONTROL. The SAME per-cycle stage MULTISET (identical wake/sleep
+                          ratio AND identical per-stage counts) emitted in an even round-robin
+                          spread instead of one bout. The ONE variable is therefore the temporal
+                          ARRANGEMENT (consolidated bout + stage order), not the ratio and not the
+                          stage mixture. If dream-lib cannot beat this arm, the homeostat is
+                          decoration and the ratio was the only lever — say that plainly.
+      (`off` never constructs this object at all ⇒ the trainer is byte-identical.)
+
+    --sleep-ticks rescales the tick axis onto dream_lib's native 90-tick session; n=90 is the
+    identity, i.e. exactly dream_lib. The arms stay multiset-matched at EVERY n by construction
+    (the control is a PERMUTATION of the treatment cycle) — the selftest re-checks that across a
+    tick sweep so no choice of n can pick the verdict (no tune-to-green).
+    """
+
+    ARMS = ("dream-lib", "fixed-alternating")
+
+    def __init__(self, arm, ticks):
+        if arm not in self.ARMS:
+            raise SystemExit(f"[sleep-schedule] unknown arm {arm!r} (have: {', '.join(self.ARMS)})")
+        n = int(ticks)
+        if n < DR.dr_n_stages():
+            raise SystemExit(f"[sleep-schedule] --sleep-ticks {n} < {DR.dr_n_stages()}: a cycle "
+                             f"shorter than the stage count cannot realize the stage multiset.")
+        self.arm, self.n = arm, n
+        native = [DR.dr_stage_at((t * DR.dr_n_ticks()) // n) for t in range(n)]
+        self.cycle = native if arm == "dream-lib" else _slp_spread(native)
+        # Process-S/C telemetry, reported (never gated on): the homeostat's own reading of the
+        # same tick axis. dream_lib returns numbers only — no bool gate lives here either (p5).
+        self.pressure = [DR.sp_pressure_at((t * DR.dr_n_ticks()) // n, 0.0) for t in range(n)]
+        self.propensity = [DR.sp_sleep_propensity(p, DR.sp_circadian_bias((t * DR.dr_n_ticks()) // n))
+                           for t, p in enumerate(self.pressure)]
+
+    def stage_at(self, step):
+        """1-based training step → dream_lib stage id (0=WAKE, 1..4 = N1/N2/N3/REM)."""
+        return self.cycle[(step - 1) % self.n]
+
+    def is_deep(self, stage):
+        """N3/REM — dream_lib's own imagination-active stages replay the WHOLE buffer;
+        the light stages (N1/N2) rehearse only its recent tail."""
+        return DR.dr_imagination_active(stage) == 1
+
+    def render(self, steps):
+        return "".join(_SLP_STAGE_INITIAL[self.stage_at(s)] for s in range(1, steps + 1))
+
+
+def _slp_spread(cycle):
+    """Even round-robin PERMUTATION of a stage cycle — the ratio-and-multiset-matched control.
+
+    Each stage's c occurrences get keys (j+0.5)/c and the whole cycle is re-sorted by that key,
+    so every stage is spread evenly over the session while the per-stage COUNTS are untouched by
+    construction. That construction is what makes `fixed-alternating` a control and not a second
+    treatment: it cannot differ from `dream-lib` in ratio or mixture, only in arrangement.
+    """
+    counts = {}
+    for s in cycle:
+        counts[s] = counts.get(s, 0) + 1
+    seen, keyed = {}, []
+    for s in cycle:
+        j = seen.get(s, 0)
+        seen[s] = j + 1
+        keyed.append(((j + 0.5) / counts[s], s, j))
+    keyed.sort()
+    return [s for _, s, _ in keyed]
+
+
+def slp_meter(stages):
+    """THE INSTRUMENT: read a realized stage sequence into ratio + bout structure.
+
+    Certified by the two controls in `run_sleep_selftest` before any arm row is reported.
+    """
+    n = len(stages)
+    sleep_bouts, wake_bouts = [], []
+    run_s = run_w = 0
+    for s in stages:
+        if s != 0:
+            run_s += 1
+            if run_w:
+                wake_bouts.append(run_w); run_w = 0
+        else:
+            run_w += 1
+            if run_s:
+                sleep_bouts.append(run_s); run_s = 0
+    if run_s: sleep_bouts.append(run_s)
+    if run_w: wake_bouts.append(run_w)
+    n_sleep = sum(1 for s in stages if s != 0)
+    counts = {}
+    for s in stages:
+        counts[DR.dr_stage_name(s)] = counts.get(DR.dr_stage_name(s), 0) + 1
+    return {
+        "n": n, "wake": n - n_sleep, "sleep": n_sleep,
+        "sleep_ratio": (n_sleep / n) if n else 0.0,
+        "n_sleep_bouts": len(sleep_bouts),
+        "max_sleep_bout": max(sleep_bouts) if sleep_bouts else 0,
+        "max_wake_bout": max(wake_bouts) if wake_bouts else 0,
+        "stage_counts": counts,
+    }
+
+
+def run_sleep_selftest(ticks, steps):
+    """H_9840 $0 SCHEDULE SELFTEST — controls first, arm rows only if they certify.
+
+    Same frozen order as cli/corpus.py::run_mi_screen:
+      ① METER CONTROLS.  `plant_bout` = a hand-planted sequence whose geometry is known exactly
+         (60 WAKE then 30 N3): the meter must RECOVER it. `null_all_wake` = the zero-truth
+         pedestal, a stream with no sleep in it at all: the meter must REFUSE (report no sleep
+         structure). A meter that cannot see a planted bout, or that manufactures one on an
+         all-wake stream, makes every arm row unreadable.
+      ② ARM GATES.  `separation` — the two arms must actually differ (an inert lever is
+         INSTRUMENT-DEAD). `multiset_match` — they must carry IDENTICAL per-stage counts, else
+         `fixed-alternating` is not ratio-matched and the contrast is confounded (INVALID).
+      ③ TICK ROBUSTNESS.  Both gates re-checked across a --sleep-ticks sweep: if either could be
+         made to pass or fail by choosing n, the knob would be choosing the verdict.
+    """
+    plant = [0] * 60 + [3] * 30                     # known truth: ratio 30/90, ONE bout of 30
+    m_plant = slp_meter(plant)
+    plant_truth = {"sleep_ratio": 30 / 90, "n_sleep_bouts": 1,
+                   "max_sleep_bout": 30, "max_wake_bout": 60}
+    plant_fires = all(abs(m_plant[k] - v) < 1e-12 for k, v in plant_truth.items())
+
+    m_null = slp_meter([0] * 90)                    # zero-truth pedestal: no sleep exists
+    null_refuses = (m_null["sleep"] == 0 and m_null["n_sleep_bouts"] == 0
+                    and m_null["max_sleep_bout"] == 0 and m_null["sleep_ratio"] == 0.0)
+
+    sweep, sep_ok, mset_ok = [], True, True
+    for n in sorted({30, 45, 90, 180, int(ticks)}):
+        try:
+            a_dl = SleepSchedule("dream-lib", n)
+            a_fa = SleepSchedule("fixed-alternating", n)
+        except SystemExit as e:
+            sweep.append({"ticks": n, "error": str(e)}); sep_ok = False; continue
+        m_dl, m_fa = slp_meter(a_dl.cycle), slp_meter(a_fa.cycle)
+        ham = sum(1 for x, y in zip(a_dl.cycle, a_fa.cycle) if x != y)
+        same_mset = (m_dl["stage_counts"] == m_fa["stage_counts"])
+        sep_ok = sep_ok and ham > 0
+        mset_ok = mset_ok and same_mset
+        sweep.append({"ticks": n, "hamming": ham, "multiset_match": same_mset,
+                      "dream-lib": m_dl, "fixed-alternating": m_fa})
+
+    certified = plant_fires and null_refuses and sep_ok and mset_ok
+    if not plant_fires:
+        status, why = "INSTRUMENT-DEAD", ("plant_bout did NOT fire — the meter cannot recover a "
+                                          "bout geometry that is known to be there, so no arm row "
+                                          "it reports can be read.")
+    elif not null_refuses:
+        status, why = "INVALID", ("null_all_wake did NOT refuse — the meter reports sleep structure "
+                                  "on a stream containing no sleep, i.e. it MANUFACTURES it.")
+    elif not sep_ok:
+        status, why = "INSTRUMENT-DEAD", ("the two arms are identical at some --sleep-ticks: the "
+                                          "lever does nothing there and a contrast is impossible.")
+    elif not mset_ok:
+        status, why = "INVALID", ("the arms' stage multisets differ at some --sleep-ticks: "
+                                  "`fixed-alternating` is then not ratio-matched and any "
+                                  "dream-lib−control delta is confounded by the ratio.")
+    else:
+        status, why = "CERTIFIED", ("meter fires on the plant and refuses on the all-wake pedestal; "
+                                    "the arms differ in ARRANGEMENT at every swept tick count while "
+                                    "carrying an identical stage multiset.")
+
+    arms, realized_ratios = {}, {}
+    if certified:
+        for arm in SleepSchedule.ARMS:
+            sch = SleepSchedule(arm, ticks)
+            realized = [sch.stage_at(s) for s in range(1, steps + 1)]
+            rm = slp_meter(realized)
+            realized_ratios[arm] = rm["sleep_ratio"]
+            arms[arm] = {"realized_meter": rm,
+                         "cycle_meter": slp_meter(sch.cycle),
+                         "sequence": sch.render(steps),
+                         "pressure_first8": [round(p, 6) for p in sch.pressure[:8]],
+                         "propensity_first8": [round(p, 6) for p in sch.propensity[:8]]}
+
+    out = {
+        "instrument": "sleep-schedule-selftest",
+        "hypothesis": "H_9840",
+        "engine": "core/dream_lib.py (5-stage session + Process-S/C homeostat)",
+        "status": status, "why": why,
+        "controls": {"plant_bout": {"must": "FIRE", "fired": plant_fires,
+                                    "truth": plant_truth, "measured": m_plant},
+                     "null_all_wake": {"must": "REFUSE", "refused": null_refuses,
+                                       "measured": m_null}},
+        "arm_gates": {"separation_all_ticks": sep_ok, "multiset_match_all_ticks": mset_ok,
+                      "tick_sweep": sweep},
+        # SELF-CAUGHT DEFECT (kept as a reported gate, and hard-enforced in the trainer):
+        # `steps` is a knob that can flip the contrast. dream-lib front-loads its WAKE bout, so a
+        # run of steps=12 at ticks=90 realizes sleep_ratio 0.0000 for dream-lib and 0.2500 for
+        # fixed-alternating — the "ratio-matched" control would then not be ratio-matched at all,
+        # and any delta would be a ratio delta wearing an arrangement label. The cycle ratios are
+        # equal by construction; only a WHOLE number of sessions makes the REALIZED ones equal too.
+        # The trainer therefore refuses `--steps` that is not a multiple of `--sleep-ticks`.
+        "steps_alignment": {"steps": int(steps), "sleep_ticks": int(ticks),
+                            "whole_sessions": (int(steps) % int(ticks) == 0),
+                            "realized_sleep_ratio": realized_ratios,
+                            "realized_ratio_matched": (len(set(realized_ratios.values())) <= 1)},
+        "geometry": {"sleep_ticks": int(ticks), "steps": int(steps),
+                     "native_ticks": DR.dr_n_ticks()},
+        "arms": arms,
+        "reaudit": {"argv": ["anima-py", "train"] + sys.argv[1:]},
+        "reading": ("`off` is not an arm here: it never constructs a schedule, so it has no "
+                    "sequence to print — its claim is byte-identity, which is checked by "
+                    "comparing a real `--sleep-schedule off` run's .clm sha256 against a run "
+                    "with no flag at all. SUBORDINATE TO H_9833: a SLEEP step rehearses already-"
+                    "seen windows, and without a consolidation objective that is resampling, not "
+                    "consolidation — this selftest certifies the SCHEDULE, never a learning gain."),
+    }
+    print(json.dumps(out, ensure_ascii=False, indent=2))
+    return 0 if certified else 3
+
+
 def _to_device_or_die(model, device):
     """model.to(device) but turn a CUDA OOM at model-move into a CLEAR, actionable message
     instead of a raw torch AcceleratorError traceback (which reads like a code/arch bug — it
@@ -1926,12 +2159,45 @@ def main():
     ap.add_argument("--pregate-panel", type=str, default="",
                     help="H_9808: the panel identifier this run will be scored on. Must equal the "
                          "anchor's panel. REQUIRED when --trained-control-ceiling > 0.")
+    # ── H_9840 SLEEP-SCHEDULE curriculum (SLP lane · see the SleepSchedule docstring) ──────────
+    # The 5-stage session in core/dream_lib.py had no consumer on the training side; this makes it
+    # one. DEFAULT-OFF ⇒ the golden path never constructs a schedule and is byte-identical.
+    ap.add_argument("--sleep-schedule", choices=["off", "dream-lib", "fixed-alternating"],
+                    default="off",
+                    help="H_9840: 'dream-lib' = core/dream_lib.py's own 5-stage session drives the "
+                         "per-step wake/sleep phase (one long WAKE bout, then a consolidated "
+                         "N1→N2→N3→REM bout); a SLEEP step rehearses windows already consumed "
+                         "while awake instead of drawing fresh corpus · 'fixed-alternating' = THE "
+                         "CONTROL, the SAME stage multiset (identical ratio AND per-stage counts, "
+                         "it is a permutation) spread evenly, so the ONE variable is the temporal "
+                         "ARRANGEMENT · 'off' (default) ⇒ byte-identical, no replay buffer. "
+                         "SUBORDINATE TO H_9833: without a consolidation objective a sleep step is "
+                         "resampling, not consolidation — do not read a gain here as one.")
+    ap.add_argument("--sleep-ticks", type=int, default=DR.dr_n_ticks(),
+                    help="H_9840: session length in training steps (default 90 = dream_lib's "
+                         "native session, i.e. the identity rescale of its stage table).")
+    ap.add_argument("--sleep-replay-cap", type=int, default=4096,
+                    help="H_9840: FIFO capacity of the wake replay buffer, in window specs.")
+    ap.add_argument("--sleep-selftest", type=int, default=0,
+                    help="H_9840 $0 SELFTEST: build N steps of every arm, run the meter controls "
+                         "(planted bout must FIRE, all-wake pedestal must REFUSE) and the arm "
+                         "gates (arms differ · stage multisets identical) across a --sleep-ticks "
+                         "sweep, print the realized sequences as JSON and EXIT — no model, no "
+                         "corpus, no device. Non-zero exit if the battery does not certify.")
     ap.add_argument("--ddp-find-unused", action="store_true",
                     help="DDP debug/escape-hatch: pass find_unused_parameters=True to DDP. Off "
                          "by default — the current objective set fires every head every step "
                          "(§4). Flip ON only if a FUTURE per-step-gated head makes DDP error on "
                          "an unused param.")
     a = ap.parse_args()
+
+    # ══ H_9840 — SLEEP-SCHEDULE $0 SELFTEST ═════════════════════════════════════════════════════
+    # Runs FIRST, like the H_9808 gate below: before the DDP re-exec, before any device, corpus or
+    # model. The schedule is pure integer arithmetic over core/dream_lib.py, so certifying it must
+    # not cost a GPU-second — and an instrument that has never been run hides several bugs at once
+    # (convergence instrument-never-run-hides-multiple-bugs).
+    if a.sleep_selftest > 0:
+        sys.exit(run_sleep_selftest(a.sleep_ticks, a.sleep_selftest))
 
     # ══ H_9808 — TRAINED-CONTROL CEILING: the ABORT-BEFORE-SPEND gate ═══════════════════════════
     #
@@ -2319,6 +2585,43 @@ def main():
     if not cells:
         p0("  corpus: NONE -> synthetic smoke", flush=True)
 
+    # ── H_9840 sleep-schedule lane ────────────────────────────────────────────────────────────
+    #   Constructed only when the arm is on ⇒ `off` never allocates a schedule, a replay buffer or
+    #   a generator, and the batch draw below stays byte-identical. ANNOUNCED at startup: a silent
+    #   arm is how a CONTROL run gets read as a treatment run (the H_9805 precedent above).
+    slp = None
+    slp_stats = None
+    if a.sleep_schedule != "off":
+        if not cells:
+            sys.exit("[sleep-schedule] needs a real --corpus: the SLEEP phase rehearses windows "
+                     "the WAKE phase consumed, and the synthetic smoke stream has no windows.")
+        # NO-TUNE-TO-GREEN GATE (self-caught while writing the selftest): `--steps` can flip the
+        # contrast on its own. dream-lib front-loads its WAKE bout, so steps=12 at ticks=90
+        # realizes sleep_ratio 0.0000 on dream-lib but 0.2500 on fixed-alternating — the
+        # "ratio-matched" control would not be ratio-matched, and any delta would be a RATIO
+        # delta wearing an arrangement label. The two cycles are multiset-identical by
+        # construction; only a WHOLE number of sessions carries that equality into the realized
+        # run. So a partial session is refused rather than silently mis-read.
+        if steps % a.sleep_ticks != 0:
+            sys.exit(f"[sleep-schedule] --steps {steps} is not a whole multiple of --sleep-ticks "
+                     f"{a.sleep_ticks}. A partial session realizes DIFFERENT wake/sleep ratios in "
+                     f"the two arms (dream-lib front-loads WAKE), which un-matches the control and "
+                     f"turns an arrangement contrast into a ratio contrast. Use steps = k * "
+                     f"{a.sleep_ticks}, or shorten --sleep-ticks. "
+                     f"(`--sleep-selftest N` reports this as steps_alignment.)")
+        slp = SleepSchedule(a.sleep_schedule, a.sleep_ticks)
+        _cm = slp_meter(slp.cycle)
+        slp_stats = {"arm": slp.arm, "ticks": slp.n, "cycle_meter": _cm,
+                     "replay_cap": a.sleep_replay_cap,
+                     "wake_steps": 0, "sleep_steps": 0, "replay_batches": 0, "warmup_fresh": 0}
+        p0(f"  sleep-schedule: arm={slp.arm} ticks={slp.n} "
+           f"wake={_cm['wake']} sleep={_cm['sleep']} (sleep_ratio={_cm['sleep_ratio']:.4f}) "
+           f"stages={_cm['stage_counts']} max_sleep_bout={_cm['max_sleep_bout']} "
+           f"replay_cap={a.sleep_replay_cap} · SLEEP steps REPLAY the wake buffer "
+           f"(H_9840 · SUBORDINATE to H_9833: no consolidation objective exists yet, so a sleep "
+           f"step is REHEARSAL, not distillation)", flush=True)
+        p0(f"  sleep-schedule cycle: {slp.render(min(slp.n, 120))}", flush=True)
+
     _samp_cells = [c for c in cells if c.train_end >= seq_len + 2]
     _samp_w = torch.tensor([float(c.train_end) for c in _samp_cells]) \
         if _samp_cells else torch.tensor([1.0])
@@ -2389,8 +2692,38 @@ def main():
             out.append((x_i.to(device), y_i.to(device), m_i.to(device), fork_i))
         return out
 
+    # H_9840 — the wake replay buffer + its OWN generator (like idl_gen/sb_gen above): a sleep
+    # step must not consume the main `gen` stream, or the arm comparison would also be a
+    # different-corpus-stream comparison. Both are allocated only when the lane is on.
+    slp_gen = torch.Generator().manual_seed(int(a.seed) ^ 0x9840) if slp is not None else None
+    slp_replay = []                    # FIFO of (cell, start) specs consumed while awake
+
     def get_batch(step):
         if cells:
+            # ── H_9840: SLEEP step ⇒ rehearse the wake buffer instead of drawing fresh corpus.
+            #    Deep stages (N3/REM, dr_imagination_active==1) replay the WHOLE buffer; the light
+            #    stages (N1/N2) rehearse only its recent quarter. Until the buffer holds a full
+            #    batch the step falls back to a fresh draw (counted as `warmup_fresh`, never
+            #    silently) — a sleep step cannot rehearse what was never seen.
+            if slp is not None:
+                _stage = slp.stage_at(step)
+                if _stage != 0:
+                    slp_stats["sleep_steps"] += 1
+                    if len(slp_replay) >= B_global:
+                        pool = (slp_replay if slp.is_deep(_stage)
+                                else slp_replay[-max(B_global, len(slp_replay) // 4):])
+                        _idx = torch.randint(0, len(pool), (B_global,), generator=slp_gen).tolist()
+                        specs = [pool[i] for i in _idx]
+                        slp_stats["replay_batches"] += 1
+                        lo = rank * B_local
+                        xs, ys = [], []
+                        for cell, start in specs[lo:lo + B_local]:
+                            w = cell.materialize(start, seq_len)
+                            xs.append(w[0]); ys.append(w[1])
+                        return torch.stack(xs).to(device), torch.stack(ys).to(device)
+                    slp_stats["warmup_fresh"] += 1
+                else:
+                    slp_stats["wake_steps"] += 1
             # ── §3 SPEC phase (ALL ranks, IDENTICAL shared gen=42): draw the GLOBAL batch's
             #    window specs in TODAY's interleaved order (proportional: multinomial→spec;
             #    roundrobin: index→spec). This global spec list is byte-identical to the
@@ -2404,6 +2737,10 @@ def main():
                     cell = cells[(step - 1 + b) % len(cells)]
                 start = cell.window_spec(seq_len, gen)   # None ⇒ synthetic fallback (no randint)
                 specs.append((cell, start))
+            if slp is not None:                          # remember what was seen while awake
+                slp_replay.extend([s for s in specs if s[1] is not None])
+                if len(slp_replay) > a.sleep_replay_cap:
+                    del slp_replay[:len(slp_replay) - a.sleep_replay_cap]
             # ── §3 MATERIALIZE phase (rank-local slice): rank r takes [r*B_local, (r+1)*B_local).
             lo = rank * B_local
             xs, ys = [], []
@@ -2685,6 +3022,15 @@ def main():
             p0(f"  step {step:5d}  CE={ce:.5f}  E={e_now()}  "
                f"wd={wd:.4f} dp={dp:.4f}{vtxt}{ptxt}{atxt}", flush=True)
     wall = time.time() - t0
+    # H_9840 — freeze the realized schedule counts HERE, before the DBES probe calls get_batch()
+    # once more: a monitor probe must not appear in the training-step census.
+    slp_final = dict(slp_stats) if slp_stats is not None else None
+    if slp_final is not None:
+        p0(f"  sleep-schedule realized: wake={slp_final['wake_steps']} "
+           f"sleep={slp_final['sleep_steps']} "
+           f"(sleep_ratio={slp_final['sleep_steps'] / max(1, steps):.4f}) "
+           f"replay_batches={slp_final['replay_batches']} "
+           f"warmup_fresh={slp_final['warmup_fresh']}", flush=True)
 
     # ══ §6 FINALIZE — held-out val / DBES / gauges / ckpt / summary / serialize are ALL
     #    RANK-0-ONLY on the UNWRAPPED core_model (`model`). A non-zero rank writing files =
@@ -2805,6 +3151,8 @@ def main():
                    "dbes_batch_scope": (f"per_rank_shard(B_local={B_local})" if world > 1
                                         else f"full_batch(B={B_global})"),
                    "gauges_g1g6_torch_probe": gauges,
+                   # H_9840 — None when the lane is off (nothing was scheduled and nothing replayed).
+                   "sleep_schedule": slp_final,
                    "tier": ("engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
                             if is_bytegpt else
                             "engine-native-eligible (.clm additive, TLoRA materialized); torch probe DIRECTIONAL")}
