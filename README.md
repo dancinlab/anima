@@ -602,151 +602,18 @@ trailer, pass matching `--slw`, `--slw-n-slot`, and `--slw-k` arguments: the tra
 the learned memory lane and refuses to silently discard it. `--skip-inline-rho` skips only the
 slow directional torch probe at shutdown; promotion still requires the engine-native evaluation.
 
-Build a source-derived workspace curriculum without copying the frozen evaluation panel:
-`anima-py corpus workspace-struct --corpus SOURCE --out workspace.txt`. The command splits
-source lines before expansion, writes `workspace.txt.heldout.txt`, and records source/record
-SHA-256 sets plus zero-overlap verdicts in `workspace.txt.workspace.json`.
+### Model-native G1/G6 policy
 
-### Typed workspace
-
-The workspace composes compound premises into a measurable hypothesis, checks typed `.kosmos`
-evidence, rejects contradicted candidates, and can abstain when grounding is absent. Chat defaults
-to `--workspace auto`: a genuine compound `--workspace-seed` uses the six-lens divergent path,
-while an empty or atomic seed reduces exactly to `off`. For a selected divergent hypothesis the
-workspace locks every operand, direction, measure, and lens; the mounted mouth then ranks three
-meaning-preserving English/Korean surfaces by next-byte likelihood. This avoids asking a local
-conv decoder to regenerate distant semantic slots. Explicit modes remain available.
+G1/G6 capability is credited only to direct output from the mounted, frozen model through the
+engine. The former typed workspace, controlled-grammar renderer, candidate generator, evidence
+ledger, and structured fallback were removed in 0.20.88 because they implemented the answer path
+in Python. Deterministic code may measure a result, but it may not create, repair, or replace the
+model's conclusion or hypothesis.
 
 ```bash
-anima-py evaluate --workspace-semantic
-anima-py evaluate --workspace-deep
-anima-py evaluate --workspace-deeper
-anima-py evaluate --workspace-production-cert
-anima-py evaluate --workspace-divergence --seed "if copper conducts heat, then water drives turbines"
-anima-py evaluate model.clm --workspace-divergence-realizer --workspace-realizer-panel \
-  --out workspace-realizer-verdict.json
-anima-py evaluate --workspace-system-rho --store-report store-verdict.json \
-  --realizer-report workspace-realizer-verdict.json --out system-rho.json
-anima-py evaluate --workspace-release-verify \
-  --candidate-model anima_workspace_system_v1.clm --base-model e1_slw_303m.final.clm \
-  --store-report store-verdict.json --realizer-report workspace-realizer-verdict.json \
-  --out release-verified.json
-anima-py evaluate --workspace-regression --out workspace-regression.json
-anima-py evaluate model.clm --workspace-reach-only --workspace-evidence evidence-dir
-anima-py evaluate model.clm --workspace-divergence-realizer --workspace-adversarial-panel
-anima-py evaluate --workspace-longrun --ticks 500
-```
-
-`--workspace-deep` extends the frozen panel without changing its release bars. G1 certifies exact
-6/8/10-hop closure, conjunctive branch/merge, finite cycles, relation-pair shuffles, negation and
-quantifier controls, typed homonyms, irrelevant insertion, and wrong-rule collapse. G6 runs numeric
-measurement → source/time-bearing typed evidence → rejection → distinguishable alternative selection,
-with OFF and claim-ID shuffle controls. Conflicting support/contradiction is always `UNGROUNDED` and
-remains so after typed `.kosmos` persistence and process restart.
-
-`--workspace-deeper` adds a separate, non-frozen second-stage certificate. G1 distinguishes
-necessary/sufficient direction, AND/OR/XOR, explicit exception clearance, universal versus
-existential quantifiers, double-negation scope, and temporal order. Every derived fact carries a
-replayable proof DAG; missing parents, changed rules, and late exceptions invalidate it. G6 uses an
-append-only JSONL evidence ledger: weak or missing measurements become `INCONCLUSIVE`, tied or
-incomparable conflicts become `UNGROUNDED`, and conflict resolution requires independent replicated
-experiments rather than recency. Corrections and retractions preserve history, observational evidence
-cannot ground a causal claim, and proposed experiments are ranked by expected candidate separation.
-This is a structural gate, not source authentication or a statistical package: callers must supply
-trustworthy experiment IDs and quality metadata, and domain-specific effect estimation remains outside
-the workspace.
-
-`--workspace-production DIR` is the separate, default-off user path. Controlled English/Korean
-statements are converted to typed facts, and derived conclusions are stored with replayable proof
-artifacts. Signed evidence is resolved before contradicted candidates are removed; if several
-candidates remain, the ledger records the next experiment with the highest expected separation.
-Logic, evidence history, proof invalidations, decision proofs, checkpoints, and state-transition
-telemetry survive process restart. A torn final JSONL write is repaired; checksum damage in the
-middle is rejected.
-
-```json
-{
-  "sources": {"lab-a": {"key_env": "ANIMA_LAB_A_KEY"}},
-  "experiments": [{
-    "experiment_id": "exp-a",
-    "claim_id": "workspace-claim-...",
-    "source": "lab-a",
-    "context": "reactor-v1",
-    "target_inference": "associational",
-    "intervention": "catalyst dose",
-    "outcome": "yield"
-  }]
-}
-```
-
-Use the exact claim IDs printed by `--workspace-divergence` when preregistering experiments. A
-`MEASUREMENT` percept has `{"measurement": {...}, "signature": "..."}` after the prefix. The
-signature is HMAC-SHA256 over the measurement object serialized as UTF-8 canonical JSON
-(`sort_keys=true`, compact separators); unsigned, altered, shuffled-claim, or unregistered inputs
-are rejected before statistical assessment.
-
-```bash
-export ANIMA_LAB_A_KEY='source-held-secret'
-ANIMA_TICKS=1 anima-py chat model.clm --workspace divergent \
-  --workspace-seed "if catalyst increases yield, then reactor reduces waste" \
-  --workspace-production workspace-state \
-  --workspace-trust-registry registry.json \
-  --workspace-target-inference associational \
-  --percept-file signed-percepts.jsonl
-```
-
-The production certificate tests controlled-language ambiguity, proof tampering and late
-exceptions, signed measurement and claim substitution, confidence-interval decisions, direct
-common-cause adjustment, randomized causal evidence, Simpson reversal, selective reporting,
-concurrent append, torn-write recovery, candidate elimination, and decision replay. Its boundaries
-are deliberate: the extractor is a controlled grammar rather than general NLP; HMAC assumes the
-verifier and source share a protected secret; intervals use a normal approximation rather than a
-domain statistical model; and causal checks cover randomized evidence or explicitly adjusted direct
-common causes, not arbitrary causal identification.
-
-The unchanged HF workspace-system-v1 303M model was rerun against the adversarial mounted-mouth panel
-after this change: 42/42 hypotheses were model-reranked with zero fallback and all 126/126
-meaning-locked candidates passed (model SHA-256 `f64a4afb43f5ba2911b836a066a6ef16f2f9678b95c2efa4824a022181d4b8fc`).
-
-Deterministic greedy workspace sessions cache only exact repeated anchored model inputs. Sampled
-mouths and workspace-OFF runs never use this cache. On the HF workspace-system-v1 303M CPU run,
-the frozen 100-tick panel improved from 2431.76s to 1866.39s while preserving 50/50 mounted-mouth
-realizations, zero fallback, and `psi_intact=1` (22/100 exact decode-cache hits).
-
-```bash
-anima-py evaluate model.clm --corpus corpus.txt --rho-axon  # exact probe calls are memoized
+anima-py evaluate model.clm --corpus corpus.txt --rho-axon
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-cache .rho-cache
-anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-no-cells \
-  --rho-out bare-rho.json
-anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-axes self --kosmos self-dir
-
-# User path: compound seed automatically activates the divergent spoken-text seam.
-ANIMA_TICKS=1 anima-py chat model.clm \
-  --workspace-seed "if rain increases, then streets become wet"
-
-# Exact legacy behavior remains explicitly selectable.
-ANIMA_TICKS=1 anima-py chat model.clm --workspace off
-
-# Strict G6: absent evidence becomes UNGROUNDED/abstain.
-anima-py chat model.clm --workspace structured --workspace-require-evidence \
-  --workspace-evidence evidence-dir --workspace-seed "premise one. premise two"
-
-# Numeric JSONL rows {claim_id, observed, control, direction} become typed verdict evidence.
-anima-py chat model.clm --workspace structured --workspace-measurements measurements.jsonl \
-  --workspace-seed "premise one. premise two"
-
-# Six-lens evidence rejection/reranking; all candidates contradicted => abstain.
-anima-py chat model.clm --workspace divergent --workspace-measurements measurements.jsonl \
-  --workspace-seed "if copper conducts heat, then water drives turbines"
-
-# Unique typed lookup only; missing, shuffled, or conflicting records abstain.
-anima-py chat model.clm --workspace grounded --workspace-evidence facts-dir \
-  --workspace-query "library|opens_at"
-
-# Session A: only this explicit typed form is persisted; ordinary prose is ignored.
-anima-py chat model.clm --workspace-persist facts-dir
-# percept: FACT library | opens_at | 09:00
-# Session B: load the same typed anchors through --workspace-evidence facts-dir.
+anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-no-cells --rho-out bare-rho.json
 ```
 
 > **Which twin is canonical?** `anima-py` (pip) is the SSOT for verdicts and the one that

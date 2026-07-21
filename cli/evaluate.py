@@ -160,7 +160,7 @@ class _Mouth:
             self.W, seed, gen, top_k, temp, seed_rng)["text"]
 
     def score(self, text):
-        """Mean next-byte CE used to rank meaning-locked workspace surfaces."""
+        """Mean next-byte CE used to rank candidate surfaces."""
         if text in self._score_cache:
             return self._score_cache[text]
         ids = list(text.encode("utf-8", "surrogateescape"))
@@ -913,17 +913,10 @@ def eval_rho_fan(mouth, gen, known, seed_class="composed", seed_off=0):
 
 def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
                    seed_class="composed", fan_temp_ladder=False, seed_off=0,
-                   weave_null="off", workspace_reach=False, workspace_evidence=(),
-                   workspace_require_evidence=False, workspace_realizer="structured"):
+                   weave_null="off"):
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
     mouth = _Mouth(ckpt, grow_window=grow_window)
-    if workspace_reach:
-        from workspace_mouth import TypedWorkspaceMouth
-        mouth = TypedWorkspaceMouth(mouth, workspace_evidence, workspace_require_evidence,
-                                    workspace_realizer)
-        print("  [workspace] typed compose/falsify wrapper ON — SYSTEM reach; "
-              "bare-model bars unchanged", flush=True)
     if grow_window:
         print("  [Fix-W] --grow-window ON (H_9804/H_6189): CLM decode window = "
               "min(len(seed)+gen, 512) instead of the production T=24. The frozen bars do "
@@ -949,188 +942,6 @@ def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
     return {"g0": r0, "g1": r1, "g2": r2, "g3": r3, "g5": r5, "g6": r6,
             "closure": closure, "gen": g,
             "calibration": rho_fan_detector_calibration(known)}
-
-
-def workspace_reach_only_run(argv):
-    """Run the unchanged frozen G1/G6 scorers on the typed system mouth only."""
-    positional = [arg for arg in argv if not arg.startswith("--")]
-    if not positional:
-        print("ERROR: --workspace-reach-only requires <ckpt>", file=sys.stderr)
-        return 2
-    ckpt = positional[0]
-    gen = evaluate_intval(argv, "--gen", _default_gen())
-    grow = "--grow-window" in argv
-    seed_off = evaluate_intval(argv, "--seed-offset", 0)
-    from workspace_mouth import TypedWorkspaceMouth
-    evidence_dir = evaluate_strval(argv, "--workspace-evidence", "")
-    evidence = []
-    if evidence_dir:
-        from workspace_adapters import load_fact_anchors
-        evidence = load_fact_anchors(evidence_dir)
-    known = _rho_fan_dict_load()
-    require_evidence = "--workspace-require-evidence" in argv
-    realizer = evaluate_strval(argv, "--workspace-realizer", "structured")
-    mouth = TypedWorkspaceMouth(_Mouth(ckpt, grow_window=grow), evidence, require_evidence,
-                                realizer)
-    print("=== anima evaluate --workspace-reach-only — frozen G1/G6 system panel ===", flush=True)
-    print("ckpt: " + ckpt, flush=True)
-    print("scope: typed SYSTEM reach; bare model claim = unchanged", flush=True)
-    print("evidence: %d typed fact(s)%s" %
-          (len(evidence), (" from " + evidence_dir) if evidence_dir else " (none)"), flush=True)
-    print("evidence_required: %s" % require_evidence, flush=True)
-    print("realizer: %s" % realizer, flush=True)
-    g1 = eval_rho_weave(mouth, gen, known, seed_off=seed_off)
-    g6 = eval_rho_fan(mouth, gen, known, seed_off=seed_off)
-    print("G1 pass=%s best_distinct=%d max_single=%d noecho=%d echo_suspect=%s"
-          % (g1["pass"], g1["best_distinct"], g1["max_single"],
-             g1["best_distinct_noecho"], g1["echo_suspect"]))
-    print("G6 pass=%s dist=%d fals=%d coherent=%d frame_leaks=%d"
-          % (g6["pass"], g6["dist"], g6["fals"], g6["coherent"], g6["frame_leaks"]))
-    rejected = sum(len(decision.rejected_claim_ids) for decision in mouth.decisions)
-    abstained = sum(1 for decision in mouth.decisions if decision.abstained)
-    print("FALSIFY rejected=%d abstained=%d decisions=%d" %
-          (rejected, abstained, len(mouth.decisions)))
-    for index, decision in enumerate(mouth.decisions):
-        print("  decision[%d] candidates=%s selected=%s rejected=%s abstained=%s" %
-              (index, ",".join(decision.candidate_claim_ids),
-               decision.selected_claim_id or "none",
-               ",".join(decision.rejected_claim_ids) or "none", decision.abstained))
-        for spec in decision.candidate_specs:
-            print("    spec id=%s measure=%s control=%s falsified_when=%s" %
-                  (spec.claim_id, spec.measure, spec.control, spec.falsified_when))
-        print("    realization by=%s valid=%s" %
-              (decision.realized_by, decision.realizer_valid))
-    ok = bool(g1["pass"]) and not bool(g1["echo_suspect"]) and bool(g6["pass"])
-    print("WORKSPACE_REACH: " + ("PASS" if ok else "FAIL"))
-    return 0 if ok else 1
-
-
-def workspace_divergence_run(argv):
-    """Ckpt-free content-divergence certificate with causal corruption controls."""
-    from workspace_mouth import certify_divergence
-    seed = evaluate_strval(
-        argv, "--seed", "if copper conducts heat, then water drives turbines")
-    report = certify_divergence(seed)
-    known = _rho_fan_dict_load()
-    frozen_applicable = not any(ord(ch) > 127 for ch in seed)
-    frozen_fals = sum(
-        1 for hypothesis in report["hypotheses"]
-        if _rho_fan_known_word_ratio(hypothesis.text, known) >= 0.5
-        and _rho_fan_is_falsifiable(hypothesis.text, known)
-    )
-    ok = bool(report["ok"]) and (not frozen_applicable or frozen_fals == report["count"])
-    print("=== anima workspace divergence certification ===")
-    print("seed: " + seed)
-    print("live=%d/%d unique_specs=%d pairwise_max=%.3f missing_admit=%d shuffle_admit=%d" %
-          (report["live"], report["count"], report["unique_specs"],
-           report["pairwise_max"], report["missing_admit"], report["shuffle_admit"]))
-    if frozen_applicable:
-        print("frozen_detector_falsifiable=%d/%d" % (frozen_fals, report["count"]))
-    else:
-        print("frozen_detector_falsifiable=N/A (English/ASCII detector; typed content spec used)")
-    for hypothesis in report["hypotheses"]:
-        print("  lens=%s id=%s measure=%s falsified_when=%s" %
-              (hypothesis.lens, hypothesis.spec.claim_id, hypothesis.spec.measure,
-               hypothesis.spec.falsified_when))
-        print("    " + hypothesis.text)
-    print("WORKSPACE_DIVERGENCE: " + ("PASS" if ok else "FAIL"))
-    return 0 if ok else 1
-
-
-def workspace_divergence_realizer_run(argv):
-    """Measure model restatement and the fail-closed structured fallback."""
-    positional = [arg for arg in argv if not arg.startswith("--")]
-    if not positional:
-        print("ERROR: --workspace-divergence-realizer requires <ckpt>", file=sys.stderr)
-        return 2
-    from workspace_mouth import (
-        diverge_seed, divergence_preserves, divergence_realization_candidates,
-        realize_divergence,
-    )
-    ckpt = positional[0]
-    seed = evaluate_strval(
-        argv, "--seed", "if copper conducts heat, then water drives turbines")
-    if "--workspace-adversarial-panel" in argv:
-        from workspace_semantic import realizer_adversarial_panel
-        panel = realizer_adversarial_panel()
-    elif "--workspace-realizer-panel" in argv:
-        from workspace_semantic import realizer_heldout_panel
-        panel = realizer_heldout_panel()
-    else:
-        panel = (("custom", seed),)
-    gen = evaluate_intval(argv, "--gen", _default_gen())
-    # Match the canonical reach evaluator: a CLM's production T=24 window cannot
-    # see the operands once the realizer instruction is appended.  `--grow-window`
-    # restores the full-seed measurement semantics without changing the default
-    # production decode contract.
-    grow = "--grow-window" in argv
-    mouth = _Mouth(ckpt, grow_window=grow)
-    cases = []
-    for case_index, (name, case_seed) in enumerate(panel):
-        hypotheses = diverge_seed(case_seed)
-        if not hypotheses:
-            print("ERROR: divergence seed is not compound: " + name, file=sys.stderr)
-            return 2
-        results = [realize_divergence(mouth, hypothesis, gen, 40, 0.7,
-                                      700 + case_index * 10 + index)
-                   for index, hypothesis in enumerate(hypotheses)]
-        cases.append((name, case_seed, hypotheses, results))
-    accepted = sum(result.valid for _, _, _, results in cases for result in results)
-    result_total = sum(len(results) for _, _, _, results in cases)
-    safe = all(divergence_preserves(hypothesis, result.text)
-               for _, _, hypotheses, results in cases
-               for hypothesis, result in zip(hypotheses, results))
-    candidate_live = sum(
-        divergence_preserves(hypothesis, candidate)
-        for _, _, hypotheses, _ in cases for hypothesis in hypotheses
-        for candidate in divergence_realization_candidates(hypothesis))
-    candidate_total = sum(
-        len(divergence_realization_candidates(hypothesis))
-        for _, _, hypotheses, _ in cases for hypothesis in hypotheses)
-    print("=== anima workspace divergence realizer ===")
-    print("grow_window=%s" % grow)
-    print("model_semantic_accept=%d/%d fallback=%d/%d" %
-          (accepted, result_total, result_total - accepted, result_total))
-    print("meaning_locked_candidates=%d/%d" % (candidate_live, candidate_total))
-    for name, case_seed, hypotheses, results in cases:
-        print("case=%s seed=%s" % (name, case_seed))
-        for hypothesis, result in zip(hypotheses, results):
-            print("  lens=%s by=%s valid=%s candidates=%d" %
-                  (hypothesis.lens, result.realized_by, result.valid, result.candidate_count))
-            print("    " + result.text)
-    print("WORKSPACE_DIVERGENCE_REALIZER: " + ("SAFE" if safe else "UNSAFE"))
-    out_path = evaluate_strval(argv, "--out", "")
-    if out_path:
-        digest = hashlib.sha256()
-        with open(ckpt, "rb") as checkpoint:
-            for chunk in iter(lambda: checkpoint.read(1024 * 1024), b""):
-                digest.update(chunk)
-        report = {
-            "schema": "anima.workspace-divergence-realizer/v1",
-            "ckpt": os.path.abspath(ckpt),
-            "ckpt_sha256": digest.hexdigest(),
-            "panel": ("adversarial" if "--workspace-adversarial-panel" in argv else
-                      "heldout" if "--workspace-realizer-panel" in argv else "custom"),
-            "grow_window": grow,
-            "model_semantic_accept": accepted,
-            "hypotheses": result_total,
-            "fallback": result_total - accepted,
-            "meaning_locked_candidates": candidate_live,
-            "meaning_locked_candidate_total": candidate_total,
-            "safe": safe,
-            "cases": [
-                {"name": name, "seed": case_seed, "results": [
-                    {"lens": hypothesis.lens, "text": result.text,
-                     "realized_by": result.realized_by, "valid": result.valid,
-                     "candidate_count": result.candidate_count}
-                    for hypothesis, result in zip(hypotheses, results)]}
-                for name, case_seed, hypotheses, results in cases],
-        }
-        with open(out_path, "w", encoding="utf-8") as output:
-            json.dump(report, output, ensure_ascii=False, indent=2, sort_keys=True)
-            output.write("\n")
-        print("report: " + out_path)
-    return 0 if safe else 1
 
 
 def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_dir="",
@@ -1495,41 +1306,6 @@ def evaluate_usage():
     print("  dir (a chat session's kosmos, generator_read_anchors → joined memory) so ρ·self")
     print("  measures a real identity trace instead of INVALID (H_1471/H_9256). Absent → ρ·self")
     print("  stays INVALID (p3: never hand-curate a persona · default unchanged).")
-    print("  --workspace-smoke: ckpt-free typed G1 compose + G6 contradiction/select causal")
-    print("  smoke with unary, pairing-shuffle, and comparator-OFF collapse controls.")
-    print("  --workspace-reach: wrap compound prompts in the typed compose/falsify workspace;")
-    print("  atomic mouth calls stay byte-identical. Reports system reach, not bare-model reach.")
-    print("  --workspace-reach-only: run only the frozen G1/G6 functions through that wrapper")
-    print("  (same bars, reduced 303M decode cost; exits 0 only when both pass).")
-    print("  --workspace-evidence <kosmos-dir>: load typed contradiction facts; rejected")
-    print("  candidates are replaced, and all-candidates-rejected causes explicit abstention.")
-    print("  --workspace-require-evidence: no supported/contradicted measurement keeps the")
-    print("  compound claim UNGROUNDED and forces explicit abstention.")
-    print("  --workspace-realizer structured|model: let the mounted mouth restate the selected")
-    print("  fact; operand/falsifiability loss fails closed to the structured realization.")
-    print("  --workspace-semantic: ckpt-free exact-triple certification across held-out domains")
-    print("  with direction, pairing, missing-middle, irrelevant-fact, and falsification controls.")
-    print("  --workspace-deep: G1 6/8/10-hop + branch/merge/cycle semantic controls and")
-    print("  G6 measured evidence/conflict/source/time/session-persistence certification.")
-    print("  --workspace-deeper: G1 typed complex logic + replayable proof DAG and G6")
-    print("  quality/causal/correction ledger + discriminating-experiment certification.")
-    print("  --workspace-production-cert: controlled NL extraction, signed statistics,")
-    print("  causal/adversarial controls, durable ledger, active-loop and proof replay.")
-    print("  --workspace-divergence [--seed compound]: six content-distinct hypotheses with")
-    print("  missing-operand and lens-shuffle collapse controls; ckpt-free system certificate.")
-    print("  --workspace-divergence-realizer <ckpt> [--seed compound]: measure model semantic")
-    print("    add --workspace-realizer-panel for frozen physics/biology/everyday/Korean/negation/5-step cases")
-    print("    or --workspace-adversarial-panel for negation/quantifier/homonym/code-mix/6-step stress")
-    print("  --workspace-longrun [--ticks 100|500]: ckpt-free logic/state soak; no model forward")
-    print("  preservation per lens and fail closed to the structured rendering.")
-    print("  --workspace-regression [--realizer-report verdict.json] [--out manifest.json]: system gates")
-    print("  plus an explicit default-promotion blocker audit.")
-    print("  --workspace-system-rho --store-report store.json --realizer-report verdict.json")
-    print("      evidence-bound seven-axis production-system closure; bare-mouth claim stays separate")
-    print("  --workspace-release-verify --candidate-model system.clm --base-model base.clm")
-    print("      --store-report store.json --realizer-report verdict.json [--out verified.json]")
-    print("      recomputes both model SHA-256 values and the candidate's exact base prefix")
-    print("")
     print("  H_9200 E1 SLW controls (a .clm carrying an SLW\\x01 trailer applies the")
     print("  gated-write forward-slot by default): --slot-off forces γ=0 (bit-exact base")
     print("  trunk = slot-ablation control); --slot-shuffle N scrambles the write address")
@@ -2464,19 +2240,9 @@ def evaluate_run(argv):
     if seed_off:
         print("  [seed-offset] decode seeds shifted by %+d (bars unchanged; this is a RE-DRAW "
               "of the sampled decode, for n>1 replication)" % seed_off, flush=True)
-    workspace_evidence = []
-    workspace_evidence_dir = evaluate_strval(argv[1:], "--workspace-evidence", "")
-    if workspace_evidence_dir:
-        from workspace_adapters import load_fact_anchors
-        workspace_evidence = load_fact_anchors(workspace_evidence_dir)
     r = eval_reach_all(ckpt, corpus, gen, grow_window=grow_window,
                        seed_class=seed_class, fan_temp_ladder=fan_temp_ladder,
-                       seed_off=seed_off, weave_null=weave_null,
-                       workspace_reach="--workspace-reach" in argv[1:],
-                       workspace_evidence=workspace_evidence,
-                       workspace_require_evidence="--workspace-require-evidence" in argv[1:],
-                       workspace_realizer=evaluate_strval(argv[1:], "--workspace-realizer",
-                                                          "structured"))
+                       seed_off=seed_off, weave_null=weave_null)
     g0 = r["g0"]; g1 = r["g1"]; g2 = r["g2"]
     g3 = r["g3"]; g5 = r["g5"]; g6 = r["g6"]
 
@@ -9765,28 +9531,6 @@ _KNOWN_FLAGS = frozenset((
     "--decl-flip", "--arms", "--strata",          # H_9800 ephemeral-declaration grounding
     "--tension-concord",                          # H_9812 lex|class concord mode for the audit
     "--closure-ladder", "--closure-arm", "--closure-ticks", "--closure-seed",   # H_9807 interventional closure rung 1
-    "--workspace-smoke",                          # typed G1/G6 workspace causal smoke
-    "--workspace-reach",                          # typed workspace around compound mouth calls
-    "--workspace-reach-only",                     # frozen G1/G6 only through workspace wrapper
-    "--workspace-evidence",                       # typed contradiction .kosmos directory
-    "--workspace-require-evidence",               # strict UNGROUNDED without measurement
-    "--workspace-realizer",                       # structured|model with semantic fail-closed
-    "--workspace-semantic",                       # exact held-out semantic certification
-    "--workspace-deep",                           # deep G1 graph + measured G6 certification
-    "--workspace-deeper",                         # proof logic + governed evidence ledger
-    "--workspace-production-cert",                 # opt-in user-path production controls
-    "--workspace-divergence",                     # content-distinct falsifiable fan certificate
-    "--workspace-divergence-realizer",            # mounted mouth semantic preservation/fallback
-    "--workspace-realizer-panel",                 # frozen cross-domain mounted-mouth panel
-    "--workspace-adversarial-panel",              # extra semantic stress panel
-    "--workspace-longrun",                        # ckpt-free 100/500 tick state soak
-    "--ticks",                                    # workspace longrun tick count
-    "--workspace-regression",                     # combined system + promotion blocker manifest
-    "--workspace-system-rho",                     # evidence-bound typed-system ρ-AXON panel
-    "--workspace-release-verify",                 # strict on-disk promoted-artifact verification
-    "--store-report",                             # measured frozen-trunk CLMS verdict
-    "--realizer-report",                          # measured held-out mouth-realizer verdict
-    "--candidate-model", "--base-model",          # strict release verifier artifact paths
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
     "--capture-anchor", "--n-segments",           # H_9806 shift-null LOO capture
     # H_9808 $0 PRE-REGISTRATION GATES (core/pregates.py) — closed-form referees that ABORT
@@ -16443,108 +16187,6 @@ def main(argv):
     # flag PRESENCE, not on argv[0]. ADDITIVE — it moves no frozen bar and touches no panel.
     if "--closure-ladder" in argv:
         return closure_ladder_run(argv)
-    if len(argv) >= 1 and argv[0] == "--workspace-smoke":
-        from workspace_smoke import format_report, run_smoke
-        report = run_smoke()
-        print(format_report(report))
-        return 0 if report["ok"] else 1
-    if len(argv) >= 1 and argv[0] == "--workspace-semantic":
-        from workspace_semantic import format_report, run_semantic_certification
-        report = run_semantic_certification()
-        print(format_report(report))
-        return 0 if report["ok"] else 1
-    if len(argv) >= 1 and argv[0] == "--workspace-deep":
-        from workspace_deep import format_deep_report, run_workspace_deep_certification
-        report = run_workspace_deep_certification()
-        print(format_deep_report(report))
-        return 0 if report["ok"] else 1
-    if len(argv) >= 1 and argv[0] == "--workspace-deeper":
-        from workspace_deeper import format_deeper_report, run_workspace_deeper_certification
-        report = run_workspace_deeper_certification()
-        print(format_deeper_report(report))
-        return 0 if report["ok"] else 1
-    if len(argv) >= 1 and argv[0] == "--workspace-production-cert":
-        from workspace_production_cert import (
-            format_production_report, run_workspace_production_certification,
-        )
-        report = run_workspace_production_certification()
-        print(format_production_report(report))
-        return 0 if report["ok"] else 1
-    if len(argv) >= 1 and argv[0] == "--workspace-longrun":
-        from workspace_longrun import run_workspace_longrun
-        report = run_workspace_longrun(evaluate_intval(argv[1:], "--ticks", 500))
-        print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
-        print("WORKSPACE_LONGRUN: " + ("PASS" if report["ok"] else "FAIL"))
-        return 0 if report["ok"] else 1
-    if len(argv) >= 1 and argv[0] == "--workspace-divergence":
-        return workspace_divergence_run(argv[1:])
-    if len(argv) >= 1 and argv[0] == "--workspace-regression":
-        from workspace_regression import format_workspace_regression, run_workspace_regression
-        realizer_path = evaluate_strval(argv[1:], "--realizer-report", "")
-        realizer_report = None
-        if realizer_path:
-            with open(realizer_path, "r", encoding="utf-8") as handle:
-                realizer_report = json.load(handle)
-        report = run_workspace_regression(realizer_report)
-        print(format_workspace_regression(report))
-        out_path = evaluate_strval(argv[1:], "--out", "")
-        if out_path:
-            with open(out_path, "w", encoding="utf-8") as handle:
-                json.dump(report, handle, ensure_ascii=False, indent=2, sort_keys=True)
-            print("wrote: " + out_path)
-        return 0 if report["system_pass"] else 1
-    if len(argv) >= 1 and argv[0] == "--workspace-system-rho":
-        from workspace_system_rho import format_workspace_system_rho, run_workspace_system_rho
-        store_path = evaluate_strval(argv[1:], "--store-report", "")
-        realizer_path = evaluate_strval(argv[1:], "--realizer-report", "")
-        if not store_path or not realizer_path:
-            print("ERROR: --workspace-system-rho requires --store-report and --realizer-report",
-                  file=sys.stderr)
-            return 2
-        with open(store_path, "r", encoding="utf-8") as handle:
-            store_report = json.load(handle)
-        with open(realizer_path, "r", encoding="utf-8") as handle:
-            realizer_report = json.load(handle)
-        report = run_workspace_system_rho(store_report, realizer_report)
-        print(format_workspace_system_rho(report))
-        out_path = evaluate_strval(argv[1:], "--out", "")
-        if out_path:
-            with open(out_path, "w", encoding="utf-8") as handle:
-                json.dump(report, handle, ensure_ascii=False, indent=2, sort_keys=True)
-                handle.write("\n")
-            print("wrote: " + out_path)
-        return 0 if report["reach_closed"] else 1
-    if len(argv) >= 1 and argv[0] == "--workspace-release-verify":
-        from workspace_release_verify import (
-            format_workspace_release_verification, verify_workspace_release,
-        )
-        candidate_path = evaluate_strval(argv[1:], "--candidate-model", "")
-        base_path = evaluate_strval(argv[1:], "--base-model", "")
-        store_path = evaluate_strval(argv[1:], "--store-report", "")
-        realizer_path = evaluate_strval(argv[1:], "--realizer-report", "")
-        if not all((candidate_path, base_path, store_path, realizer_path)):
-            print("ERROR: --workspace-release-verify requires candidate/base models and both reports",
-                  file=sys.stderr)
-            return 2
-        with open(store_path, "r", encoding="utf-8") as handle:
-            store_report = json.load(handle)
-        with open(realizer_path, "r", encoding="utf-8") as handle:
-            realizer_report = json.load(handle)
-        report = verify_workspace_release(
-            candidate_path, base_path, store_report, realizer_report)
-        print(format_workspace_release_verification(report))
-        out_path = evaluate_strval(argv[1:], "--out", "")
-        if out_path:
-            with open(out_path, "w", encoding="utf-8") as handle:
-                json.dump(report, handle, ensure_ascii=False, indent=2, sort_keys=True)
-                handle.write("\n")
-            print("wrote: " + out_path)
-        return 0 if report["release_verified"] else 1
-    if "--workspace-divergence-realizer" in argv:
-        return workspace_divergence_realizer_run(
-            [a for a in argv if a != "--workspace-divergence-realizer"])
-    if "--workspace-reach-only" in argv:
-        return workspace_reach_only_run([a for a in argv if a != "--workspace-reach-only"])
     # ── H_9808 $0 PRE-REGISTRATION GATES ────────────────────────────────────────────────────
     # Ckpt-FREE, closed-form referees dispatched on the leading flag: they read a spec file and
     # decide ADMISSIBILITY, never a verdict. Exit 3 = REFUSE (abort before spend), 0 = PASS,

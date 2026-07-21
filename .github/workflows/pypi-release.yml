@@ -108,8 +108,12 @@ jobs:
           # 이 패턴을 따라 assert 를 늘리면 "verb 배포 누락"류가 구조적으로 막힌다.
           printf '%s\n' "$out" | grep -q -- '--xbind' || { echo "::error::anima-py evaluate --help MISSING --xbind (wheel-content/VERSION lockstep broke — was this eval-verb fold left out of the published wheel?)"; printf '%s\n' "$out"; exit 1; }
           printf '%s\n' "$out" | grep -q -- '--xfan' || { echo "::error::anima-py evaluate --help MISSING --xfan (wheel-content/VERSION lockstep broke — was this eval-verb fold left out of the published wheel?)"; printf '%s\n' "$out"; exit 1; }
-          printf '%s\n' "$out" | grep -q -- '--workspace-production-cert' || { echo "::error::anima-py evaluate --help MISSING --workspace-production-cert"; printf '%s\n' "$out"; exit 1; }
-          echo "PY-SMOKE PASS — anima-python wheel installs + import + dispatch OK, production workspace verb present (hexa-free)"
+          if printf '%s\n' "$out" | grep -q -- '--workspace'; then
+            echo "::error::removed Python workspace scaffold is still exposed by the wheel"
+            printf '%s\n' "$out"
+            exit 1
+          fi
+          echo "PY-SMOKE PASS — anima-python wheel installs + import + dispatch OK, removed workspace verbs absent"
       - name: Skip if this version already on PyPI (idempotent · no clobber)
         id: gate
         shell: bash

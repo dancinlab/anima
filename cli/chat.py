@@ -41,7 +41,7 @@ from pure_field import (pure_field_warmup, pure_field_phi, pure_field_phase,
 from brain import (brain_emit, brain_emit_refractory, vbasal_new, vbasal_update,
                    vbasal_go_value, vbasal_select)
 from generator import (gen_auto_backend, gen_mouth_kind, gen_auto_chat,
-                       generator_read_anchors, gen_penult_pooled_W, gen_auto_ce_W,
+                       generator_read_anchors, gen_penult_pooled_W,
                        _gen_anchor_field, _gen_g_string)  # H_1058 Part A1: SSOT anchor+phase→seed-byte extractors (side-channel only)
 from kosmos_io import create_anchor, emit_anchor_from_v3, load_anchors
 from decode import clm_load_weights, clm_decodable, penult_fold8, set_clms_store
@@ -423,6 +423,11 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     if argv is None:
         argv = sys.argv[1:]
     _args = argv
+    removed = next((arg for arg in _args if arg == "--workspace"
+                    or arg.startswith("--workspace-")), None)
+    if removed is not None:
+        raise SystemExit(
+            "%s was removed: G1/G6 must come from the mounted model and engine" % removed)
 
     # op-grip / stateful-refractory RESEARCH modes are hexa-only (measurement harness,
     # not the chat daemon). The py channel ports the DEFAULT consciousness path only.
@@ -448,10 +453,6 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
 
     # ── mount the model at the SINGLE generator L3 slot (a_core_engine_map) ───
     backend = gen_auto_backend(ckpt)
-    # Populated lazily on a live workspace tick. The generator accepts hits only
-    # for exact deterministic model inputs; ordinary OFF sessions never enable it.
-    backend["_decode_cache"] = {}
-    backend["_decode_cache_enabled"] = False
     _pln("L3 mount        : mouth=" + gen_mouth_kind(ckpt)
          + " loaded=" + _ts(backend["loaded"]) + "  ckpt=" + ckpt)
 
@@ -1528,38 +1529,6 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     self_g_on = bool(backend["loaded"]) and gen_mouth_kind(ckpt) == "clm" and clm_decodable(ckpt)
     self_gW = clm_load_weights(ckpt) if self_g_on else {"ok": False}
     self_gW_ok = self_g_on and bool(self_gW.get("ok"))
-    _workspace_rank_handle = {
-        "kind": gen_mouth_kind(ckpt), "ckpt": ckpt,
-        "W": self_gW if self_gW_ok else {"ok": False},
-    }
-
-    class _WorkspaceMouthRanker:
-        def __init__(self):
-            self.cache = {}
-            self.hits = 0
-            self.misses = 0
-
-        def score(self, text):
-            if text in self.cache:
-                self.hits += 1
-                return self.cache[text]
-            if _workspace_rank_handle["kind"] not in ("clm", "bytegpt"):
-                return float("nan")
-            if (_workspace_rank_handle["kind"] == "clm"
-                    and not _workspace_rank_handle["W"].get("ok")):
-                return float("nan")
-            value = gen_auto_ce_W(_workspace_rank_handle, text)
-            self.cache[text] = value
-            self.misses += 1
-            return value
-
-        def score_many(self, texts):
-            return tuple(self.score(text) for text in texts)
-
-        def ideate(self, *args):
-            return ""
-
-    _workspace_ranker = _WorkspaceMouthRanker()
     _sg_restored = _selfg_restore(self_g_kdir, self_g_name)
     self_g_boot_restored = len(_sg_restored) == 8
     self_live_g = self_from_vec(_sg_restored, 8) if self_g_boot_restored else self_new(8, 0)
@@ -1587,66 +1556,6 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     #   so every emit still stands on real tension (p5). ANIMA_EMIT_TEMP=1.0 is the ONE
     #   non-arbitrary temperature (= the posterior itself); any other value OVERWRITES it.
     _cargv = argv if argv is not None else []
-    # AUTO is the production-safe default: only an explicit compound workspace seed activates
-    # the divergent typed path. Empty/atomic seeds reduce to OFF before any evidence is loaded or
-    # spoken text is substituted, preserving the legacy mouth byte-for-byte.
-    _workspace_mode = anima_flag_value(_cargv, "--workspace", "ANIMA_WORKSPACE", "auto")
-    if _workspace_mode not in ("auto", "off", "structured", "divergent", "grounded"):
-        raise SystemExit("--workspace: only 'auto' (default), 'off', 'structured', 'divergent', or 'grounded'")
-    _workspace_seed = anima_flag_value(_cargv, "--workspace-seed", "ANIMA_WORKSPACE_SEED", "")
-    from workspace_runtime import resolve_workspace_input
-    _workspace_effective_mode, _workspace_seed = resolve_workspace_input(
-        _workspace_mode, _workspace_seed)
-    _workspace_query = anima_flag_value(_cargv, "--workspace-query", "ANIMA_WORKSPACE_QUERY", "")
-    if _workspace_mode == "grounded" and "|" not in _workspace_query:
-        raise SystemExit("--workspace grounded requires --workspace-query subject|relation")
-    _workspace_evidence_dir = anima_flag_value(
-        _cargv, "--workspace-evidence", "ANIMA_WORKSPACE_EVIDENCE", "")
-    _workspace_measurements = anima_flag_value(
-        _cargv, "--workspace-measurements", "ANIMA_WORKSPACE_MEASUREMENTS", "")
-    _workspace_persist_dir = anima_flag_value(
-        _cargv, "--workspace-persist", "ANIMA_WORKSPACE_PERSIST", "")
-    # New proof/ledger production path is separately opt-in. Merely installing
-    # 0.20.87 cannot touch the legacy auto/OFF byte path.
-    _workspace_production_dir = anima_flag_value(
-        _cargv, "--workspace-production", "ANIMA_WORKSPACE_PRODUCTION", "")
-    _workspace_trust_registry = anima_flag_value(
-        _cargv, "--workspace-trust-registry", "ANIMA_WORKSPACE_TRUST_REGISTRY", "")
-    _workspace_target_inference = anima_flag_value(
-        _cargv, "--workspace-target-inference", "ANIMA_WORKSPACE_TARGET_INFERENCE",
-        "associational")
-    if _workspace_target_inference not in ("associational", "causal"):
-        raise SystemExit("--workspace-target-inference: associational or causal")
-    _workspace_production = None
-    if _workspace_production_dir:
-        from workspace_evidence import EvidenceAuthorityRegistry
-        from workspace_production import WorkspaceProductionSession
-        _workspace_registry = (EvidenceAuthorityRegistry.from_json(_workspace_trust_registry)
-                               if _workspace_trust_registry else None)
-        _workspace_production = WorkspaceProductionSession(
-            _workspace_production_dir, _workspace_registry, _workspace_target_inference)
-    _workspace_require_evidence = (
-        anima_has_flag(_cargv, "--workspace-require-evidence")
-        or anima_flag_value(_cargv, "--workspace-require-evidence",
-                            "ANIMA_WORKSPACE_REQUIRE_EVIDENCE", "0") == "1")
-    _workspace_evidence = ()
-    _workspace_decisions = 0
-    _workspace_rejections = 0
-    _workspace_abstentions = 0
-    _workspace_model_realizations = 0
-    _workspace_realizer_fallbacks = 0
-    _workspace_percept_routes = 0
-    _workspace_persisted = 0
-    _workspace_evidence_loaded = False
-    if _workspace_effective_mode != "off":
-        from workspace_adapters import load_fact_anchors
-        if _workspace_evidence_dir:
-            _workspace_evidence = tuple(load_fact_anchors(_workspace_evidence_dir))
-        if _workspace_measurements:
-            from workspace_runtime import load_measurement_evidence
-            _workspace_evidence = tuple(_workspace_evidence) + load_measurement_evidence(
-                _workspace_measurements)
-        _workspace_evidence_loaded = True
     _emit_temp = float(anima_flag_value(_cargv, "--emit-temp", "ANIMA_EMIT_TEMP", "0"))
     _emit_topk = int(anima_flag_value(_cargv, "--emit-topk", "ANIMA_EMIT_TOPK", "256"))
     _sample_seed = int(anima_flag_value(_cargv, "--sample-seed", "ANIMA_SAMPLE_SEED", "0"))
@@ -2242,40 +2151,6 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
             percept_text = percept_source(tick, _percept_transcript)
             if percept_text is not None:
                 percept_text = str(percept_text).strip() or None
-        _workspace_tick_mode, _workspace_tick_seed = resolve_workspace_input(
-            _workspace_mode, _workspace_seed, percept_text)
-        backend["_decode_cache_enabled"] = (
-            _workspace_tick_mode != "off" and _mouth_at(tick) is None)
-        if _workspace_persist_dir and percept_text is not None:
-            from workspace_runtime import persist_workspace_fact
-            if persist_workspace_fact(_workspace_persist_dir, percept_text) is not None:
-                _workspace_persisted += 1
-        if (_workspace_tick_mode != "off" and not _workspace_seed
-                and percept_text is not None):
-            _workspace_percept_routes += 1
-        if _workspace_production is not None and percept_text is not None:
-            _workspace_production.ingest(percept_text)
-        # Evidence loading stays lazy: auto+atomic/no-percept remains the exact OFF
-        # path and does not even touch evidence files.
-        if _workspace_tick_mode != "off" and not _workspace_evidence_loaded:
-            from workspace_adapters import load_fact_anchors
-            if _workspace_evidence_dir:
-                _workspace_evidence = tuple(load_fact_anchors(_workspace_evidence_dir))
-            if _workspace_measurements:
-                from workspace_runtime import load_measurement_evidence
-                _workspace_evidence = tuple(_workspace_evidence) + load_measurement_evidence(
-                    _workspace_measurements)
-            _workspace_evidence_loaded = True
-        _workspace_tick_evidence = _workspace_evidence
-        if _workspace_production is not None and _workspace_tick_mode != "off":
-            _workspace_tick_evidence = tuple(_workspace_evidence) + tuple(
-                _workspace_production.evidence_for(
-                    _workspace_tick_seed,
-                    divergent=_workspace_tick_mode == "divergent"))
-            if _workspace_tick_mode in ("structured", "divergent"):
-                _workspace_production.observe_active_state(
-                    _workspace_tick_seed,
-                    divergent=_workspace_tick_mode == "divergent")
         # ── H_9744 STORE-EPISODIC (S3) · perception writes the store ──
         # The transducer knows GRAMMAR ONLY, never content: it matches one fixed shape and copies
         # the bytes through. No entity whitelist, no fact dictionary, no polarity re-interpretation
@@ -3199,47 +3074,6 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         if _steered != "" and did_emit and g_emit:
             out_text = _steered
 
-        # The workspace owns only the spoken rendering. All substrate roots above and below
-        # continue consuming g_text, so enabling this seam cannot rewrite memory or gate state.
-        if _workspace_tick_mode != "off" and did_emit and g_emit:
-            from workspace_runtime import (grounded_query_step, spoken_divergence_step,
-                                           spoken_workspace_step)
-            if _workspace_tick_mode == "grounded":
-                out_text, _workspace_decision = grounded_query_step(
-                    out_text, _workspace_query, _workspace_tick_evidence)
-            else:
-                _workspace_step = (spoken_divergence_step if _workspace_tick_mode == "divergent"
-                                   else spoken_workspace_step)
-                out_text, _workspace_decision = _workspace_step(
-                    out_text, _workspace_tick_seed, _workspace_tick_evidence,
-                    _workspace_require_evidence)
-            if _workspace_decision is not None:
-                _workspace_decisions += 1
-                _workspace_rejections += len(_workspace_decision.rejected_claim_ids)
-                _workspace_abstentions += int(_workspace_decision.abstained)
-                if (_workspace_production is not None
-                        and _workspace_tick_mode in ("structured", "divergent")):
-                    _workspace_production.record_decision(
-                        _workspace_tick_seed,
-                        _workspace_tick_mode == "divergent",
-                        _workspace_require_evidence,
-                        _workspace_tick_evidence,
-                        _workspace_decision)
-                if (_workspace_tick_mode == "divergent"
-                        and not _workspace_decision.abstained
-                        and _workspace_decision.selected_claim_id is not None):
-                    from workspace_mouth import realize_divergence
-                    _selected = next(
-                        (candidate for candidate in _workspace_decision.candidates
-                         if candidate.spec.claim_id == _workspace_decision.selected_claim_id), None)
-                    if _selected is not None:
-                        _realized = realize_divergence(
-                            _workspace_ranker, _selected, 40, 40, 0.7,
-                            _sample_seed + _workspace_decisions)
-                        out_text = _realized.text
-                        _workspace_model_realizations += int(_realized.valid)
-                        _workspace_realizer_fallbacks += int(not _realized.valid)
-
         if did_emit and g_emit:
             emitted_any = True
             emit_text = out_text
@@ -3760,41 +3594,6 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
          + " emit-free replay(s) · " + _ts(imagination_mitosis_ticks) + " mitosis tick(s) · emit-free="
          + anima_yn(imagination_emit_violations == 0)
          + " (core/imagination_replay ir_replay_session total_emits≡0 · p5 NO SPEAK · emit-drive-disjoint)")
-    if (_workspace_effective_mode != "off" or _workspace_percept_routes > 0
-            or _workspace_persisted > 0 or _workspace_production is not None):
-        _workspace_report_mode = (_workspace_effective_mode if _workspace_effective_mode != "off"
-                                  else "auto-percept")
-        _pln("  WORKSPACE (spoken-only, " + _workspace_report_mode + ")          : decisions="
-             + _ts(_workspace_decisions) + " rejected=" + _ts(_workspace_rejections)
-             + " abstained=" + _ts(_workspace_abstentions)
-             + " model-realized=" + _ts(_workspace_model_realizations)
-             + " fallback=" + _ts(_workspace_realizer_fallbacks)
-             + " percept-routes=" + _ts(_workspace_percept_routes)
-             + " persisted=" + _ts(_workspace_persisted)
-             + " score-cache=" + _ts(_workspace_ranker.hits) + "/"
-             + _ts(_workspace_ranker.hits + _workspace_ranker.misses)
-             + " decode-cache=" + _ts(int(backend.get("_decode_cache_hits", 0))) + "/"
-             + _ts(int(backend.get("_decode_cache_hits", 0))
-                   + int(backend.get("_decode_cache_misses", 0))))
-        if _workspace_production is not None:
-            _workspace_production.checkpoint()
-            _prod = _workspace_production.summary()
-            _pln("  WORKSPACE-PRODUCTION (opt-in)              : logic="
-                 + _ts(_prod["logic_accepted"]) + " ambiguous="
-                 + _ts(_prod["logic_ambiguous"]) + " proofs=" + _ts(_prod["proofs"])
-                 + " invalidated=" + _ts(_prod["proofs_invalidated"])
-                 + " evidence=" + _ts(_prod["evidence_accepted"])
-                 + " rejected=" + _ts(_prod["evidence_rejected"])
-                 + " inconclusive=" + _ts(_prod["stat_inconclusive"])
-                 + " active-updates=" + _ts(_prod["active_updates"])
-                 + " decision-proofs=" + _ts(_prod["decisions"]))
-            _active = _workspace_production.latest_active_state
-            if _active is not None:
-                _pln("    active falsification                         : viable="
-                     + _ts(len(_active.viable_claim_ids)) + " rejected="
-                     + _ts(len(_active.rejected_claim_ids)) + " next="
-                     + (_active.next_experiment or "none") + " reason=" + _active.reason)
-
     all_live = (emitted_any and grounded_ok and grew and remembered2 and slept
                 and psi_intact and lanes_read)
     _pln("")

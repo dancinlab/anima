@@ -44,7 +44,6 @@ import sys
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _REPO = os.path.dirname(_HERE)
 sys.path.insert(0, os.path.join(_REPO, "core"))
-from workspace_curriculum import build_workspace_curriculum
 
 # ── frozen default concepts = rho_fan cz[] (memorization-free ρ·weave / former-G1 gate alignment) ──
 DEFAULT_SEEDS = [
@@ -4449,20 +4448,6 @@ def run_ngram_audit(opts):
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
-    if fmt == "workspace-struct":
-        if not opts["corpus"] or not opts["out"]:
-            print("anima-py corpus workspace-struct --corpus SOURCE [--corpus SOURCE2] "
-                  "--out train.txt [--held-out-frac 0.20] [--seed 7]")
-            sys.exit(2)
-        frac = opts["held_out_frac"] or 0.20
-        manifest, manifest_path = build_workspace_curriculum(
-            opts["corpus"], opts["out"], heldout_frac=frac, seed=opts["seed"])
-        print("anima corpus workspace-struct: train=%d heldout=%d source_overlap=%d "
-              "record_overlap=%d leakage_free=%s -> %s · %s" %
-              (manifest["records"]["train"], manifest["records"]["heldout"],
-               manifest["source_overlap"], manifest["record_overlap"],
-               manifest["leakage_free"], opts["out"], manifest_path))
-        return 0
     if fmt == "ngram-audit" or opts["ngram_recoverable_audit"]:
         if not opts["ngram_recoverable_audit"] or not opts["audit_train"] or not opts["panel"]:
             print("anima-py corpus ngram-audit --ngram-recoverable-audit "

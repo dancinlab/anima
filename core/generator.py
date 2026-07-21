@@ -458,30 +458,7 @@ def generate(backend, substrate_ctx, emit_decision, anchors, mouth=None):
     if kind == "clm":
         decodable = bool(backend["decodable"])
         if loaded and decodable:
-            # Workspace sessions often revisit the exact same anchored seed while the
-            # refractory gate still needs an imagined candidate on every tick.  Greedy
-            # CLM decoding is deterministic, so an opt-in cache may reuse only an exact
-            # model-input match. Sampled mouths are deliberately excluded.
-            cache = backend.get("_decode_cache") if mouth is None else None
-            key = None
-            if backend.get("_decode_cache_enabled") and isinstance(cache, dict):
-                phase = _gen_g_string(substrate_ctx, "phase")
-                texts = tuple(_gen_anchor_texts(anchors))
-                last = _gen_anchor_text(anchors[-1]) if anchors else ""
-                # With anchors, _gen_clm_decode always takes grounded decode and
-                # never reads deliberation_k. Without anchors it selects argmax vs
-                # best-of-K, so retain that field only on the branch that consumes it.
-                deliberation = None if anchors else _gen_g_int(
-                    substrate_ctx, "deliberation_k")
-                key = ("clm", str(backend["ckpt"]), phase, last, texts, deliberation)
-                if key in cache:
-                    backend["_decode_cache_hits"] = int(backend.get("_decode_cache_hits", 0)) + 1
-                    return {"emitted": True, "backend": "clm",
-                            "text": cache[key], "fellback": False}
             text = _gen_clm_decode(backend, substrate_ctx, anchors, mouth)
-            if key is not None:
-                cache[key] = text
-                backend["_decode_cache_misses"] = int(backend.get("_decode_cache_misses", 0)) + 1
             return {"emitted": True, "backend": "clm", "text": text, "fellback": False}
         return {"emitted": True, "backend": "null",
                 "text": _gen_null_text(substrate_ctx, anchors), "fellback": True}
