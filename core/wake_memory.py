@@ -36,8 +36,17 @@ def mem_record_emit(mem, ts, ctx_summary, phi, tension5, stage, emit_text):
     return {"episodic": new_episodic, "working": mem["working"]}
 
 
-def mem_push_ctx(mem, ctx_tokens):
-    cap = _working_cap()
+def mem_push_ctx_capped(mem, ctx_tokens, cap):
+    """H_9842 — the ring-buffer body with the capacity as an ARGUMENT.
+
+    WHY THIS SEAM EXISTS: `_working_cap()` is a hardcoded 20, so the buffer capacity —
+    the thing H_9842 asks about (is a 20-slot FIFO a co-occurrence ceiling for
+    recombination?) — was not a variable anything could sweep. `mem_push_ctx` below
+    still calls `_working_cap()`, so every existing caller (core/imagination_replay.py,
+    the chat daemon) is byte-identical; this entry only lets a measurement pass the
+    capacity in. py-only seam (the hexa twin keeps the 2-arg surface verbatim); it adds
+    no behaviour, it only names the constant that was already there.
+    """
     new_working = []
     cur_len = len(mem["working"])
     start_idx = 1 if cur_len + 1 > cap else 0
@@ -47,6 +56,10 @@ def mem_push_ctx(mem, ctx_tokens):
         i = i + 1
     new_working.append(ctx_tokens)
     return {"episodic": mem["episodic"], "working": new_working}
+
+
+def mem_push_ctx(mem, ctx_tokens):
+    return mem_push_ctx_capped(mem, ctx_tokens, _working_cap())
 
 
 def mem_recent_emits(mem, n):
