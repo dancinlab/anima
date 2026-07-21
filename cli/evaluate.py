@@ -2851,11 +2851,21 @@ def store_retr_probe_run(argv):
                   "null": _nway_from_ranks(cen[1]["ranks"], n_te, nway),
                   "live": _nway_from_ranks(cen[0]["ranks"], n_te, nway),
                   "kperm": _nway_from_ranks(kperm["ranks"], n_te, nway),
-                  "gram": _gram_nway(K, te, nway)}
+                  "gram": _gram_nway(K, te, nway),
+                  # ADVERSARIAL bound: give every target the m−1 HIGHEST-scoring distractors, i.e.
+                  # the hardest block that could ever be drawn against it. Winning that block means
+                  # beating every competitor, so it is EXACTLY rank==1 — the full-pool top-1 rate,
+                  # free of charge and with no extra fit. It brackets the uniform read from below;
+                  # no block generator that cannot see h can do worse than this.
+                  "adv": float((cen[0]["ranks"] == 1).mean())}
             print("  [%s · %d-way re-read matched to the live lane] chance=%.4f  (closed form over "
                   "the SAME fitted W — no resampling, no seed)" % (tag, nway, nw["chance"]))
             print("    ORACLE %.4f   GRAM-exact-W %.4f   NULL %.4f   KEY-PERMUTE %.4f   LIVE %.4f"
                   % (nw["oracle"], nw["gram"], nw["null"], nw["kperm"], nw["live"]))
+            print("    LIVE bracket: adversarial(hardest block) %.4f  <=  uniform %.4f   "
+                  "[the manifest draws slots uniformly — cli/corpus.py _sb_emit_block rng.sample — "
+                  "so `uniform` is the in-vivo-faithful arm and `adversarial` is the worst case]"
+                  % (nw["adv"], nw["live"]))
         return cen[0], cen[1], cen[2], raw, shared, nw
 
     if "--retr-probe-selftest" in argv:

@@ -5780,7 +5780,17 @@
                 "name": "🟢 이식 완료 ① — H_9825 --store-retr-probe · rv3c13 = REACHABLE (천장)",
                 "role": "gate",
                 "id": "store-retr-probe-h9825",
-                "detail": "다리가 쓰는 선형 질의사상만 적합해 검색 천장을 읽는다(판정팔=train-mean 중심화 + 실제 lane 규모 n_slot=8 닫힌형태 재판독). 서로소 2 풀 확증: ORACLE 0.9159/0.9402 · LIVE 0.6496/0.6774 (FLOOR 0.25) · KEY-PERMUTE 0.1211/0.1226 우연붕괴 = 신호원은 내용-주소 대응."
+                "detail": "다리가 쓰는 선형 질의사상만 적합해 검색 천장을 읽는다(판정팔=train-mean 중심화 + 실제 lane 규모 n_slot=8 닫힌형태 재판독). 서로소 2 풀 확증: ORACLE 0.9159/0.9402 · LIVE 0.6496/0.6774 (FLOOR 0.25) · KEY-PERMUTE 0.1211/0.1226 우연붕괴 = 신호원은 내용-주소 대응.",
+                "children": [
+                  {
+                    "name": "R3 — '천장은 낙관적 상한' 단서 철회 · 방해자 법칙은 설계 일치",
+                    "detail": "그 단서는 charge_store(지각충전)를 전제했으나 charge_store 는 repo 전수 호출부 0(미배선). 배선된 store 는 매니페스트에서 오고 슬롯 추출은 cli/corpus.py:1828 _sb_emit_block 의 rng.sample = 비복원 균등추출(held-out 평가블록 동일) ⟹ probe 의 방해자 법칙과 일치. 동결 템플릿도 생성기와 바이트 동일."
+                  },
+                  {
+                    "name": "R3 — ADVERSARIAL 최악경계 (공짜 항등)",
+                    "detail": "최고점 방해자 m-1 개를 붙이면 정답이 전원을 이겨야 하므로 rank==1 과 정확 동치 = full-pool top-1 이 그대로 하한. bracket: stage1 0.2031<=0.6496 · stage2 0.2656<=0.6774 (FLOOR 0.25). 적대 배치에서는 stage1 이 바닥 아래·stage2 가 간신히 위 = 여유 없음."
+                  }
+                ]
               },
               {
                 "name": "미흡수 ① bridge-faithful slot-retrieval probe (v2 M15)",
