@@ -2499,6 +2499,11 @@
                     "detail": "≥ **5** distinct(pairwise Jaccard < 0.5) ∧ ≥ **1** falsifiable.",
                     "children": [
                       {
+                        "name": "🔧 판독가능화: `--fan-draws N` 연속 rate (H_9829 · 2026-07-21 · 동결 판정 불변)",
+                        "detail": "H_9828 이 확정한 검정력 부재의 직접 수리. `anima-py evaluate <clm> --rho-axon --fan-draws N` 은 PASS 조건을 0줄 바꾸지 않고(any_falsi 는 여전히 동결 n_cont=8 draws 에서만 결정) 추가 N draws 로 연속 `fals-rate = hit/coherent ± sd` 를 보고만 한다. 추가 draw 의 seed 는 동결 수열을 이어서 (SEEDS[0]+17*j, j≥n_cont) 쓰므로 판정이 읽는 표본과 서로소 — 추정이 게이트 자신의 표본을 재사용하지 않는다. 같은 coherence gate(kwr≥cgate)를 써 분모 정의가 판정 다리와 동일. 기본 N=0 이면 추가 루프 미실행 = byte-identical. 집계 패널과 4 register 셀 전부에 배선. e2e(store_struct_toy 400KB · N=24): 집계 0/23 · en_general 0/17 · en_sns 0/16 · ko 셀 0/0(분모 0 정직표기) · 판정값은 플래그 유무와 무관하게 동일. ⚠️ 그 수치는 계기 확인이지 과학 아님(토이 ckpt · 코퍼스 rate 기준 24 draws 기대적중 0.15 ⟹ 여전히 판독불가). 판독가능한 최초 G6 관측 = py303_full.clm 에 --fan-draws 250 (pool · heavy 는 mini 금지).",
+                        "type": "gate"
+                      },
+                      {
                         "name": "⚠️ ρ·fan `any_falsi` 다리는 구성상 검정력이 없다 (H_9828 · 2026-07-21 · $0 코퍼스 census)",
                         "detail": "`anima-py evaluate --falsi-census` 가 프로덕션 검출기 `_rho_fan_is_falsifiable` 를 학습 코퍼스 자체에 걸어 'ρ·fan 이 요구하는 구조를 코퍼스가 담고 있는가' 를 모델·디코드 없이 측정(H_9304 가 G1 에 한 측정의 G6 동형). 실측 EN 2셀 전량 762,625 문장: en-general 744,588 → P(falsifiable) 0.006546(4,874건 · 결합 lift 1.829) · en-sns 18,037 → 0.002938(53건 · lift 2.459) · pooled p 0.006461. ⟹ ① G6 는 DATA 벽이 아니다 — 코퍼스는 반증가능 문장을 실제로 담고 있고 lift>1 은 성분의 우연한 산포가 아니라 결합을 구조로 담았다는 뜻. ② 그러나 판정 불가: ρ·fan 은 n_cont=8 뽑아 1건 이상이면 통과라, 코퍼스를 완벽히 재현하는 모델조차 P(≥1 in 8)=0.0505 이고 P(4 register 셀 전부 fals=0)=0.8127 · 80% 검정력에 필요한 뽑기 249회. ⟹ H_9801 의 'fals=0 4/4' 는 결함의 증거가 아니라 코퍼스-충실 null 에서 기대되는 관측이며, 'G6=반증가능 주장 생성 불가' 라는 구조적 독해는 성립하지 않는다(능력 음성 아님 · 구성상 검정력 부족). 따라서 H_9801 의 'G6 는 G1 하류가 아니다' 해리 결론도 그 다리 위에 서 있으므로 재심 대상. 계기가 매 실행 이 검정력을 스스로 출력한다. 경계: 이 null 은 코퍼스 주변분포 참조 null 이지 모델 조건부 분포가 아니고(H_1449 의 .20/.27 은 코퍼스 .068/.018 보다 높다 = 하한 참조), ko 셀은 검출기 영어전용이라 구성상 미측정. 죽는 것은 'fals=0 이 faculty 부재를 뜻한다' 는 독해이지 faculty 존재 주장이 아니다. 수리 방향: any_falsi 이진 다리를 다-뽑기 연속 rate DV 로 교체(≥249 draws) 또는 코퍼스 밀도 상향(H_9267 레시피).",
                         "type": "gate"
