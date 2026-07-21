@@ -137,6 +137,11 @@ class CLMConfig:
     clms_val_center: bool = False  # H_9710 RV-3 majority-null centering (lane_type 3)
     clms_key_fn: str = "mean"      # H_9852 address function: mean (shipped) | roll (lane_type 6)
     clms_fangate: bool = False     # H_9696 CLMS-FAN (lane_type 4): value-from-key + learned query gate
+    clms_vonly: bool = False       # H_9885 v-only fusion (lane_type 7): hold the g half of the fusion
+                                   # input at 0 so the answer can only be a function of the retrieved
+                                   # store value. REMOVES capacity — that is what makes a pass mean
+                                   # something (the composed wall's last live account is that g alone
+                                   # fits the trained rows, so v never earns gradient).
     clms_fresh_k: int = 0          # H_9720-ⓐ EN-disjoint fresh query lane width (0=off, lane_type 5)
     clms_fresh_L: int = 3          # H_9720-ⓐ trunk-layer tap depth for the fresh address query
 
@@ -442,7 +447,8 @@ class CLMConvMoE(nn.Module):
                                    cfg.clms_d_s, cfg.clms_r, cfg.clms_key_seed, lam0=cfg.clms_lam0,
                                    d_g=cfg.clms_d_g, val_center=cfg.clms_val_center, fangate=cfg.clms_fangate, key_fn=cfg.clms_key_fn,
                                    fresh_k=int(getattr(cfg, "clms_fresh_k", 0)),
-                                   fresh_L=int(getattr(cfg, "clms_fresh_L", 3)))
+                                   fresh_L=int(getattr(cfg, "clms_fresh_L", 3)),
+                                   vonly=bool(getattr(cfg, "clms_vonly", False)))
         # H_9698 MBND mouth-binder lane (co-trained). None => byte-identical (no lane). CORE-owned
         # (core/mbnd.py); lazily imported. Unlike CLMS this one IS applied in this forward — it needs
         # no runtime data, only the frame's own causal bank of hiddens.

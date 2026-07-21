@@ -98,7 +98,7 @@ def _key_fn_of(lane_type):
     """lane_type -> address function. 6 = lane_type 3 semantics (W_g fusion + majority-null
     centering) with the order-aware key; every other lane keeps the shipped mean, so existing
     checkpoints are byte-identical."""
-    return "roll" if int(lane_type) == 6 else "mean"
+    return "roll" if int(lane_type) in (6, 7) else "mean"
 
 
 def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, audit=None,
@@ -219,25 +219,34 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
                           "target": int(ts) if ts is not None else -1,
                           "a_max": float(np.max(a)),
                           "a_ent": _ent})
-        if lane_type in (3, 6):                                           # RV-3 majority-null centering (H_9710)
+        if lane_type in (3, 6, 7):                                        # RV-3 majority-null centering (H_9710)
             a = a - (1.0 / n_slot)                                        # v≡0 at uniform a → shortcut basin gone
         v = a @ V_slots                                                   # (d_s,) = Σ (aᵢ−c)·val[polᵢ]
-        if lane_type in (2, 3, 4, 5, 6):
-            g = h @ clms["W_g"]                                           # (d_g,) op-gate bottleneck (H_9423)
+        if lane_type in (2, 3, 4, 5, 6, 7):
+            if lane_type == 7:
+                # H_9885 V-ONLY fusion — the g half of the fusion input is held at ZERO, so the
+                # answer can only be a function of the retrieved store value. This REMOVES capacity
+                # (W_g stays allocated for codec identity but contributes nothing), which is the
+                # point: on a 2-conjunct panel the taught model answers its trained rows at ~1.0
+                # while barely routing through the store, so g alone fits them and v never earns
+                # gradient. Zeroing g is the intervention that makes that account falsifiable.
+                g = np.zeros(int(clms["W_g"].shape[1]), dtype=v.dtype)
+            else:
+                g = h @ clms["W_g"]                                       # (d_g,) op-gate bottleneck (H_9423)
             z = _gelu(np.concatenate([v, g]) @ clms["W_h"] + clms["b_h"]) # (r,) [v; g] fusion (v un-diluted)
         else:                                                             # lane_type 1 legacy: [v; h] fusion
             z = _gelu(np.concatenate([v, h]) @ clms["W_h"] + clms["b_h"]) # (r,) — S1/S2 artifacts, no silent recast
         s = z @ clms["W_out"]                                             # (V,)
         if fuse == "odd":                                                 # H_9760 odd-symmetrized fusion:
             v_neg = -v                                                    #   s_odd = ½(s(v,g) − s(−v,g)) cancels the
-            if lane_type in (2, 3, 4, 5, 6):                                 #   even (op-gate g-path) prior that emits a
+            if lane_type in (2, 3, 4, 5, 6, 7):                              #   even (op-gate g-path) prior that emits a
                 z_neg = _gelu(np.concatenate([v_neg, g]) @ clms["W_h"] + clms["b_h"])  # polarity-invariant constant on
             else:                                                         #   op=0 (H_9744 flip-coh gap). For lane_type 3
                 z_neg = _gelu(np.concatenate([v_neg, h]) @ clms["W_h"] + clms["b_h"])  # (Σ(aᵢ−1/n)=0 ⟹ v_flip≡−v) this
             s = 0.5 * (s - z_neg @ clms["W_out"])                         #   makes fixed-address flip-coherence = 1.
         elif fuse == "pairodd":                                           # H_9775 Π-equivariant pair-odd: full-row odd
             v_neg = -v                                                    #   (H_9760) killed the g/b argmax because it
-            if lane_type in (2, 3, 4, 5, 6):                                 #   subtracted the even level that made g/b the
+            if lane_type in (2, 3, 4, 5, 6, 7):                              #   subtracted the even level that made g/b the
                 z_neg = _gelu(np.concatenate([v_neg, g]) @ clms["W_h"] + clms["b_h"])  # top logits. Here out[c∉{g,b}]=
             else:                                                         #   ½(s⁺+s⁻) PRESERVES that even level (argmax
                 z_neg = _gelu(np.concatenate([v_neg, h]) @ clms["W_h"] + clms["b_h"])  # stays g/b = readable) while
@@ -354,7 +363,7 @@ def pack_clms(w: dict) -> bytes:
         out += struct.pack("<BIIIIII", 4, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
                            int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
         order = _ARR_ORDER_V4
-    elif lane_type in (2, 3, 6):  # 2 = W_g fusion (H_9423) · 3 = 2 + majority-null centering (H_9710 RV-3) · 6 = 3 + order-aware key (H_9852)
+    elif lane_type in (2, 3, 6, 7):  # 2 = W_g fusion (H_9423) · 3 = 2 + majority-null centering (H_9710 RV-3) · 6 = 3 + order-aware key (H_9852) · 7 = 6 with the g half of the fusion input held at 0 (H_9885 v-only)
         out += struct.pack("<BIIIIII", lane_type, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
                            int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
         order = _ARR_ORDER_V2
@@ -381,7 +390,7 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
         if p + 32 > len(buf):
             return None, off
         n_slot, d_k, d_s, d_g, r, key_seed, fresh_k, fresh_L = struct.unpack_from("<IIIIIIII", buf, p); p += 32
-    elif lane_type in (2, 3, 4, 6):                        # 2 = W_g · 3 = +centering (RV-3) · 4 = CLMS-FAN · 6 = 3 + order-aware key
+    elif lane_type in (2, 3, 4, 6, 7):                     # 2 = W_g · 3 = +centering (RV-3) · 4 = CLMS-FAN · 6 = 3 + order-aware key · 7 = 6 with g:=0 (H_9885)
         if p + 24 > len(buf):
             return None, off
         n_slot, d_k, d_s, d_g, r, key_seed = struct.unpack_from("<IIIIII", buf, p); p += 24
@@ -404,14 +413,14 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
     if lane_type == 5:                                    # H_9720-ⓐ fresh lane: W_fresh · W_q_fresh (pack order)
         clms["W_fresh"] = take(d * fresh_k, (d, fresh_k))
         clms["W_q_fresh"] = take(fresh_k * d_k, (fresh_k, d_k))
-    if lane_type in (2, 3, 4, 5, 6):
+    if lane_type in (2, 3, 4, 5, 6, 7):
         clms["W_g"] = take(d * d_g, (d, d_g))
     if lane_type == 4:                                     # H_9696: value-from-key + learned gate
         clms["W_v"] = take(d_k * d_s, (d_k, d_s))
         clms["W_gate"] = take(d, (d,))
     if lane_type != 4:                                     # lane 4 has no polarity table (W_v replaces it)
         clms["val"] = take(2 * d_s, (2, d_s))
-    w_h_in = (d_s + d_g) if lane_type in (2, 3, 4, 5, 6) else (d_s + d)
+    w_h_in = (d_s + d_g) if lane_type in (2, 3, 4, 5, 6, 7) else (d_s + d)
     clms["W_h"] = take(w_h_in * r, (w_h_in, r))
     clms["b_h"] = take(r, (r,))
     clms["W_out"] = take(r * V, (r, V))
@@ -426,10 +435,11 @@ def clms_weights_from_torch(mod) -> dict:
     def n(t):
         return t.detach().cpu().numpy().astype("<f4")
     out = {
-        "lane_type": (6 if getattr(mod, "key_fn", "mean") == "roll" else  # 6=H_9852 order-aware key (3+roll)
+        "lane_type": (7 if getattr(mod, "vonly", False) else              # 7=H_9885 v-only fusion (6 + g:=0)
+                      (6 if getattr(mod, "key_fn", "mean") == "roll" else  # 6=H_9852 order-aware key (3+roll)
                       (5 if int(getattr(mod, "fresh_k", 0)) > 0 else       # 5=H_9720-ⓐ fresh query lane
                       (4 if getattr(mod, "fangate", False) else
-                       (3 if getattr(mod, "val_center", False) else 2)))),  # 4=CLMS-FAN · 3=RV-3 · 2=W_g
+                       (3 if getattr(mod, "val_center", False) else 2))))),  # 4=CLMS-FAN · 3=RV-3 · 2=W_g
         "n_slot": mod.n_slot, "d_k": mod.d_k, "d_s": mod.d_s,
         "d_g": mod.d_g, "r": mod.r, "key_seed": mod.key_seed,
         "fresh_k": int(getattr(mod, "fresh_k", 0)), "fresh_L": int(getattr(mod, "fresh_L", 3)),
@@ -476,7 +486,7 @@ if _HAS_TORCH:
 
         def __init__(self, d, V, n_slot=8, d_k=64, d_s=64, r=128,
                      key_seed=9423, key_emb=None, lam0=1.0, d_g=64, val_center=False, fangate=False,
-                     fresh_k=0, fresh_L=3, key_fn="mean"):
+                     fresh_k=0, fresh_L=3, key_fn="mean", vonly=False):
             super().__init__()
             self.key_fn = key_fn          # H_9852 address function (mean | roll)
             self.d, self.V, self.n_slot = d, V, n_slot
@@ -484,6 +494,7 @@ if _HAS_TORCH:
             self.d_g = d_g                                          # H_9423 fusion-bottleneck (lane_type 2)
             self.val_center = bool(val_center)                     # RV-3 majority-null centering (lane_type 3)
             self.fangate = bool(fangate)                           # H_9696 CLMS-FAN (lane_type 4)
+            self.vonly = bool(vonly)                               # H_9885 v-only fusion (lane_type 7)
             # H_9720-ⓐ EN-disjoint fresh query lane (lane_type 5): the ADDRESS query is read from an
             # early-layer tap (detached from the trunk in the trainer) through W_fresh·W_q_fresh — store-CE
             # co-adapts an entity basis that does NOT compete with EN-CE for the penultimate. fresh_k=0 =
@@ -543,6 +554,8 @@ if _HAS_TORCH:
                 a = a - (1.0 / self.n_slot)                               # v≡0 at uniform a → shortcut basin gone
             v = _torch.bmm(a.unsqueeze(1), V_slots).squeeze(1)           # (B,d_s)
             g = self.W_g(yn_q)                                            # (B,d_g) op-gate bottleneck
+            if self.vonly:
+                g = _torch.zeros_like(g)                                  # H_9885: answer must ride v alone
             z = _F.gelu(self.W_h(_torch.cat([v, g], dim=-1)), approximate="tanh")   # (B,r) [v; g] fusion
             s = self.W_out(z)                                             # (B,V)
             if self.fangate:
