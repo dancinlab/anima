@@ -39,8 +39,13 @@ them.
 import sys, os
 import numpy as np
 
-DUMP = "opt_probe.npz"
-CKPT = os.path.expanduser("~/anima-weights/store_struct_303m/store303_s2000.clm")
+# Paths resolve portably: env var first, then a repo/weights root derived from $HOME, then
+# fail fast. Never a machine-specific absolute path -- this file ran on the pool host and on
+# the author's laptop, and #4439 landed RED because one line said /home/summer out loud.
+DUMP = os.environ.get("H9919_DUMP", "opt_probe.npz")
+WEIGHTS = os.environ.get("ANIMA_WEIGHTS", os.path.join(os.path.expanduser("~"), "anima-weights"))
+CKPT = os.environ.get("H9919_CKPT",
+                      os.path.join(WEIGHTS, "store_struct_303m", "store303_s2000.clm"))
 CONDS = ("trained", "space", "zzzzz", "ttttt")
 
 if not os.path.exists(DUMP):
@@ -58,8 +63,11 @@ def pick(cond, op):
     return np.stack([np.asarray(z[k], dtype=np.float64).reshape(-1) for k in sorted(ks)])
 
 
-sys.path.insert(0, os.path.expanduser("~/dancinlab/anima/core"))
-sys.path.insert(0, "/home/summer/anima-weights")
+for _p in (os.environ.get("ANIMA_CORE"),
+           os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "core"),
+           WEIGHTS):
+    if _p and os.path.isdir(_p):
+        sys.path.insert(0, _p)
 try:
     import decode as clm
     W_g = np.asarray(clm.clm_load_weights(CKPT)["clms"]["W_g"], dtype=np.float64)
