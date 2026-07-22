@@ -1259,6 +1259,7 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
         main_n = len(S._pack_main_blob(np_sd, L, E))
         next_magic = raw[main_n:main_n + 4]
         slw_loaded = False
+        clms_loaded = False
         if next_magic == bytes([83, 76, 87, 1]):
             if getattr(model, "slw", None) is None:
                 raise ValueError(
@@ -1288,6 +1289,40 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
             converted = {k: torch.as_tensor(v, dtype=target[k].dtype) for k, v in slw_sd.items()}
             mod.load_state_dict(converted, strict=True)
             slw_loaded = True
+            next_magic = raw[sw_end:sw_end + 4] if sw_end + 4 <= len(raw) else b""
+            main_n = sw_end
+        # H_9928 CLMS warm-start. SLW above both restores its lane AND refuses to drop it
+        # silently; CLMS had neither, so `--init <ckpt with a trained store lane>` re-initialised
+        # that lane from scratch and said nothing. A 60-step run on a fresh CLMS then reads 0.4688
+        # where the source ckpt reads 1.0000, and the number looks like a scientific negative
+        # instead of a warm-start that never happened.
+        if next_magic == bytes([67, 76, 77, 83]):                    # b"CLMS"
+            if getattr(model, "clms", None) is None:
+                raise ValueError(
+                    f"--init {init_path}: checkpoint carries a CLMS trailer but the built model "
+                    "does not. Pass --store-bridge/--freeze-trunk with matching --clms-n-slot/"
+                    "--clms-d-k/--clms-d-s/--clms-r; silently dropping a trained store lane would "
+                    "not be a valid warm-start.")
+            from clms import read_clms
+            cs, _cs_end = read_clms(raw, main_n, int(expect_cfg["d"]), int(expect_cfg["V"]))
+            if cs is None:
+                raise ValueError(f"--init {init_path}: malformed CLMS trailer")
+            cm = model.clms
+            if (int(cs["n_slot"]), int(cs["d_k"]), int(cs["d_s"]), int(cs["r"])) != \
+                    (int(cm.n_slot), int(cm.d_k), int(cm.d_s), int(cm.r)):
+                raise ValueError(
+                    f"--init {init_path}: CLMS shape "
+                    f"{(cs['n_slot'], cs['d_k'], cs['d_s'], cs['r'])} != built "
+                    f"{(cm.n_slot, cm.d_k, cm.d_s, cm.r)}")
+            clms_sd = {"key_emb": cs["key_emb"], "W_q.weight": cs["W_q"].T,
+                       "val": cs["val"], "W_h.weight": cs["W_h"].T, "W_h.bias": cs["b_h"],
+                       "W_out.weight": cs["W_out"].T, "lam": cs["lam"]}
+            if "W_g" in cs and getattr(cm, "W_g", None) is not None:
+                clms_sd["W_g.weight"] = cs["W_g"].T
+            ct = cm.state_dict()
+            cm.load_state_dict({k: torch.as_tensor(v, dtype=ct[k].dtype)
+                                for k, v in clms_sd.items() if k in ct}, strict=False)
+            clms_loaded = True
         model_sd = model.state_dict()
         loadable, shape_bad = {}, []
         for k, v in sd.items():                     # same H_247 hard guard as the .pt path
@@ -1305,7 +1340,8 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
         missing, unexpected = model.load_state_dict(loadable, strict=False)
         return (f"warm-start ✓ .clm int4-dequant loaded {len(loadable)}/{len(model_sd)} keys "
                 f"(L={L} E={E} · round-trip BYTE-IDENTICAL · untouched={len(missing)}"
-                f" · SLW={'restored' if slw_loaded else 'absent'})")
+                f" · SLW={'restored' if slw_loaded else 'absent'}"
+                f" · CLMS={'restored' if clms_loaded else 'absent'})")
 
     if low.endswith(".bin"):
         if not is_bytegpt:
