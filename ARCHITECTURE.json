@@ -17060,6 +17060,12 @@
         "type": "gate",
         "detail": "main blob 재포장을 파일 '전체' 와 비교해 트레일러 달린 ckpt(store-bridge·mouth-binder)를 구조적으로 warm-start 거부하던 결함. 파리티 성질은 정상·비교범위만 오류. core/serialize.py v0.20.43.",
         "verdict": "🟢 WIRED — prefix 비교 + 코어 리더로 체인 전체 파싱 + EOF 정확소진 요구. 실측 실 ckpt 4/4 통과 · 손상 3종(잘림·magic뒤 쓰레기·유효체인뒤 잉여) 거부. magic-only 과소검사는 lab full 양 모델 독립지적."
+       },
+       {
+        "id": "gate-v6-g1ctx-payoff-split-is-real",
+        "type": "gate",
+        "name": "🔑 G1 의 두 절반은 같은 경제학의 반대편 — 지불 10⁴ 배 차이(V6_15 · 자연 코퍼스 · DIRECTIONAL)",
+        "detail": "발산 07 의 G1-ctx(문맥 결합) vs G1-weight(문서횡단 가중치-사실 재조합) 분리가 실재하는지 자연 코퍼스 4.80MB·43,001줄에서 $0 검증. ★내가 브리프에 스스로 표시한 긴장='용량(170MB) 아래선 암기가 항상 싼데 왜 문맥 결합만 학습되나' — 줄의 59.8% 가 반복이라 암기는 더욱 싸다 ⟹ '지시대상이 새롭다' 후보 해소 기각. ★🚨 첫 측정이 계기를 쟀다: 결합구문 5종 4,259건 중 수용야(35B) 밖 3건 → '자연문에 긴 결합 없다' 로 읽을 뻔. 틀렸다 — `X, the Y`·`X's Y` 는 정의상 인접만 매치하므로 긴 결합을 표현할 능력 자체가 없다. 3/4259 는 코퍼스가 아니라 내 정규식의 성질(짧은 범위 패턴은 긴 범위 사실을 보고 못한다). ★제대로 잰 것(짧은 패턴이 못 보는 두 사건): 이름 재등장 수용야 밖 4,868/5,632=86.4%(1,013/MB) · 대명사 해소 5,865/10,136=57.9%(1,221/MB) ⟹ 합 10,733/15,768=68.1%, MB당 2,234 사건. RF 민감도(RF 재유도 없이 정직하게): 9B→~93% · 35B→68.1% · 100B→31.0% · 200B→5.6% = 100B 까지 결론 생존. ★지불대비(CE 가 최적화하는 양): 상호참조 기전 1회 학습=10,733회 갚음 vs 특정 사실쌍 1.58회(56% 단발) vs 줄 암기 1회 ⟹ 10⁴ 배. 같은 코퍼스·목적함수·구조인데 두 절반이 경제학의 반대편에 앉는다 — 긴장이 구조 이야기 없이 해소된다. ★함의: 212 패널은 지불 1.58 짜리 절반만 재 왔고 지불 10⁴ 짜리 절반은 미측정. ⚠️ 이건 텍스트의 성질이지 모델의 성취가 아님(목적함수가 무엇을 값 매기는지만 말함) — DIRECTIONAL, cement 는 engine-native anima-py 로만. 계기: lab/v6/ctx_payoff.py · ctx_distance.py"
        }
       ],
       "verdict": "🟡 REOPENED-DIRECTIONAL-POSITIVE(첫 lift·robustness 미확인): decode 20-family refuted+engine-native지만 학습 derivation-trace(target=풀이과정)가 held-out{c0,c1} engine-native G1 PASS(bd=2>ms=1)∧FLAT통제 FAIL=H_9124. caveat bd=2·1쌍·G2미측정. δ_FM=coverage form-priming→FORM. 벽=trunk-objective."
