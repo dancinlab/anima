@@ -1,7 +1,8 @@
-# H_9904 — decode-time join 은 포맷이 막은 게 아니다: 레인 트레일러 체인이 이미 7칸 있고 그중 하나는 in-vivo 증명됐다
+# H_9907 — decode-time join 은 포맷이 막은 게 아니다: 레인 트레일러 체인이 이미 7칸 있고 그중 하나는 in-vivo 증명됐다
 
 **tier:** 🔧 코드-확증 스코핑 정정 (측정 0 · 새 코드 0줄) · **DIRECTIONAL** · NOT a verdict
 **group:** R13-instrument-audit
+**renumbered:** H_9904 → H_9907 — 두 병렬 세션이 H_9904 를 동시에 점유해 origin/main 이 G6 로 RED 였다. 게이트 처방대로 **나중 머지된 쪽**(이 카드, #4390 14:14 · 먼저는 #4382 13:45)을 재번호했고 **내용·수치는 verbatim 보존**이다. jsonl 행이 없던 고아 카드였으므로 2표면을 맞추며 행도 신설했다.
 **date:** 2026-07-22
 **source:** [[H_9903]](#4380) 의 "decode-time joining is impossible by construction" 을 코드에서 재확인하다 반례 발견
 **wired:** n/a (기존 배선을 가리키는 카드 · 새 계기 없음)
