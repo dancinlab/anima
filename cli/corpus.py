@@ -1166,7 +1166,7 @@ def _parse_args(argv):
             #   --entity-pool F        (H_9683) external one-ascii-atom-per-line entity pool,
             #                          replacing the builtin CVCVC nonce enumeration. Omitted =>
             #                          builtin, byte-identical to before.
-            "n_blocks": 4000, "store_slots": 8, "entity_pool": None,
+            "n_blocks": 4000, "store_slots": 8, "entity_pool": None, "gap_jitter": None,
             "compose": 0, "compose_teach": False,
             # H_9520 study-replay (consolidation-CPT corpus from an `anima study` transcript):
             #   --transcript T.jsonl   the study transcript (teacher percepts + substrate emits)
@@ -1333,6 +1333,10 @@ def _parse_args(argv):
             opts["store_slots"] = int(argv[i + 1]); i += 2
         elif a == "--entity-pool":
             opts["entity_pool"] = argv[i + 1]; i += 2   # H_9683 storebind: external atom pool
+        elif a == "--sb-gap-jitter":
+            # H_9928: comma-separated extra-space counts for the TRAINING lines, e.g. "0,1,2,3,5,7".
+            # Omitted => "0" => byte-identical to every storebind corpus built before this flag.
+            opts["gap_jitter"] = argv[i + 1]; i += 2
         elif a == "--compose":
             opts["compose"] = int(argv[i + 1]); i += 2  # H_9875 storebind: 2-conjunct study panel
         elif a == "--compose-teach":
@@ -2984,7 +2988,7 @@ def _sb_answer(op, polarity):
     return polarity if op == 0 else (1 - polarity)
 
 
-def _sb_emit_block(rng, entities, store_slots, balanced=False):
+def _sb_emit_block(rng, entities, store_slots, balanced=False, gaps=(0,)):
     """One block = one store draw with a FRESH polarity per slot, then EXACTLY ONE query line per
     stored entity in a random order. Block-level rotation is the mmap-window-compatible analogue of
     v2's per-example rotation: because a block re-draws every polarity, memorizing entity->polarity
@@ -3011,7 +3015,14 @@ def _sb_emit_block(rng, entities, store_slots, balanced=False):
         polarity = pols[slot]
         ans = _sb_answer(op, polarity)
         op_s = "is" if op == 0 else "not"
-        prompt = "%s %s => " % (op_s, entity)          # query pos = last prompt byte (bridge query)
+        # H_9928 --sb-gap-jitter: extra spaces between the operator and the entity. Windows are
+        # right-aligned padded so "=> " always ends at T-1, which puts the operator's last byte at
+        # qpos-(len(entity)+5+gap) -- i.e. the gap moves the OPERATOR's distance from the query and
+        # changes nothing else. H_9915 measured that distance to be what breaks the readout (one
+        # space costs as much as one extra entity byte); H_9927 measured a lane fitted across
+        # several distances reading unseen ones at 0.74-0.82. gaps=(0,) is byte-identical to before.
+        gap = " " * int(rng.choice(gaps)) if len(gaps) > 1 or gaps[0] else ""
+        prompt = "%s %s%s => " % (op_s, gap, entity)   # query pos = last prompt byte (bridge query)
         lines.append(prompt + _SB_ANSWER[ans])
         # H_9888 mention taps — a 1-slot line is the A=B case of a composed line: both reads land on
         # the same mention, so vA=vB and the pair summary degenerates to [2v ; 0]. Emitting them here
@@ -3324,6 +3335,7 @@ def _g6bind_sha(items):
 
 
 def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, replay=0,
+                    gap_jitter=None,
                     entity_pool=None, compose=0, compose_teach=False):
     """Build the storebind corpus + co-train store manifest + 0-shot held-out eval manifest.
 
@@ -3352,10 +3364,30 @@ def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, r
     if store_slots > len(ev):
         raise SystemExit("storebind: store_slots %d > held-out pool %d" % (store_slots, len(ev)))
 
+    # H_9928 --sb-gap-jitter "0,1,2,3,5,7": the TRAINING lines draw their operator-to-query
+    # distance from this set instead of the single value every storebind corpus used before.
+    # Absent => (0,) => byte-identical to those corpora. The eval manifests are NOT jittered:
+    # the verdict ladder is built by `evaluate`, so baking it into the corpus would train on
+    # the test distribution -- the trap H_9922 caught in my own evidence.
+    _gaps = (0,)
+    if gap_jitter:
+        try:
+            _gaps = tuple(int(x) for x in str(gap_jitter).split(",") if x.strip() != "")
+        except ValueError:
+            raise SystemExit("storebind: --sb-gap-jitter must be comma-separated integers "
+                             "(got %r)" % (gap_jitter,))
+        if not _gaps or min(_gaps) < 0:
+            raise SystemExit("storebind: --sb-gap-jitter needs >=1 non-negative integer "
+                             "(got %r)" % (gap_jitter,))
+        if 0 not in _gaps:
+            raise SystemExit("storebind: --sb-gap-jitter must include 0 -- the trained condition "
+                             "is the regression control every verdict reads first (got %r)"
+                             % (gap_jitter,))
+
     rng = random.Random(seed)
     lines, store_rows = [], []
     for _ in range(n_blocks):
-        bl, br = _sb_emit_block(rng, train, store_slots)
+        bl, br = _sb_emit_block(rng, train, store_slots, gaps=_gaps)
         lines.extend(bl)
         store_rows.extend(br)
 
@@ -7254,7 +7286,8 @@ def main():
             sys.exit(2)
         text, st = build_storebind(opts["n_blocks"], opts["store_slots"], opts["seed"], opts["lang"],
                                    entity_pool=opts["entity_pool"], compose=opts["compose"],
-                                   compose_teach=opts["compose_teach"])
+                                   compose_teach=opts["compose_teach"],
+                                   gap_jitter=opts["gap_jitter"])
         open(opts["out"], "w", encoding="utf-8").write(text)
         # .store.jsonl = per-training-line store manifest (block<->store · the co-train input the
         # trainer feeds the CLMS lane · JSONL, one row per line).
