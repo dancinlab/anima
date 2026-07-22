@@ -1251,6 +1251,15 @@ def evaluate_usage():
     print("      baseline (INSTRUMENT-DEAD, no primary, on any mismatch). Reuses an --xbind flip")
     print("      manifest ({heldout,seen} of {seed,gold,counterfactual,pol?,store_key?}). MEASURES")
     print("      only — the verdict cements on a pool/303M fire with owner go, never this run.")
+    print("  anima evaluate <ckpt> --gen-ctx-2afc <trace.jsonl> [--out f.json] [--win 64]")
+    print("      H_9929 engine→CLM content-flow discriminator. Reads a live decision trace")
+    print("      (ANIMA_DECISION_TRACE from `anima-py chat`); each emit tick already records the")
+    print("      decode seed (\"<PHASE> <anchor>\") + the emitted bytes. $0 CE re-scoring on the")
+    print("      frozen trunk: PAIR-2AFC asks whether CE(content|true phase) beats CE(content|a")
+    print("      swapped phase) with the anchor held fixed — does the A⇄G tension VALUE shape")
+    print("      content (FLOW) or is it theater (NULL). anchor-swap = positive control (blind ⇒")
+    print("      INSTRUMENT-DEAD); pedestal = deterministic re-score (drift ⇒ INVALID); chance is")
+    print("      derived from the realized tie rate; headline split by phase class. MEASURES only.")
     print("  anima evaluate <ckpt> --xbind <manifest.json> --out <file.json> [--arm main|ctrl] [--gen 16] [--win 64]")
     print("      [--consult <store.json>] [--consult-format DEMO|F1|F2|F3]  — render a declarative")
     print("      fact into the 2AFC scoring context (same prefix on gold AND counterfactual, so it")
@@ -1592,7 +1601,7 @@ def _bind_dacc(np, W, item, T, free_slots, answers):
     are the same byte length (asserted in the preflight), so there is no length confound to correct.
 
     A tie scores 0.5 and is COUNTED. A tie is the signature of a readout that never moved, and
-    silently rounding it to `correct` is how a dead readout reads as chance-plus (H_9800's
+    silently rounding it to `correct` is how a dead readout reads as chance-plus (H_9929's
     degenerate-readout telemetry, same defect family)."""
     surf, gold = item["surface"], item["gold_pattern"]
     L = len(answers[0])
@@ -1605,7 +1614,7 @@ def _bind_dacc(np, W, item, T, free_slots, answers):
         na = _xbind_cont_nll(np, clm, W, prefix, a, T)
         # The CHOSEN token is reported in answer space, not gold space: a model that always emits
         # the same token sits at exactly 0.5 on a balanced panel and is indistinguishable from an
-        # honest chance reader by d_acc alone (H_9800's readout telemetry, same defect family).
+        # honest chance reader by d_acc alone (H_9929's readout telemetry, same defect family).
         chosen.append(g if ng < na else (a if na < ng else None))
         margins.append(na - ng)
         if ng < na:
@@ -5115,7 +5124,7 @@ def _store_mix_cont_nll(np, clm_mod, W, seed, cont, T, store_val, lam):
     return s
 
 
-# ── H_9800 DECL-FLIP — ephemeral-declaration grounding, first-class ─────────
+# ── H_9929 DECL-FLIP — ephemeral-declaration grounding, first-class ─────────
 # `anima-py evaluate <clm> --decl-flip <c.txt.decl.json>` promotes the H_9359 diagnostic
 # ("does the answer move when the in-context declaration moves?") from an ad-hoc probe to a
 # scored flag on the canonical measurement path.
@@ -5179,7 +5188,7 @@ def _decl_flip_cell(rows):
 
 def decl_flip_run(argv):
     """`anima-py evaluate <ckpt> --decl-flip <manifest.json> [--out f.json] [--win 256]
-    [--arms live,declaration-drop,value-shuffle] [--strata seen,heldout-stem,...]` — H_9800."""
+    [--arms live,declaration-drop,value-shuffle] [--strata seen,heldout-stem,...]` — H_9929."""
     import numpy as np
     ckpt = argv[0]
     man_path = evaluate_strval(argv[1:], "--decl-flip", "")
@@ -5199,7 +5208,7 @@ def decl_flip_run(argv):
     want_strata = [s for s in evaluate_strval(argv[1:], "--strata", "").split(",") if s]
     entries = [e for e in man["entries"] if not want_strata or e["stratum"] in want_strata]
     answers = man["answers"]                      # index == answer_bit
-    print("=== anima evaluate --decl-flip — H_9800 EPHEMERAL-DECLARATION GROUNDING ===")
+    print("=== anima evaluate --decl-flip — H_9929 EPHEMERAL-DECLARATION GROUNDING ===")
     print("  ckpt %s · manifest %s · %d items · win %dB · arms %s"
           % (ckpt, man_path, len(entries), T, ",".join(arms)))
     print("  regen: %s" % man.get("regen_cmd", "(absent — this manifest is not re-derivable)"))
@@ -8253,6 +8262,318 @@ def xfan_run(argv):
     print(json.dumps({"out": out_path,
                       "heldout_C": res["splits"]["heldout"]["summary"]["coverage_C"],
                       "seen_C": res["splits"]["seen"]["summary"]["coverage_C"]}))
+    return 0
+
+
+# ════════════════════════════════════════════════════════════════════════
+# H_9929 · GEN-CTX-2AFC — does the A⇄G tension VALUE causally shape emitted content,
+# or is it theater? The discriminator for the engine→CLM channel narrowed in H_9392.
+#
+#   anima-py evaluate <ckpt> --gen-ctx-2afc <trace.jsonl> [--out f.json] [--win 64]
+#
+# READS a live decision trace (ANIMA_DECISION_TRACE from `anima-py chat`). Every emit tick
+# already records seed_b64 = "<PHASE> <anchor-field>" (phase is ALWAYS the first ws-token,
+# by construction in cli/chat.py's _seed_str = _gen_g_string(dec,"phase")+" "+anchor) and
+# gtext_b64 = the bytes the daemon actually emitted at that tick under that seed. So the
+# whole discriminator is a $0 RE-SCORING on the frozen trunk — no new forward-pass semantics,
+# only the engine's own CE (_xbind_cont_nll), the a_eval_py_canonical / a_experiment_engine_native
+# path (a NEW manipulation is a flag on evaluate, not a probe beside the engine).
+#
+# WHY A PAIR-2AFC AND NOT BYTE-DIVERGENCE (Fable design · reconciled): a byte-LM changes its
+# continuation whenever the prefix changes, so Δ(live↔any-clamp)>0 is guaranteed and says
+# nothing. "Flow" must mean the substrate treats the phase VALUE as information about THIS
+# tick's content. content_i was argmax-generated under (phase_i + anchor_i); so if phase
+# carries information, CE(content_i | phase_i + anchor_i) should beat CE(content_i | phase_j +
+# anchor_i) for a DIFFERENT phase_j (anchor held fixed). Fraction of ticks where the true
+# phase wins = the 2AFC score. Under a truly inert phase the two CEs are equal (tie ⇒ 0.5),
+# so chance is DERIVED from the realized tie rate, never assumed (chance-level-must-be-derived).
+#
+# ARMS (all computed from the ONE live trace — no divergent rollouts needed):
+#   phase   PRIMARY. true phase vs a swapped real phase (anchor fixed) → does the VALUE matter.
+#   anchor  POSITIVE CONTROL. true anchor vs a swapped anchor (phase fixed). The anchor is the
+#           KNOWN-causal seed half (content is grounded in / often copies it), so this MUST beat
+#           chance; if it does not, the CE readout cannot see a seed-half that provably matters ⇒
+#           INSTRUMENT-DEAD, no phase read (positive-control-before-reading-a-negative).
+#   carrier SECONDARY robustness. true phase vs a length-matched NEUTRAL token (not another real
+#           phase). Reported, not gating: because content was argmax-generated under the real
+#           phase word, a neutral token has no generative tie to it, so this arm mostly probes
+#           whether the phase win survives swapping against an out-of-vocab shape. (The value-vs-
+#           shape confound the store-mix carrier arm chased is already controlled in `phase`:
+#           BOTH sides there are distinct real phase tokens, so a win is the specific value, not
+#           merely "a token is present".)
+#   Sol dissent (recorded, not taken): score each arm by Δ(quality-panel) with a ±0.02 prereg
+#           bar + bootstrap CI instead of the CE 2AFC. Rejected: no predeclared quality panel
+#           exists for free monologue, and the engine's own CE is the more native, tie-honest DV.
+#
+# PEDESTAL G-P0: re-score the true seeds twice — CE must be byte-identical (deterministic do();
+# no --sample-seed re-rolls · sample-seed-invalid-for-deterministic-do-intervention). Any drift
+# ⇒ INVALID (nondeterminism leak), stop before any read.
+#
+# PREREG DECISION TABLE (margin m from a binomial bound at N · power-before-negative-verdict;
+# covers below-chance · prereg-table-must-cover-below-chance):
+#   G-P0  true-rescore not byte-identical .................. INVALID  (stop)
+#   G-P1  anchor 2AFC ≤ chance+m ........................... INSTRUMENT-DEAD  (stop)
+#   deg   < 2 distinct phase classes in the trace .......... UNDECIDABLE  (no phase contrast)
+#   G-F1  phase 2AFC > chance+m ........................... FLOW  (the value shapes content)
+#   G-F3  phase 2AFC within ±m of chance (P1 passed) ....... NULL  (theater, measured)
+#   G-F4  phase 2AFC < chance−m ........................... BELOW-CHANCE / ANTI-ALIGNED  (INVALID, audit)
+# Headline is ALWAYS split by phase class (polarity-split-before-headline); a per-class collapse
+# to chance is flagged even when the pooled score clears the bar.
+
+def _gen_ctx_cont_nll(np, W, seed, cont, T):
+    """Surrogate-safe twin of _xbind_cont_nll: sum NLL of `cont` given `seed`, right-aligned
+    T-window. Daemon-emitted content contains raw model bytes (utf-8 surrogateescape), which the
+    shared _xbind_cont_nll's strict `cont.encode()` rejects — so score the byte length with the
+    SAME surrogateescape convention _seed_to_tok/_fwd_logits use (identical math otherwise, so a
+    clean-ASCII cont scores byte-identical to _xbind_cont_nll · G-P0 determinism preserved)."""
+    text = seed + cont
+    tok = clm._seed_to_tok(text, T)
+    logits = clm._fwd_logits(W, tok, T)
+    k = len(cont.encode("utf-8", "surrogateescape"))
+    lo = max(0, T - 1 - k)
+    s = 0.0
+    for i in range(lo, T - 1):
+        row = logits[i]
+        m = float(np.max(row))
+        lse = m + math.log(float(np.sum(np.exp(row - m))) + 1e-30)
+        s += lse - float(row[int(tok[i + 1])])
+    return s
+
+
+def _gen_ctx_seed_split(np, seed_str):
+    """Split a recorded decode seed into (phase_token, anchor_rest). By construction in
+    cli/chat.py the seed is `<PHASE> <anchor>` — phase is the first whitespace-delimited
+    token, anchor is everything after the first space (may be empty)."""
+    if " " in seed_str:
+        p, rest = seed_str.split(" ", 1)
+    else:
+        p, rest = seed_str, ""
+    return p, rest
+
+
+def _gen_ctx_2afc_pairs(np, W, T, items, key_true, key_swap_from, label):
+    """PAIR-2AFC over emit ticks. For each ordered pair (i, j) with key_true[i] != key_true[j],
+    ask whether matching each content to its OWN seed-half beats swapping them:
+        [CE(c_i | seed_i) + CE(c_j | seed_j)]  <  [CE(c_i | seed_i^{j}) + CE(c_j | seed_j^{i})]
+    where seed_i^{j} is seed i with the tested half taken from tick j. Symmetric ⇒ controls for
+    both content difficulty and seed-half baseline. Returns (score, n_pairs, n_ties, per_class).
+    `key_true` selects the CONTRAST variable (phase or anchor); `key_swap_from` builds the swapped
+    seed for a given (host_item, donor_item)."""
+    import itertools
+    # cache CE(content_i | seed built from its true halves) — computed once per item
+    n = len(items)
+    ce_true = [None] * n
+    for i in range(n):
+        ce_true[i] = _gen_ctx_cont_nll(np, W, items[i]["seed_true"], items[i]["cont"], T)
+    wins = ties = npair = 0.0
+    per_class = {}
+    for i, j in itertools.combinations(range(n), 2):
+        if key_true(items[i]) == key_true(items[j]):
+            continue  # need a genuine contrast on the tested half
+        # cross-scored: content i under seed i with j's tested half, and vice-versa
+        seed_ij = key_swap_from(items[i], items[j])
+        seed_ji = key_swap_from(items[j], items[i])
+        ce_ij = _gen_ctx_cont_nll(np, W, seed_ij, items[i]["cont"], T)
+        ce_ji = _gen_ctx_cont_nll(np, W, seed_ji, items[j]["cont"], T)
+        matched = ce_true[i] + ce_true[j]
+        swapped = ce_ij + ce_ji
+        npair += 1
+        cls = "%s|%s" % (key_true(items[i]), key_true(items[j]))
+        pc = per_class.setdefault(cls, [0.0, 0.0, 0.0])  # win, tie, n
+        pc[2] += 1
+        if abs(matched - swapped) < 1e-9:
+            ties += 1
+            pc[1] += 1
+        elif matched < swapped:
+            wins += 1
+            pc[0] += 1
+    # score counts a tie as half a win (2AFC convention); chance = realized tie-adjusted 0.5
+    score = (wins + 0.5 * ties) / npair if npair > 0 else float("nan")
+    return score, int(npair), int(ties), per_class
+
+
+def gen_ctx_2afc_run(argv):
+    """`anima-py evaluate <ckpt> --gen-ctx-2afc <trace.jsonl>` — H_9929 discriminator for the
+    engine→CLM content channel (see the block comment above). $0 re-scoring on the frozen trunk
+    with the engine's own CE. MEASURES; the verdict is engine-native and TERMINAL-eligible."""
+    import numpy as np
+    import base64 as _b64
+    import time
+    ckpt = argv[0]
+    trace_path = evaluate_strval(argv[1:], "--gen-ctx-2afc", "")
+    out_path = evaluate_strval(argv[1:], "--out", "gen_ctx_2afc_eval.json")
+    if not trace_path:
+        print("ERROR: --gen-ctx-2afc needs a decision trace (ANIMA_DECISION_TRACE from anima-py chat).")
+        return 1
+    # ── read the trace: emit ticks with a real seed + non-empty emitted content ──
+    meta = {}
+    items = []
+    for line in open(trace_path, "r", encoding="utf-8", errors="surrogateescape"):
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+        except Exception:
+            continue
+        if r.get("_meta"):
+            meta = r
+            continue
+        if not r.get("emit"):
+            continue
+        sb = r.get("seed_b64", "")
+        gb = r.get("gtext_b64", "")
+        if not sb or not gb:
+            continue
+        try:
+            seed = _b64.b64decode(sb).decode("utf-8", "surrogateescape")
+            cont = _b64.b64decode(gb).decode("utf-8", "surrogateescape")
+        except Exception:
+            continue
+        if len(cont) == 0:
+            continue
+        phase, anchor = _gen_ctx_seed_split(np, seed)
+        items.append({"tick": r.get("tick"), "phase": phase, "anchor": anchor,
+                      "seed_true": seed, "cont": cont, "cls": r.get("cls")})
+    T = evaluate_intval(argv[1:], "--win", int(meta.get("n_win", 64) if isinstance(meta, dict) else 64))
+    n = len(items)
+    print("=== anima evaluate --gen-ctx-2afc — H_9929 engine→CLM content-flow discriminator ===")
+    print("ckpt: %s  trace: %s  emit-ticks(usable)=%d  win=%d" % (ckpt, trace_path, n, T))
+    # provenance: bind the trace to the ckpt that produced it (reject a mismatched pair)
+    tsha = meta.get("ckpt_sha256", "") if isinstance(meta, dict) else ""
+    if tsha and isinstance(ckpt, str) and os.path.exists(ckpt):
+        import hashlib as _hl
+        csha = _hl.sha256(open(ckpt, "rb").read()).hexdigest()
+        if csha != tsha:
+            print("  ❌ INVALID-PROVENANCE: trace was produced by ckpt %s… but you passed %s…"
+                  % (tsha[:12], csha[:12]))
+            json.dump({"ckpt": ckpt, "trace": trace_path, "verdict": "INVALID-PROVENANCE"},
+                      open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
+            return 2
+    phase_classes = sorted(set(it["phase"] for it in items))
+    print("  phase classes present: %s" % (", ".join(phase_classes) if phase_classes else "(none)"))
+    if n < 4:
+        print("  ⇒ ⛔ NOT-POWERED — fewer than 4 usable emit ticks. Run a longer session.")
+        json.dump({"ckpt": ckpt, "trace": trace_path, "n": n, "verdict": "NOT-POWERED"},
+                  open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
+        return 0
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+    # margin m: one-sided binomial bound at N pairs, ~1.64·sqrt(0.25/Npair). Npair≈n(n-1)/2 but
+    # only discordant-half pairs count; use a conservative n as the effective unit for the bar.
+    import math as _math
+    m = 1.64 * _math.sqrt(0.25 / max(1, n))
+    print("  prereg margin m = %.4f  (one-sided binomial bound at n=%d)" % (m, n), flush=True)
+
+    # ── G-P0 pedestal: deterministic re-score of the true seeds must be byte-identical ──
+    p0_ok = True
+    for it in items[:min(8, n)]:
+        a = _gen_ctx_cont_nll(np, W, it["seed_true"], it["cont"], T)
+        b = _gen_ctx_cont_nll(np, W, it["seed_true"], it["cont"], T)
+        if a != b:
+            p0_ok = False
+            break
+    print("  G-P0 pedestal (determinism): %s" % ("✅ byte-identical" if p0_ok
+          else "❌ INVALID — nondeterminism leak"), flush=True)
+    if not p0_ok:
+        json.dump({"ckpt": ckpt, "trace": trace_path, "verdict": "INVALID", "gate": "G-P0"},
+                  open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
+        return 2
+
+    def _phase_of(it):
+        return it["phase"]
+
+    def _anchor_of(it):
+        return it["anchor"]
+
+    def _swap_phase(host, donor):
+        # host's seed but donor's phase token (anchor held = host's)
+        return donor["phase"] + " " + host["anchor"] if host["anchor"] else donor["phase"] + " "
+
+    def _swap_anchor(host, donor):
+        # host's phase but donor's anchor (phase held = host's)
+        return host["phase"] + " " + donor["anchor"] if donor["anchor"] else host["phase"] + " "
+
+    # ── G-P1 positive control: anchor-swap 2AFC (the known-causal seed half) ──
+    t0 = time.time()
+    a_score, a_np, a_ties, _ = _gen_ctx_2afc_pairs(np, W, T, items, _anchor_of, _swap_anchor, "anchor")
+    print("  G-P1 anchor-swap 2AFC (positive control) = %.4f  (pairs=%d ties=%d · %.1fs)"
+          % (a_score, a_np, a_ties, time.time() - t0), flush=True)
+    if a_np == 0:
+        print("  ⇒ UNDECIDABLE — no anchor contrast (all ticks share one anchor).")
+        json.dump({"ckpt": ckpt, "trace": trace_path, "verdict": "UNDECIDABLE-ANCHOR"},
+                  open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
+        return 0
+    instrument_dead = a_score <= 0.5 + m
+
+    # ── PRIMARY: phase-swap 2AFC ──
+    t0 = time.time()
+    p_score, p_np, p_ties, p_by_class = _gen_ctx_2afc_pairs(np, W, T, items, _phase_of, _swap_phase, "phase")
+    print("  PRIMARY phase-swap 2AFC = %.4f  (pairs=%d ties=%d · %.1fs)"
+          % (p_score, p_np, p_ties, time.time() - t0), flush=True)
+
+    # ── SECONDARY robustness: carrier (true phase vs length-matched neutral token) ──
+    # fixed bijection phase-word → neutral out-of-vocab token of the same byte length.
+    _NEUTRAL = {}
+    for pw in phase_classes:
+        _NEUTRAL[pw] = (" " * max(1, len(pw)))  # figure-space run, length-matched, non-phase
+    def _swap_carrier(host, donor):
+        neu = _NEUTRAL.get(donor["phase"], " ")
+        return neu + " " + host["anchor"] if host["anchor"] else neu + " "
+    c_score = float("nan"); c_np = 0
+    if len(phase_classes) >= 2:
+        c_score, c_np, c_ties, _ = _gen_ctx_2afc_pairs(np, W, T, items, _phase_of, _swap_carrier, "carrier")
+        print("  SECONDARY carrier 2AFC (phase vs neutral token) = %.4f  (pairs=%d)"
+              % (c_score, c_np), flush=True)
+
+    # ── VERDICT (prereg table) ──
+    verdict = None; note = ""
+    if len(phase_classes) < 2 or p_np == 0:
+        verdict = "UNDECIDABLE"; note = "fewer than 2 phase classes — no phase contrast in this trace"
+    elif instrument_dead:
+        verdict = "INSTRUMENT-DEAD"; note = "positive control (anchor) failed to beat chance+m — CE readout blind"
+    elif p_score < 0.5 - m:
+        verdict = "BELOW-CHANCE"; note = "phase 2AFC below chance−m — INVALID, audit the instrument"
+    elif p_score > 0.5 + m:
+        verdict = "FLOW"; note = "the phase VALUE causally lowers CE for its own content"
+    else:
+        verdict = "NULL"; note = "phase 2AFC within ±m of chance — theater (phase inert given the anchor)"
+
+    # per-phase-class collapse flag
+    class_scores = {}
+    collapsed = []
+    for cls, (w, t, cn) in p_by_class.items():
+        if cn > 0:
+            cs = (w + 0.5 * t) / cn
+            class_scores[cls] = cs
+            if cs <= 0.5 + m and verdict == "FLOW":
+                collapsed.append(cls)
+    print()
+    print("  ── by phase-pair class ──")
+    for cls in sorted(class_scores):
+        print("     %-24s 2AFC=%.4f" % (cls, class_scores[cls]))
+    if collapsed:
+        print("  ⚠️ COLLAPSE: pooled FLOW but these classes sit at/below chance+m: %s" % ", ".join(collapsed))
+    print()
+    print("  ═══ VERDICT: %s ═══" % verdict)
+    print("     %s" % note)
+    print("     phase=%.4f  anchor(+ctrl)=%.4f  carrier=%.4f  chance=0.5  m=%.4f  n=%d"
+          % (p_score, a_score, c_score, m, n))
+    print("     (MEASURES only; cement is engine-native anima-py — this IS that path · a_eval_py_canonical)")
+
+    res = {"schema": "anima-gen-ctx-2afc/v1", "ckpt": ckpt, "trace": trace_path,
+           "n_emit_ticks": n, "win": T, "margin_m": m, "phase_classes": phase_classes,
+           "g_p0_pedestal": "PASS" if p0_ok else "INVALID",
+           "phase_2afc": p_score, "phase_pairs": p_np, "phase_ties": p_ties,
+           "anchor_2afc": a_score, "anchor_pairs": a_np,
+           "carrier_2afc": (None if c_np == 0 else c_score), "carrier_pairs": c_np,
+           "by_phase_class": class_scores, "collapsed_classes": collapsed,
+           "verdict": verdict, "note": note}
+    json.dump(_json_safe(res), open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
+    print(json.dumps({"out": out_path, "verdict": verdict, "phase_2afc": p_score,
+                      "anchor_2afc": a_score, "n": n}))
     return 0
 
 
@@ -11594,6 +11915,7 @@ _KNOWN_FLAGS = frozenset((
     "--gn-freeze",
     "--bridge-trace", "--flip0", "--theta",
     "--store-mix", "--store-lambda", "--manifest",
+    "--gen-ctx-2afc",
     "--store-component-swap", "--store-swap-from",
     "--store", "--store-oracle", "--store-oracle-pair", "--store-dual-ctrl",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
@@ -11622,7 +11944,7 @@ _KNOWN_FLAGS = frozenset((
     "--fan-dump",
     "--cascade-null",
     "--state-census", "--kmax",
-    "--decl-flip", "--arms", "--strata",          # H_9800 ephemeral-declaration grounding
+    "--decl-flip", "--arms", "--strata",          # H_9929 ephemeral-declaration grounding
     "--tension-concord",                          # H_9812 lex|class concord mode for the audit
     "--closure-ladder", "--closure-arm", "--closure-ticks", "--closure-seed",   # H_9807 interventional closure rung 1
     "--stream-mi", "--shuffle-floor",             # H_9806 compression-MI battery (core/mi_compress)
@@ -18482,7 +18804,7 @@ def main(argv):
         return route_audit_run(argv)
     if "--bind-locus" in argv:
         return bind_locus_run(argv)
-    # --decl-flip <c.txt.decl.json>: H_9800 EPHEMERAL-DECLARATION grounding — the H_9359
+    # --decl-flip <c.txt.decl.json>: H_9929 EPHEMERAL-DECLARATION grounding — the H_9359
     # declaration-flip diagnostic promoted to a first-class scored flag. ADDITIVE: it moves no
     # frozen bar and touches no existing panel.
     if "--decl-flip" in argv:
@@ -18576,6 +18898,11 @@ def main(argv):
     # answer position). SEQUENTIAL C0 gate (λ=0 byte-identical to baseline) inside the run.
     if "--store-mix" in argv:
         return store_mix_run(argv)
+    # --gen-ctx-2afc <trace.jsonl>: H_9929 engine→CLM content-flow discriminator — does the A⇄G
+    # tension phase VALUE causally shape emitted content (FLOW) or is it theater (NULL)? $0 CE
+    # re-scoring of a live decision trace on the frozen trunk (a_eval_py_canonical · TERMINAL-eligible).
+    if "--gen-ctx-2afc" in argv:
+        return gen_ctx_2afc_run(argv)
     # --store <held.json> [--store-oracle] [--store-lambda λ]: H_9423 CLMS store-bridge lane — the
     # CO-TRAINED bridge (store injected at the query, answer-position logits OVERWRITTEN by the lane's
     # content-addressed lookup). Distinct from --store-mix (H_9392 post-forward actuator).
