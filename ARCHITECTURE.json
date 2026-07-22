@@ -15779,6 +15779,12 @@
       "type": "gate",
       "verdict": "🟢 ③상상(크기 한정)·④전형성 SATISFIED · DIRECTIONAL(toy)",
       "detail": "V6_P5 가 σ 축마다 인쇄한 측정가능성 4연언(①독립 ②조작가능 ③관측가능 ④판별가능) 표에서 빈칸이던 두 줄을 계기로 채움(lab/v6/sigma_missing_conjuncts.py · $0 · 3 seed · exit 0). ③ 상상-관측가능성: 상상 레인에 로짓행 경로를 주면 표면이 내부 잔여 크기를 corr 0.7056 으로 따라감 vs 경로없음(=오늘의 anima) 0.0000 vs 다른 에피소드 잔여 -0.0143 ⟹ H_9790 DIRECTIONAL 은 부재 아니라 판독구 공백(V6_P1e 과 같은 모양). ④ 전형성-판별가능성: 다음토큰 확률 붙박은 통제서 판독이 전형성을 0.9098 로 계속 따라감(확률 상관 0.0000) vs 자연조건 0.9506/0.9359 엉킴 ⟹ H_9787 BOUNDED-NULL 원인=표본이 둘을 못 갈랐던 것. 🔻자가결함: 첫 shuffled 통제가 인덱스만 섞고 크기는 제 에피소드에 붙여둬 KL 스칼라 판독구엔 무변화(0.6989≈wired 0.7056 → 실패 오판); 크기 셔플로 수리 → -0.0143. 그 결함이 곧 경계 — 스칼라-크기 표면은 잔여의 크기만 관측가능하게 하고 정체는 못 함(H_9576 과 같은 1차원 채널) ⟹ ③은 크기 충족·내용 열림, 처방은 V6_PX 위치 동시배정과 동일 지점. 범위: 구성 토이 = 이런 모양이면 조건 충족 가능하다는 것이지 anima 의 상상/전형성이 무엇이라는 게 아님(303M 엔진-네이티브 미측정 · pool 블로커). card=lab/v6/hypotheses/V6_P5b_sigma_conjuncts.md"
+     },
+     {
+      "id": "store-telemetry-measured-floor",
+      "type": "gate",
+      "verdict": "🟢 H_9911 CONFIRMED · 계기 수리 · H_9802 답=RECRUITMENT",
+      "detail": "H_9802 store 주소 telemetry 의 판정 바닥이 uniform(1/n_slot=0.1250)이었는데 실현된 바닥이 아니었다. 엔진-네이티브 303M(store303_s2000.clm · pool/summer GPU · anima-py evaluate --store --store-telemetry) 4단 사다리(한 칸에 한 가지만 변경): C 템플릿+nonce=학습된 조건·양성통제 a_max 0.7133/acc 0.9609 · E 템플릿+실단어 0.3420 · A 자연문장+실단어 0.3017 · B 자연문장+대상단어 부재=참값 0 PEDESTAL 0.2591. 옛 규칙 a_max<=uniform*1.5=0.1875 는 참값 0 인 B 조차 ADDRESSED 로 선언 ⟹ 주소지정 0 인 증거로 싼 정렬수리에 학습지출을 오라우팅. 수리=--store-telemetry-floor <a_max>(실측 pedestal 대비 판정), 미지정시 PENDING. 수리 후 C만 ADDRESSED, E/A/B 는 RECRUITMENT 로 뒤집힘(3/4). H_9802 답=RECRUITMENT ⟹ 커리큘럼 팔. 사망지점=C→E 낙차(문장 아닌 단어 · nonce 키가 실어휘 미인식), E→A 0.0403 · A−B 0.0426. 범위: ckpt 1·seed 1 — 결함은 코드사실 CONFIRMED, floor 값은 ckpt/분포 한정이라 인자화. 병렬 V6_20 prereg(floor>=통제=>INVALID)와 AGREES·충돌 0. card=HYPOTHESES/cards/H_9911_store_telemetry_floor_is_measured_not_uniform.md · VERSION 0.20.169"
      }
     ],
     "verdict": "⛔ 옛 패널 INVALID (H_9351) · 진짜 Ψ̂ = --psi-soma 로 수리됨"

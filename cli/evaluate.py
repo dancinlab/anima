@@ -7736,6 +7736,10 @@ def store_run(argv):
     # "natural text never addresses the store" (recruitment) from "addresses it but the
     # values are garbage" (alignment) BEFORE any training spend is committed.
     store_telemetry = "--store-telemetry" in argv
+    # H_9911: the verdict needs a MEASURED floor, not the uniform one. Pass the a_max
+    # of a pedestal arm — same prompts, but the addressed entity ABSENT from the store, so
+    # its true address mass is zero. See the ladder in the card for why uniform is not it.
+    tel_floor = float(evaluate_strval(argv, "--store-telemetry-floor", "nan"))
     tel_n = 0; tel_amax = 0.0; tel_aent = 0.0
     addr_top1 = addr_mass = addr_n = 0                  # (mean a[target]) — soft-address diagnostic
 
@@ -7911,12 +7915,29 @@ def store_run(argv):
             print("  store-telemetry (MONITOR-ONLY · not in any loss/bar): rows=%d · a_max=%.4f "
                   "(uniform=%.4f derived from n_slot=%d) · a_ent=%.4f (1.0=uniform, 0.0=one-hot)"
                   % (tel_n, amax, unif, n_slot_obs, aent))
-            if amax <= unif * 1.5:
-                print("    → RECRUITMENT: address mass is at the uniform floor ⟹ this text never "
-                      "ADDRESSES the store. Fire the curriculum arm; an alignment fix would be wasted.")
+            # H_9911 — the verdict runs against a MEASURED pedestal, not the uniform one.
+            # Measured on store303_s2000 (303M, engine-native): a pedestal arm whose addressed
+            # entity is ABSENT from the store — true address mass zero — still reads a_max
+            # 0.2591 against uniform 0.1250. The old rule (amax <= unif*1.5, i.e. 0.1875)
+            # therefore called that pedestal "ADDRESSED", and would have routed a real training
+            # spend to the cheap alignment fix on evidence that contains no addressing at all.
+            # Uniform is the theoretical chance; it is not the realised floor of this readout
+            # (chance-level-must-be-derived-per-metric).
+            if tel_floor != tel_floor:                        # no --store-telemetry-floor given
+                print("    → PENDING — no measured floor. a_max=%.4f sits above uniform=%.4f, but "
+                      "uniform is NOT this readout's floor: a pedestal arm with the addressed "
+                      "entity ABSENT measured 0.2591 on store303_s2000. Re-run a pedestal arm "
+                      "(same prompts, addressed entity removed from every store) and pass its "
+                      "a_max as --store-telemetry-floor to get RECRUITMENT vs ADDRESSED."
+                      % (amax, unif))
+            elif amax <= tel_floor * 1.5:
+                print("    → RECRUITMENT: a_max=%.4f is at the MEASURED floor %.4f (×1.5=%.4f) ⟹ this "
+                      "text never ADDRESSES the store. Fire the curriculum arm; an alignment fix "
+                      "would be wasted." % (amax, tel_floor, tel_floor * 1.5))
             else:
-                print("    → ADDRESSED (a_max above the uniform floor) ⟹ NOT a recruitment problem; "
-                      "if the values still read wrong the failure is ALIGNMENT (cheaper fix).")
+                print("    → ADDRESSED: a_max=%.4f clears the MEASURED floor %.4f (×1.5=%.4f) ⟹ NOT a "
+                      "recruitment problem; if the values still read wrong the failure is ALIGNMENT "
+                      "(cheaper fix)." % (amax, tel_floor, tel_floor * 1.5))
         else:
             print("  store-telemetry: rows=0 — the store lane never fired ⟹ INSTRUMENT-DEAD, "
                   "read nothing from this arm (check --store-fuse/--store-query wiring).")
@@ -11541,7 +11562,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-component-swap", "--store-swap-from",
     "--store", "--store-oracle", "--store-oracle-pair", "--store-dual-ctrl",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
-    "--store-addr-audit", "--store-telemetry", "--weave-null", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
+    "--store-addr-audit", "--store-telemetry", "--store-telemetry-floor", "--weave-null", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
     "--store-query", "--store-fuse", "--store-readout",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--store-adversarial",                                  # H_9850 hostile slot placement
