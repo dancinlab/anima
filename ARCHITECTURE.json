@@ -15815,6 +15815,12 @@
       "type": "gate",
       "verdict": "🟢 H_9916 MONOTONE/POINT 확정 · PERIODIC KILL · 🔎 방향은 틈의 내용(탐색적)",
       "detail": "트렁크 팽창 1·2·4·8(E=3·L=4·K=3 · core/model.py:414) ⟹ 팽창 탭이 연산자를 읽으면 δ 가 배수일 때 회복해야 함. δ=0..8 사다리(엔티티 5B 고정·공백으로만 이동): 1.0000/0.5781/0.6016/0.5391/0.5078/0.5156/0.5312/0.5234/0.5078, 우연 0.5, 게이트 통과. δ>=1 전부 <=0.70 이고 2·4·8 회복 0 ⟹ 동결표 1행 MONOTONE/POINT 확정, PERIODIC KILL — 트렁크 팽창은 연산자를 키잉하지 않음. 모양: δ>=3 부터 is 칸 1.0000/1.0000 · not 칸 ~0.0 · κ 0.686→0.972 포화 ⟹ 연산자가 사라지고 기본값 is, 0.51 은 열화 아니라 절반에 자신있게 틀린 답. H_9914 실단어 '뭉개짐'=길이 혼합으로 여러 δ 평균. 🔎탐색적 매칭쌍(판정 아님): 오프셋 15 고정에 틈을 공백(lad_d5 κ=+0.962) vs 글자(lad_gapletters κ=-0.210) ⟹ 오프셋은 부수기에 충분하나 방향은 틈의 내용이 정하며 엔티티 길이 자체가 아님. 미결: 층(팽창 유추 닫힘→절제/덤프만) · 공백vs글자가 어휘성인지 바이트클래스인지. card=HYPOTHESES/cards/H_9916_monotone_not_periodic_and_the_gap_steers.md · prereg=lab/v6/hypotheses/V6_H9916_prereg.md"
+     },
+     {
+      "id": "store-gap-variety-steers-direction",
+      "type": "gate",
+      "verdict": "🟢 H_9917 ENTROPY 지지 · LEXICALITY/BYTE-CLASS 2중 KILL · drill-only",
+      "detail": "H_9916 매칭쌍이 남긴 질문(방향을 정하는 성질)을 사전등록 동결 후 측정. 연산자 오프셋 15·엔티티 5B 고정, 틈 5B 만 5종 변경, 팔당 128. κ=mean(is칸)-mean(not칸): 공백 +0.957 · zzzzz +0.693 · 구두점 -0.487 · 글자 -0.534 · 숫자 -0.741. 게이트 통과(공백/글자 극 H_9916 재현). 3행 발동 ENTROPY 지지 + LEXICALITY KILL(숫자는 비어휘인데 -0.741) + BYTE-CLASS KILL(zzzzz 는 글자인데 +0.693). 법칙: 저-다양성(한 글자 5번)→is 기본값 / 고-다양성(매 바이트 다름)→not 쪽 ⟹ 단어인지도 공백인지도 아니라 틈이 변화를 담느냐가 방향을 뒤집음. 전체 정확도는 다섯 팔 0.4609~0.5312 로 우연 근처라 이 축에 눈멀었고 0.70 초과 없음 ⟹ H_9916 MONOTONE 불변, 이 카드는 방향만. 범위: 엔트로피가 '서로 다른 바이트 값 개수' 와 뒤엉켜 확정 아닌 지지(다음=문자 2/3/5종 틈) · 구두점 0.4609 는 CI 안 · ckpt1·seed1. 다음 층 탐색은 '틈 다양성에 반응하며 연산자 읽기를 좌우' 로 좁혀졌고 트렁크 팽창은 H_9916 이 배제. card=HYPOTHESES/cards/H_9917_gap_variety_not_lexicality.md · prereg=lab/v6/hypotheses/V6_H9917_prereg.md"
      }
     ],
     "verdict": "⛔ 옛 패널 INVALID (H_9351) · 진짜 Ψ̂ = --psi-soma 로 수리됨"
