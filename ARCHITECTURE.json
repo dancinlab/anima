@@ -11547,6 +11547,12 @@
             "type": "gate",
             "name": "✅ P2 실측 — 가법 오라클 천장 0.1562 (라틴방진) vs 0.5417 (무작위 표) · 2026-07-22 · $0",
             "detail": "H_9890 선결 P2 를 학습 전에 실측(순수 데이터 성질 · 모델 없음 · forward 없음 · 엔진 무관). 최대 가법 모델 logit[v]=a[r,v]+b[e,v] 를 전체 표에 수렴학습 후 argmax 정확도 = 천장. 수렴 검증 먼저(미수렴이면 천장 과소평가 → P2 거짓통과라 위험 방향): 4k/20k/80k iter 전부 0.1562 평탄 · 3/3 seed 동일 = 수렴 확정. 결과 — 8×8 라틴방진 0.1562(우연 0.1250) ⟹ 🟢 P2 PASS(bar ≤0.20 을 0.044 마진 통과) · 8×8 무작위 표 0.5417~0.5573 ⟹ 사산. ★함의: 라틴방진 제약은 장식이 아니라 하중부재다. 무작위 표(아무 생각 없이 고르면 기본값)로 지었으면 가법 천장 0.54 가 이 카드의 GREEN bar x≥0.50 을 넘어 어떤 🟢 도 '가법으로 설명됨' 과 구분 불가 = 판독 불가 — H_9131 이 죽은 바로 그 방식(반대칭 bilinear 의 additive subsume 을 못 보고 +0.24 를 크랙으로 읽음). 3.5배 차이가 표를 어떻게 뽑는가 하나에서 나온다. 이 천장은 학습 전 동결(burned-gate-no-refreeze). 등급 = 코퍼스 적격성 판정이지 기질 판정 아님 — GREEN 을 예측하지 않고 '이 실험이 낼 숫자가 비트를 나를 수 있다' 만 말한다(H_9808 심판 규율). 남은 선결 = P1(arity-1 양성통제 ≥0.75 양 seed) · P3(토이 스크리너 · grokking 가드 필수)."
+           },
+           {
+            "id": "gate-g1-r13-store-reuse-refuted",
+            "type": "gate",
+            "name": "⚠️ R13 기전 전제 REFUTED — store lane 은 1바이트라 조성 못 나른다 (H_9899 · 2026-07-22 · 병렬세션)",
+            "detail": "R13(H_9890)은 'H_9775 헤드에서 주소 항수만 바꾼다' 를 기전으로 적었는데 병렬 세션이 발사 전에 코드로 반증했다: StoreBindCell 학습창 seq = b' '*(T-len(prompt)) + prompt + gold[:1] ⟹ store lane 이 읽는 것은 답의 첫 1바이트뿐(주석도 binary readout 명시)인데 rule-compound 답은 4~6바이트(평균 5.2). 답을 1바이트로 줄이는 우회도 막힘(ρ·weave 우연 적중률 폭증으로 통제 무의미). ⟹ 'store 헤드 재사용' 폐기 · 분리 방향은 유효 · 구현은 다중바이트 답 지원 새 lane = H_9900 `anima-py train --comp-lane`(penultimate detach + 답 스팬 전체 CE · 토이 e2e 3/3 · 기본 OFF). 🔀 AGREES(독립수렴 · 강한 신호): 두 계보가 서로 못 본 채 'CE 를 트렁크에서 떼는 lane 분리' 원리에 도달 — R13 은 store_only 게이트로, 저쪽은 pen.detach() 로. 저쪽은 원인을 등노출 실측으로 확정(H_9898: 25%×8000 → ρ·weave 0.000 vs 100%×2000 → 0.525 · 노출 같은데 정반대 ⟹ 원인은 예산이 아니라 replay 의 존재 · a_substrate_disjoint 실측 지지). mouth 배선 경계도 양쪽 독립 명시(lane 이 배워도 트렁크 mouth 로 안 나오면 reach 0 = NEGATIVE 아니라 배선 결과 · a_verified_must_wire). CONFLICTS: 1건, R13 이 짐. NOVEL(R13 이 저쪽에 넘길 값): ① 가법 오라클 천장 검사는 기전 무관 — 저쪽 동결표는 H_9861 BASE(0/212 · 95% 상한 0.0142)라는 reach 기준선이지 가법 천장이 아니므로 comp-lane 동결표에도 같은 검사 권고(라틴방진 0.1562 vs 무작위 0.5417 = 3.5배) ② marginal-clamp do() 는 저쪽 통제집합(HILLOCK·ρ·form 축·self-shuffle·양성통제·ECHO-KILL)에 없음 ③ H_9895 값-알파벳 동치 ④ H_9897 게이트 분할. R13 에서 살아남은 것 = 판정표·3-leg 결합증서·marginal-clamp·P2 천장(전부 기전 무관한 채점 규율이라 comp-lane 위에 그대로 얹힘). H_9891/9893/9894 도 같은 1바이트 제약 ⟹ comp-lane 위로 재-스코프 필요. 현재 저쪽 진행 = H_9901 🔒 PRE-REGISTERED(선결 4개 · 판정표 5칸 · 2 seed 동결 · 양성통제를 held-out 과 동시 발사). 중복 발사 금지."
            }
           ]
          }
