@@ -32,3 +32,15 @@ H_9259 가 죽인 것은 **미학습** recurrence 다. 여기서는 상태전이
 
 두 1-hop leg 가 같은 하네스서 🟢 인데 사슬이 실패하면 — 벽이 **trunk arity** 에서
 **store 재귀**로 **이동**한다. 그것 자체가 새 벽 진술이다.
+
+---
+
+## ⚠️ 1바이트 제약 — store lane 위에 그대로 얹을 수 없다 (H_9899 · 2026-07-22)
+
+병렬 세션이 코드로 확정: `StoreBindCell` 학습창은 답의 **첫 바이트만** 담는다
+(`gold[:1]` · 주석도 "binary readout" 명시). rule-compound 답은 4~6바이트다.
+이 카드는 store lane 조회를 전제로 쓰였으므로 **다중바이트 readout 을 명시한 경로**
+— H_9900 `anima-py train --comp-lane`(penultimate detach + 답 스팬 전체 CE) —
+위로 **재-스코프한 뒤에만** 발사 가능하다. 답을 1바이트로 줄이는 우회는 금지
+(ρ·weave 우연 적중률이 치솟아 통제가 의미를 잃는다).
+분리 방향과 예측 자체는 불변. 자세한 대조 → [[H_9890]] 의 AGREES/CONFLICTS/NOVEL 절.

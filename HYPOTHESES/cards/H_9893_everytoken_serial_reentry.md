@@ -29,3 +29,15 @@ write 경로**다.
 ## 비용 논거
 
 신규 계기 표면이 가장 작다(평가 플래그 기존재). 이 계보에서 가장 싼 팔.
+
+---
+
+## ⚠️ 1바이트 제약 — store lane 위에 그대로 얹을 수 없다 (H_9899 · 2026-07-22)
+
+병렬 세션이 코드로 확정: `StoreBindCell` 학습창은 답의 **첫 바이트만** 담는다
+(`gold[:1]` · 주석도 "binary readout" 명시). rule-compound 답은 4~6바이트다.
+이 카드는 store lane 조회를 전제로 쓰였으므로 **다중바이트 readout 을 명시한 경로**
+— H_9900 `anima-py train --comp-lane`(penultimate detach + 답 스팬 전체 CE) —
+위로 **재-스코프한 뒤에만** 발사 가능하다. 답을 1바이트로 줄이는 우회는 금지
+(ρ·weave 우연 적중률이 치솟아 통제가 의미를 잃는다).
+분리 방향과 예측 자체는 불변. 자세한 대조 → [[H_9890]] 의 AGREES/CONFLICTS/NOVEL 절.
