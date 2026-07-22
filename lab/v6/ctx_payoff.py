@@ -21,7 +21,9 @@ says what the objective PRICES, not what the model learned.  Nothing here cement
 import re, sys
 from collections import Counter
 
-PATH = "/Users/mini/anima-weights/study303_long_transcript/cpt_mix.txt"
+from corpus_path import natural_corpus
+
+PATH = natural_corpus()
 RF   = 35   # mouth receptive field in BYTES -- below this a bigram continuation suffices
 
 ENT = re.compile(r"\b([A-Z][a-z]{2,}(?:\s+[A-Z][a-z]{2,}){0,2})\b")
