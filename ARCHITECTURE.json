@@ -15809,6 +15809,12 @@
       "type": "gate",
       "verdict": "🟢 H_9915 POSITIONAL 확정 · GENERIC-OOD/CONTENT/GLOBAL-GN 3중 KILL · 사전등록 동결 · drill-only",
       "detail": "H_9914 의 '엔티티 길이' 는 언컨파운딩 안 됐었음 — 우측정렬 패딩이라 연산자 마지막 바이트가 qpos-(len+5) 에 앉아 길이 사다리가 오프셋도 함께 이동. lab full 에서 fable(A3/A4)·sol(P/E/D)이 독립적으로 같은 수 제안: 엔티티 5바이트 고정하고 공백으로 오프셋만 이동. 판정표 발사 전 동결 후 8판: A0 1.0000 · A1 op절제 실측바닥 0.3516 · A3 공백+1 0.6406 · A3b 공백+2 0.6094 · A4 앞공백(오프셋불변) 1.0000 · A6 길이6 0.5859 · GN(A6+--gn-freeze) 0.5703 · GN통제(A0+동결) 1.0000, 우연 0.5. 행1(A3<=0.70 ∧ A4>=0.94 ∧ |A3-A6|=0.0547 ∧ |A3b-0.539|=0.0704) ⟹ POSITIONAL 확정. 3중 KILL: GENERIC-OOD(A4 가 미지바이트 1개에도 1.0000) · CONTENT(A3/A3b 엔티티 바이트 0 추가인데 붕괴; H_9914 길이4 는 바이트 빼고도 붕괴) · GLOBAL-GN(동결 구제 실패, 동결은 5 사이트 실작동+A0 통제 1.0000 이라 음성 판독가능). 결론: 판독구가 잃는 건 연산자가 질의에서 떨어진 바이트 거리이며 드릴 엔티티 길이가 하나였으므로 그 거리도 하나. sol 의 명시적 최애(전역 GN)가 sol 설계 팔에 사망 — 근거는 사실, 결론은 오류. 주석(비표제): A3 붕괴 모양이 A6 보다 깔끔 ⟹ 길이가 오프셋 위에 추가 기여 가능. 미결: 층/dilation 키잉 · 길이9 κ 부호역전. 계기: --gn-freeze 를 store_run 에 배선(H_9611 패턴·부재시 바이트동일·참조 명시·스윕금지). card=HYPOTHESES/cards/H_9915_operator_offset_not_entity_length.md · prereg=lab/v6/hypotheses/V6_H9915_prereg.md · VERSION 0.20.171"
+     },
+     {
+      "id": "store-offset-monotone-gap-steers",
+      "type": "gate",
+      "verdict": "🟢 H_9916 MONOTONE/POINT 확정 · PERIODIC KILL · 🔎 방향은 틈의 내용(탐색적)",
+      "detail": "트렁크 팽창 1·2·4·8(E=3·L=4·K=3 · core/model.py:414) ⟹ 팽창 탭이 연산자를 읽으면 δ 가 배수일 때 회복해야 함. δ=0..8 사다리(엔티티 5B 고정·공백으로만 이동): 1.0000/0.5781/0.6016/0.5391/0.5078/0.5156/0.5312/0.5234/0.5078, 우연 0.5, 게이트 통과. δ>=1 전부 <=0.70 이고 2·4·8 회복 0 ⟹ 동결표 1행 MONOTONE/POINT 확정, PERIODIC KILL — 트렁크 팽창은 연산자를 키잉하지 않음. 모양: δ>=3 부터 is 칸 1.0000/1.0000 · not 칸 ~0.0 · κ 0.686→0.972 포화 ⟹ 연산자가 사라지고 기본값 is, 0.51 은 열화 아니라 절반에 자신있게 틀린 답. H_9914 실단어 '뭉개짐'=길이 혼합으로 여러 δ 평균. 🔎탐색적 매칭쌍(판정 아님): 오프셋 15 고정에 틈을 공백(lad_d5 κ=+0.962) vs 글자(lad_gapletters κ=-0.210) ⟹ 오프셋은 부수기에 충분하나 방향은 틈의 내용이 정하며 엔티티 길이 자체가 아님. 미결: 층(팽창 유추 닫힘→절제/덤프만) · 공백vs글자가 어휘성인지 바이트클래스인지. card=HYPOTHESES/cards/H_9916_monotone_not_periodic_and_the_gap_steers.md · prereg=lab/v6/hypotheses/V6_H9916_prereg.md"
      }
     ],
     "verdict": "⛔ 옛 패널 INVALID (H_9351) · 진짜 Ψ̂ = --psi-soma 로 수리됨"
