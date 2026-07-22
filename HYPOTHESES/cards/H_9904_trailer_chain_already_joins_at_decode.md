@@ -90,3 +90,58 @@ fuse="gated-add"     → out[t] = logits[t] + λ·s     ← 트렁크 보존 + �
 `fuse="gated-add"` 경로 중 **하나라도 실제로는 죽어 있거나 eval 에서 안 불린다면** 이 카드는
 틀린다. 확인 방법 = `anima-py evaluate <H_9775-ckpt> --store m.json --store-query every-token
 --store-fuse gated-add` 가 base 와 다른 출력을 내는가($0 · 기존 ckpt · 새 학습 없음).
+
+---
+
+## 🔬 반증 시험 실행 결과 (2026-07-22 · 토이 · $0) — 카드 주장 부분 확증 + **내 시험은 무효**
+
+카드에 적어둔 반증법을 직접 돌렸다. 결과를 보기 **전에** 판독 기준을 고정했다:
+*두 팔이 다른 값 ⟹ 카드 유지 · 같은 값 ⟹ 카드 반증.*
+
+`anima-py evaluate ~/anima-weights/store_struct_toy/toy.clm --store …held.json` (128 items):
+
+| 팔 | overall | is/good | is/bad | not/good | not/bad |
+|---|---|---|---|---|---|
+| A `qpos·overwrite`(기본) | **126/128 = 0.9844** | 1.0000 | 0.9630 | 0.9737 | 1.0000 |
+| B `every-token·gated-add` | **126/128 = 0.9844** | 1.0000 | 0.9630 | 0.9737 | 1.0000 |
+
+소수점까지 동일 — 첫 반응은 "경로 사망"(`flat-across-manipulations-means-the-lane-is-dead`)이었다.
+**그 판독은 틀렸다.** 코드를 열어보니 계기가 조작 지점을 안 본다:
+
+```python
+clm.set_clms_store(..., query=store_query, fuse=store_fuse)   # 플래그는 실제로 전달됨
+logits = clm._fwd_logits(W, tok, T)
+qp = _clms.find_qpos(tok)
+if not qp: return None
+row = logits[qp[-1]]        # ← qpos 행 하나만 채점
+```
+
+`every-token` 의 존재 이유는 **마커 없는 자유 생성에서 발화**하는 것인데(H_9695: "free ideation
+carries no marker"), 이 매니페스트는 전 항목이 `=> ` 마커를 갖고 채점기는 qpos 행만 읽는다.
+⟹ **조작이 만드는 차이가 DV 밖에 있다.** 게다가 qpos 행에서 `overwrite`(λ·s)와
+`gated-add`(logits+λ·s)는 g/b 2지선다 argmax 를 같은 쪽으로 몰기 쉬워(레인이 0.9844 로 강하게
+학습됨) 이 거친 readout 은 두 모드를 원리적으로 구분하지 못한다.
+
+⟹ **이 시험은 반증이 아니라 INVALID** 다. 계기가 조작을 볼 수 있음을 먼저 증명하지 않고 null 을
+읽었다 — `positive-control-before-reading-a-negative` 위반을 내가 저질렀다. 판정 철회.
+
+### ✅ 다만 ARM A 가 카드의 핵심 주장을 **실증**한다
+
+`toy.clm` 은 `CLMX` + **`CLMS` 트레일러를 실제로 담고 있고**(바이트 확인 · 406,763 B),
+디코더가 그것을 읽어 답위치 로짓을 바꿔 **0.9844** 를 만든다. 즉:
+
+> "a head that is not in the file cannot be read by evaluate's mouth" ([[H_9903]]) 의 전제에
+> 대해 — **파일 안에 있고 mouth 가 읽는 헤드가 실재한다**는 살아있는 반례가 여기 있다.
+
+포맷이 decode-time join 을 막지 않는다는 이 카드의 결론은 **유지**된다. 막힌 것은
+[[H_9900]] 의 헤드가 `model.state_dict` 밖에 살아 `serialize_v3` 가 안 쓴 것뿐이다.
+
+### 교체된 반증법 (다음 사람이 쓸 것)
+
+`every-token` 을 판독하려면 **마커 없는** 창과 **qpos 아닌 행**을 보는 DV 가 필요하다:
+- 매니페스트에서 `=> ` 를 제거한 자유-생성 창(마커 부재 ⟹ `qpos` 팔은 `find_qpos` 가 비어
+  `None` 반환 = 무응답, `every-token` 팔만 발화) — 이 대조가 진짜 판별식이다.
+- 또는 전 행 로짓의 L1 차이 `‖logits_B − logits_A‖₁` 를 직접 보고. 0 이면 경로 사망,
+  >0 이면 살아있음. qpos-2지선다 argmax 로는 영원히 못 가른다.
+
+⚠️ 이 절은 **계기 판정**이지 기질 판정이 아니다. cement 는 engine-native `anima-py` 로만.
