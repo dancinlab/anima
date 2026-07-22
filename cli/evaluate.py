@@ -7598,6 +7598,23 @@ def store_run(argv):
     if not W.get("ok"):
         print("ERROR: ckpt not decodable (clm): " + ckpt)
         return 1
+    # H_9915 --gn-freeze <ref>: the same H_9611 flag, now reachable from the store path.
+    # GroupNorm(1) reduces over the WHOLE [T,C] slab (core/decode.py:633), so ONE extra
+    # entity byte moves mu/var and therefore every position's output — a sequence-global
+    # channel that survives past the conv receptive field. H_9914 found the store readout
+    # works only at the trained entity length, and "RF=35 bytes, so 5->6 is well inside it"
+    # does NOT exclude that global channel. Pinning mu/var to a pre-registered reference
+    # makes the trunk strictly RF-local, so replaying the collapse under the freeze asks
+    # whether the global statistic is what carries the length. Default (absent) is
+    # BYTE-IDENTICAL to the live path; the reference is explicit and never swept.
+    gn_ref = evaluate_strval(argv[1:], "--gn-freeze", "")
+    if gn_ref:
+        if os.path.exists(gn_ref):
+            gn_ref = open(gn_ref, "r").read()
+        _st = clm.gn_freeze_calibrate(W, clm._seed_to_tok(gn_ref, T), T)
+        clm.gn_freeze_set(_st)
+        print("  [gn-freeze] ON — %d GN sites pinned from ref (%d bytes · pre-registered, not swept)"
+              % (len(_st), len(gn_ref)), flush=True)
     # H_9850 --store-adversarial: refill each entry's NON-TARGET slots from this ckpt's own
     # key geometry instead of the manifest's uniform draw. Every shipped manifest draws slots
     # with rng.sample (cli/corpus.py _sb_emit_block), so every store number to date was taken

@@ -15803,6 +15803,12 @@
       "type": "gate",
       "verdict": "🔴 H_9914 정정 · 방아쇠=엔티티 길이(어휘 무죄) · 기전 미식별 · drill-only",
       "detail": "오라클에서 store 엔티티는 안 읽힘(core/clms.py:160 a=one_hot ⟹ v=val[pols], K 미사용) ⟹ H_9913 오라클 격차 원인은 프롬프트뿐. 길이×어휘 2×3 (팔당 128·GPU pool): len5 nonce 1.0000/real 1.0000 · len6 0.5781/0.6094 · len7 0.5391/0.5469, 우연 0.5. 같은 길이 어휘차 <=0.03 ⟹ 어휘 무죄, 방아쇠=엔티티 길이. 총 프롬프트 길이 아님('not kunem => ' 13B 완벽 vs 'is bavune => ' 13B 붕괴). 통제=새로 생성한 nonce5 도 1.0000(암기 아님). 기전 미식별: nonce6 만 깔끔한 not 반전(0.2424/0.1613), real6 은 고르게 뭉개짐 ⟹ op-gate 반전은 한 칸 관찰이지 법칙 아님. 정정: H_9911 '단어에서 죽는다'=실은 길이(arm E 0.6641 은 5자 성공+6·7자 실패의 평균 오독) · H_9913 '실단어를 못 읽는다'=오류. 두 카드의 측정값·계기수리(실측 floor·READOUT-DEAD 게이트)는 유효, 틀린 건 원인 이름. p9: 드릴 엔티티 길이가 하나였고 능력은 그 격자 안에서만 작동 = drill-installed 최저가 실례이며 이 결과도 drill-only. card=HYPOTHESES/cards/H_9914_entity_length_not_vocabulary.md"
+     },
+     {
+      "id": "store-operator-offset-positional",
+      "type": "gate",
+      "verdict": "🟢 H_9915 POSITIONAL 확정 · GENERIC-OOD/CONTENT/GLOBAL-GN 3중 KILL · 사전등록 동결 · drill-only",
+      "detail": "H_9914 의 '엔티티 길이' 는 언컨파운딩 안 됐었음 — 우측정렬 패딩이라 연산자 마지막 바이트가 qpos-(len+5) 에 앉아 길이 사다리가 오프셋도 함께 이동. lab full 에서 fable(A3/A4)·sol(P/E/D)이 독립적으로 같은 수 제안: 엔티티 5바이트 고정하고 공백으로 오프셋만 이동. 판정표 발사 전 동결 후 8판: A0 1.0000 · A1 op절제 실측바닥 0.3516 · A3 공백+1 0.6406 · A3b 공백+2 0.6094 · A4 앞공백(오프셋불변) 1.0000 · A6 길이6 0.5859 · GN(A6+--gn-freeze) 0.5703 · GN통제(A0+동결) 1.0000, 우연 0.5. 행1(A3<=0.70 ∧ A4>=0.94 ∧ |A3-A6|=0.0547 ∧ |A3b-0.539|=0.0704) ⟹ POSITIONAL 확정. 3중 KILL: GENERIC-OOD(A4 가 미지바이트 1개에도 1.0000) · CONTENT(A3/A3b 엔티티 바이트 0 추가인데 붕괴; H_9914 길이4 는 바이트 빼고도 붕괴) · GLOBAL-GN(동결 구제 실패, 동결은 5 사이트 실작동+A0 통제 1.0000 이라 음성 판독가능). 결론: 판독구가 잃는 건 연산자가 질의에서 떨어진 바이트 거리이며 드릴 엔티티 길이가 하나였으므로 그 거리도 하나. sol 의 명시적 최애(전역 GN)가 sol 설계 팔에 사망 — 근거는 사실, 결론은 오류. 주석(비표제): A3 붕괴 모양이 A6 보다 깔끔 ⟹ 길이가 오프셋 위에 추가 기여 가능. 미결: 층/dilation 키잉 · 길이9 κ 부호역전. 계기: --gn-freeze 를 store_run 에 배선(H_9611 패턴·부재시 바이트동일·참조 명시·스윕금지). card=HYPOTHESES/cards/H_9915_operator_offset_not_entity_length.md · prereg=lab/v6/hypotheses/V6_H9915_prereg.md · VERSION 0.20.171"
      }
     ],
     "verdict": "⛔ 옛 패널 INVALID (H_9351) · 진짜 Ψ̂ = --psi-soma 로 수리됨"
