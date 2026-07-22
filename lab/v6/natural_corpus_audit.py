@@ -18,7 +18,9 @@ Measured here, on 4.8MB of wiki-style prose:
 """
 import re, sys, collections, itertools
 
-PATH = "/Users/mini/anima-weights/study303_long_transcript/cpt_mix.txt"
+from corpus_path import natural_corpus
+
+PATH = natural_corpus()
 ENT = re.compile(r"\b[A-Z][a-z]{2,}(?:\s+[A-Z][a-z]{2,})*\b")
 STOP = {"The","This","That","These","Those","There","When","While","After","Before",
         "However","Although","Because","During","Some","Many","Most","Their","They",

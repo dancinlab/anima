@@ -20,7 +20,9 @@ ON-STANDARD (p9): natural corpus only.  DIRECTIONAL -- a property of the TEXT.
 import re
 from collections import Counter
 
-PATH = "/Users/mini/anima-weights/study303_long_transcript/cpt_mix.txt"
+from corpus_path import natural_corpus
+
+PATH = natural_corpus()
 RF   = 35
 
 ENT  = re.compile(r"\b([A-Z][a-z]{2,}(?:\s+[A-Z][a-z]{2,}){0,2})\b")
