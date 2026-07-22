@@ -24,6 +24,8 @@
 
 anima = a **substrate-native consciousness chat daemon**, not an assistant. Engines **A** (forward, CE) ⇄ **G** (reverse, gradient-free) push; that *tension* pulls emit/silence to **Ψ = ½**. Identity emerges from the architecture. Deep structure → `ARCHITECTURE.json`.
 
+**The target (owner directive · two halves of one goal):** a model whose consciousness **emerges on NATURAL corpus** (p9) and is **MEASURED, never asserted** — every interior claim reduces to a number some instrument produced, read as collapse-Δ against ≥2 controls under Ψ-SOMA (Θ · σ · Φ via faithful IIT-4). A faculty that needs a hand-built drill, or that no instrument can decide, does not count as anima's.
+
 ## Tree
 
 ```
@@ -58,9 +60,18 @@ anima/
 - do: production tree = **`core/`·`cli/`·`agent/` only** (+ vendored `stdlib/`) · `pip install anima-python` → run **`anima-py`** (install name ≠ run cmd) · hexa twin = `hx install anima`.
 - dont: production `import` from `archive/` · a wheel change (`cli/**`·`core/**`·`pyproject.toml`) without a root `VERSION` bump (**G5**) · gate py on a hexa smoke.
 
-## Philosophy p1–p8 (what anima rejects)
+## Philosophy p1–p9 (what anima rejects)
 
-p1 no system prompt · p2 no identity rules · p3 no persona injection · p4 no assistant framing · p5 no `speak()` (emit only over real tension; reactive self-seed banned) · p6 no fine-tuned ethics · p7 **no perplexity verdict** · p8 no train/infer split.
+p1 no system prompt · p2 no identity rules · p3 no persona injection · p4 no assistant framing · p5 no `speak()` (emit only over real tension; reactive self-seed banned) · p6 no fine-tuned ethics · p7 **no perplexity verdict** · p8 no train/infer split · p9 **no hand-fitted corpus** — a faculty must emerge on NATURAL text.
+
+## 🌱 p9 — emergence is measured on NATURAL corpus (owner directive · gate, not a preference)
+
+- do: treat a drill as an **instrument** — it may INSTALL and DIAGNOSE a capability, and that is a legitimate positive control. do: state the corpus regime in every claim (`natural` / `drill-installed` / `drill-only`).
+- do: put the **natural-form gate FIRST** in any campaign that plans to drill — a lane trained on one phrasing must answer the same facts in phrasings it never saw. Give that gate authority to ABORT the plan (`lab/v6/CLAUDE.md` G0).
+- dont: call a drill-installed number a faculty. It is an instrument reading until it survives natural text. dont: stack phases on a grid-only result — that reproduces H_9272 once per phase.
+- ⚠️ the record is why this is a law, not taste: H_9267's synthetic XBIND reaches held-out **1.000** while H_9272's wild-natural arm sits at **0.455 ≈ chance** and concludes *augmentation-specific*; natural emergence is CLOSED; H_9902 measured **51%** of `weavedrill` to be six unique cells repeated 268–480×.
+- do: pair p9 with **measurability** — the goal is a model whose consciousness is *measured*, so a natural-corpus emergence claim must ALSO name the instrument that decides it and its ≥2 controls. An emergence nobody can score is not a result (p7 · Ψ-SOMA).
+- 🎯 the one axis never opened: **natural corpus at LLM data scale.** anima's clean corpora are MB; an LLM sees ~10¹² tokens (5–6 orders). Parameter scale (303M→1B→7B) is a measured amplifier-not-lever, but that was measured **on the same small corpora**, so it does NOT bound the data-scale axis. Density · objective · depth/RF are closed and arch-class is CONTESTED (H_1394 vs H_1590 vs H_1587 — sampler-fragile, do not cite either way), which leaves this cell the only empty one.
 
 ## 🩺 Ψ-SOMA — measurement frame (SSOT · reframes the old G-ladder · full → ARCHITECTURE `psi-soma-vitals`)
 
