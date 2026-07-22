@@ -27,21 +27,34 @@ maximum cosine over 20 draws (chance-level-must-be-derived-per-metric).
 import os, sys
 import numpy as np
 
+# H9920_DUMP may name ONE npz or several comma-separated ones. The full ladder at n=160 is
+# 2880 prompts, whose dump exceeds the pool host's memory ceiling, so it is taken in three
+# chunks (delta 0-2 / 3-5 / 6-8) and merged here. Chunking changes nothing about the fit --
+# every decoder is fitted within its own delta, and no statistic crosses a chunk except the
+# cosines between already-fitted directions.
 DUMP = os.environ.get("H9920_DUMP", "rot_probe.npz")
 DELTAS = range(0, 9)
 SEED = 7
 
-if not os.path.exists(DUMP):
-    sys.exit("missing %s -- run `anima-py evaluate <ckpt> --dump-hidden rot_probe.json "
-             "--out %s` first (engine-native tap)" % (DUMP, DUMP))
+PARTS = [p.strip() for p in DUMP.split(",") if p.strip()]
+missing = [p for p in PARTS if not os.path.exists(p)]
+if missing:
+    sys.exit("missing %s -- run `anima-py evaluate <ckpt> --dump-hidden <spec>.json --out "
+             "<dump>.npz` first (engine-native tap)" % ", ".join(missing))
 
-z = np.load(DUMP, allow_pickle=True)
+ZS = [np.load(p, allow_pickle=True) for p in PARTS]
+print("dump: %d file(s), %d arrays total" % (len(ZS), sum(len(z.files) for z in ZS)))
 
 
 def pick(d, op):
-    ks = sorted(k for k in z.files
-                if k.startswith("d%d|%s|" % (d, op)) and k.endswith("__last"))
-    return np.stack([np.asarray(z[k], dtype=np.float64).reshape(-1) for k in ks])
+    rows = []
+    for z in ZS:
+        for k in sorted(z.files):
+            if k.startswith("d%d|%s|" % (d, op)) and k.endswith("__last"):
+                rows.append(np.asarray(z[k], dtype=np.float64).reshape(-1))
+    if not rows:
+        sys.exit("no prompts for delta=%d op=%s in %s" % (d, op, PARTS))
+    return np.stack(rows)
 
 
 def fit(A, B):
