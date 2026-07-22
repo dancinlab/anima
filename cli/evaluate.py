@@ -7740,6 +7740,13 @@ def store_run(argv):
     # of a pedestal arm — same prompts, but the addressed entity ABSENT from the store, so
     # its true address mass is zero. See the ladder in the card for why uniform is not it.
     tel_floor = float(evaluate_strval(argv, "--store-telemetry-floor", "nan"))
+    # H_9913: RECRUITMENT vs ALIGNMENT is a routing verdict, and it silently assumes the
+    # READOUT works — that a correct pointer would be read correctly. Measured on
+    # store303_s2000: oracle (address handed for free) reads 1.0000 on the trained nonce
+    # condition but 0.6641 on real words and 0.7188 in natural context, against the ≥0.90
+    # bar this file already prints in the oracle path. When the readout fails with a perfect
+    # pointer, neither routing answer is available — training the address cannot fix it.
+    tel_oracle = float(evaluate_strval(argv, "--store-telemetry-oracle", "nan"))
     tel_n = 0; tel_amax = 0.0; tel_aent = 0.0
     addr_top1 = addr_mass = addr_n = 0                  # (mean a[target]) — soft-address diagnostic
 
@@ -7923,7 +7930,18 @@ def store_run(argv):
             # spend to the cheap alignment fix on evidence that contains no addressing at all.
             # Uniform is the theoretical chance; it is not the realised floor of this readout
             # (chance-level-must-be-derived-per-metric).
-            if tel_floor != tel_floor:                        # no --store-telemetry-floor given
+            # H_9913 — the READOUT gate runs FIRST. Both routing answers presuppose that a
+            # correct pointer would be read correctly, so when the oracle arm (address handed
+            # for free) is below the 0.90 bar this file already enforces elsewhere, neither
+            # answer exists and training the address cannot help.
+            if tel_oracle == tel_oracle and tel_oracle < 0.90:
+                print("    → READOUT-DEAD: the oracle arm reads %.4f (<0.90), so a PERFECT pointer "
+                      "is already not read correctly on this text. Neither RECRUITMENT nor "
+                      "ALIGNMENT is available — both presuppose a working readout, and a "
+                      "curriculum arm trains W_q, which is not what is broken. Fix the readout "
+                      "(val/W_out/λ) or narrow the text until the oracle clears 0.90, then route."
+                      % tel_oracle)
+            elif tel_floor != tel_floor:                      # no --store-telemetry-floor given
                 print("    → PENDING — no measured floor. a_max=%.4f sits above uniform=%.4f, but "
                       "uniform is NOT this readout's floor: a pedestal arm with the addressed "
                       "entity ABSENT measured 0.2591 on store303_s2000. Re-run a pedestal arm "
@@ -11562,7 +11580,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-component-swap", "--store-swap-from",
     "--store", "--store-oracle", "--store-oracle-pair", "--store-dual-ctrl",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
-    "--store-addr-audit", "--store-telemetry", "--store-telemetry-floor", "--weave-null", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
+    "--store-addr-audit", "--store-telemetry", "--store-telemetry-floor", "--store-telemetry-oracle", "--weave-null", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
     "--store-query", "--store-fuse", "--store-readout",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--store-adversarial",                                  # H_9850 hostile slot placement
