@@ -1,13 +1,15 @@
 <!-- @hypothesis-ok — lab/v6 is a rule-exempt sandbox (lab/v2 convention); v6 hypotheses are
      V6_<n>_*.md and are FORBIDDEN from the parent HYPOTHESES/ registry. See lab/v6/CLAUDE.md. -->
 
-# V6_5 — Φ-matched-dead 통제 · 그리고 **네 세포형을 통과한 "법칙"이 측도 아티팩트였다**
+# V6_6 — Φ-matched-dead 통제 · 그리고 **네 세포형을 통과한 "법칙"이 측도 아티팩트였다**
 
 **status:** 🟢 CONTROL HOLDS + ⚠️ **near-miss 1건이 본체보다 중요** · DIRECTIONAL 천장
 **cost:** $0 · 순수 파이썬 · 초 단위
 **runs:** `python3 lab/v6/phi_matched_dead_control.py` (exit 0 = 통제 성립)
 **source:** `../divergence/06_iit_implementable.md` 의 **C(2)** — Φ-matched-but-functionally-dead
 **closes:** Φ 주장의 통제 집합 3조각 완성 → [[V6_3]] 쓰기경로 · [[V6_4]] 읽기값 · 이 카드 기능축
+**⚠️ id 정정:** 원래 V6_5 로 착륙했으나 병렬 세션의 [[V6_5]](LANE-BUS P0)와 **같은 분에 id 충돌**했다.
+저쪽이 먼저 들어갔으므로 이 카드가 양보해 **V6_6** 으로 재번호(`a_parallel_session_compare`).
 
 ## 무엇을 막는 통제인가
 
