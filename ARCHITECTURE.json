@@ -15785,6 +15785,12 @@
       "type": "gate",
       "verdict": "🟢 H_9911 CONFIRMED · 계기 수리 · H_9802 답=RECRUITMENT",
       "detail": "H_9802 store 주소 telemetry 의 판정 바닥이 uniform(1/n_slot=0.1250)이었는데 실현된 바닥이 아니었다. 엔진-네이티브 303M(store303_s2000.clm · pool/summer GPU · anima-py evaluate --store --store-telemetry) 4단 사다리(한 칸에 한 가지만 변경): C 템플릿+nonce=학습된 조건·양성통제 a_max 0.7133/acc 0.9609 · E 템플릿+실단어 0.3420 · A 자연문장+실단어 0.3017 · B 자연문장+대상단어 부재=참값 0 PEDESTAL 0.2591. 옛 규칙 a_max<=uniform*1.5=0.1875 는 참값 0 인 B 조차 ADDRESSED 로 선언 ⟹ 주소지정 0 인 증거로 싼 정렬수리에 학습지출을 오라우팅. 수리=--store-telemetry-floor <a_max>(실측 pedestal 대비 판정), 미지정시 PENDING. 수리 후 C만 ADDRESSED, E/A/B 는 RECRUITMENT 로 뒤집힘(3/4). H_9802 답=RECRUITMENT ⟹ 커리큘럼 팔. 사망지점=C→E 낙차(문장 아닌 단어 · nonce 키가 실어휘 미인식), E→A 0.0403 · A−B 0.0426. 범위: ckpt 1·seed 1 — 결함은 코드사실 CONFIRMED, floor 값은 ckpt/분포 한정이라 인자화. 병렬 V6_20 prereg(floor>=통제=>INVALID)와 AGREES·충돌 0. card=HYPOTHESES/cards/H_9911_store_telemetry_floor_is_measured_not_uniform.md · VERSION 0.20.169"
+     },
+     {
+      "id": "store-key-geometry-innocent",
+      "type": "gate",
+      "verdict": "🔧 H_9912 · 키 기하 무죄 · H_9911 처방 무수정 유지",
+      "detail": "H_9911 커리큘럼 처방을 태우기 전 키 정체 확인(core/clms.py:81 _entity_key=동결 (256,64) 표 바이트행 평균 · :163 a=softmax(q@K.T/sqrt(d_k)) 정규화없음). 뒤집기 두 시도 모두 실패: ①collinearity nonce 0.7264 vs real 0.7546 을 발명한 0.02 문턱으로 통과시켰고 논리('나란하면 못 뾰족')가 질의 크기 자유 아래 거짓 ②q=표적키 '천장' nonce 0.1275/real 0.1268 를 실측 0.7133 이 5.6배 넘음 ⟹ 넘어서는 천장은 천장 아님. 천장격차 0.0007 vs 실측격차 0.3713=0.2% ⟹ 키 기하는 C→E 설명 못하고 실단어 키는 분리가능했으며 모델이 분리 못한 학습된 실패 ⟹ 커리큘럼 팔이 맞다. 순서맹(실단어 200/200 애너그램 바이트동일)은 별개 영구사실이나 nonce 에도 참이라 붕괴 설명 0. 자가결함3=코퍼스 부재시 README 조용한 폴백으로 다른 단어풀 비교(무효)→종료로 수정. card=HYPOTHESES/cards/H_9912_key_geometry_does_not_explain_the_collapse.md"
      }
     ],
     "verdict": "⛔ 옛 패널 INVALID (H_9351) · 진짜 Ψ̂ = --psi-soma 로 수리됨"
