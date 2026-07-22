@@ -1381,6 +1381,12 @@ class TrainShell(nn.Module):
         self.obj_needs_pen = obj_needs_pen
         self.dict_on = dict_on
         self.jamo_on = jamo_on
+        # H_9900 composition lane — attached by the caller when --comp-lane is given. need_pen
+        # must include it: the lane reads the trunk penultimate (detached) at the answer span.
+        self.comp_lane = None
+        self.comp_w = 1.0
+        self.comp_sep = 32                            # b" "
+        self.comp_end = 46                            # b"."
         self.need_pen = obj_needs_pen or dict_on or jamo_on
         self.bf16 = bf16
         self.device = device
@@ -1450,6 +1456,17 @@ class TrainShell(nn.Module):
                 if ans_w > 0.0:                       # H_9811 answer-weighted CE (default 0 = off)
                     ace, an = answer_ce(out["logits"].float(), y, V)
                     loss = loss + ans_w * ace
+                if self.comp_lane is not None:        # H_9900 composition lane (default None = off)
+                    # DETACH is the whole point: this lane's CE must not reach the trunk, or it
+                    # competes with the language stratum exactly as replay does (H_9898).
+                    ph = h if h is not None else self.trunk_penultimate(x)
+                    assert ph is not None, "composition lane needs the trunk penultimate"
+                    cl_logits = self.comp_lane(ph.float().detach())
+                    cmask = _comp_answer_mask(y, self.comp_sep, self.comp_end)
+                    closs = CompositionLane.loss(cl_logits, y, cmask)
+                    loss = loss + self.comp_w * closs
+                    aux["comp_ce"] = float(closs.detach())
+                    aux["comp_span"] = float(cmask.float().mean())
                     aux["ans_ce"] = float(ace.detach()); aux["ans_n"] = an
                 if self.dict_on:
                     dloss = dict_lambda * h.abs().mean()
@@ -1596,6 +1613,66 @@ class TrainShell(nn.Module):
                     aux[k_] = v_ / n_doc                               # MONITOR-ONLY (a_train_inline_gauge)
         aux.update(oaux)
         return loss, out["ce_loss"].detach(), aux
+
+
+
+# ══ H_9900 — COMPOSITION LANE (multi-byte answer, CE that never reaches the trunk) ═══════════
+# H_9898 measured the constraint this lane exists to escape: at equal drill exposure, replay's
+# mere PRESENCE prevents composition from being learned (25% x 8000 steps reads rho·weave 0.000
+# while 100% x 2000 reads 0.525), because both compete for the same trunk CE. a_substrate_disjoint
+# names the fix — separation preserves, overlap conflicts.
+#
+# H_9899 established why --store-bridge cannot be reused: its window carries gold[:1], one byte,
+# while composed answers run 4-6 bytes. So this lane keeps the store lane's ESSENTIAL property
+# (CE off the trunk) and drops its binary readout:
+#
+#   * a separate linear head reads the trunk penultimate at the answer positions,
+#   * CE is computed on THAT head's logits over the WHOLE answer span,
+#   * the penultimate is DETACHED, so no gradient from this lane reaches the trunk,
+#   * and the head's targets are the answer bytes rho·weave will look for verbatim.
+class CompositionLane(torch.nn.Module):
+    """Answer-span readout trained off a detached trunk (requirements 1-3 of H_9899)."""
+
+    def __init__(self, d, V):
+        super().__init__()
+        self.head = torch.nn.Linear(d, V)
+
+    def forward(self, pen_detached):
+        # pen_detached: (B, d, T) — already detached by the caller, asserted below.
+        return self.head(pen_detached.transpose(1, 2))          # (B, T, V)
+
+    @staticmethod
+    def loss(logits, y, ans_mask):
+        """CE over the answer span only. ans_mask: (B, T) bool marking the composed answer bytes."""
+        if ans_mask.sum() == 0:
+            return logits.sum() * 0.0
+        sel = ans_mask.reshape(-1)
+        lg = logits.reshape(-1, logits.shape[-1])[sel]
+        tg = y.reshape(-1)[sel]
+        return F.cross_entropy(lg, tg)
+
+
+def _comp_answer_mask(y, sep_byte, end_byte):
+    """Answer span = bytes after the LAST separator up to the terminator, per row.
+
+    The drill line is '<cue> <answer> .', so the answer is what follows the final space before
+    the period. Marking it explicitly is what makes this lane multi-byte where the store lane is
+    not — the whole compound is a target, not just its first character."""
+    B, T = y.shape
+    mask = torch.zeros_like(y, dtype=torch.bool)
+    for b in range(B):
+        row = y[b]
+        ends = (row == end_byte).nonzero()
+        if ends.numel() == 0:
+            continue
+        e = int(ends[-1].item())
+        seps = (row[:e] == sep_byte).nonzero()
+        if seps.numel() < 2:
+            continue
+        st = int(seps[-2].item()) + 1                  # after the space preceding the answer
+        if st < e:
+            mask[b, st:e] = True
+    return mask
 
 
 class StoreBindCell:
@@ -2914,6 +2991,13 @@ def main():
                     help="OPTIONAL objrun coupling (default ce_marginal = standalone)")
     ap.add_argument("--tlora-rank", type=int, default=TLORA_RANK)
     ap.add_argument("--tlora-no-base", action="store_true", help="drop the dense base")
+    ap.add_argument("--comp-lane", action="store_true",
+                    help="H_9900 composition lane: a separate answer-span head trained off a "
+                         "DETACHED trunk penultimate, so its CE never competes with the language "
+                         "stratum (H_9898 measured that competition as the blocker). Multi-byte "
+                         "answers, unlike --store-bridge's one-byte readout (H_9899).")
+    ap.add_argument("--comp-weight", type=float, default=1.0,
+                    help="weight on the composition-lane CE (--comp-lane only)")
     ap.add_argument("--dict-lambda", type=float, default=DICT_LAMBDA)
     ap.add_argument("--jamo-lambda", type=float, default=JAMO_LAMBDA)
     # H_9643: enable the N8 jamo(자모) teach-aux INDEPENDENTLY of --arm, so a faction run
@@ -3798,6 +3882,24 @@ def main():
     shell = TrainShell(model, objfn, jamo_head, is_bytegpt=is_bytegpt, V=V,
                        obj_needs_pen=obj_needs_pen, dict_on=dict_on, jamo_on=jamo_on,
                        bf16=a.bf16, device=device)
+    if a.comp_lane:
+        # H_9900 — attach BEFORE the param assert below so the lane head is allreduced like any
+        # other aux head, and force need_pen: the lane reads the trunk penultimate (detached).
+        # Read the width from the ACTUAL penultimate rather than guessing an attribute name —
+        # ByteGPT and CLM expose different ones, and a wrong guess would fail at the first step.
+        shell.need_pen = True
+        with torch.no_grad():
+            _probe = shell.trunk_penultimate(
+                torch.zeros(1, min(8, seq_len), dtype=torch.long, device=device))
+        if _probe is None:
+            sys.exit("[comp-lane] this model exposes no trunk penultimate")
+        _d_pen = int(_probe.shape[1])
+        shell.comp_lane = CompositionLane(_d_pen, V).to(device)
+        shell.comp_w = float(a.comp_weight)
+        params = params + [q for q in shell.comp_lane.parameters()]
+        opt.add_param_group({"params": list(shell.comp_lane.parameters())})
+        print("  comp-lane: ON · d=%d V=%d weight=%.3f (CE detached from the trunk)"
+              % (_d_pen, V, shell.comp_w), flush=True)
     # §10.1 defense — the shell's param set MUST equal the optimizer's (aux heads covered).
     assert {id(p) for p in shell.parameters()} == {id(p) for p in params}, \
         "TrainShell params != optimizer params — an aux head would never be allreduced."
