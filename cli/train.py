@@ -1652,6 +1652,46 @@ class CompositionLane(torch.nn.Module):
         return F.cross_entropy(lg, tg)
 
 
+def comp_lane_heldout(shell, panel_path, device, max_items=0):
+    """H_9904 — score the LANE HEAD directly, without the mouth.
+
+    H_9903 established that the lane head is dropped at serialize, so evaluate's mouth can never
+    read it and rho·weave is structurally blind to whatever the lane learns. Opening that path is a
+    .clm format change (a separate campaign), and it is only worth launching if the lane learned
+    anything at all. This answers that question without the format.
+
+    Teacher-forced: the cue is fed as context and the lane's argmax is read at each answer position
+    against the true answer bytes. That is a MIRROR of the engine decode, so it is DIRECTIONAL by
+    a_engine_native_learning and can never cement a verdict — it decides whether the format
+    campaign is worth opening, nothing more.
+    """
+    import json as _json
+    items = _json.load(open(panel_path))["items"]
+    if max_items:
+        items = items[:max_items]
+    lane = shell.comp_lane
+    if lane is None:
+        return None
+    hit = tot = 0
+    with torch.no_grad():
+        for it in items:
+            cue, tgt = it["cue"], it["target"]
+            line = (cue + " " + tgt + " .").encode("ascii", "ignore")
+            x = torch.tensor([list(line[:-1])], dtype=torch.long, device=device)
+            y = torch.tensor([list(line[1:])], dtype=torch.long, device=device)
+            pen = shell.trunk_penultimate(x)
+            if pen is None:
+                return None
+            lg = lane(pen.float().detach())
+            m = _comp_answer_mask(y, 32, 46)
+            if m.sum() == 0:
+                continue
+            pred = lg.argmax(-1)
+            hit += int(((pred == y) & m).sum().item())
+            tot += int(m.sum().item())
+    return {"byte_acc": (hit / tot if tot else 0.0), "bytes": tot}
+
+
 def _comp_answer_mask(y, sep_byte, end_byte):
     """Answer span = bytes after the LAST separator up to the terminator, per row.
 
@@ -2998,6 +3038,10 @@ def main():
                          "answers, unlike --store-bridge's one-byte readout (H_9899).")
     ap.add_argument("--comp-weight", type=float, default=1.0,
                     help="weight on the composition-lane CE (--comp-lane only)")
+    ap.add_argument("--comp-probe-panel", type=str, default="",
+                    help="H_9904 weavepanel json — after training, score the LANE HEAD directly on "
+                         "it (teacher-forced, no mouth). DIRECTIONAL only: it decides whether the "
+                         ".clm format campaign H_9903 scoped is worth opening, never a verdict.")
     ap.add_argument("--dict-lambda", type=float, default=DICT_LAMBDA)
     ap.add_argument("--jamo-lambda", type=float, default=JAMO_LAMBDA)
     # H_9643: enable the N8 jamo(자모) teach-aux INDEPENDENTLY of --arm, so a faction run
@@ -3900,6 +3944,7 @@ def main():
         opt.add_param_group({"params": list(shell.comp_lane.parameters())})
         print("  comp-lane: ON · d=%d V=%d weight=%.3f (CE detached from the trunk)"
               % (_d_pen, V, shell.comp_w), flush=True)
+        _comp_probe_panel = a.comp_probe_panel
     # §10.1 defense — the shell's param set MUST equal the optimizer's (aux heads covered).
     assert {id(p) for p in shell.parameters()} == {id(p) for p in params}, \
         "TrainShell params != optimizer params — an aux head would never be allreduced."
@@ -4530,6 +4575,12 @@ def main():
             print(f"     {lab:<12s} val_CE={vc:.5f}  {'DESCENT' if ok else 'NO-DESCENT'}", flush=True)
         final_val = (sum(per.values()) / len(per)) if per else None
         print(f"  FINAL val_CE(pooled)={final_val}  registers_DESCENT={n_desc}/{len(per)}", flush=True)
+        if getattr(shell, "comp_lane", None) is not None and a.comp_probe_panel:
+            # H_9904 — DIRECTIONAL lane readout (see comp_lane_heldout). Printed, never cemented.
+            _lp = comp_lane_heldout(shell, a.comp_probe_panel, device)
+            if _lp is not None:
+                print("  comp-lane HELD-OUT (DIRECTIONAL · teacher-forced · not a verdict): "
+                      "byte_acc=%.4f over %d bytes" % (_lp["byte_acc"], _lp["bytes"]), flush=True)
         print(f"  loss0={loss0:.5f} lossF={lossF:.5f} wall={wall:.1f}s "
               f"savant_latched_at={latch['at']} E0={e0}->E={e_now()}", flush=True)
 
