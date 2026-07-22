@@ -8496,17 +8496,53 @@ def gen_ctx_2afc_run(argv):
         # host's phase but donor's anchor (phase held = host's)
         return host["phase"] + " " + donor["anchor"] if donor["anchor"] else host["phase"] + " "
 
-    # ── G-P1 positive control: anchor-swap 2AFC (the known-causal seed half) ──
+    # ── DIRECT NULL: content-invariance census (no positive control needed) ──
+    # If the daemon emits byte-identical content across ≥2 phase classes, phase CANNOT be shaping
+    # content — content that never varies is unshapeable. This is a raw observation, stronger than
+    # and independent of the 2AFC/positive-control machinery. (Discovered on the real 303M monologue
+    # session, which the toy QA — hand-built with varied content — could not surface.)
+    import hashlib as _hl2
+    chash = {}
+    ph_of_hash = {}
+    for it in items:
+        h = _hl2.sha256(it["cont"].encode("utf-8", "surrogateescape")).hexdigest()[:16]
+        it["_chash"] = h
+        chash[h] = chash.get(h, 0) + 1
+        ph_of_hash.setdefault(h, set()).add(it["phase"])
+    n_distinct_content = len(chash)
+    print("  content-invariance census: %d distinct emitted content(s) across %d ticks / %d phase class(es)"
+          % (n_distinct_content, n, len(phase_classes)), flush=True)
+    content_invariant = (n_distinct_content == 1 and len(phase_classes) >= 2)
+    if content_invariant:
+        print("  ⇒ CONTENT-INVARIANT — one fixed utterance across all ticks AND all phase classes.")
+
+    # ── G-P1 positive control: anchor-ABLATION (works with a single anchor) ──
+    # The anchor is the known-causal seed half (content is grounded in / copies it). Removing it
+    # must RAISE the content's CE; if it does not, the CE readout is blind to a seed-half that
+    # provably matters ⇒ INSTRUMENT-DEAD, no phase read (positive-control-before-reading-a-negative).
+    # Anchor-ablation needs only ONE anchor, unlike anchor-swap — so it certifies a monologue trace.
     t0 = time.time()
-    a_score, a_np, a_ties, _ = _gen_ctx_2afc_pairs(np, W, T, items, _anchor_of, _swap_anchor, "anchor")
-    print("  G-P1 anchor-swap 2AFC (positive control) = %.4f  (pairs=%d ties=%d · %.1fs)"
-          % (a_score, a_np, a_ties, time.time() - t0), flush=True)
-    if a_np == 0:
-        print("  ⇒ UNDECIDABLE — no anchor contrast (all ticks share one anchor).")
-        json.dump({"ckpt": ckpt, "trace": trace_path, "verdict": "UNDECIDABLE-ANCHOR"},
-                  open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
-        return 0
-    instrument_dead = a_score <= 0.5 + m
+    abl_wins = abl_ties = abl_n = 0
+    for it in items:
+        if not it["anchor"]:
+            continue
+        ce_with = _gen_ctx_cont_nll(np, W, it["seed_true"], it["cont"], T)
+        ce_without = _gen_ctx_cont_nll(np, W, it["phase"] + " ", it["cont"], T)  # anchor removed
+        abl_n += 1
+        if abs(ce_with - ce_without) < 1e-9:
+            abl_ties += 1
+        elif ce_with < ce_without:
+            abl_wins += 1
+    a_score = (abl_wins + 0.5 * abl_ties) / abl_n if abl_n > 0 else float("nan")
+    print("  G-P1 anchor-ablation (positive control) = %.4f  (n=%d ties=%d · %.1fs) [with-anchor CE < no-anchor CE]"
+          % (a_score, abl_n, abl_ties, time.time() - t0), flush=True)
+    # bonus: anchor-swap 2AFC when the trace actually has ≥2 distinct anchors (else 0 pairs)
+    aswap_score, aswap_np, _, _ = _gen_ctx_2afc_pairs(np, W, T, items, _anchor_of, _swap_anchor, "anchor")
+    if aswap_np > 0:
+        print("  (bonus) anchor-swap 2AFC = %.4f  (pairs=%d)" % (aswap_score, aswap_np), flush=True)
+    # instrument-dead unless the positive control (ablation) can see the causal anchor half. When
+    # content is invariant we SKIP this gate (the direct NULL needs no positive control).
+    instrument_dead = (abl_n > 0 and a_score <= 0.5 + m) and not content_invariant
 
     # ── PRIMARY: phase-swap 2AFC ──
     t0 = time.time()
@@ -8530,10 +8566,12 @@ def gen_ctx_2afc_run(argv):
 
     # ── VERDICT (prereg table) ──
     verdict = None; note = ""
-    if len(phase_classes) < 2 or p_np == 0:
+    if content_invariant:
+        verdict = "NULL"; note = ("CONTENT-INVARIANT — the daemon emits ONE byte-identical utterance across all %d ticks and both phase classes; the phase value (and all A⇄G tension) has ZERO effect on emitted content. A fixed attractor cannot be shaped by phase. Direct observation, no positive control needed; the phase-swap 2AFC is a formal 0.5 (all ties)." % n)
+    elif len(phase_classes) < 2 or p_np == 0:
         verdict = "UNDECIDABLE"; note = "fewer than 2 phase classes — no phase contrast in this trace"
     elif instrument_dead:
-        verdict = "INSTRUMENT-DEAD"; note = "positive control (anchor) failed to beat chance+m — CE readout blind"
+        verdict = "INSTRUMENT-DEAD"; note = "positive control (anchor-ablation) failed to beat chance+m — CE readout blind to a seed-half that provably matters"
     elif p_score < 0.5 - m:
         verdict = "BELOW-CHANCE"; note = "phase 2AFC below chance−m — INVALID, audit the instrument"
     elif p_score > 0.5 + m:
@@ -8559,21 +8597,23 @@ def gen_ctx_2afc_run(argv):
     print()
     print("  ═══ VERDICT: %s ═══" % verdict)
     print("     %s" % note)
-    print("     phase=%.4f  anchor(+ctrl)=%.4f  carrier=%.4f  chance=0.5  m=%.4f  n=%d"
-          % (p_score, a_score, c_score, m, n))
+    print("     phase=%.4f  anchor-ablation(+ctrl)=%.4f  carrier=%.4f  distinct-content=%d  chance=0.5  m=%.4f  n=%d"
+          % (p_score, a_score, c_score, n_distinct_content, m, n))
     print("     (MEASURES only; cement is engine-native anima-py — this IS that path · a_eval_py_canonical)")
 
     res = {"schema": "anima-gen-ctx-2afc/v1", "ckpt": ckpt, "trace": trace_path,
            "n_emit_ticks": n, "win": T, "margin_m": m, "phase_classes": phase_classes,
            "g_p0_pedestal": "PASS" if p0_ok else "INVALID",
+           "n_distinct_content": n_distinct_content, "content_invariant": content_invariant,
            "phase_2afc": p_score, "phase_pairs": p_np, "phase_ties": p_ties,
-           "anchor_2afc": a_score, "anchor_pairs": a_np,
+           "anchor_ablation_ctrl": a_score, "anchor_ablation_n": abl_n,
+           "anchor_swap_bonus": (None if aswap_np == 0 else aswap_score), "anchor_swap_pairs": aswap_np,
            "carrier_2afc": (None if c_np == 0 else c_score), "carrier_pairs": c_np,
            "by_phase_class": class_scores, "collapsed_classes": collapsed,
            "verdict": verdict, "note": note}
     json.dump(_json_safe(res), open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
     print(json.dumps({"out": out_path, "verdict": verdict, "phase_2afc": p_score,
-                      "anchor_2afc": a_score, "n": n}))
+                      "anchor_ablation_ctrl": a_score, "n_distinct_content": n_distinct_content, "n": n}))
     return 0
 
 
