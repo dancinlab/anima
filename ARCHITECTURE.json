@@ -15791,6 +15791,12 @@
       "type": "gate",
       "verdict": "🔧 H_9912 · 키 기하 무죄 · H_9911 처방 무수정 유지",
       "detail": "H_9911 커리큘럼 처방을 태우기 전 키 정체 확인(core/clms.py:81 _entity_key=동결 (256,64) 표 바이트행 평균 · :163 a=softmax(q@K.T/sqrt(d_k)) 정규화없음). 뒤집기 두 시도 모두 실패: ①collinearity nonce 0.7264 vs real 0.7546 을 발명한 0.02 문턱으로 통과시켰고 논리('나란하면 못 뾰족')가 질의 크기 자유 아래 거짓 ②q=표적키 '천장' nonce 0.1275/real 0.1268 를 실측 0.7133 이 5.6배 넘음 ⟹ 넘어서는 천장은 천장 아님. 천장격차 0.0007 vs 실측격차 0.3713=0.2% ⟹ 키 기하는 C→E 설명 못하고 실단어 키는 분리가능했으며 모델이 분리 못한 학습된 실패 ⟹ 커리큘럼 팔이 맞다. 순서맹(실단어 200/200 애너그램 바이트동일)은 별개 영구사실이나 nonce 에도 참이라 붕괴 설명 0. 자가결함3=코퍼스 부재시 README 조용한 폴백으로 다른 단어풀 비교(무효)→종료로 수정. card=HYPOTHESES/cards/H_9912_key_geometry_does_not_explain_the_collapse.md"
+     },
+     {
+      "id": "store-readout-dead-gate",
+      "type": "gate",
+      "verdict": "🔴 H_9913 KILL · 커리큘럼 팔 오조준 · READOUT-DEAD 게이트 추가",
+      "detail": "H_9911 커리큘럼 처방을 태우기 전 lab full 병렬발산(fable 사전점검①/게이트G-a · sol 판정표 첫행)이 같은 관문을 지목=오라클 선행. 실행이 팔을 죽임: 오라클(a=one-hot(target_slot)·주소 공짜) 정확도 C 템플릿+nonce 1.0000 · E 템플릿+실단어 0.6641 · A 자연문장+실단어 0.7188 vs 코드 자신의 바 >=0.90 ⟹ 포인터가 완벽해도 실단어를 못 읽음. 커리큘럼 팔은 W_q(주소) 학습이라 오조준 — GPU 학습 지출 0원, eval 3판으로 KILL. 자가정정: H_9911 의 RECRUITMENT/ALIGNMENT 이분법이 '포인터 맞으면 읽힌다'를 암묵 가정 ⟹ 빠진 칸 READOUT-DEAD. 수리=--store-telemetry-oracle 을 판정 맨 앞 게이트(0.90 미만 라우팅 거부), 3갈래 검증(READOUT-DEAD/ADDRESSED 유지/플래그없음 하위호환). p9 가 lab-full 충돌을 판정: synthetic 은 계기인증엔 허용 faculty 증거엔 금지 ⟹ 커리큘럼 팔은 금지 아닌 drill-installed 로 시작부터 강등. 다음=주소 아닌 읽기(val·W_out·λ) — nonce 1.0 vs 실단어 0.6641 은 값 경로의 엔티티-표면 의존. card=HYPOTHESES/cards/H_9913_oracle_kills_the_curriculum_arm.md · VERSION 0.20.170"
      }
     ],
     "verdict": "⛔ 옛 패널 INVALID (H_9351) · 진짜 Ψ̂ = --psi-soma 로 수리됨"
