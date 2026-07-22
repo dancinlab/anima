@@ -15819,8 +15819,14 @@
      {
       "id": "store-gap-variety-steers-direction",
       "type": "gate",
-      "verdict": "🟢 H_9917 ENTROPY 지지 · LEXICALITY/BYTE-CLASS 2중 KILL · drill-only",
-      "detail": "H_9916 매칭쌍이 남긴 질문(방향을 정하는 성질)을 사전등록 동결 후 측정. 연산자 오프셋 15·엔티티 5B 고정, 틈 5B 만 5종 변경, 팔당 128. κ=mean(is칸)-mean(not칸): 공백 +0.957 · zzzzz +0.693 · 구두점 -0.487 · 글자 -0.534 · 숫자 -0.741. 게이트 통과(공백/글자 극 H_9916 재현). 3행 발동 ENTROPY 지지 + LEXICALITY KILL(숫자는 비어휘인데 -0.741) + BYTE-CLASS KILL(zzzzz 는 글자인데 +0.693). 법칙: 저-다양성(한 글자 5번)→is 기본값 / 고-다양성(매 바이트 다름)→not 쪽 ⟹ 단어인지도 공백인지도 아니라 틈이 변화를 담느냐가 방향을 뒤집음. 전체 정확도는 다섯 팔 0.4609~0.5312 로 우연 근처라 이 축에 눈멀었고 0.70 초과 없음 ⟹ H_9916 MONOTONE 불변, 이 카드는 방향만. 범위: 엔트로피가 '서로 다른 바이트 값 개수' 와 뒤엉켜 확정 아닌 지지(다음=문자 2/3/5종 틈) · 구두점 0.4609 는 CI 안 · ckpt1·seed1. 다음 층 탐색은 '틈 다양성에 반응하며 연산자 읽기를 좌우' 로 좁혀졌고 트렁크 팽창은 H_9916 이 배제. card=HYPOTHESES/cards/H_9917_gap_variety_not_lexicality.md · prereg=lab/v6/hypotheses/V6_H9917_prereg.md"
+      "verdict": "🔴 H_9917 ENTROPY 다운그레이드(H_9918 이 반증) · LEXICALITY/BYTE-CLASS KILL 만 유효",
+      "detail": "H_9916 매칭쌍이 남긴 질문(방향을 정하는 성질)을 사전등록 동결 후 측정. 연산자 오프셋 15·엔티티 5B 고정, 틈 5B 만 5종 변경, 팔당 128. κ=mean(is칸)-mean(not칸): 공백 +0.957 · zzzzz +0.693 · 구두점 -0.487 · 글자 -0.534 · 숫자 -0.741. 게이트 통과(공백/글자 극 H_9916 재현). 3행 발동 ENTROPY 지지 + LEXICALITY KILL(숫자는 비어휘인데 -0.741) + BYTE-CLASS KILL(zzzzz 는 글자인데 +0.693). 법칙: 저-다양성(한 글자 5번)→is 기본값 / 고-다양성(매 바이트 다름)→not 쪽 ⟹ 단어인지도 공백인지도 아니라 틈이 변화를 담느냐가 방향을 뒤집음. 전체 정확도는 다섯 팔 0.4609~0.5312 로 우연 근처라 이 축에 눈멀었고 0.70 초과 없음 ⟹ H_9916 MONOTONE 불변, 이 카드는 방향만. 범위: 엔트로피가 '서로 다른 바이트 값 개수' 와 뒤엉켜 확정 아닌 지지(다음=문자 2/3/5종 틈) · 구두점 0.4609 는 CI 안 · ckpt1·seed1. 다음 층 탐색은 '틈 다양성에 반응하며 연산자 읽기를 좌우' 로 좁혀졌고 트렁크 팽창은 H_9916 이 배제. card=HYPOTHESES/cards/H_9917_gap_variety_not_lexicality.md · prereg=lab/v6/hypotheses/V6_H9917_prereg.md ⚠️ H_9918 정정: 같은 '한 글자 5번' 틈이 공백 +0.957 · zzzzz +0.693 · bbbbb -0.141 · ggggg -0.376 · vvvvv -0.690 · kkkkk -0.955 · ttttt -1.000 으로 폭 1.96 을 걸침 ⟹ 다양성은 방향 변수가 아니며 ENTROPY 지지는 반증됨. 이 노드에서 유효하게 남는 것은 LEXICALITY KILL 과 BYTE-CLASS KILL 뿐(둘은 반증이었음)."
+     },
+     {
+      "id": "store-gap-byte-identity-unexplained",
+      "type": "gate",
+      "verdict": "🔴 H_9918 · H_9917 ENTROPY 반증 · 후보 4개 전멸 · 저차원 기술 없음 · 등급/스위치 미결",
+      "detail": "H_9917 의 ENTROPY '지지' 를 k=1/2/3/5 연속 변주로 확정하려 했으나 발사 전 동결 게이트 G1(k=1 이 +0.693 재현)에서 κ(k=1)=-0.499 로 부호 반대 ⟹ 배치 INVALID, 나머지 미판독, 등급/스위치 미결. 원인 추적: '한 글자 5번' 틈만 여럿 측정(오프셋15·엔티티5B·다양성 동일) — 공백 +0.957 · zzzzz +0.693 · bbbbb -0.141 · ggggg -0.376 · vvvvv -0.690 · kkkkk -0.955 · ttttt -1.000, 폭 1.96 ⟹ 다양성은 변수가 아님. H_9917 매니페스트 재실행이 바이트 동일 재현(+0.693/+0.957)이라 배치 표류 아님. 정답바이트 가설(g/b)도 반증(비-정답바이트 v·k·t 가 더 극단). 현 정직 상태: 오프셋이 어긋나면 판독구가 두 포화 기본값(is 기계/not 기계) 중 하나로 빨려가고 방향은 틈의 구체적 바이트가 정하나 저차원 기술 부재 — 어휘성·바이트클래스·정답바이트·다양성 4후보 전멸. H_9916 MONOTONE 과 H_9915 POSITIONAL 은 불변. 값어치: 동결 재현 게이트가 한 턴 전 자기 발표 법칙을 잡음. card=HYPOTHESES/cards/H_9918_entropy_refuted_gate_caught_it.md · prereg=lab/v6/hypotheses/V6_H9918_prereg.md"
      }
     ],
     "verdict": "⛔ 옛 패널 INVALID (H_9351) · 진짜 Ψ̂ = --psi-soma 로 수리됨"
