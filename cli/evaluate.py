@@ -12006,7 +12006,7 @@ _KNOWN_FLAGS = frozenset((
     "--gen-ctx-2afc",
     "--store-component-swap", "--store-swap-from",
     "--store", "--store-oracle", "--store-oracle-pair", "--store-dual-ctrl",
-    "--store-source", "--store-source-nulls", "--store-source-build",   # V6_36 lane_type 9 SRC
+    "--store-source", "--store-source-nulls", "--store-source-build", "--build-prompts",   # V6_36 lane_type 9 SRC
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
     "--store-addr-audit", "--store-telemetry", "--store-telemetry-floor", "--store-telemetry-oracle", "--weave-null", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
     "--store-query", "--store-fuse", "--store-readout",
@@ -18679,6 +18679,140 @@ def closure_ladder_run(argv):
     return 0 if ok else 1
 
 
+def store_source_build(argv):
+    """V6_36 --store-source-build — build the natural cue-paired difficulty-matched STORE-SOURCE
+    manifests from a base model + natural corpus. SELF = the base model's OWN temperature-sampled
+    continuation of a natural prefix (auth=1); OTHER = the true natural continuation (auth=0). Cues =
+    lowercase-ascii words 5-12 chars in the span. THE ADDRESS-LEAK KILL, BY CONSTRUCTION: a cue word is
+    usable only if it occurs in BOTH a SELF span and an OTHER span (different sentences); we emit it as
+    a (SELF-cue, OTHER-cue) PAIR → P(auth | cue) = 0.5 exactly (the rule never inspects auth). Rings =
+    4 SELF + 4 OTHER, distinct cues, pair members in different rings. Difficulty (span mean-NLL) is
+    matched across SELF/OTHER and TOST-checked — a fail ABORTS before any train spend (DIFFICULTY-AGAIN,
+    the label is inseparable from difficulty on this corpus). Emits <out>.train.json / <out>.held.json
+    (cue-disjoint) / <out>.held_valperm.json (pols deranged per ring, keys fixed). Engine op (SELF
+    sampling) → lives on evaluate; run on py303 (pool) for the real fire, $0 on trained57 to smoke."""
+    import numpy as np
+    import re as _re
+    ckpt = argv[0]
+    corpus = evaluate_strval(argv[1:], "--corpus", os.path.expanduser("~/anima-weights/en_general.txt"))
+    out = evaluate_strval(argv[1:], "--out", "store_source")
+    n_prompt = evaluate_intval(argv[1:], "--build-prompts", 400)
+    seed = evaluate_intval(argv[1:], "--store-ctrl-seed", 7)
+    n_slot = 8; maxcont = 80; temp = 1.0
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: base ckpt not decodable: " + ckpt); return 1
+    rng = np.random.default_rng(seed)
+    _date = _re.compile(r"^\s*\d{3,4}\s*[–-]")
+
+    def prose(txt):
+        for line in txt.split("\n"):
+            line = line.strip()
+            if not line or _date.match(line):
+                continue
+            for s in _re.split(r"(?<=[.!?])\s+", line):
+                s = s.strip()
+                if 60 < len(s) < 260 and s.endswith((".", "!", "?")) and s.count(",") <= 6:
+                    yield s
+
+    def softmax_row(x):
+        z = x - x.max(); e = np.exp(z); return e / (e.sum() + 1e-12)
+
+    def sample_self(prefix, nbytes):
+        seq = [float(x) for x in prefix]; o = []
+        for _ in range(nbytes):
+            lg = clm._fwd_logits(W, np.array(seq, dtype=np.float64), len(seq))[len(seq) - 1]
+            p = softmax_row(lg / temp); b = int(rng.choice(len(p), p=p)); o.append(b); seq.append(float(b))
+        return o
+
+    def span_nll(allbytes, lo, hi):
+        ta = np.array([float(x) for x in allbytes], dtype=np.float64)
+        lg = clm._fwd_logits(W, ta, len(allbytes)); nl = []
+        for t in range(lo, min(hi, len(allbytes) - 1)):
+            p = softmax_row(lg[t]); nl.append(-np.log(p[allbytes[t + 1]] + 1e-12))
+        return float(np.mean(nl)) if nl else 5.0
+
+    def cues_of(span_bytes):
+        s = bytes(span_bytes).decode("ascii", "ignore").lower()
+        return [w for w in _re.findall(r"[a-z]+", s) if 5 <= len(w) <= 12]
+
+    full = open(corpus, encoding="utf-8", errors="ignore").read()
+    txt = full[int(len(full) * 0.80):]                 # held-corpus tail (train would use the head)
+    sents = []
+    for s in prose(txt):
+        sents.append(s)
+        if len(sents) >= n_prompt:
+            break
+    # episodes: {word: [(auth, nll)]}, split by authorship
+    self_ep, other_ep = {}, {}
+    for s in sents:
+        b = list(s.encode("ascii", "ignore"))
+        if len(b) < 40:
+            continue
+        mid = len(b) // 2; prefix = b[:mid]; other = b[mid:mid + maxcont]
+        if len(other) < 8:
+            continue
+        selfc = sample_self(prefix, len(other))
+        for (bytes_, auth, bank) in ((other, 0, other_ep), (selfc, 1, self_ep)):
+            nll = span_nll(prefix + bytes_, len(prefix), len(prefix) + len(bytes_))
+            for w in cues_of(bytes_):
+                bank.setdefault(w, []).append(nll)
+    # cue-pairing: words present in BOTH banks → P(auth|cue)=0.5
+    paired = sorted(set(self_ep) & set(other_ep))
+    episodes = []   # (cue, auth, nll)
+    for w in paired:
+        episodes.append((w, 1, float(np.mean(self_ep[w]))))
+        episodes.append((w, 0, float(np.mean(other_ep[w]))))
+    n_self = sum(1 for e in episodes if e[1] == 1); n_other = len(episodes) - n_self
+    # difficulty TOST across SELF/OTHER episode nll (abort authority)
+    s_nll = np.array([e[2] for e in episodes if e[1] == 1]); o_nll = np.array([e[2] for e in episodes if e[1] == 0])
+    dnll = float(s_nll.mean() - o_nll.mean()) if len(s_nll) and len(o_nll) else 9.9
+    se = float(np.sqrt(s_nll.var(ddof=1) / max(len(s_nll), 2) + o_nll.var(ddof=1) / max(len(o_nll), 2)))
+    balanced = (abs(dnll) + 2 * se) < 0.15
+    print("=== anima evaluate --store-source-build — V6_36 SRC manifest builder ===")
+    print("base=%s corpus=%s prompts=%d paired_words=%d episodes=%d (self=%d other=%d)" %
+          (ckpt, corpus, len(sents), len(paired), len(episodes), n_self, n_other))
+    print("difficulty TOST: self_nll=%.3f other_nll=%.3f diff=%+.3f -> %s" %
+          (s_nll.mean() if len(s_nll) else 0, o_nll.mean() if len(o_nll) else 0, dnll,
+           "BALANCED" if balanced else "NOT balanced (ABORT: DIFFICULTY-AGAIN)"))
+    if not balanced:
+        print("ABORT — the authorship label is inseparable from difficulty on this corpus; no fire.")
+        return 3
+    if len(episodes) < 4 * n_slot:
+        print("ABORT — too few paired episodes (%d) to build rings." % len(episodes)); return 3
+    # assemble rings: 4 SELF + 4 OTHER per ring, distinct cues, seeded slot order
+    self_e = [e for e in episodes if e[1] == 1]; other_e = [e for e in episodes if e[1] == 0]
+    rng.shuffle(self_e); rng.shuffle(other_e)
+    rings = []; n_ring = min(len(self_e), len(other_e)) // 4
+    for r in range(n_ring):
+        picks = self_e[r * 4:r * 4 + 4] + other_e[r * 4:r * 4 + 4]
+        order = rng.permutation(n_slot)
+        cues = [picks[j][0] for j in order]; pols = [picks[j][1] for j in order]
+        if len(set(cues)) < n_slot:       # a within-ring dup splits softmax mass — skip
+            continue
+        tgt = int(rng.integers(n_slot))
+        rings.append({"cues": cues, "pols": [int(x) for x in pols], "target_slot": tgt})
+    # gold-balance the target polarity across rings
+    import json as _json
+    def dump(name, rr):
+        man = {"schema": "anima-store-source/v1", "host": ckpt, "n_slot": n_slot,
+               "chance": 0.5, "entries": rr}
+        open(name, "w").write(_json.dumps(man)); return len(rr)
+    nh = int(len(rings) * 0.5)
+    n_tr = dump(out + ".train.json", rings[:nh]); n_he = dump(out + ".held.json", rings[nh:])
+    # held_valperm: pols deranged per ring (keys fixed)
+    vp = []
+    for e in rings[nh:]:
+        pp = list(e["pols"]); pr = list(rng.permutation(n_slot))
+        vp.append({"cues": e["cues"], "pols": [pp[i] for i in pr], "target_slot": e["target_slot"]})
+    dump(out + ".held_valperm.json", vp)
+    print("wrote %s.train.json (%d rings) · %s.held.json (%d) · %s.held_valperm.json" %
+          (out, n_tr, out, n_he, out))
+    print("next: anima-py train --store-source %s.train.json --store-source-init %s --out <lane9.clm>"
+          % (out, ckpt))
+    return 0
+
+
 def store_source_run(argv):
     """V6_36 STORE-SOURCE — route AGENCY (SELF/OTHER authorship) through the NON-mouth lane_type 9
     (SRC) store. The lane reads a stored authorship VALUE by content-address and NEVER writes the
@@ -19065,6 +19199,8 @@ def main(argv):
     # content-addressed lookup). Distinct from --store-mix (H_9392 post-forward actuator).
     if "--fan-bind" in argv:                       # H_9693 (R1) bind-Δ instrument
         return fan_bind_run(argv)
+    if "--store-source-build" in argv:         # V6_36 SRC natural manifest builder (SELF sampling)
+        return store_source_build(argv)
     if "--store-source" in argv:               # V6_36 lane_type 9 (SRC) authorship route
         return store_source_run(argv)
     if "--store" in argv:
