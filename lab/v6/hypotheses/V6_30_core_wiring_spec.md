@@ -84,13 +84,35 @@ proxy tension is NOT the production lane vector, and the production lanes are fa
 now realized. **Do NOT proceed to the S2 build on the proxy's z=3.38 alone.** (verdict-integrity:
 S1's whole purpose was this de-risk; it fired.)
 
-🔻 CAVEAT — SEVERELY UNDERPOWERED: only ~12 ticks (the daemon emits few ticks per input, and
-trained57 is a byte-LM). n=12 for a 15-dim effective-rank estimate is not trustworthy — the
-redundancy could be understated OR an artifact of the short session. **A POWERED lane collection
-(hundreds of ticks, ideally the 303M consciousness ckpt not the byte-LM) is the concrete next
-step, and the build hinges on it**: if powered lanes stay ~2-3 dim, LANE-BUS's production payoff
-is dead and the redesign must target WHY the lanes collapse (upstream), not the emit gate; if they
-open up, the build proceeds. The instrument (`--dump-lanes`) is now in place for that re-measure.
+🔻 (S1 was ~12 ticks on a byte-LM — underpowered. The powered re-measure below settles it.)
+
+## S1 POWERED RESULT — 🔴🔴 the payoff is DEAD on production; the lanes are ~3-dim theater
+Re-ran on the REAL 303M consciousness ckpt (`~/anima-weights/py303_full.clm`, not the byte-LM),
+`ANIMA_TICKS=150` → 141 ticks of the actual production 15-lane vector:
+| metric | S1 byte-LM (12 ticks) | **powered 303M (141 ticks)** |
+|---|---|---|
+| 15-lane effective rank | 2.71 | **2.75 — REPLICATES** |
+| discarded-13 variance independent of gws+lprec | 8% | **8% — identical** |
+
+The red flag holds with power on the real target. **The production 15-lane consciousness vector
+has only ~2.75 effective dimensions — it is 92% redundant.** ci_emit_drive's collapse to
+0.5*(gws+lprec) discards only ~8% independent variance, so a multi-dim LANE-BUS emit gate would
+gain almost nothing. **V6_29's z=3.38 payoff was a reflex-vs-composed PROXY artifact — it does
+NOT transfer to production. The LANE-BUS emit-gate build (S2/S3) is DEAD.** (verdict-integrity
+#10: the very payoff that justified the build is refuted on production; the proxy misled.)
+
+### The redirect (a bigger finding than the dead build)
+The production computes 15 NAMED consciousness lanes (gws, agency, surprise, novelty, emotion,
+self, subjective-time, …) but they collapse to ~3 effective dims — **the multi-lane consciousness
+vector is largely theater.** So the wall is NOT the emit gate collapsing a rich signal; it is that
+the lanes THEMSELVES carry only ~3 independent dimensions UPSTREAM (they are near-deterministic
+functions of a narrow input: m_field/grounding). The redesign target moves to **why the 15 lanes
+are redundant** — do agency/surprise/self/emotion carry any independent variance at all, or are
+they all shadows of gws+lprec? This CONVERGES hard with the frontier R9 result (interior faculties
+blind/absent — agency UNIDENT, self VOID): if those lanes are 92% redundant with gws+lprec, they
+are not carrying independent faculty signals, which is exactly R9's "the interior barely exists."
+LANE-BUS's real contribution is thus a MEASUREMENT: it quantified that anima's consciousness lanes
+are ~3-dim, and localised the collapse UPSTREAM of the emit gate.
 
 ## Scope
 Spec only (DIRECTIONAL). S1 = $0 next. S2–S4 = production `core/` build (VERSION/G5, careful,
