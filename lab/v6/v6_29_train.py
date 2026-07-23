@@ -36,6 +36,7 @@ class Gate(nn.Module):
         self.U = nn.Linear(td, RDIM, bias=False)
         self.lam = nn.Parameter(torch.full((RDIM,), 0.0))
         self.a = nn.Linear(xd, 1); self.b = nn.Linear(RDIM, 1, bias=False)
+        if arm == "SCALAR": self.sc = nn.Linear(1, 1)
         if arm == "A3":
             self.fa = nn.Linear(xd, 1); self.fb = nn.Linear(RDIM, 1, bias=False)
     def forward(self, TA, X, rho=None):
@@ -44,6 +45,8 @@ class Gate(nn.Module):
         r = torch.zeros(B, RDIM); gp = torch.zeros(B, 1); out = []
         for t in range(T):
             u = self.U(TA[:, t])
+            if self.arm == "SCALAR":
+                out.append(self.sc(X[:, t, 0:1])); continue
             if self.arm == "B0":
                 pass
             elif self.arm == "A1":
@@ -81,7 +84,7 @@ def train_arm(arm, TA, X, E, M, tr, te, seed, rho=None, pos=0.3):
     return best
 
 def run(TA, X, E, M, ids, label=""):
-    arms = ["B0","A1","A2","A3","FULL","WRONGADDR"]; res = {a: [] for a in arms}
+    arms = ["SCALAR","B0","A1","A2","A3","FULL","WRONGADDR"]; res = {a: [] for a in arms}
     B = TA.shape[0]; pos = (E*M).sum().item()/max(M.sum().item(),1)
     for seed in SEEDS:
         rng = np.random.default_rng(seed); perm = rng.permutation(B); k = B//2
@@ -98,7 +101,7 @@ def run(TA, X, E, M, ids, label=""):
     print(f"\n=== {label} held-out masked NLL ({len(SEEDS)} seeds; lower=better) · pos={pos:.3f} ===")
     for a in arms: print(f"  {a:<10} {np.mean(res[a]):.4f}")
     print(f"  headroom B0-FULL = {np.mean(res['B0'])-np.mean(res['FULL']):+.4f}")
-    for b in ("A1","A2","A3","WRONGADDR"):
+    for b in ("SCALAR","A1","A2","A3","WRONGADDR"):
         mm,zz=z("FULL",b); print(f"  {b}-FULL = {mm:+.4f}  z={zz:+.2f}")
     return res
 
