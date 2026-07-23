@@ -3052,6 +3052,78 @@ def run_imagination_selftest(ratio, every, vadapt_on, select, seed, real_source=
                    else (5 if out["status"] == "REAL-UNDERPOWERED" else 4)))
 
 
+def _store_source_train(a):
+    """V6_36 STORE-SOURCE — train a lane_type 9 (SRC) authorship head on a FROZEN trunk, then
+    serialize a lane-9 .clm. Trains {W_q, val, w_A, b_A} only (the trunk/mouth are never touched, and
+    the lane never writes the mouth). Loss = BCE(σ(s_A), auth[target]) + 0.5·CE(att, target_slot)
+    (H_9672 aux addressing supervision; address ⊥ auth by cue-pairing, so it teaches WHERE not
+    WHICH-value). Manifest = the anima-store-source/v1 rings. Engine-native (decode.clm_forward_hidden
+    + clms.pack_clms). This is the frozen-trunk head fit; the SELF-sampling manifest build is
+    --store-source-build (evaluate side)."""
+    import numpy as np
+    import decode as _dec
+    import clms as _clms
+    base = a.store_source_init
+    if not base:
+        sys.exit("[store-source] --store-source needs --store-source-init <base.clm> to warm-start from")
+    if not a.out:
+        sys.exit("[store-source] --store-source needs --out <lane9.clm>")
+    W = _dec.clm_load_weights(base)
+    if not W.get("ok"):
+        sys.exit("[store-source] base ckpt not decodable (clm): " + base)
+    d = W["d"]; man = json.load(open(a.store_source))
+    entries = man.get("entries", []); n_slot = int(man.get("n_slot", 8))
+    d_k, d_s = int(a.store_source_dk), int(a.store_source_ds)
+    rng = np.random.default_rng(a.seed)
+    key_emb = rng.standard_normal((256, d_k)).astype(np.float32)   # FROZEN address table
+
+    def qh(cue):
+        b = list(("src " + cue + " => ").encode("ascii"))
+        yn = _dec.clm_forward_hidden(W, np.array([float(x) for x in b], dtype=np.float64), len(b))
+        return yn[-1].astype(np.float32)
+
+    H, Ks, Pol, Auth, Tgt = [], [], [], [], []
+    for e in entries:
+        cues = e["cues"]; tgt = int(e["target_slot"]); pols = np.asarray(e["pols"], np.int64)
+        H.append(qh(cues[tgt]))
+        Ks.append(np.stack([_clms._entity_key(key_emb, c, "roll") for c in cues]).astype(np.float32))
+        Pol.append(pols); Auth.append(int(pols[tgt])); Tgt.append(tgt)
+    H = torch.tensor(np.stack(H)); Ks = torch.tensor(np.stack(Ks)); Pol = torch.tensor(np.stack(Pol))
+    Auth = torch.tensor(np.array(Auth, np.float32)); Tgt = torch.tensor(np.array(Tgt))
+    torch.manual_seed(a.seed)
+    Wq = nn.Parameter(torch.randn(d, d_k) * (1/np.sqrt(d)))
+    val = nn.Parameter(torch.randn(2, d_s) * 0.3)
+    wA = nn.Parameter(torch.randn(d_s) * (1/np.sqrt(d_s))); bA = nn.Parameter(torch.zeros(1))
+    opt = torch.optim.Adam([Wq, val, wA, bA], lr=5e-3); scale = 1.0/np.sqrt(d_k)
+    for ep in range(int(a.store_source_epochs)):
+        opt.zero_grad()
+        q = H @ Wq
+        al = (q.unsqueeze(1) * Ks).sum(-1) * scale
+        att = torch.softmax(al, -1) - 1.0/n_slot
+        vv = torch.einsum("bs,bsd->bd", att, val[Pol])
+        sA = vv @ wA + bA
+        loss = (F.binary_cross_entropy_with_logits(sA, Auth) + 0.5 * F.cross_entropy(al, Tgt))
+        loss.backward(); opt.step()
+    with torch.no_grad():
+        tr_ba = float((((sA >= 0).float() == Auth).float().mean()))
+    clms = {"lane_type": 9, "n_slot": n_slot, "d_k": d_k, "d_s": d_s, "key_seed": 1,
+            "key_emb": key_emb, "W_q": Wq.detach().numpy().astype("<f4"),
+            "val": val.detach().numpy().astype("<f4"),
+            "w_A": wA.detach().numpy().astype("<f4"), "b_A": bA.detach().numpy().astype("<f4"),
+            "lam": np.array([1.0], "<f4")}
+    trailer = _clms.pack_clms(clms)
+    open(a.out, "wb").write(open(base, "rb").read() + trailer)
+    W2 = _dec.clm_load_weights(a.out)                       # verify the loader reads it back
+    cl = W2.get("clms")
+    assert cl is not None and int(cl["lane_type"]) == 9, f"[store-source] loader rejected the lane-9 trailer: {cl}"
+    print("=== anima-py train --store-source — V6_36 lane_type 9 (SRC) head ===")
+    print("base=%s  manifest=%s  rings=%d  d_k=%d d_s=%d  train_BA=%.3f" %
+          (base, a.store_source, len(entries), d_k, d_s, tr_ba))
+    print("wrote %s (base + lane-9 trailer %dB) · loader reads lane_type=9" % (a.out, len(trailer)))
+    print("verdict path: anima-py evaluate %s --store-source <held.json>" % a.out)
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="anima canonical python trainer (`anima-py train`) — CLMConvMoE "
@@ -3101,6 +3173,17 @@ def main():
     # (prompt-aligned, qpos = T-1) so the train tap and the verdict tap coincide.
     ap.add_argument("--store-bridge", type=str, default="",
                     help="H_9423: storebind corpus c.txt to co-train the CLMS lane (core/clms.py)")
+    ap.add_argument("--store-source", type=str, default="",
+                    help="V6_36: manifest to train a lane_type 9 (SRC) authorship head on a FROZEN "
+                         "trunk (warm-start --store-source-init, serialize a lane-9 .clm to --out). "
+                         "Trains {W_q,val,w_A,b_A} only; the lane never writes the mouth (structural "
+                         "NLL-probe). H_9672 aux L_addr supervises addressing (address ⊥ auth by "
+                         "cue-pairing, so it teaches WHERE not WHICH-value).")
+    ap.add_argument("--store-source-init", type=str, default="",
+                    help="V6_36: base .clm to warm-start the SRC head training (frozen trunk).")
+    ap.add_argument("--store-source-dk", type=int, default=24, help="V6_36 SRC key dim d_k")
+    ap.add_argument("--store-source-ds", type=int, default=16, help="V6_36 SRC value dim d_s")
+    ap.add_argument("--store-source-epochs", type=int, default=400, help="V6_36 SRC head epochs")
     ap.add_argument("--store-win", type=int, default=24,
                     help="CLMS window (MUST equal evaluate --win so train/verdict geometry match)")
     ap.add_argument("--store-batch", type=int, default=8, help="global CLMS sub-batch (div by world)")
@@ -3534,6 +3617,9 @@ def main():
                          "(§4). Flip ON only if a FUTURE per-step-gated head makes DDP error on "
                          "an unused param.")
     a = ap.parse_args()
+
+    if a.store_source:                     # V6_36 SRC head training (frozen trunk) — dispatch first
+        return _store_source_train(a)
 
     # ══ H_9840 — SLEEP-SCHEDULE $0 SELFTEST ═════════════════════════════════════════════════════
     # Runs FIRST, like the H_9808 gate below: before the DDP re-exec, before any device, corpus or
