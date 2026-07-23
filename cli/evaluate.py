@@ -12006,6 +12006,7 @@ _KNOWN_FLAGS = frozenset((
     "--gen-ctx-2afc",
     "--store-component-swap", "--store-swap-from",
     "--store", "--store-oracle", "--store-oracle-pair", "--store-dual-ctrl",
+    "--store-source", "--store-source-nulls", "--store-source-build",   # V6_36 lane_type 9 SRC
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
     "--store-addr-audit", "--store-telemetry", "--store-telemetry-floor", "--store-telemetry-oracle", "--weave-null", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
     "--store-query", "--store-fuse", "--store-readout",
@@ -18678,6 +18679,74 @@ def closure_ladder_run(argv):
     return 0 if ok else 1
 
 
+def store_source_run(argv):
+    """V6_36 STORE-SOURCE — route AGENCY (SELF/OTHER authorship) through the NON-mouth lane_type 9
+    (SRC) store. The lane reads a stored authorship VALUE by content-address and NEVER writes the
+    mouth (structural NLL-probe), so a pass is store-routed SOURCE MEMORY, not agency (a later
+    causal-credit test is required before any agency claim). Terminal path = anima-py evaluate on a
+    trained lane-9 .clm + a held-out manifest. Arms STORE/ORACLE/VALUE-PERMUTE/ADDRESS-SHUFFLE/NOSTORE
+    (nulls DRIVER-HIST/TIMER/ADDRESS-ONLY via --store-source-nulls). Blueprint: lab/v6/V6_36_store_source_buildspec.md."""
+    import numpy as np
+    import clms as _clms
+    ckpt = argv[0]
+    man_path = evaluate_strval(argv[1:], "--store-source", "")
+    if not man_path:
+        print("ERROR: --store-source needs a held-out manifest (--store-source <held.json>)."); return 1
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt); return 1
+    cl = W.get("clms")
+    if cl is None or int(cl.get("lane_type", 0)) != 9:
+        print("ERROR: --store-source needs a lane_type 9 (SRC) CLMS trailer on the ckpt "
+              "(got lane_type=%s). Train one with `anima-py train --store-source`." %
+              (None if cl is None else cl.get("lane_type"))); return 1
+    man = json.load(open(man_path)); entries = man.get("entries", [])
+    rng = np.random.default_rng(evaluate_intval(argv[1:], "--store-ctrl-seed", 9423))
+    n_slot = int(cl["n_slot"])
+
+    def qhidden(cue):
+        b = list(("src " + cue + " => ").encode("ascii"))
+        yn = clm.clm_forward_hidden(W, np.array([float(x) for x in b], dtype=np.float64), len(b))
+        return yn[-1:].astype(np.float32)                 # (1, d) at the answer position
+
+    def arm(mode):
+        preds, golds, mouth_ok = [], [], True
+        for e in entries:
+            ents = list(e["cues"]); pols = np.asarray(e["pols"], np.int64); tgt = int(e["target_slot"])
+            auth = int(pols[tgt]); store = {"entities": ents, "pols": pols.tolist(), "target_slot": tgt}
+            oracle = False; lam = None
+            if mode == "ORACLE": oracle = True
+            elif mode == "VALUE-PERMUTE":
+                store["pols"] = pols[rng.permutation(n_slot)].tolist(); oracle = True
+            elif mode == "ADDRESS-SHUFFLE":
+                store["entities"] = [ents[j] for j in rng.permutation(n_slot)]
+            elif mode == "NOSTORE": lam = 0.0
+            yn = qhidden(ents[tgt]); logits = np.zeros((yn.shape[0], W["V"]), np.float32); aud = []
+            out = _clms.store_apply(logits, yn, cl, store, [yn.shape[0] - 1], oracle=oracle,
+                                    lam_override=lam, audit=aud)
+            if not np.array_equal(out, logits): mouth_ok = False
+            if mode == "NOSTORE": preds.append(0); golds.append(auth); continue
+            preds.append(1 if aud[-1].get("s_A", 0.0) >= 0 else 0); golds.append(auth)
+        preds = np.array(preds); golds = np.array(golds)
+        ba = 0.5 * (((preds == 1) & (golds == 1)).sum() / max((golds == 1).sum(), 1)
+                    + ((preds == 0) & (golds == 0)).sum() / max((golds == 0).sum(), 1))
+        return float(ba), mouth_ok
+
+    print("=== anima evaluate --store-source — V6_36 lane_type 9 (SRC) authorship route ===")
+    print("ckpt=%s  manifest=%s  rings=%d  n_slot=%d" % (ckpt, man_path, len(entries), n_slot))
+    res = {}
+    for m in ("ORACLE", "STORE", "VALUE-PERMUTE", "ADDRESS-SHUFFLE", "NOSTORE"):
+        ba, mok = arm(m); res[m] = ba
+        print("  %-15s BA=%.3f  mouth_byte_identical=%s" % (m, ba, mok))
+    gap_vp = res["STORE"] - res["VALUE-PERMUTE"]; gap_as = res["STORE"] - res["ADDRESS-SHUFFLE"]
+    print("  STORE-VP gap=%+.3f  STORE-ADDRSHUF gap=%+.3f  (floor 4/4=%.3f)" % (gap_vp, gap_as, 3 / 7))
+    ok = (res["ORACLE"] >= 0.90 and res["STORE"] >= 0.75 and gap_vp >= 0.15 and gap_as >= 0.15
+          and abs(res["NOSTORE"] - 0.5) < 0.06)
+    print("VERDICT: %s" % ("FACULTY-ROUTES (store-routed SOURCE memory, NOT agency — causal-credit test pends)"
+                           if ok else "NOT-ROUTES/DIFFICULTY-AGAIN — read the arm that missed (DIRECTIONAL)"))
+    return 0
+
+
 def main(argv):
     if len(argv) >= 1 and argv[0] in ("-h", "--help"):
         evaluate_usage()
@@ -18996,6 +19065,8 @@ def main(argv):
     # content-addressed lookup). Distinct from --store-mix (H_9392 post-forward actuator).
     if "--fan-bind" in argv:                       # H_9693 (R1) bind-Δ instrument
         return fan_bind_run(argv)
+    if "--store-source" in argv:               # V6_36 lane_type 9 (SRC) authorship route
+        return store_source_run(argv)
     if "--store" in argv:
         return store_run(argv)
     if "--xbind" in argv:
