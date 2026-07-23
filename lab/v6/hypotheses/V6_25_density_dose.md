@@ -55,8 +55,43 @@ full V6_22 caliper; keep UNBRIDGED as the differencing control (read D, not raw 
 SEEN(k) by distinct-sentence count m — if the lift lives only in low-m (same sentence repeated),
 it is memorisation and scored dead (`polarity-split-before-headline`).
 
+## Step 1 RESULT — 🔴 density is NOT the lever (causal · CLOSES the frontier · retracts Step-0)
+Built 3 density-controlled arms (`v6_25_build_arms.py`): each SEEN pair's train-bearing sentence
+repeated to k ∈ {1,8,64}, total bytes held at 48MB (419/700 pairs dosed). Trained k8/k64 on
+summer (15000 steps), reused trained57 as k=1. SEEN, trained / pedestal / collapse-Δ:
+
+| k | trained | pedestal | collapse-Δ |
+|---|---|---|---|
+| 1 | 0.563 | 0.487 | +0.076 |
+| 8 | 0.544 | 0.486 | +0.059 |
+| 64 | 0.570 | 0.494 | **+0.076** |
+
+**collapse-Δ dose = +0.076 (k=1) → +0.076 (k=64) = 0.000 — dead FLAT.** Causally installing 64×
+the co-occurrence density does NOT lift direct binding. Per Fable's frozen table row 1: **density
+is not the install lever; the V6_24 "singleton dominance" causal story is REFUTED-as-stated; the
+wall is deeper than data → close the composition frontier, go LANE-BUS; Track C stays unported.**
+
+- **Self-correction of Step-0** (verdict-integrity): Step-0's observational collapse-Δ rise
+  (+0.063→+0.154, "2.4×") was the **famous-entity confound** I flagged in its own caveat —
+  naturally-high-k pairs are hub/famous entities. Controlling it (same entities, only the pair's
+  sentence upsampled) erases the dose entirely. Step-0's "V6_24 partially refuted" is WITHDRAWN.
+- **Why it's a strong negative**: repeating one "A…C" sentence 64× is the memorisation-friendly
+  case; the model memorises that surface but the held-out probe uses a DIFFERENT phrasing, and
+  SEEN(k=64) stays 0.57 — surface memorisation does NOT abstract the A–C relation (the G0
+  natural-form-gate wall, now confirmed causally). Converges with `g1-is-absence-not-failure`.
+- Caveat: first-cut arms repeat the SAME bearing sentence (not distinct per Fable's preference);
+  distinct high-k sentences aren't available at n≥300. But repetition is the easier case and it
+  still failed, so the negative is robust; distinct-sentence is an untested variant unlikely to flip it.
+
+## Verdict — composition frontier CLOSED (V6_21→V6_25); next = LANE-BUS, not more data
+The last suspected lever (density) is causally dead. The whole natural-composition arc closes:
+DV (V6_21), corpus-supply (V6_22/23), readout (V6_24), and now density (V6_25) are all
+eliminated. The wall is architectural/form-generalisation, not a data property. Track C
+(rotation-readout port) stays deferred with its trigger (any SEEN≥0.70 arm — never reached).
+Next engine-native frontier = the LANE-BUS redesign (v6's original 대공사 purpose), for which
+Fable produced a full design in the same divergence.
+
 ## Scope
-Step-0 = $0 observational (DONE, 🟡 dose present but underpowered). Step-1 = 3 curated arms +
-train on summer (~$0 marginal, 3×114s). `natural-curated` regime — labeled as instrument-check
-(we install the density), never quoted as "composition emerged naturally" (p9). DIRECTIONAL;
+Step-0 = $0 observational (WITHDRAWN as confounded). Step-1 = 3 causal arms, summer (~$0
+marginal). `natural-curated` instrument-check regime. Single ckpt · single seed. DIRECTIONAL;
 TERMINAL only via anima-py.
