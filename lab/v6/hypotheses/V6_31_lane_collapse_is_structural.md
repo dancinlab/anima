@@ -50,6 +50,23 @@ independent of the big redesign: (1) delete/merge the exact-duplicate lanes (sel
 blink≡stime) — dead code / false dimensionality; (2) the ρ-AXON `ρ·self` / faculty scorers
 should note that these lanes are `m`-derived (not independent) so a PASS on them is not a faculty.
 
+## Consumption trace — the duplicates are NOT safely deletable, and the emit path reads only 4/15
+Followed where the 15-lane vector goes:
+- **Emit path** (cli/chat.py): reads only **4 of 15** — gws[0], selfi[3]=coh_lane, lprec[4],
+  emo[9]=bal_lane. All four are m / m_field-derived. The other 11 (surp, nov, blink, agency,
+  stime, forg, body, divid, wont, mito, hab) are computed and NOT read in the emit decision.
+- **Ψ coupling**: the FULL 15-lane vector IS routed through the Φ-optimal mean-center operator
+  (`ci_lane_scores_coupled_op`, chat.py ~L2275, Ψ-preserving) — so the duplicate lanes (selfi≡body,
+  blink≡stime) feed the Ψ computation. ⟹ deleting them is a BEHAVIORAL change (moves Ψ), not a
+  byte-identical cleanup. The `--dump-lanes` instrument + the broader R2/R9/R10 "consciousness
+  catalogue" (dozens more lanes) also consume them.
+⟹ the "cheap win" (delete the duplicates) is NOT cheap — every redirect item (dup merge, faculty
+independent-variable redesign, m-derived flag in ρ·self) is a production `core/` change with
+behavioral/Ψ impact, needing a fresh design pass. This card is the terminal of what the $0 lab
+probe can establish.
+
 ## Scope
-$0 code read. DIRECTIONAL; the duplicate-lane merge + independent-faculty-variable redesign are
-build items (core/, VERSION/G5) for a future phase. Converges with R9 (engine-native, cemented).
+$0 code read + consumption trace. DIRECTIONAL. The redirect (independent-faculty redesign) is a
+production `core/` build phase (VERSION/G5, behavioral, fresh design). Converges with the cemented
+frontier R9 — this arc's contribution is the MECHANISM (faculties = formulas over one scalar `m`)
+and the MEASUREMENT (~3 effective dims, code-proven). LANE-BUS $0→build→why arc terminates here.
