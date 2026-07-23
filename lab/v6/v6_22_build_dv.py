@@ -105,6 +105,26 @@ def main():
     def cn(a, x):  # shared NON-HUB training neighbours
         return {b for b in (adj.get(a, set()) & adj.get(x, set())) if len(adj[b]) < hub_deg}
 
+    # --- PRECOMPUTE hot paths (57MB was O(items x candidates x set-intersection)) ---
+    cvec = {e: vec(ctx[e]) for e in train_ents}          # normalized tf-idf context vectors
+    cnrm = {e: l2(cvec[e]) for e in train_ents}
+    def cosv(e, svec, snorm):
+        u = cvec[e]
+        if not u or snorm == 0: return 0.0
+        if len(u) > len(svec): u, ref = svec, u
+        else: ref = svec
+        return sum(x * ref.get(w, 0.0) for w, x in u.items()) / (cnrm[e] * snorm)
+    _twohop = {}
+    def two_hop(a):                                       # entities sharing a NON-HUB nbr with a
+        if a not in _twohop:
+            s = set()
+            for b in adj.get(a, ()):
+                if len(adj[b]) < hub_deg:
+                    s |= adj[b]
+            s.discard(a)
+            _twohop[a] = s
+        return _twohop[a]
+
     # --- mine held-out triples (orientation A before C, C occurs once) ---
     triples = {"SEEN": [], "BRIDGED": [], "UNBRIDGED": []}
     seen = set()
@@ -140,8 +160,9 @@ def main():
         want_bridge = stratum in ("SEEN", "BRIDGED")
         csig = (fbk(freq[C]), dbk(len(adj[C])), ewc(C))
         cbytes = len(C.encode()); cap = C[:1].isupper()
-        cvec = vec(ctx[C]); svec = sentence_ctx(s)
-        target_cos = cos(cvec, svec)
+        svec = sentence_ctx(s); snorm = l2(svec)
+        target_cos = cosv(C, svec, snorm)
+        reach = two_hop(A)                                     # O(1) membership vs O(intersection)
         cands = []
         for e in by_sig.get(csig, ()):
             if e == A or e == C or e in s: continue
@@ -149,10 +170,10 @@ def main():
             if key in pairs_all: continue                      # never co-occur w/ A
             if abs(len(e.encode()) - cbytes) > 2: continue
             if e[:1].isupper() != cap: continue
-            has = bool(cn(A, e))
+            has = e in reach
             if want_bridge and not has: continue
             if not want_bridge and has: continue
-            fit = cos(vec(ctx[e]), svec)
+            fit = cosv(e, svec, snorm)
             d = abs(fit - target_cos) + 0.3*abs(math.log2((freq[e]+1)/(freq[C]+1)))
             cands.append((d, e))
         cands.sort()
