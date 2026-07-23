@@ -19480,8 +19480,8 @@
    {
     "id": "pool-host-anima-py-clean-update-1",
     "state": "pos-conv",
-    "value": "pool 호스트(summer/aiden)의 anima_py가 landed main보다 뒤처져(summer 0.20.158 vs landed 0.20.181) 새 CLI 플래그(--store-source) 없어, 발사 전 landed py파일 패키지 수동 scp frankenstein 우회했다(vendored-copy 패치=금지). 근본원인=pool 호스트 clean 업데이트 경로 부재 + anima-python 머지시 PyPI 자동발행 안 됨. 수정(GREEN): summer 정규 uninstall→GitHub main clean install(0.20.158→0.20.181·store_source refs 6·lane9 refs 3 검증).",
-    "threshold": "pool 발사 전 호스트 anima_py 버전 landed 대조. 뒤처지면 수동 scp 금지, 정규 재설치: pip install --user --force-reinstall --no-deps --break-system-packages git+https://github.com/dancinlab/anima.git@main (PEP668=--break-system-packages 필수). summer/aiden GitHub public 도달가능. 더 근본은 머지시 PyPI 자동발행 CI(별도)."
+    "value": "pool 호스트(summer)의 anima_py가 오래된 설치(0.20.158)라 새 CLI 플래그(--store-source) 없어, 발사 전 landed py파일 수동 scp frankenstein 우회했다(vendored-copy 패치=금지). 근본원인=호스트 설치 미갱신(⚠️정정: PyPI 발행 파이프라인 pypi-release.yml은 정상작동·PyPI latest=landed 0.20.181 확인 — 앞서 'PyPI 자동발행 미구현'이라 적은 건 거짓, verdict-integrity 정정). 수정(GREEN): summer 정규 uninstall→clean install(0.20.158→0.20.181·store_source refs6·lane9 refs3 검증).",
+    "threshold": "pool 발사 전 호스트 anima_py 버전을 landed와 대조(pip show anima-python version == 루트 VERSION). 뒤처지면 수동 scp 금지, canonical 갱신: `pip install --user --upgrade --break-system-packages anima-python`(PyPI가 landed와 동기·pypi-release.yml). PyPI 반영 전 급하면 git+https 대체. PEP668=--break-system-packages 필수. GPU 확인=GPU-FIRED vs GPU-FALLBACK 로그."
    }
   ]
  }
