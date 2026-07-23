@@ -8370,7 +8370,7 @@ def _gen_ctx_2afc_pairs(np, W, T, items, key_true, key_swap_from, label):
     # PAIR CAP — the cross-scored loop is 2 forwards/pair; at n=100 the full O(n²) is ~9900 forwards
     # (~10h at 303M CPU). Deterministically take every k-th discordant pair so a large trace stays
     # tractable while the sample is unbiased (fixed stride, no RNG · sample-seed-invalid rule).
-    MAX_PAIRS = 1500
+    MAX_PAIRS = 300
     all_pairs = [(i, j) for i, j in itertools.combinations(range(n), 2)
                  if key_true(items[i]) != key_true(items[j])]
     stride = max(1, len(all_pairs) // MAX_PAIRS)
@@ -8523,26 +8523,52 @@ def gen_ctx_2afc_run(argv):
     if content_invariant:
         print("  ⇒ CONTENT-INVARIANT — one fixed utterance across all ticks AND all phase classes.")
 
+    # ── WINDOW GUARD (computed BEFORE the scoring-side arms so they can skip when blind) ──
+    # The scoring-side 2AFC/ablation only see the seed if it is inside the T-window while the
+    # content bytes are scored. With a right-aligned window over seed+content, when most ticks have
+    # seed_len ≥ T the seed is truncated out of every scored position — the arms are STRUCTURALLY
+    # tie-only and carry NO evidence. The generation-side content-invariance census stays valid
+    # (the daemon generated with the seed in-window for the first ~T−seed_len content bytes).
+    # The scored positions are the last k=content_len bytes of the right-aligned (seed+content)
+    # T-window. The content alone fills the window when content_len ≥ T, pushing the ENTIRE seed
+    # (phase AND anchor) out of every scored position ⇒ the seed cannot affect any scored byte ⇒
+    # the scoring-side arms are structurally tie-only. (It is content_len ≥ T that blinds them, NOT
+    # seed_len — the seed can be short and still be shoved out by a long content.)
+    cont_lens = [len(it["cont"].encode("utf-8", "surrogateescape")) for it in items]
+    frac_cont_fills = sum(1 for cl in cont_lens if cl >= T) / max(1, len(cont_lens))
+    scoring_window_blind = frac_cont_fills >= 0.5
+    if scoring_window_blind:
+        print("  ⚠️ SCORING-WINDOW-BLIND: %.0f%% of ticks have content_len ≥ T=%d — the content fills"
+              % (100 * frac_cont_fills, T))
+        print("     the window and pushes the whole seed out of the scored positions, so the scoring-")
+        print("     side arms are structurally tie-only and carry NO evidence (the generation-side")
+        print("     content census is the load-bearing signal).")
+
     # ── G-P1 positive control: anchor-ABLATION (works with a single anchor) ──
     # The anchor is the known-causal seed half (content is grounded in / copies it). Removing it
     # must RAISE the content's CE; if it does not, the CE readout is blind to a seed-half that
     # provably matters ⇒ INSTRUMENT-DEAD, no phase read (positive-control-before-reading-a-negative).
     # Anchor-ablation needs only ONE anchor, unlike anchor-swap — so it certifies a monologue trace.
-    t0 = time.time()
-    abl_wins = abl_ties = abl_n = 0
-    for it in items:
-        if not it["anchor"]:
-            continue
-        ce_with = _gen_ctx_cont_nll(np, W, it["seed_true"], it["cont"], T)
-        ce_without = _gen_ctx_cont_nll(np, W, it["phase"] + " ", it["cont"], T)  # anchor removed
-        abl_n += 1
-        if abs(ce_with - ce_without) < 1e-9:
-            abl_ties += 1
-        elif ce_with < ce_without:
-            abl_wins += 1
-    a_score = (abl_wins + 0.5 * abl_ties) / abl_n if abl_n > 0 else float("nan")
-    print("  G-P1 anchor-ablation (positive control) = %.4f  (n=%d ties=%d · %.1fs) [with-anchor CE < no-anchor CE]"
-          % (a_score, abl_n, abl_ties, time.time() - t0), flush=True)
+    # SKIP under window-blindness (guaranteed ties, n forwards wasted) — the census is load-bearing.
+    if scoring_window_blind:
+        a_score = float("nan"); abl_n = 0
+        print("  G-P1 anchor-ablation — SKIPPED (scoring-window-blind: seed outside the T-window ⇒ all ties)", flush=True)
+    else:
+        t0 = time.time()
+        abl_wins = abl_ties = abl_n = 0
+        for it in items:
+            if not it["anchor"]:
+                continue
+            ce_with = _gen_ctx_cont_nll(np, W, it["seed_true"], it["cont"], T)
+            ce_without = _gen_ctx_cont_nll(np, W, it["phase"] + " ", it["cont"], T)  # anchor removed
+            abl_n += 1
+            if abs(ce_with - ce_without) < 1e-9:
+                abl_ties += 1
+            elif ce_with < ce_without:
+                abl_wins += 1
+        a_score = (abl_wins + 0.5 * abl_ties) / abl_n if abl_n > 0 else float("nan")
+        print("  G-P1 anchor-ablation (positive control) = %.4f  (n=%d ties=%d · %.1fs) [with-anchor CE < no-anchor CE]"
+              % (a_score, abl_n, abl_ties, time.time() - t0), flush=True)
     # bonus: anchor-swap 2AFC when the trace actually has ≥2 distinct anchors (else 0 pairs)
     aswap_score, aswap_np, _, _ = _gen_ctx_2afc_pairs(np, W, T, items, _anchor_of, _swap_anchor, "anchor")
     if aswap_np > 0:
@@ -8550,23 +8576,6 @@ def gen_ctx_2afc_run(argv):
     # instrument-dead unless the positive control (ablation) can see the causal anchor half. When
     # content is invariant we SKIP this gate (the direct NULL needs no positive control).
     instrument_dead = (abl_n > 0 and a_score <= 0.5 + m) and not content_invariant
-
-    # ── WINDOW GUARD: the scoring-side 2AFC/ablation only see the seed if it is inside the
-    # T-window while the content bytes are scored. With a right-aligned window over seed+content,
-    # the seed reaches the scored positions only when seed_len + content_len is not much over T.
-    # When most ticks have seed_len ≥ T (the seed is entirely truncated out), the scoring-side arms
-    # are STRUCTURALLY blind — every arm returns ties regardless of any real effect, so they carry
-    # NO evidence and must not be read as NULL. The generation-side content-invariance census stays
-    # valid (the daemon generated with the seed in-window for the first ~T−seed_len content bytes).
-    seed_lens = [len(it["seed_true"].encode("utf-8", "surrogateescape")) for it in items]
-    frac_seed_out = sum(1 for sl in seed_lens if sl >= T) / max(1, len(seed_lens))
-    scoring_window_blind = frac_seed_out >= 0.5
-    if scoring_window_blind:
-        print("  ⚠️ SCORING-WINDOW-BLIND: %.0f%% of ticks have seed_len ≥ T=%d — the seed is truncated"
-              % (100 * frac_seed_out, T))
-        print("     out of the scored positions, so the scoring-side 2AFC/ablation arms are")
-        print("     structurally tie-only and carry NO evidence (the generation-side content census")
-        print("     is the load-bearing signal). Anchor-ablation ctrl above (%.4f) is expected ~0.5." % a_score)
 
     # ── PRIMARY: phase-swap 2AFC ──
     # SHORT-CIRCUIT under content-invariance: with one fixed utterance the pairwise 2AFC is a
@@ -8591,7 +8600,12 @@ def gen_ctx_2afc_run(argv):
         neu = _NEUTRAL.get(donor["phase"], " ")
         return neu + " " + host["anchor"] if host["anchor"] else neu + " "
     c_score = float("nan"); c_np = 0
-    if len(phase_classes) >= 2:
+    if content_invariant or scoring_window_blind:
+        # meaningless when content never varies OR the seed is truncated out of the scoring
+        # window — same O(n²) 303M cost as phase-swap, skip it (the verdict does not use it).
+        print("  SECONDARY carrier 2AFC — SKIPPED (%s)"
+              % ("content-invariant" if content_invariant else "scoring-window-blind"), flush=True)
+    elif len(phase_classes) >= 2:
         c_score, c_np, c_ties, _ = _gen_ctx_2afc_pairs(np, W, T, items, _phase_of, _swap_carrier, "carrier")
         print("  SECONDARY carrier 2AFC (phase vs neutral token) = %.4f  (pairs=%d)"
               % (c_score, c_np), flush=True)
@@ -8602,6 +8616,8 @@ def gen_ctx_2afc_run(argv):
         verdict = "NULL"; note = ("CONTENT-INVARIANT — the daemon emits ONE byte-identical utterance across all %d ticks and both phase classes; the phase value (and all A⇄G tension) has ZERO effect on emitted content. A fixed attractor cannot be shaped by phase. Direct observation, no positive control needed; the phase-swap 2AFC is a formal 0.5 (all ties)." % n)
     elif len(phase_classes) < 2 or p_np == 0:
         verdict = "UNDECIDABLE"; note = "fewer than 2 phase classes — no phase contrast in this trace"
+    elif scoring_window_blind:
+        verdict = "UNDECIDABLE"; note = ("SCORING-WINDOW-BLIND — content_len ≥ T pushes the whole seed out of every scored position, so the scoring-side arms are structurally tie-only and cannot read the phase, AND content is not invariant to fall back on. Re-run scoring the phase-reachable content PREFIX (first ~T−seed_len bytes), or with a larger --win.")
     elif instrument_dead:
         verdict = "INSTRUMENT-DEAD"; note = "positive control (anchor-ablation) failed to beat chance+m — CE readout blind to a seed-half that provably matters"
     elif p_score < 0.5 - m:
