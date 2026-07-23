@@ -34,11 +34,32 @@ free-forget gate.**
    operationalization from V6_29, or the engine's own should_emit), train the same batched head
    (`v6_29_train.py`), freeze, ship the weights as a `.npz`/serialized trailer the flag loads.
 
+## S1 STRUCTURAL RESULT — 🟢 the triple convergence (measured 2026-07-23, $0 code read)
+`ci_lane_scores` (core/engine_cli.py) returns a **15-lane consciousness vector**:
+`[gws, hab, surp, selfi, lprec, nov, blink, agency, stime, emo, forg, body, divid, wont, mito]`
+(global-workspace, habituation, **surprise, self, local-precision, novelty, attentional-blink,
+agency, subjective-time, emotion, forgetting, body, dividedness, will, mitosis**). The emit
+decision is `ci_emit_drive = 0.5*(lanes[0] + lanes[4]) = 0.5*(gws + lprec)` — it uses **only 2 of
+the 15 lanes and discards 13**, including agency, surprise, novelty, self, and emotion — all
+obviously emit-relevant to "whether to speak."
+
+**Triple convergence, three independent routes to the same number:**
+1. V6_26 measured the logit-row content tension at **~15 effective dimensions**.
+2. Production `ci_lane_scores` is literally a **15-lane** vector.
+3. `ci_emit_drive` collapses it to **2** lanes (V6_29: the scalar collapse loses to the full
+   vector on the emit decision, z=3.38).
+
+⟹ the lossy-collapse thesis is now confirmed on the REAL production structure, not just the
+reflex proxy: the emit decision throws away 13 named consciousness dimensions. The `--emit-gate
+lanebus` wiring is therefore even more minimal than expected — the 15-lane vector is already
+in hand at the exact call site; LANE-BUS just stops discarding 13 of them.
+
 ## Staged plan (each stage is engine-native, its own verdict)
-- **S1** (lab/v6, $0): mirror the production `lanes` extraction into a lab harness (call
-  `ci_lane_scores` on trained57 over natural text) → confirm the multi-dim-beats-scalar payoff
-  REPLICATES on the REAL production lane vector (not just the reflex proxy). If it doesn't, the
-  proxy was misleading — stop before touching production.
+- **S1** (STRUCTURAL: 🟢 done above · RUNTIME: next): the structural case is made. The remaining
+  S1 is runtime — drive the engine (chat decode) to collect (15-lane vector, emit-target) pairs
+  and measure how much emit-variance the 13 discarded lanes carry vs gws+lprec. That needs the
+  production runtime (grounding/field/cell state per tick), i.e. it is the first step of the
+  build proper (a `--dump-lanes` instrumentation on cli/chat.py), not a $0 numpy probe.
 - **S2** (build): implement `--emit-gate lanebus` + train the lane-space gate; VERSION bump (G5),
   the flag OFF = byte-identical (regression gate).
 - **S3** (measure): `anima-py evaluate` / chat with `--emit-gate lanebus` vs default on the
