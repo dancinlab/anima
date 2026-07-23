@@ -6126,6 +6126,10 @@
           "detail": "수리는 주소함수 교체뿐이고 재학습 비용을 무니, 키 코드북만으로 후보를 거른다(--key-geometry-screen). 후보 전부 기존 frozen 테이블만 쓰고 새 파라미터 0. store86: mean 1/0.3075/0.9915 vs roll 0/0.1172/1.0000 · vocab1500: mean 17/0.3506/0.9665 vs roll 0/0.0984/0.9997 ⟹ 현행 mean 은 파레토 전선 밖. SCREEN 이지 lane 판정 아님(재학습+evaluate --store 필요)."
          },
          {
+          "name": "🔌 lane_type 9 배선 — SRC source/authorship 레인 (V6_36 STORE-SOURCE step 1 · codec 착륙·미배선)",
+          "detail": "9 = content-addressed store 가 authorship VALUE 를 나르되 store_apply 가 입 로짓 UNCHANGED 반환(입에 못 씀=구조상) ⟹ V6_34 NLL-probe(p7)가 STRUCTURAL 불변식. head=v 단독(s_A=v·w_A+b_A · fusion 없음) ⟹ 트렁크 신호가 head 로 갈 경로는 주소→값뿐. read 는 audit(s_A). codec=_ARR_ORDER_V9·pack/read 분기(V2 헤더 d_g0 r0)·_key_fn_of 9(roll). smoke ALL PASS(왕복 byte-id·입로짓 Δ0·oracle/value-permute s_A 이동·lanes2/6 무손상). VERSION→178(G5). 미배선(GREEN 아님) — 후속: cli/evaluate --store-source + cli/train --store-source + CLMSModule(agency) → 로컬 smoke → pool 발사. 배경/후속상세=CHANGELOG + lab/v6/V6_36_store_source_buildspec.md. 정직범위=통과해도 source memory이지 agency 아님."
+         },
+         {
           "name": "🔌 lane_type 6 배선 — 순서인식 주소(roll) · 학습·추론 lockstep",
           "detail": "6 = lane_type 3 의미 + roll 키. .clm 이 자기 주소함수를 기록하므로 학습·추론이 조용히 어긋날 수 없다. 실측 parity mean 6.939e-18 · roll 1.388e-17 · 양쪽 drift 7/7.",
           "children": [

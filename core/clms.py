@@ -104,7 +104,7 @@ def _key_fn_of(lane_type):
     # lane learned (train store-acc .97) and then read chance through the .clm, which is what a
     # train/infer key mismatch looks like from the outside. A dual+roll lane, if it is ever wanted,
     # gets its own id rather than a second meaning for this one.
-    return "roll" if int(lane_type) in (6, 7) else "mean"
+    return "roll" if int(lane_type) in (6, 7, 9) else "mean"
 
 
 def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, audit=None,
@@ -225,6 +225,19 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
                           "target": int(ts) if ts is not None else -1,
                           "a_max": float(np.max(a)),
                           "a_ent": _ent})
+        if lane_type == 9:
+            # SRC (source/authorship) lane — the agency read exits through `audit` (s_A), and the
+            # mouth logit row is NEVER touched: `continue` leaves out[t] == logits[t]. This makes the
+            # V6_34 NLL-probe (p7: the recalled value must not improve next-byte prediction) a
+            # STRUCTURAL invariant, not a measured one — the lane cannot write the mouth, by
+            # construction. The head reads v ALONE (no g/h fusion), so the trunk's content-authorship
+            # signal (V6_35 AUC_content) has no path except the address→value route under test.
+            a9 = a - (1.0 / n_slot)                                       # RV-3 majority-null centering
+            v9 = a9 @ V_slots                                            # (d_s,) = Σ (aᵢ−1/n)·val[polᵢ]
+            s_A = float(v9 @ clms["w_A"] + float(np.asarray(clms["b_A"]).reshape(-1)[0]))
+            if audit is not None:
+                audit[-1]["s_A"] = s_A                                   # pred = self if s_A>=0 else other
+            continue                                                     # out[t] stays == logits[t]
         if lane_type in (3, 6, 7, 8):                                     # RV-3 majority-null centering (H_9710)
             a = a - (1.0 / n_slot)                                        # v≡0 at uniform a → shortcut basin gone
         v = a @ V_slots                                                   # (d_s,) = Σ (aᵢ−c)·val[polᵢ]
@@ -337,6 +350,11 @@ _ARR_ORDER_V4 = ("key_emb", "W_q", "W_g", "W_v", "W_gate", "W_h", "b_h", "W_out"
 # tap through W_fresh→W_q_fresh (store-CE co-adapts an entity basis off the EN-occupied penultimate);
 # W_q stays packed (unused for addressing, kept for diagnostics). Header adds fresh_k·fresh_L.
 _ARR_ORDER_V5 = ("key_emb", "W_q", "W_fresh", "W_q_fresh", "W_g", "val", "W_h", "b_h", "W_out", "lam")
+# lane_type 9 (V6_36 SRC — source/authorship read): the head reads the retrieved value v ALONE
+# (s_A = v·w_A + b_A, a scalar), has NO W_g/W_h/W_out/fusion, and store_apply returns the mouth logits
+# UNCHANGED (the lane cannot write the mouth → V6_34 NLL-probe is a structural invariant). Header is the
+# V2 <BIIIIII form with d_g=0, r=0 (both unused). Address = order-aware `roll` key (in _key_fn_of's set).
+_ARR_ORDER_V9 = ("key_emb", "W_q", "val", "w_A", "b_A", "lam")
 
 
 # ── H_9696 (R4) perceptual charging — what the store holds during free ideation ──────────
@@ -408,6 +426,10 @@ def pack_clms(w: dict) -> bytes:
         out += struct.pack("<BIIIIII", 4, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
                            int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
         order = _ARR_ORDER_V4
+    elif lane_type == 9:      # V6_36 SRC — source/authorship read; V2 header with d_g=0, r=0 (both unused)
+        out += struct.pack("<BIIIIII", 9, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
+                           0, 0, int(w["key_seed"]))
+        order = _ARR_ORDER_V9
     elif lane_type in (2, 3, 6, 7, 8):  # 8 = H_9888 dual read (same header; W_h input is 2*d_s+d_g) · 2 = W_g fusion (H_9423) · 3 = 2 + majority-null centering (H_9710 RV-3) · 6 = 3 + order-aware key (H_9852) · 7 = 6 with the g half of the fusion input held at 0 (H_9885 v-only)
         out += struct.pack("<BIIIIII", lane_type, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
                            int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
@@ -435,7 +457,7 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
         if p + 32 > len(buf):
             return None, off
         n_slot, d_k, d_s, d_g, r, key_seed, fresh_k, fresh_L = struct.unpack_from("<IIIIIIII", buf, p); p += 32
-    elif lane_type in (2, 3, 4, 6, 7, 8):                  # 8 = H_9888 dual read · 2 = W_g · 3 = +centering (RV-3) · 4 = CLMS-FAN · 6 = 3 + order-aware key · 7 = 6 with g:=0 (H_9885)
+    elif lane_type in (2, 3, 4, 6, 7, 8, 9):              # 9 = V6_36 SRC (d_g=0,r=0) · 8 = H_9888 dual read · 2 = W_g · 3 = +centering (RV-3) · 4 = CLMS-FAN · 6 = 3 + order-aware key · 7 = 6 with g:=0 (H_9885)
         if p + 24 > len(buf):
             return None, off
         n_slot, d_k, d_s, d_g, r, key_seed = struct.unpack_from("<IIIIII", buf, p); p += 24
@@ -455,6 +477,12 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
             "fresh_k": int(fresh_k), "fresh_L": int(fresh_L)}
     clms["key_emb"] = take(_KEY_ALPHABET * d_k, (_KEY_ALPHABET, d_k))
     clms["W_q"] = take(d * d_k, (d, d_k))
+    if lane_type == 9:                                    # V6_36 SRC — val + w_A + b_A + lam (no fusion arrays)
+        clms["val"] = take(2 * d_s, (2, d_s))
+        clms["w_A"] = take(d_s, (d_s,))
+        clms["b_A"] = take(1, (1,))
+        clms["lam"] = float(np.frombuffer(buf, "<f4", 1, p)[0]); p += 4
+        return clms, p
     if lane_type == 5:                                    # H_9720-ⓐ fresh lane: W_fresh · W_q_fresh (pack order)
         clms["W_fresh"] = take(d * fresh_k, (d, fresh_k))
         clms["W_q_fresh"] = take(fresh_k * d_k, (fresh_k, d_k))
