@@ -43,8 +43,22 @@ not A1−FULL. Sol's WRONG-ADDR guards the complementary failure (consumption is
 not content-addressed). `emit_t` is a designer-chosen p5 operationalization + 8-byte reflex proxy
 ⇒ DIRECTIONAL regardless of outcome; TERMINAL only after the core/+anima-py port, in-vivo.
 
-## RESULT — ⏳ Phase B training on summer (pending)
-To be filled from the trainer output.
+## RESULT — ⚠️ VOID at reduced power (positive control failed); full-power run pending
+First Phase B pass was speed-reduced (2 seeds, 15 epochs, 150 sentences) because the torch
+sequential-recurrence RNN is slow over 41k positions. That reduction under-powered everything:
+- **Positive control FAILED** — on the synthetic integrate-and-fire task (where FULL's reset
+  should provably beat A1's leak), A1−FULL z=0.55 (need z≥3). ⟹ per the frozen table, the run is
+  **VOID** — the ablation instrument did not certify itself, so the natural arms are unreadable.
+- Natural (unreadable, directional only): B0 0.668 / A1 0.649 / A3 0.659 / FULL 0.651 NLL;
+  A1−FULL z=−0.36 (FULL not better than A1), A3−FULL z=1.14. The lean is "consumption does NOT
+  clearly beat the ablations", but at 2 seeds nothing clears z≥2 — cannot be trusted.
+
+⚠️ Honesty: the VOID is at least partly MY doing — I cut seeds/epochs for speed, which
+under-powered the positive control. The full-power run (3 seeds, 25 epochs, all 420 sentences)
+is now grinding on summer (~40–60 min, the computational bottleneck I first tried to dodge). Its
+verdict replaces this. If the positive control passes there and A1≈FULL holds, the honest read
+is "architected discharge does not help on this proxy → drop residual consumption from p5"; if
+FULL then beats A1 and A3, discharge is validated. Either way this reduced pass reads NOTHING.
 
 ## Scope
 Phase A $0 laptop (DONE). Phase B ~$0 marginal (summer CPU, tiny heads). Single ckpt · reflex =
