@@ -43,22 +43,37 @@ not A1−FULL. Sol's WRONG-ADDR guards the complementary failure (consumption is
 not content-addressed). `emit_t` is a designer-chosen p5 operationalization + 8-byte reflex proxy
 ⇒ DIRECTIONAL regardless of outcome; TERMINAL only after the core/+anima-py port, in-vivo.
 
-## RESULT — ⚠️ VOID at reduced power (positive control failed); full-power run pending
-First Phase B pass was speed-reduced (2 seeds, 15 epochs, 150 sentences) because the torch
-sequential-recurrence RNN is slow over 41k positions. That reduction under-powered everything:
-- **Positive control FAILED** — on the synthetic integrate-and-fire task (where FULL's reset
-  should provably beat A1's leak), A1−FULL z=0.55 (need z≥3). ⟹ per the frozen table, the run is
-  **VOID** — the ablation instrument did not certify itself, so the natural arms are unreadable.
-- Natural (unreadable, directional only): B0 0.668 / A1 0.649 / A3 0.659 / FULL 0.651 NLL;
-  A1−FULL z=−0.36 (FULL not better than A1), A3−FULL z=1.14. The lean is "consumption does NOT
-  clearly beat the ablations", but at 2 seeds nothing clears z≥2 — cannot be trusted.
+## RESULT — 🔴 the emit⇄discharge TIE is refuted; a free-forget gate matches it (valid, 3 seeds)
+Two instrument fixes were needed first (verdict-integrity: the VOID runs were NOT read):
+(1) batched-sentence recurrence replaced the per-position torch loop (~100× faster → full power
+in minutes, not an hour); (2) the synthetic positive control leaked the drive into its x features,
+letting memoryless arms cheat — fixing x to pure noise (only τ-accumulation predicts emit) made
+the control valid. **Positive control PASS: A1−FULL z=20.4, A2 z=20.0, A3 z=4.2** (FULL's
+emit-tied reset crushes every ablation where reset is provably optimal — the instrument certifies).
 
-⚠️ Honesty: the VOID is at least partly MY doing — I cut seeds/epochs for speed, which
-under-powered the positive control. The full-power run (3 seeds, 25 epochs, all 420 sentences)
-is now grinding on summer (~40–60 min, the computational bottleneck I first tried to dodge). Its
-verdict replaces this. If the positive control passes there and A1≈FULL holds, the honest read
-is "architected discharge does not help on this proxy → drop residual consumption from p5"; if
-FULL then beats A1 and A3, discharge is validated. Either way this reduced pass reads NOTHING.
+Natural (n=41,792 positions, emit rate 0.42, held-out masked NLL, 3 seeds):
+| arm vs FULL | mean Δ | z | reading |
+|---|---|---|---|
+| B0−FULL (headroom) | +0.043 | — | memory helps a lot |
+| A1 (no-consume) | +0.0054 | +2.46 | consumption helps (borderline) |
+| A2 (random-reset) | +0.0118 | +4.98 | structured, not a random reset |
+| WRONGADDR (deranged τ) | +0.0433 | +4.12 | content-addressed, not any packet |
+| **A3 (free-forget)** | **−0.0018** | **−0.73** | **emit-tie buys NOTHING vs a free forget** |
+
+**Verdict (valid — positive control passed): the residual IS consumed (memory + gating +
+content-addressing all help), but NOT specifically at emits.** A free learned forget gate (A3)
+matches the emit-tied gate (FULL) — the decisive p5 control per both models. So Fable's p5
+"emitting discharges the residual" is **refuted as an architectural mechanism**, exactly as
+V6_28 refuted it causally. Two independent methods (V6_28 counterfactual + V6_29 ablation) agree.
+
+## LANE-BUS architectural refinement (the convergent finding, V6_28+V6_29)
+p5's emit⇄discharge TIE is wrong. What survives: (i) the multi-dim logit-row tension is real
+(V6_26); (ii) a learned consume/forget on the residual helps the emit decision (V6_29 A1/A2/
+WRONGADDR); (iii) but the consumption runs on the bus's OWN schedule, not the emit's (V6_28
+causal ✗, V6_29 A3≈FULL). ⟹ the LANE-BUS emit gate should be **READ-ONLY on the tension** (emit
+reads the residual) **+ a SEPARATE autonomous forget dynamic** on the residual — not "emitting
+pays down a debt." This is Fable's own row-3′ replacement, now measured. Next (Step-4): build
+that read-only-emit + autonomous-relaxation gate and test it against the tied gate in-loop.
 
 ## Scope
 Phase A $0 laptop (DONE). Phase B ~$0 marginal (summer CPU, tiny heads). Single ckpt · reflex =
