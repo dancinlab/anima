@@ -83,19 +83,49 @@ On the 4.81MB natural corpus (train 3.84MB / held-out 0.96MB, disjoint; 29,322 e
 
 **Degree+freq-matched fieldable n = 3,171/stratum** (BRIDGED vs UNBRIDGED, per density
 signature bin) — **10× the MDE floor (300)**. SEEN positive-control supply = 11,727.
-⟹ Fable's hub-density pre-mortem does NOT kill supply at this scale: even after removing the
-confound, the natural axis poses the composition question with ample n. **Eval is
-constructible; training ladder warranted.**
+⟹ Fable's hub-density pre-mortem does NOT kill supply at this scale.
+⚠️ HONESTY: this 3,171 used a permissive sentence splitter that let list-dump blocks
+("List of…", year-birth/death rows) count as co-occurrence. Stage-1 tightened the extractor
+to PROSE-ONLY (single-line, terminal punctuation, no date-list rows) because list adjacency
+is not a relation — that dropped usable supply to **BRIDGED/UNBRIDGED = 396 each, SEEN 500**,
+still above MDE. The prose numbers are the honest ones.
 
-## Stage 1 (NEXT) — engine-native single-size probe before the full ladder
-Cheapest decisive test (fluency-pregate discipline): build the 2AFC eval from the matched
-strata, train one small model on the 3.84MB training slice (pool ~$10), run
-`anima-py evaluate` → is BRIDGED Δ > UNBRIDGED Δ above the pedestal, with SEEN ≥ 0.70
-positive-control? If it fails at one size, the size ladder is moot (cheap kill). If it
-passes, fetch a larger EN dump (Simple English Wikipedia ~250MB) and run Fable's
-4.8/16/48/130MB ladder + the repeated-small exposure-matched arm.
+## Stage 1 RESULT — 🔴 NO COMPOSITION SIGNAL (prereg row 2 · measured 2026-07-23 · summer)
+Engine-native single-size probe. Trained `--arm ctrl --objective ce_marginal --arch clm`
+(production ConvMoE, plain CE) 6000 steps on the 3.84MB train slice (loss 5.68→2.04);
+pedestal = same config, 1 step (untrained, 5.68). Scored with the engine's own byte-CE
+(`decode.clm_ce_seq_W`) as a 2AFC: real held-out sentence vs the same sentence with C
+swapped to a freq-matched never-co-occurring entity. **p9-clean: training corpus, the
+(A,C) fact, AND the probe sentence are all natural — no hand-built template** (an earlier
+templated build was off-standard and was discarded).
+
+| stratum | trained acc | pedestal acc | collapse-Δ |
+|---|---|---|---|
+| SEEN (pos-control) | 0.756 | 0.576 | +0.180 |
+| BRIDGED (composition) | 0.828 | 0.513 | +0.316 |
+| UNBRIDGED (similarity floor) | 0.808 | 0.525 | +0.283 |
+
+- **Instrument VALID**: SEEN trained 0.756 ≥ 0.70 pos-control bar; pedestal ≈ chance (0.51–0.58).
+- **Training works**: every stratum lifts far above pedestal (collapse-Δ +0.18 to +0.32) —
+  the byte-LM genuinely learned to prefer real natural text over entity-swapped text.
+- **BUT no composition**: BRIDGED (0.828) vs UNBRIDGED (0.808) gap = **+0.020, SE 0.027,
+  z 0.74** → not significant, far below the prereg ≥.05 bar. collapse-Δ gap = +0.033.
+  The model prefers the real entity **whether or not a training bridge exists** ⟹ the signal
+  is **co-occurrence / topical similarity, not bridge-mediated composition**. Prereg table
+  row 2: the DV cannot see the faculty — **redesign the DV before any data-scale spend.**
+
+### Why the swap-2AFC can't isolate composition (the DV defect to fix)
+Real-vs-swap is won by LOCAL fluency: a freq-matched but topically-wrong C′ ("…Mercedes and
+**Aachen** retired") is simply less probable in context than the real C, and a trained LM
+detects that from general co-occurrence stats without ever binding A to C. UNBRIDGED scoring
+as high as BRIDGED is the proof. A composition-isolating DV must make the distractor
+**bridge-plausible but never-composed** (e.g. C′ that shares A's neighbours yet never meets A),
+so only a model that actually traversed the 2-hop path can win. That is the V6_22 redesign.
 
 ## Scope
-Stage-0 = $0 laptop numpy/regex on 4.6MB corpus (DONE, GREEN). Stage-1 = pool GPU (~$10,
-autonomous per a_fire_autonomous). Full ladder needs a larger EN dump, fetched only if
-Stage-1 passes. DIRECTIONAL; faculty claim earns TERMINAL only via engine-native `anima-py`.
+Stage-0 = $0 feasibility (DONE, GREEN). Stage-1 = pool GPU on summer (~$0 marginal, owned
+host · DONE, 🔴 no-composition). Single ckpt · single seed · 4.6MB · production ConvMoE trunk.
+The data-scale ladder is **NOT warranted yet** — the DV doesn't discriminate composition, so
+scaling data would amplify a co-occurrence signal, not answer the question. Next = V6_22
+(bridge-plausible distractor DV), not a bigger corpus. DIRECTIONAL; TERMINAL only via
+engine-native `anima-py`.
