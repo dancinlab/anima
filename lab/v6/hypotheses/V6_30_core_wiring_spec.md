@@ -68,10 +68,29 @@ in hand at the exact call site; LANE-BUS just stops discarding 13 of them.
 - **S4**: the content lane (store-bridge promoted patch→heart, Fable design) as the composed
   side of the bus, replacing the reflex proxy. This is the full 대공사.
 
-## Pre-mortem
-The V6_29 payoff used a reflex-vs-composed PROXY tension, not the production `lanes`. S1 exists
-precisely to check the payoff isn't an artifact of the proxy — the production lanes may already
-be correlated/collapsed such that the extra dims carry little. Run S1 before any production edit.
+## S1 RUNTIME RESULT — 🔴 the proxy OVERSTATED it; production lanes are redundant (preliminary)
+Added `--dump-lanes` instrumentation to `cli/chat.py` (write-only, default-off = byte-identical,
+VERSION 0.20.176→177) and ran the daemon on natural text with trained57, dumping the real 15-lane
+vector per tick. On the collected ticks:
+- **15-lane effective rank (participation ratio) = 2.71**, NOT 15 — the real production lanes are
+  highly REDUNDANT (correlated), not 15 independent dimensions.
+- **discarded-13 variance independent of gws+lprec = 8%** — the scalar collapse to
+  `0.5*(gws+lprec)` loses only ~8% independent variance, far less than the structural argument
+  implied. (Most-independent discarded lanes: hab, emo, forg, selfi, body — small.)
+
+⚠️ **This diverges from the reflex-vs-composed PROXY** (V6_26 15-dim, V6_29 z=3.38 payoff): the
+proxy tension is NOT the production lane vector, and the production lanes are far more collapsible.
+⟹ **the V6_29 multi-dim payoff may NOT transfer to production** — exactly the S1 pre-mortem risk,
+now realized. **Do NOT proceed to the S2 build on the proxy's z=3.38 alone.** (verdict-integrity:
+S1's whole purpose was this de-risk; it fired.)
+
+🔻 CAVEAT — SEVERELY UNDERPOWERED: only ~12 ticks (the daemon emits few ticks per input, and
+trained57 is a byte-LM). n=12 for a 15-dim effective-rank estimate is not trustworthy — the
+redundancy could be understated OR an artifact of the short session. **A POWERED lane collection
+(hundreds of ticks, ideally the 303M consciousness ckpt not the byte-LM) is the concrete next
+step, and the build hinges on it**: if powered lanes stay ~2-3 dim, LANE-BUS's production payoff
+is dead and the redesign must target WHY the lanes collapse (upstream), not the emit gate; if they
+open up, the build proceeds. The instrument (`--dump-lanes`) is now in place for that re-measure.
 
 ## Scope
 Spec only (DIRECTIONAL). S1 = $0 next. S2–S4 = production `core/` build (VERSION/G5, careful,

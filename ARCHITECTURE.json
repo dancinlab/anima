@@ -19375,6 +19375,13 @@
     "source": "sidecar/pool"
    },
    {
+    "id": "proxy-not-production-1",
+    "state": "pos-conv",
+    "value": "lab 프록시로 잰 다차원성/이득이 production 실측과 발산 — 프록시가 과대평가할 수 있다. LANE-BUS S1(V6_30): reflex-vs-composed 프록시 tension은 15 유효차원(V6_26)이고 다차원 gate가 스칼라를 z=3.38로 이겼으나(V6_29), production ci_lane_scores의 실제 15-lane 벡터를 --dump-lanes로 뽑아보니 유효차원 2.71·버려진 13 lane의 독립분산 8%뿐 = 붕괴가 잃는 게 적음. 프록시 tension ≠ production lane. build(S2) 진행을 프록시 z=3.38에만 근거해 하면 안 된다.",
+    "threshold": "engine 재설계/배선을 lab 프록시 신호로 정당화하기 전에, production이 실제로 계산하는 그 신호(여기선 ci_lane_scores lanes)를 계측(--dump-lanes 류)해 프록시와 같은 통계를 내는지 실측하라. 발산하면 프록시 결과는 방향성일 뿐 build 근거 아님. ⚠️ 이 S1 실측 자체가 underpowered(~12틱)일 수 있으니 build gate로 쓰기 전 powered 재측정(수백틱·목표 ckpt) 필수. de-risk는 build '전에' 돌린다.",
+    "source": "cli/chat.py"
+   },
+   {
     "id": "hypotheses-jsonl-4",
     "state": "pos-conv",
     "value": "n=2 seed 로 형식 비등가(TOST 계열) 주장 시도 — df=1 의 t배수 6.314 가 신뢰하한을 자연대역 아래로 밀어 효과가 커도 형식주장 실패",
