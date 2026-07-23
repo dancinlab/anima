@@ -8367,7 +8367,14 @@ def _gen_ctx_2afc_pairs(np, W, T, items, key_true, key_swap_from, label):
         ce_true[i] = _gen_ctx_cont_nll(np, W, items[i]["seed_true"], items[i]["cont"], T)
     wins = ties = npair = 0.0
     per_class = {}
-    for i, j in itertools.combinations(range(n), 2):
+    # PAIR CAP — the cross-scored loop is 2 forwards/pair; at n=100 the full O(n²) is ~9900 forwards
+    # (~10h at 303M CPU). Deterministically take every k-th discordant pair so a large trace stays
+    # tractable while the sample is unbiased (fixed stride, no RNG · sample-seed-invalid rule).
+    MAX_PAIRS = 1500
+    all_pairs = [(i, j) for i, j in itertools.combinations(range(n), 2)
+                 if key_true(items[i]) != key_true(items[j])]
+    stride = max(1, len(all_pairs) // MAX_PAIRS)
+    for i, j in all_pairs[::stride]:
         if key_true(items[i]) == key_true(items[j]):
             continue  # need a genuine contrast on the tested half
         # cross-scored: content i under seed i with j's tested half, and vice-versa
@@ -8544,11 +8551,36 @@ def gen_ctx_2afc_run(argv):
     # content is invariant we SKIP this gate (the direct NULL needs no positive control).
     instrument_dead = (abl_n > 0 and a_score <= 0.5 + m) and not content_invariant
 
+    # ── WINDOW GUARD: the scoring-side 2AFC/ablation only see the seed if it is inside the
+    # T-window while the content bytes are scored. With a right-aligned window over seed+content,
+    # the seed reaches the scored positions only when seed_len + content_len is not much over T.
+    # When most ticks have seed_len ≥ T (the seed is entirely truncated out), the scoring-side arms
+    # are STRUCTURALLY blind — every arm returns ties regardless of any real effect, so they carry
+    # NO evidence and must not be read as NULL. The generation-side content-invariance census stays
+    # valid (the daemon generated with the seed in-window for the first ~T−seed_len content bytes).
+    seed_lens = [len(it["seed_true"].encode("utf-8", "surrogateescape")) for it in items]
+    frac_seed_out = sum(1 for sl in seed_lens if sl >= T) / max(1, len(seed_lens))
+    scoring_window_blind = frac_seed_out >= 0.5
+    if scoring_window_blind:
+        print("  ⚠️ SCORING-WINDOW-BLIND: %.0f%% of ticks have seed_len ≥ T=%d — the seed is truncated"
+              % (100 * frac_seed_out, T))
+        print("     out of the scored positions, so the scoring-side 2AFC/ablation arms are")
+        print("     structurally tie-only and carry NO evidence (the generation-side content census")
+        print("     is the load-bearing signal). Anchor-ablation ctrl above (%.4f) is expected ~0.5." % a_score)
+
     # ── PRIMARY: phase-swap 2AFC ──
-    t0 = time.time()
-    p_score, p_np, p_ties, p_by_class = _gen_ctx_2afc_pairs(np, W, T, items, _phase_of, _swap_phase, "phase")
-    print("  PRIMARY phase-swap 2AFC = %.4f  (pairs=%d ties=%d · %.1fs)"
-          % (p_score, p_np, p_ties, time.time() - t0), flush=True)
+    # SHORT-CIRCUIT under content-invariance: with one fixed utterance the pairwise 2AFC is a
+    # formal 0.5 (every cross-score is between identical contents) and O(n²) forwards would burn
+    # ~10h at 303M for no new information — the census already decided the verdict.
+    if content_invariant:
+        p_score, p_np, p_ties, p_by_class = 0.5, 0, 0, {}
+        print("  PRIMARY phase-swap 2AFC = 0.5000 (formal · SKIPPED under content-invariance — "
+              "identical content ⇒ every pair is a tie; O(n²) 303M forwards not spent)", flush=True)
+    else:
+        t0 = time.time()
+        p_score, p_np, p_ties, p_by_class = _gen_ctx_2afc_pairs(np, W, T, items, _phase_of, _swap_phase, "phase")
+        print("  PRIMARY phase-swap 2AFC = %.4f  (pairs=%d ties=%d · %.1fs)"
+              % (p_score, p_np, p_ties, time.time() - t0), flush=True)
 
     # ── SECONDARY robustness: carrier (true phase vs length-matched neutral token) ──
     # fixed bijection phase-word → neutral out-of-vocab token of the same byte length.
