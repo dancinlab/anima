@@ -66,8 +66,30 @@ more native, tie-honest DV.
 - Every prereg gate exercised; instrument certified (store-mix bar: no-op byte-identical + guard
   proven able to fail + live control arm).
 
-## Next
+## VERDICT — 🔴 NULL (THEATER) · 303M pool fire (2026-07-23 · summer · engine-native)
 
-Pool (summer) · a real 303M `.clm` + a long chat session with `ANIMA_DECISION_TRACE` (so phase
-actually varies) → `--gen-ctx-2afc`. If the real session's phase is near-constant, the honest
-outcome is UNDECIDABLE (the 2-bit channel is <2 bits in practice) — itself a finding.
+`h9720_fresh3_s11.clm` (179MB, 303M-class) · `ANIMA_TICKS=200` monologue · `anima-py evaluate
+--gen-ctx-2afc`. **100 emit-ticks spanning two phase classes (SUSTAIN 76 · RESONANT 24) produced
+ONE byte-identical utterance** — content-invariance census = 1 distinct hash across all 100 ticks
+and both classes. The daemon collapses to a fixed attractor; the shipped 2-bit phase channel — and
+the whole A⇄G tension state — has ZERO effect on emitted content. Matches the toy QA at scale.
+
+**Honest scope (verdict-integrity — corrected from a first draft that quoted the toy's numbers):**
+the SCORING-side arms are window-defeated on this trace and are NOT evidence. Content is 80 bytes,
+seed (phase+anchor) is 52 bytes; with the T=64 right-aligned scoring window the whole seed falls
+outside the scored positions, so anchor-ablation came back **0.5000 (100/100 ties)** — not the 1.0
+the toy showed — and the phase-swap 2AFC is a formal 0.5 (also O(n²)≈10h at 303M, now short-
+circuited under content-invariance). The NULL rests ENTIRELY on the **generation-side** content-
+invariance census: the seed WAS in-window (52<64) while the daemon generated the first ~12 content
+bytes, so phase COULD have shaped them — and the content is byte-identical across SUSTAIN and
+RESONANT, so it did not.
+
+Tool hardened after the real run: SCORING-WINDOW-BLIND guard (warns when seed_len ≥ T for most
+ticks), phase-swap short-circuit under content-invariance, deterministic pair cap (1500).
+
+## Next (optional refinements, not blocking the verdict)
+
+- To certify the SCORING-side arms in general, score the phase-reachable content PREFIX (first
+  ~T−seed_len bytes) instead of the window-truncated whole.
+- A varying-anchor session (percept_source) or `--pc2-mouth on` is a SEPARATE measurement — the
+  one live content-side write authority (H_9575 PC2) was off here.
