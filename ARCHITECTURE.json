@@ -19476,6 +19476,12 @@
     "state": "pos-conv",
     "value": "근본재설계 STORE-SOURCE 발사 실제 303M verdict(V6_37): DIFFICULTY-AGAIN. py303_full(summer RTX5070 GPU-FIRED)서 --store-source-build 800프롬프트: 318 cue-paired words·636 episodes, difficulty TOST self_nll=1.148 vs other_nll=1.703 diff=-0.555 → NOT balanced → 사전등록 ABORT. 강한 모델의 자기-생성 SELF 텍스트가 자신에게 trivially 예측가능(NLL 1.148<<1.703)해 authorship 라벨이 소스에서 난이도와 얽힘(gap 0.555=trained57 0.109의 5배). ⟹ store가 authorship 날라도 그건 난이도(p7)이지 agency 아님. 빌더 $0 게이트가 train/eval spend 전 정확히 abort. R9(agency UNIDENT)+V6_33/34(입 difficulty-complete) 수렴확장: 실제 303M선 agency가 어떤 채널(입/store)로도 라우팅할 난이도-직교 라벨이 없음(라벨 자체가 p7). 파이프라인(codec/eval/train/build #4492/4494/4495/4496) 전부 landed+검증, 발사 인프라(summer landed 3파일 수동배치·GPU 93분)도 작동. 정직 scope=raw-label abort(match-first subset은 named follow-up, gap 0.555라 low-prior). 통과해도 source-memory이지 agency 아님.",
     "threshold": "faculty를 새 채널로 라우팅하기 전, 그 faculty 라벨이 소스에서 난이도-직교인지 실제-스케일 모델로 확인하라 — toy(trained57)선 gap 0.109로 matched 신호 살아남았지만(V6_35 +0.161) 실제 303M선 gap 0.555로 라벨이 p7 붕괴. 강한 생성모델일수록 자기-샘플이 자기예측 쉬워 SELF/OTHER authorship이 난이도 그림자."
+   },
+   {
+    "id": "pool-host-anima-py-clean-update-1",
+    "state": "pos-conv",
+    "value": "pool 호스트(summer/aiden)의 anima_py가 landed main보다 뒤처져(summer 0.20.158 vs landed 0.20.181) 새 CLI 플래그(--store-source) 없어, 발사 전 landed py파일 패키지 수동 scp frankenstein 우회했다(vendored-copy 패치=금지). 근본원인=pool 호스트 clean 업데이트 경로 부재 + anima-python 머지시 PyPI 자동발행 안 됨. 수정(GREEN): summer 정규 uninstall→GitHub main clean install(0.20.158→0.20.181·store_source refs 6·lane9 refs 3 검증).",
+    "threshold": "pool 발사 전 호스트 anima_py 버전 landed 대조. 뒤처지면 수동 scp 금지, 정규 재설치: pip install --user --force-reinstall --no-deps --break-system-packages git+https://github.com/dancinlab/anima.git@main (PEP668=--break-system-packages 필수). summer/aiden GitHub public 도달가능. 더 근본은 머지시 PyPI 자동발행 CI(별도)."
    }
   ]
  }
