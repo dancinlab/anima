@@ -19347,6 +19347,34 @@
     "source": "cli/train.py"
    },
    {
+    "id": "pool-1",
+    "state": "pos-conv",
+    "value": "summer 디스크 100% 포화 상태에서 scp 가 조각파일(18MB/523MB)을 남기고 실패 — 크기 확인 없이 ls 로 존재만 보면 정상으로 오독",
+    "threshold": "pool 호스트로 대용량 ckpt 보낼 때 df 선확인. scp 후 존재(ls)가 아니라 **바이트 크기 일치**로 검증하라 — 포화 디스크는 조각을 남기고 exit 만 실패한다. 측정 끝난 ckpt 는 즉시 정리(로컬+HF 이중보존이면 pool 사본은 일회용).",
+    "source": "sidecar/pool"
+   },
+   {
+    "id": "train-py-11",
+    "state": "pos-conv",
+    "value": "측정용 --out /tmp/tw_*.clm 이 .clm 뿐 아니라 3.9G .pt 사본까지 남겨 12회 누적에 45G 소모 — pool 디스크를 100% 채워 내 후속 scp 가 조각파일로 실패",
+    "threshold": "pool 에서 step-1 val_CE 같은 버림용 측정을 돌릴 때 --out 산출은 실행 직후 rm 하라(.clm + .pt 둘 다). 학습기는 요청 안 한 .pt 를 함께 쓴다. 반복 측정 = 회당 ~4G 누적 ⟹ 10여 회면 호스트가 찬다.",
+    "source": "cli/train.py"
+   },
+   {
+    "id": "pool-2",
+    "state": "pos-conv",
+    "value": "pool 디스크 포화 시 최대 레버는 .pt(torch 파생본) — summer 에서 98개 123.4G 회수",
+    "threshold": "정리 순서: ① .pt 중 짝 .clm 이 있는 것만 삭제(엔진이 .clm warm-start 를 지원하므로 .pt 는 설계상 파생본 · serialize.py 주석 근거) ② 짝 없는 고아 .pt 는 유일본일 수 있으니 보존 ③ .clm/.bin 은 정본이라 자동삭제 금지(오너 판단) ④ 삭제 前後 .clm 개수 대조로 오삭제 검증. 짝 판정 시 <x>.clm.resume.pt→<x>.clm 패턴 누락 주의(놓치면 회수량 30G 손해).",
+    "source": "sidecar/pool"
+   },
+   {
+    "id": "pool-3",
+    "state": "pos-conv",
+    "value": "pool 의 .bin 53.2G 를 '오래된 실험 산출물'로 보고 정리 대상으로 오인 — sha256 전수대조 결과 47개 중 45개가 HF 미백업 유일본",
+    "threshold": "pool 정리에서 정본 포맷(.clm/.bin)을 지우기 전에 sha256 를 HF 인덱스와 전수대조하라. 이름·경로·나이로 '오래됐으니 백업됐겠지' 추정 금지 — 실측하면 대부분 미백업이다. 대조 후 '완전 중복(동일 sha 2벌+HF 존재)'만 안전한 삭제 대상.",
+    "source": "sidecar/pool"
+   },
+   {
     "id": "hypotheses-jsonl-4",
     "state": "pos-conv",
     "value": "n=2 seed 로 형식 비등가(TOST 계열) 주장 시도 — df=1 의 t배수 6.314 가 신뢰하한을 자연대역 아래로 밀어 효과가 커도 형식주장 실패",
