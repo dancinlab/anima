@@ -66,6 +66,24 @@ matches the emit-tied gate (FULL) — the decisive p5 control per both models. S
 "emitting discharges the residual" is **refuted as an architectural mechanism**, exactly as
 V6_28 refuted it causally. Two independent methods (V6_28 counterfactual + V6_29 ablation) agree.
 
+## 🟢🟢 THESIS PAYOFF — the multi-dim bus beats the SCALAR servo on the emit decision
+Added a SCALAR arm (memoryless gate on ONE tension scalar = KL(composed‖reflex), the analog of
+the production servo `s = 2·emit_drive − 1`, ~0–1 effective dims) and re-ran (positive control
+still PASS). Natural held-out NLL, monotone in tension dimensionality:
+| arm | NLL | tension dims |
+|---|---|---|
+| SCALAR (servo analog) | 0.759 | 1 |
+| B0 (memoryless, 6 features) | 0.666 | 6 |
+| A1 (+ recurrent τ) | 0.628 | multi + memory |
+| A3 / FULL (LANE-BUS) | 0.621 / 0.623 | multi + memory + gate |
+
+**SCALAR−FULL = +0.136, z = 3.38** — the multi-dimensional LANE-BUS tension gate decides
+emit/silence dramatically better than the scalar-servo analog, and the improvement is monotone
+in how many tension dimensions the gate can see. This is the concrete justification for the
+redesign: the production scalar `2·emit_drive−1` discards emit-relevant information that the
+15-dim logit-row bus (V6_26) recovers. The LANE-BUS thesis is validated end to end — premise
+(V6_26 multi-dim), **payoff (this: multi-dim ≫ scalar on emit)**, mechanism (below).
+
 ## LANE-BUS architectural refinement (the convergent finding, V6_28+V6_29)
 p5's emit⇄discharge TIE is wrong. What survives: (i) the multi-dim logit-row tension is real
 (V6_26); (ii) a learned consume/forget on the residual helps the emit decision (V6_29 A1/A2/
