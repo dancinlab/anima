@@ -18759,8 +18759,18 @@ def store_source_build(argv):
                 bank.setdefault(w, []).append(nll)
     # cue-pairing: words present in BOTH banks → P(auth|cue)=0.5
     paired = sorted(set(self_ep) & set(other_ep))
+    # V6_37 match-first (preserves cue-pairing): a paired word is USABLE only if its SELF and OTHER
+    # spans are per-word difficulty-balanced (|nll_s - nll_o| <= eps). This is the only way to satisfy
+    # BOTH the address-leak kill (same word both sides) AND the difficulty-confound kill on a strong
+    # generator (where self-generated text is uniformly easier). If few words survive, the two
+    # constraints are structurally incompatible on this model = measured DIFFICULTY-AGAIN.
+    eps_pair = 0.15
+    pair_nll = [(w, float(np.mean(self_ep[w])), float(np.mean(other_ep[w]))) for w in paired]
+    bal_words = [w for (w, ns, no) in pair_nll if abs(ns - no) <= eps_pair]
+    use_words = bal_words if len(bal_words) >= 4 * n_slot else paired
+    matched = len(bal_words) >= 4 * n_slot
     episodes = []   # (cue, auth, nll)
-    for w in paired:
+    for w in use_words:
         episodes.append((w, 1, float(np.mean(self_ep[w]))))
         episodes.append((w, 0, float(np.mean(other_ep[w]))))
     n_self = sum(1 for e in episodes if e[1] == 1); n_other = len(episodes) - n_self
@@ -18771,7 +18781,11 @@ def store_source_build(argv):
     balanced = (abs(dnll) + 2 * se) < 0.15
     print("=== anima evaluate --store-source-build — V6_36 SRC manifest builder ===")
     print("base=%s corpus=%s prompts=%d paired_words=%d episodes=%d (self=%d other=%d)" %
-          (ckpt, corpus, len(sents), len(paired), len(episodes), n_self, n_other))
+          (ckpt, corpus, len(sents), len(use_words), len(episodes), n_self, n_other))
+    print("match-first: balanced-pair words (|nll_s-nll_o|<=%.2f) = %d / %d  -> %s" %
+          (eps_pair, len(bal_words), len(paired),
+           "MATCHED SUBSET (build from balanced pairs)" if matched else
+           "TOO FEW balanced pairs -> structural DIFFICULTY-AGAIN (cue-pairing ⊥ difficulty-match on this model)"))
     print("difficulty TOST: self_nll=%.3f other_nll=%.3f diff=%+.3f -> %s" %
           (s_nll.mean() if len(s_nll) else 0, o_nll.mean() if len(o_nll) else 0, dnll,
            "BALANCED" if balanced else "NOT balanced (ABORT: DIFFICULTY-AGAIN)"))
