@@ -70,10 +70,22 @@ The clean DV cannot be fielded on this corpus — two prereg gates fire before t
   (direct memorised co-occurrence) only wins **0.531 < 0.70** (V1 fail). A distractor equated
   on local fluency leaves the byte-LM almost no readable margin, even for memorised pairs.
 
-Trained 2AFC (pilot, underpowered): SEEN 0.531 (n700) · **BRIDGED 0.628 (n129)** · UNBRIDGED
-0.520 (n700). The raw BRIDGED−UNBRIDGED gap **+0.108** is the campaign's first hint of a
-bridge-SPECIFIC lift (vs V6_21's confounded +0.020) — but on n=129 with a failed positive
-control it is DIRECTIONAL-ONLY, not a verdict.
+Pilot 2AFC, trained / pedestal / **collapse-Δ**:
+| stratum | trained | pedestal | collapse-Δ |
+|---|---|---|---|
+| SEEN (n700) | 0.531 | 0.487 | +0.044 |
+| BRIDGED (n129) | 0.628 | 0.535 | **+0.093** |
+| UNBRIDGED (n700) | 0.520 | 0.493 | +0.027 |
+
+Raw BRIDGED−UNBRIDGED gap +0.108; **pedestal already shows +0.042** (BRIDGED items are
+slightly intrinsically easier — exactly why the DiD, not the raw gap, is the discriminator).
+**Difference-in-differences D = Δ_BRIDGED − Δ_UNBRIDGED = +0.066** — above the δ=.05 threshold
+AND it SURVIVES pedestal-differencing: training adds a bridge-specific lift beyond the
+item-difficulty artifact. This is the encouraging part vs V6_21 (whose gap vanished under any
+scrutiny). BUT at n=129, SE(D)≈0.067, z≈1.0, 95% CI ≈ [−0.07, +0.20] spans 0 → the point
+estimate is promising but **statistically DIRECTIONAL-ONLY**, and V1 (SEEN 0.531<0.70) makes it
+INVALID regardless. Paired per-item scoring (not available from the aggregate scorer) would
+tighten the CI; that + n≥300 is the V6_23 job.
 
 **What this decides**: the DV is now sound (it kills the co-occurrence tell — the whole
 signal collapsed toward chance once local fluency was equated, and only BRIDGED held a
