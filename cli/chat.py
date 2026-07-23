@@ -1665,6 +1665,10 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # the old clock daemon is preserved byte-identically at `--emit-gate clock` / ANIMA_EMIT_GATE=clock
     # (rollback + clock-lineage verdict reproducibility · H_9400 stays refuted for the clock lineage).
     _emit_gate = anima_flag_value(_cargv, "--emit-gate", "ANIMA_EMIT_GATE", "refractory")
+    # V6_30 · --dump-lanes <path>: append the full 15-lane consciousness vector + scalar emit_drive
+    # per tick, to measure how much ci_emit_drive's collapse to 0.5*(gws+lprec) discards (LANE-BUS
+    # S1). Default "" = OFF = byte-identical (write-only instrumentation, no control-flow change).
+    _dump_lanes = anima_flag_value(_cargv, "--dump-lanes", "ANIMA_DUMP_LANES", "")
     # H_9417 · C2 shuffle-margin CONTROL (refractory gate only). Default 0 = OFF. When 1, the gate's
     # g_recog reads the immune margin on a SEEDED BYTE-PERMUTATION of the candidate — byte multiset
     # (amplitude/statistics) preserved, sequence (content/recognition) destroyed. If emit-listening
@@ -2283,6 +2287,10 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         coh_lane = lanes[3]
         bal_lane = lanes[9]
         emit_drive = ci_emit_drive(lanes)
+        if _dump_lanes:
+            # V6_30 S1: full 15-lane vector + scalar emit_drive per tick (write-only; no branch on it)
+            with open(_dump_lanes, "a") as _dl:
+                _dl.write(",".join("%.6f" % float(v) for v in lanes) + ",%.6f\n" % float(emit_drive))
         # H_9351 — Ψ is DEFINED as the population fraction over the emit-drive threshold
         # (engine_cli ci_psi_balance -> ci_emit_decision: 0.5*(lanes[0]+lanes[4]) >= 0.5), and
         # those two lanes were the one thing the trace did NOT record. So Ψ could not be
