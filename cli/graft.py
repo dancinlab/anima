@@ -510,25 +510,66 @@ def _fit(a):
     return 0
 
 
-def _check(a):
-    """C-swap + ablation. swap: K states, sample each state's OWN continuation, cross-score, InfoNCE
-    bound + accuracy + permutation null + norm-matched noise. ablation: KL(ON||OFF) vs KL(NOISE||OFF)
-    — the GRAFT-causality discriminator (decorative signature = the two are equal)."""
-    W = dec.clm_load_weights(a.organ)
-    cl = W.get("clmg")
-    if cl is None:
-        sys.exit("[graft] --check needs a ckpt carrying a CLMG trailer (run `graft fit` first)")
-    organ = G.torch_organ(W)
-    rng = np.random.default_rng(a.seed)
+def _check_hf_setup(a):
+    """Reload an HF-organ bridge (the `.pt` saved by `graft fit --hf-model`) and reconstruct the
+    trained codes EXACTLY as _fit_hf did, so `graft check --hf-model` runs the same swap/ablation/
+    rotation-null body on a Mistral-class organ. The HF fit saves a torch bridge state, not a
+    CLMG-trailer `.clm`, so `_check`'s clm loader cannot read it — this is that missing branch. The
+    control arm `rotation_null` was unrunnable at 7B until here (that is why H_9939's fit logged
+    `rotation_null: 0`). Returns (organ, codes[list of [d] tensors], emb_rms, d)."""
+    st = torch.load(a.organ, map_location="cpu", weights_only=False)
+    if "bridge" not in st or st.get("hf_model") is None:
+        sys.exit(f"[graft] --hf-model check needs the .pt bridge from `graft fit --hf-model`: {a.organ}")
+    d, hidden = int(st["d"]), int(st["hidden"])
+    organ = HFOrgan(a.hf_model, load_4bit=a.load_4bit)
+    if organ.d != d:
+        sys.exit(f"[graft] organ d={organ.d} != bridge d={d} (wrong --hf-model for this bridge?)")
+    emb_rms = organ.embedding_rms()
+    bridge = G.GraftBridge(c_dim=G.C_DIM, h=hidden, d=d, gate_rho=float(st["gate_rho"]))
+    bridge.load_state_dict(st["bridge"])
+    bridge.eval()
+    torch.manual_seed(a.seed)
     pf = PF.pure_field_new()
     for _ in range(a.p1_steps):
         pf = PF.pure_field_step(pf, 0.0) or pf
     pf, states = _snapshots(pf, a.k, a.state_gap)
-    emb_rms = float(np.sqrt(np.mean(np.asarray(W["embed"], np.float64) ** 2)))
-    codes = [torch.tensor(G.gate_offset(cl, c, emb_rms) * a.gate_scale) for c in states]
+    Cst = torch.tensor(np.stack(states), dtype=torch.float32)
+    with torch.no_grad():                                            # codes = _fit_hf's exact form
+        codes_t = bridge(Cst) * float(st["gate_strength"]) * emb_rms * a.gate_scale
+    codes = [codes_t[i].detach() for i in range(a.k)]
+    print(f"[graft] HF organ {a.hf_model} · d={d} · reloaded bridge (hidden={hidden}, "
+          f"gate_strength={st['gate_strength']}, emb_rms={emb_rms:.4f}, stage={st.get('stage')}) · "
+          f"K={a.k} codes RMS={float(np.sqrt((codes_t.numpy()**2).mean())):.5f}")
+    return organ, codes, emb_rms, d
+
+
+def _check(a):
+    """C-swap + ablation. swap: K states, sample each state's OWN continuation, cross-score, InfoNCE
+    bound + accuracy + permutation null + norm-matched noise. ablation: KL(ON||OFF) vs KL(NOISE||OFF)
+    — the GRAFT-causality discriminator (decorative signature = the two are equal)."""
+    rng = np.random.default_rng(a.seed)
+    if a.hf_model:
+        organ, codes, emb_rms, d = _check_hf_setup(a)
+    else:
+        W = dec.clm_load_weights(a.organ)
+        cl = W.get("clmg")
+        if cl is None:
+            sys.exit("[graft] --check needs a ckpt carrying a CLMG trailer (run `graft fit` first)")
+        organ = G.torch_organ(W)
+        pf = PF.pure_field_new()
+        for _ in range(a.p1_steps):
+            pf = PF.pure_field_step(pf, 0.0) or pf
+        pf, states = _snapshots(pf, a.k, a.state_gap)
+        emb_rms = float(np.sqrt(np.mean(np.asarray(W["embed"], np.float64) ** 2)))
+        codes = [torch.tensor(G.gate_offset(cl, c, emb_rms) * a.gate_scale) for c in states]
+        d = int(W["d"])
     if a.gate_scale != 1.0:
         print(f"[graft] gate-scale ×{a.gate_scale} applied to codes (amplitude-stability probe)")
-    probes = [p.encode("ascii") for p in ("the ", "a ", "when ", "in ", "we ", "it ", "there ", "one ")]
+    _probe_texts = ("the ", "a ", "when ", "in ", "we ", "it ", "there ", "one ")
+    # HF organ = subword tokenizer, so probes must be ENCODED (byte-values as token-ids would be
+    # meaningless to Mistral); the byte-LM organ takes ascii bytes. `[int(b) for b in p]` works for both.
+    probes = [organ.encode(p) for p in _probe_texts] if a.hf_model \
+        else [p.encode("ascii") for p in _probe_texts]
     K = a.k
 
     # sample each state's OWN continuation, then cross-score every (state i, continuation j)
@@ -592,8 +633,7 @@ def _check(a):
     # read on a FIXED held-out carrier (base-organ sampled, code-independent) — no self-sampling — so
     # the reading is pure code-vs-organ alignment, not the diagonal artifact of H_9933/H_9935.
     if a.rotation_null > 0:
-        d = int(W["d"])
-        C = np.stack([c.numpy() for c in codes])                          # [K, d] trained offsets
+        C = np.stack([c.numpy() for c in codes])                          # [K, d] trained offsets (d in scope)
         base_ids = [int(b) for b in probes[0]]
         carrier = _sample_carrier(organ, base_ids, None, a.cont_len, rng=rng)  # code-INDEPENDENT
         fx = torch.tensor(carrier, dtype=torch.long)
@@ -608,8 +648,11 @@ def _check(a):
         mi_tr = _mi_of([c.numpy() for c in codes])
         null = []
         for _ in range(a.rotation_null):
-            R = G.random_orthogonal(d, rng)
-            null.append(_mi_of([G.rotate_offsets(C, R)[i] for i in range(K)]))
+            # thin-SVD rotation null scales to d=4096 (Mistral hidden); the full-d QR is O(d^3),
+            # fine on the toy (d=64) but a 4096×4096 QR per draw on the HF organ. Both are D-exact.
+            rot = (G.rotation_null_offsets(C, rng) if a.hf_model
+                   else G.rotate_offsets(C, G.random_orthogonal(d, rng)))
+            null.append(_mi_of([rot[i] for i in range(K)]))
         null_sorted = sorted(null)
         q99 = null_sorted[min(len(null) - 1, int(round(0.99 * (len(null) - 1))))]
         q95 = null_sorted[min(len(null) - 1, int(round(0.95 * (len(null) - 1))))]
