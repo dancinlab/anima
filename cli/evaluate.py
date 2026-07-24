@@ -3627,7 +3627,8 @@ def iit4_recurrent_lane_run(argv):
     if not W.get("ok"):
         print("evaluate --iit4-recurrent-lane: %s is not clm-decodable" % ckpt, file=sys.stderr, flush=True)
         return 2
-    emb = np.asarray(W["embed"], dtype=np.float64)          # [V, d]
+    _emb = W["embed"]                                        # [V, d] (cupy on a CUDA host, else numpy)
+    emb = np.asarray(_emb.get() if hasattr(_emb, "get") else _emb, dtype=np.float64)
     d = int(emb.shape[1])
     raw = open(ckpt, "rb").read()
     off = raw.rfind(RL.RCRL_MAGIC)
