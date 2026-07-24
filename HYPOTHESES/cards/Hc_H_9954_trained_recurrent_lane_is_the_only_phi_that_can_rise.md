@@ -39,6 +39,7 @@
 - **양성통제:** H_9942 의 손제작 XOR n=3 TPM (Φ≈2.25 기지값).
 - **통제 1:** 셀별 transition entropy·occupancy 를 맞춘 yoked-independent 셀.
 - **통제 2:** `(S_t,S_{t+1})` pairing shuffle — 셀 수·분산·주변분포 보존, 인과 전이만 제거.
+- **통제 3 (필수 · H_9960 실측 강화):** **gradient-step-matched shuffled-label** arm — 같은 최적화 스텝 수를 가짜 라벨로 밟은 통제. H_9960 토이서 shuffled-label 도 추출 Φ 를 untrained 보다 올렸다(최적화-유발 결합=크기 혼입 재등장). 이 arm 없이는 최적화 결합을 학습된 통합으로 오인한다.
 - **ABORT:** 받침대≠0 · 양성통제 무반응 · Φ 가 파라미터 수에 단조 ⟹ INSTRUMENT-DEAD, 하류 판독 금지.
 
 ## 🟢 선행 계기-인증 게이트 = PASS ([[H_9959]] · 2026-07-24)
