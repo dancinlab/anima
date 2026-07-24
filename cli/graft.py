@@ -293,7 +293,9 @@ def _check(a):
         pf = PF.pure_field_step(pf, 0.0) or pf
     pf, states = _snapshots(pf, a.k, a.state_gap)
     emb_rms = float(np.sqrt(np.mean(np.asarray(W["embed"], np.float64) ** 2)))
-    codes = [torch.tensor(G.gate_offset(cl, c, emb_rms)) for c in states]
+    codes = [torch.tensor(G.gate_offset(cl, c, emb_rms) * a.gate_scale) for c in states]
+    if a.gate_scale != 1.0:
+        print(f"[graft] gate-scale ×{a.gate_scale} applied to codes (amplitude-stability probe)")
     probes = [p.encode("ascii") for p in ("the ", "a ", "when ", "in ", "we ", "it ", "there ", "one ")]
     K = a.k
 
@@ -547,6 +549,10 @@ def main():
                          "follow-on). Absent = original self-loop fit (kept for old-vs-new Δswitch).")
     ap.add_argument("--carrier-k", type=int, default=4, dest="carrier_k",
                     help="fixed carrier windows scored per step (all N states on the SAME windows)")
+    ap.add_argument("--gate-scale", type=float, default=1.0, dest="gate_scale",
+                    help="check-time multiplier on the trained offsets — amplitude-stability probe: "
+                         "true direction-coding leaves the rotation-null z stable across ×0.5/×1/×2 "
+                         "(direction is scale-invariant), a displacement artifact tracks amplitude")
     ap.add_argument("--rotation-null", type=int, default=0, dest="rotation_null",
                     help="rotation-null draws: rigidly rotate the trained offsets (norm+Gram+mean, "
                          "hence displacement D, preserved) and read MI on a fixed held-out carrier — "

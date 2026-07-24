@@ -36,6 +36,23 @@ new-fit 의 val lift 는 **학습에 안 쓴 disjoint 검증 bank(64 windows)** 
 - 확정: GRAFT 의 학습 신호는 self-loop 오염에 견고 — 오염은 H_9933/9935/9936 처럼 **측정**을 무너뜨렸으나
   gradient 는 유용한 방향으로도 흘렀다. 측정은 고정 carrier(H_9937)로 이미 해결됐고, 학습은 애초에 괜찮았다.
 
+
+## 부록 — rotation-null z 의 진폭 안정성 (신설 `--gate-scale` · Fable (e) 잔여 CLOSED)
+진짜 방향코딩이면 rotation-null z 가 진폭에 불변이어야 한다(방향은 스케일 불변). check-time 게이트
+스케일 `--gate-scale` 을 신설해 학습본을 ×0.5/×1/×2 로 재측정:
+
+| gate-scale | seed1 z | seed2 z | seed3 z | 판정 |
+|---|---|---|---|---|
+| ×0.5 | +34.6 | +41.8 | +39.2 | PASS>q99 |
+| ×1.0 | +31.1 | +32.7 | +32.9 | PASS>q99 |
+| ×2.0 | +19.6 | +21.6 | +25.9 | PASS>q99 |
+
+z 는 **완전 불변은 아니고** ×2 에서 압축된다(35→20, 약 40% 감소) — 고진폭 softmax 포화가 회전 null 의
+MI 도 키우기 때문(학습본 MI 0.058→0.564, null MI 0.005→0.082 로 둘 다 진폭 추종). 그러나 **모든 스케일에서
+학습본이 회전 null 을 z≥19 로 압도(PASS>q99 · 3/3×3)**. ⟹ 학습된 방향 정렬은 진폭 전반에서 강건(우위
+실재), z 의 *크기*만 고진폭서 압축. 정직한 그림 = 주(主) 방향코딩 + 고진폭 잔여 진폭성분이지 순수 불변 아님.
+로그 `~/.fire-recover/graft_toy_3seed/amplitude_stability.log`.
+
 ## 다음
 ① py303(TERMINAL 은 거기서만) — 고정 carrier fit + rotation-null check 로. ② rotation-null 을 `graft check`
 기본 패널로 승격, self-loop swap 은 완전 폐기. ③ 진폭 조작(gs ×0.5/×2)에 rotation-null z 안정성 확인
