@@ -402,3 +402,31 @@ def mixture_mi(logp_states):
     p = logp_states.exp()
     mi = (p * (logp_states - logp_mix.unsqueeze(0))).sum(-1).mean()
     return mi, logp_mix
+
+
+# --------------------------------------------------------------------------- #
+# (e) ROTATION NULL — the control an isotropic never-trained gate cannot supply.
+#   A random-init coupling shares the trained gate's structural bounds but NOT its per-state
+#   geometry. The rotation null does: it applies ONE random orthogonal R (in embedding space)
+#   to the N trained offset vectors, which preserves every vector's norm, the full Gram matrix
+#   (pairwise inner products = the state-to-state angles the training produced), AND the mean
+#   (mean-centering survives), while destroying the alignment between that geometry and the
+#   frozen organ's sensitive directions. So trained-vs-rotation isolates "did the C->language
+#   MAPPING land on directions the organ reads" from "did training merely build some geometry".
+#   H_9936: the isotropic null already put trained BELOW its q99 at matched displacement; the
+#   rotation null is the stronger, displacement-EXACT control (D is rotation-invariant).
+# --------------------------------------------------------------------------- #
+def random_orthogonal(d, rng):
+    """A Haar-ish random orthogonal [d, d] via QR of a Gaussian, with sign-normalized R diagonal
+    (so Q is a proper deterministic function of the draw). Norm/Gram/mean preserving by
+    construction: (gR^T) has the same norms and inner products as g, and mean(g R^T)=mean(g) R^T."""
+    a = rng.standard_normal((d, d))
+    q, r = np.linalg.qr(a)
+    q = q * np.sign(np.diag(r))
+    return q.astype(np.float32)
+
+
+def rotate_offsets(codes, R):
+    """codes: [N, d] final injected offsets (mean-centered, RMS-fixed). Returns codes @ R^T — the
+    SAME N vectors rotated rigidly, so realized displacement D is identical and only direction moves."""
+    return (np.asarray(codes, np.float32) @ np.asarray(R, np.float32).T).astype(np.float32)

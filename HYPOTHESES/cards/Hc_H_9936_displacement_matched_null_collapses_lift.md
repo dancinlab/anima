@@ -1,6 +1,9 @@
 # H_9936 · 실현-변위(D)로 맞추면 GRAFT 의 우위가 무너진다 — 판정점서 학습본이 무작위 null q99 밑
 
 **한 줄:** 진폭 축을 `gate_strength` 가 아니라 **실현 변위 `D ≡ mean_i KL(p_i‖p_base) = MI + L_common`**
+
+> ⚠️ **정정(H_9937)**: 아래 등방-null 판정은 fit 의 **self-loop carrier** 로 잰 MI 위에 서 있었다. 같은 것을 **고정 held-out carrier**(self-sampling 없음)로 재면 학습본이 등방 null 을 10~12배, 회전 null 을 z=+28~+38 로 압도한다(PASS>q99). ⟹ '우위=변위 매개, 판정점서 null 밑'은 self-sampling 측정 artifact다. 이 카드의 유효분: gs-매칭 lift 가 진폭교란이라는 것, D=MI+L_common 프레임, η. 뒤집히는 건 등방-null 판정 방향뿐.
+
 (Fable·Sol 공통 지목)로 잡고 같은 D 에서 학습본을 **149-뽑기 학습 0회 null 앙상블**과 비교하면,
 판정점 gs=0.1 에서 학습본 MI 가 null q99 를 **밑돈다**(−0.047/−0.046/−0.050 · 3/3 FAIL). 같은 gs 로
 잰 lift +0.19~+0.25(z=+20~+26)는 순전히 진폭 교란이었다.
