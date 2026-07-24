@@ -77,6 +77,32 @@ class FieldLoop:
         """The trainable field-loop params to hand the optimizer (bridge + gamma)."""
         return list(self.bridge.parameters()) + [self.gamma]
 
+    def save(self, path):
+        """Persist the TRAINED coupling (bridge + gamma + config) as a torch sidecar next to the .clm.
+        The .clm holds only the trunk; the eval (Delta_collapse / sever / rotation / FORM) needs this
+        to reconstruct the field->language mapping."""
+        self.torch.save(
+            {"bridge": {k: v.detach().cpu() for k, v in self.bridge.state_dict().items()},
+             "gamma": float(self.gamma.detach()), "c_dim": self.G.C_DIM,
+             "hidden": int(self.bridge.l1.out_features), "d": self.d,
+             "gate_rho": float(self.bridge.gate_rho), "arm": self.arm,
+             "leaky": self.leaky, "drive_gain": self.drive_gain}, path)
+
+    @staticmethod
+    def load(path, batch_rows, device="cpu", seed=0):
+        """Reconstruct a FieldLoop from a save() sidecar (for eval). batch_rows = the K documents /
+        rows the eval will run in parallel; the field state itself is re-seeded fresh (the trained
+        thing is the bridge+gamma, not the transient field)."""
+        import torch
+        st = torch.load(path, map_location="cpu", weights_only=False)
+        fl = FieldLoop(batch_rows, int(st["d"]), arm=st["arm"], gate_rho=float(st["gate_rho"]),
+                       hidden=int(st["hidden"]), seed=seed,
+                       leaky=float(st["leaky"]), drive_gain=float(st["drive_gain"]))
+        fl.bridge.load_state_dict(st["bridge"])
+        with torch.no_grad():
+            fl.gamma.fill_(float(st["gamma"]))
+        return fl.to(device)
+
     def _C(self):
         return self.torch.tensor(
             np.stack([self.G.graft_c_state(p) for p in self.pf]),
@@ -300,7 +326,22 @@ def _smoke():
     print(f"(5) e2e tiny-LM: purefield16 CE {hist[0]:.3f}->{hist[-1]:.3f} gamma={float(fl_e.gamma.detach()):+.5f}"
           f" · off gamma=0.0 (true no-op)  OK")
 
-    print("\nFIELD-LOOP SMOKE: ALL PASS (mechanism + end-to-end wiring — cli/train.py --field-loop dispatch is next)")
+    # (6) save/load roundtrip — the trained bridge+gamma survive a sidecar write/read (eval needs this)
+    import tempfile
+    import os as _os
+    with torch.no_grad():
+        fl_e.gamma.fill_(0.1234)
+    p = _os.path.join(tempfile.gettempdir(), "fl_roundtrip.pt")
+    fl_e.save(p)
+    fl_r = FieldLoop.load(p, batch_rows=8, device="cpu")
+    assert abs(float(fl_r.gamma.detach()) - 0.1234) < 1e-6, "gamma must survive save/load"
+    b0 = list(fl_e.bridge.state_dict().values())[0]
+    b1 = fl_r.bridge.state_dict()[list(fl_e.bridge.state_dict().keys())[0]]
+    assert torch.allclose(b0.cpu(), b1.cpu()), "bridge weights must survive save/load"
+    _os.remove(p)
+    print("(6) save/load: gamma+bridge roundtrip byte-faithful  OK")
+
+    print("\nFIELD-LOOP SMOKE: ALL PASS (mechanism + e2e wiring + persistence — eval harness is next)")
     return 0
 
 

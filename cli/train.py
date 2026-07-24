@@ -4492,7 +4492,8 @@ def main():
                                        log=lambda s: p0(s, flush=True))
         if a.out:
             _write_clm(a.out)
-            p0(f"[field-loop] wrote {a.out} · arm={a.field_arm} "
+            fl.save(a.out + ".fl.pt")                     # the trained bridge+gamma the eval needs
+            p0(f"[field-loop] wrote {a.out} (+{a.out}.fl.pt) · arm={a.field_arm} "
                f"gamma={float(fl.gamma.detach()):+.5f} final_CE={hist[-1]:.4f}", flush=True)
         return 0
 
