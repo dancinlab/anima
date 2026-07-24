@@ -3320,6 +3320,11 @@ def main():
                          "Control = --objective ce_marginal_shuffled (H_9960).")
     ap.add_argument("--recurrent-lane-seed", type=int, default=9954,
                     help="H_9954: init seed for the recurrent lane params (arm-invariant).")
+    ap.add_argument("--recurrent-lane-freeze-trunk", action="store_true",
+                    help="H_9954 growth-fork: freeze the whole trunk (requires_grad=False) and train "
+                         "ONLY rln.* — distinct from --freeze-trunk (the CLMS BOLT arm). Cuts trunk "
+                         "grads + Adam state so a 303M fork fits a 12GB card; isolates the lane's "
+                         "contribution. Needs --recurrent-lane gru3-bidir.")
     ap.add_argument("--trunk-norm", choices=["global", "position"], default="global",
                     help="H_9814: trunk normalization statistics. global = legacy GroupNorm over "
                          "(C,T) — measurably NON-CAUSAL (H_9813: masking input bytes AFTER t moved "
@@ -4040,6 +4045,19 @@ def main():
         model.to(device)
         p0(f"  [--init] {report}", flush=True)
 
+    # H_9954 growth-fork: freeze the trunk, train only the recurrent lane. A frozen trunk still
+    # backprops CE to the lane residual (the residual is grad-bearing; freezing skips trunk PARAM
+    # grads + Adam state, not gradient flow through the trunk's ops). This is what makes a 303M fork
+    # fit a 12GB card AND isolates the lane's contribution. `--freeze-trunk` (the CLMS BOLT arm) is a
+    # different flag and would freeze rln.* — do not reuse it.
+    if getattr(a, "recurrent_lane_freeze_trunk", False):
+        if getattr(model, "rln", None) is None:
+            raise SystemExit("--recurrent-lane-freeze-trunk needs --recurrent-lane gru3-bidir")
+        for _n, _prm in model.named_parameters():
+            _prm.requires_grad_(_n.startswith("rln."))
+        _ntrain = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        p0(f"  recurrent-lane: TRUNK FROZEN — only rln.* trains ({_ntrain} params)", flush=True)
+
     # ── H_9803 branch-latent ideation fan: attach the lane BEFORE the optimizer collects params
     #    (registering it on `model` puts it in model.parameters(), which the shell/opt assertion
     #    below requires). Lane off ⇒ the attribute is never set ⇒ byte-identical golden path.
@@ -4070,9 +4088,11 @@ def main():
            f"n_bucket={model.tfld.n_bucket} lam0={float(model.tfld.lam.detach()):.4f} "
            f"· WRITE-SIDE (pre-trunk embedding residual)", flush=True)
 
-    params = (list(model.parameters())
+    params = ([p for p in model.parameters() if p.requires_grad]
               + (list(jamo_head.parameters()) if jamo_head else [])
               + (list(objfn.parameters()) if obj_is_module else []))   # H_1640 aux-head params
+    # H_9954 --recurrent-lane-freeze-trunk filters model.parameters() to the trainable lane only;
+    # with no freeze this is every param (requires_grad defaults True), so the golden path is unchanged.
     if obj_is_module:
         n_obj = sum(p.numel() for p in objfn.parameters())
         p0(f"  objective '{a.objective}' aux params: {n_obj} "
@@ -4105,9 +4125,11 @@ def main():
         print("  comp-lane: ON · d=%d V=%d weight=%.3f (CE detached from the trunk)"
               % (_d_pen, V, shell.comp_w), flush=True)
         _comp_probe_panel = a.comp_probe_panel
-    # §10.1 defense — the shell's param set MUST equal the optimizer's (aux heads covered).
-    assert {id(p) for p in shell.parameters()} == {id(p) for p in params}, \
-        "TrainShell params != optimizer params — an aux head would never be allreduced."
+    # §10.1 defense — the shell's TRAINABLE param set MUST equal the optimizer's (aux heads covered).
+    # H_9954: --recurrent-lane-freeze-trunk sets the trunk requires_grad=False, so compare only
+    # grad-bearing params (a frozen param is deliberately absent from the optimizer, not a lost aux head).
+    assert {id(p) for p in shell.parameters() if p.requires_grad} == {id(p) for p in params}, \
+        "TrainShell trainable params != optimizer params — an aux head would never be allreduced."
     if ddp_on:
         # §4/§10.8 — CLMConvMoE/ByteGPT/SLW carry NO batch-stat buffers, and mito.active_mask
         # is an intentionally-unregistered per-rank tensor; assert zero buffers so a FUTURE
