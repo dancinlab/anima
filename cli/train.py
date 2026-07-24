@@ -3616,10 +3616,13 @@ def main():
                          "train-time replacement for GRAFT). Reuses the loaded/built model + a "
                          "contiguous-stream loop with per-row field carry + write-back. v1 CLM-only, "
                          "single-process.")
-    ap.add_argument("--field-arm", choices=["off", "purefield16", "purefield16-yoked"],
+    ap.add_argument("--field-arm", choices=["off", "purefield16", "purefield16-yoked",
+                                            "integrator16", "integrator16-yoked"],
                     default="purefield16", dest="field_arm",
                     help="field-loop arm: off (no residual = ignore + fluency baseline) · purefield16 "
-                         "(live loop) · purefield16-yoked (A/G deranged across rows = fancy-seed control)")
+                         "(live loop) · purefield16-yoked (A/G deranged across rows = fancy-seed control) · "
+                         "integrator16[-yoked] (H_9957 sibling: read the shared H_9607 integral I through "
+                         "fixed random features, no PureField cell — is the channel just the scalar integrator?)")
     ap.add_argument("--field-block", type=int, default=256, dest="field_block",
                     help="contiguous block length (bytes) per field-loop step")
     ap.add_argument("--field-b", type=int, default=8, dest="field_b",
