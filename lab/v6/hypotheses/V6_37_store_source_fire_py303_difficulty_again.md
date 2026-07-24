@@ -27,16 +27,25 @@ is itself a difficulty shadow on the strong model (self-generated text is trivia
 Converges hard with frontier R9 (agency UNIDENT): agency reads as absent because there is no
 difficulty-orthogonal agency signal to instrument — on the real model the very label is p7.
 
-## Honest scope — the match-first follow-up (named, not skipped)
-The builder aborts on the RAW paired-episode TOST. Fable's blueprint specified a difficulty-MATCH-first
-step (bin by NLL decile, subsample SELF/OTHER to equal counts, THEN TOST the matched pool) — my builder
-TOSTs the raw pool (stricter). So the formal open question is whether a difficulty-MATCHED SUBSET of
-py303 episodes still carries residual authorship (V6_35 found matched-ΔAUC +0.161 on trained57). This
-is NOT closed here. But it is LOW-PRIOR: the raw gap (0.555) is 5× trained57's (0.109), where even the
-matched signal was a borderline +0.161; on py303 the SELF/OTHER NLL distributions barely overlap, so a
-matched subset would be small, unrepresentative, and near the confound floor. The match-first re-run
-(implement decile-subsample in `store_source_build` before the TOST → if matched-balanced, train
-seed 7/11 → eval + value-permute + nulls) is the named next step if the store route is pursued further.
+## The match-first follow-up — RUN, and it CLOSES the edge (measured, not argued)
+The first build aborted on the RAW paired-episode TOST, leaving one honest open edge: does a
+difficulty-MATCHED subset still carry authorship (V6_35 found matched-ΔAUC +0.161 on trained57)?
+`--store-source-build` was extended with **match-first that PRESERVES cue-pairing** — a paired word is
+usable only if its SELF and OTHER spans are per-word difficulty-balanced (|nll_s − nll_o| <= 0.15),
+the only construction satisfying BOTH the address-leak kill (same word both sides) and the
+difficulty-confound kill — and re-fired on py303 (summer GPU, 400 prompts, seed 7):
+
+| | measured |
+|---|---|
+| paired words | 142 (284 episodes, 142 self / 142 other) |
+| **balanced-pair words (|nll_s−nll_o| ≤ 0.15)** | **10 / 142 = 7%** — too few for even ONE 8-slot ring set (needs 4·n_slot = 32) |
+| raw TOST | self_nll 1.147 vs other_nll 1.750, diff −0.603 (replicates the 800-prompt −0.555) |
+
+⟹ **STRUCTURAL DIFFICULTY-AGAIN, measured.** On a strong generator the two constraints are mutually
+incompatible: cue-pairing forces an easy-SELF span to be paired with a hard-OTHER span for the SAME
+word (self-generated text is uniformly more self-predictable), so difficulty-matching can only keep
+the thin 7% overlap band — not enough to build a manifest. The edge flagged in the first pass is
+therefore CLOSED by measurement, not by the structural argument alone.
 
 ## Scope + infra
 Real 303M `py303_full.clm` (summer RTX 5070, ~93 min GPU build, sequential SELF sampling), engine-native
