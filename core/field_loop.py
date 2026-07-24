@@ -410,8 +410,103 @@ def _smoke():
     return 0
 
 
+def _falsifier(reps=200, seed0=0, jitter_sd=0.1, g_const=0.2, drive_gain=-0.6,
+               n_key_blocks=2, sites=3, filler_per_site=2, filler_ce=0.5,
+               sep_ratio_req=5.0, decode_req=0.95):
+    """$0 INSTRUMENT-DESIGN falsifier for the `fieldctl` DIFFICULTY-KEY positive control (H_9957,
+    fable design). NO trunk, NO GPU, NO corpus: it exercises ONLY the landed FieldLoop physics
+    (H_9607 scalar write-back `s=exp(-CE)-G` -> leaky integral -> pure_field_step, read out by
+    graft_c_state) to decide the single load-bearing question the corpus rests on:
+
+      Does a 16-D fixed-physics field, driven by ONE scalar per block, keep K difficulty-coded drive
+      histories SEPARABLE across the ~n_key+filler out-of-window blocks a payload site sits behind?
+
+    The key is coded as block DIFFICULTY (a CE level in the KEY blocks), because the write-back is a
+    scalar channel and is BLIND to content-coded keys (that is exactly why the earlier content-key
+    control read gamma~0 / delta~0). During KEY blocks each row (=key) gets its own CE target; during
+    all later FILLER/PAYLOAD blocks every row gets the SAME constant filler CE, so the field must
+    RETAIN the key difference with no further help. We snapshot the per-row C-state at every payload
+    block over `reps` jittered repetitions and, at the DEEPEST (hardest) payload site, require
+    between-key/within-key separation >= sep_ratio_req AND held-out nearest-centroid key-decode
+    >= decode_req. Reported for K=4 (the design) and K=2 (the minimal floor).
+
+    Verdict: if even K=2 fails at the deepest site, the H_9607 scalar write-back STRUCTURALLY cannot
+    carry one bit out-of-window -> the 303M fieldctl fire must NOT be lit until the write-back is
+    widened (the pre-explained null, paid for at $0). This is instrument design, not a measurement/
+    verdict/cemented number: it produces no faculty claim and never touches a .clm.
+    """
+    import numpy as np
+    payload_blocks = [n_key_blocks + s * (filler_per_site + 1) + filler_per_site for s in range(sites)]
+    n_blocks = n_key_blocks + sites * (filler_per_site + 1)
+
+    def _run(K, ce_targets):
+        rng = np.random.default_rng(seed0)
+        ce_targets = np.asarray(ce_targets[:K], float)
+        C = {pb: [] for pb in payload_blocks}                    # pb -> [reps] of [K, Cdim]
+        for _ in range(reps):
+            fl = FieldLoop(K, d=64, arm="purefield16", seed=int(rng.integers(1 << 31)),
+                           drive_gain=drive_gain)
+            for b in range(n_blocks):
+                base = ce_targets if b < n_key_blocks else np.full(K, filler_ce)
+                ce = np.clip(base + rng.normal(0, jitter_sd, K), 1e-3, None)
+                fl.writeback(ce, np.full(K, g_const))
+                if b in payload_blocks:
+                    C[b].append(np.stack([fl.G.graft_c_state(p) for p in fl.pf]))
+        out = {}
+        for pb in payload_blocks:
+            arr = np.asarray(C[pb])                              # [reps, K, Cdim]
+            X = arr.reshape(-1, arr.shape[-1])                   # [reps*K, Cdim]
+            y = np.tile(np.arange(K), reps)
+            mu, sd = X.mean(0), X.std(0) + 1e-9
+            Xz = (X - mu) / sd                                   # z-score per dim (no dim dominates)
+            # held-out nearest-centroid decode: fit centroids on first half of reps, test on second
+            tr = np.tile(np.arange(reps) < reps // 2, K).reshape(K, reps).T.reshape(-1)
+            cents = np.stack([Xz[tr & (y == k)].mean(0) for k in range(K)])   # [K, Cdim]
+            te = ~tr
+            d2 = ((Xz[te][:, None, :] - cents[None]) ** 2).sum(-1)            # [n_te, K]
+            acc = float((d2.argmin(1) == y[te]).mean())
+            # separation ratio: between-centroid dist / within-key spread (on full z-scored set)
+            allc = np.stack([Xz[y == k].mean(0) for k in range(K)])
+            between = np.mean([np.linalg.norm(allc[i] - allc[j])
+                               for i in range(K) for j in range(i + 1, K)])
+            within = np.mean([np.linalg.norm(Xz[y == k] - allc[k], axis=1).mean() for k in range(K)])
+            out[pb] = {"decode_acc": acc, "sep_ratio": float(between / (within + 1e-9)),
+                       "depth_blocks": pb - (n_key_blocks - 1)}
+        return out
+
+    configs = [("K4", 4, (0.15, 0.8, 1.9, 3.9)), ("K2", 2, (0.15, 3.9))]
+    deepest = payload_blocks[-1]
+    print(f"FIELD-LOOP $0 FALSIFIER (fieldctl difficulty-key separability · reps={reps} · "
+          f"payload blocks {payload_blocks} · gate: deepest site sep>={sep_ratio_req} & "
+          f"decode>={decode_req})\n")
+    verdicts = {}
+    for name, K, tgt in configs:
+        res = _run(K, tgt)
+        print(f"[{name}] CE-targets={tgt}")
+        for pb in payload_blocks:
+            r = res[pb]
+            print(f"   payload@block{pb} (+{r['depth_blocks']} blocks past key): "
+                  f"sep_ratio={r['sep_ratio']:.2f}  decode_acc={r['decode_acc']:.3f} "
+                  f"(chance={1.0 / K:.3f})")
+        d = res[deepest]
+        ok = (d["sep_ratio"] >= sep_ratio_req) and (d["decode_acc"] >= decode_req)
+        verdicts[name] = ok
+        print(f"   -> deepest-site gate: {'PASS' if ok else 'FAIL'}\n")
+    floor_ok = verdicts.get("K2", False)
+    print("=" * 72)
+    if floor_ok:
+        print("VERDICT: PASS — the scalar write-back separates difficulty-keys out-of-window at the "
+              "deepest payload site. The 303M fieldctl fire is worth lighting on aiden.")
+        return 0
+    print("VERDICT: FAIL — the H_9607 scalar write-back cannot carry even 1 bit (K=2) to the deepest "
+          "payload site. Do NOT light the 303M fire until the write-back channel is widened "
+          "(fable's pre-explained null, bought at $0).")
+    return 1
+
+
 if __name__ == "__main__":
     import os
     import sys
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    raise SystemExit(_smoke())
+    mode = sys.argv[1] if len(sys.argv) > 1 else "smoke"
+    raise SystemExit(_falsifier() if mode == "falsify" else _smoke())
