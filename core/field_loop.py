@@ -115,9 +115,91 @@ class FieldLoop:
             self.I[i] = 0.0
 
 
+class _FieldStream:
+    """Per-row CONTIGUOUS byte-cursors into a corpus — the cross-chunk premise FIELD-LOOP needs (the
+    field is the only thing that persists across adjacent blocks, so it must carry out-of-window
+    history the trunk's window cannot). Each row advances contiguously; a row that reaches the end
+    wraps to 0 and is reported as a document boundary (the caller resets that row's field). Replaces
+    the trainer's random-window draw for the field-loop path. Returns
+    (x[B,block], y[B,block] = x shifted by 1, wrapped_rows)."""
+
+    def __init__(self, data_bytes, B, block, seed=0):
+        import torch
+        self.torch = torch
+        self.data = np.frombuffer(data_bytes, dtype=np.uint8)
+        self.N = int(self.data.shape[0])
+        self.B = int(B)
+        self.block = int(block)
+        if self.N < block + 2:
+            raise ValueError(f"corpus too small: {self.N} bytes < block+2 = {block + 2}")
+        rng = np.random.default_rng(seed)
+        self.cur = rng.integers(0, self.N - block - 1, size=self.B).astype(np.int64)
+
+    def next_block(self):
+        xs = []
+        wrapped = []
+        for i in range(self.B):
+            c = int(self.cur[i])
+            if c + self.block + 1 > self.N:                 # wrap = new document boundary
+                c = 0
+                wrapped.append(i)
+            xs.append(self.data[c:c + self.block + 1])
+            self.cur[i] = c + self.block                    # next block continues where this ended
+        arr = np.stack(xs).astype(np.int64)                 # [B, block+1]
+        t = self.torch.tensor(arr, dtype=self.torch.long)
+        return t[:, :-1].contiguous(), t[:, 1:].contiguous(), wrapped
+
+
+def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, seed=0,
+                     device="cpu", hidden=64, g_fn=None, log_every=25, log=print):
+    """One FIELD-LOOP training run (model-agnostic — cli/train.py --field-loop passes the real
+    CLMConvMoE; the $0 smoke passes a tiny stand-in). Per contiguous block:
+        residual = FieldLoop.residual()   [B,d] broadcast over T at the embedding site
+        logits   = model(x, None, emb_residual=residual[:,None,:])["logits"]   [B,V,T]
+        ce_row   = mean_T CE(logits, y)                                          [B]
+        loss.backward(); opt.step()       # model + bridge + gamma train JOINTLY
+        write-back: s = A - G, A = exp(-ce_row), G = g_fn(x)  (gradient-free reverse recognition)
+    No MI/lambda term — plain next-byte CE is the whole objective (the train-time difference from
+    GRAFT). g_fn(x_block)->[B] defaults to zeros (smoke stub; the caller wires the real
+    immune_memory_recall_reach). Returns (FieldLoop, per-step mean-CE history)."""
+    import torch
+    import torch.nn.functional as F
+    fl = FieldLoop(B, d, arm=arm, hidden=hidden, seed=seed)
+    fl.bridge.to(device)
+    stream = _FieldStream(data_bytes, B, block, seed=seed)
+    params = list(model.parameters()) + fl.parameters()
+    opt = torch.optim.Adam(params, lr=lr)
+    hist = []
+    for step in range(1, steps + 1):
+        x, y, wrapped = stream.next_block()
+        if wrapped:
+            fl.reset(wrapped)                                # doc boundary -> reset that row's field
+        x = x.to(device)
+        y = y.to(device)
+        res = fl.residual()                                  # [B, d] or None (off)
+        if res is not None:
+            res = res.to(device).unsqueeze(1)                # [B, 1, d] -> broadcast over T
+        logits = model(x, None, emb_residual=res)["logits"].float()   # [B, V, T]
+        ce_row = F.cross_entropy(logits, y, reduction="none").mean(dim=1)  # [B]
+        loss = ce_row.mean()
+        opt.zero_grad()
+        loss.backward()
+        opt.step()
+        with torch.no_grad():
+            ce_np = ce_row.detach().cpu().numpy()
+            g_np = np.zeros(B) if g_fn is None else np.asarray(g_fn(x), dtype=np.float64)
+            fl.writeback(ce_np, g_np)
+        hist.append(float(loss.detach()))
+        if step % log_every == 0 or step == 1:
+            log(f"[field-loop:{arm}] step {step:5d}  CE={hist[-1]:.4f}  "
+                f"gamma={float(fl.gamma.detach()):+.5f}")
+    return fl, hist
+
+
 def _smoke():
-    """$0 mechanism smoke — no GPU, no training, no corpus. Certifies the 4 mechanical witnesses the
-    design rests on before any pool spend."""
+    """$0 mechanism + end-to-end wiring smoke — no GPU, no corpus file, no pool. Certifies the 4
+    mechanical witnesses AND that a residual->forward->CE->backward->write-back step trains gamma+bridge
+    jointly on a tiny stand-in LM, before the real CLMConvMoE is wired in cli/train.py --field-loop."""
     import torch
     B, d = 4, 64
 
@@ -166,7 +248,39 @@ def _smoke():
     assert np.abs(ca - cy).sum() > 0, "yoked arm must advance the field differently than aligned"
     print("(4) yoked arm: derangement changes the trajectory vs aligned  OK")
 
-    print("\nFIELD-LOOP MECHANISM SMOKE: ALL PASS (mechanism only — train-loop wiring is the next increment)")
+    # (5) END-TO-END wiring on a tiny stand-in LM with the CLMConvMoE interface
+    #     (tokens, targets, emb_residual)->{"logits": [B,V,T]}. Proves the closed loop
+    #     residual->forward->per-row CE->backward->write-back trains gamma+bridge jointly, and that
+    #     the off arm is a true no-op (gamma stays exactly 0). The real 303M CLMConvMoE is passed by
+    #     cli/train.py --field-loop; this stand-in keeps the smoke $0/CPU/dependency-light.
+    class _TinyLM(torch.nn.Module):
+        def __init__(self, V=256, dm=32):
+            super().__init__()
+            self.embed = torch.nn.Embedding(V, dm)
+            self.head = torch.nn.Linear(dm, V)
+
+        def forward(self, tokens, targets=None, emb_residual=None):
+            h = self.embed(tokens)                      # [B, T, dm]
+            if emb_residual is not None:
+                h = h + emb_residual                    # [B, 1, dm] -> broadcast over T
+            return {"logits": self.head(h).transpose(1, 2)}   # [B, V, T]
+
+    dm = 32
+    data = bytes(np.random.default_rng(0).integers(0, 256, size=20000).astype(np.uint8).tobytes())
+    torch.manual_seed(0)
+    fl_e, hist = field_loop_train(_TinyLM(256, dm), data, arm="purefield16", steps=60, d=dm,
+                                  B=8, block=128, lr=3e-3, seed=0, log_every=10_000)
+    assert len(hist) == 60 and all(np.isfinite(hist)), "e2e CE must stay finite for all steps"
+    assert np.isfinite(float(fl_e.gamma.detach())), "gamma must stay finite"
+    torch.manual_seed(0)
+    fl_off, hist_off = field_loop_train(_TinyLM(256, dm), data, arm="off", steps=20, d=dm,
+                                        B=8, block=128, lr=3e-3, seed=0, log_every=10_000)
+    assert float(fl_off.gamma.detach()) == 0.0, "off arm gamma must stay EXACTLY 0 (no residual path)"
+    assert all(np.isfinite(hist_off)), "off arm CE must stay finite"
+    print(f"(5) e2e tiny-LM: purefield16 CE {hist[0]:.3f}->{hist[-1]:.3f} gamma={float(fl_e.gamma.detach()):+.5f}"
+          f" · off gamma=0.0 (true no-op)  OK")
+
+    print("\nFIELD-LOOP SMOKE: ALL PASS (mechanism + end-to-end wiring — cli/train.py --field-loop dispatch is next)")
     return 0
 
 
