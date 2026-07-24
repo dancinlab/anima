@@ -243,25 +243,83 @@ def _check(a):
     print(f"[graft] SWAP: MI_swap={mi_swap:.3f} bits (ceiling log2 K={math.log2(K):.3f}) · "
           f"acc={acc:.3f} (chance {1.0/K:.3f}) · perm_p={perm_p:.4f} · uniqueY={len(uniqY)}/{K*a.probes}")
 
-    # ablation: KL(ON||OFF) vs KL(NOISE||OFF)
-    ids = [int(b) for b in probes[0]] + _sample_carrier(organ, [int(b) for b in probes[0]],
-                                                        codes[0], a.cont_len, rng=rng)[len(probes[0]):]
-    t = torch.tensor(ids, dtype=torch.long)
+    # ablation: KL(ON||OFF) vs KL(NOISE||OFF), averaged over EVERY state and several carriers.
+    # A single (state, carrier) draw is far too noisy to read: on a gate_strength sweep it produced a
+    # non-monotone KL(ON||OFF) (0.150 / 0.571 / 1.507 / 0.355 / 2.048) whose dip is variance, not
+    # signal — and that dip alone would have licensed a "decorative exactly where it passes" story.
+    ons, kls = [], []
     with torch.no_grad():
-        off = F.log_softmax(organ(t).float(), -1)
-        on = F.log_softmax(organ(t, emb_residual=codes[0]).float(), -1)
-        kl_on = float((on.exp() * (on - off)).sum(-1).mean()) / math.log(2)
-        kls = []
-        for _ in range(a.noise_reps):
-            nz = torch.tensor(rng.standard_normal(codes[0].shape).astype(np.float32))
-            nz = nz / (nz.pow(2).mean().sqrt() + 1e-8) * codes[0].pow(2).mean().sqrt()
-            ln = F.log_softmax(organ(t, emb_residual=nz).float(), -1)
-            kls.append(float((ln.exp() * (ln - off)).sum(-1).mean()) / math.log(2))
-    q95 = float(np.quantile(kls, 0.95))
-    print(f"[graft] ABLATION: KL(ON||OFF)={kl_on:.4f} bits · KL(NOISE||OFF) q95={q95:.4f} · "
+        for ci in range(min(a.abl_carriers, len(probes))):
+            pb = [int(b) for b in probes[ci]]
+            ids = pb + _sample_carrier(organ, pb, codes[ci % K], a.cont_len, rng=rng)[len(pb):]
+            t = torch.tensor(ids, dtype=torch.long)
+            off = F.log_softmax(organ(t).float(), -1)
+            for c in codes:                                  # every state, not just codes[0]
+                on = F.log_softmax(organ(t, emb_residual=c).float(), -1)
+                ons.append(float((on.exp() * (on - off)).sum(-1).mean()) / math.log(2))
+            for _ in range(a.noise_reps):
+                nz = torch.tensor(rng.standard_normal(codes[0].shape).astype(np.float32))
+                nz = nz / (nz.pow(2).mean().sqrt() + 1e-8) * codes[0].pow(2).mean().sqrt()
+                ln = F.log_softmax(organ(t, emb_residual=nz).float(), -1)
+                kls.append(float((ln.exp() * (ln - off)).sum(-1).mean()) / math.log(2))
+    kl_on = float(np.mean(ons)); q95 = float(np.quantile(kls, 0.95))
+    print(f"[graft] ABLATION: KL(ON||OFF)={kl_on:.4f} bits (mean of {len(ons)} state×carrier, "
+          f"sd {np.std(ons):.4f}) · KL(NOISE||OFF) q95={q95:.4f} (n={len(kls)}) · "
           f"ratio={kl_on/max(q95,1e-9):.2f}x  "
           f"({'gate is distinguishable from noise' if kl_on >= 3*q95 else 'DECORATIVE signature (ON≈NOISE)'})")
+
+    if a.fluency_corpus:
+        _fluency(a, organ, codes, emb_rms, rng)
     return 0
+
+
+def _fluency(a, organ, codes, emb_rms, rng):
+    """FLUENCY PRICE — what the gate costs the frozen organ's language, on natural held-out text.
+
+    MI alone cannot decide whether the capacity ceiling is a defect or a declared trade-off: a
+    wider channel that wrecks the organ is not a win. DV = the organ's NLL per byte on natural
+    text, gate ON vs OFF.
+
+    The load-bearing arm is NOISE, not OFF. An offset of ANY kind at this RMS perturbs the
+    embeddings, so `ON - OFF` alone cannot separate "this gate costs fluency" from "an offset of
+    this size costs fluency". The norm-matched noise arm is that separation, and it is the same
+    control the ablation block above already uses.
+
+    Alignment is pinned by construction and cross-checkable: row i of the organ's logits predicts
+    t[i+1] (the same convention _check's cross-scoring uses), so OFF NLL is the organ's ordinary
+    held-out CE. On trained57 that independently measured 2.076 nats/byte — if OFF lands far from
+    the organ's known CE, the readout is mis-aligned and the arms below are meaningless.
+    """
+    txt = open(os.path.expanduser(a.fluency_corpus), encoding="utf-8", errors="ignore").read()
+    b = txt[int(len(txt) * 0.8):].encode("utf-8")[:a.fluency_bytes]      # held-out tail
+    t = torch.tensor([int(x) for x in b], dtype=torch.long)
+    tgt = t[1:]
+
+    def nll(resid):
+        with torch.no_grad():
+            lg = organ(t, emb_residual=resid).float()
+            lp = F.log_softmax(lg[:-1], -1)
+            return float(-lp.gather(1, tgt.unsqueeze(1)).mean())
+
+    off = nll(None)
+    on = [nll(c) for c in codes]
+    noise = []
+    for _ in range(a.noise_reps):
+        nz = torch.tensor(rng.standard_normal(codes[0].shape).astype(np.float32))
+        nz = nz / (nz.pow(2).mean().sqrt() + 1e-8) * codes[0].pow(2).mean().sqrt()
+        noise.append(nll(nz))
+    d_on = float(np.mean(on)) - off
+    d_nz = float(np.mean(noise)) - off
+    off_rms = float(codes[0].pow(2).mean().sqrt())
+    print(f"[graft] FLUENCY ({len(b)}B natural held-out · offset RMS={off_rms:.4f} = "
+          f"{off_rms/emb_rms:.3f}x embedding RMS)")
+    print(f"[graft]   NLL gate-OFF   = {off:.4f} nats/byte   <- the frozen organ's own language")
+    print(f"[graft]   NLL gate-ON    = {np.mean(on):.4f}  (dNLL {d_on:+.4f}, per-state sd {np.std(on):.4f})")
+    print(f"[graft]   NLL noise-matched = {np.mean(noise):.4f}  (dNLL {d_nz:+.4f})  <- the control that matters")
+    verdict = ("gate costs LESS fluency than a size-matched perturbation — the offset is structured"
+               if d_on < d_nz else
+               "gate costs AT LEAST as much as size-matched noise — no fluency credit for structure")
+    print(f"[graft]   price ratio dNLL(ON)/dNLL(NOISE) = {d_on/max(d_nz,1e-9):+.3f}   ({verdict})")
 
 
 def main():
@@ -290,6 +348,11 @@ def main():
     ap.add_argument("--probes", type=int, default=4)
     ap.add_argument("--perms", type=int, default=999)
     ap.add_argument("--noise-reps", type=int, default=16, dest="noise_reps")
+    ap.add_argument("--abl-carriers", type=int, default=4, dest="abl_carriers",
+                    help="carriers averaged in the ablation arm (x every state) — 1 is too noisy to read")
+    ap.add_argument("--fluency-corpus", default=None, dest="fluency_corpus",
+                    help="natural text; measure the gate's fluency price (NLL ON vs OFF vs size-matched noise)")
+    ap.add_argument("--fluency-bytes", type=int, default=4000, dest="fluency_bytes")
     a = ap.parse_args()
     if a.verb == "fit":
         if not a.out:
