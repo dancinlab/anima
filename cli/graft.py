@@ -198,7 +198,7 @@ def _sample_carrier(organ, ids, code, n_bytes, temp=1.0, rng=None):
     with torch.no_grad():
         for _ in range(n_bytes):
             lg = organ(torch.tensor(cur, dtype=torch.long), emb_residual=code)
-            p = torch.softmax(lg[-1], dim=-1).cpu().numpy().astype(np.float64)
+            p = torch.softmax(lg[-1].float(), dim=-1).cpu().numpy().astype(np.float64)
             p = p / p.sum()
             cur.append(int(rng.choice(len(p), p=p)))
     return cur
