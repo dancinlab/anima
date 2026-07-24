@@ -316,11 +316,32 @@ def _fluency(a, organ, codes, emb_rms, rng):
     # EXACTLY fixed, so content/unigrams are matched by construction and only order (form) differs.
     #   margin = NLL(scrambled) - NLL(natural)   ·   dMargin = margin_OFF - margin_ON
     # dMargin ~ 0 with dNLL > 0  =>  distribution SHIFT, not fluency loss.
+    # THREE corruption families, not one. A panel resting on a single corruption is the same
+    # single-draw defect the ablation arm just had to be repaired for: if dMargin is read off one
+    # family, a family-specific quirk becomes "form is/isn't damaged". Each family breaks a
+    # DIFFERENT axis of form, and every one preserves the multiset by construction (global word
+    # order / local word order / within-word spelling), so content is matched and only form moves.
     words = txt[int(len(txt) * 0.8):].split()[:1200]
-    sc = list(words)
-    rng.shuffle(sc)
+
+    def _shuffle(ws):                       # global word order — syntax at long range
+        s = list(ws); rng.shuffle(s); return s
+
+    def _adjswap(ws):                       # adjacent pairs only — local order, a much milder blow
+        s = list(ws)
+        for i in range(0, len(s) - 1, 2):
+            s[i], s[i + 1] = s[i + 1], s[i]
+        return s
+
+    def _spell(ws):                         # within-word letters — orthography, word order intact
+        out = []
+        for w in ws:
+            if len(w) > 3:
+                mid = list(w[1:-1]); rng.shuffle(mid); w = w[0] + "".join(mid) + w[-1]
+            out.append(w)
+        return out
+
+    FAMILIES = (("word-order", _shuffle), ("adj-swap", _adjswap), ("spelling", _spell))
     b_nat = " ".join(words).encode("utf-8")[:a.fluency_bytes]
-    b_scr = " ".join(sc).encode("utf-8")[:a.fluency_bytes]
 
     def nll_of(bs, resid):
         tt = torch.tensor([int(x) for x in bs], dtype=torch.long)
@@ -328,8 +349,16 @@ def _fluency(a, organ, codes, emb_rms, rng):
             lp = F.log_softmax(organ(tt, emb_residual=resid).float()[:-1], -1)
             return float(-lp.gather(1, tt[1:].unsqueeze(1)).mean())
 
-    m_off = nll_of(b_scr, None) - nll_of(b_nat, None)
-    m_on = float(np.mean([nll_of(b_scr, c) - nll_of(b_nat, c) for c in codes]))
+    nat_off = nll_of(b_nat, None)
+    nat_on = [nll_of(b_nat, c) for c in codes]
+    fam = {}
+    for fname, fn in FAMILIES:
+        b_c = " ".join(fn(words)).encode("utf-8")[:a.fluency_bytes]
+        off_m = nll_of(b_c, None) - nat_off
+        on_m = float(np.mean([nll_of(b_c, c) - n for c, n in zip(codes, nat_on)]))
+        fam[fname] = (off_m, on_m)
+    m_off = float(np.mean([v[0] for v in fam.values()]))
+    m_on = float(np.mean([v[1] for v in fam.values()]))
 
     d_on = float(np.mean(on)) - off
     d_nz = float(np.mean(noise)) - off
@@ -343,8 +372,14 @@ def _fluency(a, organ, codes, emb_rms, rng):
                if d_on < d_nz else
                "gate costs AT LEAST as much as size-matched noise — no fluency credit for structure")
     print(f"[graft]   price ratio dNLL(ON)/dNLL(NOISE) = {d_on/max(d_nz,1e-9):+.3f}   ({verdict})")
-    print(f"[graft]   FORM margin OFF = {m_off:+.4f} nats/byte (organ prefers natural over a "
-          f"word-scramble)  ON = {m_on:+.4f}  dMargin = {m_off-m_on:+.4f}")
+    print(f"[graft]   FORM panel (3 corruption families · multiset preserved by construction):")
+    for fname, (o, n) in fam.items():
+        flag = "  ⚠️ family invalid (organ does not prefer natural)" if o <= 0.02 else ""
+        print(f"[graft]     {fname:<11} margin OFF {o:+.4f}  ON {n:+.4f}  dMargin {o-n:+.4f}"
+              f"  ({100*(o-n)/max(o,1e-9):+.1f}%){flag}")
+    spread = max(v[0] - v[1] for v in fam.values()) - min(v[0] - v[1] for v in fam.values())
+    print(f"[graft]   FORM mean: margin OFF = {m_off:+.4f}  ON = {m_on:+.4f}  dMargin = {m_off-m_on:+.4f}"
+          f"  (across-family spread {spread:.4f})")
     if m_off <= 0.02:
         print("[graft]   ⛔ FORM PANEL INVALID: the organ does not prefer natural text to begin with "
               "— dMargin is unreadable, do not quote it.")
