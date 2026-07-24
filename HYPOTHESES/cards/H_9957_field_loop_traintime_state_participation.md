@@ -123,6 +123,12 @@ from-init(d256·L4·block128·B4·doc_len1408·34k step·4096 train/512 val·**`
 
 **2-seed 재현 확정**: 두 seed 모두 받침대 성립(off≈ln4·누출0)·통제 clean(aligned≪sever≪yoked)·Δ≈0.63–0.69 ≈ ln2 = **1비트 안정**.
 
+**generic-recurrence sibling rung 1 = `integrator16` (fable 설계·가장 날카로운 위협 먼저):** H_9607 leaky 적분 I(τ=400)를
+고정 랜덤특징 tanh(w·I+b)로 읽음(셀 없음·+0 param·drive/bridge/gamma/reset 동일). **결과 Δ=−0.000 (2 seed)** = off 와 동일.
+⟹ **채널은 공유 스칼라 적분이 아니다**(fable "integrator suffices" prior 반증) — PureField 의 **비선형 순환 확장**(스칼라 drive
+→ 16-D 진동자 궤적)이 키를 디코드가능케 하는 게 load-bearing. 단 "PureField 특이 vs 아무 학습순환" 은 미판별(rung 2 =
+GRU-frozen/trained TBPTT-1 필요). purefield16 rebaseline 은 같은 commit 서 0.685/0.633 불변(diff additive·배치 valid).
+
 - **받침대 성립**: off arm payload CE 1.446 ≈ 우연 ln4=1.386(> lnK−0.1=1.286) → 창내누출 없음. payload 는 필드 없이 창내 예측불가.
 - **필드가 창밖 키를 나름**: aligned 0.943 ≪ sever 1.628 ≪ yoked 2.672. 자기 필드는 우연보다 잘, 틀린/무필드는 우연 이상 못 맞힘.
 - **판정 PARTIAL**(Δ 0.685∈[0.3,0.8) ∧ aligned 0.943>0.4): 스칼라 되쓰기가 2비트 키 중 ~1비트를 창밖 +9블록 운반 — fable 예측 용량제한 실측. $0 팰서파이어(필드물리 분리 PASS)와 정합.
