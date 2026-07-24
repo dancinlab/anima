@@ -169,6 +169,17 @@ def anima_train_mode(argv):
     return os.spawnv(os.P_WAIT, sys.executable, [sys.executable, train_py] + fwd)
 
 
+def anima_graft_mode(argv):
+    """GRAFT — no-corpus consciousness→language grounding (cli/graft.py). A FROZEN .clm is the
+    language organ; only the CLMG coupling trains, on a mutual-information objective. Torch lives in
+    the subprocess, so this launcher stays numpy-only like the train twin."""
+    print("=== anima graft → cli/graft.py (frozen organ · CLMG coupling · no corpus, no CE) ===")
+    graft_py = os.path.join(_HERE, "graft.py")
+    fwd = argv[1:]
+    print("dispatch: " + " ".join([sys.executable, graft_py] + fwd))
+    return os.spawnv(os.P_WAIT, sys.executable, [sys.executable, graft_py] + fwd)
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 #  EVALUATE MODE — dispatch to cli/evaluate.py (MEASUREMENT single-entry twin)
 # ══════════════════════════════════════════════════════════════════════════════
@@ -367,6 +378,8 @@ def main(argv):
     if sub in ("-h", "--help"):
         anima_usage()
         return 0
+    if sub == "graft":
+        return anima_graft_mode(argv)
     if sub == "train":
         return anima_train_mode(argv)
     if sub == "serialize":
