@@ -85,8 +85,18 @@ class HFOrgan:
             # Backward through N states x K windows keeps every layer activation alive: measured
             # 11.38 GB (OOM on a 12GB card) for 8x4 sequences of a 7B 4bit base. Checkpointing
             # recomputes them instead — the standard QLoRA-side pairing with a frozen 4bit base.
+            # ⚠️ HF fires checkpointing only under `self.training` (`if self.gradient_checkpointing
+            # and self.training`), so eval() mode silently DISABLES it — measured: the same 11.38 GB
+            # OOM with checkpointing "enabled". We therefore put the frozen base in train() mode and
+            # pin every Dropout to p=0, which leaves the forward numerically identical to eval (the
+            # wiring smoke's input_ids-vs-inputs_embeds parity re-checks that) while the recompute
+            # actually happens. Base params stay requires_grad=False, so nothing trains.
             self.model.gradient_checkpointing_enable()
             self.model.config.use_cache = False
+            for m in self.model.modules():
+                if isinstance(m, torch.nn.Dropout):
+                    m.p = 0.0
+            self.model.train()
         self.embed = self.model.get_input_embeddings()
         assert self.embed.weight.dtype in (torch.float16, torch.bfloat16, torch.float32), \
             f"embedding must stay float (got {self.embed.weight.dtype}) — 4bit must not touch nn.Embedding"
