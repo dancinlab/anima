@@ -456,9 +456,10 @@ def field_loop_eval_fieldctl(model, fl, val_bytes, mask, device="cpu", seed=0):
                 ce = F.cross_entropy(lg, yb.to(device), reduction="none").mean(dim=1).cpu().numpy()
             fl.writeback(ce, np.zeros(K))
         with torch.no_grad():                              # snapshot the K grown fields -> residuals
-            C = torch.tensor(np.stack([fl.G.graft_c_state(p) for p in fl.pf]),
-                             dtype=torch.float32, device=device)
-            R = (fl.bridge(C) * fl.gamma * emb_rms)         # [K, d]
+            C = fl._C()                                     # kind-branched (PureField / integrator / GRU);
+            R = (fl.bridge(C) * fl.gamma * emb_rms)         # graft_c_state(pf) read the UNADVANCED pf for
+            #   the sibling arms (pf only advances on the purefield kind) -> identical rows -> a false
+            #   Δ=0. fl._C() is exactly what residual() uses during the grow loop.
         xb, yb, _ = stream.next_block()                    # the deepest payload block (not written back)
         # the planted payload byte sits at block position `spos` (right after the `PAY<j>:` marker).
         # next-byte scoring predicts x[spos] from logits at spos-1 with target yb[spos-1] (= x[spos]);
