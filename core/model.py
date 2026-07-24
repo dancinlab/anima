@@ -493,10 +493,20 @@ class CLMConvMoE(nn.Module):
 
     def forward(
         self, tokens: torch.Tensor, targets: Optional[torch.Tensor] = None,
-        domain_ids: Optional[torch.Tensor] = None
+        domain_ids: Optional[torch.Tensor] = None,
+        emb_residual: Optional[torch.Tensor] = None
     ) -> dict:
         # tokens: (B, T) long
         x = self.embed(tokens)                  # (B, T, C)
+        # GRAFT/CLMG (core/clmg.py): the consciousness→language gate, added at the SAME site as the
+        # tension field and as the numpy twin (core/decode.py `_fwd_trunk`), so a gate trained here
+        # decodes identically through the engine-native path. emb_residual is broadcastable to
+        # (B, T, C) — typically (C,) or (B, 1, C). None (the default) ⇒ not evaluated ⇒ byte-identical.
+        # It is injected BEFORE embed_conv on purpose: a post-trunk injection would be a per-state
+        # logit bias, which the MI objective can satisfy with static unigram tilts that never pass
+        # through the frozen organ (see the graft-clmg-lane-1 convergence record).
+        if emb_residual is not None:
+            x = x + emb_residual.to(x.dtype)
         # H_9805 — the WRITE-SIDE injection, and the only lane that fires here. The residual is
         # added to the embeddings BEFORE embed_conv and before every trunk layer, so the tension
         # field is something the trunk COMPUTES OVER rather than something read off its output.
