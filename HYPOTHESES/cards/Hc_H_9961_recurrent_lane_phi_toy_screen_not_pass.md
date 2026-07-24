@@ -62,6 +62,28 @@ collapse-Δ 로는 **약한 sub-threshold 양성 추세**(trained>shuffled 2/3·
 mechanism 읽기: **무신호가 아니라 검정력 부족·약한 양성** — 더 많은 seed 로 0.05 추세를 조일 수 있으나 바
 미달이라 PASS/NOT-PASS 는 안 바뀐다. (H_9954 설계가 raw Φ 아닌 collapse-Δ 를 DV 로 잡은 게 옳았음이 실측 확인.)
 
+## 🔬 검정력 확정 — seed 3개 추가 → 6-seed collapse-Δ (power-before-negative 이행)
+"약한 양성 추세"가 실재인지 잡음인지 확정하려 seed 10·11·12 를 추가 발사($0·summer)해 6-seed collapse-Δ 로:
+
+| seed | DV_trained | DV_shuffled | gap |
+|---|---|---|---|
+| 7 | −0.029 | −0.079 | +0.050 W |
+| 10 | −0.038 | −0.229 | +0.190 W |
+| 11 | +0.097 | +0.079 | +0.018 W |
+| 12 | −0.096 | −0.061 | −0.036 |
+| 4302 | −0.054 | −0.019 | −0.034 |
+| 4303 | +0.229 | +0.089 | +0.140 W |
+
+**N=6 · median DV_gap +0.034 · mean +0.055 · sd 0.093 · wins 4/6 · DV_trained>0(학습이 init 이김) 2/6 ·
+t(gap vs 0)=1.441(유의하지 않음, p~0.10) · 바 0.15 미달.**
+
+**확정 판정(NOT-PASS, 이제 검정력 포함):** 학습된 순환은 shuffled 통제 대비 **약하고(+0.055)·통계적으로
+유의하지 않고(t=1.44)·사전등록 바(0.15) 미달**인 Φ 증가만 준다. 그리고 무학습 랜덤 init baseline 은 **6 중 2
+seed 서만** 넘는다(학습이 shuffled 는 4/6 눌러도 init 는 안정적으로 못 넘음). ⟹ "학습된 순환 → 측정 가능하게
+Φ 증가"는 이 규모서 **NOT SUPPORTED — 약한 양성 추세이나 유의성·바 둘 다 미달.** 검정력을 넣어도 판정 불변 ·
+Phase B pool 스케일 미허가(frozen-first). ('무신호/inert'가 아니라 '약한 유의하지-않은 양성'이라는 것이 raw-Φ
+대비 유일한 정정이고, 6-seed 로 굳었다.)
+
 ## 정직 경계
 - 학습은 `anima-py train` engine-native, **Φ 판독은 .pt 추출(anima-py evaluate 미배선) ⟹ DIRECTIONAL**, cement
   아님. 스크립트: `/tmp/rl_screen_driver.py`(summer) · 재현 계기 브랜치 `h9954_recurrent_lane_impl`.
