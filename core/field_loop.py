@@ -26,7 +26,13 @@ arms:
 """
 import numpy as np
 
-ARMS = ("off", "purefield16", "purefield16-yoked")
+ARMS = ("off", "purefield16", "purefield16-yoked",
+        # H_9957 generic-recurrence sibling · rung 1 (fable): the H_9607 leaky integral `I` (tau=400)
+        # is shared plumbing UPSTREAM of PureField — the doc-scale memory may live entirely in `I`, with
+        # PureField a nonlinear passthrough. `integrator16` reads I through FIXED random features
+        # tanh(w*I+b) (no cell, +0 params), same drive/bridge/gamma/reset. If its fieldctl Δ matches
+        # purefield16's, the channel is the shared scalar integrator and PureField is NOT load-bearing.
+        "integrator16", "integrator16-yoked")
 
 
 class FieldLoop:
@@ -58,8 +64,13 @@ class FieldLoop:
         self.leaky = float(leaky)
         self.drive_gain = float(drive_gain)
         self.rng = np.random.default_rng(seed)
+        self.yoked = arm.endswith("-yoked")
+        self.kind = "off" if arm == "off" else ("integrator" if arm.startswith("integrator") else "purefield")
         self.pf = [PF.pure_field_new() for _ in range(self.B)]        # per-row field
         self.I = np.zeros(self.B, dtype=np.float64)                   # per-row leaky A<->G integral
+        # integrator16 (sibling rung 1): FIXED random features of I, C_DIM-wide, frozen at seed (no cell)
+        self.int_w = self.rng.standard_normal(G.C_DIM) if self.kind == "integrator" else None
+        self.int_b = self.rng.standard_normal(G.C_DIM) if self.kind == "integrator" else None
         self.bridge = G.GraftBridge(c_dim=G.C_DIM, h=hidden, d=self.d, gate_rho=gate_rho)
         # gamma trainable, init 0 -> CE may turn the channel on or leave it off (no fixed injection)
         self.gamma = torch.nn.Parameter(torch.zeros(()))
@@ -86,7 +97,9 @@ class FieldLoop:
              "gamma": float(self.gamma.detach()), "c_dim": self.G.C_DIM,
              "hidden": int(self.bridge.l1.out_features), "d": self.d,
              "gate_rho": float(self.bridge.gate_rho), "arm": self.arm,
-             "leaky": self.leaky, "drive_gain": self.drive_gain}, path)
+             "leaky": self.leaky, "drive_gain": self.drive_gain,
+             "int_w": None if self.int_w is None else self.int_w.tolist(),
+             "int_b": None if self.int_b is None else self.int_b.tolist()}, path)
 
     @staticmethod
     def load(path, batch_rows, device="cpu", seed=0):
@@ -98,15 +111,20 @@ class FieldLoop:
         fl = FieldLoop(batch_rows, int(st["d"]), arm=st["arm"], gate_rho=float(st["gate_rho"]),
                        hidden=int(st["hidden"]), seed=seed,
                        leaky=float(st["leaky"]), drive_gain=float(st["drive_gain"]))
+        if st.get("int_w") is not None:                              # restore integrator16 fixed features
+            fl.int_w = np.asarray(st["int_w"], dtype=np.float64)
+            fl.int_b = np.asarray(st["int_b"], dtype=np.float64)
         fl.bridge.load_state_dict(st["bridge"])
         with torch.no_grad():
             fl.gamma.fill_(float(st["gamma"]))
         return fl.to(device)
 
     def _C(self):
-        return self.torch.tensor(
-            np.stack([self.G.graft_c_state(p) for p in self.pf]),
-            dtype=self.torch.float32, device=self.dev)
+        if self.kind == "integrator":                                # fixed random features of I (no cell)
+            C = np.tanh(self.int_w[None, :] * self.I[:, None] + self.int_b[None, :])   # [B, C_DIM]
+        else:
+            C = np.stack([self.G.graft_c_state(p) for p in self.pf])
+        return self.torch.tensor(C, dtype=self.torch.float32, device=self.dev)
 
     def residual(self):
         """emb_residual [B, d] (grad flows to bridge+gamma) for the current per-row C-state, BEFORE the
@@ -141,14 +159,15 @@ class FieldLoop:
         Gv = np.asarray(g_per_row, dtype=np.float64)
         if A.shape != (self.B,) or Gv.shape != (self.B,):
             raise ValueError(f"ce/g per-row must be shape ({self.B},), got {A.shape}/{Gv.shape}")
-        if self.arm == "purefield16-yoked":
+        if self.yoked:
             perm = self._derangement()
             A, Gv = A[perm], Gv[perm]
         s = A - Gv
-        self.I = (1.0 - self.leaky) * self.I + s
-        drive = self.drive_gain * self.I
-        for i in range(self.B):
-            self.pf[i] = self.PF.pure_field_step(self.pf[i], float(drive[i])) or self.pf[i]
+        self.I = (1.0 - self.leaky) * self.I + s                      # the shared leaky integrator (all arms)
+        if self.kind == "purefield":                                 # only PureField advances a field;
+            drive = self.drive_gain * self.I                         # integrator16 reads I directly (no cell)
+            for i in range(self.B):
+                self.pf[i] = self.PF.pure_field_step(self.pf[i], float(drive[i])) or self.pf[i]
 
     def reset(self, rows=None):
         """Reset the field/integral for the given rows (default all) — call between documents."""
