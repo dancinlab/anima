@@ -218,6 +218,180 @@ if _HAS_TORCH:
                     "gate_rms_max": float(gate_rms_max)}
 
 
+def torch_organ(W, device="cpu"):
+    """A FROZEN, differentiable torch mirror of the engine's own forward (decode._fwd_trunk + readout).
+
+    GRAFT needs gradients of the output distribution w.r.t. the injected embedding residual, so the
+    organ must be differentiable — but it must also be the SAME organ the engine-native path decodes,
+    or the coupling is trained into a different model while the loss still falls. We mirror decode's
+    numpy ops op-for-op rather than reusing core/model.CLMConvMoE because that module's MoE routes
+    top-k while the decode path mixes DENSELY (nn_moe_router_fwd: y[t,c] = Σ_e softmax(r)[t,e]·ex[e,t,c]);
+    a stage-by-stage diff located exactly that divergence (trunk matched to 1.4e-06, post-MoE 7.5).
+    Every organ tensor is a buffer (no grad) — the ONLY trainable thing in GRAFT is the bridge.
+    `torch_organ_parity()` is mandatory before any number is read."""
+    import torch
+    import torch.nn as nn
+
+    class _Organ(nn.Module):
+        def __init__(self, W):
+            super().__init__()
+            t = lambda a: torch.tensor(np.asarray(a, np.float32))
+            self.d, self.K, self.V = int(W["d"]), int(W["K"]), int(W["V"])
+            self.L, self.E = int(W["L"]), int(W["E"])
+            self.register_buffer("embed", t(W["embed"]))
+            self.register_buffer("ecWt", t(W["ecWt"])); self.register_buffer("ecB", t(W["ecB"]))
+            for li in range(self.L):
+                self.register_buffer(f"tcWt{li}", t(W["tcWt"][li]))
+                self.register_buffer(f"tcB{li}", t(W["tcB"][li]))
+                self.register_buffer(f"tgG{li}", t(W["tgG"][li]))
+                self.register_buffer(f"tgB{li}", t(W["tgB"][li]))
+            for ej in range(self.E):
+                self.register_buffer(f"eWt{ej}", t(W["eWt"][ej]))
+                self.register_buffer(f"eB{ej}", t(W["eB"][ej]))
+            self.register_buffer("rWt", t(W["rWt"])); self.register_buffer("rB", t(W["rB"]))
+            self.register_buffer("noG", t(W["noG"])); self.register_buffer("noB", t(W["noB"]))
+            self.register_buffer("roWt", t(W["roWt"])); self.register_buffer("roB", t(W["roB"]))
+
+        def _conv(self, x, Wt, b, K, dil):
+            """decode._conv1d mirror: xcol[t, ci*K+k] = x[t − dil*(K−1−k), ci]; y = xcol @ Wt + b."""
+            T, Cin = x.shape
+            pad = dil * (K - 1)
+            xp_ = torch.nn.functional.pad(x.t().unsqueeze(0), (pad, 0))[0].t()   # left-pad on time
+            cols = [xp_[dil * k: dil * k + T] for k in range(K)]                 # k -> offset dil*(K-1-k)
+            xcol = torch.stack(cols, dim=2).reshape(T, Cin * K)
+            return xcol @ Wt + b.unsqueeze(0)
+
+        def _gn(self, x, g, b):
+            """decode.nn_groupnorm_fwd with G=1: statistics over the WHOLE [T,C] slab (eps=1e-5)."""
+            mu = x.mean(); var = x.var(unbiased=False)
+            return (x - mu) / torch.sqrt(var + 1e-5) * g.unsqueeze(0) + b.unsqueeze(0)
+
+        def forward(self, ids, emb_residual=None):
+            xe = self.embed[ids]                                   # [T, d]
+            if emb_residual is not None:
+                xe = xe + emb_residual                             # GRAFT gate — BEFORE embed_conv
+            xt = self._conv(xe, self.ecWt, self.ecB, self.K, 1)
+            dil = 1
+            for li in range(self.L):
+                h = self._conv(xt, getattr(self, f"tcWt{li}"), getattr(self, f"tcB{li}"),
+                               self.K, min(dil, 512))
+                hn = self._gn(h, getattr(self, f"tgG{li}"), getattr(self, f"tgB{li}"))
+                xt = xt + torch.nn.functional.gelu(hn)
+                dil *= 2
+            ex = torch.stack([torch.nn.functional.gelu(
+                self._conv(xt, getattr(self, f"eWt{j}"), getattr(self, f"eB{j}"), self.K, 1))
+                for j in range(self.E)])                           # [E, T, d]
+            lr = self._conv(xt, self.rWt, self.rB, 1, 1)           # [T, E]
+            y = torch.einsum("te,etc->tc", torch.softmax(lr, dim=1), ex)
+            yn = self._gn(y, self.noG, self.noB)
+            return yn @ self.roWt + self.roB.unsqueeze(0)          # [T, V]
+
+    m = _Organ(W).to(device).eval()
+    for p in m.parameters():
+        p.requires_grad_(False)
+    return m
+
+
+def torch_organ_parity(m, W, fwd_logits, n=6, T=24, seed=7):
+    """MANDATORY gate: the differentiable organ must reproduce the engine-native numpy logits."""
+    import torch
+    rng = np.random.default_rng(seed); worst = 0.0
+    for _ in range(n):
+        toks = rng.integers(0, int(W["V"]), T)
+        ref = np.asarray(fwd_logits(W, toks.astype(np.float64), T), np.float32)
+        with torch.no_grad():
+            got = m(torch.tensor(toks, dtype=torch.long)).numpy()
+        worst = max(worst, float(np.max(np.abs(got - ref))))
+    return worst
+
+
+def clm_to_torch(W, device="cpu"):
+    """Load a decoded `.clm` weight dict into a FROZEN torch CLMConvMoE — the differentiable mirror
+    of the numpy organ, needed because the GRAFT loss backprops the gate through the organ.
+
+    Layout (definitive, from decode._conv1d): `xcol[t, ci*K + k] = x[t - dil*(K-1-k), ci]` and
+    `mm = xcol @ Wt`, so `Wt[ci*K + k, co]` ⟺ torch `weight[co, ci, k]` = `Wt.T.reshape(Cout,Cin,K)`;
+    the causal left-pad convention matches (k=K-1 is the current position in both).
+    EVERY parameter is frozen (requires_grad_(False)) — GRAFT trains only the bridge. The caller MUST
+    run `torch_numpy_parity()` before reading any number: a silently mis-transposed organ would train
+    a coupling into the wrong model and the loss would still go down."""
+    import torch
+    from model import CLMConfig, CLMConvMoE
+    d, V, K, L, E = int(W["d"]), int(W["V"]), int(W["K"]), int(W["L"]), int(W["E"])
+    cfg = CLMConfig(vocab_size=V, d_model=d, kernel_size=K, n_trunk_layers=L, n_experts=E)
+    for attr, val in (("n_factions", int(W.get("n_factions", 0) or 0)),):
+        if hasattr(cfg, attr):
+            setattr(cfg, attr, val)
+    m = CLMConvMoE(cfg).to(device).eval()
+
+    def T3(wt, cout, cin, k):
+        import numpy as _np
+        return torch.tensor(_np.asarray(wt, _np.float32).T.reshape(cout, cin, k))
+
+    sd = m.state_dict()
+    def put(name, val):
+        if name in sd:
+            if tuple(sd[name].shape) != tuple(val.shape):
+                raise ValueError(f"clm_to_torch shape mismatch {name}: {tuple(sd[name].shape)} vs {tuple(val.shape)}")
+            sd[name] = val.to(sd[name].dtype)
+        else:
+            raise KeyError(f"clm_to_torch: '{name}' not in the torch model state_dict")
+
+    put("embed.weight", torch.tensor(np.asarray(W["embed"], np.float32)))
+    put("embed_conv.conv.weight", T3(W["ecWt"], d, d, K))
+    put("embed_conv.conv.bias", torch.tensor(np.asarray(W["ecB"], np.float32)))
+    for li in range(L):
+        put(f"trunk.{li}.conv.conv.weight", T3(W["tcWt"][li], d, d, K))
+        put(f"trunk.{li}.conv.conv.bias", torch.tensor(np.asarray(W["tcB"][li], np.float32)))
+        put(f"trunk.{li}.norm.weight", torch.tensor(np.asarray(W["tgG"][li], np.float32)))
+        put(f"trunk.{li}.norm.bias", torch.tensor(np.asarray(W["tgB"][li], np.float32)))
+    for ei in range(E):
+        put(f"moe.experts.{ei}.conv.conv.weight", T3(W["eWt"][ei], d, d, K))
+        put(f"moe.experts.{ei}.conv.conv.bias", torch.tensor(np.asarray(W["eB"][ei], np.float32)))
+    rw = np.asarray(W["rWt"], np.float32).T                     # (E, d)
+    put("moe.router.weight", torch.tensor(rw if sd["moe.router.weight"].dim() == 2
+                                          else rw.reshape(E, d, 1)))
+    put("moe.router.bias", torch.tensor(np.asarray(W["rB"], np.float32)))
+    put("norm_out.weight", torch.tensor(np.asarray(W["noG"], np.float32)))
+    put("norm_out.bias", torch.tensor(np.asarray(W["noB"], np.float32)))
+    ro = np.asarray(W["roWt"], np.float32).T                    # (V, d)
+    put("readout.weight", torch.tensor(ro if sd["readout.weight"].dim() == 2
+                                       else ro.reshape(V, d, 1)))
+    put("readout.bias", torch.tensor(np.asarray(W["roB"], np.float32)))
+    m.load_state_dict(sd)
+    for p in m.parameters():
+        p.requires_grad_(False)
+    return m
+
+
+def torch_numpy_parity(m, W, fwd_logits, n=8, T=32, seed=7, tol=1e-3):
+    """MANDATORY gate before any GRAFT number: the torch organ must reproduce the engine-native numpy
+    forward. Returns max abs logit difference over n random contexts. A mis-transposed organ trains a
+    coupling into a DIFFERENT model while the loss still falls — that failure is invisible downstream."""
+    import torch
+    rng = np.random.default_rng(seed)
+    worst = 0.0
+    for _ in range(n):
+        toks = rng.integers(0, int(W["V"]), T)
+        ref = fwd_logits(W, toks.astype(np.float64), T)
+        with torch.no_grad():
+            out = m(torch.tensor(toks, dtype=torch.long)[None, :])
+        lg = out["logits"] if isinstance(out, dict) else out
+        got = lg[0].detach().cpu().numpy()
+        ref = np.asarray(ref, np.float32)
+        if got.shape != ref.shape and got.T.shape == ref.shape:
+            got = got.T            # the torch mouth works channel-first (B,V,T); numpy is (T,V)
+        worst = max(worst, float(np.max(np.abs(got - ref))))
+    return worst
+
+
+def logits_TV(out):
+    """Normalize a CLMConvMoE forward result to [T, V] (the numpy twin's orientation)."""
+    lg = out["logits"] if isinstance(out, dict) else out
+    lg = lg[0] if lg.dim() == 3 else lg
+    return lg.transpose(0, 1) if lg.shape[0] != 0 and lg.shape[-1] != 0 and lg.shape[0] < lg.shape[1] else lg
+
+
 def mixture_mi(logp_states):
     """MI = mean_i KL(p_i || p_mix) — the EXACT conditional MI I(state; next-token | shared prefix)
     (generalized JSD). logp_states: torch [N, T, V] log-softmax. Returns (MI, log p_mix).
