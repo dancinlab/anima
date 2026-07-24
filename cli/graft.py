@@ -521,7 +521,8 @@ def _check_hf_setup(a):
     if "bridge" not in st or st.get("hf_model") is None:
         sys.exit(f"[graft] --hf-model check needs the .pt bridge from `graft fit --hf-model`: {a.organ}")
     d, hidden = int(st["d"]), int(st["hidden"])
-    organ = HFOrgan(a.hf_model, load_4bit=a.load_4bit)
+    organ = HFOrgan(a.hf_model, load_4bit=a.load_4bit, grad_ckpt=False)  # check has no backward:
+    # checkpointing is unnecessary and its train() mode corrupts the measurement (fluency NLL 14.30)
     if organ.d != d:
         sys.exit(f"[graft] organ d={organ.d} != bridge d={d} (wrong --hf-model for this bridge?)")
     emb_rms = organ.embedding_rms()
