@@ -3624,6 +3624,13 @@ def main():
                          "(live loop) · purefield16-yoked (A/G deranged across rows = fancy-seed control) · "
                          "integrator16[-yoked] (H_9957 sibling: read the shared H_9607 integral I through "
                          "fixed random features, no PureField cell — is the channel just the scalar integrator?)")
+    ap.add_argument("--field-write", choices=["scalar", "vector"], default="scalar", dest="field_write",
+                    help="H_9957 coupled arm: scalar (legacy mode-0 mean-CE write) or vector (first "
+                         "--field-cells DCT modes of the per-byte A-G tension profile). Only the coupled arm.")
+    ap.add_argument("--field-cells", type=int, default=1, dest="field_cells",
+                    help="H_9957 coupled arm: m coupled leaky cells (fixed weak rotation coupling). "
+                         "The state faithful IIT-4 reads for the Φ-under-monopoly question; m=1 = the "
+                         "scalar integral (Φ undefined).")
     ap.add_argument("--field-block", type=int, default=256, dest="field_block",
                     help="contiguous block length (bytes) per field-loop step")
     ap.add_argument("--field-b", type=int, default=8, dest="field_b",
@@ -4533,7 +4540,8 @@ def main():
            f"d={dfl} block={a.field_block} B={a.field_b} steps={steps} corpus={len(raw)}B", flush=True)
         fl, hist = FL.field_loop_train(model, raw, a.field_arm, steps, dfl, B=a.field_b,
                                        block=a.field_block, lr=a.lr, seed=a.seed, device=device,
-                                       log=lambda s: p0(s, flush=True), doc_len=a.field_doc_len)
+                                       log=lambda s: p0(s, flush=True), doc_len=a.field_doc_len,
+                                       write=a.field_write, cells=a.field_cells)
         if a.out:
             # field-loop never runs the mitosis GROW loop, so mito.e_active is still e0; but a --init'd
             # model carries all `emax` experts. Serialize ALL of them (else _write_clm's e_ser=e_active

@@ -38,7 +38,12 @@ ARMS = ("off", "purefield16", "purefield16-yoked",
         # multi-D RECURRENT expansion with frozen weights (+0 trainable params). If it matches
         # purefield16's Δ, any fixed multi-D recurrence suffices (PureField not special); if it carries
         # ~0 like integrator16, PureField's specific dynamics (or a TRAINED cell) are needed.
-        "gru16-frozen", "gru16-frozen-yoked")
+        "gru16-frozen", "gru16-frozen-yoked",
+        # H_9957 Φ-measurability arm (fable): m COUPLED leaky cells + DCT-mode vector write. cells>1 +
+        # --field-write vector makes the state a system faithful IIT-4 can read (a 1-cell integral has
+        # Φ undefined); the FIXED weak cell-coupling makes integration available so the Φ question is not
+        # vacuous. The mission DV is Φ collapse-Δ of the CE-earned state, not payload bits.
+        "coupled", "coupled-yoked")
 
 
 class _FrozenGRU:
@@ -92,6 +97,30 @@ def _sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 
 
+def _fixed_rotation(m, rng, theta=0.15):
+    """A FIXED weak orthogonal cell-coupling matrix [m,m] (identity when m==1). Weak so the leaky
+    dynamics dominate but cross-cell influence is nonzero → integration is available-by-construction,
+    which is what makes Φ on the m-cell state a non-vacuous question (fable · H_9957). Deterministic
+    given the rng draw; persisted with the FieldLoop so eval reconstructs it exactly."""
+    if m == 1:
+        return np.eye(1)
+    A = rng.standard_normal((m, m))
+    A = A - A.T                                    # skew-symmetric -> exp(theta*A) is a small rotation
+    # low-order series for a small rotation (theta small): I + θA + (θA)^2/2
+    tA = theta * A
+    return np.eye(m) + tA + 0.5 * (tA @ tA)
+
+
+def _dct_basis(m, T):
+    """First m DCT-II temporal basis rows [m, T] (orthonormal-ish). Row 0 is the flat/mean mode, so a
+    scalar write (mode 0 only) is the block-mean of the profile = the legacy H_9607 scalar up to scale."""
+    t = np.arange(T)
+    k = np.arange(m)[:, None]
+    W = np.cos(np.pi * (t + 0.5) * k / T)          # [m, T]
+    W = W / np.linalg.norm(W, axis=1, keepdims=True)
+    return W
+
+
 class FieldLoop:
     """Per-batch-row PureField + H_9607 leaky A<->G integrator + a trainable GraftBridge/gamma that
     injects the C-state as an embedding residual. PureField physics fixed; only bridge+gamma train.
@@ -108,7 +137,7 @@ class FieldLoop:
     running g_mu, a follow-on)."""
 
     def __init__(self, batch_rows, d, arm="purefield16", gate_rho=1.0, hidden=64,
-                 seed=0, leaky=1.0 / 400.0, drive_gain=-0.6):
+                 seed=0, leaky=1.0 / 400.0, drive_gain=-0.6, write="scalar", cells=1):
         import pure_field as PF
         import clmg as G
         import torch
@@ -124,7 +153,7 @@ class FieldLoop:
         self.yoked = arm.endswith("-yoked")
         base = arm[:-len("-yoked")] if self.yoked else arm
         self.kind = {"off": "off", "purefield16": "purefield", "integrator16": "integrator",
-                     "gru16-frozen": "gru-frozen"}.get(base, "purefield")
+                     "gru16-frozen": "gru-frozen", "coupled": "coupled"}.get(base, "purefield")
         self.pf = [PF.pure_field_new() for _ in range(self.B)]        # per-row field
         self.I = np.zeros(self.B, dtype=np.float64)                   # per-row leaky A<->G integral
         # integrator16 (sibling rung 1): FIXED random features of I, C_DIM-wide, frozen at seed (no cell)
@@ -133,7 +162,23 @@ class FieldLoop:
         # gru16-frozen (sibling rung 2): FIXED random GRU-16, scalar-driven, C_DIM-wide bounded state
         self.gru = _FrozenGRU(G.C_DIM, self.rng) if self.kind == "gru-frozen" else None
         self.gru_h = np.zeros((self.B, G.C_DIM)) if self.kind == "gru-frozen" else None
-        self.bridge = G.GraftBridge(c_dim=G.C_DIM, h=hidden, d=self.d, gate_rho=gate_rho)
+        # coupled (H_9957 Φ-measurability arm · fable): m coupled leaky cells, log-spaced τ, a FIXED weak
+        # rotation R so integration is available-by-construction (Φ non-vacuous); write = first m DCT modes
+        # of the per-byte A−G tension profile (scalar = mode 0 only, so cells=1/write=scalar == the legacy
+        # integrator). Only bridge+gamma train; the write basis + cell dynamics are fixed (the substrate
+        # under test). This is the state faithful IIT-4 can read — 1-cell integral has Φ undefined.
+        self.write = write
+        self.m = int(cells) if (self.kind == "coupled" and write == "vector") else 1
+        if self.kind == "coupled":
+            tau = np.array([400.0]) if self.m == 1 else np.logspace(2.0, np.log10(6400.0), self.m)
+            self.lam = 1.0 / tau                                     # per-cell leak (m=1 -> 1/400)
+            self.Ivec = np.zeros((self.B, self.m), dtype=np.float64)
+            self.R = _fixed_rotation(self.m, self.rng)              # weak fixed cell coupling (I if m=1)
+            self.Wdct = None                                        # DCT basis [m, T], built when T known
+        else:
+            self.lam = None; self.Ivec = None; self.R = None; self.Wdct = None
+        c_dim = self.m if self.kind == "coupled" else G.C_DIM
+        self.bridge = G.GraftBridge(c_dim=c_dim, h=hidden, d=self.d, gate_rho=gate_rho)
         # gamma trainable, init 0 -> CE may turn the channel on or leave it off (no fixed injection)
         self.gamma = torch.nn.Parameter(torch.zeros(()))
         self.dev = torch.device("cpu")
@@ -162,7 +207,10 @@ class FieldLoop:
              "leaky": self.leaky, "drive_gain": self.drive_gain,
              "int_w": None if self.int_w is None else self.int_w.tolist(),
              "int_b": None if self.int_b is None else self.int_b.tolist(),
-             "gru": None if self.gru is None else self.gru.state()}, path)
+             "gru": None if self.gru is None else self.gru.state(),
+             "write": self.write, "m": self.m,
+             "lam": None if self.lam is None else self.lam.tolist(),
+             "R": None if self.R is None else self.R.tolist()}, path)
 
     @staticmethod
     def load(path, batch_rows, device="cpu", seed=0):
@@ -173,12 +221,16 @@ class FieldLoop:
         st = torch.load(path, map_location="cpu", weights_only=False)
         fl = FieldLoop(batch_rows, int(st["d"]), arm=st["arm"], gate_rho=float(st["gate_rho"]),
                        hidden=int(st["hidden"]), seed=seed,
-                       leaky=float(st["leaky"]), drive_gain=float(st["drive_gain"]))
+                       leaky=float(st["leaky"]), drive_gain=float(st["drive_gain"]),
+                       write=st.get("write", "scalar"), cells=int(st.get("m", 1)))
         if st.get("int_w") is not None:                              # restore integrator16 fixed features
             fl.int_w = np.asarray(st["int_w"], dtype=np.float64)
             fl.int_b = np.asarray(st["int_b"], dtype=np.float64)
         if st.get("gru") is not None:                                # restore gru16-frozen fixed weights
             fl.gru = _FrozenGRU.from_state(st["gru"])
+        if st.get("lam") is not None:                                # restore coupled cells' fixed dynamics
+            fl.lam = np.asarray(st["lam"], dtype=np.float64)
+            fl.R = np.asarray(st["R"], dtype=np.float64)
         fl.bridge.load_state_dict(st["bridge"])
         with torch.no_grad():
             fl.gamma.fill_(float(st["gamma"]))
@@ -189,6 +241,8 @@ class FieldLoop:
             C = np.tanh(self.int_w[None, :] * self.I[:, None] + self.int_b[None, :])   # [B, C_DIM]
         elif self.kind == "gru-frozen":                              # fixed random GRU state (recurrent)
             C = self.gru_h
+        elif self.kind == "coupled":                                 # m coupled leaky cells (the Φ state)
+            C = self.Ivec
         else:
             C = np.stack([self.G.graft_c_state(p) for p in self.pf])
         return self.torch.tensor(C, dtype=self.torch.float32, device=self.dev)
@@ -218,10 +272,12 @@ class FieldLoop:
                 return p
 
     def writeback(self, ce_per_row, g_per_row):
-        """After the block, advance each row's field by the H_9607 drive. no_grad (the field is not a
-        graph leaf). s = A - G, A = exp(-CE) (the forward CE-trained engine's support for the observed
-        bytes), G = the gradient-free reverse-recognition reach; I <- (1-1/400) I + s; drive = -0.6 I.
-        On the yoked arm the (A,G) pairs are deranged across rows first (fancy-seed control)."""
+        """After the block, advance the field by the H_9607 drive. no_grad (the field is not a graph
+        leaf). s = A - G, A = exp(-CE), G = gradient-free reverse-recognition reach; I <- (1-1/400) I + s.
+        On the yoked arm the drive is deranged across rows (fancy-seed control). The COUPLED arm accepts
+        a per-byte CE/G profile [B,T] and writes its first m DCT modes into m coupled leaky cells."""
+        if self.kind == "coupled":
+            return self._writeback_coupled(ce_per_row, g_per_row)
         A = np.exp(-np.asarray(ce_per_row, dtype=np.float64))
         Gv = np.asarray(g_per_row, dtype=np.float64)
         if A.shape != (self.B,) or Gv.shape != (self.B,):
@@ -239,6 +295,30 @@ class FieldLoop:
             self.gru_h = self.gru.step(self.gru_h, drive)
         # integrator16 reads I directly (no cell to advance)
 
+    def _writeback_coupled(self, ce, g):
+        """Coupled-cell write. vector: ce/g are per-byte [B,T] -> s = first m DCT modes of the A-G
+        tension profile. scalar (m=1): ce/g are per-row [B] mean-CE -> s is the block-mean = mode 0.
+        State: I <- R · diag(1-λ) · I + s (fixed weak coupling R, per-cell leak λ). Yoked derangement
+        permutes the drive rows. no_grad."""
+        ce = np.asarray(ce, dtype=np.float64)
+        g = np.asarray(g, dtype=np.float64)
+        if self.write == "vector":
+            if ce.ndim != 2 or ce.shape[0] != self.B:
+                raise ValueError(f"vector coupled write needs per-byte ce [B,T], got {ce.shape}")
+            T = ce.shape[1]
+            if self.Wdct is None or self.Wdct.shape[1] != T:
+                self.Wdct = _dct_basis(self.m, T)
+            if g.ndim == 1:
+                g = np.repeat(g[:, None], T, axis=1)                 # broadcast per-row g to per-byte
+            s = (np.exp(-ce) - g) @ self.Wdct.T                      # [B,m] first m DCT modes of A-G
+        else:                                                        # scalar (m=1) = legacy mode-0 write
+            if ce.shape != (self.B,):
+                raise ValueError(f"scalar coupled write needs per-row ce [B], got {ce.shape}")
+            s = (np.exp(-ce) - g)[:, None]                           # [B,1]
+        if self.yoked:
+            s = s[self._derangement()]                              # derange the drive across rows
+        self.Ivec = (self.Ivec * (1.0 - self.lam)) @ self.R.T + s   # [B,m] coupled leaky update
+
     def reset(self, rows=None):
         """Reset the field/integral for the given rows (default all) — call between documents."""
         idx = range(self.B) if rows is None else rows
@@ -247,6 +327,8 @@ class FieldLoop:
             self.I[i] = 0.0
             if self.gru_h is not None:
                 self.gru_h[i] = 0.0
+            if self.Ivec is not None:
+                self.Ivec[i] = 0.0
 
 
 class _FieldStream:
@@ -314,7 +396,8 @@ class _FieldStream:
 
 
 def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, seed=0,
-                     device="cpu", hidden=64, g_fn=None, log_every=25, log=print, doc_len=0):
+                     device="cpu", hidden=64, g_fn=None, log_every=25, log=print, doc_len=0,
+                     write="scalar", cells=1):
     """One FIELD-LOOP training run (model-agnostic — cli/train.py --field-loop passes the real
     CLMConvMoE; the $0 smoke passes a tiny stand-in). Per contiguous block:
         residual = FieldLoop.residual()   [B,d] broadcast over T at the embedding site
@@ -327,7 +410,8 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
     immune_memory_recall_reach). Returns (FieldLoop, per-step mean-CE history)."""
     import torch
     import torch.nn.functional as F
-    fl = FieldLoop(B, d, arm=arm, hidden=hidden, seed=seed).to(device)
+    fl = FieldLoop(B, d, arm=arm, hidden=hidden, seed=seed, write=write, cells=cells).to(device)
+    vec_wb = (fl.kind == "coupled" and fl.write == "vector")      # per-byte write needs the [B,T] CE
     core_m = model.module if hasattr(model, "module") else model
     emb_w = getattr(core_m, "embed", None)
     emb_rms = (float(emb_w.weight.detach().float().pow(2).mean().sqrt())
@@ -347,15 +431,17 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
             res = (res * emb_rms).unsqueeze(1)               # anchor amplitude to the model's embedding
             #      RMS (GRAFT's stability anchor) so gamma stays O(1), then broadcast over T
         logits = model(x, None, emb_residual=res)["logits"].float()   # [B, V, T]
-        ce_row = F.cross_entropy(logits, y, reduction="none").mean(dim=1)  # [B]
+        ce_all = F.cross_entropy(logits, y, reduction="none")         # [B, T] per-byte CE
+        ce_row = ce_all.mean(dim=1)                                   # [B]
         loss = ce_row.mean()
         opt.zero_grad()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0)          # GRAFT/standard-loop grad clip (no-NaN)
         opt.step()
         with torch.no_grad():
-            ce_np = ce_row.detach().cpu().numpy()
             g_np = np.zeros(B) if g_fn is None else np.asarray(g_fn(x), dtype=np.float64)
+            ce_np = (ce_all.detach().cpu().numpy() if vec_wb        # per-byte [B,T] for the DCT write
+                     else ce_row.detach().cpu().numpy())            # per-row [B] for scalar arms
             fl.writeback(ce_np, g_np)
         hist.append(float(loss.detach()))
         if step % log_every == 0 or step == 1:
@@ -438,6 +524,7 @@ def field_loop_eval_fieldctl(model, fl, val_bytes, mask, device="cpu", seed=0):
     stream = _FieldStream(val_bytes, K, block, seed=seed, doc_len=doc_len)
     nchunks = stream.ndocs // K
     a_ce, y_ce, s_ce = [], [], []                           # aligned / yoked / sever payload CE pools
+    vec_wb = (fl.kind == "coupled" and fl.write == "vector")      # per-byte write needs the [K,T] CE
 
     def _logits(xb, res):
         with torch.no_grad():
@@ -453,8 +540,8 @@ def field_loop_eval_fieldctl(model, fl, val_bytes, mask, device="cpu", seed=0):
             res = None if res is None else (res * emb_rms).unsqueeze(1)
             with torch.no_grad():
                 lg = _logits(xb, res)
-                ce = F.cross_entropy(lg, yb.to(device), reduction="none").mean(dim=1).cpu().numpy()
-            fl.writeback(ce, np.zeros(K))
+                ce_bt = F.cross_entropy(lg, yb.to(device), reduction="none").cpu().numpy()   # [K,T]
+            fl.writeback(ce_bt if vec_wb else ce_bt.mean(axis=1), np.zeros(K))
         with torch.no_grad():                              # snapshot the K grown fields -> residuals
             C = fl._C()                                     # kind-branched (PureField / integrator / GRU);
             R = (fl.bridge(C) * fl.gamma * emb_rms)         # graft_c_state(pf) read the UNADVANCED pf for
@@ -692,9 +779,43 @@ def _falsifier(reps=200, seed0=0, jitter_sd=0.1, g_const=0.2, drive_gain=-0.6,
     return 1
 
 
+def _coupled_smoke():
+    """$0 mechanism smoke for the coupled Φ-arm (fable's witnesses). No GPU/corpus/torch-train."""
+    B, m, T = 4, 4, 16
+    rng = np.random.default_rng(0)
+    fl = FieldLoop(B, 64, arm="coupled", seed=0, write="vector", cells=m)
+    fl.writeback(rng.random((B, T)), np.zeros(B))
+    assert fl.Ivec.shape == (B, m) and fl.Wdct.shape == (m, T), "coupled state/DCT shape wrong"
+    print(f"(1) coupled vector m={m}: state {fl.Ivec.shape}, dct {fl.Wdct.shape}  OK")
+    # (2) two per-byte profiles with IDENTICAL block-mean but different temporal shape must give
+    #     different states — a scalar/mode-0 write cannot tell them apart; the higher DCT modes must.
+    prof1 = np.tile(np.full(T, 0.5)[None], (B, 1))
+    prof2 = np.tile(np.concatenate([np.full(T // 2, 0.9), np.full(T - T // 2, 0.1)])[None], (B, 1))
+    assert abs(prof1.mean() - prof2.mean()) < 1e-9, "test profiles must share the block mean"
+    fa = FieldLoop(B, 64, arm="coupled", seed=1, write="vector", cells=m)
+    fb = FieldLoop(B, 64, arm="coupled", seed=1, write="vector", cells=m)
+    fa.writeback(-np.log(prof1), np.zeros(B))              # ce = -ln p  ->  exp(-ce) = p
+    fb.writeback(-np.log(prof2), np.zeros(B))
+    diff = float(np.abs(fa.Ivec - fb.Ivec).sum())
+    assert diff > 1e-3, f"same-mean different-shape profiles gave the same state (Δ={diff}) — modes>0 dead"
+    print(f"(2) same block-mean, different temporal shape -> different state (Δ={diff:.4f})  OK")
+    # (3) fixed coupling R is a non-identity rotation for m>1 (integration available by construction)
+    off = float(np.abs(fa.R - np.eye(m)).sum())
+    assert off > 1e-3, "coupling R must be non-identity for m>1"
+    print(f"(3) fixed cell-coupling R != I (off-identity mass {off:.4f})  OK")
+    # (4) m=1 scalar coupled reduces to a single leaky cell (Φ undefined there — the reason to widen)
+    f1 = FieldLoop(B, 64, arm="coupled", seed=0, write="scalar", cells=1)
+    f1.writeback(rng.random(B), np.zeros(B))
+    assert f1.Ivec.shape == (B, 1) and np.allclose(f1.R, np.eye(1)), "m=1 must be a single uncoupled cell"
+    print("(4) m=1 scalar coupled = single leaky cell (R=I)  OK")
+    print("\nCOUPLED SMOKE: ALL PASS (vector DCT write + coupled cells; Φ readout is the next increment)")
+    return 0
+
+
 if __name__ == "__main__":
     import os
     import sys
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     mode = sys.argv[1] if len(sys.argv) > 1 else "smoke"
-    raise SystemExit(_falsifier() if mode == "falsify" else _smoke())
+    fn = {"falsify": _falsifier, "couple": _coupled_smoke}.get(mode, _smoke)
+    raise SystemExit(fn())
