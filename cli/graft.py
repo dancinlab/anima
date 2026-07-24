@@ -695,7 +695,7 @@ def _fluency(a, organ, codes, emb_rms, rng):
         with torch.no_grad():
             lg = organ(t, emb_residual=resid).float()
             lp = F.log_softmax(lg[:-1], -1)
-            return float(-lp.gather(1, tgt.unsqueeze(1)).mean())
+            return float(-lp.gather(1, tgt.unsqueeze(1).to(lp.device)).mean())
 
     off = nll(None)
     on = [nll(c) for c in codes]
@@ -743,7 +743,7 @@ def _fluency(a, organ, codes, emb_rms, rng):
         tt = torch.tensor([int(x) for x in bs], dtype=torch.long)
         with torch.no_grad():
             lp = F.log_softmax(organ(tt, emb_residual=resid).float()[:-1], -1)
-            return float(-lp.gather(1, tt[1:].unsqueeze(1)).mean())
+            return float(-lp.gather(1, tt[1:].unsqueeze(1).to(lp.device)).mean())
 
     nat_off = nll_of(b_nat, None)
     nat_on = [nll_of(b_nat, c) for c in codes]
