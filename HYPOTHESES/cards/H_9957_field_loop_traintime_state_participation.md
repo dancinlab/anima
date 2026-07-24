@@ -114,10 +114,14 @@ K2 바닥 16.37·1.000. ⟹ 스칼라 되쓰기가 최소 1비트를 창밖으�
 **PARTIAL — 계기가 진짜 창밖 채널을 읽음(CERTIFIED-AS-READING), 단 스칼라 용량 ~1비트.** cheap-decisive 2-arm
 from-init(d256·L4·block128·B4·doc_len1408·34k step·4096 train/512 val·**`--trunk-norm position` 필수**):
 
-| arm | gamma | aligned | yoked | sever | Δ=min(yoke,sev)−aligned |
+| seed·arm | gamma | aligned | yoked | sever | Δ=min(yoke,sev)−aligned |
 |---|---|---|---|---|---|
-| off (받침대) | 0.000 | 1.446 | 1.446 | 1.446 | 0.000 |
-| purefield16 | +0.173 | **0.943** | 2.672 | 1.628 | **+0.685 ≈ ln2 = 1비트** |
+| s0 off (받침대) | 0.000 | 1.446 | 1.446 | 1.446 | 0.000 |
+| s0 purefield16 | +0.173 | **0.943** | 2.672 | 1.628 | **+0.685** |
+| s1 off (받침대) | 0.000 | 1.399 | 1.399 | 1.399 | 0.000 |
+| s1 purefield16 | +0.173 | **0.987** | 2.401 | 1.619 | **+0.633** |
+
+**2-seed 재현 확정**: 두 seed 모두 받침대 성립(off≈ln4·누출0)·통제 clean(aligned≪sever≪yoked)·Δ≈0.63–0.69 ≈ ln2 = **1비트 안정**.
 
 - **받침대 성립**: off arm payload CE 1.446 ≈ 우연 ln4=1.386(> lnK−0.1=1.286) → 창내누출 없음. payload 는 필드 없이 창내 예측불가.
 - **필드가 창밖 키를 나름**: aligned 0.943 ≪ sever 1.628 ≪ yoked 2.672. 자기 필드는 우연보다 잘, 틀린/무필드는 우연 이상 못 맞힘.
