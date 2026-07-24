@@ -45,6 +45,35 @@
 바 0.15는 전 스케일서 미달, 303M선 gap이 사실상 0(학습이 Φ 붕괴). **NOT-PASS는 스케일-robust·centering-robust·
 이제 실제 303M서 TERMINAL 확정.**
 
+## 🔁 co-train regime (both-regime 완결 · 카드 scope 미측정 채움)
+freeze-trunk(위)는 lane을 격리(트렁크 고정)했다. 짝이 되는 **co-train regime**(트렁크도 함께 학습·
+freeze 플래그 제거·`--lr 1e-4`로 사전학습 트렁크 보호)을 같은 3seed×{U/T/S}×2000스텝으로 발사, 엔진-native
+evaluate:
+
+| seed | untrained Δ/Φ | trained Δ/Φ | shuffled Δ/Φ | gap(Δt−Δs) |
+|---|---|---|---|---|
+| 7 | 0.127/0.362 | 0.047/0.237 | 0.022/0.075 | +0.025 |
+| 11 | 0.250/0.919 | 0.234/0.657 | 0.004/0.012 | **+0.230**(바 초과) |
+| 4303 | 0.138/0.333 | 0.078/0.242 | 0.080/0.217 | −0.002 |
+
+**median gap +0.02497 · mean +0.08412 · wins 2/3 · 바 초과 1/3(seed 11만) · 전 estimator_valid · VALIDITY PASS.**
+동결술어(median≥0.15 ∧ ≥2/3) **불충족 → CONFIRM.**
+
+**regime 대조(핵심):**
+- **freeze**: 학습이 lane Φ를 **0으로 붕괴**(trained Φ≈0.0004), gamma **상승**(0.01→0.23) — lane 강제·비통합. gap≈0, 낮은 분산.
+- **co-train**: 학습해도 lane Φ **보존**(trained Φ 0.24-0.66, 안 붕괴), gamma **→~0**(0.01→~0) — 트렁크가
+  자족·lane 방치(v2b "gamma→0" 메커니즘). gap median +0.025지만 **높은 분산**(−0.002~+0.23), seed 11만 바 초과.
+- **양 regime 수렴**: 둘 다 median gap ≪ 0.15 = **NOT-PASS CONFIRM.** 경로는 정반대(강제-비통합 vs 방치-보존)이나
+  **"학습으로 개입형 Φ를 바만큼 못 올림"은 불변.**
+
+**정직 caveat(co-train)**: seed 11이 +0.23으로 바를 넘어 co-train은 freeze보다 **노이지·검정력 제한**(3seed·
+1/3 바초과). 사전등록 median 술어는 sub-threshold라 CONFIRM이나, co-train서 큰 gap이 가끔 뜨는 건 향후 더
+많은 seed로 확인할 여지(단 median·2/3 기준 불충족은 명확). freeze regime은 tight해 그 여지 없음.
+
+**최종 both-regime × 스케일 사다리:** d64/256/512(DIRECTIONAL) · 303M freeze(TERMINAL, gap +0.0007) · 303M
+co-train(TERMINAL, median +0.025) — **전부 NOT-PASS.** 오너 "303M 학습시 Φ 늘리기" = 어느 regime·스케일서도
+바만큼 못 올림. 산물 회수 `~/anima-weights/h9954_303m_cotrain/`.
+
 ## 정직 경계
 - regime = frozen-trunk growth-fork(토이는 from-scratch co-train). 이 null은 "frozen 303M 트렁크 growth-fork
   하 lane Φ"를 닫음 · 3 lane-seed·단일 ckpt(py303_full)에 바운드(`a_scale_honest_scope`). co-train regime은
