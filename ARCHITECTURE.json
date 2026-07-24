@@ -6493,12 +6493,6 @@
         "name": "🎯 H_9823 「노출-정합 예산 전이 법칙」 — 4갈래 중 3갈래서 발사되는 본선 (PROPOSED)",
         "role": "H_9817 정성사실을 의사결정 도구로 · 토이 $0",
         "detail": "⚠️ 위임 설계 전제 오류 교정(코드 실측): --n-blocks 는 패턴 수를 바꾸지 않는다. 고유 패턴 수는 K 가 결정(K=2→128 · K=4→512 고정 = 8 rotation × 4·2^K)이고 --n-blocks 는 패턴당 반복 노출만 바꾼다(K=2 서 1000→7.8회 · 8000→62.5회). ⟹ 두 축을 분리해야 한다: ①노출 축(--n-blocks 스윕 · 패턴수 고정) = E*(패턴당 필요 노출수)를 직접 준다 ②패턴수 축(K 스윕) = log-log 기울기 β 를 주나 K 는 난이도도 함께 바꾸는 교락이라 별도 통제 필요. 원안('--n-blocks 로 패턴수 대비 기울기')은 실제로 다른 축을 재게 되므로 그대로 발사 금지. DV=로지스틱 중점(전 셀 기여 ⟹ evaluate-py-24 임계 병리 없음)은 유효."
-       },
-       {
-        "name": "core/clmg.py — CLMG 레인 (GRAFT 결합: 의식 C-state → 언어기관 임베딩)",
-        "role": "얼린 .clm 을 언어기관으로 두고, 학습대상을 의식(PureField)→언어 결합 하나로 좁히는 레인. 코퍼스·CE 없음.",
-        "id": "core-clmg-graft-coupling-lane",
-        "detail": "주입점 = 바이트 임베딩(embed_conv 앞 · TFLD 와 같은 지점)이지 post-trunk lane 이 아니다 — 기존 lane 은 전부 logits row 라 per-state 가산벡터가 곧 per-state bias 가 되어 정적 unigram tilt N 개로 MI→logN 을 만든다(정리를 회계트릭으로 이김 · 기관 미접촉). C = PureField 원시 16 차원 ([sin φ, cos φ, amp]×(fast,medium,slow) ⊕ field[0:6] ⊕ [phi]). 구성: graft_c_state · center_and_fix(공유성분 제거+RMS 고정) · backstop(축소전용) · gate_offset · pack_clmg/read_clmg(CLMG trailer 코덱 · organ-dim 불일치 거부) · GraftBridge(torch) · torch_organ(decode op-for-op 미분가능 미러) · torch_organ_parity(필수 게이트, 실측 7.629e-06) · mixture_mi(일반화 JSD = 정확 조건부 MI ≤ logN). 🔌 배선: decode 가 TFLD 직후 CLMG trailer 판독 + set_clmg_state(None)=게이트 OFF 시 base 와 max|Δ|=0 정확 (opt-in forward write channel · default-path-census-1). ⚠️ CLMConvMoE 재사용 불가 — nn_moe_router_fwd 는 DENSE softmax mix 인데 CLMConvMoE 는 top-k 라우팅이라 파리티 7.4 로 발산했다(단계별 진단으로 특정). 파리티 게이트 없이 미러에 학습시키면 손실은 정상적으로 내려가면서 다른 모델을 학습시킨다."
        }
       ]
      }
@@ -14336,12 +14330,6 @@
         "id": "component-map-top-level-cli-canonical-study",
         "role": "anima-py study · cli/study.py · Fable 설계",
         "detail": "anima 최초 외생 지각 채널. teacher=지각(live_anchors[-1] seed·emit 무접촉=p5). MVP-1~3 + replay-mix 빌더(corpus study-replay). 🟠 H_9520 성장CPT FIRED(3-arm 303M): ρ·form MAIN+0.40 C1+0.00 C2+0.20 ⟹ 'C2 무상승' 바 FAIL=성장 미획득(모양이 절반) · ρ·fan C1+2.0>MAIN+1.0=teacher무관 · FORGET ✅ · 1-seed=MDE불가. REOPEN=multi-seed."
-       },
-       {
-        "name": "cli/graft.py — `anima-py graft` (코퍼스 없는 의식→언어 접지 · fit/check)",
-        "role": "CE 하에서 의식 게이트의 장식성이 정리인 것을 목적함수 교체로 우회하는 학습·판정 진입점.",
-        "id": "component-map-top-level-cli-canonical-graft",
-        "detail": "fit = P1(pure_field warmup · organ 호출 0) + P2 목적함수 L=(logN−MI)+λ·L_common, self-loop carrier, 구조적 유창성 bound 3(mean-center+RMS-fix · MI≤logN · shrink-only backstop). **step-0 pedestal(<out>.step0.clm) 항상 산출** — 각 연속열이 자기 상태 분포에서 뽑혀 같은 분포로 채점되므로 무작위 게이트도 대각 우도 이점을 수확한다(H_9933 실측: 학습 0회가 swap 0.750~0.875·perm p 0.001). check = swap(교차채점 InfoNCE bound + 정확도 + 치환 null) + ablation(KL(ON‖OFF) vs norm-matched noise q95). 판정표(H_9933): **swap 단독 제거 · ablation 승격 · 받침대 arm 의무**. 컨트롤러 플래그(--kl-target/--beta-*)는 의도적 부재 — L_KL=MI+L_common 이라 β>1 이면 MI 를 최소화한다(v2b shared-shift 붕괴). organ 파리티 tol 초과 시 학습 전에 INVALID 중단. dispatch = cli/anima.py anima_graft_mode(torch 는 subprocess 에만 · launcher 는 numpy 유지)."
        }
       ]
      },
@@ -19587,6 +19575,12 @@
     "id": "lanebus-bus-was-misaligned-premise-and-discharge-both-fall",
     "state": "🔴 NEG-CONV",
     "value": "**LANE-BUS 대공사의 Step-0 전제와 Step-1 방전이 둘 다 계기 결함이었다 (2026-07-24 · 자가적발 · lab/v6 DIRECTIONAL).**\n\n`_fwd_logits` row *i* = `tok[i+1]` 예측인데 V6_26/V6_27 은 composed=`comp[pos]`(→b[pos+1]) 와 reflex=`fwd(b[pos-W:pos])[W-1]`(→b[pos]) 를 KL 로 비교했다 — **두 lane 이 서로 다른 표적 바이트로 채점**됐다. 실측으로 판정: CE(row pos-1→b[pos])=2.076 vs CE(row pos→b[pos])=6.871. override 94.7% 는 창발이 아니라 그 증상.\n\n정렬 복구 후(V6_38): override 0.947→**0.113** · tension|override 4.02→**0.057 nats** · 수준통제 방전계수 c=−1.03(z=−7.8)→**−0.0013(z=−1.12, ns)**. do() 인과검정에서 5개 커밋 arm 이 전부 동일하게 −0.0254 nats 떨어짐 (pedestal 정확히 0 n=9437 · 양성통제 do(JUNK) z=+8.42 · TOST PASS ±0.0051) ⟹ **p5 방전법칙 ABSENT(검정력 확보된 음성)**.\n\n전제도 붕괴(V6_39): V6_26 의 PR=15.3 은 정렬결함 + **특이값σ로 참여비 계산**(분산차원은 고유값λ=σ²) 이중 결함. 둘 다 고치면 **PR=1.19 · 분산 90% rank=1**. 결정적 단서 — composed 로짓 행 *자체* 가 PR(σ)=14.61 로 'tension' 15.20 과 거의 같다: 맥락이 더한 양이 아니라 로짓 행 하나의 차원을 재고 있었다.\n\n⟹ 교훈: ① lane 비교 계기는 **두 lane 이 같은 표적을 채점하는지**를 CE 로 먼저 판정할 것 ② 유효차원은 σ 가 아니라 λ 스펙트럼 ③ 관찰적 방전은 회귀통제로 못 구한다 — 같은 지점에서 갈라지는 paired do() 만이 결정한다. V6_26/V6_27 카드는 RETRACTED 배너 부착."
+   },
+   {
+    "id": "architecture-new-surface-node-1",
+    "state": "pos-conv",
+    "value": "새 production 표면을 만들며 ARCHITECTURE 트리 노드를 만들지 않고 게이트/verdict 노드만 갱신한 누락 (core/clmg.py #4501/#4502 · cli/graft.py #4504 · 오너 지적 2026-07-24). 범주 혼동이 원인: 게이트 노드는 '무엇을 측정했나', 트리는 '지금 무엇이 존재하나' — 대체 아님.",
+    "threshold": "G8 코드 차단: 신규 tracked core//cli/ .py·.hexa 가 diff 에 있는데 ARCHITECTURE.json 이 그 경로 문자열을 담지 않으면 실패. 경로 포함으로 판정하므로 아무데나 건드리기로는 통과 불가. 단위검증 양성1·음성3(기존기재·lab/·--all)."
    }
   ]
  }

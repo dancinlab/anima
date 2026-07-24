@@ -40,6 +40,14 @@ Gates enforced (mechanical subset of CLAUDE.md):
       verdicts → ARCHITECTURE gate nodes; volatile scratch → /tmp. Commit-time backstop to the
       H-NO-STATE-DIR pre_write hook (which only sees agent tool-calls, not script-internal writes).
 
+  G8  new-surface ARCHITECTURE node  (single-doc · commons c4 · owner 2026-07-24)
+      A NEW tracked production file under core/ or cli/ (*.py, *.hexa) must land together with
+      an ARCHITECTURE.json edit that MENTIONS ITS PATH — the design SSOT gets the node when the
+      surface is created, not whenever someone remembers. A verdict/gate node about the work is
+      NOT a substitute: it records what was measured, while the tree records what now EXISTS.
+      Precedent: core/clmg.py + cli/graft.py landed (#4501/#4502/#4504) with a gate node only,
+      so the tree never learned the two new surfaces existed.
+
 Exit: 0 = clean, 1 = violation(s), 2 = enforcer error.
 """
 
@@ -394,6 +402,28 @@ def g7_violations(all_mode):
     return sorted(f.strip() for f in new if f.strip() and G7_PATH.match(f.strip()))
 
 
+# G8 — new production surface must arrive WITH its ARCHITECTURE.json node (single-doc, commons c4).
+# The tree is the "what exists" SSOT; gate/convergence nodes are the "what was measured" record.
+# Landing a new core//cli/ module while touching only a gate node leaves the tree blind to it.
+G8_PATH = re.compile(r"^(core|cli)/[^/]*\.(py|hexa)$")
+
+
+def g8_violations(all_mode):
+    if all_mode:
+        return []  # per-change gate — a whole-repo audit has no baseline to diff against
+    base = sh(["git", "merge-base", "HEAD", "origin/main"]).strip()
+    new = set(sh(["git", "diff", "--name-only", "--diff-filter=A", "--cached"]).splitlines())
+    if base:
+        new |= set(sh(["git", "diff", "--name-only", "--diff-filter=A", base, "HEAD"]).splitlines())
+    added = sorted(f.strip() for f in new if f.strip() and G8_PATH.match(f.strip()))
+    if not added:
+        return []
+    arch = REPO / "ARCHITECTURE.json"
+    text = arch.read_text(encoding="utf-8", errors="replace") if arch.is_file() else ""
+    # the node must NAME the path — an unrelated ARCHITECTURE edit in the same diff is not a node
+    return [f for f in added if f not in text]
+
+
 def main():
     all_mode = "--all" in sys.argv[1:]
     if not HYP.is_file():
@@ -409,8 +439,9 @@ def main():
     g5 = g5_violations(all_mode)  # changed-scope only; VERSION lockstep vs anima-python wheel content
     g6 = g6_violations(rows)  # always whole-repo; unique-H_id invariant (a_hypothesis_register)
     g7 = g7_violations(all_mode)  # changed-scope only; no-scatter (state/ + archive/state/ new-write block)
+    g8 = g8_violations(all_mode)  # changed-scope only; new core//cli/ surface must carry its ARCHITECTURE node
 
-    if not g1 and not g2 and not g3 and not g5 and not g6 and not g7:
+    if not g1 and not g2 and not g3 and not g5 and not g6 and not g7 and not g8:
         print(f"✅ anima-gates: clean · scope={scope_label} · {len(rows)} hypotheses · gate-card invariant OK")
         return 0
 
@@ -468,6 +499,17 @@ def main():
             print(f"        · {f}")
         print("     → 내용은 카드 본문 + jsonl(수치·parity) · ARCHITECTURE gate 노드(verdict) 로 흡수하고 "
               "파일은 삭제한다. 휘발 중간물은 /tmp. frozen 계약만 state/verdicts/. (no bypass — c18)")
+    if g8:
+        print()
+        print("  [G8] new-surface ARCHITECTURE node (single-doc · commons c4) — "
+              "core//cli/ 신규 production 파일인데 ARCHITECTURE.json 이 그 경로를 담지 않음:")
+        for f in g8:
+            print(f"        · {f}")
+        print("     → 설계 SSOT 트리에 그 파일의 노드를 같은 변경분에 만들어라 "
+              "({name, role, id, detail} · 형제 노드 규약을 따를 것). "
+              "게이트/verdict 노드는 대체물이 아니다 — 그건 '무엇을 측정했나'이고, "
+              "트리는 '지금 무엇이 존재하나'다. 만든 시점에 만들고 이후 갱신한다(오너 2026-07-24). "
+              "(no bypass — c18)")
     return 1
 
 
