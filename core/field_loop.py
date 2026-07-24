@@ -369,12 +369,16 @@ def field_loop_eval_fieldctl(model, fl, val_bytes, mask, device="cpu", seed=0):
                              dtype=torch.float32, device=device)
             R = (fl.bridge(C) * fl.gamma * emb_rms)         # [K, d]
         xb, yb, _ = stream.next_block()                    # the deepest payload block (not written back)
-        tgt = yb[:, spos].to(device)                       # [K] the planted payload bytes
+        # the planted payload byte sits at block position `spos` (right after the `PAY<j>:` marker).
+        # next-byte scoring predicts x[spos] from logits at spos-1 with target yb[spos-1] (= x[spos]);
+        # using spos would score x[spos+1] (the constant space pad) = a trivially-0 CE for every arm.
+        sp = spos - 1
+        tgt = yb[:, sp].to(device)                         # [K] the planted payload bytes (= x[spos])
         S = np.zeros((K, K))
         for i in range(K):
             lg = _logits(xb, R[i].view(1, 1, -1).expand(K, 1, -1))   # doc rows under field i
-            S[i] = F.cross_entropy(lg[:, :, spos], tgt, reduction="none").cpu().numpy()   # payload CE
-        sev = F.cross_entropy(_logits(xb, None)[:, :, spos], tgt, reduction="none").cpu().numpy()
+            S[i] = F.cross_entropy(lg[:, :, sp], tgt, reduction="none").cpu().numpy()   # payload CE
+        sev = F.cross_entropy(_logits(xb, None)[:, :, sp], tgt, reduction="none").cpu().numpy()
         a_ce.extend(np.diag(S))
         y_ce.extend(S[~np.eye(K, dtype=bool)])
         s_ce.extend(sev)
