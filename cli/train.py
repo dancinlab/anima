@@ -3611,6 +3611,19 @@ def main():
                          "the store row is withheld unless both certify.")
     ap.add_argument("--kosmos-carry-out", type=str, default="",
                     help="H_9843: also write the carry report JSON here.")
+    ap.add_argument("--field-loop", action="store_true", dest="field_loop",
+                    help="H_9957 FIELD-LOOP: closed text<->PureField re-entry co-training (the "
+                         "train-time replacement for GRAFT). Reuses the loaded/built model + a "
+                         "contiguous-stream loop with per-row field carry + write-back. v1 CLM-only, "
+                         "single-process.")
+    ap.add_argument("--field-arm", choices=["off", "purefield16", "purefield16-yoked"],
+                    default="purefield16", dest="field_arm",
+                    help="field-loop arm: off (no residual = ignore + fluency baseline) · purefield16 "
+                         "(live loop) · purefield16-yoked (A/G deranged across rows = fancy-seed control)")
+    ap.add_argument("--field-block", type=int, default=256, dest="field_block",
+                    help="contiguous block length (bytes) per field-loop step")
+    ap.add_argument("--field-b", type=int, default=8, dest="field_b",
+                    help="parallel contiguous document streams (batch rows) for field-loop")
     ap.add_argument("--ddp-find-unused", action="store_true",
                     help="DDP debug/escape-hatch: pass find_unused_parameters=True to DDP. Off "
                          "by default — the current objective set fires every head every step "
@@ -4459,6 +4472,30 @@ def main():
                f"statistics, NOT Φ (a_phi_iit4_tool).", flush=True)
     # intermediate-ckpt extension: bytegpt writes .bin, clm writes .clm.
     _ck_ext = ".bin" if is_bytegpt else ".clm"
+    # ── H_9957 FIELD-LOOP dispatch — reuse the loaded/built model; run the closed text<->PureField
+    #    re-entry co-training instead of the standard random-window loop (v1 CLM-only, single-process).
+    if getattr(a, "field_loop", False):
+        if ddp_on:
+            sys.exit("[field-loop] v1 is single-process — run without torchrun/DDP")
+        if is_bytegpt:
+            sys.exit("[field-loop] v1 supports the CLM organ only (ByteGPT emb_residual unwired)")
+        import field_loop as FL
+        core_m = model.module if hasattr(model, "module") else model
+        dfl = int(getattr(core_m.cfg, "d_model", getattr(core_m.cfg, "d", 0)))
+        raw = b"".join(open(c, "rb").read() for c in a.corpus) if a.corpus else b""
+        if len(raw) < a.field_block + 2:
+            sys.exit(f"[field-loop] needs --corpus with >= field-block+2 bytes (got {len(raw)})")
+        p0(f"=== anima-py train --field-loop (H_9957 · arm={a.field_arm}) === "
+           f"d={dfl} block={a.field_block} B={a.field_b} steps={steps} corpus={len(raw)}B", flush=True)
+        fl, hist = FL.field_loop_train(model, raw, a.field_arm, steps, dfl, B=a.field_b,
+                                       block=a.field_block, lr=a.lr, seed=a.seed, device=device,
+                                       log=lambda s: p0(s, flush=True))
+        if a.out:
+            _write_clm(a.out)
+            p0(f"[field-loop] wrote {a.out} · arm={a.field_arm} "
+               f"gamma={float(fl.gamma.detach()):+.5f} final_CE={hist[-1]:.4f}", flush=True)
+        return 0
+
     # ── H_9841 imagination-reconsolidation lane (None ⇒ every branch below skipped) ──
     #    RANK-LOCAL by construction: each rank rehearses the stream IT saw, so the lane
     #    adds no collective and cannot desync DDP (shapes are preserved exactly).
