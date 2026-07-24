@@ -1877,6 +1877,88 @@
       ]
      },
      {
+      "name": "core/clmg.py (CLMG lane — consciousness→language coupling)",
+      "role": "",
+      "id": "a-g-consciousness-engine-core-substrate-only-core-clmg-py",
+      "detail": "",
+      "children": [
+       {
+        "name": "GRAFT 결합의 substrate. 얼린 `.clm` 을 언어기관으로 두고 학습대상은 PureField→기관 결합뿐 — 코퍼",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-core-clmg-py-0",
+        "detail": "GRAFT 결합의 substrate. 얼린 `.clm` 을 언어기관으로 두고 학습대상은 PureField→기관 결합뿐 — 코퍼스도 CE 도 없다. 주입점은 **바이트 임베딩**(embed_conv 前 · TFLD 선례와 같은 지점)이지 post-trunk lane 이 아니다: 기존 lane 은 전부 logits row 라 per-state 가산벡터가 곧 per-state bias 가 되어 기관을 건드리지 않고 정적 unigram tilt 만으로 MI→log N 을 채운다."
+       },
+       {
+        "name": "C = PureField 원시 16 차원(`graft_c_state`: sin/cos/amp × 3 진동자 + field[0.",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-core-clmg-py-1",
+        "detail": "C = PureField 원시 16 차원(`graft_c_state`: sin/cos/amp × 3 진동자 + field[0..5] + phi). ci_lane_scores 가 아니다 — 15 lane 은 한 스칼라의 닫힌형이라 ~2.75 차원이고 스냅샷이 near-collinear 라 vacuous 가드에 걸린다."
+       },
+       {
+        "name": "구조적 유창성 bound 3종: (1) codes 를 N 상태에 걸쳐 mean-center 후 RMS 를 `gate_rho` ",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-core-clmg-py-2",
+        "detail": "구조적 유창성 bound 3종: (1) codes 를 N 상태에 걸쳐 mean-center 후 RMS 를 `gate_rho` 로 고정 — 학습은 방향만 회전 (2) MI ≤ log N (3) decoder backstop = 주입 offset 의 RMS 를 `gate_rms_max × emb_rms` 로 clamp, **축소 전용**(scale=min(1,·) 이라 최적화가 뚫을 수 없는 기하)."
+       },
+       {
+        "name": "⚠️ 실측(H_9934): 주입 RMS = gate_rho × gate_strength × emb_rms 로 **하드 고정**",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-core-clmg-py-3",
+        "detail": "⚠️ 실측(H_9934): 주입 RMS = gate_rho × gate_strength × emb_rms 로 **하드 고정**이라 이 셋 중 실제로 MI 를 묶고 있던 것은 (1) 의 진폭이다. backstop 은 기본값에서 한 번도 발동하지 않는다(0.086 ≪ 3.45)."
+       },
+       {
+        "name": "`torch_organ(W)` = decode 를 op-for-op 손미러한 **미분가능 얼린 기관**. CLMConvMoE ",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-core-clmg-py-4",
+        "detail": "`torch_organ(W)` = decode 를 op-for-op 손미러한 **미분가능 얼린 기관**. CLMConvMoE 재사용 불가(top-k 라우팅 vs decode 의 dense softmax 믹싱). `torch_organ_parity` 게이트가 필수 — 파리티가 깨지면 결합이 *다른 모델* 로 학습되는데 손실은 그대로 떨어진다."
+       },
+       {
+        "name": "codec `pack_clmg`/`read_clmg` (magic CLMG · header c_dim/h/d · W1/b1/W",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-core-clmg-py-5",
+        "detail": "codec `pack_clmg`/`read_clmg` (magic CLMG · header c_dim/h/d · W1/b1/W2/g_mu + 3 f32 스칼라). 기관 차원 불일치면 적재 거부. `set_clmg_state(c_vec=None)` 가 기본값이라 미주입 시 디코드는 byte-identical."
+       }
+      ]
+     },
+     {
+      "name": "cli/graft.py (`anima-py graft` — fit/check)",
+      "role": "",
+      "id": "a-g-consciousness-engine-core-substrate-only-cli-graft-py",
+      "detail": "",
+      "children": [
+       {
+        "name": "단일진입 정본(`a_cli_single_entry`): `anima-py graft fit <organ.clm> --out <",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-cli-graft-py-0",
+        "detail": "단일진입 정본(`a_cli_single_entry`): `anima-py graft fit <organ.clm> --out <graft.clm>` / `anima-py graft check <graft.clm>`. `cli/anima.py` 가 `sub == \"graft\"` 로 디스패치. `[train]` extra 필요(torch)."
+       },
+       {
+        "name": "`fit` = P1 pure_field warmup(기관 미호출) → **step-0 PEDESTAL 필수 산출**(`<out",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-cli-graft-py-1",
+        "detail": "`fit` = P1 pure_field warmup(기관 미호출) → **step-0 PEDESTAL 필수 산출**(`<out>.step0.clm`) → P2 손실 `L = (log N − MI) + λ·L_common`. pedestal 은 선택이 아니다: C-swap 통제는 학습 전에도 통과할 수 있어서 `MI_final − MI_step0` 없이는 어떤 swap 성적도 결합의 증거가 못 된다."
+       },
+       {
+        "name": "**컨트롤러 플래그는 존재하지 않는다 — 의도적**: `L_KL = MI + L_common` 이라 `beta·relu(L_K",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-cli-graft-py-2",
+        "detail": "**컨트롤러 플래그는 존재하지 않는다 — 의도적**: `L_KL = MI + L_common` 이라 `beta·relu(L_KL − target)` 는 beta>1 에서 MI 를 *최소화* 한다(GRAFT-shared-shift-collapse). `--kl-target`/`--beta-*` 를 만들지 않아 손이 닿지 않게 했다."
+       },
+       {
+        "name": "`check` = swap(K state 교차채점 InfoNCE + 순열 null) · ablation(KL(ON‖OFF) v",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-cli-graft-py-3",
+        "detail": "`check` = swap(K state 교차채점 InfoNCE + 순열 null) · ablation(KL(ON‖OFF) vs 크기정합 잡음 q95) · `--fluency-corpus`(기관의 자연문 NLL: ON / OFF / 크기정합잡음 3팔). 유창성 팔의 하중은 **잡음 팔**에 있다 — ON-vs-OFF 만으로는 '이 게이트가 깎았다' 와 '이 크기의 교란이면 무엇이든 깎는다' 를 못 가른다. OFF NLL ≡ 기관 단독 CE 가 정렬 교차핀."
+       },
+       {
+        "name": "판정 현황: H_9932 NOT GRAFTED 0/3(MI 바 미달, 결합 자체는 인과적) · H_9933 swap 은 무학습",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-cli-graft-py-4",
+        "detail": "판정 현황: H_9932 NOT GRAFTED 0/3(MI 바 미달, 결합 자체는 인과적) · H_9933 swap 은 무학습 결합을 인증하므로 판정표에서 제거·ablation 승격 · H_9934 진폭이 곧 천장이며 MI≥0.5 와 ablation≥3× 는 동시만족 불가. swap 은 판정표에서 빠졌다."
+       }
+      ]
+     },
+     {
       "name": "core/emit_policy.hexa",
       "role": "",
       "id": "a-g-consciousness-engine-core-substrate-only-core-emit-policy-hexa",
