@@ -83,6 +83,7 @@ class HFOrgan:
             kw["torch_dtype"] = torch.bfloat16
             kw["device_map"] = "auto"
             kw["max_memory"] = {0: os.environ.get("ANIMA_GRAFT_GPU_MEM", "8GiB"), "cpu": "24GiB"}
+        self.model = AutoModelForCausalLM.from_pretrained(model_name, **kw)
         self.model.eval()
         for p in self.model.parameters():
             p.requires_grad_(False)                              # base fully frozen
