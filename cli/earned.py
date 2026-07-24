@@ -79,23 +79,48 @@ K_PERM = 1000
 CI_DEFAULT = 95.0
 
 
-def _stems(text, script):
+_SCRIPT_PREFIX = {"arabic": 5, "latin": 4, "hangul": 3}
+_FRAG_CODE = "abcdefghijklmnop"          # up to 16 fragmentation classes
+
+
+def _frag_hash(w, text, seed):
+    """DETERMINISTIC across runs (unlike Python's per-process-salted hash(str)). The class a token
+    gets depends on the word AND the sentence it sits in, so ONE root lands in several classes across
+    the corpus — mimicking one Korean root realised with several endings (H_9953 SPLIT-English)."""
+    import hashlib
+    h = hashlib.blake2b((w + "\x00" + text + "\x00" + str(seed)).encode("utf-8"), digest_size=8)
+    return int.from_bytes(h.digest(), "big")
+
+
+def _stems(text, script, prefix=None, frag_k=None, frag_seed=0):
     """Content-word stems. No lexicon and no polarity list -- alpha_A is FITTED, not looked up.
 
     Adding a script is a REGEX SWAP, and certification is inherited: G-ALIVE/G-PEDESTAL are synthetic
     arms built from integer symbol ids, so they never touch this function (H_9318 added Arabic this
     way). What a new script must NOT do is smuggle in a different notion of "stem" -- each branch
     truncates to a fixed prefix and keeps a mid-length band, so alpha_A stays a fitted coefficient
-    over surface forms rather than a lexicon lookup."""
+    over surface forms rather than a lexicon lookup.
+
+    `prefix` (H_9953 MERGE) overrides the selected script's truncation length ONLY; the regex and
+    length band are unchanged, so it is the same fixed-prefix rule with one integer freed (never a
+    lexicon). `frag_k` (H_9953 SPLIT, latin only) inserts a class char INSIDE the key: base = first 3
+    chars, 4th char = one of K deterministic classes ⇒ one English root is fragmented into K stems
+    the way Korean inflection fragments one root. Both are echoed in the header/JSON so no number can
+    be quoted without the manipulation visible; neither touches the synthetic gate arms."""
     if script == "arabic":
-        return [w[:5] if len(w) > 5 else w
+        n = prefix if prefix else 5
+        return [w[:n] if len(w) > n else w
                 for w in re.findall(r"[؀-ۿ]+", text) if 3 <= len(w) <= 12]
     if script == "latin":
-        # Prefix-4 over alphabetic runs. The length band drops function words (a/of/is) and the
-        # very long forms, mirroring the hangul branch's 2-6 char content-word window.
-        return [w[:4] if len(w) > 4 else w
-                for w in re.findall(r"[A-Za-z]+", text.lower()) if 3 <= len(w) <= 12]
-    return [w[:3] if len(w) > 3 else w
+        toks = [w for w in re.findall(r"[A-Za-z]+", text.lower()) if 3 <= len(w) <= 12]
+        if frag_k:
+            # base3 + class char. K=1 = constant 4th char = a pedestal that isolates fragmentation
+            # (K>1) from the 4->3 root-channel narrowing (both differ from the untouched prefix-4).
+            return [w[:3] + _FRAG_CODE[_frag_hash(w, text, frag_seed) % frag_k] for w in toks]
+        n = prefix if prefix else 4
+        return [w[:n] if len(w) > n else w for w in toks]
+    n = prefix if prefix else 3
+    return [w[:n] if len(w) > n else w
             for w in re.findall(r"[가-힣]+", text) if 2 <= len(w) <= 6]
 
 
@@ -127,7 +152,7 @@ def load_corpus(path):
     return rows
 
 
-def build_cells(rows, min_occ, script, with_rows=False):
+def build_cells(rows, min_occ, script, with_rows=False, prefix=None, frag_k=None, frag_seed=0):
     """Explode corpus ROWS into (stem, B, T) items.
 
     with_rows=True also returns, per item, the index of the SOURCE ROW it came from. That index is
@@ -138,14 +163,14 @@ def build_cells(rows, min_occ, script, with_rows=False):
     from collections import Counter
     cnt = Counter()
     for text, _b, _t in rows:
-        for s in set(_stems(text, script)):
+        for s in set(_stems(text, script, prefix, frag_k, frag_seed)):
             cnt[s] += 1
     keep = {s for s, c in cnt.items() if c >= min_occ}
     sid = {s: i for i, s in enumerate(sorted(keep))}
     items = []
     ridx = []
     for ri, (text, b, t) in enumerate(rows):
-        for s in set(_stems(text, script)):
+        for s in set(_stems(text, script, prefix, frag_k, frag_seed)):
             if s in keep:
                 items.append((sid[s], b, t))
                 ridx.append(ri)
@@ -492,7 +517,30 @@ def earned_run(argv):
     sha = hashlib.sha256(open(path, "rb").read()).hexdigest()
     rows = load_corpus(path)
     script = _detect_script(rows)
+
+    # H_9953 stem-channel manipulations (engine-native flags · echoed everywhere · gates untouched).
+    stem_prefix = evaluate_intval(argv, "--stem-prefix", 0) or None   # 0/absent = script default
+    frag_k = evaluate_intval(argv, "--stem-fragment-k", 0) or None
+    frag_seed = evaluate_intval(argv, "--stem-fragment-seed", 9953)
+    if stem_prefix is not None:
+        dflt = _SCRIPT_PREFIX.get(script, 3)
+        if not (1 <= stem_prefix <= dflt):
+            print("evaluate --earned --stem-prefix: N must be 1..%d for script=%s (default %d); "
+                  "widening past the default is not a merge." % (dflt, script, dflt), file=sys.stderr)
+            return 2
+    if frag_k is not None:
+        if script != "latin":
+            print("evaluate --earned --stem-fragment-k: latin script only (it splits an English "
+                  "root into K classes); script=%s." % script, file=sys.stderr)
+            return 2
+        if not (1 <= frag_k <= len(_FRAG_CODE)):
+            print("evaluate --earned --stem-fragment-k: K must be 1..%d." % len(_FRAG_CODE),
+                  file=sys.stderr)
+            return 2
+
     res = {"corpus": path, "corpus_sha256": sha, "rows": len(rows), "script": script,
+           "stem_prefix": stem_prefix, "stem_fragment_k": frag_k,
+           "stem_fragment_seed": frag_seed if frag_k else None,
            "delta_eq": DELTA_EQ, "xbind_ruler": XBIND_RULER, "seed": seed, "null": null,
            "control_design": "real" if null == "real" else "synthetic",
            "kernel": kernel, "kappa": kappa}
@@ -512,11 +560,18 @@ def earned_run(argv):
           "  script=" + script)
     print("        B-rate=%.3f   (B and T are corpus labels; T is OUTSIDE the token stream)"
           % float(np.mean([b for _, b, _ in rows])))
+    if stem_prefix is not None or frag_k is not None:
+        _sp = ("stem-prefix=%d (default %d)" % (stem_prefix, _SCRIPT_PREFIX.get(script, 3))
+               if stem_prefix is not None else "stem-prefix=default")
+        _fk = (" · fragment-K=%d seed=%d (English root split into K classes)" % (frag_k, frag_seed)
+               if frag_k is not None else "")
+        print("        ⚙ STEM-CHANNEL MANIPULATION (H_9953): %s%s — DIRECTIONAL, not the shipped run"
+              % (_sp, _fk))
     print("")
 
     # ---- the item table. Built HERE (no rng touched) because `--null real` regenerates the two
     #      control arms on this same real design; `--null parametric|shuffle` never reads it early.
-    items, sid, rowidx = build_cells(rows, min_occ, script, with_rows=True)
+    items, sid, rowidx = build_cells(rows, min_occ, script, with_rows=True, prefix=stem_prefix, frag_k=frag_k, frag_seed=frag_seed)
     if null == "real":
         if kernel != "r0":
             print("--null real is defined for kernel r0 only (the real-design positive control plants "
