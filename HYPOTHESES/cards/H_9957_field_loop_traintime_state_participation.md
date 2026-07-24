@@ -79,7 +79,37 @@ fable 이견: from-init 2-arm(step0 부터 플래그). 둘 다 합법 · sol for
   (H_9956 스스로 "측정성 최악" 예상). H_9955 무관.
 - **NOVEL 핵심**: 같은 재진입 구조를 **Φ 대신 CE-monopoly-bottleneck + sever/yoke 통제**로 판정가능하게 만듦.
 
+## fieldctl 계기체크 — 사전등록 동결 (2026-07-25 · frozen-first · faculty 인용 금지 p9)
+
+**핵심 교정(fable+sol 코드정독 합의):** FIELD-LOOP 되쓰기는 **스칼라 채널**(`s=exp(−CE_block)−G`, 블록·행당 1수)
+이라 **내용-코딩 키에 맹목**이다. 앞선 계기체크(내용-키 planted)가 γ~0·Δ~0 로 무효였던 원인이 이것 — 모든 키가
+같은 블록 CE → 같은 drive → 같은 필드 → 행-센터링 잔차 0. `fieldctl`(fable 설계)은 **키를 KEY-블록 바이트
+엔트로피(=난이도 CE 레벨 {0.15,0.8,1.9,3.9})로 코딩**해 스칼라 채널이 실제로 나를 수 있는 유일한 형태로 심는다.
+payload 바이트 = `codebook[site][key]` 로 창내 상수문맥(`PAY<j>:`) 하에서 **K-균등**(우연=ln K) → 필드가 창밖
+키를 날라야만 예측가능.
+
+**$0 팰서파이어 PASS (GPU 전 결정게이트 · `core/field_loop.py::_falsifier`):** landed FieldLoop physics 만으로
+난이도-키가 창밖 +9블록까지 분리 유지되는지 검증 — K4 최심부 sep_ratio=10.35·decode 0.950(우연 0.25),
+K2 바닥 16.37·1.000. ⟹ 스칼라 되쓰기가 최소 1비트를 창밖으로 나른다 = 303M fieldctl fire 켤 가치 검증됨.
+
+**엔진-네이티브 계기면(신규 플래그, 스크립트 아님):** `anima-py corpus fieldctl … --mask m.json`(TRAIN+.val+마스크) ·
+`anima-py train … --field-loop --field-doc-len <doc_len>`(doc경계 필드리셋 doc-인식 학습) ·
+`anima-py train … --field-loop-eval fl.pt --score-mask m.json`(payload-바이트 Δ_collapse DV).
+
+**DV = Δ_collapse = min(CE_yoke, CE_sever) − CE_aligned** (payload 바이트만, val 셋, 단일 aligned-학습 ckpt 서 eval —
+"arm 마다 다른 trunk" 혼입 제거). from-INIT 소형 trunk(d256·L4·block128·B4) · arm {off·purefield16·purefield16-yoked} · 2 seed.
+
+| 결과 | 판독 |
+|---|---|
+| Δ ≥ 0.8 nats ∧ aligned ≤ 0.4 ∧ off-arm ≈ ln K(±0.1) | **CERTIFIED** — 계기가 실제 2비트 창밖채널을 읽음 |
+| 0.3 ≤ Δ < 0.8 | PARTIAL — ≥~1비트 · 용량제한 · 303M Δ 임계는 이 천장 대비 읽을 것 |
+| −0.15 < Δ < 0.3 | 채널 사망 — 최대유리 planted 1비트도 못 나름(정보적 KILL, 재시도 아님) |
+| Δ ≤ −0.15 ∨ aligned > 1.55 | 우연-이하 → 계기 INVALID(부호/배선 버그) · 판정 없음 |
+
+**off-arm 은 창내-누출 탐지기(negative pedestal):** off-학습 arm 의 val payload CE 가 ln K−0.1 아래로 내려가면
+창내 누출 = 코퍼스 결함 → ABORT(양성 읽기 전 받침대). fable 이견 없음. sol: rotation-null 은 train-arm 아님 eval-후 적용.
+
 ## 다음 (cement 는 engine-native run 만)
-① `anima-py train --field-loop` 구현(emb_residual 훅 + Bφ·γ + H_9607 drive 되먹임 + 연속스트림 + 3-arm fork).
+① `anima-py train --field-loop` 구현(emb_residual 훅 + Bφ·γ + H_9607 drive 되먹임 + 연속스트림 + 3-arm fork). **✅ landed** — fieldctl 계기면(corpus·doc-aware stream·payload eval)+$0 팰서파이어 PASS(3a16f43c·6bab1c5).
 ② 사전등록표 동결(위 통과기준·below-chance 행 포함) → 합성 planted-dependency 로 **계기 체크**(faculty 인용
 금지·p9) → 303M pool fire 25%→50% 3-arm. ③ 통과시에만 generic-recurrence sibling + 100% 연장.
