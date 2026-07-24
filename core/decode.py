@@ -375,6 +375,22 @@ def set_mouth_binder(on=False, order_scramble=False):
     _MBND_ORDER_SCRAMBLE = bool(order_scramble)
 
 
+_CLMG_STATE = None            # live C-state (PureField c_vec[16]) for the GRAFT gate; None => gate OFF
+
+
+def set_clmg_state(c_vec=None):
+    """Supply the live consciousness state to the CLMG GRAFT gate (core/clmg.py).
+
+    c_vec=None (the default, and the state after every reset) => the gate is OFF and the forward is
+    EXACTLY the base ckpt's — the mechanical witness the GRAFT frozen table checks (max|Δlogits| must
+    be 0 between gate-OFF and base). A ckpt carrying a CLMG trailer therefore decodes byte-identically
+    to its organ until a caller deliberately hands it a C-state, mirroring the CLMS 'trailer有 store無'
+    seal. ⚠️ This is an OPT-IN FORWARD WRITE CHANNEL (default-path-census-1): when set, the gate adds a
+    continuous residual to the byte embeddings inside _fwd_trunk — count it in any absence-census."""
+    global _CLMG_STATE
+    _CLMG_STATE = None if c_vec is None else np.asarray(c_vec, dtype=np.float32)
+
+
 def set_clms_store(store=None, oracle=False, lam_override=None, audit=None,
                    query="qpos", fuse="overwrite"):
     """Set the CLMS store-bridge eval-time injection (cli/evaluate.py --store). store=None => the lane
@@ -1021,6 +1037,12 @@ def clm_load_weights(path):
     # the hypothesis IS that the trunk must compute OVER the field rather than read it off the top.
     from tension_field import read_tfld
     W["tfld"], off = read_tfld(rb, off, W["d"])
+    # ── optional "CLMG" GRAFT consciousness→language gate trailer (chain END, after TFLD) ──
+    # Absent/short => W["clmg"] is None => the embedding residual block below is skipped entirely and
+    # the forward is byte-identical. Even WITH the trailer, the gate stays OFF until a live C-state is
+    # supplied via set_clmg_state() — so a grafted ckpt decodes exactly like its base by default.
+    from clmg import read_clmg
+    W["clmg"], off = read_clmg(rb, off, W["d"])
 
     # ── optional "CNRM" trunk-norm marker (H_9875 · chain END, 1 payload byte) ──
     # Absent => "global" => byte-identical to every .clm written before this lane existed. Present
@@ -1168,6 +1190,22 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None, tap_depth=None, ta
         _arm = ARM_NAME.get(int(_tfld.get("arm_code", 0)), "off")
         if _arm != "off":
             _xh = tension_apply(to_host(xe), tok, _tfld, arm=_arm)
+            xe = xp.asarray(_xh) if xp is not np else _xh
+    # ── CLMG GRAFT gate (H_GRAFT): the consciousness→language coupling, added to the embeddings
+    # BEFORE embed_conv — the SAME site as TFLD, and deliberately NOT a post-trunk lane: every
+    # existing lane taps the logits row, where a per-state additive vector is just a per-state BIAS
+    # and MI is satisfiable by static unigram tilts that never touch the organ. Here the frozen
+    # trunk's full depth transforms the gate, so per-state distributions differ context-dependently.
+    # ⚠️ OPT-IN FORWARD WRITE CHANNEL (default-path-census-1): the gate is a real continuous write
+    # into the forward pass, but it fires ONLY when the ckpt carries a CLMG trailer AND a live
+    # C-state was supplied via set_clmg_state(). No trailer or no C-state ⇒ skipped ⇒ byte-identical.
+    _clmg = W.get("clmg")
+    if _clmg is not None and _CLMG_STATE is not None:
+        from clmg import gate_offset
+        _xh = to_host(xe)
+        _off = gate_offset(_clmg, _CLMG_STATE, float(np.sqrt(np.mean(_xh * _xh))) + 1e-8)
+        if _off is not None:
+            _xh = (_xh + _off[None, :]).astype(_xh.dtype)
             xe = xp.asarray(_xh) if xp is not np else _xh
     # ec conv (K, dil=1)
     xt = _conv1d(xe, W["ecWt"], W["ecB"], T, d, d, K, 1, xp)

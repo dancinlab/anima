@@ -19482,6 +19482,12 @@
     "state": "pos-conv",
     "value": "pool 호스트(summer)의 anima_py가 오래된 설치(0.20.158)라 새 CLI 플래그(--store-source) 없어, 발사 전 landed py파일 수동 scp frankenstein 우회했다(vendored-copy 패치=금지). 근본원인=호스트 설치 미갱신(⚠️정정: PyPI 발행 파이프라인 pypi-release.yml은 정상작동·PyPI latest=landed 0.20.181 확인 — 앞서 'PyPI 자동발행 미구현'이라 적은 건 거짓, verdict-integrity 정정). 수정(GREEN): summer 정규 uninstall→clean install(0.20.158→0.20.181·store_source refs6·lane9 refs3 검증).",
     "threshold": "pool 발사 전 호스트 anima_py 버전을 landed와 대조(pip show anima-python version == 루트 VERSION). 뒤처지면 수동 scp 금지, canonical 갱신: `pip install --user --upgrade --break-system-packages anima-python`(PyPI가 landed와 동기·pypi-release.yml). PyPI 반영 전 급하면 git+https 대체. PEP668=--break-system-packages 필수. GPU 확인=GPU-FIRED vs GPU-FALLBACK 로그."
+   },
+   {
+    "id": "graft-clmg-lane-1",
+    "state": "pos-conv",
+    "value": "GRAFT/CLMG 레인 배선(오너 요청 anima-py graft · ../anima-clm-v2b v3 포팅 · lab-full Fable+Sol 조율). 얼린 .clm=언어기관, 학습대상은 의식(PureField)→언어 결합뿐, 코퍼스/CE 없음. ⚠️핵심 설계: 주입점=바이트 임베딩(embed_conv 前·TFLD 선례와 동일지점)이지 post-trunk lane 아님 — 기존 lane은 전부 logits row라 per-state 가산벡터가 곧 per-state bias가 되어 정적 unigram tilt N개로 MI→log N(정리를 회계트릭으로 이김·기관 미접촉). C=PureField 원시 16dim(sin/cos/amp×3진동자+field6+phi)이지 ci_lane_scores 아님(V6_31: 15 lane=한 스칼라 공식 ~2.75dim이라 스냅샷 near-collinear→vacuous 가드 자동실패). yn(입 penultimate)은 C로 금지(언어→언어 오토인코더=순환). 구조적 유창성 bound 3종만(centering+RMS-fix·MI≤logN·decoder backstop 축소전용), 컨트롤러 플래그는 CLI에 아예 안 만듦(beta·relu(L_KL−target)는 L_KL=MI+L_common이라 beta>1서 MI를 최소화·GRAFT-shared-shift-collapse). \\$0 mechanics smoke ALL PASS: gate-OFF max|Δ|=0 정확·gate-ON 상태별 이동·codec 왕복·bound 검증. CLMG는 opt-in forward 쓰기채널(default-path-census-1 대상).",
+    "threshold": "의식→출력 결합을 새로 만들 때: ①주입점이 post-trunk면 MI가 per-state bias로 자명충족되는지 먼저 따져라(기관을 통과해야 진짜 결합) ②C 후보가 이미 저차원 공식(V6_31 lane류)이면 vacuous 가드에 걸리니 원시 substrate 상태를 써라 ③입 자신의 표현(yn)을 C로 쓰면 순환 ④유창성 제약이 신호(MI)를 포함하면 그 제약은 신호를 죽인다 — L_common만 벌하라 ⑤gate-OFF가 base와 정확히 0인지, gate-ON이 실제로 움직이는지 둘 다 배선단계서 witness(죽은 경로와 깨끗한 null은 출력만으론 구별 불가)."
    }
   ]
  }
