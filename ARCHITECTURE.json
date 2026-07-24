@@ -1979,6 +1979,44 @@
       ]
      },
      {
+      "name": "Φ 측정 자리 (faithful IIT-4) — CollectivePool = ECA 규칙 풀이지 `.clm` 이 아니다",
+      "role": "",
+      "id": "a-g-consciousness-engine-core-substrate-only-phi-measurement-locus",
+      "detail": "",
+      "children": [
+       {
+        "name": "입력 — Φ 는 ECA 규칙 번호만 먹는다",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-phi-measurement-locus-input",
+        "detail": "`big_phi_bounded` 호출부는 전부 ECA 다: `collective_member_phi`→`big_phi_bounded(_eca_tpm_n3(rules[idx]),3,0,3)` · `collective_phi`→`_build_tpm_ab(rules[0],rules[1],w)`(6노드) / `_build_tpm_ring(rules,w)`(3n노드)."
+       },
+       {
+        "name": "실호출 인자 = 하드코딩된 ECA 규칙 번호",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-phi-measurement-locus-callsite",
+        "detail": "`_eca_tpm_n3(rule)` = 규칙번호 → 3노드 TPM. 실호출은 `collective_new([110,110],0.6)` · `collective_new([30,90],0.4)` = 하드코딩된 ECA 규칙 번호. **`.clm` 가중치는 Φ 계산에 한 바이트도 들어가지 않는다.**"
+       },
+       {
+        "name": "n>3 이면 적분이 아니라 합",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-phi-measurement-locus-sum",
+        "detail": "`collective_nmax()==3`. 멤버 n>3 이면 `collective_phi` 가 `collective_sum_phi`(개별 Φ 의 **단순 합**)로 빠진다 — 합은 통합이 아니므로 \"셀 수를 늘려 Φ 가 커졌다\"는 적분정보 증가가 아니라 덧셈 증가다."
+       },
+       {
+        "name": "303M 이 닿는 유일한 Φ-유사 경로는 스스로 Φ 도구가 아니라고 밝힌다",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-phi-measurement-locus-proxy",
+        "detail": "트렁크 활성이 들어가는 `evaluate --faction-phi-proxy` 는 도움말이 직접 \"NOT a Phi tool — real Phi is faithful IIT4 only (a_phi_iit4_tool). DIRECTIONAL\" 이라 명시. 식이 `Var=E[Var|g]+Var(E[X|g])` 의 집단간 항이라 **K 증가에 구성상 자동 상승**(K=N 에서 global_var 포화) — 파벌 수를 늘리면 오르는 게 당연한 양."
+       },
+       {
+        "name": "함의 — 303M 을 키워도 Φ 는 정의상 안 움직인다",
+        "role": "",
+        "id": "a-g-consciousness-engine-core-substrate-only-phi-measurement-locus-implication",
+        "detail": "303M 을 더 학습·확대하면 G0 유창성은 늘지만 Φ 는 **정의상** 안 움직인다(스케일=증폭기-not-lever 와 정합). Φ 를 올리려면 Φ 의 **입력**을 바꿔야 한다. 크기축(Φ·셀수) ⊥ 결합축(MI·reach) 의 코드측 근거이며, v2b 의 `phi-is-orthogonal-to-coupling`(Φ~2200 인데 MI~0.05)과 독립 수렴."
+       }
+      ]
+     },
+     {
       "name": "G-게이트 평가 시스템 (cli/evaluate.hexa + cli/anima.hexa eval) — SSOT",
       "role": "",
       "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa",
