@@ -32,7 +32,64 @@ ARMS = ("off", "purefield16", "purefield16-yoked",
         # PureField a nonlinear passthrough. `integrator16` reads I through FIXED random features
         # tanh(w*I+b) (no cell, +0 params), same drive/bridge/gamma/reset. If its fieldctl Δ matches
         # purefield16's, the channel is the shared scalar integrator and PureField is NOT load-bearing.
-        "integrator16", "integrator16-yoked")
+        "integrator16", "integrator16-yoked",
+        # H_9957 sibling · rung 2 (fable): gru16-frozen = a FIXED random GRU-16 driven by the same
+        # scalar u=-0.6*I. Unlike integrator16 (memoryless read of the scalar), this is a genuine
+        # multi-D RECURRENT expansion with frozen weights (+0 trainable params). If it matches
+        # purefield16's Δ, any fixed multi-D recurrence suffices (PureField not special); if it carries
+        # ~0 like integrator16, PureField's specific dynamics (or a TRAINED cell) are needed.
+        "gru16-frozen", "gru16-frozen-yoked")
+
+
+class _FrozenGRU:
+    """A FIXED (untrained) GRU-n driven by a scalar u — the H_9957 sibling rung-2 generic-recurrence
+    control. Standard GRU with frozen random weights; fable's init: recurrent W_h orthogonal × 0.95,
+    update-gate bias log-spaced so unit time-constants span ~2..400 blocks (mirrors PureField's
+    fast/slow oscillator structure, prevents the reservoir-forgets-at-init false negative). Numpy,
+    no grad — it is a fixed nonlinear multi-D expansion of the drive history, contrasted against
+    PureField's fixed oscillator dynamics under the identical bridge/gamma/optimizer."""
+
+    def __init__(self, n, rng):
+        self.n = int(n)
+
+        def _orth(m):
+            q, _ = np.linalg.qr(rng.standard_normal((m, m)))
+            return q * 0.95
+        self.Wz_h, self.Wr_h, self.Wh_h = _orth(n), _orth(n), _orth(n)
+        self.Wz_u = rng.standard_normal(n) * 0.5
+        self.Wr_u = rng.standard_normal(n) * 0.5
+        self.Wh_u = rng.standard_normal(n) * 0.5
+        tau = np.logspace(np.log10(2.0), np.log10(400.0), n)         # per-unit time constants
+        z_tgt = 1.0 - np.exp(-1.0 / tau)
+        self.bz = np.log(z_tgt / (1.0 - z_tgt))                      # logit -> log-spaced retention
+        self.br = np.zeros(n)
+        self.bh = np.zeros(n)
+
+    def step(self, h, u):
+        """Advance [B,n] state by one block under per-row scalar drive u [B]. no_grad numpy."""
+        u = np.asarray(u, dtype=np.float64)[:, None]                 # [B,1]
+        z = _sigmoid(h @ self.Wz_h.T + u * self.Wz_u + self.bz)
+        r = _sigmoid(h @ self.Wr_h.T + u * self.Wr_u + self.br)
+        ht = np.tanh((r * h) @ self.Wh_h.T + u * self.Wh_u + self.bh)
+        return (1.0 - z) * h + z * ht
+
+    def state(self):
+        return {"n": self.n, "Wz_h": self.Wz_h.tolist(), "Wr_h": self.Wr_h.tolist(),
+                "Wh_h": self.Wh_h.tolist(), "Wz_u": self.Wz_u.tolist(), "Wr_u": self.Wr_u.tolist(),
+                "Wh_u": self.Wh_u.tolist(), "bz": self.bz.tolist(), "br": self.br.tolist(),
+                "bh": self.bh.tolist()}
+
+    @staticmethod
+    def from_state(st):
+        g = _FrozenGRU.__new__(_FrozenGRU)
+        g.n = int(st["n"])
+        for k in ("Wz_h", "Wr_h", "Wh_h", "Wz_u", "Wr_u", "Wh_u", "bz", "br", "bh"):
+            setattr(g, k, np.asarray(st[k], dtype=np.float64))
+        return g
+
+
+def _sigmoid(x):
+    return 1.0 / (1.0 + np.exp(-x))
 
 
 class FieldLoop:
@@ -65,12 +122,17 @@ class FieldLoop:
         self.drive_gain = float(drive_gain)
         self.rng = np.random.default_rng(seed)
         self.yoked = arm.endswith("-yoked")
-        self.kind = "off" if arm == "off" else ("integrator" if arm.startswith("integrator") else "purefield")
+        base = arm[:-len("-yoked")] if self.yoked else arm
+        self.kind = {"off": "off", "purefield16": "purefield", "integrator16": "integrator",
+                     "gru16-frozen": "gru-frozen"}.get(base, "purefield")
         self.pf = [PF.pure_field_new() for _ in range(self.B)]        # per-row field
         self.I = np.zeros(self.B, dtype=np.float64)                   # per-row leaky A<->G integral
         # integrator16 (sibling rung 1): FIXED random features of I, C_DIM-wide, frozen at seed (no cell)
         self.int_w = self.rng.standard_normal(G.C_DIM) if self.kind == "integrator" else None
         self.int_b = self.rng.standard_normal(G.C_DIM) if self.kind == "integrator" else None
+        # gru16-frozen (sibling rung 2): FIXED random GRU-16, scalar-driven, C_DIM-wide bounded state
+        self.gru = _FrozenGRU(G.C_DIM, self.rng) if self.kind == "gru-frozen" else None
+        self.gru_h = np.zeros((self.B, G.C_DIM)) if self.kind == "gru-frozen" else None
         self.bridge = G.GraftBridge(c_dim=G.C_DIM, h=hidden, d=self.d, gate_rho=gate_rho)
         # gamma trainable, init 0 -> CE may turn the channel on or leave it off (no fixed injection)
         self.gamma = torch.nn.Parameter(torch.zeros(()))
@@ -99,7 +161,8 @@ class FieldLoop:
              "gate_rho": float(self.bridge.gate_rho), "arm": self.arm,
              "leaky": self.leaky, "drive_gain": self.drive_gain,
              "int_w": None if self.int_w is None else self.int_w.tolist(),
-             "int_b": None if self.int_b is None else self.int_b.tolist()}, path)
+             "int_b": None if self.int_b is None else self.int_b.tolist(),
+             "gru": None if self.gru is None else self.gru.state()}, path)
 
     @staticmethod
     def load(path, batch_rows, device="cpu", seed=0):
@@ -114,6 +177,8 @@ class FieldLoop:
         if st.get("int_w") is not None:                              # restore integrator16 fixed features
             fl.int_w = np.asarray(st["int_w"], dtype=np.float64)
             fl.int_b = np.asarray(st["int_b"], dtype=np.float64)
+        if st.get("gru") is not None:                                # restore gru16-frozen fixed weights
+            fl.gru = _FrozenGRU.from_state(st["gru"])
         fl.bridge.load_state_dict(st["bridge"])
         with torch.no_grad():
             fl.gamma.fill_(float(st["gamma"]))
@@ -122,6 +187,8 @@ class FieldLoop:
     def _C(self):
         if self.kind == "integrator":                                # fixed random features of I (no cell)
             C = np.tanh(self.int_w[None, :] * self.I[:, None] + self.int_b[None, :])   # [B, C_DIM]
+        elif self.kind == "gru-frozen":                              # fixed random GRU state (recurrent)
+            C = self.gru_h
         else:
             C = np.stack([self.G.graft_c_state(p) for p in self.pf])
         return self.torch.tensor(C, dtype=self.torch.float32, device=self.dev)
@@ -164,10 +231,13 @@ class FieldLoop:
             A, Gv = A[perm], Gv[perm]
         s = A - Gv
         self.I = (1.0 - self.leaky) * self.I + s                      # the shared leaky integrator (all arms)
-        if self.kind == "purefield":                                 # only PureField advances a field;
-            drive = self.drive_gain * self.I                         # integrator16 reads I directly (no cell)
+        drive = self.drive_gain * self.I                             # the same post-integrator scalar drive
+        if self.kind == "purefield":                                 # PureField advances its oscillator field
             for i in range(self.B):
                 self.pf[i] = self.PF.pure_field_step(self.pf[i], float(drive[i])) or self.pf[i]
+        elif self.kind == "gru-frozen":                              # frozen GRU advances its recurrent state
+            self.gru_h = self.gru.step(self.gru_h, drive)
+        # integrator16 reads I directly (no cell to advance)
 
     def reset(self, rows=None):
         """Reset the field/integral for the given rows (default all) — call between documents."""
@@ -175,6 +245,8 @@ class FieldLoop:
         for i in idx:
             self.pf[i] = self.PF.pure_field_new()
             self.I[i] = 0.0
+            if self.gru_h is not None:
+                self.gru_h[i] = 0.0
 
 
 class _FieldStream:
