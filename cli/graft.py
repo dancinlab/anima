@@ -308,6 +308,29 @@ def _fluency(a, organ, codes, emb_rms, rng):
         nz = torch.tensor(rng.standard_normal(codes[0].shape).astype(np.float32))
         nz = nz / (nz.pow(2).mean().sqrt() + 1e-8) * codes[0].pow(2).mean().sqrt()
         noise.append(nll(nz))
+    # ---- FORM MARGIN — the arm that keeps the NLL reading honest (Sol, 2026-07-24) ----
+    # Unconditional NLL punishes the C-dependent content shift that GRAFT is TRYING to produce, so
+    # "MI up => NLL up" is nearly definitional and would manufacture a fluency trade-off out of the
+    # measurement's own definition. The discriminator: does the organ still PREFER natural text over
+    # a word-order scramble by the same margin under the gate? The scramble holds the word multiset
+    # EXACTLY fixed, so content/unigrams are matched by construction and only order (form) differs.
+    #   margin = NLL(scrambled) - NLL(natural)   ·   dMargin = margin_OFF - margin_ON
+    # dMargin ~ 0 with dNLL > 0  =>  distribution SHIFT, not fluency loss.
+    words = txt[int(len(txt) * 0.8):].split()[:1200]
+    sc = list(words)
+    rng.shuffle(sc)
+    b_nat = " ".join(words).encode("utf-8")[:a.fluency_bytes]
+    b_scr = " ".join(sc).encode("utf-8")[:a.fluency_bytes]
+
+    def nll_of(bs, resid):
+        tt = torch.tensor([int(x) for x in bs], dtype=torch.long)
+        with torch.no_grad():
+            lp = F.log_softmax(organ(tt, emb_residual=resid).float()[:-1], -1)
+            return float(-lp.gather(1, tt[1:].unsqueeze(1)).mean())
+
+    m_off = nll_of(b_scr, None) - nll_of(b_nat, None)
+    m_on = float(np.mean([nll_of(b_scr, c) - nll_of(b_nat, c) for c in codes]))
+
     d_on = float(np.mean(on)) - off
     d_nz = float(np.mean(noise)) - off
     off_rms = float(codes[0].pow(2).mean().sqrt())
@@ -320,6 +343,17 @@ def _fluency(a, organ, codes, emb_rms, rng):
                if d_on < d_nz else
                "gate costs AT LEAST as much as size-matched noise — no fluency credit for structure")
     print(f"[graft]   price ratio dNLL(ON)/dNLL(NOISE) = {d_on/max(d_nz,1e-9):+.3f}   ({verdict})")
+    print(f"[graft]   FORM margin OFF = {m_off:+.4f} nats/byte (organ prefers natural over a "
+          f"word-scramble)  ON = {m_on:+.4f}  dMargin = {m_off-m_on:+.4f}")
+    if m_off <= 0.02:
+        print("[graft]   ⛔ FORM PANEL INVALID: the organ does not prefer natural text to begin with "
+              "— dMargin is unreadable, do not quote it.")
+    elif abs(m_off - m_on) < 0.02 <= d_on:
+        print("[graft]   ⚠️ dNLL is a DISTRIBUTION SHIFT, not fluency loss: the organ's preference "
+              "for natural word order survives the gate intact. Do not call this a fluency price.")
+    else:
+        print(f"[graft]   → form preference is degraded by {100*(m_off-m_on)/max(m_off,1e-9):.1f}% "
+              f"— the fluency reading survives the content-shift confound.")
 
 
 def main():
