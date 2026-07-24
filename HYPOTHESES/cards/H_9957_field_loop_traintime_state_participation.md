@@ -129,6 +129,12 @@ from-init(d256·L4·block128·B4·doc_len1408·34k step·4096 train/512 val·**`
 → 16-D 진동자 궤적)이 키를 디코드가능케 하는 게 load-bearing. 단 "PureField 특이 vs 아무 학습순환" 은 미판별(rung 2 =
 GRU-frozen/trained TBPTT-1 필요). purefield16 rebaseline 은 같은 commit 서 0.685/0.633 불변(diff additive·배치 valid).
 
+**rung 2 = `gru16-frozen` (고정 랜덤 GRU-16·직교W_h×0.95·시간상수2-400·+0param):** **Δ=0.000 (2 seed)**, aligned=yoked=sever
+(gamma→0). ⟹ **아무 고정 다차원 순환이면 되는 게 아니다** — PureField 의 **구조화된 진동자 동역학**만 키를 브리지-가능하게 만들고
+랜덤 고정 순환은 못 한다. **고정 셀 중 PureField 특이**(integrator16=0·gru16-frozen=0·purefield16=0.68). ⚠️ 미완: 이게 PureField
+동역학 특이인지 vs 고정 랜덤 GRU 의 나쁜 init 인지는 **학습 GRU(rung 3·gru16 TBPTT-1)** 만이 가른다 — 학습셀이 매치하면 "학습이면
+됨", 학습셀도 실패하면 강한 PureField-특이(fable capped claim: "이 encoder 들 이긴다", 결코 "의식물리 certified" 아님).
+
 - **받침대 성립**: off arm payload CE 1.446 ≈ 우연 ln4=1.386(> lnK−0.1=1.286) → 창내누출 없음. payload 는 필드 없이 창내 예측불가.
 - **필드가 창밖 키를 나름**: aligned 0.943 ≪ sever 1.628 ≪ yoked 2.672. 자기 필드는 우연보다 잘, 틀린/무필드는 우연 이상 못 맞힘.
 - **판정 PARTIAL**(Δ 0.685∈[0.3,0.8) ∧ aligned 0.943>0.4): 스칼라 되쓰기가 2비트 키 중 ~1비트를 창밖 +9블록 운반 — fable 예측 용량제한 실측. $0 팰서파이어(필드물리 분리 PASS)와 정합.
