@@ -3140,10 +3140,10 @@
           "detail": "H_9304 의 한국어 비트가 3 계급 혼합인 것은 **사실**(어휘 아니/없 22,920=75% · 결속 ~6,260=20% · 자유 ~1,244=4%). 그러나 셋을 갈라 재니 **어느 계급도 전이 정보를 안 담는다** ⇒ 혼합이 살아있는 자유형 신호를 가리고 있던 게 아니다."
          },
          {
-          "name": "🔎 영어 우위의 남은 후보 — 셋 중 둘 KILL/부분, 마지막 하나만 미측정",
+          "name": "🔎 영어 우위 후보 4종 — 전부 판정완료: 길이가 지배적 설명",
           "role": "",
           "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-earned-operator-supply-open-candidates",
-          "detail": "형태론 경로가 H_9949 로 막혀 EN 우위(+0.02058)를 within-corpus 로 하나씩 제거: **H_9952 라벨/부정률 분포 → KILL**(매칭해도 +0.02371) · **H_9953 굴절 파편화 → PARTIAL**(8배 파편화가 ~37% 제거하나 잔차 0.00530 생존) · **H_9951 문장길이 → 미측정, 마지막 후보**(SST-2 는 treebank 라 행이 구절). 세 자기-겨눔 통제 모두 EN 우위를 완전히 못 지움 → H_9944 생존."
+          "detail": "EN 우위(+0.02058)를 within-corpus 로 제거: **형태론 H_9949 REFUTED해석** · **분포 H_9952 KILL**(매칭해도 +0.02371) · **파편화 H_9953 PARTIAL**(~37%) · **길이 H_9951 🟢 LIVE·지배적**(긴 완결문서 mid+0.0395→long+0.0081 ~5배 붕괴해 KO대역 수렴). ⟹ EN-KO 격차는 대체로 **언어-내재 연산자 차이가 아니라 계기/코퍼스-구조 artifact**(SST-2 짧은 treebank 구절 vs NSMC 완결발화). H_9944 EN INFO-PRESENT 는 길이 재프레이밍(DIRECTIONAL)."
          },
          {
           "name": "H_9953 을 강하게 만드는 이미 측정된 이상 신호",
@@ -3168,6 +3168,12 @@
           "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-earned-operator-supply-fragmentation-partial",
           "type": "gate",
           "detail": "영어-쪼개기 K-스윕(`--stem-fragment-k`, seeds 9304-6): K=1 받침대(창4→3) +0.01661 [.01592,.01726] → K=2 +0.01810 → K=4 +0.01790 → K=8(최강 8-class) +0.01127 [.00986,.01298]. K=8 게이트 전부 PASS(G-ALIVE +5.037·G-PEDESTAL +0.00124·G-POWER MDE 0.00238·seed-퍼짐 0.00485=검정력있음). 판정=PARTIAL: K=8 이 유의 하강(K1↔K8 CI 서로소)하나 +0.01127 에서 멈춰 KO대역(+0.008)·KO-FREE(+0.00597) 위, 비단조(K2>K1). 설명분율(격차 0.01461): 창-artifact 0.00397(27%)+파편화 0.00534(37%)=토큰화입도 ~64%, 검정력·seed안정 잔차 0.00530(36%) 생존 ⟹ 영어 재조합신호는 순수 토큰화 artifact 아님. MERGE-Korean 미실행(prefix-1 over-merge INVALID 위험 감동/감사→감, BLOCKING 게이트). DIRECTIONAL(p9). 마지막 후보=H_9951 길이."
+         },
+         {
+          "name": "🟢 H_9951 측정완료 — 길이는 살아있는 변수 (영어 우위의 지배적 설명 · 연산자 특이적)",
+          "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-earned-operator-supply-length-live-variable",
+          "type": "gate",
+          "detail": "길이 3분위 × (FREE 연산자/BOUND 대조), 층간 n=20161 매칭. FREE 검정력층 단조하강: mid +0.03950 [.035,.050] ≫ long +0.00806 [.007,.009] CI서로소 ~5배. short +0.35720 INVALID(c48 G-POWER FAIL). BOUND 어느 길이서도 ~0(mid -0.00326·long +0.00105, CI 0 걸침) ⟹ FREE 기울기는 연산자 특이적, 추정 artifact 아님(교란통제 통과·B율교란은 BOUND 가 배제). 판정=🟢 길이 LIVE(사전등록표). 긴 영어는 KO대역 붕괴(KO-FREE +0.00597, 대역 ≤+0.008)하나 BOUND-long보다 유의높아 미세 잔존신호. 함의: 네 후보 중 길이가 EN-KO 격차의 지배적 설명 → H_9944 EN INFO-PRESENT 는 상당부분 길이/코퍼스-구조(treebank 구절 vs 완결발화) artifact. DIRECTIONAL(p9), cement 아님. 산출 scratchpad earned_en_{free,bound}_len_{short,mid,long}.log."
          }
         ]
        }
