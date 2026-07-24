@@ -1945,10 +1945,42 @@
         "detail": "**컨트롤러 플래그는 존재하지 않는다 — 의도적**: `L_KL = MI + L_common` 이라 `beta·relu(L_KL − target)` 는 beta>1 에서 MI 를 *최소화* 한다(GRAFT-shared-shift-collapse). `--kl-target`/`--beta-*` 를 만들지 않아 손이 닿지 않게 했다."
        },
        {
-        "name": "`check` = swap(K state 교차채점 InfoNCE + 순열 null) · ablation(KL(ON‖OFF) v",
+        "name": "`check` 패널 구성 — rotation-null 기본 · swap 맥락용 · ablation · fluency · --hf-model 분기",
         "role": "",
         "id": "a-g-consciousness-engine-core-substrate-only-cli-graft-py-3",
-        "detail": "`check` = swap(K state 교차채점 InfoNCE + 순열 null) · ablation(KL(ON‖OFF) vs 크기정합 잡음 q95) · `--rotation-null N`(학습 오프셋을 강체회전 → 노름·Gram·평균·실현변위 D 모두 보존, 방향만 파괴 = displacement-EXACT 통제; 고정 held-out carrier 로 MI 채점 = self-loop 대각 artifact 회피. H_9937 이 토이서 z=+28~+38 로 통과) · `--fluency-corpus`(기관의 자연문 NLL: ON / OFF / 크기정합잡음 3팔). 유창성 팔의 하중은 **잡음 팔**에 있다 — ON-vs-OFF 만으로는 '이 게이트가 깎았다' 와 '이 크기의 교란이면 무엇이든 깎는다' 를 못 가른다. OFF NLL ≡ 기관 단독 CE 가 정렬 교차핀. **`--hf-model` 분기**(`_check_hf_setup`): `_fit_hf` 는 CLMG 트레일러 없는 torch bridge `.pt` 로 저장되므로 clm 로더가 못 읽었다 → HFOrgan+GraftBridge 재적재로 `graft check --hf-model M <bridge.pt>` 가 Mistral급 기관서 같은 body 실행(probes 는 subword 라 `organ.encode`; rotation-null 은 d=4096 용 thin-SVD `rotation_null_offsets`, D-exact O(d·r)). 이 배선 전엔 7B rotation-null 통제가 실행불가였다(H_9939 fit 이 `rotation_null:0` 로 남긴 그 통제)."
+        "detail": "",
+        "children": [
+         {
+          "name": "rotation-null = 기본 패널 (`--rotation-null` 기본 64)",
+          "role": "",
+          "id": "a-g-consciousness-engine-core-substrate-only-cli-graft-py-3-rotnull",
+          "detail": "**기본 패널**(`--rotation-null` 기본 **64** · `0` 이면 생략). 학습 오프셋을 강체회전 → 노름·Gram·평균·실현변위 D 보존, 방향만 파괴 = displacement-EXACT 통제. 고정 held-out carrier 로 MI 채점 = self-loop 대각 artifact 회피. 작동 실적: toy z=+28~+38(H_9937) · Mistral-7B z=+18.59(H_9940)."
+         },
+         {
+          "name": "swap = 판정표에서 제외됨 (맥락용)",
+          "role": "",
+          "id": "a-g-consciousness-engine-core-substrate-only-cli-graft-py-3-swap",
+          "detail": "swap(K state 교차채점 InfoNCE + 순열 null)은 **판정표에서 제외**(H_9933: 무학습 결합도 인증해버림). 여전히 실행되나 **맥락용**이지 판정 근거 아님. '작동하는 통제는 opt-in, 폐기된 팔은 기본'이던 역전은 해소됨(`a_gpu_default_no_optin` · H_9937 next-③)."
+         },
+         {
+          "name": "ablation = KL(ON‖OFF) vs 크기정합 잡음 q95",
+          "role": "",
+          "id": "a-g-consciousness-engine-core-substrate-only-cli-graft-py-3-ablation",
+          "detail": "게이트가 잡음과 구별되는가. 단일 (state,carrier) draw 는 너무 시끄러워 판독 불가라 **전 state × 여러 carrier 평균**으로 읽는다."
+         },
+         {
+          "name": "`--fluency-corpus` = 유창성 값 3팔",
+          "role": "",
+          "id": "a-g-consciousness-engine-core-substrate-only-cli-graft-py-3-fluency",
+          "detail": "기관의 자연문 NLL 3팔(ON / OFF / 크기정합잡음). 하중은 **잡음 팔**에 있다 — ON-vs-OFF 만으로는 '이 게이트가 깎았다' 와 '이 크기 교란이면 무엇이든 깎는다' 를 못 가른다. OFF NLL ≡ 기관 단독 CE 가 정렬 교차핀."
+         },
+         {
+          "name": "`--hf-model` 분기 (`_check_hf_setup`)",
+          "role": "",
+          "id": "a-g-consciousness-engine-core-substrate-only-cli-graft-py-3-hf",
+          "detail": "`_fit_hf` 는 CLMG 트레일러 없는 torch bridge `.pt` 라 clm 로더가 못 읽었다 → HFOrgan+GraftBridge 재적재로 Mistral급 기관서 같은 body 실행(probes 는 subword 라 `organ.encode`; rotation-null 은 d=4096 용 thin-SVD `rotation_null_offsets`). 배선 전엔 7B 통제 실행불가(H_9939 `rotation_null:0`)."
+         }
+        ]
        },
        {
         "name": "판정 현황: H_9932 NOT GRAFTED 0/3(MI 바 미달, 결합 자체는 인과적) · H_9933 swap 은 무학습",
