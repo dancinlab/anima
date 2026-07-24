@@ -84,11 +84,18 @@ class FieldLoop:
 
     def residual(self):
         """emb_residual [B, d] (grad flows to bridge+gamma) for the current per-row C-state, BEFORE the
-        block forward. Returns None on the off arm (byte-identical to no-field). At gamma=0 the residual
-        is exactly zero, so training starts from the base model and CE decides whether to raise gamma."""
+        block forward. Returns None on the off arm (byte-identical to no-field), AND whenever the rows'
+        C-states are still identical (fresh fields at step 0, or just after a reset): the bridge centers
+        across rows, so identical rows give a zero-variance input whose RMS-normalization gradient is
+        singular (sqrt(0) -> inf -> NaN in gamma). Identical rows also carry NO differential state to
+        inject, so skipping is correct, not just safe. At gamma=0 the residual is exactly zero, so
+        training starts from the base model and CE decides whether to raise gamma."""
         if self.arm == "off":
             return None
-        return self.bridge(self._C()) * self.gamma                   # [B, d]
+        C = self._C()
+        if float((C - C.mean(dim=0, keepdim=True)).abs().max()) < 1e-6:
+            return None                                              # rows identical -> no injection
+        return self.bridge(C) * self.gamma                          # [B, d]
 
     def _derangement(self):
         """A random derangement of range(B) (no row keeps its own index) — the yoked control."""
@@ -175,6 +182,10 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
     import torch
     import torch.nn.functional as F
     fl = FieldLoop(B, d, arm=arm, hidden=hidden, seed=seed).to(device)
+    core_m = model.module if hasattr(model, "module") else model
+    emb_w = getattr(core_m, "embed", None)
+    emb_rms = (float(emb_w.weight.detach().float().pow(2).mean().sqrt())
+               if emb_w is not None else 1.0)                # residual amplitude anchor (GRAFT-style)
     stream = _FieldStream(data_bytes, B, block, seed=seed)
     params = list(model.parameters()) + fl.parameters()
     opt = torch.optim.Adam(params, lr=lr)
@@ -187,12 +198,14 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
         y = y.to(device)
         res = fl.residual()                                  # [B, d] or None (off)
         if res is not None:
-            res = res.to(device).unsqueeze(1)                # [B, 1, d] -> broadcast over T
+            res = (res * emb_rms).unsqueeze(1)               # anchor amplitude to the model's embedding
+            #      RMS (GRAFT's stability anchor) so gamma stays O(1), then broadcast over T
         logits = model(x, None, emb_residual=res)["logits"].float()   # [B, V, T]
         ce_row = F.cross_entropy(logits, y, reduction="none").mean(dim=1)  # [B]
         loss = ce_row.mean()
         opt.zero_grad()
         loss.backward()
+        torch.nn.utils.clip_grad_norm_(params, 1.0)          # GRAFT/standard-loop grad clip (no-NaN)
         opt.step()
         with torch.no_grad():
             ce_np = ce_row.detach().cpu().numpy()
@@ -217,20 +230,18 @@ def _smoke():
     assert fl_off.residual() is None, "off arm must produce no residual"
     print("(1) off arm: residual is None  OK")
 
-    # (2) purefield16 -> gamma=0 gives EXACTLY zero residual. Raising gamma is not enough on its own:
-    #     freshly-initialized rows share one field, and the bridge centers ACROSS rows, so an identical
-    #     field zeros the residual by construction. That is the design working — the field carries
-    #     signal only once rows DIVERGE via different text-dependent write-back history. So we diverge
-    #     the rows first (distinct per-row drive), THEN the residual is nonzero and grad-carrying.
+    # (2) purefield16 -> fresh rows share one field, so residual() returns None (the identical-rows
+    #     guard: a zero-variance input has a singular RMS-normalization gradient = NaN, and identical
+    #     rows carry no differential state). The field carries signal only once rows DIVERGE via
+    #     different text-dependent write-back history — THEN residual() is a nonzero grad-carrying tensor.
     fl = FieldLoop(B, d, arm="purefield16", seed=1)
-    r0 = fl.residual()
-    assert r0.shape == (B, d), f"residual shape {tuple(r0.shape)} != {(B, d)}"
-    assert float(r0.detach().abs().max()) == 0.0, "gamma init 0 must give exactly-zero residual"
+    assert fl.residual() is None, "identical fresh rows must return None (no differential state)"
     for _ in range(3):                                            # accumulate text-dependent history
         fl.writeback(np.array([0.1, 0.9, 0.4, 1.5]), np.array([0.2, 0.2, 0.2, 0.2]))
     with torch.no_grad():
         fl.gamma.fill_(1.0)
     r1 = fl.residual()
+    assert r1 is not None and r1.shape == (B, d), "diverged rows must give a [B,d] residual"
     assert float(r1.detach().abs().max()) > 0.0, "diverged rows at gamma=1 must give a nonzero residual"
     assert r1.requires_grad, "residual must carry grad to bridge+gamma"
     print(f"(2) purefield16: gamma0 zero; after divergence gamma1 |max|={float(r1.detach().abs().max()):.4f}, "
