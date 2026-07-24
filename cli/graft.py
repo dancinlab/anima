@@ -268,6 +268,42 @@ def _check(a):
           f"ratio={kl_on/max(q95,1e-9):.2f}x  "
           f"({'gate is distinguishable from noise' if kl_on >= 3*q95 else 'DECORATIVE signature (ON≈NOISE)'})")
 
+    # ROTATION NULL — H_9936 follow-on. The isotropic never-trained null already put trained below
+    # its q99 at matched displacement; this is the stronger control. One random orthogonal R rotates
+    # the N trained offsets rigidly (norm/Gram/mean and thus displacement D all preserved), so the
+    # ONLY thing that moves is whether the geometry lands on the organ's sensitive directions. MI is
+    # read on a FIXED held-out carrier (base-organ sampled, code-independent) — no self-sampling — so
+    # the reading is pure code-vs-organ alignment, not the diagonal artifact of H_9933/H_9935.
+    if a.rotation_null > 0:
+        d = int(W["d"])
+        C = np.stack([c.numpy() for c in codes])                          # [K, d] trained offsets
+        base_ids = [int(b) for b in probes[0]]
+        carrier = _sample_carrier(organ, base_ids, None, a.cont_len, rng=rng)  # code-INDEPENDENT
+        fx = torch.tensor(carrier, dtype=torch.long)
+        cont_from = len(base_ids)
+
+        def _mi_of(offsets):
+            with torch.no_grad():
+                lp = torch.stack([F.log_softmax(organ(fx, emb_residual=torch.tensor(o))[cont_from:].float(), -1)
+                                  for o in offsets])
+                return float(G.mixture_mi(lp)[0]) / math.log(2)           # bits
+
+        mi_tr = _mi_of([c.numpy() for c in codes])
+        null = []
+        for _ in range(a.rotation_null):
+            R = G.random_orthogonal(d, rng)
+            null.append(_mi_of([G.rotate_offsets(C, R)[i] for i in range(K)]))
+        null_sorted = sorted(null)
+        q99 = null_sorted[min(len(null) - 1, int(round(0.99 * (len(null) - 1))))]
+        q95 = null_sorted[min(len(null) - 1, int(round(0.95 * (len(null) - 1))))]
+        mean = sum(null) / len(null)
+        sd = (sum((x - mean) ** 2 for x in null) / len(null)) ** 0.5
+        z = (mi_tr - mean) / sd if sd > 0 else 0.0
+        verd = "PASS(>q99)" if mi_tr > q99 else "PASS(>q95)" if mi_tr > q95 else "FAIL(<=q95)"
+        print(f"[graft] ROTATION-NULL: MI_trained={mi_tr:.4f} bits · null(n={len(null)}) "
+              f"mean {mean:.4f} sd {sd:.4f} q95 {q95:.4f} q99 {q99:.4f} · z={z:+.2f} · {verd}  "
+              f"(displacement-exact: R preserves norm+Gram+mean, only direction moves)")
+
     if a.fluency_corpus:
         _fluency(a, organ, codes, emb_rms, rng)
     return 0
@@ -422,6 +458,10 @@ def main():
     ap.add_argument("--fluency-corpus", default=None, dest="fluency_corpus",
                     help="natural text; measure the gate's fluency price (NLL ON vs OFF vs size-matched noise)")
     ap.add_argument("--fluency-bytes", type=int, default=4000, dest="fluency_bytes")
+    ap.add_argument("--rotation-null", type=int, default=0, dest="rotation_null",
+                    help="rotation-null draws: rigidly rotate the trained offsets (norm+Gram+mean, "
+                         "hence displacement D, preserved) and read MI on a fixed held-out carrier — "
+                         "the displacement-exact control the isotropic null cannot supply (H_9936)")
     a = ap.parse_args()
     if a.verb == "fit":
         if not a.out:
