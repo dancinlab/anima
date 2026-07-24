@@ -166,7 +166,7 @@ class _FieldStream:
     the trainer's random-window draw for the field-loop path. Returns
     (x[B,block], y[B,block] = x shifted by 1, wrapped_rows)."""
 
-    def __init__(self, data_bytes, B, block, seed=0):
+    def __init__(self, data_bytes, B, block, seed=0, doc_len=0):
         import torch
         self.torch = torch
         self.data = np.frombuffer(data_bytes, dtype=np.uint8)
@@ -175,26 +175,55 @@ class _FieldStream:
         self.block = int(block)
         if self.N < block + 2:
             raise ValueError(f"corpus too small: {self.N} bytes < block+2 = {block + 2}")
-        rng = np.random.default_rng(seed)
-        self.cur = rng.integers(0, self.N - block - 1, size=self.B).astype(np.int64)
+        # doc_len>0 = DOC-AWARE mode (H_9957 fieldctl): blocks align to a fixed doc grid and the field
+        # is reset at every planted doc boundary, so the leaky integral carries ONE doc's key, not a
+        # ~400-block blur of many docs. Rows are held B-docs apart and cycle, so a batch spans distinct
+        # docs (mixed keys => the row-centered residual is non-degenerate). doc_len=0 = legacy random-
+        # start contiguous stream (natural-corpus path), byte-identical to before.
+        self.doc_len = int(doc_len)
+        if self.doc_len > 0:
+            if self.doc_len % self.block != 0:
+                raise ValueError(f"doc_len {self.doc_len} must be a multiple of block {self.block}")
+            self.doc_blocks = self.doc_len // self.block
+            self.ndocs = self.N // self.doc_len
+            if self.ndocs < self.B:
+                raise ValueError(f"corpus has {self.ndocs} docs < B={self.B}")
+            self.row_doc = (np.arange(self.B) % self.ndocs).astype(np.int64)
+            self.blk_in_doc = np.zeros(self.B, dtype=np.int64)
+        else:
+            rng = np.random.default_rng(seed)
+            self.cur = rng.integers(0, self.N - block - 1, size=self.B).astype(np.int64)
 
     def next_block(self):
         xs = []
         wrapped = []
-        for i in range(self.B):
-            c = int(self.cur[i])
-            if c + self.block + 1 > self.N:                 # wrap = new document boundary
-                c = 0
-                wrapped.append(i)
-            xs.append(self.data[c:c + self.block + 1])
-            self.cur[i] = c + self.block                    # next block continues where this ended
+        if self.doc_len > 0:                                # DOC-AWARE (fieldctl)
+            for i in range(self.B):
+                if int(self.blk_in_doc[i]) >= self.doc_blocks:      # finished a doc -> next doc, reset
+                    self.row_doc[i] = (self.row_doc[i] + self.B) % self.ndocs
+                    self.blk_in_doc[i] = 0
+                    wrapped.append(i)
+                c = int(self.row_doc[i]) * self.doc_len + int(self.blk_in_doc[i]) * self.block
+                seg = self.data[c:c + self.block + 1]
+                if seg.shape[0] < self.block + 1:           # last doc's last block: pad the +1 target
+                    seg = np.concatenate([seg, seg[-1:].repeat(self.block + 1 - seg.shape[0])])
+                xs.append(seg)
+                self.blk_in_doc[i] += 1
+        else:                                               # legacy random-start contiguous stream
+            for i in range(self.B):
+                c = int(self.cur[i])
+                if c + self.block + 1 > self.N:             # wrap = new document boundary
+                    c = 0
+                    wrapped.append(i)
+                xs.append(self.data[c:c + self.block + 1])
+                self.cur[i] = c + self.block                # next block continues where this ended
         arr = np.stack(xs).astype(np.int64)                 # [B, block+1]
         t = self.torch.tensor(arr, dtype=self.torch.long)
         return t[:, :-1].contiguous(), t[:, 1:].contiguous(), wrapped
 
 
 def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, seed=0,
-                     device="cpu", hidden=64, g_fn=None, log_every=25, log=print):
+                     device="cpu", hidden=64, g_fn=None, log_every=25, log=print, doc_len=0):
     """One FIELD-LOOP training run (model-agnostic — cli/train.py --field-loop passes the real
     CLMConvMoE; the $0 smoke passes a tiny stand-in). Per contiguous block:
         residual = FieldLoop.residual()   [B,d] broadcast over T at the embedding site
@@ -212,7 +241,7 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
     emb_w = getattr(core_m, "embed", None)
     emb_rms = (float(emb_w.weight.detach().float().pow(2).mean().sqrt())
                if emb_w is not None else 1.0)                # residual amplitude anchor (GRAFT-style)
-    stream = _FieldStream(data_bytes, B, block, seed=seed)
+    stream = _FieldStream(data_bytes, B, block, seed=seed, doc_len=doc_len)
     params = list(model.parameters()) + fl.parameters()
     opt = torch.optim.Adam(params, lr=lr)
     hist = []
@@ -293,6 +322,69 @@ def field_loop_eval(model, fl, data_bytes, K=8, block=128, warmup=8, seed=0, dev
     sever = float(np.mean(-_ce_rows(xb, yb, None)))              # field cut -> free-run baseline (no residual)
     return {"K": K, "aligned": aligned, "yoked": yoked, "delta_collapse": aligned - yoked,
             "sever": sever, "aligned_minus_sever": aligned - sever, "gamma": float(fl.gamma.detach())}
+
+
+def field_loop_eval_fieldctl(model, fl, val_bytes, mask, device="cpu", seed=0):
+    """H_9957 DIFFICULTY-KEY DV: the payload-byte Delta_collapse over the held-out fieldctl val set.
+    Doc/mask-aware (unlike field_loop_eval which scores a whole random block): for each chunk of K=mask
+    docs it (1) resets + grows each doc's field over its own key+filler blocks with the TRAINED bridge,
+    (2) at the DEEPEST payload block scores ONLY the single planted payload byte (the layer the mask
+    marks — the one that is 1/K-uniform in-window, so a below-chance CE there can come only from the
+    field carrying the key), under its OWN grown field (aligned), every OTHER doc's field (yoked), and
+    no field (sever). Returns per-arm mean payload CE + Delta = min(yoked, sever) - aligned (fable's DV,
+    nats). Chance = ln K. INSTRUMENT read-out, never a faculty (p9)."""
+    import torch
+    import torch.nn.functional as F
+    fl.to(device)
+    core_m = model.module if hasattr(model, "module") else model
+    emb_w = getattr(core_m, "embed", None)
+    emb_rms = (float(emb_w.weight.detach().float().pow(2).mean().sqrt()) if emb_w is not None else 1.0)
+    K = int(mask["K"])
+    block = int(mask["block"])
+    doc_len = int(mask["doc_len"])
+    deepest = int(mask["deepest_payload_block"])            # block index of the scored (deepest) payload
+    spos = int(mask["scored_pos_in_block"])                 # position of the scored byte within the block
+    stream = _FieldStream(val_bytes, K, block, seed=seed, doc_len=doc_len)
+    nchunks = stream.ndocs // K
+    a_ce, y_ce, s_ce = [], [], []                           # aligned / yoked / sever payload CE pools
+
+    def _logits(xb, res):
+        with torch.no_grad():
+            r = None if res is None else res.to(device)
+            return model(xb.to(device), None, emb_residual=r)["logits"].float()   # [K, V, T]
+
+    for _ in range(nchunks):
+        for b in range(deepest):                           # grow each doc's field over its own blocks
+            xb, yb, wr = stream.next_block()
+            if wr:
+                fl.reset(wr)
+            res = fl.residual()
+            res = None if res is None else (res * emb_rms).unsqueeze(1)
+            with torch.no_grad():
+                lg = _logits(xb, res)
+                ce = F.cross_entropy(lg, yb.to(device), reduction="none").mean(dim=1).cpu().numpy()
+            fl.writeback(ce, np.zeros(K))
+        with torch.no_grad():                              # snapshot the K grown fields -> residuals
+            C = torch.tensor(np.stack([fl.G.graft_c_state(p) for p in fl.pf]),
+                             dtype=torch.float32, device=device)
+            R = (fl.bridge(C) * fl.gamma * emb_rms)         # [K, d]
+        xb, yb, _ = stream.next_block()                    # the deepest payload block (not written back)
+        tgt = yb[:, spos].to(device)                       # [K] the planted payload bytes
+        S = np.zeros((K, K))
+        for i in range(K):
+            lg = _logits(xb, R[i].view(1, 1, -1).expand(K, 1, -1))   # doc rows under field i
+            S[i] = F.cross_entropy(lg[:, :, spos], tgt, reduction="none").cpu().numpy()   # payload CE
+        sev = F.cross_entropy(_logits(xb, None)[:, :, spos], tgt, reduction="none").cpu().numpy()
+        a_ce.extend(np.diag(S))
+        y_ce.extend(S[~np.eye(K, dtype=bool)])
+        s_ce.extend(sev)
+    aligned = float(np.mean(a_ce))
+    yoked = float(np.mean(y_ce))
+    sever = float(np.mean(s_ce))
+    delta = float(min(yoked, sever) - aligned)
+    return {"K": K, "docs_scored": nchunks * K, "chance_nats": float(mask.get("chance_nats", np.log(K))),
+            "aligned_ce": aligned, "yoked_ce": yoked, "sever_ce": sever,
+            "delta_collapse": delta, "gamma": float(fl.gamma.detach())}
 
 
 def _smoke():

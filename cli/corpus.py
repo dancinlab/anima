@@ -1239,7 +1239,18 @@ def _parse_args(argv):
             "bind_legacy_lengths": False, "bind_task": "xor",   # H_9815 xor | hp(positive control)
             "bind_lex_corpus": [],                              # H_9819R real-lexeme input swap
             "ngram_recoverable_audit": False, "audit_train": None, "panel": None,
-            "codec": None, "audit_marker": None, "audit_min_coverage": 0.10}
+            "codec": None, "audit_marker": None, "audit_min_coverage": 0.10,
+            # H_9957 fieldctl (DIFFICULTY-KEY positive control for --field-loop-eval · fable design):
+            #   the FIELD-LOOP write-back is a SCALAR channel (s=exp(-CE)-G), so a content-coded key is
+            #   invisible; fieldctl codes the key as block DIFFICULTY (a per-key byte-entropy in the KEY
+            #   blocks). Doc = [key_blocks of i.i.d. p_k bytes | sites x (filler_blocks constant | 1
+            #   payload block: PAY<j>: + 1 scored byte = codebook[j][k] + pad)]. The payload byte is
+            #   1/K-uniform given the (constant) in-window context, so it is reachable ONLY if the field
+            #   carried k across the out-of-window filler. Emits TRAIN + .val + a --mask sidecar of the
+            #   VAL scored-byte offsets for `evaluate --field-loop-eval --score-mask`.
+            #   INSTRUMENT CHECK ONLY (synthetic · known ground truth) — never a faculty (p9).
+            "fc_k": 4, "fc_block": 128, "fc_key_blocks": 2, "fc_filler_blocks": 2, "fc_sites": 3,
+            "fc_docs": 4096, "fc_val_docs": 512, "fc_mask": None}
     i = 1
     while i < len(argv):
         a = argv[i]
@@ -1361,6 +1372,22 @@ def _parse_args(argv):
             opts["mi_robust"] = True; i += 1                  # H_9844: geometry-robustness gate
         elif a == "--mi-chat-cell":
             opts["mi_chat_cells"].append(argv[i + 1]); i += 2  # H_9844: REAL 4-cell chat input
+        elif a == "--k":
+            opts["fc_k"] = int(argv[i + 1]); i += 2                 # H_9957 fieldctl: # difficulty keys
+        elif a == "--block":
+            opts["fc_block"] = int(argv[i + 1]); i += 2             # H_9957 fieldctl: block T (bytes)
+        elif a == "--key-blocks":
+            opts["fc_key_blocks"] = int(argv[i + 1]); i += 2        # H_9957 fieldctl: KEY-segment blocks
+        elif a == "--filler-blocks":
+            opts["fc_filler_blocks"] = int(argv[i + 1]); i += 2     # H_9957 fieldctl: filler blocks/site
+        elif a == "--sites":
+            opts["fc_sites"] = int(argv[i + 1]); i += 2             # H_9957 fieldctl: payload sites/doc
+        elif a == "--docs":
+            opts["fc_docs"] = int(argv[i + 1]); i += 2              # H_9957 fieldctl: train docs
+        elif a == "--val-docs":
+            opts["fc_val_docs"] = int(argv[i + 1]); i += 2          # H_9957 fieldctl: held-out val docs
+        elif a == "--mask":
+            opts["fc_mask"] = argv[i + 1]; i += 2                   # H_9957 fieldctl: val score-mask out
         elif a == "--arm":
             opts["arm"] = argv[i + 1]; i += 2          # H_9694 g6bind: targeted|shuf
         elif a == "--stems-per-episode":
@@ -6431,9 +6458,126 @@ def run_wake_coresidency(opts):
         sys.exit(3)
 
 
+def _fc_entropy_dist(h_target_nats, alphabet=256):
+    """A fixed categorical over `alphabet` bytes whose Shannon entropy ~= h_target_nats, via a
+    geometric-decay p_i ∝ exp(-i/tau) with tau found by bisection (entropy is monotone in tau).
+    Used by fieldctl to code a difficulty KEY: KEY-block bytes drawn i.i.d. from p_k give the trunk
+    an asymptotic per-byte CE ~= h_k, and that block CE (a scalar) is exactly what the H_9607
+    write-back reads — the only key coding the scalar field channel can carry (H_9957 / fable)."""
+    import numpy as np
+    idx = np.arange(alphabet)
+
+    def ent(tau):
+        w = np.exp(-idx / max(tau, 1e-9))
+        p = w / w.sum()
+        return float(-(p * np.log(p + 1e-300)).sum()), p
+
+    lo, hi = 1e-4, 1e7
+    for _ in range(200):
+        mid = (lo * hi) ** 0.5
+        e, _ = ent(mid)
+        if e < h_target_nats:
+            lo = mid
+        else:
+            hi = mid
+    _, p = ent((lo * hi) ** 0.5)
+    return p
+
+
+def run_fieldctl(opts):
+    """H_9957 DIFFICULTY-KEY positive control for `evaluate --field-loop-eval` (fable design).
+    Doc layout (block-aligned, uniform length): [key_blocks of i.i.d. p_k bytes | sites x
+    (filler_blocks of a constant byte | 1 PAYLOAD block: `PAY<j>:` + 1 scored byte codebook[j][k]
+    + space pad)]. The key k is coded as the KEY-block byte ENTROPY (so the scalar write-back can
+    carry it); the payload byte is 1/K-uniform given the constant in-window `PAY<j>:` context, so it
+    is predictable ONLY if the field carried k across the out-of-window filler. Emits TRAIN + `.val`
+    (disjoint RNG) + a `--mask` sidecar (doc geometry + val/train scored-byte offsets + codebook) for
+    the doc/mask-aware `evaluate --field-loop-eval --score-mask`. INSTRUMENT CHECK ONLY (synthetic,
+    known ground truth) — never a faculty (p9)."""
+    import numpy as np
+    import json
+    import os
+    out = opts["out"]
+    if not out:
+        print("usage: anima-py corpus fieldctl --out fieldctl.bin --mask fieldctl.mask.json "
+              "[--k 4] [--block 128] [--key-blocks 2] [--filler-blocks 2] [--sites 3] "
+              "[--docs 4096] [--val-docs 512] [--seed 7]")
+        print("      H_9957 — DIFFICULTY-KEY positive control certifying that --field-loop-eval reads")
+        print("      a real out-of-window channel. The key is coded as KEY-block byte ENTROPY (the")
+        print("      only thing the scalar H_9607 write-back can carry); the payload byte is uniform")
+        print("      over K given the constant in-window context, so a below-chance payload CE at the")
+        print("      deepest site can come ONLY from the field carrying the key. Train from-INIT with")
+        print("      --field-loop --field-doc-len <doc_len> (reset at each planted doc); the doc_len")
+        print("      is printed below and stored in the mask. INSTRUMENT CHECK, never a faculty (p9).")
+        sys.exit(2)
+    K = int(opts["fc_k"])
+    T = int(opts["fc_block"])
+    nkey = int(opts["fc_key_blocks"])
+    nfill = int(opts["fc_filler_blocks"])
+    sites = int(opts["fc_sites"])
+    seed = int(opts["seed"])
+    base_targets = [0.15, 0.8, 1.9, 3.9]
+    ce_targets = base_targets[:K] if K <= len(base_targets) else list(np.linspace(0.15, 3.9, K))
+    dists = [_fc_entropy_dist(h) for h in ce_targets]
+    rng = np.random.default_rng(seed)
+    printable = np.arange(33, 127, dtype=np.int64)                  # 94 printable bytes (no space/ctrl)
+    codebook = [[int(x) for x in rng.permutation(printable)[:K]] for _ in range(sites)]  # per-site key->byte
+    filler_byte = 126                                              # '~' constant filler
+    doc_blocks = nkey + sites * (nfill + 1)
+    doc_len = doc_blocks * T
+
+    def build(ndocs, r):
+        buf = bytearray()
+        scored = []
+        per_key = [0] * K
+        for _ in range(ndocs):
+            k = int(r.integers(K))
+            per_key[k] += 1
+            buf += r.choice(256, size=nkey * T, p=dists[k]).astype(np.uint8).tobytes()   # KEY blocks
+            for j in range(sites):
+                buf += bytes([filler_byte]) * (nfill * T)          # constant filler blocks
+                marker = ("PAY%d:" % j).encode()
+                scored.append(len(buf) + len(marker))              # abs offset of the scored byte
+                blk = bytearray(marker)
+                blk.append(codebook[j][k])
+                blk += b" " * (T - len(blk))                       # pad to exactly T
+                buf += bytes(blk[:T])
+        return bytes(buf), scored, per_key
+
+    tr_bytes, tr_scored, tr_key = build(int(opts["fc_docs"]), np.random.default_rng(seed))
+    val_bytes, val_scored, val_key = build(int(opts["fc_val_docs"]), np.random.default_rng(seed + 10007))
+    with open(out, "wb") as f:
+        f.write(tr_bytes)
+    val_out = out + ".val"
+    with open(val_out, "wb") as f:
+        f.write(val_bytes)
+    chance = float(np.log(K))
+    mask = {"format": "fieldctl", "K": K, "block": T, "doc_blocks": doc_blocks, "doc_len": doc_len,
+            "n_key_blocks": nkey, "n_filler_blocks": nfill, "sites": sites,
+            "ce_targets": [float(x) for x in ce_targets], "codebook": codebook, "chance_nats": chance,
+            "deepest_payload_block": doc_blocks - 1, "scored_pos_in_block": len(("PAY%d:" % (sites - 1)).encode()),
+            "train_file": os.path.basename(out), "val_file": os.path.basename(val_out),
+            "val_scored_offsets": val_scored, "train_scored_offsets": tr_scored, "seed": seed}
+    mask_path = opts["fc_mask"] or (out + ".mask.json")
+    with open(mask_path, "w") as f:
+        json.dump(mask, f)
+    print("[fieldctl] INSTRUMENT CHECK (synthetic · known ground truth · p9 never-a-faculty)")
+    print("  train %s  %d docs  %d B (%.2f MB)" % (out, opts["fc_docs"], len(tr_bytes), len(tr_bytes) / 1e6))
+    print("  val   %s  %d docs  %d B (%.2f MB)" % (val_out, opts["fc_val_docs"], len(val_bytes), len(val_bytes) / 1e6))
+    print("  mask  %s  (%d val scored bytes)" % (mask_path, len(val_scored)))
+    print("  doc = %d blocks x %d B = %d B  ->  --field-doc-len %d" % (doc_blocks, T, doc_len, doc_len))
+    print("  K=%d  CE-targets=%s  chance=ln K=%.4f nats  codebook(per-site key->byte)=%s"
+          % (K, ["%.2f" % x for x in ce_targets], chance, codebook))
+    print("  train key balance=%s  val=%s" % (tr_key, val_key))
+    print("  budget floor: train corpus = %d bytes" % len(tr_bytes))
+
+
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
+    if fmt == "fieldctl":
+        run_fieldctl(opts)
+        return
     if fmt == "ngram-audit" or opts["ngram_recoverable_audit"]:
         if not opts["ngram_recoverable_audit"] or not opts["audit_train"] or not opts["panel"]:
             print("anima-py corpus ngram-audit --ngram-recoverable-audit "

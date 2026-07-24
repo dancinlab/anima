@@ -3628,6 +3628,15 @@ def main():
                     help="measure a trained coupling instead of training: load this .fl.pt, grow K "
                          "per-doc fields on --corpus, print Delta_collapse = aligned - yoked (own-field "
                          "vs wrong-field own-byte prediction) + the sever control. No training.")
+    ap.add_argument("--field-doc-len", type=int, default=0, dest="field_doc_len",
+                    help="H_9957 fieldctl: DOC-AWARE field-loop — reset the field at every planted doc "
+                         "boundary of this byte length (blocks align to the doc grid), so the leaky "
+                         "integral carries ONE doc's key not a ~400-block blur. 0 = legacy random-start "
+                         "contiguous stream (natural-corpus path). = the doc_len printed by `corpus fieldctl`.")
+    ap.add_argument("--score-mask", type=str, default="", dest="score_mask",
+                    help="H_9957 fieldctl: with --field-loop-eval, score the payload-byte Delta_collapse "
+                         "using this fieldctl .mask.json (doc geometry + scored-byte position) on the val "
+                         "--corpus, instead of the whole-block DV. The instrument-check DV.")
     ap.add_argument("--ddp-find-unused", action="store_true",
                     help="DDP debug/escape-hatch: pass find_unused_parameters=True to DDP. Off "
                          "by default — the current objective set fires every head every step "
@@ -4490,6 +4499,20 @@ def main():
         if len(raw) < a.field_block + 2:
             sys.exit(f"[field-loop] needs --corpus with >= field-block+2 bytes (got {len(raw)})")
         if a.field_loop_eval:                            # MEASURE a trained coupling (no training)
+            if a.score_mask:                             # H_9957 fieldctl payload-byte DV (doc/mask-aware)
+                import json as _json
+                mask = _json.load(open(a.score_mask))
+                fl = FL.FieldLoop.load(a.field_loop_eval, int(mask["K"]), device=device)
+                ev = FL.field_loop_eval_fieldctl(model, fl, raw, mask, device=device, seed=a.seed)
+                p0(f"=== anima-py train --field-loop-eval --score-mask (H_9957 fieldctl payload DV) === "
+                   f"K={ev['K']} docs={ev['docs_scored']} gamma={ev['gamma']:+.5f} "
+                   f"chance=ln K={ev['chance_nats']:.4f} nats", flush=True)
+                p0(f"[fieldctl-eval] payload CE  aligned={ev['aligned_ce']:.4f}  "
+                   f"yoked={ev['yoked_ce']:.4f}  sever={ev['sever_ce']:.4f}", flush=True)
+                p0(f"[fieldctl-eval] DELTA_COLLAPSE = min(yoked,sever)-aligned = "
+                   f"{ev['delta_collapse']:+.4f} nats  (>0 ⇒ the field carried the out-of-window key; "
+                   f"prereg CERTIFIED gate: Δ>=0.8 ∧ aligned<=0.4)", flush=True)
+                return 0
             fl = FL.FieldLoop.load(a.field_loop_eval, a.field_b, device=device)
             ev = FL.field_loop_eval(model, fl, raw, K=a.field_b, block=a.field_block,
                                     seed=a.seed, device=device)
@@ -4506,7 +4529,7 @@ def main():
            f"d={dfl} block={a.field_block} B={a.field_b} steps={steps} corpus={len(raw)}B", flush=True)
         fl, hist = FL.field_loop_train(model, raw, a.field_arm, steps, dfl, B=a.field_b,
                                        block=a.field_block, lr=a.lr, seed=a.seed, device=device,
-                                       log=lambda s: p0(s, flush=True))
+                                       log=lambda s: p0(s, flush=True), doc_len=a.field_doc_len)
         if a.out:
             # field-loop never runs the mitosis GROW loop, so mito.e_active is still e0; but a --init'd
             # model carries all `emax` experts. Serialize ALL of them (else _write_clm's e_ser=e_active
