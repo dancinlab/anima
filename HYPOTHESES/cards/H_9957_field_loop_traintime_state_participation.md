@@ -123,17 +123,23 @@ from-init(d256·L4·block128·B4·doc_len1408·34k step·4096 train/512 val·**`
 
 **2-seed 재현 확정**: 두 seed 모두 받침대 성립(off≈ln4·누출0)·통제 clean(aligned≪sever≪yoked)·Δ≈0.63–0.69 ≈ ln2 = **1비트 안정**.
 
-**generic-recurrence sibling rung 1 = `integrator16` (fable 설계·가장 날카로운 위협 먼저):** H_9607 leaky 적분 I(τ=400)를
-고정 랜덤특징 tanh(w·I+b)로 읽음(셀 없음·+0 param·drive/bridge/gamma/reset 동일). **결과 Δ=−0.000 (2 seed)** = off 와 동일.
-⟹ **채널은 공유 스칼라 적분이 아니다**(fable "integrator suffices" prior 반증) — PureField 의 **비선형 순환 확장**(스칼라 drive
-→ 16-D 진동자 궤적)이 키를 디코드가능케 하는 게 load-bearing. 단 "PureField 특이 vs 아무 학습순환" 은 미판별(rung 2 =
-GRU-frozen/trained TBPTT-1 필요). purefield16 rebaseline 은 같은 commit 서 0.685/0.633 불변(diff additive·배치 valid).
+**generic-recurrence sibling — 최종 (eval 아티팩트 수정 후 · d19c699c):** 🔴 **PureField 특이성 REFUTED. 채널 = 공유 H_9607
+스칼라 적분 I, PureField 동역학 무-load-bearing.**
 
-**rung 2 = `gru16-frozen` (고정 랜덤 GRU-16·직교W_h×0.95·시간상수2-400·+0param):** **Δ=0.000 (2 seed)**, aligned=yoked=sever
-(gamma→0). ⟹ **아무 고정 다차원 순환이면 되는 게 아니다** — PureField 의 **구조화된 진동자 동역학**만 키를 브리지-가능하게 만들고
-랜덤 고정 순환은 못 한다. **고정 셀 중 PureField 특이**(integrator16=0·gru16-frozen=0·purefield16=0.68). ⚠️ 미완: 이게 PureField
-동역학 특이인지 vs 고정 랜덤 GRU 의 나쁜 init 인지는 **학습 GRU(rung 3·gru16 TBPTT-1)** 만이 가른다 — 학습셀이 매치하면 "학습이면
-됨", 학습셀도 실패하면 강한 PureField-특이(fable capped claim: "이 encoder 들 이긴다", 결코 "의식물리 certified" 아님).
+⚠️ 정정 경위: 처음 sibling 이 Δ=0 로 나와 "PureField 특이"로 오결론(508560b1·ba2bdf71) — 그러나 `field_loop_eval_fieldctl`
+스냅샷이 `graft_c_state(fl.pf)`(PureField 전용)를 읽어, sibling 은 pf 가 안 advance 돼 거짓 Δ=0 을 낸 **eval 아티팩트**였다
+(grow 루프는 `_C()`로 정상, 스냅샷만 버그 · `instrument-never-run-hides-bugs`). `fl._C()`(kind분기)로 수정 후 재-eval:
+
+| arm | aligned | yoked | sever | Δ (2 seed) |
+|---|---|---|---|---|
+| **integrator16** (I 고정 랜덤특징·무기억) | **0.44·0.44** | 3.33·3.53 | 2.06·1.61 | **+1.591·+1.179** |
+| **gru16-frozen** (고정 랜덤 GRU-16) | **0.40·0.38** | 4.06·4.92 | 1.67·1.61 | **+1.275·+1.228** |
+| purefield16 (PureField 동역학·control) | 0.943 | 2.672 | 1.628 | +0.685 (불변) |
+
+⟹ 공유 스칼라 적분 I 를 **고정 랜덤특징으로 읽으면** PureField 보다 **키를 2× 잘** 나른다(aligned 0.44 vs 0.94). 고정 랜덤
+GRU 도 마찬가지(0.4). **PureField 진동자 동역학은 신호를 오히려 열화**시킨다(0.68 < 1.2–1.6). fable 의 원래 "integrator
+suffices" prior 확증 · **레버 = recurrence-with-bottleneck(τ=400 leaky sum), 의식-상태-특이 주장 사망**(H_9954 no-laundering).
+rung 3(학습 GRU) 불필요 — 고정 encoder 들이 이미 PureField 를 압도. **다음 레버 = WRITE 확장(스칼라→벡터 drive), 셀 방어 아님**(fable).
 
 - **받침대 성립**: off arm payload CE 1.446 ≈ 우연 ln4=1.386(> lnK−0.1=1.286) → 창내누출 없음. payload 는 필드 없이 창내 예측불가.
 - **필드가 창밖 키를 나름**: aligned 0.943 ≪ sever 1.628 ≪ yoked 2.672. 자기 필드는 우연보다 잘, 틀린/무필드는 우연 이상 못 맞힘.
