@@ -2,6 +2,15 @@
 
 # V6_27 — LANE-BUS Step-1: the bus tension is load-bearing AND discharges on emit 🟢🟢
 
+> ⛔ **RETRACTED by V6_38 (2026-07-24).** The bus was mis-aligned: `_fwd_logits` row *i* predicts
+> `tok[i+1]`, so `comp[pos]` scored `b[pos+1]` while the reflex window scored `b[pos]` — the two
+> lanes were never compared on the same byte (decided by measurement: CE 2.076 vs 6.871 nats).
+> The 0.947 override rate was that symptom, not a finding. Re-measured aligned: override **0.113**,
+> tension|override **0.057 nats** (not 4.02), and the level-controlled discharge coefficient falls
+> from **c = −1.03, z = −7.8** to **c = −0.0013, z = −1.12 (ns)**. The Step-2 causal test then found
+> discharge ABSENT under do() with a live positive control and a passing TOST.
+> → `V6_38_causal_discharge.md`
+
 **origin:** V6_26 gate PASS (logit-row content tension is 15-dim). Step-1 tests whether that
 tension is (a) LOAD-BEARING and (b) has Fable's falsifiable p5 signature — emitting a
 content-driven byte should DISCHARGE the residual. `v6_27_lanebus_discharge.py`, $0, reuses
