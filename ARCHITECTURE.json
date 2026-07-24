@@ -3140,10 +3140,10 @@
           "detail": "H_9304 의 한국어 비트가 3 계급 혼합인 것은 **사실**(어휘 아니/없 22,920=75% · 결속 ~6,260=20% · 자유 ~1,244=4%). 그러나 셋을 갈라 재니 **어느 계급도 전이 정보를 안 담는다** ⇒ 혼합이 살아있는 자유형 신호를 가리고 있던 게 아니다."
          },
          {
-          "name": "🔎 영어 우위의 남은 후보 3종 — 전부 사전등록 · 미측정",
+          "name": "🔎 영어 우위의 남은 후보 — 셋 중 둘 KILL/부분, 마지막 하나만 미측정",
           "role": "",
           "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-earned-operator-supply-open-candidates",
-          "detail": "형태론 경로가 H_9949 로 막혔으므로 EN 우위(+0.02058)를 설명할 후보를 같은 within-corpus 방식으로 하나씩 제거한다: **H_9951 문장길이**(SST-2 는 treebank 라 행이 구절) · **H_9952 라벨/부정률 분포**(부정률 10× 차 → 셀 17,898 vs 2,175) · **H_9953 굴절 파편화**(가장 강한 후보). 셋 다 판정표 동결 · $0."
+          "detail": "형태론 경로가 H_9949 로 막혀 EN 우위(+0.02058)를 within-corpus 로 하나씩 제거: **H_9952 라벨/부정률 분포 → KILL**(매칭해도 +0.02371) · **H_9953 굴절 파편화 → PARTIAL**(8배 파편화가 ~37% 제거하나 잔차 0.00530 생존) · **H_9951 문장길이 → 미측정, 마지막 후보**(SST-2 는 treebank 라 행이 구절). 세 자기-겨눔 통제 모두 EN 우위를 완전히 못 지움 → H_9944 생존."
          },
          {
           "name": "H_9953 을 강하게 만드는 이미 측정된 이상 신호",
@@ -3162,6 +3162,12 @@
           "role": "",
           "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-earned-operator-supply-stem-channel-flags",
           "detail": "어간 A 는 `_stems` 가 텍스트서 prefix 절단으로 추출(한국어 prefix-3=1음절 어근+어미라 좋다/좋은/좋았 파편화, 영어 prefix-4=어근잡고 어미버림). **`--stem-prefix N`**(병합·N≤스크립트기본, N=3 byte-동일 재현) · **`--stem-fragment-k K`**(영어 어근을 K클래스로 분할·prefix창 안 삽입·결정론 blake2b·K=1 받침대). 헤더/JSON 에코 · 게이트 미접촉(정수 심볼). ⚠️ N=1 병합은 과병합 감사(200/200 SAME) 통과해야 판독."
+         },
+         {
+          "name": "⚠️ H_9953 측정완료 — 파편화 PARTIAL (기여자이나 충분원인 아님)",
+          "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-earned-operator-supply-fragmentation-partial",
+          "type": "gate",
+          "detail": "영어-쪼개기 K-스윕(`--stem-fragment-k`, seeds 9304-6): K=1 받침대(창4→3) +0.01661 [.01592,.01726] → K=2 +0.01810 → K=4 +0.01790 → K=8(최강 8-class) +0.01127 [.00986,.01298]. K=8 게이트 전부 PASS(G-ALIVE +5.037·G-PEDESTAL +0.00124·G-POWER MDE 0.00238·seed-퍼짐 0.00485=검정력있음). 판정=PARTIAL: K=8 이 유의 하강(K1↔K8 CI 서로소)하나 +0.01127 에서 멈춰 KO대역(+0.008)·KO-FREE(+0.00597) 위, 비단조(K2>K1). 설명분율(격차 0.01461): 창-artifact 0.00397(27%)+파편화 0.00534(37%)=토큰화입도 ~64%, 검정력·seed안정 잔차 0.00530(36%) 생존 ⟹ 영어 재조합신호는 순수 토큰화 artifact 아님. MERGE-Korean 미실행(prefix-1 over-merge INVALID 위험 감동/감사→감, BLOCKING 게이트). DIRECTIONAL(p9). 마지막 후보=H_9951 길이."
          }
         ]
        }
