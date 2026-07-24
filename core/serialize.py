@@ -81,6 +81,7 @@ _TRAILER_MAGICS = (
     bytes([77, 66, 78, 68]),         # "MBND"   — mouth binder (core/mbnd.py)
     bytes([73, 70, 65, 78]),         # "IFAN"   — core/ifan.py
     bytes([84, 70, 76, 68]),         # "TFLD"   — tension field (core/tension_field.py)
+    bytes([67, 78, 82, 77]),         # "CNRM"   — trunk-norm marker (H_9875 · 5 bytes: magic+1)
 )
 
 
@@ -1078,6 +1079,8 @@ def _trailer_chain_end(raw: bytes, off: int, d: int, V: int) -> int:
     for rd in (read_clml, read_clms, read_mbnd, read_ifan):
         _, off = rd(raw, off, d, V)
     _, off = read_tfld(raw, off, d)
+    if raw[off:off + 4] == CNRM_MAGIC:                   # H_9875 trunk-norm marker (magic + 1 byte),
+        off += len(CNRM_MAGIC) + 1                       # appended LAST — consume it exactly to EOF
     return off
 
 # ── "CNRM" trunk-norm marker (H_9875) ────────────────────────────────────────────
