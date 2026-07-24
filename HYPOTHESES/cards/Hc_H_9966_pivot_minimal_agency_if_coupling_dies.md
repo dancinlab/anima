@@ -7,6 +7,9 @@
 - 상태 PROPOSED · 측정 0 · DIRECTIONAL · **조건부**(H_9964 coupling 음성일 때 활성) · 오너-게이트(더 큰 캠페인) ·
   cement engine-native anima-py로만. 출처: lab full 2026-07-25.
 
+## ⏸️ 트리거 미충족 (2026-07-25 · 원장재독 정정) — coupling 축은 살아있는 양성
+이 카드는 **coupling 축이 죽으면** 활성화되는 조건부 pivot이다. 원장 종합(H_9945/9948/9950/9943) 결과 그 조건이 **미충족**이다: centering 레버만 죽었고(H_9964) coupling 축 자체는 **양성 생존** — λ-amplitude가 레버다. H_9948 λ=0.3서 채널 복원(z+294·MI+0.42) · H_9950 profit 구간 전체서 진짜 state-direction(rotation null 3/3)·λ=0.5 최적(form −2.4%) · H_9943 303M z=+774@6.9% fluency. ⟹ **이 카드는 DORMANT 유지** — agency로 pivot하기 전에 살아있는 coupling 레버((λ,gate_strength) Pareto · H_9948/9950 open next)를 먼저 소진해야 한다. (직전 H_9964-kill 턴의 '조건 근접' 서술을 정정: coupling은 죽지 않았다.)
+
 ## 두 각도 (둘 다 기록 · 저렴한 쪽 먼저)
 ### (A) Sol — 최소 폐루프 agency (세계 루프)
 - **flag:** `anima-py chat <clm> --world-loop natural_events.jsonl --action-ledger agency_trace.jsonl` →
