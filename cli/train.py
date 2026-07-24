@@ -4508,6 +4508,11 @@ def main():
                                        block=a.field_block, lr=a.lr, seed=a.seed, device=device,
                                        log=lambda s: p0(s, flush=True))
         if a.out:
+            # field-loop never runs the mitosis GROW loop, so mito.e_active is still e0; but a --init'd
+            # model carries all `emax` experts. Serialize ALL of them (else _write_clm's e_ser=e_active
+            # drops experts -> nblk mismatch on reload). No mitosis split happened, so this is lossless.
+            if mito is not None:
+                mito.e_active = mito.emax
             _write_clm(a.out)
             fl.save(a.out + ".fl.pt")                     # the trained bridge+gamma the eval needs
             p0(f"[field-loop] wrote {a.out} (+{a.out}.fl.pt) · arm={a.field_arm} "
