@@ -21,7 +21,7 @@
 | SWAP | acc **0.750**(chance 0.125) · MI_swap 2.329/3.0 · perm_p 0.0010 | — |
 | ABLATION | KL(ON‖OFF)=0.7133 vs noise q95=0.0581 · **12.28×** (gate≠noise) | — |
 | fit MI 궤적 | step200 0.35 / 400 0.49 / 600 **0.62** / 1000 0.52 · L_common 0.7~2.0 유지 | λ=1 은 step75 이후 floor 0.004 |
-| FLUENCY | ⏳ **PENDING** — HF fluency arm 이 device 버그(#4540)로 크래시 → 수정 후 재-check 큐(bg-1784893761075) | — |
+| FLUENCY | ⛔ **HF엔 INVALID(측정불가)** — #4540 로 크래시는 고쳤고 재-check 는 rotation-null z=+293.79 를 **정확히 재현**했으나, fluency arm 이 raw byte 를 토큰ID 로 먹임(subword Mistral 엔 무의미) → NLL gate-OFF=13.95(쓰레기)·**FORM PANEL 이 스스로 INVALID 선언**("organ 이 자연문 선호 안 함"). **가드가 가짜 숫자를 거부한 정상 작동**. HF fluency = fluency arm 이 `organ.encode` 토큰화를 써야 유효(follow-up). | — |
 
 ## 판정 — 🟢 이득영역 존재: λ<교환비면 priced-out 채널이 강하게 회복 (DIRECTIONAL · fluency 미완)
 - **H_9947 AGREES + EXTENDS(직접 다음 단계)**: H_9947 = "λ=1 서 real-but-priced-out(z=+26)". 이 카드 =
@@ -39,7 +39,8 @@
 3. DIRECTIONAL: 4bit · 1 seed · Mistral ≠ 303M(terminal 은 H_9943 의 303M).
 
 ## 다음
-① **fluency 재-check 완주 판독**(bg-1784893761075 · #4540 수정본): dNLL(ON)/dNLL(NOISE) + FORM margin →
-   "저비용 이득영역" vs "비용有 이득" 확정. ② λ 스윕(0.5=병렬 H_9947 인접 / 0.2 / 0.1)으로 이득영역 경계 +
+① **fluency arm 을 HF-호환으로 수정**(byte→`organ.encode` 토큰화 · probes 수정과 동종): 현재 fluency 는
+   subword organ 에 byte 를 먹여 FORM PANEL 자가무효 → HF 이득영역의 "저비용 vs 비용有"가 **미측정**으로
+   남음. 수정 후 재-check 로 dNLL/FORM margin 판독. (303M byte-LM 은 fluency 유효 = H_9943 −6.9%.) ② λ 스윕(0.5=병렬 H_9947 인접 / 0.2 / 0.1)으로 이득영역 경계 +
    교환비 정밀화. ③ 303M(H_9943)서 gate_strength 스윕과 대칭 = 두 축(λ·gs)의 이득영역 지도.
 산출: log `graft_mistral_lam03_track1.log`·recheck `graft_mistral_lam03_check2.log` · ckpt `graft_mistral_lam03_s1.pt`.
