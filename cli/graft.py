@@ -841,10 +841,15 @@ def main():
                     help="check-time multiplier on the trained offsets — amplitude-stability probe: "
                          "true direction-coding leaves the rotation-null z stable across ×0.5/×1/×2 "
                          "(direction is scale-invariant), a displacement artifact tracks amplitude")
-    ap.add_argument("--rotation-null", type=int, default=0, dest="rotation_null",
-                    help="rotation-null draws: rigidly rotate the trained offsets (norm+Gram+mean, "
-                         "hence displacement D, preserved) and read MI on a fixed held-out carrier — "
-                         "the displacement-exact control the isotropic null cannot supply (H_9936)")
+    ap.add_argument("--rotation-null", type=int, default=64, dest="rotation_null",
+                    help="rotation-null draws (DEFAULT 64 — this is the check's PRIMARY control; "
+                         "pass 0 to skip): rigidly rotate the trained offsets (norm+Gram+mean, hence "
+                         "displacement D, preserved) and read MI on a fixed held-out carrier — the "
+                         "displacement-exact control the isotropic null cannot supply (H_9936). "
+                         "Default-ON because it is the arm that WORKS (toy z=+28~+38 H_9937 · "
+                         "Mistral-7B z=+18.59 H_9940) while swap was struck from the verdict table "
+                         "for certifying an UNTRAINED coupling (H_9933) — a working control must not "
+                         "be opt-in (a_gpu_default_no_optin). Promotion prescribed by H_9937 next-3.")
     a = ap.parse_args()
     if not a.organ and not a.hf_model:
         sys.exit("[graft] need an organ: a .clm path, or --hf-model <name>")
