@@ -3618,7 +3618,8 @@ def main():
                          "single-process.")
     ap.add_argument("--field-arm", choices=["off", "purefield16", "purefield16-yoked",
                                             "integrator16", "integrator16-yoked",
-                                            "gru16-frozen", "gru16-frozen-yoked"],
+                                            "gru16-frozen", "gru16-frozen-yoked",
+                                            "coupled", "coupled-yoked"],
                     default="purefield16", dest="field_arm",
                     help="field-loop arm: off (no residual = ignore + fluency baseline) · purefield16 "
                          "(live loop) · purefield16-yoked (A/G deranged across rows = fancy-seed control) · "
