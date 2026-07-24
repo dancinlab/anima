@@ -2,6 +2,14 @@
 
 # V6_26 — LANE-BUS Step-0 gate: is content tension at the logit row multi-dimensional? 🟢 YES
 
+> ⛔ **RETRACTED by V6_39 (2026-07-24).** The PR = 15.3 headline below carries two compounding
+> instrument defects: the composed and reflex lanes were scored on **different target bytes**
+> (V6_38), and the effective rank was taken over **singular values** instead of covariance
+> eigenvalues. Corrected on the same model/corpus the quantity reads **PR = 1.19, rank 1 at 90% of
+> variance** — the gate's own pre-written abort condition ("PR ~ 1-2 ⇒ LANE-BUS is built on sand").
+> The tell: the composed logit row *by itself* reads PR(σ) = 14.61 against the "tension"'s 15.20.
+> Nothing below licenses a multi-lane bus. → `V6_39_aligned_bus_dims.md`
+
 **origin:** the natural-composition frontier CLOSED (V6_21→25); next = the LANE-BUS engine
 redesign (v6's original 대공사). Before that large build, a $0 gate on its core premise:
 Fable's LANE-BUS routes CONTENT to the pre-softmax logit row as a MULTI-dimensional "bus", but
