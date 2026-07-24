@@ -74,10 +74,15 @@ class HFOrgan:
                 bnb_4bit_compute_dtype=torch.bfloat16, bnb_4bit_use_double_quant=True)
             kw["device_map"] = {"": 0}
         else:
+            # UNQUANTIZED bf16 (owner: 양자화 없이 진행). A 7B bf16 base is ~15GB and will NOT fit a
+            # 12GB card, so let accelerate keep what fits on the GPU and OFFLOAD the rest to CPU RAM.
+            # The weights stay exactly bf16 — no nf4 rounding — only their placement changes; this
+            # trades speed for numerical fidelity, which is the entire point of dropping quantization.
+            # max_memory is deliberately below the card size: transformers' caching_allocator_warmup
+            # preallocates the GPU share in one block, and asking for the full card OOMs the warmup.
             kw["torch_dtype"] = torch.bfloat16
-        self.model = AutoModelForCausalLM.from_pretrained(model_name, **kw)
-        if not load_4bit:
-            self.model = self.model.to(device)
+            kw["device_map"] = "auto"
+            kw["max_memory"] = {0: os.environ.get("ANIMA_GRAFT_GPU_MEM", "8GiB"), "cpu": "24GiB"}
         self.model.eval()
         for p in self.model.parameters():
             p.requires_grad_(False)                              # base fully frozen
