@@ -62,7 +62,7 @@ class HFOrgan:
     from the N states, never the vocab). 4bit (nf4) base with bf16 compute; only nn.Linear is
     quantized, nn.Embedding stays float so the embedding-RMS anchor is unchanged."""
 
-    def __init__(self, model_name, load_4bit=True, device="cuda"):
+    def __init__(self, model_name, load_4bit=True, device="cuda", grad_ckpt=True):
         from transformers import AutoModelForCausalLM, AutoTokenizer
         self.name = model_name
         self.tok = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
@@ -81,6 +81,12 @@ class HFOrgan:
         self.model.eval()
         for p in self.model.parameters():
             p.requires_grad_(False)                              # base fully frozen
+        if grad_ckpt:
+            # Backward through N states x K windows keeps every layer activation alive: measured
+            # 11.38 GB (OOM on a 12GB card) for 8x4 sequences of a 7B 4bit base. Checkpointing
+            # recomputes them instead — the standard QLoRA-side pairing with a frozen 4bit base.
+            self.model.gradient_checkpointing_enable()
+            self.model.config.use_cache = False
         self.embed = self.model.get_input_embeddings()
         assert self.embed.weight.dtype in (torch.float16, torch.bfloat16, torch.float32), \
             f"embedding must stay float (got {self.embed.weight.dtype}) — 4bit must not touch nn.Embedding"
