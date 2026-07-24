@@ -81,6 +81,7 @@ _TRAILER_MAGICS = (
     bytes([77, 66, 78, 68]),         # "MBND"   — mouth binder (core/mbnd.py)
     bytes([73, 70, 65, 78]),         # "IFAN"   — core/ifan.py
     bytes([84, 70, 76, 68]),         # "TFLD"   — tension field (core/tension_field.py)
+    bytes([82, 67, 82, 76]),  # RCRL (H_9954 recurrent lane) — chain end after TFLD
 )
 
 
@@ -97,6 +98,18 @@ def append_slw_trailer(out_path: str, slw_module) -> int:
     invoke this when model.slw is not None, so the additive .clm stays untouched."""
     from slw import slw_weights_from_torch, pack_slw   # core/slw.py (same core/ dir)
     trailer = pack_slw(slw_weights_from_torch(slw_module))
+    with open(out_path, "ab") as f:
+        f.write(trailer)
+    return len(trailer)
+
+
+def append_rcrl_trailer(out_path: str, rln) -> int:
+    """Append the H_9954 RCRL recurrent-lane trailer to an already-written .clm. `rln` = a trained
+    torch RecurrentLane3 (has .weights_np()) OR a ready numpy weights dict. Returns bytes written.
+    Call LAST (after append_tfld_trailer) so the chain end stays RCRL."""
+    from recurrent_lane import pack_rcrl   # core/recurrent_lane.py
+    w = rln if isinstance(rln, dict) else rln.weights_np()
+    trailer = pack_rcrl(w)
     with open(out_path, "ab") as f:
         f.write(trailer)
     return len(trailer)

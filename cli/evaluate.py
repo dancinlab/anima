@@ -3599,6 +3599,104 @@ def _se_depth_units(W, seed):
     return out
 
 
+def iit4_recurrent_lane_run(argv):
+    """`anima-py evaluate <ckpt.clm> --iit4-recurrent-lane <heldout.json> [--out j.json]`
+
+    H_9954 engine-native readout (licensed by H_9959/H_9960): read the RCRL trailer's trained 3-cell
+    GRU + the .clm token embedding, force each of the 8 binary states over a held-out EN embedding
+    pool (do()-intervention), build the state-by-node TPM and feed the faithful
+    `core/engine_cli.py::big_phi_bounded` (n=3, cap=3, DV=mean over 8 states). Reports Phi_live, the
+    baseline-subtracted edge-cut collapse-Delta, and the XOR(=2.25)/COPY(=0) estimator controls.
+    READ-ONLY — moves no frozen bar; substrate stamp is 'lane3' (trunk Phi is 0 by theorem)."""
+    import json as _json
+    import numpy as np
+    import decode as clm
+    import recurrent_lane as RL
+    import engine_cli as E
+    ck = [a for a in argv if not a.startswith("--") and a.endswith(".clm")]
+    if not ck:
+        print("evaluate --iit4-recurrent-lane: needs a <ckpt.clm> positional", file=sys.stderr, flush=True)
+        return 2
+    ckpt = ck[0]
+    man_path = evaluate_strval(argv, "--iit4-recurrent-lane", "")
+    out_path = evaluate_strval(argv, "--out", "")
+    if not man_path or not os.path.exists(man_path):
+        print("evaluate --iit4-recurrent-lane: manifest json not found: %r" % man_path, file=sys.stderr, flush=True)
+        return 2
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("evaluate --iit4-recurrent-lane: %s is not clm-decodable" % ckpt, file=sys.stderr, flush=True)
+        return 2
+    _emb = W["embed"]                                        # [V, d] (cupy on a CUDA host, else numpy)
+    emb = np.asarray(_emb.get() if hasattr(_emb, "get") else _emb, dtype=np.float64)
+    d = int(emb.shape[1])
+    raw = open(ckpt, "rb").read()
+    off = raw.rfind(RL.RCRL_MAGIC)
+    lane, _ = (RL.read_rcrl(raw, off, d) if off >= 0 else (None, off))
+    if lane is None:
+        print("evaluate --iit4-recurrent-lane: no RCRL trailer in %s (train with "
+              "--recurrent-lane gru3-bidir)" % ckpt, file=sys.stderr, flush=True)
+        return 2
+    man = _json.load(open(man_path))
+    seed = int(man.get("seed", 9954))
+    M = int(man.get("n_inputs", 4096))
+    # held-out bytes: {"corpus": path} or {"sources":[{"path":..,"range":[a,b]}]}
+    chunks = []
+    if man.get("corpus"):
+        chunks.append(np.fromfile(man["corpus"], dtype=np.uint8))
+    for src in man.get("sources", []):
+        arr = np.fromfile(src["path"], dtype=np.uint8)
+        if src.get("range"):
+            a, b = src["range"]; arr = arr[int(a):int(b)]
+        chunks.append(arr)
+    if not chunks:
+        print("evaluate --iit4-recurrent-lane: manifest has neither 'corpus' nor 'sources'", file=sys.stderr, flush=True)
+        return 2
+    data = np.concatenate(chunks)
+    rng = np.random.default_rng(seed)
+    bytes_sel = data[rng.integers(0, len(data), size=M)].astype(np.int64)
+    e = emb[bytes_sel]                                      # [M, d]
+    u = RL.project_embeddings_np(lane["W_in"], lane["ln_g"], lane["ln_b"], e)
+    gru = RL.gru_dict_from_np(lane)
+    tpm = RL.extract_tpm_np(gru, u)
+
+    def _phi(t):
+        return sum(E.big_phi_bounded(t, 3, s, 3)[0] for s in range(8)) / 8.0
+
+    def _cut(t, j, i):
+        o = list(t)
+        for st in range(8):
+            o[st * 3 + i] = 0.5 * (t[(st & ~(1 << j)) * 3 + i] + t[(st | (1 << j)) * 3 + i])
+        return o
+
+    phi_live = _phi(tpm)
+    cuts = {"%d->%d" % (j, i): _phi(_cut(tpm, j, i)) for j in range(3) for i in range(3) if i != j}
+    collapse = phi_live - (sum(cuts.values()) / len(cuts))
+    # estimator controls, same call
+    xor = [float(([(st >> k) & 1 for k in range(3) if k != u2][0]) ^ ([(st >> k) & 1 for k in range(3) if k != u2][1]))
+           for st in range(8) for u2 in range(3)]
+    cop = [float((st >> u2) & 1) for st in range(8) for u2 in range(3)]
+    xor_ctrl = _phi(xor); cop_ped = _phi(cop)
+    sharp = float(np.mean(np.abs(np.asarray(tpm) - 0.5)))
+    occ = [float(np.mean([tpm[st * 3 + i] for st in range(8)])) for i in range(3)]
+    rep = {"instrument": "iit4-recurrent-lane", "hypothesis": "H_9954", "substrate": "lane3",
+           "regime": "natural", "ckpt": ckpt, "d": d, "n_inputs": M, "seed": seed,
+           "phi_live": phi_live, "collapse_delta": collapse, "edge_cuts": cuts,
+           "xor_ctrl": xor_ctrl, "copy_pedestal": cop_ped, "sharpness": sharp,
+           "occupancy": occ, "tpm": [float(x) for x in tpm],
+           "estimator_valid": bool(abs(xor_ctrl - 2.25) <= 1e-3 and cop_ped <= 1e-6)}
+    print("[iit4-recurrent-lane H_9954 · engine-native readout] ckpt=%s d=%d M=%d" % (ckpt, d, M))
+    print("  estimator controls: XOR=%.4f (2.25) · COPY pedestal=%.6f (0) -> %s"
+          % (xor_ctrl, cop_ped, "VALID" if rep["estimator_valid"] else "VOID"))
+    print("  substrate=lane3 (trunk Phi=0 by theorem) · Phi_live=%.6f · collapse-delta=%.6f"
+          % (phi_live, collapse))
+    print("  natural ON-occupancy per cell=%s · sharpness=%.6f" % (["%.3f" % o for o in occ], sharp))
+    if out_path:
+        open(out_path, "w").write(_json.dumps(rep, ensure_ascii=False))
+        print("  wrote %s" % out_path)
+    return 0
+
+
 def structure_envelope_read_run(argv):
     """`anima-py evaluate <ckpt.clm> --structure-envelope-read [--out j.json]`
 
@@ -12022,6 +12120,9 @@ _KNOWN_FLAGS = frozenset((
     # H_9846 structure-envelope read over the REAL checkpoint (the H_9838 planted-geometry
     # swap applied to this instrument). ONE flag, no tuning argument — the carriers are frozen.
     "--structure-envelope-read",
+    # H_9954 recurrent-lane IIT-4 readout: do()-intervention TPM of the trained 3-cell GRU (RCRL
+    # trailer) over held-out EN embeddings -> faithful big_phi_bounded. READ-ONLY, takes a manifest.
+    "--iit4-recurrent-lane",
     # H_1520 conversational-salience emit gate re-read with the PLANTED FNV-trigram key
     # geometry swapped for the REAL 303M penultimate. ONE flag, no tuning argument.
     "--salience-toggle-read",
@@ -18924,6 +19025,11 @@ def main(argv):
     # checkpoint's units instead of a 20-step toy's. Dispatches on flag PRESENCE (it takes the
     # ckpt from the positional). ADDITIVE and READ-ONLY — it moves no frozen bar, opens no
     # write path, and default-absent it changes nothing.
+    # H_9954 --iit4-recurrent-lane: engine-native readout of the trained recurrent lane's
+    # interventional big-Phi (RCRL trailer + .clm embedding). ADDITIVE, READ-ONLY, ckpt from the
+    # positional; default-absent it changes nothing.
+    if "--iit4-recurrent-lane" in argv:
+        return iit4_recurrent_lane_run(argv)
     if "--structure-envelope-read" in argv:
         return structure_envelope_read_run(argv)
     # H_1520 --salience-toggle-read: the landed conversational-salience emit gate re-read with
