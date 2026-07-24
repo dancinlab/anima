@@ -430,3 +430,19 @@ def rotate_offsets(codes, R):
     """codes: [N, d] final injected offsets (mean-centered, RMS-fixed). Returns codes @ R^T — the
     SAME N vectors rotated rigidly, so realized displacement D is identical and only direction moves."""
     return (np.asarray(codes, np.float32) @ np.asarray(R, np.float32).T).astype(np.float32)
+
+
+def rotation_null_offsets(codes, rng):
+    """Thin-SVD rotation null (Sol) — distributionally IDENTICAL to a full-d Haar rotation of the N
+    offsets (codes @ R^T, R~Haar(d)) but O(d·r) not O(d³), so it scales to d=4096 (Mistral hidden).
+    C = U diag(S) Vᵀ (thin, r=min(N,d)); draw a Haar Stiefel frame Q (d×r) via QR of a Gaussian;
+    return U diag(S) Qᵀ. Preserves the Gram matrix (C'C'ᵀ = U S² Uᵀ = CCᵀ), every norm, the zero
+    mean (1ᵀC=0 ⟹ 1ᵀU=0 ⟹ 1ᵀC'=0), and hence realized displacement D — only direction moves.
+    Proof of identity: C Rᵀ = U S (R V)ᵀ and R V ~ Haar Stiefel(d, r) for R~Haar(d)."""
+    C = np.asarray(codes, np.float64)
+    U, S, _ = np.linalg.svd(C, full_matrices=False)          # C = U diag(S) Vᵀ, U:[N,r] S:[r]
+    r = len(S)
+    G = rng.standard_normal((C.shape[1], r))
+    Q, Rm = np.linalg.qr(G)                                    # Q:[d,r] Haar Stiefel
+    Q = Q * np.sign(np.diag(Rm))
+    return ((U * S) @ Q.T).astype(np.float32)                  # [N,d] = U diag(S) Qᵀ

@@ -48,6 +48,109 @@ import clmg as G
 import pure_field as PF
 
 
+# --------------------------------------------------------------------------- #
+#  HF ORGAN — a Mistral (or any HF causal LM) as the frozen language organ, driven under anima-py's
+#  OWN frame (owner 2026-07-24: "mistral 을 anima 엔진기준으로"). The original GRAFT borrowed
+#  fluency from Mistral; we keep that organ but measure it with anima's instruments (fixed carrier,
+#  rotation null, pedestal, gate-scale). Same interface as G.torch_organ so fit/check stay
+#  organ-agnostic: organ(token_ids, emb_residual=None) -> logits [T, V]. Design reconciled from
+#  `sidecar lab full` (Fable 5 + Codex Sol); the forward and the RMS anchor follow their agreement.
+# --------------------------------------------------------------------------- #
+class HFOrgan:
+    """Frozen HF causal LM as the language organ. Byte tokenizer (V=256) is replaced by the model's
+    subword tokenizer; MI = mean_i KL(p_i||p_mix) stays exact conditional MI <= log N (the bound is
+    from the N states, never the vocab). 4bit (nf4) base with bf16 compute; only nn.Linear is
+    quantized, nn.Embedding stays float so the embedding-RMS anchor is unchanged."""
+
+    def __init__(self, model_name, load_4bit=True, device="cuda"):
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+        self.name = model_name
+        self.tok = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+        kw = dict(trust_remote_code=True)
+        if load_4bit:
+            from transformers import BitsAndBytesConfig
+            kw["quantization_config"] = BitsAndBytesConfig(
+                load_in_4bit=True, bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.bfloat16, bnb_4bit_use_double_quant=True)
+            kw["device_map"] = {"": 0}
+        else:
+            kw["torch_dtype"] = torch.bfloat16
+        self.model = AutoModelForCausalLM.from_pretrained(model_name, **kw)
+        if not load_4bit:
+            self.model = self.model.to(device)
+        self.model.eval()
+        for p in self.model.parameters():
+            p.requires_grad_(False)                              # base fully frozen
+        self.embed = self.model.get_input_embeddings()
+        assert self.embed.weight.dtype in (torch.float16, torch.bfloat16, torch.float32), \
+            f"embedding must stay float (got {self.embed.weight.dtype}) — 4bit must not touch nn.Embedding"
+        self.d = int(self.model.config.hidden_size)
+        self.V = int(self.model.config.vocab_size)
+        self.dev = self.embed.weight.device
+        self.tok_sha = hashlib.sha256(
+            repr(sorted(self.tok.get_vocab().items())[:64]).encode()).hexdigest()[:12]
+
+    def embedding_rms(self):
+        with torch.no_grad():
+            w = self.embed.weight.float()
+            return float(torch.sqrt((w * w).mean()))
+
+    def encode(self, text):
+        return self.tok(text, add_special_tokens=False)["input_ids"]
+
+    def __call__(self, ids, emb_residual=None):
+        """ids: 1-D long (or python list). emb_residual: [d] or None. Returns logits [T, V].
+        Residual add stays OUTSIDE no_grad so grad flows to the bridge; base is frozen so no base
+        grad. softmax/KL are taken in fp32 by the caller."""
+        t = ids if torch.is_tensor(ids) else torch.tensor(ids, dtype=torch.long)
+        t = t.to(self.dev)
+        e = self.embed(t)                                        # [T, d], base frozen
+        if emb_residual is not None:
+            rr = emb_residual if torch.is_tensor(emb_residual) else torch.tensor(emb_residual)
+            e = e + rr.to(e.dtype).to(self.dev)                  # live leaf → grad to bridge
+        out = self.model(inputs_embeds=e.unsqueeze(0), use_cache=False).logits[0]
+        return out
+
+
+def hf_organ_wiring_smoke(organ):
+    """The HF analog of torch_organ_parity — there is no numpy mirror, so we certify the organ is
+    REALLY frozen and the residual REALLY moves the logits (Fable+Sol). Hard-exit on any failure.
+      1 parity : model(input_ids) == model(inputs_embeds=embed(ids)+0)  → injection site is the
+                 real embedding path (guards a wrong hook silently scoring an un-injected model)
+      2 moves  : a gate_rho-amplitude residual moves the logits (KL>0)
+      3 grad   : that residual's leaf grad is finite & nonzero; every base param grad is None"""
+    ids = organ.encode("The field is quiet and the")[:16] or [1, 2, 3]
+    t = torch.tensor(ids, dtype=torch.long)
+    with torch.no_grad():
+        direct = organ.model(input_ids=t.unsqueeze(0).to(organ.dev), use_cache=False).logits[0].float()
+        viaemb = organ(ids).float()
+    par = float((direct - viaemb).abs().max())
+    tol = 5e-2                                                    # bf16 at 32k vocab
+    print(f"[hf-smoke] 1 parity input_ids vs inputs_embeds+0: max|Δ|={par:.3e} (tol {tol})")
+    if par > tol:
+        sys.exit("[hf-smoke] INVALID: injection site is NOT the model's embedding path")
+    emb_rms = organ.embedding_rms()
+    resid = torch.zeros(organ.d, requires_grad=True)
+    off = (resid / (resid.detach().norm() + 1)) * 0.0 + torch.randn(organ.d) * 0.02 * emb_rms
+    off = off.detach().requires_grad_(True)
+    lp_on = F.log_softmax(organ(ids, emb_residual=off).float(), -1)
+    with torch.no_grad():
+        lp_off = F.log_softmax(organ(ids).float(), -1)
+    kl = (lp_on.exp() * (lp_on - lp_off)).sum(-1).mean()
+    print(f"[hf-smoke] 2 moves KL(ON||OFF)={float(kl):.4e} (must be >0)")
+    if float(kl) <= 0:
+        sys.exit("[hf-smoke] INVALID: residual does not move the logits (dead path)")
+    kl.backward()
+    g = off.grad
+    gn = float(g.norm()) if g is not None else 0.0
+    base_grads = [p.grad for p in organ.model.parameters() if p.grad is not None]
+    print(f"[hf-smoke] 3 grad resid-leaf norm={gn:.4e} finite={bool(g is not None and torch.isfinite(g).all())} "
+          f"· base params with grad={len(base_grads)} (must be 0)")
+    if not (g is not None and torch.isfinite(g).all() and gn > 0 and len(base_grads) == 0):
+        sys.exit("[hf-smoke] INVALID: 4bit grad path broken or base not frozen")
+    print("[hf-smoke] ALL PASS — HF organ really frozen, residual really wired")
+
+
 def _sha(path):
     h = hashlib.sha256()
     with open(path, "rb") as fh:
@@ -145,6 +248,20 @@ def _carrier_mi(organ, windows, codes, ctx):
 
 
 def _fit(a):
+    if a.hf_model:
+        # Mistral (or any HF causal LM) organ, driven under anima-py's frame. The wiring smoke is the
+        # HF analog of torch_organ_parity — it certifies the organ is frozen and the residual is wired
+        # BEFORE any training. With --steps 0 the smoke IS the deliverable (the injection-site gate).
+        organ = HFOrgan(a.hf_model, load_4bit=a.load_4bit)
+        print(f"[graft] HF organ {a.hf_model} · d={organ.d} V={organ.V} · emb_rms={organ.embedding_rms():.4f} "
+              f"· tok_sha={organ.tok_sha} · 4bit={a.load_4bit}")
+        hf_organ_wiring_smoke(organ)
+        if a.steps == 0:
+            print("[graft] --steps 0 with --hf-model: wiring smoke only — done.")
+            return 0
+        sys.exit("[graft] HF-organ fit loop is not wired yet (this commit lands the organ + wiring "
+                 "gate). Re-run with --steps 0 for the smoke; the fit body follows once the smoke "
+                 "passes on the real Mistral.")
     W = dec.clm_load_weights(a.organ)
     if not W.get("ok"):
         sys.exit(f"[graft] organ not decodable: {a.organ}")
@@ -515,7 +632,17 @@ def _fluency(a, organ, codes, emb_rms, rng):
 def main():
     ap = argparse.ArgumentParser(description="GRAFT: no-corpus consciousness→language grounding")
     ap.add_argument("verb", choices=["fit", "check"])
-    ap.add_argument("organ", help="the FROZEN language organ (.clm); for `check`, the grafted ckpt")
+    ap.add_argument("organ", nargs="?", default=None,
+                    help="the FROZEN language organ (.clm); for `check`, the grafted ckpt. "
+                         "Omit when --hf-model is given (the organ is the HF model).")
+    ap.add_argument("--hf-model", default=None, dest="hf_model",
+                    help="use an HF causal LM (e.g. mistralai/Mistral-7B-Instruct-v0.2) as the frozen "
+                         "organ instead of a .clm — Mistral organ under anima-py's frame (owner). "
+                         "With --steps 0, runs the wiring smoke only (the injection-site gate).")
+    ap.add_argument("--load-4bit", action="store_true", default=True, dest="load_4bit",
+                    help="load the HF organ in nf4 4bit (default; fits Mistral-7B on a 12GB GPU)")
+    ap.add_argument("--no-4bit", action="store_false", dest="load_4bit",
+                    help="load the HF organ in bf16 instead of 4bit (needs a bigger GPU)")
     ap.add_argument("--out", default="", help="output grafted .clm (fit)")
     ap.add_argument("--steps", type=int, default=2000)
     ap.add_argument("--p1-steps", type=int, default=2000, dest="p1_steps")
@@ -558,8 +685,10 @@ def main():
                          "hence displacement D, preserved) and read MI on a fixed held-out carrier — "
                          "the displacement-exact control the isotropic null cannot supply (H_9936)")
     a = ap.parse_args()
+    if not a.organ and not a.hf_model:
+        sys.exit("[graft] need an organ: a .clm path, or --hf-model <name>")
     if a.verb == "fit":
-        if not a.out:
+        if not a.out and not (a.hf_model and a.steps == 0):
             sys.exit("[graft] fit needs --out <graft.clm>")
         if a.state_gap <= 0 or a.n_states < 2:
             sys.exit("[graft] --n-states >= 2 and --state-gap > 0")
