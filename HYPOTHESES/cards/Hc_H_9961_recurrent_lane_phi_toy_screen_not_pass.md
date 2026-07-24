@@ -40,6 +40,28 @@
   빼야** 하고(DV=학습 전후 collapse-Δ 가 raw Φ 보다 옳음 — H_9954 설계가 이미 그렇게 잡았으나 토이서도
   그 baseline 이 크다), 그마저 이 규모선 신호가 안 뜬다.
 
+## 🔧 정정 — 올바른 DV(edge-cut collapse-Δ · baseline 차감)로 재분석 (instrument-repair 의무 재읽기)
+위 스크린은 **raw Φ**를 DV 로 썼는데, H_9954 설계가 지정한 DV 는 **edge-cut collapse-Δ**
+(`Δ = Φ_live − mean_6cuts Φ_cut`, 컷으로 못 없애는 통합량)에서 **untrained 를 뺀** `DV_arm = Δ_arm − Δ_untrained`
+이다. 무학습 init 이 Φ 를 지배(위 발견)하므로 raw Φ 는 바로 그 baseline 에 오염된 양이었다. **재학습 없이**
+같은 9개 `.pt` 를 collapse-Δ 로 재추출(summer · $0):
+
+| seed | Δ trained / shuf / untr | DV_trained | DV_shuffled | DV_gap |
+|---|---|---|---|---|
+| 7 | 0.201 / 0.151 / 0.230 | −0.029 | −0.079 | **+0.050 WIN** |
+| 4302 | 0.064 / 0.098 / 0.118 | −0.054 | −0.019 | −0.034 |
+| 4303 | 0.269 / 0.128 / 0.040 | +0.229 | +0.089 | **+0.140 WIN** |
+
+median DV_gap **+0.050** · wins **2/3**. → **여전히 NOT-PASS**(0.05 < 0.15 바) 이나 **방향이 뒤집힌다**:
+raw Φ 의 median −0.024·1/3승(무신호처럼 보임)이 baseline 을 빼자 **trained 가 shuffled 를 2/3 서 이기고 median 양수**로.
+
+**정정된 특성 규정**: "INERT/seed-noise, 학습이 Φ 를 못 올림"은 **부분적으로 raw-Φ DV 아티팩트**였다. 설계-정확
+collapse-Δ 로는 **약한 sub-threshold 양성 추세**(trained>shuffled 2/3·median +0.05)다. 단 (a) 바(0.15) 미달이고
+(b) `DV_trained>0`(학습이 init 를 이김)은 **1/3 뿐**(seed 4303 만) — 학습이 shuffled 는 눌러도 init baseline 은
+안정적으로 못 넘는다. ⟹ **판정 NOT-PASS·Phase B 미허가는 유지**(0.05 로는 스케일 정당화 불가). 바뀐 것은
+mechanism 읽기: **무신호가 아니라 검정력 부족·약한 양성** — 더 많은 seed 로 0.05 추세를 조일 수 있으나 바
+미달이라 PASS/NOT-PASS 는 안 바뀐다. (H_9954 설계가 raw Φ 아닌 collapse-Δ 를 DV 로 잡은 게 옳았음이 실측 확인.)
+
 ## 정직 경계
 - 학습은 `anima-py train` engine-native, **Φ 판독은 .pt 추출(anima-py evaluate 미배선) ⟹ DIRECTIONAL**, cement
   아님. 스크립트: `/tmp/rl_screen_driver.py`(summer) · 재현 계기 브랜치 `h9954_recurrent_lane_impl`.
