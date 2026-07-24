@@ -79,6 +79,16 @@ v2b 의 두 착륙 발견이 우리 결론과 직결된다(`anima-clm-v2b/ARCHIT
 - 함의: 이 축을 재개한다면 **레버는 학습이 아니라 판독-centering**(짧은 causal EMA baseline)이다 — 우리 정적
   init-baseline 을 young-averaged 중심으로 바꾼 재판독이 미측정 정제이며, 이게 음성이면 축 종결.
 
+## 🔒 centering caveat 바운드 — primary 지표는 baseline-불변 ($0 대수+검산)
+v2b centering caveat 를 정량 바운드했다. 우리 primary 판정 지표는 **trained−shuffled gap** 인데,
+gap = DV_trained − DV_shuffled = (Δ_trained − Δ_base) − (Δ_shuffled − Δ_base) = **Δ_trained − Δ_shuffled**
+— 두 arm 이 같은 baseline 을 빼므로 **baseline/centering 선택이 상쇄되어 gap 은 불변**이다. d=256 3-seed 로
+검산: 임의의 다른 baseline(young-averaged proxy)으로 바꿔도 gap 이 소수 5자리까지 동일(+0.097/+0.059/+0.094,
+MATCH). ⟹ **v2b 의 centering caveat 는 오직 `DV_trained>0`(학습이 init 를 넘나) 부차 지표에만 영향하고,
+`gap < 바 0.15` = NOT-PASS 판정은 centering 과 무관하다.** 즉 우리 핵심 음성(학습된 순환이 shuffled 를
+바만큼 못 이김)은 **centering-robust** 이며 v2b caveat 로 흔들리지 않는다(caveat 는 "학습이 init baseline 을
+넘는가"라는 별개 질문에만 남는다). 이로써 짧은-causal-중심 재판독은 판정을 바꿀 수 없음이 대수로 확정됐다.
+
 ## 정직 경계
 - d=512 는 여전히 303M(d~3784) 아님 · 3-seed. 단 **방향**(토이 약양성 → 8× 스케일서 null/음성)이 "스케일=레버"의
   정반대라 scale-robust 근거로 충분(`a_scale_honest_scope`: 실제 스케일 스텝 밟았고 효과가 안 자람).
