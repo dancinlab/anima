@@ -687,8 +687,13 @@ def _fluency(a, organ, codes, emb_rms, rng):
     the organ's known CE, the readout is mis-aligned and the arms below are meaningless.
     """
     txt = open(os.path.expanduser(a.fluency_corpus), encoding="utf-8", errors="ignore").read()
-    b = txt[int(len(txt) * 0.8):].encode("utf-8")[:a.fluency_bytes]      # held-out tail
-    t = torch.tensor([int(x) for x in b], dtype=torch.long)
+    is_hf = getattr(a, "hf_model", None) is not None
+    def _ids(text):     # HF organ = subword tokenizer; byte-LM organ = raw bytes (V=256)
+        if is_hf:
+            return organ.encode(text)[: max(64, a.fluency_bytes // 4)]
+        return [int(x) for x in text.encode("utf-8")[:a.fluency_bytes]]
+    seq = _ids(txt[int(len(txt) * 0.8):])                               # held-out tail
+    t = torch.tensor(seq, dtype=torch.long)
     tgt = t[1:]
 
     def nll(resid):
@@ -737,10 +742,10 @@ def _fluency(a, organ, codes, emb_rms, rng):
         return out
 
     FAMILIES = (("word-order", _shuffle), ("adj-swap", _adjswap), ("spelling", _spell))
-    b_nat = " ".join(words).encode("utf-8")[:a.fluency_bytes]
+    b_nat = _ids(" ".join(words))
 
-    def nll_of(bs, resid):
-        tt = torch.tensor([int(x) for x in bs], dtype=torch.long)
+    def nll_of(ids, resid):
+        tt = torch.tensor(ids, dtype=torch.long)
         with torch.no_grad():
             lp = F.log_softmax(organ(tt, emb_residual=resid).float()[:-1], -1)
             return float(-lp.gather(1, tt[1:].unsqueeze(1).to(lp.device)).mean())
@@ -749,7 +754,7 @@ def _fluency(a, organ, codes, emb_rms, rng):
     nat_on = [nll_of(b_nat, c) for c in codes]
     fam = {}
     for fname, fn in FAMILIES:
-        b_c = " ".join(fn(words)).encode("utf-8")[:a.fluency_bytes]
+        b_c = _ids(" ".join(fn(words)))
         off_m = nll_of(b_c, None) - nat_off
         on_m = float(np.mean([nll_of(b_c, c) - n for c, n in zip(codes, nat_on)]))
         fam[fname] = (off_m, on_m)
@@ -759,7 +764,7 @@ def _fluency(a, organ, codes, emb_rms, rng):
     d_on = float(np.mean(on)) - off
     d_nz = float(np.mean(noise)) - off
     off_rms = float(codes[0].pow(2).mean().sqrt())
-    print(f"[graft] FLUENCY ({len(b)}B natural held-out · offset RMS={off_rms:.4f} = "
+    print(f"[graft] FLUENCY ({len(seq)}{'tok' if is_hf else 'B'} natural held-out · offset RMS={off_rms:.4f} = "
           f"{off_rms/emb_rms:.3f}x embedding RMS)")
     print(f"[graft]   NLL gate-OFF   = {off:.4f} nats/byte   <- the frozen organ's own language")
     print(f"[graft]   NLL gate-ON    = {np.mean(on):.4f}  (dNLL {d_on:+.4f}, per-state sd {np.std(on):.4f})")
