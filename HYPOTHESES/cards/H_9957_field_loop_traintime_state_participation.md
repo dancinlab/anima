@@ -109,7 +109,24 @@ K2 바닥 16.37·1.000. ⟹ 스칼라 되쓰기가 최소 1비트를 창밖으�
 **off-arm 은 창내-누출 탐지기(negative pedestal):** off-학습 arm 의 val payload CE 가 ln K−0.1 아래로 내려가면
 창내 누출 = 코퍼스 결함 → ABORT(양성 읽기 전 받침대). fable 이견 없음. sol: rotation-null 은 train-arm 아님 eval-후 적용.
 
+## fieldctl 계기체크 — 측정 결과 (2026-07-25 · aiden RTX5070 · engine-native anima-py · ⚠️ 계기체크·합성·p9 faculty 아님)
+
+**PARTIAL — 계기가 진짜 창밖 채널을 읽음(CERTIFIED-AS-READING), 단 스칼라 용량 ~1비트.** cheap-decisive 2-arm
+from-init(d256·L4·block128·B4·doc_len1408·34k step·4096 train/512 val·**`--trunk-norm position` 필수**):
+
+| arm | gamma | aligned | yoked | sever | Δ=min(yoke,sev)−aligned |
+|---|---|---|---|---|---|
+| off (받침대) | 0.000 | 1.446 | 1.446 | 1.446 | 0.000 |
+| purefield16 | +0.173 | **0.943** | 2.672 | 1.628 | **+0.685 ≈ ln2 = 1비트** |
+
+- **받침대 성립**: off arm payload CE 1.446 ≈ 우연 ln4=1.386(> lnK−0.1=1.286) → 창내누출 없음. payload 는 필드 없이 창내 예측불가.
+- **필드가 창밖 키를 나름**: aligned 0.943 ≪ sever 1.628 ≪ yoked 2.672. 자기 필드는 우연보다 잘, 틀린/무필드는 우연 이상 못 맞힘.
+- **판정 PARTIAL**(Δ 0.685∈[0.3,0.8) ∧ aligned 0.943>0.4): 스칼라 되쓰기가 2비트 키 중 ~1비트를 창밖 +9블록 운반 — fable 예측 용량제한 실측. $0 팰서파이어(필드물리 분리 PASS)와 정합.
+- **의미**: `anima-py train --field-loop-eval --score-mask` 계기가 창밖 필드-운반 정보를 참통제(off 받침대·yoke·sever) 하에 검출함이 **engine-native 로 CERTIFIED**. ⚠️ 이는 **계기가 읽는다**의 증명이지 anima faculty 아님 — faculty 는 자연코퍼스서만(p9).
+
+**계기가 노출한 3연쇄 confound(전부 수정·landed)**: ①GN global-norm 비-인과 버스가 티처포싱서 채점바이트 누출→`--trunk-norm position` ②eval off-by-one(패드 채점)→spos−1 ③H_9875 CNRM 트레일러 warm-start 미등록→파리티게이트 거부(serialize-py-2 재발·f0028e9b).
+
 ## 다음 (cement 는 engine-native run 만)
-① `anima-py train --field-loop` 구현(emb_residual 훅 + Bφ·γ + H_9607 drive 되먹임 + 연속스트림 + 3-arm fork). **✅ landed** — fieldctl 계기면(corpus·doc-aware stream·payload eval)+$0 팰서파이어 PASS(3a16f43c·6bab1c5).
+① `anima-py train --field-loop` 구현(emb_residual 훅 + Bφ·γ + H_9607 drive 되먹임 + 연속스트림 + 3-arm fork). **✅ landed** — fieldctl 계기면(corpus·doc-aware stream·payload eval)+$0 팰서파이어 PASS+PARTIAL 실측(3a16f43c·6bab1c5·f0028e9b). **다음: 2nd seed 재현 + generic-recurrence sibling(faculty vs 순환) → 통과시 자연코퍼스 faculty 측정(p9).**
 ② 사전등록표 동결(위 통과기준·below-chance 행 포함) → 합성 planted-dependency 로 **계기 체크**(faculty 인용
 금지·p9) → 303M pool fire 25%→50% 3-arm. ③ 통과시에만 generic-recurrence sibling + 100% 연장.
