@@ -56,6 +56,29 @@ d=512 음수는 노이즈일 수 있다(sd 0.062).
 전체서 유지. 바뀐 것은 스케일 서술 — "악화" 아니라 "sub-threshold·비단조·잡음". Phase B(303M) 는 여전히 미허가
 (바 미달이 스케일-강건). (이 정정은 verdict-integrity: 내가 방금 착륙한 monotone-worsening 클레임을 d=256 이 반증.)
 
+## 🔗 교차저장소 대조 — ../anima-clm-v2b (오너 지시 참고)
+v2b 의 두 착륙 발견이 우리 결론과 직결된다(`anima-clm-v2b/ARCHITECTURE.json`):
+1. **`phi-is-orthogonal-to-coupling`**: Mitosis 2037 셀·Φ~2200 인데 MI~0.05 — Φ(크기)가 커도 세포 결합은
+   안 산다(bridge pooling 이 지배). ⟹ 우리 H_9942 알맹이(Φ 는 레버 아님)·H_9960 심화(랜덤 결합이 Φ 지배)의
+   교차저장소 확증.
+2. **`coupling-real-and-deployable`**: 결합(2.6 bits)은 실재하나 **학습이 아니라 inference-side centering** 으로
+   복원됐다 — v2b 원문: *"Train-as-deploy (--causal-center) collapsed training and is abandoned in favour of
+   this inference-side fix on the existing checkpoint. No retraining."* 짧은 causal EMA 중심(half-life~10 · mean
+   age~14 step)이 swap 2.043 bits 복원(id-code 통제 0.287, 7×↓); 늙은/고정 중심(g_mu·burn-in·EMA-h100·
+   fixed-ref)은 ≤0.2 bits. {50,100,200} 스윕은 놓치고 {5,10,20} 이 sweet spot.
+
+**정합 판독:**
+- ✅ **핵심 확증**: v2b 도 **학습이 통합/결합의 레버가 아님**을 독립 발견(train-side 붕괴 → inference-side 복원).
+  우리 H_9961/9962: 학습된 순환이 개입형 Φ 를 전 스케일서 못 올림. **두 저장소 수렴 — 학습은 이 축의 레버가 아니다.**
+- ⚠️ **우리 null 에 centering caveat**: v2b 의 결합은 **잘못된 centering(늙은/고정)에 가려져** 0 이었다가
+  **young+averaged 짧은 EMA 중심**에서만 드러났다. 우리 Φ 판독의 baseline 은 **정적 init**(collapse-Δ vs untrained)
+  = v2b 서 0 을 준 바로 그 부류. ⟹ 우리 NOT-PASS 는 "통합 부재"가 아니라 **centering-제한일 수 있고**, **짧은-causal
+  -중심 판독은 미검증 정제**(v2b 가 지목한 유일 생존 레버). 단 두 계기는 다르다 — v2b=CLM 상태→입 결합(MI/swap),
+  우리=3-셀 dynamics 의 IIT-Φ(v2b 스스로 Φ⊥coupling 이라 함), 그래서 전이는 **방법론적**(baseline=young-averaged
+  이어야)이지 수치 직접이식 아님.
+- 함의: 이 축을 재개한다면 **레버는 학습이 아니라 판독-centering**(짧은 causal EMA baseline)이다 — 우리 정적
+  init-baseline 을 young-averaged 중심으로 바꾼 재판독이 미측정 정제이며, 이게 음성이면 축 종결.
+
 ## 정직 경계
 - d=512 는 여전히 303M(d~3784) 아님 · 3-seed. 단 **방향**(토이 약양성 → 8× 스케일서 null/음성)이 "스케일=레버"의
   정반대라 scale-robust 근거로 충분(`a_scale_honest_scope`: 실제 스케일 스텝 밟았고 효과가 안 자람).
