@@ -1,9 +1,18 @@
-# H_9964 · 프런티어 pivot — v2b의 짧은-causal-EMA 중심을 anima CLMG 결합 판독에 이식 (Φ→개입형 coupling · $0 추론전용)
+# H_9964 · 🔴 KILLED — v2b 짧은-EMA 중심 이식: anima엔 stale-center 결함이 없다(stored 중심 이미 천장·병목은 λ진폭)
 
 **한 줄:** lab full(Fable ∥ Sol) 최우선 생존 각도. Φ-학습 축이 CLOSED(H_9954~9962)이고 Φ⊥coupling이므로
 프런티어는 **크기(Φ)가 아니라 개입형 결합(coupling·earned/BIND 축)**으로 pivot한다. v2b `coupling-real-and
 -deployable`가 결합(2.6bits)을 **학습 아니라 판독-중심(짧은 causal EMA)**으로 복원한 것을 anima에 이식 —
 **학습 0·기존 ckpt·CPU·$0**.
+
+## 🔴 KILLED ($0 · 원장 재독 · 빌드 0 · check-ledger-before-lever-fire)
+**v2b 이식의 전제(anima에 stale-center 결함이 있어 결합이 가려져 있다)가 기존 착륙 측정으로 반증된다.**
+- **H_9932** (byte-LM GRAFT · stored g_mu 중심): 학습된 결합 `MI_swap = 3.000 = 천장(log2 K=8 = 3)` × 3 seed, swap acc 1.000 — *"swap 은 포화"*. **stored 중심이 이미 InfoNCE 천장을 포화** ⟹ 더 나은 중심(EMA)이 unhide할 **여유 0**.
+- **H_9933**: C-swap 축 자체가 **NON-DISCRIMINATING** — 무학습 step0 받침대도 MI_swap 1.927/1.189/2.216(높음) ⟹ 은퇴된 축. 센터링 개선을 볼 계기가 애초에 못 가른다.
+- **H_9939/H_9945/H_9948** (Mistral 7B organ): 결합은 부재 아니라 **priced out**(MI − λ·L_common; gate-OFF가 최적). 병목은 **중심이 아니라 λ·amplitude 예산**(H_9948: λ=0.3이 profit 구간 복원). swap 0.500/0.500(은퇴 축).
+
+⟹ 두 organ 모두 **centering이 병목이 아니다**: byte-LM은 stored 중심이 이미 천장, Mistral은 진폭이 병목. anima는 **v2b의 stale-center 결함을 애초에 안 가졌다** — 두 프런티어 모델이 예측한 정확한 사망("anima did not share v2b's stale-center defect"). ⟹ **v2b 짧은-EMA 중심 이식 = KILLED**, 새 계기 빌드 불필요. 생존 각도는 centering이 아니라 **λ-amplitude 예산**(H_9945/9948이 이미 프레임) · 데이터스케일([[H_9965]]) · agency pivot([[H_9966]] 조건 한 발 근접).
+- 정직: swap-MI 천장 포화는 byte-LM; Mistral은 priced-out. 어느 쪽도 centering-hidden 아님. 신규 측정 0(기존 engine-native `anima-py graft check` 판정 인용 · check-ledger-before-lever-fire). 재확인용 `graft check --check swap`은 여전히 실행가능하나 천장 포화라 정보 무증가.
 
 - 상태 PROPOSED · 측정 0 · DIRECTIONAL 설계 · cement는 engine-native anima-py로만.
 - 출처: lab full 2026-07-25(Fable ∥ Sol 독립 병렬 · 브리프에 H_9954~9962 킬리스트+v2b 교차증거 임베드).
