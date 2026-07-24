@@ -63,6 +63,15 @@ class FieldLoop:
         self.bridge = G.GraftBridge(c_dim=G.C_DIM, h=hidden, d=self.d, gate_rho=gate_rho)
         # gamma trainable, init 0 -> CE may turn the channel on or leave it off (no fixed injection)
         self.gamma = torch.nn.Parameter(torch.zeros(()))
+        self.dev = torch.device("cpu")
+
+    def to(self, device):
+        """Move the trainable params (bridge + gamma) AND anchor the device the C-state is built on,
+        so residual() never mixes a CPU C-tensor with a CUDA bridge (train-py-1 device-mismatch)."""
+        self.dev = self.torch.device(device)
+        self.bridge.to(self.dev)
+        self.gamma.data = self.gamma.data.to(self.dev)
+        return self
 
     def parameters(self):
         """The trainable field-loop params to hand the optimizer (bridge + gamma)."""
@@ -70,7 +79,8 @@ class FieldLoop:
 
     def _C(self):
         return self.torch.tensor(
-            np.stack([self.G.graft_c_state(p) for p in self.pf]), dtype=self.torch.float32)
+            np.stack([self.G.graft_c_state(p) for p in self.pf]),
+            dtype=self.torch.float32, device=self.dev)
 
     def residual(self):
         """emb_residual [B, d] (grad flows to bridge+gamma) for the current per-row C-state, BEFORE the
@@ -164,8 +174,7 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
     immune_memory_recall_reach). Returns (FieldLoop, per-step mean-CE history)."""
     import torch
     import torch.nn.functional as F
-    fl = FieldLoop(B, d, arm=arm, hidden=hidden, seed=seed)
-    fl.bridge.to(device)
+    fl = FieldLoop(B, d, arm=arm, hidden=hidden, seed=seed).to(device)
     stream = _FieldStream(data_bytes, B, block, seed=seed)
     params = list(model.parameters()) + fl.parameters()
     opt = torch.optim.Adam(params, lr=lr)
