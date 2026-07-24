@@ -201,18 +201,29 @@ class _CarrierPool:
     position-memorization failure mode). A disjoint validation bank (final 20%, separated by a
     ctx+T byte gap) is the generalization control: MI lift on windows never trained on."""
 
-    def __init__(self, path, ctx, T, rng, val_frac=0.2, val_bank=64):
+    def __init__(self, path, ctx, T, rng, val_frac=0.2, val_bank=64, encode=None, max_bytes=0):
+        """encode: None ⇒ byte organ (1 byte = 1 position). Otherwise the organ's tokenizer
+        (Mistral etc.) — the corpus is tokenized ONCE and windows are cut over token ids; never
+        re-tokenize per window (BPE boundary drift would break held-out-ness). max_bytes caps the
+        text fed to the tokenizer (a 60MB corpus is ~15M tokens; windows need far less)."""
         raw = open(os.path.expanduser(path), "rb").read()
+        if max_bytes and len(raw) > max_bytes:
+            raw = raw[:max_bytes]
         self.sha = hashlib.sha256(raw).hexdigest()[:16]
         self.ctx, self.T, self.win = ctx, T, ctx + T
-        n = len(raw)
+        if encode is None:
+            seq = np.frombuffer(raw, dtype=np.uint8).astype(np.int64)
+        else:
+            seq = np.asarray(encode(raw.decode("utf-8", errors="ignore")), dtype=np.int64)
+        self.units = "byte" if encode is None else "token"
+        n = len(seq)
         cut = int(n * (1 - val_frac))
         gap = self.win
-        self.train = np.frombuffer(raw[:cut], dtype=np.uint8).astype(np.int64)
-        self.val = np.frombuffer(raw[cut + gap:], dtype=np.uint8).astype(np.int64)
+        self.train = seq[:cut]
+        self.val = seq[cut + gap:]
         self.n_train = max(0, len(self.train) - self.win)
         self.n_val = max(0, len(self.val) - self.win)
-        self.splits = {"total": n, "train_end": cut, "val_start": cut + gap}
+        self.splits = {"total": n, "train_end": cut, "val_start": cut + gap, "units": self.units}
         self._order = rng.permutation(self.n_train) if self.n_train else np.array([], int)
         self._ptr = 0
         # fixed validation bank (same windows at step-0 and final — the paired lift control)
@@ -247,6 +258,90 @@ def _carrier_mi(organ, windows, codes, ctx):
     return sum(mis) / len(mis), sum(lcs) / len(lcs)
 
 
+def _fit_hf(a, organ):
+    """GRAFT fit with an HF (Mistral) organ, under anima-py's frame. FIXED held-out carrier only —
+    the self-loop is not offered here: it is the artifact H_9933/9935/9936 all traced back to, and
+    H_9938 measured that a fixed carrier trains just as well. Objective is unchanged:
+    L = (log N − MI) + λ·L_common, NO controller (the repo's kill-list). The trained coupling is
+    saved as a bridge state (there is no .clm to carry a CLMG trailer), so `graft check` reloads it
+    with the same --hf-model."""
+    if not a.carrier_corpus:
+        sys.exit("[graft] HF organ fit requires --carrier-corpus <natural text> (fixed carrier only)")
+    torch.manual_seed(a.seed)
+    rng = np.random.default_rng(a.seed)
+    d = organ.d
+    emb_rms = organ.embedding_rms()
+    T = max(a.cont_len, 64)
+    pool = _CarrierPool(a.carrier_corpus, a.ctx, T, rng, encode=organ.encode,
+                        max_bytes=a.carrier_max_bytes)
+    if pool.n_train < a.carrier_k:
+        sys.exit(f"[graft] carrier too small: {pool.n_train} train windows < K={a.carrier_k}")
+    print(f"[graft] fixed carrier {a.carrier_corpus} sha={pool.sha} units={pool.units} "
+          f"ctx={a.ctx} T={T} K={a.carrier_k} · train={pool.n_train} val={len(pool.val_windows)} windows")
+
+    bridge = G.GraftBridge(c_dim=G.C_DIM, h=a.hidden, d=d, gate_rho=a.gate_rho).to(organ.dev)
+    opt = torch.optim.AdamW(bridge.parameters(), lr=a.lr, weight_decay=0.0)
+    pf = PF.pure_field_new()
+    for _ in range(a.p1_steps):
+        pf = PF.pure_field_step(pf, 0.0) or pf
+    print(f"[graft] P1 done ({a.p1_steps} pure_field steps · organ invocations: 0)")
+    logN = math.log(a.n_states)
+
+    def _measure(tag):
+        nonlocal pf
+        _pf, states = _snapshots(pf, a.n_states, a.state_gap)
+        C = torch.tensor(np.stack(states)).to(organ.dev)
+        with torch.no_grad():
+            codes = bridge(C) * a.gate_strength * emb_rms
+            mi, lcom = _carrier_mi(organ, pool.val_windows, codes, a.ctx)
+        print(f"[graft] {tag} [val]: MI={float(mi):.4f} nats (logN={logN:.3f})  L_common={float(lcom):.4f}")
+        return float(mi), float(lcom)
+
+    def _save(path, meta_extra):
+        torch.save({"bridge": {k: v.detach().cpu() for k, v in bridge.state_dict().items()},
+                    "c_dim": G.C_DIM, "hidden": a.hidden, "d": d,
+                    "gate_rho": a.gate_rho, "gate_strength": a.gate_strength,
+                    "gate_rms_max": a.gate_rms_max, "hf_model": a.hf_model,
+                    "tok_sha": organ.tok_sha, "emb_rms": emb_rms, **meta_extra}, path)
+
+    mi0, lcom0 = _measure("step-0 PEDESTAL")
+    _save(a.out + ".step0.pt", {"stage": "pedestal"})
+    print(f"[graft] wrote pedestal {a.out}.step0.pt")
+
+    log = []
+    for step in range(1, a.steps + 1):
+        pf, states = _snapshots(pf, a.n_states, a.state_gap)
+        C = torch.tensor(np.stack(states)).to(organ.dev)
+        raw = bridge.raw(C)
+        bridge.update_mu(raw)
+        codes = bridge(C) * a.gate_strength * emb_rms
+        windows = pool.draw(a.carrier_k, rng)
+        mi, lcom = _carrier_mi(organ, windows, codes, a.ctx)
+        loss = (logN - mi) + a.lam_common * lcom          # NO controller (kill-list)
+        opt.zero_grad(); loss.backward()
+        torch.nn.utils.clip_grad_norm_(bridge.parameters(), 1.0)
+        opt.step()
+        if step % a.log_every == 0 or step == 1:
+            rec = {"step": step, "MI": float(mi.detach()), "L_common": float(lcom.detach())}
+            log.append(rec)
+            print(f"[graft] step {step:5d}  MI={rec['MI']:.4f}  commonKL={rec['L_common']:.4f}  "
+                  f"carrier=fixed-heldout({pool.units})")
+
+    mi_f, lcom_f = _measure("final")
+    _save(a.out, {"stage": "trained"})
+    meta = {"organ": a.hf_model, "organ_kind": "hf", "d": d, "V": organ.V, "emb_rms": emb_rms,
+            "tok_sha": organ.tok_sha, "logN": logN, "MI_step0": mi0, "L_common_step0": lcom0,
+            "MI_final": mi_f, "L_common_final": lcom_f, "MI_lift_vs_pedestal": mi_f - mi0,
+            "carrier": {"mode": "fixed-heldout", "corpus": a.carrier_corpus, "sha": pool.sha,
+                        "units": pool.units, "ctx": a.ctx, "T": T, "K": a.carrier_k,
+                        "splits": pool.splits, "measured_on": "disjoint-val-bank"},
+            "args": vars(a), "log": log}
+    json.dump(meta, open(a.out + ".graft.json", "w"), indent=1)
+    print(f"[graft] wrote {a.out} + {a.out}.graft.json")
+    print(f"[graft] MI lift vs pedestal (disjoint val) = {mi_f - mi0:+.4f} nats")
+    return 0
+
+
 def _fit(a):
     if a.hf_model:
         # Mistral (or any HF causal LM) organ, driven under anima-py's frame. The wiring smoke is the
@@ -259,9 +354,7 @@ def _fit(a):
         if a.steps == 0:
             print("[graft] --steps 0 with --hf-model: wiring smoke only — done.")
             return 0
-        sys.exit("[graft] HF-organ fit loop is not wired yet (this commit lands the organ + wiring "
-                 "gate). Re-run with --steps 0 for the smoke; the fit body follows once the smoke "
-                 "passes on the real Mistral.")
+        return _fit_hf(a, organ)
     W = dec.clm_load_weights(a.organ)
     if not W.get("ok"):
         sys.exit(f"[graft] organ not decodable: {a.organ}")
@@ -676,6 +769,9 @@ def main():
                          "follow-on). Absent = original self-loop fit (kept for old-vs-new Δswitch).")
     ap.add_argument("--carrier-k", type=int, default=4, dest="carrier_k",
                     help="fixed carrier windows scored per step (all N states on the SAME windows)")
+    ap.add_argument("--carrier-max-bytes", type=int, default=4_000_000, dest="carrier_max_bytes",
+                    help="cap the carrier text fed to the tokenizer (a 60MB corpus is ~15M tokens; "
+                         "windows need far less). 0 = whole file.")
     ap.add_argument("--gate-scale", type=float, default=1.0, dest="gate_scale",
                     help="check-time multiplier on the trained offsets — amplitude-stability probe: "
                          "true direction-coding leaves the rotation-null z stable across ×0.5/×1/×2 "
