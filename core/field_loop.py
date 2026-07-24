@@ -77,6 +77,32 @@ class FieldLoop:
         """The trainable field-loop params to hand the optimizer (bridge + gamma)."""
         return list(self.bridge.parameters()) + [self.gamma]
 
+    def save(self, path):
+        """Persist the TRAINED coupling (bridge + gamma + config) as a torch sidecar next to the .clm.
+        The .clm holds only the trunk; the eval (Delta_collapse / sever / rotation / FORM) needs this
+        to reconstruct the field->language mapping."""
+        self.torch.save(
+            {"bridge": {k: v.detach().cpu() for k, v in self.bridge.state_dict().items()},
+             "gamma": float(self.gamma.detach()), "c_dim": self.G.C_DIM,
+             "hidden": int(self.bridge.l1.out_features), "d": self.d,
+             "gate_rho": float(self.bridge.gate_rho), "arm": self.arm,
+             "leaky": self.leaky, "drive_gain": self.drive_gain}, path)
+
+    @staticmethod
+    def load(path, batch_rows, device="cpu", seed=0):
+        """Reconstruct a FieldLoop from a save() sidecar (for eval). batch_rows = the K documents /
+        rows the eval will run in parallel; the field state itself is re-seeded fresh (the trained
+        thing is the bridge+gamma, not the transient field)."""
+        import torch
+        st = torch.load(path, map_location="cpu", weights_only=False)
+        fl = FieldLoop(batch_rows, int(st["d"]), arm=st["arm"], gate_rho=float(st["gate_rho"]),
+                       hidden=int(st["hidden"]), seed=seed,
+                       leaky=float(st["leaky"]), drive_gain=float(st["drive_gain"]))
+        fl.bridge.load_state_dict(st["bridge"])
+        with torch.no_grad():
+            fl.gamma.fill_(float(st["gamma"]))
+        return fl.to(device)
+
     def _C(self):
         return self.torch.tensor(
             np.stack([self.G.graft_c_state(p) for p in self.pf]),
@@ -218,6 +244,57 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
     return fl, hist
 
 
+def field_loop_eval(model, fl, data_bytes, K=8, block=128, warmup=8, seed=0, device="cpu"):
+    """Delta_collapse — does each held-out document's OWN grown field predict its OWN bytes better than
+    another document's field? Builds K contiguous doc streams; runs the closed loop `warmup` blocks per
+    doc (with the TRAINED bridge) to grow each field C_j; then scores S[i][j] = mean log p(y_j | x_j,
+    residual(C_i)) on one more block. aligned = mean_j S[j][j] (own field), yoked = mean_{i!=j} S[i][j]
+    (wrong field), delta_collapse = aligned - yoked (nats/byte). A field carrying doc-specific content
+    gives delta > 0; a seed/clock gives delta ~ 0 (the time-yoke null). Also returns the SEVER control:
+    the same aligned score with the residual cut (field free-runs) — if aligned doesn't drop to sever,
+    the model ignores the text-dependence. All no_grad. Reuses the trained bridge/gamma from fl."""
+    import torch
+    import torch.nn.functional as F
+    fl.to(device)
+    core_m = model.module if hasattr(model, "module") else model
+    emb_w = getattr(core_m, "embed", None)
+    emb_rms = (float(emb_w.weight.detach().float().pow(2).mean().sqrt()) if emb_w is not None else 1.0)
+    stream = _FieldStream(data_bytes, K, block, seed=seed)
+
+    def _ce_rows(xb, yb, res):                                    # per-row CE [K] under residual res
+        with torch.no_grad():
+            r = None if res is None else res.to(device)
+            lg = model(xb.to(device), None, emb_residual=r)["logits"].float()
+            return F.cross_entropy(lg, yb.to(device), reduction="none").mean(dim=1).detach().cpu().numpy()
+
+    # 1. grow the K per-doc fields over `warmup` contiguous blocks (closed loop, trained bridge)
+    for _ in range(warmup):
+        xb, yb, wr = stream.next_block()
+        if wr:
+            fl.reset(wr)
+        res = fl.residual()
+        res = None if res is None else (res * emb_rms).unsqueeze(1)
+        ce = _ce_rows(xb, yb, res)
+        fl.writeback(ce, np.zeros(K))
+    # 2. snapshot the K grown C-states -> K bridge residuals (centered across docs, RMS-fixed, *gamma)
+    with torch.no_grad():
+        C = torch.tensor(np.stack([fl.G.graft_c_state(p) for p in fl.pf]),
+                         dtype=torch.float32, device=device)
+        R = (fl.bridge(C) * fl.gamma * emb_rms)                   # [K, d]
+    # 3. score one more block: doc j under every field i
+    xb, yb, _ = stream.next_block()
+    S = np.zeros((K, K))
+    for i in range(K):
+        res_i = R[i].view(1, 1, -1).expand(K, 1, -1)             # field i, broadcast over the K docs + T
+        S[i] = -_ce_rows(xb, yb, res_i)                          # log p = -CE
+    off = ~np.eye(K, dtype=bool)
+    aligned = float(np.mean(np.diag(S)))
+    yoked = float(np.mean(S[off]))
+    sever = float(np.mean(-_ce_rows(xb, yb, None)))              # field cut -> free-run baseline (no residual)
+    return {"K": K, "aligned": aligned, "yoked": yoked, "delta_collapse": aligned - yoked,
+            "sever": sever, "aligned_minus_sever": aligned - sever, "gamma": float(fl.gamma.detach())}
+
+
 def _smoke():
     """$0 mechanism + end-to-end wiring smoke — no GPU, no corpus file, no pool. Certifies the 4
     mechanical witnesses AND that a residual->forward->CE->backward->write-back step trains gamma+bridge
@@ -300,7 +377,36 @@ def _smoke():
     print(f"(5) e2e tiny-LM: purefield16 CE {hist[0]:.3f}->{hist[-1]:.3f} gamma={float(fl_e.gamma.detach()):+.5f}"
           f" · off gamma=0.0 (true no-op)  OK")
 
-    print("\nFIELD-LOOP SMOKE: ALL PASS (mechanism + end-to-end wiring — cli/train.py --field-loop dispatch is next)")
+    # (6) save/load roundtrip — the trained bridge+gamma survive a sidecar write/read (eval needs this)
+    import tempfile
+    import os as _os
+    with torch.no_grad():
+        fl_e.gamma.fill_(0.1234)
+    p = _os.path.join(tempfile.gettempdir(), "fl_roundtrip.pt")
+    fl_e.save(p)
+    fl_r = FieldLoop.load(p, batch_rows=8, device="cpu")
+    assert abs(float(fl_r.gamma.detach()) - 0.1234) < 1e-6, "gamma must survive save/load"
+    b0 = list(fl_e.bridge.state_dict().values())[0]
+    b1 = fl_r.bridge.state_dict()[list(fl_e.bridge.state_dict().keys())[0]]
+    assert torch.allclose(b0.cpu(), b1.cpu()), "bridge weights must survive save/load"
+    _os.remove(p)
+    print("(6) save/load: gamma+bridge roundtrip byte-faithful  OK")
+
+    # (7) eval harness — Delta_collapse machinery on the tiny stand-in LM. On random bytes with an
+    #     untrained-content field the number is ~0 (the correct null); this certifies the harness RUNS
+    #     and returns finite aligned/yoked/sever, not a positive faculty (a real number needs the 303M).
+    torch.manual_seed(1)
+    m2 = _TinyLM(256, dm)
+    fl_ev = FieldLoop(6, dm, arm="purefield16", seed=2)
+    with torch.no_grad():
+        fl_ev.gamma.fill_(0.5)
+    ev = field_loop_eval(m2, fl_ev, data, K=6, block=64, warmup=4, seed=2, device="cpu")
+    assert all(np.isfinite([ev["aligned"], ev["yoked"], ev["sever"], ev["delta_collapse"]])), \
+        "eval must return finite aligned/yoked/sever/delta"
+    print(f"(7) eval harness: aligned={ev['aligned']:.4f} yoked={ev['yoked']:.4f} "
+          f"delta_collapse={ev['delta_collapse']:+.4f} sever={ev['sever']:.4f} (finite · machinery OK)")
+
+    print("\nFIELD-LOOP SMOKE: ALL PASS (mechanism + e2e + persistence + eval machinery — 303M campaign is next)")
     return 0
 
 

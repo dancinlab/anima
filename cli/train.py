@@ -3624,6 +3624,10 @@ def main():
                     help="contiguous block length (bytes) per field-loop step")
     ap.add_argument("--field-b", type=int, default=8, dest="field_b",
                     help="parallel contiguous document streams (batch rows) for field-loop")
+    ap.add_argument("--field-loop-eval", type=str, default="", dest="field_loop_eval",
+                    help="measure a trained coupling instead of training: load this .fl.pt, grow K "
+                         "per-doc fields on --corpus, print Delta_collapse = aligned - yoked (own-field "
+                         "vs wrong-field own-byte prediction) + the sever control. No training.")
     ap.add_argument("--ddp-find-unused", action="store_true",
                     help="DDP debug/escape-hatch: pass find_unused_parameters=True to DDP. Off "
                          "by default — the current objective set fires every head every step "
@@ -4485,14 +4489,33 @@ def main():
         raw = b"".join(open(c, "rb").read() for c in a.corpus) if a.corpus else b""
         if len(raw) < a.field_block + 2:
             sys.exit(f"[field-loop] needs --corpus with >= field-block+2 bytes (got {len(raw)})")
+        if a.field_loop_eval:                            # MEASURE a trained coupling (no training)
+            fl = FL.FieldLoop.load(a.field_loop_eval, a.field_b, device=device)
+            ev = FL.field_loop_eval(model, fl, raw, K=a.field_b, block=a.field_block,
+                                    seed=a.seed, device=device)
+            p0(f"=== anima-py train --field-loop-eval (H_9957 Delta_collapse) === "
+               f"K={ev['K']} block={a.field_block} gamma={ev['gamma']:+.5f}", flush=True)
+            p0(f"[field-loop-eval] aligned={ev['aligned']:.4f} yoked={ev['yoked']:.4f} "
+               f"DELTA_COLLAPSE={ev['delta_collapse']:+.4f} nats/byte "
+               f"(own-field vs wrong-field own-byte log-prob)", flush=True)
+            p0(f"[field-loop-eval] sever(field cut)={ev['sever']:.4f} "
+               f"aligned-sever={ev['aligned_minus_sever']:+.4f} "
+               f"(<=0 ⇒ model ignores the text-dependence = seed)", flush=True)
+            return 0
         p0(f"=== anima-py train --field-loop (H_9957 · arm={a.field_arm}) === "
            f"d={dfl} block={a.field_block} B={a.field_b} steps={steps} corpus={len(raw)}B", flush=True)
         fl, hist = FL.field_loop_train(model, raw, a.field_arm, steps, dfl, B=a.field_b,
                                        block=a.field_block, lr=a.lr, seed=a.seed, device=device,
                                        log=lambda s: p0(s, flush=True))
         if a.out:
+            # field-loop never runs the mitosis GROW loop, so mito.e_active is still e0; but a --init'd
+            # model carries all `emax` experts. Serialize ALL of them (else _write_clm's e_ser=e_active
+            # drops experts -> nblk mismatch on reload). No mitosis split happened, so this is lossless.
+            if mito is not None:
+                mito.e_active = mito.emax
             _write_clm(a.out)
-            p0(f"[field-loop] wrote {a.out} · arm={a.field_arm} "
+            fl.save(a.out + ".fl.pt")                     # the trained bridge+gamma the eval needs
+            p0(f"[field-loop] wrote {a.out} (+{a.out}.fl.pt) · arm={a.field_arm} "
                f"gamma={float(fl.gamma.detach()):+.5f} final_CE={hist[-1]:.4f}", flush=True)
         return 0
 
