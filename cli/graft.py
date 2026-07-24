@@ -587,7 +587,7 @@ def _check(a):
                 with torch.no_grad():
                     lg = organ(torch.tensor(seq, dtype=torch.long), emb_residual=codes[i])
                     lp = F.log_softmax(lg[len(ids0) - 1:-1].float(), -1)
-                    f[i, j] += float(lp.gather(1, torch.tensor(Y[j]).unsqueeze(1)).sum())
+                    f[i, j] += float(lp.gather(1, torch.tensor(Y[j], device=lp.device).unsqueeze(1)).sum())
     col = torch.log_softmax(torch.tensor(f), dim=0)
     mi_swap = float(col.diag().mean() + math.log(K)) / math.log(2)      # InfoNCE bound, bits
     acc = float((np.argmax(f, axis=0) == np.arange(K)).mean())
