@@ -4534,10 +4534,17 @@ def main():
                     p0(f"[field-phi] DELTA_PHI = Φ_aligned - max(yoked,shuffle) = {pv['delta_phi']:+.5f}  "
                        f"(>bar ⇒ necessity forced integration; ≈0 ⇒ it did not)", flush=True)
                     if pv.get("boot"):                       # power for the negative (prereg equivalence)
+                        _BAR = 0.05                          # H_9957 prereg bar, frozen before results
+                        _lo, _hi = pv["delta_lo90"], pv["delta_hi90"]
+                        # Read the CI against the frozen bar HERE — printing one fixed trailer whatever the
+                        # numbers say is how a log gets misread as a verdict it never made.
+                        _v = ("EQUIVALENT-TO-ZERO (powered negative: 90% CI inside ±bar)"
+                              if (-_BAR < _lo and _hi < _BAR) else
+                              "EARNED (powered positive: whole 90% CI above +bar)" if _lo >= _BAR else
+                              "UNDERPOWERED (90% CI crosses the bar — not a verdict either way)")
                         p0(f"[field-phi] BOOT({pv['boot']} moving-block) Δφ mean={pv['delta_mean']:+.5f} "
-                           f"sd={pv['delta_sd']:.5f}  90% CI [{pv['delta_lo90']:+.5f}, {pv['delta_hi90']:+.5f}]"
-                           f"  (CI inside ±0.05 ⇒ equivalent to zero AT THE PREREG BAR = powered negative)",
-                           flush=True)
+                           f"sd={pv['delta_sd']:.5f}  90% CI [{_lo:+.5f}, {_hi:+.5f}]  bar=±{_BAR}", flush=True)
+                        p0(f"[field-phi] PREREG READ: {_v}", flush=True)
                     return 0
                 fl = FL.FieldLoop.load(a.field_loop_eval, int(mask["K"]), device=device)
                 ev = FL.field_loop_eval_fieldctl(model, fl, raw, mask, device=device, seed=a.seed)
