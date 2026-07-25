@@ -82,6 +82,7 @@ _TRAILER_MAGICS = (
     bytes([73, 70, 65, 78]),         # "IFAN"   — core/ifan.py
     bytes([84, 70, 76, 68]),         # "TFLD"   — tension field (core/tension_field.py)
     bytes([67, 78, 82, 77]),         # "CNRM"   — trunk-norm marker (H_9875 · 5 bytes: magic+1)
+    bytes([82, 67, 82, 76]),         # "RCRL"   — recurrent lane (H_9954) · chain end after TFLD
 )
 
 
@@ -98,6 +99,18 @@ def append_slw_trailer(out_path: str, slw_module) -> int:
     invoke this when model.slw is not None, so the additive .clm stays untouched."""
     from slw import slw_weights_from_torch, pack_slw   # core/slw.py (same core/ dir)
     trailer = pack_slw(slw_weights_from_torch(slw_module))
+    with open(out_path, "ab") as f:
+        f.write(trailer)
+    return len(trailer)
+
+
+def append_rcrl_trailer(out_path: str, rln) -> int:
+    """Append the H_9954 RCRL recurrent-lane trailer to an already-written .clm. `rln` = a trained
+    torch RecurrentLane3 (has .weights_np()) OR a ready numpy weights dict. Returns bytes written.
+    Call LAST (after append_tfld_trailer) so the chain end stays RCRL."""
+    from recurrent_lane import pack_rcrl   # core/recurrent_lane.py
+    w = rln if isinstance(rln, dict) else rln.weights_np()
+    trailer = pack_rcrl(w)
     with open(out_path, "ab") as f:
         f.write(trailer)
     return len(trailer)
@@ -1079,8 +1092,21 @@ def _trailer_chain_end(raw: bytes, off: int, d: int, V: int) -> int:
     for rd in (read_clml, read_clms, read_mbnd, read_ifan):
         _, off = rd(raw, off, d, V)
     _, off = read_tfld(raw, off, d)
-    if raw[off:off + 4] == CNRM_MAGIC:                   # H_9875 trunk-norm marker (magic + 1 byte),
-        off += len(CNRM_MAGIC) + 1                       # appended LAST — consume it exactly to EOF
+    read_rcrl = _rd("recurrent_lane", "read_rcrl")
+    # TWO trailers now each document themselves as "appended LAST": CNRM (H_9875 trunk-norm marker)
+    # and RCRL (H_9954 recurrent lane). A walker that knows only one of them stops early, the
+    # `== len(raw)` parity check fails, and EVERY checkpoint carrying the other is refused at
+    # warm-start — the exact defect that made position-norm .clm un-`--init`-able (serialize-py-2).
+    # So consume either, in either order, until neither matches.
+    while True:
+        if raw[off:off + 4] == CNRM_MAGIC:
+            off += len(CNRM_MAGIC) + 1
+            continue
+        _, off_rc = read_rcrl(raw, off, d)
+        if off_rc > off:
+            off = off_rc
+            continue
+        break
     return off
 
 # ── "CNRM" trunk-norm marker (H_9875) ────────────────────────────────────────────

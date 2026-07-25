@@ -1016,6 +1016,16 @@ def loss_ce_marginal(logits, targets, V, gen, penultimate=None):
     return _ce(logits, targets, V), {}
 
 
+def loss_ce_marginal_shuffled(logits, targets, V, gen, penultimate=None):
+    # H_9954/H_9960 MANDATORY control: derange targets across the batch (roll by 1 row) so every
+    # position keeps its exact target marginal but NO row keeps its own labels — a gradient-step-
+    # matched shuffled-label arm. Requires batch>=2.
+    if targets.shape[0] < 2:
+        raise ValueError("ce_marginal_shuffled needs batch-size>=2 (row-derange control)")
+    y_ctl = torch.roll(targets, shifts=1, dims=0)
+    return _ce(logits, y_ctl, V), {}
+
+
 def loss_infonce(logits, targets, V, gen, penultimate=None):
     ce = _ce(logits, targets, V)
     lg = logits.transpose(1, 2).reshape(-1, V)
@@ -1196,6 +1206,7 @@ def loss_composed_nce(logits, targets, V, gen, penultimate=None):
 # `needs_penultimate` marks which objectives consume the trunk penultimate site.
 OBJECTIVE_BUILDERS = {
     "ce_marginal":             lambda d, V, dev: loss_ce_marginal,
+    "ce_marginal_shuffled":    lambda d, V, dev: loss_ce_marginal_shuffled,
     "infonce":                 lambda d, V, dev: loss_infonce,
     "contrastive_equilibrium": lambda d, V, dev: loss_contrastive_equilibrium,
     "predictive_info":         lambda d, V, dev: PredictiveInfoObjective(d, V).to(dev),
@@ -3301,6 +3312,19 @@ def main():
                     help="H_9805: TFLD inner width r for phi (n_bucket, r) and W_up (r, d).")
     ap.add_argument("--tension-field-lam0", type=float, default=1.0,
                     help="H_9805: TFLD lam init (additive pre-trunk scale).")
+    ap.add_argument("--recurrent-lane", choices=["off", "gru3-bidir"], default="off",
+                    help="H_9954: 'gru3-bidir' = a 3-cell manual GRU reading the embeddings and "
+                         "writing a residual at the pre-embed_conv site, co-trained by plain CE. "
+                         "CAUSAL. The 3 cells are the IIT-4 nodes read by `anima-py evaluate "
+                         "--iit4-recurrent-lane`. 'off' (default) => byte-identical, no trailer. "
+                         "Control = --objective ce_marginal_shuffled (H_9960).")
+    ap.add_argument("--recurrent-lane-seed", type=int, default=9954,
+                    help="H_9954: init seed for the recurrent lane params (arm-invariant).")
+    ap.add_argument("--recurrent-lane-freeze-trunk", action="store_true",
+                    help="H_9954 growth-fork: freeze the whole trunk (requires_grad=False) and train "
+                         "ONLY rln.* — distinct from --freeze-trunk (the CLMS BOLT arm). Cuts trunk "
+                         "grads + Adam state so a 303M fork fits a 12GB card; isolates the lane's "
+                         "contribution. Needs --recurrent-lane gru3-bidir.")
     ap.add_argument("--trunk-norm", choices=["global", "position"], default="global",
                     help="H_9814: trunk normalization statistics. global = legacy GroupNorm over "
                          "(C,T) — measurably NON-CAUSAL (H_9813: masking input bytes AFTER t moved "
@@ -4024,6 +4048,8 @@ def main():
                         tfld_arm=("" if a.tension_field == "off" else a.tension_field),
                         tfld_rank=a.tension_field_rank, tfld_lam0=a.tension_field_lam0,
                         tfld_concord=a.tension_concord,
+                        recurrent_lane=("" if getattr(a, "recurrent_lane", "off") == "off" else a.recurrent_lane),
+                        recurrent_lane_seed=int(getattr(a, "recurrent_lane_seed", 9954)),
                         trunk_norm=a.trunk_norm,
                         n_factions=a.n_factions, faction_bridge_lam0=a.faction_bridge_lam0)
         model = _to_device_or_die(CLMConvMoE(cfg), device)   # production additive readout (all arms)
@@ -4048,6 +4074,19 @@ def main():
         report = _warm_start(model, a.init, is_bytegpt, expect_cfg)
         model.to(device)
         p0(f"  [--init] {report}", flush=True)
+
+    # H_9954 growth-fork: freeze the trunk, train only the recurrent lane. A frozen trunk still
+    # backprops CE to the lane residual (the residual is grad-bearing; freezing skips trunk PARAM
+    # grads + Adam state, not gradient flow through the trunk's ops). This is what makes a 303M fork
+    # fit a 12GB card AND isolates the lane's contribution. `--freeze-trunk` (the CLMS BOLT arm) is a
+    # different flag and would freeze rln.* — do not reuse it.
+    if getattr(a, "recurrent_lane_freeze_trunk", False):
+        if getattr(model, "rln", None) is None:
+            raise SystemExit("--recurrent-lane-freeze-trunk needs --recurrent-lane gru3-bidir")
+        for _n, _prm in model.named_parameters():
+            _prm.requires_grad_(_n.startswith("rln."))
+        _ntrain = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        p0(f"  recurrent-lane: TRUNK FROZEN — only rln.* trains ({_ntrain} params)", flush=True)
 
     # ── H_9803 branch-latent ideation fan: attach the lane BEFORE the optimizer collects params
     #    (registering it on `model` puts it in model.parameters(), which the shell/opt assertion
@@ -4079,9 +4118,11 @@ def main():
            f"n_bucket={model.tfld.n_bucket} lam0={float(model.tfld.lam.detach()):.4f} "
            f"· WRITE-SIDE (pre-trunk embedding residual)", flush=True)
 
-    params = (list(model.parameters())
+    params = ([p for p in model.parameters() if p.requires_grad]
               + (list(jamo_head.parameters()) if jamo_head else [])
               + (list(objfn.parameters()) if obj_is_module else []))   # H_1640 aux-head params
+    # H_9954 --recurrent-lane-freeze-trunk filters model.parameters() to the trainable lane only;
+    # with no freeze this is every param (requires_grad defaults True), so the golden path is unchanged.
     if obj_is_module:
         n_obj = sum(p.numel() for p in objfn.parameters())
         p0(f"  objective '{a.objective}' aux params: {n_obj} "
@@ -4114,9 +4155,11 @@ def main():
         print("  comp-lane: ON · d=%d V=%d weight=%.3f (CE detached from the trunk)"
               % (_d_pen, V, shell.comp_w), flush=True)
         _comp_probe_panel = a.comp_probe_panel
-    # §10.1 defense — the shell's param set MUST equal the optimizer's (aux heads covered).
-    assert {id(p) for p in shell.parameters()} == {id(p) for p in params}, \
-        "TrainShell params != optimizer params — an aux head would never be allreduced."
+    # §10.1 defense — the shell's TRAINABLE param set MUST equal the optimizer's (aux heads covered).
+    # H_9954: --recurrent-lane-freeze-trunk sets the trunk requires_grad=False, so compare only
+    # grad-bearing params (a frozen param is deliberately absent from the optimizer, not a lost aux head).
+    assert {id(p) for p in shell.parameters() if p.requires_grad} == {id(p) for p in params}, \
+        "TrainShell trainable params != optimizer params — an aux head would never be allreduced."
     if ddp_on:
         # §4/§10.8 — CLMConvMoE/ByteGPT/SLW carry NO batch-stat buffers, and mito.active_mask
         # is an intentionally-unregistered per-rank tensor; assert zero buffers so a FUTURE
@@ -4435,6 +4478,11 @@ def main():
             nb = S.append_tfld_trailer(out_path, model.tfld)
             print(f"  TFLD trailer appended {nb} bytes (arm={model.tfld.arm} "
                   f"rank={model.tfld.rank} n_bucket={model.tfld.n_bucket})", flush=True)
+        # H_9954 — append the "RCRL" recurrent-lane trailer if the lane is engaged, so the .clm
+        # carries the 3-cell GRU weights that `anima-py evaluate --iit4-recurrent-lane` reads.
+        if getattr(model, "rln", None) is not None:
+            nb = S.append_rcrl_trailer(out_path, model.rln)
+            print(f"  RCRL trailer appended {nb} bytes (recurrent-lane gru3-bidir)", flush=True)
         print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
         print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
         if getattr(a, "trunk_norm", "global") == "position":

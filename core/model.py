@@ -164,6 +164,11 @@ class CLMConfig:
     tfld_rank: int = 32            # phi/W_up inner width (--tension-field-rank)
     tfld_lam0: float = 1.0         # TFLD lam init (additive pre-trunk scale)
     tfld_concord: str = "class"
+    # H_9954 recurrent lane: "" (off) | "gru3-bidir". A 3-cell manual GRU reading the embeddings
+    # and writing a residual at the emb_residual site (co-trained by plain CE; the only object whose
+    # interventional big-Φ can trainably rise on a feedforward trunk). core/recurrent_lane.py.
+    recurrent_lane: str = ""
+    recurrent_lane_seed: int = 9954
     trunk_norm: str = "global"     # H_9814: "global" (legacy GN, non-causal bus) | "position" (per-position, causal-safe)      # H_9812 concord: "lex" (word-sensitive) | "class" (layout-only control)
 
     def router_config(self) -> "RouterConfig":
@@ -470,6 +475,12 @@ class CLMConvMoE(nn.Module):
             self.tfld = TensionFieldLane(cfg.d_model, rank=cfg.tfld_rank,
                                          lam0=cfg.tfld_lam0, arm=cfg.tfld_arm,
                                          concord=str(getattr(cfg, "tfld_concord", "class")))
+        # H_9954 recurrent lane. None => byte-identical golden path. Reads embeddings, writes a
+        # residual at the SAME emb_residual site (before embed_conv). core/recurrent_lane.py.
+        self.rln = None
+        if str(getattr(cfg, "recurrent_lane", "") or "") == "gru3-bidir":
+            from recurrent_lane import build_torch_lane   # core/recurrent_lane.py
+            self.rln = build_torch_lane(cfg.d_model, int(getattr(cfg, "recurrent_lane_seed", 9954)))
 
     def faction_oracle_mask(self, domain_ids: torch.Tensor) -> Optional[torch.Tensor]:
         """H_9643 ORACLE routing mask [B, d] — 1 where faction f is allowed for that row's domain.
@@ -507,6 +518,11 @@ class CLMConvMoE(nn.Module):
         # through the frozen organ (see the graft-clmg-lane-1 convergence record).
         if emb_residual is not None:
             x = x + emb_residual.to(x.dtype)
+        # H_9954 recurrent lane: read embeddings, scan the 3-cell GRU (BPTT), add its residual at
+        # this same pre-embed_conv site. None => byte-identical. No readout head (a_substrate_disjoint).
+        if getattr(self, "rln", None) is not None:
+            r_lane, _ = self.rln(x)
+            x = x + r_lane.to(x.dtype)
         # H_9805 — the WRITE-SIDE injection, and the only lane that fires here. The residual is
         # added to the embeddings BEFORE embed_conv and before every trunk layer, so the tension
         # field is something the trunk COMPUTES OVER rather than something read off its output.
