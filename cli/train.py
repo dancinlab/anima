@@ -3677,6 +3677,20 @@ def main():
                     help="H_9957 MISSION DV (coupled arm): with --field-loop-eval + --score-mask, read "
                          "faithful IIT-4 Φ collapse-Δ of the CE-earned m-cell state (Φ_aligned vs shuffle "
                          "pedestal + time-yoked) — does necessity force integration under monopoly carriage?")
+    ap.add_argument("--field-bptt", type=int, default=0, dest="field_bptt",
+                    help="H_9976 DWB-fork: make the WRITE-BACK differentiable and keep the state graph "
+                         "for K blocks (window-truncated BPTT). 0 = legacy gradient-free write-back "
+                         "(byte-identical). Engine G stays detached either way — only the write-back "
+                         "becomes differentiable. Verdicts from K>0 are a DIFFERENT substrate "
+                         "(substrate: DWB-fork · NON-ANIMA) and cannot touch the five-lever law.")
+    ap.add_argument("--field-sg-drive", action="store_true", dest="field_sg_drive",
+                    help="H_9976 CONTROL for --field-bptt: detach the CE at the drive, i.e. run the "
+                         "identical loop with today's gradient-free write-back. full-vs-sg isolates "
+                         "the lever; Phi_full ~ Phi_sg means differentiability added nothing.")
+    ap.add_argument("--field-train-physics", action="store_true", dest="field_train_physics",
+                    help="H_9976 A2 arm: also learn the cell physics (R, lam) under a spectral clamp. "
+                         "Default OFF — the primary question is whether a gradient THROUGH the loop "
+                         "earns integration, not whether the dynamics can be fitted.")
     ap.add_argument("--field-coupling-seed", type=int, default=-1, dest="field_coupling_seed",
                     help="H_9957: seed for the FIXED architecture draw (the coupled cells' rotation R, "
                          "frozen features) — kept DISJOINT from --seed (the training draw). Default -1 = "
@@ -4649,7 +4663,9 @@ def main():
                                        log=lambda s: p0(s, flush=True), doc_len=a.field_doc_len,
                                        write=a.field_write, cells=a.field_cells,
                                        coupling_seed=(None if a.field_coupling_seed < 0
-                                                      else a.field_coupling_seed))
+                                                      else a.field_coupling_seed),
+                                       grad_wb=a.field_bptt, train_physics=a.field_train_physics,
+                                       sg_drive=a.field_sg_drive)
         if a.out:
             # field-loop never runs the mitosis GROW loop, so mito.e_active is still e0; but a --init'd
             # model carries all `emax` experts. Serialize ALL of them (else _write_clm's e_ser=e_active
