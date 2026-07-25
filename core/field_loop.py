@@ -138,7 +138,7 @@ class FieldLoop:
 
     def __init__(self, batch_rows, d, arm="purefield16", gate_rho=1.0, hidden=64,
                  seed=0, leaky=1.0 / 400.0, drive_gain=-0.6, write="scalar", cells=1,
-                 coupling_seed=None):
+                 coupling_seed=None, grad_wb=0, train_physics=False, sg_drive=False):
         import pure_field as PF
         import clmg as G
         import torch
@@ -177,12 +177,37 @@ class FieldLoop:
         # under test). This is the state faithful IIT-4 can read — 1-cell integral has Φ undefined.
         self.write = write
         self.m = int(cells) if (self.kind == "coupled" and write == "vector") else 1
+        # H_9976 (owner decision): grad_wb>0 makes the WRITE-BACK DIFFERENTIABLE — the coupled state
+        # lives in torch, the recursion keeps its graph for grad_wb blocks (truncated BPTT), and the
+        # cell dynamics (R, lam) become trainable. This CHANGES A DESIGN PRINCIPLE: anima's G side is
+        # gradient-free by specification, so a verdict measured here describes a DIFFERENT substrate
+        # variant and must carry that scope stamp. grad_wb=0 keeps the legacy numpy path byte-identical.
+        self.grad_wb = int(grad_wb)
+        self.train_physics = bool(train_physics)                     # A2 arm: learn lam/R too
+        # sg_drive = the CONTROL for this whole rung: identical run with ce DETACHED at the drive, i.e.
+        # exactly today's design. full-vs-sg isolates the new lever; if Phi_full ~ Phi_sg the
+        # differentiability added nothing and the five-lever law survives by direct measurement.
+        self.sg_drive = bool(sg_drive)
         if self.kind == "coupled":
             tau = np.array([400.0]) if self.m == 1 else np.logspace(2.0, np.log10(6400.0), self.m)
             self.lam = 1.0 / tau                                     # per-cell leak (m=1 -> 1/400)
             self.Ivec = np.zeros((self.B, self.m), dtype=np.float64)
             self.R = _fixed_rotation(self.m, self.crng)              # weak fixed cell coupling (I if m=1)
             self.Wdct = None                                        # DCT basis [m, T], built when T known
+            if self.grad_wb > 0:
+                # A1 (primary arm · fable): the PHYSICS STAYS FROZEN. The question is whether a gradient
+                # THROUGH the loop earns integration, not whether the cell dynamics can be learned — so
+                # lam/R are plain tensors (buffers), not parameters. train_physics=True is the separate
+                # A2 arm and needs the spectral clamp below to keep the recursion from exploding.
+                lam_t = torch.tensor(self.lam, dtype=torch.float64)
+                R_t = torch.tensor(self.R, dtype=torch.float64)
+                if self.train_physics:
+                    self.lam_p = torch.nn.Parameter(lam_t)
+                    self.R_p = torch.nn.Parameter(R_t)
+                else:
+                    self.lam_p, self.R_p = lam_t, R_t                # frozen buffers (no grad)
+                self.Ivec_t = torch.zeros(self.B, self.m, dtype=torch.float64)
+                self._wb_steps = 0                                   # blocks since the last detach
         else:
             self.lam = None; self.Ivec = None; self.R = None; self.Wdct = None
         c_dim = self.m if self.kind == "coupled" else G.C_DIM
@@ -197,6 +222,13 @@ class FieldLoop:
         self.dev = self.torch.device(device)
         self.bridge.to(self.dev)
         self.gamma.data = self.gamma.data.to(self.dev)
+        if getattr(self, "grad_wb", 0) > 0 and self.kind == "coupled":
+            if self.train_physics:
+                self.lam_p.data = self.lam_p.data.to(self.dev)
+                self.R_p.data = self.R_p.data.to(self.dev)
+            else:
+                self.lam_p, self.R_p = self.lam_p.to(self.dev), self.R_p.to(self.dev)
+            self.Ivec_t = self.Ivec_t.to(self.dev)
         return self
 
     def parameters(self):
@@ -249,6 +281,8 @@ class FieldLoop:
             C = np.tanh(self.int_w[None, :] * self.I[:, None] + self.int_b[None, :])   # [B, C_DIM]
         elif self.kind == "gru-frozen":                              # fixed random GRU state (recurrent)
             C = self.gru_h
+        elif self.kind == "coupled" and self.grad_wb > 0:
+            return self.Ivec_t.float()                               # live graph -> grads reach the loop
         elif self.kind == "coupled":                                 # m coupled leaky cells (the Φ state)
             C = self.Ivec
         else:
@@ -266,7 +300,7 @@ class FieldLoop:
         if self.arm == "off":
             return None
         C = self._C()
-        if float((C - C.mean(dim=0, keepdim=True)).abs().max()) < 1e-6:
+        if float((C - C.mean(dim=0, keepdim=True)).abs().max().detach()) < 1e-6:
             return None                                              # rows identical -> no injection
         return self.bridge(C) * self.gamma                          # [B, d]
 
@@ -285,6 +319,8 @@ class FieldLoop:
         On the yoked arm the drive is deranged across rows (fancy-seed control). The COUPLED arm accepts
         a per-byte CE/G profile [B,T] and writes its first m DCT modes into m coupled leaky cells."""
         if self.kind == "coupled":
+            if self.grad_wb > 0 and hasattr(ce_per_row, "shape") and hasattr(ce_per_row, "dim"):
+                return self._writeback_coupled_grad(ce_per_row, g_per_row)   # torch tensor in => graph
             return self._writeback_coupled(ce_per_row, g_per_row)
         A = np.exp(-np.asarray(ce_per_row, dtype=np.float64))
         Gv = np.asarray(g_per_row, dtype=np.float64)
@@ -302,6 +338,41 @@ class FieldLoop:
         elif self.kind == "gru-frozen":                              # frozen GRU advances its recurrent state
             self.gru_h = self.gru.step(self.gru_h, drive)
         # integrator16 reads I directly (no cell to advance)
+
+    def _writeback_coupled_grad(self, ce, g):
+        """DIFFERENTIABLE write-back (H_9976 · owner decision). Same algebra as the numpy path, run in
+        torch so the graph survives: s = (exp(-ce) - g) @ Wdct.T ; I' = (I*(1-lam)) @ R.T + s.
+        `ce` is the LIVE per-position CE tensor [B,T] from this block's forward (grad flows), `g` is
+        ALWAYS detached — engine G stays gradient-free by specification; only the write-back becomes
+        differentiable. Truncated BPTT: the state is detached every grad_wb blocks, so credit reaches
+        back at most that far. sg_drive detaches ce too = today's design, the control arm."""
+        torch = self.torch
+        T = int(ce.shape[1])
+        if self.Wdct is None or self.Wdct.shape[1] != T:
+            self.Wdct = _dct_basis(self.m, T)
+        W = torch.as_tensor(self.Wdct, dtype=torch.float64, device=self.dev)
+        ce_t = ce.detach() if self.sg_drive else ce                  # the lever, isolated
+        g_t = torch.as_tensor(np.asarray(g, dtype=np.float64), dtype=torch.float64, device=self.dev)
+        if g_t.dim() == 1:
+            g_t = g_t[:, None].expand(-1, T)
+        s = (torch.exp(-ce_t.to(self.dev).double()) - g_t.detach()) @ W.T         # [B, m] · float64
+        # float64 on purpose: the landed nulls (and every control they are compared against) run the
+        # recursion in float64. A float32 loop drifts ~5e-5 over 100 blocks — a different dynamical
+        # system, which is exactly what the parity gate is there to refuse.
+        if self.yoked:
+            s = s[self._derangement()]
+        lam, R = self.lam_p, self.R_p
+        if self.train_physics:                                       # A2: keep the recursion contractive
+            with torch.no_grad():
+                sp = torch.linalg.matrix_norm(R * (1.0 - lam)[:, None], ord=2)
+                if float(sp) > 0.99:
+                    R.data.mul_(0.99 / float(sp))
+        self.Ivec_t = (self.Ivec_t * (1.0 - lam)) @ R.T + s
+        self._wb_steps += 1
+        if self._wb_steps >= self.grad_wb:                           # truncation boundary
+            self.Ivec_t = self.Ivec_t.detach()
+            self._wb_steps = 0
+        self.Ivec = self.Ivec_t.detach().cpu().double().numpy()      # keep the numpy mirror in sync
 
     def _writeback_coupled(self, ce, g):
         """Coupled-cell write. vector: ce/g are per-byte [B,T] -> s = first m DCT modes of the A-G
@@ -327,8 +398,23 @@ class FieldLoop:
             s = s[self._derangement()]                              # derange the drive across rows
         self.Ivec = (self.Ivec * (1.0 - self.lam)) @ self.R.T + s   # [B,m] coupled leaky update
 
+    def _reset_grad_state(self, rows=None):
+        """Zero the torch state (all rows or the given rows) and drop its graph — called at doc
+        boundaries so a document never inherits the previous document's credit path."""
+        if getattr(self, "grad_wb", 0) <= 0 or self.kind != "coupled":
+            return
+        st = self.Ivec_t.detach().clone()
+        if rows is None:
+            st.zero_()
+        else:
+            for i in rows:
+                st[i] = 0.0
+        self.Ivec_t = st
+        self._wb_steps = 0
+
     def reset(self, rows=None):
         """Reset the field/integral for the given rows (default all) — call between documents."""
+        self._reset_grad_state(rows)                                 # torch state too, when the graph is on
         idx = range(self.B) if rows is None else rows
         for i in idx:
             self.pf[i] = self.PF.pure_field_new()
@@ -405,7 +491,8 @@ class _FieldStream:
 
 def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, seed=0,
                      device="cpu", hidden=64, g_fn=None, log_every=25, log=print, doc_len=0,
-                     write="scalar", cells=1, coupling_seed=None):
+                     write="scalar", cells=1, coupling_seed=None, grad_wb=0, train_physics=False,
+                     sg_drive=False):
     """One FIELD-LOOP training run (model-agnostic — cli/train.py --field-loop passes the real
     CLMConvMoE; the $0 smoke passes a tiny stand-in). Per contiguous block:
         residual = FieldLoop.residual()   [B,d] broadcast over T at the embedding site
@@ -419,7 +506,8 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
     import torch
     import torch.nn.functional as F
     fl = FieldLoop(B, d, arm=arm, hidden=hidden, seed=seed, write=write, cells=cells,
-                   coupling_seed=coupling_seed).to(device)
+                   coupling_seed=coupling_seed, grad_wb=grad_wb, train_physics=train_physics,
+                   sg_drive=sg_drive).to(device)
     vec_wb = (fl.kind == "coupled" and fl.write == "vector")      # per-byte write needs the [B,T] CE
     core_m = model.module if hasattr(model, "module") else model
     emb_w = getattr(core_m, "embed", None)
@@ -427,7 +515,10 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
                if emb_w is not None else 1.0)                # residual amplitude anchor (GRAFT-style)
     stream = _FieldStream(data_bytes, B, block, seed=seed, doc_len=doc_len)
     params = list(model.parameters()) + fl.parameters()
+    if grad_wb > 0 and train_physics and fl.kind == "coupled":
+        params = params + [fl.lam_p, fl.R_p]                 # A2 arm only: the physics joins the optimizer
     opt = torch.optim.Adam(params, lr=lr)
+    win_loss, win_n = None, 0                                # window-TBPTT accumulator
     hist = []
     for step in range(1, steps + 1):
         x, y, wrapped = stream.next_block()
@@ -443,15 +534,31 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
         ce_all = F.cross_entropy(logits, y, reduction="none")         # [B, T] per-byte CE
         ce_row = ce_all.mean(dim=1)                                   # [B]
         loss = ce_row.mean()
-        opt.zero_grad()
-        loss.backward()
-        torch.nn.utils.clip_grad_norm_(params, 1.0)          # GRAFT/standard-loop grad clip (no-NaN)
-        opt.step()
-        with torch.no_grad():
+        if grad_wb > 0:
+            # WINDOW-TBPTT (H_9976 · fable): a per-block backward would free the graph the state needs,
+            # so accumulate the window's loss, take ONE backward per window, and let the write-back
+            # detach the state at the truncation boundary. Same FLOPs as the baseline, delayed steps —
+            # not the K-fold cost of per-block retain_graph.
+            win_loss = loss if win_loss is None else (win_loss + loss)
+            win_n += 1
             g_np = np.zeros(B) if g_fn is None else np.asarray(g_fn(x), dtype=np.float64)
-            ce_np = (ce_all.detach().cpu().numpy() if vec_wb        # per-byte [B,T] for the DCT write
-                     else ce_row.detach().cpu().numpy())            # per-row [B] for scalar arms
-            fl.writeback(ce_np, g_np)
+            fl.writeback(ce_all if vec_wb else ce_row, g_np)         # LIVE tensor -> graph survives
+            if win_n >= max(1, grad_wb):
+                opt.zero_grad()
+                (win_loss / win_n).backward()
+                torch.nn.utils.clip_grad_norm_(params, 1.0)
+                opt.step()
+                win_loss, win_n = None, 0
+        else:
+            opt.zero_grad()
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(params, 1.0)      # GRAFT/standard-loop grad clip (no-NaN)
+            opt.step()
+            with torch.no_grad():
+                g_np = np.zeros(B) if g_fn is None else np.asarray(g_fn(x), dtype=np.float64)
+                ce_np = (ce_all.detach().cpu().numpy() if vec_wb    # per-byte [B,T] for the DCT write
+                         else ce_row.detach().cpu().numpy())        # per-row [B] for scalar arms
+                fl.writeback(ce_np, g_np)
         hist.append(float(loss.detach()))
         if step % log_every == 0 or step == 1:
             log(f"[field-loop:{arm}] step {step:5d}  CE={hist[-1]:.4f}  "
@@ -877,6 +984,57 @@ def _smoke():
     return 0
 
 
+def _dwb_gates(steps=120, B=4, m=4, T=32, seed=0, tol=1e-6):
+    """H_9976 $0 PRE-GATES (blocking · no GPU, no corpus). Two witnesses before any spend:
+
+      G1 PARITY — with the drive detached (sg mode = today's design) the torch recursion must reproduce
+                  the numpy recursion to <tol over >=100 blocks. If it does not, the 'differentiable'
+                  arm is a DIFFERENT dynamical system and every comparison to the landed nulls is
+                  confounded.
+      G2 REACH  — a gradient must actually arrive through the STATE path: d(residual)/d(ce_0) must be
+                  non-zero inside the truncation window. If it is ~0 the objective cannot see the loop
+                  and the rung is NO-LEVER (frozen row R5) for free.
+
+    Fail either => do not fire (instrument-never-run-hides-bugs)."""
+    import torch
+    rng = np.random.default_rng(seed)
+    ce_seq = [rng.random((B, T)) * 3.0 for _ in range(steps)]
+    zeros = np.zeros(B)
+
+    fl_np = FieldLoop(B, 32, arm="coupled", write="vector", cells=m, seed=seed, coupling_seed=7)
+    fl_t = FieldLoop(B, 32, arm="coupled", write="vector", cells=m, seed=seed, coupling_seed=7,
+                     grad_wb=4, sg_drive=True)                       # sg => must equal the numpy path
+    worst = 0.0
+    for ce in ce_seq:
+        fl_np.writeback(ce, zeros)
+        fl_t.writeback(torch.tensor(ce, dtype=torch.float32), zeros)
+        worst = max(worst, float(np.abs(np.asarray(fl_np.Ivec) - np.asarray(fl_t.Ivec)).max()))
+    g1 = worst < tol
+    print(f"(G1) parity torch-vs-numpy over {steps} blocks: max|dI| = {worst:.3e} "
+          f"({'PASS' if g1 else 'FAIL'} · tol {tol:.0e})")
+
+    fl_g = FieldLoop(B, 32, arm="coupled", write="vector", cells=m, seed=seed, coupling_seed=7,
+                     grad_wb=4)
+    ce0 = torch.tensor(ce_seq[0], dtype=torch.float32, requires_grad=True)
+    fl_g.writeback(ce0, zeros)
+    for k in range(1, 3):                                            # 3 writebacks at K=4 => strictly
+        # inside the window. (The first draft did 4 and landed exactly ON the detach boundary, reading
+        # 0 and calling it NO-LEVER — the gate's own off-by-one, not a fact about the substrate.)
+        fl_g.writeback(torch.tensor(ce_seq[k], dtype=torch.float32), zeros)
+    with torch.no_grad():
+        fl_g.gamma.fill_(1.0)
+    out = fl_g.residual()
+    reach = 0.0
+    if out is not None:
+        gr = torch.autograd.grad(out.abs().sum(), ce0, allow_unused=True)[0]
+        reach = 0.0 if gr is None else float(gr.abs().sum())
+    g2 = reach > 0.0
+    print(f"(G2) gradient reach through the state path at K=4: |d res/d ce_0| = {reach:.3e} "
+          f"({'PASS' if g2 else 'FAIL — NO-LEVER (row R5)'})")
+    print(f"\nDWB PRE-GATES: {'BOTH PASS — firing is licensed' if (g1 and g2) else 'BLOCKED'}")
+    return 0 if (g1 and g2) else 1
+
+
 def _falsifier(reps=200, seed0=0, jitter_sd=0.1, g_const=0.2, drive_gain=-0.6,
                n_key_blocks=2, sites=3, filler_per_site=2, filler_ce=0.5,
                sep_ratio_req=5.0, decode_req=0.95):
@@ -1042,5 +1200,6 @@ if __name__ == "__main__":
     import sys
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     mode = sys.argv[1] if len(sys.argv) > 1 else "smoke"
-    fn = {"falsify": _falsifier, "couple": _coupled_smoke, "phi": _phi_smoke}.get(mode, _smoke)
+    fn = {"falsify": _falsifier, "couple": _coupled_smoke, "phi": _phi_smoke,
+          "dwb-gates": _dwb_gates}.get(mode, _smoke)
     raise SystemExit(fn())
