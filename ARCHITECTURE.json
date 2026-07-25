@@ -19828,7 +19828,7 @@
     "id": "train-py-12",
     "state": "pos-conv",
     "value": "원격 pool 호스트의 설치된 anima_py 트리에 개별 파일을 scp/cp 로 덮어써서 '빨리 시험'하면 두 가지가 동시에 깨진다. ① 트리 불일치: 덮어쓴 cli/train.py 는 최신인데 같은 패키지의 core/model.py 는 옛 설치본이라 CLMConfig.__init__() got an unexpected keyword argument 'recurrent_lane' 같은 TypeError 로 죽는다(코드 버그로 오진하기 쉬움 — 실제로는 버전 혼합). ② 준비상태 오탐: '새 플래그가 --help 에 보이는가'로 설치 완료를 판정하면, 내가 방금 복사해 넣은 파일이 그 플래그를 이미 갖고 있어 pip 설치가 끝나기 전에 통과해 버린다 → 반쪽 트리에서 실행.",
-    "threshold": "pool 호스트 갱신은 항상 git+pip 정규 설치(pip install --force-reinstall --no-deps 'git+<repo>@<branch>')로만 한다 — 개별 파일 복사 금지(pool-host-anima-py-clean-update). 준비상태 판정은 '설치된 VERSION 파일 == 브랜치 VERSION' 동등성으로 한다(플래그 존재 여부 금지). 미착륙 코드를 원격에서 시험해야 하면 브랜치를 push 하고 그 브랜치를 설치하라.",
+    "threshold": "pool 호스트 갱신은 항상 git+pip 정규 설치(pip install --force-reinstall --no-deps 'git+<repo>@<branch>')로만 한다 — 개별 파일 복사 금지(pool-host-anima-py-clean-update). 준비상태 판정은 `pip show anima-python | grep ^Version` 이 브랜치 VERSION 과 같은지로 한다 — ⚠️ 자가정정: 처음 이 학습을 '설치된 anima_py/VERSION 파일 동등성'으로 적었으나 **그 파일은 패키지에 들어있지 않아** 조건이 영원히 거짓이 되어 대기 루프가 무한히 돌았다(실측). 플래그 존재 여부로 판정하는 것도 금지(내가 복사해 둔 파일이 통과시킨다). 미착륙 코드를 원격에서 시험해야 하면 브랜치를 push 하고 그 브랜치를 설치하라.",
     "source": "cli/train.py"
    }
   ]
