@@ -3653,6 +3653,11 @@ def main():
                     help="H_9957 MISSION DV (coupled arm): with --field-loop-eval + --score-mask, read "
                          "faithful IIT-4 Φ collapse-Δ of the CE-earned m-cell state (Φ_aligned vs shuffle "
                          "pedestal + time-yoked) — does necessity force integration under monopoly carriage?")
+    ap.add_argument("--field-phi-boot", type=int, default=0, dest="field_phi_boot",
+                    help="H_9957 POWER for the negative: moving-block bootstrap replicates (e.g. 200) over "
+                         "the collected state -> mean/sd/90%% CI on Δφ. Needed because the doc-aware readout "
+                         "is DETERMINISTIC (--seed does not resample it), so a negative Δφ has no sampling "
+                         "spread without this (power-before-negative-verdict · negative-claims-need-tost).")
     ap.add_argument("--ddp-find-unused", action="store_true",
                     help="DDP debug/escape-hatch: pass find_unused_parameters=True to DDP. Off "
                          "by default — the current objective set fires every head every step "
@@ -4520,13 +4525,19 @@ def main():
                 mask = _json.load(open(a.score_mask))
                 if a.field_phi:                          # H_9957 MISSION DV: faithful IIT-4 Φ of the state
                     fl = FL.FieldLoop.load(a.field_loop_eval, a.field_b, device=device)
-                    pv = FL.field_loop_phi(model, fl, raw, mask, device=device, seed=a.seed)
+                    pv = FL.field_loop_phi(model, fl, raw, mask, device=device, seed=a.seed,
+                                           boot=a.field_phi_boot)
                     p0(f"=== anima-py train --field-loop-eval --field-phi (H_9957 mission Φ-DV) === "
                        f"m={pv['m']} cells · n={pv['n']} samples · gamma={pv['gamma']:+.5f}", flush=True)
                     p0(f"[field-phi] faithful IIT-4  Φ_aligned={pv['phi_aligned']:.5f}  "
                        f"Φ_yoked={pv['phi_yoked']:.5f}  Φ_shuffle={pv['phi_shuffle']:.5f}", flush=True)
                     p0(f"[field-phi] DELTA_PHI = Φ_aligned - max(yoked,shuffle) = {pv['delta_phi']:+.5f}  "
                        f"(>bar ⇒ necessity forced integration; ≈0 ⇒ it did not)", flush=True)
+                    if pv.get("boot"):                       # power for the negative (prereg equivalence)
+                        p0(f"[field-phi] BOOT({pv['boot']} moving-block) Δφ mean={pv['delta_mean']:+.5f} "
+                           f"sd={pv['delta_sd']:.5f}  90% CI [{pv['delta_lo90']:+.5f}, {pv['delta_hi90']:+.5f}]"
+                           f"  (CI inside ±0.05 ⇒ equivalent to zero AT THE PREREG BAR = powered negative)",
+                           flush=True)
                     return 0
                 fl = FL.FieldLoop.load(a.field_loop_eval, int(mask["K"]), device=device)
                 ev = FL.field_loop_eval_fieldctl(model, fl, raw, mask, device=device, seed=a.seed)

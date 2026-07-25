@@ -184,6 +184,22 @@ seed 1 재현 전엔 DIRECTIONAL 이상으로 승격 금지**(burned-gate-no-ref
 arm 3종(coupled-vector-m4 · coupled-scalar-m4 · cinit 받침대) + 교차호스트 재검(integrator16 K16 이 aiden Δ+1.61 을
 summer 에서 재현하는지)을 한 배치로 돌린다(summer RTX5070 · aiden GPU 는 타사용자 점유).
 
+## Stage B — 음성 판정용 분석 규칙 동결 (2-차 배치 **산포를 보기 전** · 원 바 완화 아님)
+
+1차 배치가 Δφ ≤ 0 을 냈다. **음성을 판정으로 박으려면 검정력이 먼저**(power-before-negative-verdict ·
+negative-claims-need-tost-not-ns) — 단일 run 의 Δφ 엔 표집분포가 없으므로 아래를 **산포 관측 전** 동결한다.
+
+- **잡음원 2종을 분리해 잰다:** ⓐ **readout 재표집** = 같은 학습 ckpt 를 eval seed 1–5 로 재측정(val 스트림
+  표집만 바뀜) ⓑ **학습 재추출** = 학습 seed 1 로 처음부터 다시 학습(가중치·γ 까지 다른 draw).
+- **동등성 마진 = 원 prereg 바와 동일한 ±0.05**(새 바를 만들지 않는다 — 이건 완화가 아니라 같은 바를
+  양쪽으로 읽는 것): Δφ 표본의 **90% CI 가 (−0.05, +0.05) 안에 완전히 들어가면** "0 과 실질 동등" →
+  **NOT EARNED 를 검정력 있는 음성으로** 확정. CI 가 ±0.05 를 걸치면 판정은 **UNDERPOWERED**(음성 아님) —
+  seed 를 늘리거나 n(=n_blocks×B)을 키운다.
+- **받침대 대비도 같은 규칙:** (Δφ_trained − Δφ_init) 의 90% CI 가 (−0.05, +0.05) 안이면 "학습이 통합을
+  움직이지 않았다"를 검정력 있는 음성으로 읽는다.
+- **양성 방향 안전장치 유지:** 어떤 seed 에서 Δφ ≥ 0.05 가 나오더라도 단일 seed 면 DIRECTIONAL 이며,
+  다수 seed 의 평균 CI 가 0.05 위에 있어야 EARNED 로 승격한다(동결표 그대로).
+
 ## 다음 (cement 는 engine-native run 만)
 ① `anima-py train --field-loop` 구현(emb_residual 훅 + Bφ·γ + H_9607 drive 되먹임 + 연속스트림 + 3-arm fork). **✅ landed** — fieldctl 계기면(corpus·doc-aware stream·payload eval)+$0 팰서파이어 PASS+PARTIAL 실측(3a16f43c·6bab1c5·f0028e9b). **다음: 2nd seed 재현 + generic-recurrence sibling(faculty vs 순환) → 통과시 자연코퍼스 faculty 측정(p9).**
 ② 사전등록표 동결(위 통과기준·below-chance 행 포함) → 합성 planted-dependency 로 **계기 체크**(faculty 인용

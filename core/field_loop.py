@@ -580,7 +580,7 @@ def _ci_phi(Xb, m):
     return float(E.ci_phi_iit4([list(map(int, r)) for r in Xb], list(range(m))))
 
 
-def field_loop_phi(model, fl, data_bytes, mask, device="cpu", seed=0, n_blocks=400):
+def field_loop_phi(model, fl, data_bytes, mask, device="cpu", seed=0, n_blocks=400, boot=0):
     """H_9957 MISSION DV (fable): does necessity force integration? Under monopoly carriage (the field
     is the SOLE out-of-window carrier, CE NEEDS it), is the CE-EARNED coupled-cell state INTEGRATED
     (Φ>0) or does training still converge to an independent (Φ=0) solution — the direct successor to
@@ -629,9 +629,33 @@ def field_loop_phi(model, fl, data_bytes, mask, device="cpu", seed=0, n_blocks=4
     rng = np.random.default_rng(seed + 1)
     Sb = np.stack([rng.permutation(Xb[:, j]) for j in range(fl.m)], axis=1)   # shuffle pedestal
     phi_a, phi_y, phi_s = _ci_phi(Xb, fl.m), _ci_phi(Yb, fl.m), _ci_phi(Sb, fl.m)
-    return {"m": fl.m, "n": int(Xb.shape[0]), "phi_aligned": phi_a, "phi_yoked": phi_y,
-            "phi_shuffle": phi_s, "delta_phi": float(phi_a - max(phi_y, phi_s)),
-            "gamma": float(fl.gamma.detach())}
+    out = {"m": fl.m, "n": int(Xb.shape[0]), "phi_aligned": phi_a, "phi_yoked": phi_y,
+           "phi_shuffle": phi_s, "delta_phi": float(phi_a - max(phi_y, phi_s)),
+           "gamma": float(fl.gamma.detach())}
+    if boot > 0:
+        # POWER for the NEGATIVE (power-before-negative-verdict): the readout itself is DETERMINISTIC
+        # in doc-aware mode — _FieldStream ignores `seed` when doc_len>0 (rows sit on a fixed doc grid),
+        # so re-running with a different --seed returns the SAME Δφ to the decimal and estimates NO
+        # noise (flat-across-manipulations = the manipulation never reached the estimator). The honest
+        # sampling distribution therefore comes from resampling the COLLECTED state, not the stream:
+        # a MOVING-BLOCK bootstrap (contiguous runs of length doc_blocks so within-doc autocorrelation
+        # survives the resample) recomputes Φ_aligned/yoked/shuffle per replicate -> a CI on Δφ that the
+        # prereg equivalence test (|CI| inside ±0.05 => equivalent to zero at the bar) can actually read.
+        L = max(1, int(doc_len // block))                                # block length = one doc's blocks
+        n = int(Xb.shape[0])
+        nblk = max(1, n // L)
+        brng = np.random.default_rng(seed + 7)
+        deltas = []
+        for _ in range(int(boot)):
+            starts = brng.integers(0, max(1, n - L), size=nblk)
+            idx = np.concatenate([np.arange(s, s + L) for s in starts])[:n]
+            xb, yb2 = Xb[idx], Yb[idx]
+            sb = np.stack([brng.permutation(xb[:, j]) for j in range(fl.m)], axis=1)
+            deltas.append(_ci_phi(xb, fl.m) - max(_ci_phi(yb2, fl.m), _ci_phi(sb, fl.m)))
+        d = np.asarray(deltas, dtype=float)
+        out.update({"boot": int(boot), "delta_mean": float(d.mean()), "delta_sd": float(d.std(ddof=1)),
+                    "delta_lo90": float(np.percentile(d, 5)), "delta_hi90": float(np.percentile(d, 95))})
+    return out
 
 
 def _smoke():
