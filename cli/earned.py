@@ -474,6 +474,59 @@ def synth(rng, n_stems, n_rows, mode):
     return np.stack([A, B, T], axis=1)
 
 
+def synth_hetero(rng, n_stems, n_rows, rho, a0=1.0):
+    """H_9971 — a HETEROGENEOUS operator: only a fraction `rho` of stems flips polarity under B=1.
+
+    Why a separate arm. Every kernel here commits to ONE global delta shared by all stems, so the
+    worry is that flippers and non-flippers average out and a real operator reads as DATA-ADDITIVE.
+    This arm MEASURES where that happens instead of arguing about it.
+
+    Why the flip block is FROZEN and OBSERVABLE (`C_A`, deterministic sha256 over the stem id), not a
+    hidden random subset: on a held-out (stem, B=1) cell a hidden membership is unlearnable by ANY
+    estimator, so an arm built on one would certify nothing -- it would demand oracle knowledge that
+    no covariate-free method can have. With an observable block the arm DISCRIMINATES: a covariate-
+    aware estimator can pass it, a blind one cannot. The block is stratified within polarity so `C_A`
+    is not confounded with `alpha_A`.
+
+    truth:  logit P(T=1 | A,B) = a0 * s_A * (1 - 2 * B * C_A)      s_A = +-1 balanced polarity
+    rho=1 reproduces the xor world (every stem flips) and rho=0 the pedestal (truth additive), which
+    is the arm's own built-in self-check. Returns (items, C) -- C is what the oracle reference uses."""
+    pol = rng.integers(0, 2, size=n_stems)
+    h = [int(hashlib.sha256(("earned-hetero-v1|%d" % a).encode()).hexdigest()[:16], 16)
+         for a in range(n_stems)]
+    C = np.zeros(n_stems, dtype=np.int64)
+    for p in (0, 1):
+        idx = np.flatnonzero(pol == p)
+        k = int(round(rho * len(idx)))
+        if k:
+            C[sorted(idx, key=lambda a: h[a])[:k]] = 1
+    A = rng.integers(0, n_stems, size=n_rows)
+    B = rng.integers(0, 2, size=n_rows)
+    s = np.where(pol == 1, 1.0, -1.0)
+    z = a0 * s[A] * (1.0 - 2.0 * B * C[A])
+    T = (rng.random(n_rows) < 1.0 / (1.0 + np.exp(-z))).astype(np.int64)
+    return np.stack([A, B, T], axis=1), C
+
+
+def _hetero_oracle(sh, C, ho, rng, k_perm, null, kernel, kappa):
+    """GENEROUS upper bound for an estimator that KNEW the frozen block: run the SAME machinery
+    separately inside each block and average by held-out weight. Deliberately generous (it refits
+    alpha/gamma per block, more freedom than a block-delta model would get) -- if even this cannot
+    beat the blind reading, the heterogeneity worry is dead rather than merely unproven. It is a
+    REFERENCE, never a shipped estimator, and it never touches a corpus verdict."""
+    num = den = 0.0
+    for c in (0, 1):
+        m = C[sh[:, 0]] == c
+        if not m.any() or not (ho & m).any():
+            continue
+        _, inv = np.unique(sh[m, 0], return_inverse=True)
+        sub = np.stack([inv, sh[m, 1], sh[m, 2]], axis=1)
+        w = float((ho & m).sum())
+        num += w * earned(sub, ho[m], rng, k_perm, null, kernel, kappa)[0]
+        den += w
+    return num / den if den else float("nan")
+
+
 def seen_synergy(items, rng, k_perm=200, null="parametric", rowidx=None):
     """Discriminates DATA-ADDITIVE (no non-additivity at all) from OPERATOR-ABSENT (it exists but
     never transfers). Holds out HALF of each stem's B=1 rows, so the fit HAS seen that stem
@@ -622,6 +675,35 @@ def earned_run(argv):
                  "PASS — the added capacity does not invent signal"
                  if dof_ok else "FAIL — r2 hallucinates a held-out gain; demote to r1"))
         res["G_DOF"] = {"earned_additive_full_dof": e_a, "pass": bool(dof_ok)}
+
+    # ---- G-HET (H_9971 · opt-in SCOPE PROBE, never a gate) --------------------------------
+    # Every kernel commits to ONE global delta, so a real operator that fires on only SOME stems
+    # could average out and read as DATA-ADDITIVE. This measures where that actually happens
+    # instead of arguing it. It moves NO frozen bar and cannot change a corpus verdict -- what it
+    # produces is the SCOPE SENTENCE a landed DATA-ADDITIVE verdict must carry.
+    het_spec = evaluate_strval(argv, "--calib-hetero", "")
+    if het_spec:
+        a0 = float(evaluate_strval(argv, "--calib-a0", "1.0"))
+        print("")
+        print("G-HET       HETEROGENEOUS operator — only a fraction rho of stems flips under B=1"
+              "  (a0=%.2f · kernel %s)" % (a0, kernel))
+        print("            SCOPE PROBE, NOT A GATE. blind = what the shipped covariate-free estimator")
+        print("            reads · oracle = generous UPPER BOUND for one that KNEW the frozen block.")
+        het_rows = []
+        for r in [float(x) for x in het_spec.split(",") if x.strip()]:
+            sh, Cb = synth_hetero(rng, 200, 60000, r, a0)
+            ho_h, _ = make_heldout(sh, rng)
+            e_b, _, _, _, d_h = earned(sh, ho_h, rng, min(200, k_perm), null, kernel, kappa)
+            e_o = _hetero_oracle(sh, Cb, ho_h, rng, min(200, k_perm), null, kernel, kappa)
+            blindspot = abs(e_b) <= DELTA_EQ and e_o > DELTA_EQ
+            het_rows.append({"rho": r, "blind": e_b, "oracle": e_o, "delta": d_h,
+                             "blindspot": bool(blindspot)})
+            print("  rho=%.2f    blind=%+.5f (delta=%+.2f)   oracle=%+.5f   gap=%+.5f   %s"
+                  % (r, e_b, d_h, e_o, e_o - e_b,
+                     "BLIND — a real transferable operator sits under the %.2f margin" % DELTA_EQ
+                     if blindspot else "seen"))
+        res["G_HET"] = {"a0": a0, "kernel": kernel, "rows": het_rows,
+                        "note": "scope probe, not a gate; oracle is a generous reference, not a shipped arm"}
 
     # ---- G-POWER (census + null sd, measured BEFORE the effect is read) -------------------
     res["stems"] = len(sid)
