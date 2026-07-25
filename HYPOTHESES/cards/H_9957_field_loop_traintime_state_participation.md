@@ -200,6 +200,21 @@ negative-claims-need-tost-not-ns) — 단일 run 의 Δφ 엔 표집분포가 �
 - **양성 방향 안전장치 유지:** 어떤 seed 에서 Δφ ≥ 0.05 가 나오더라도 단일 seed 면 DIRECTIONAL 이며,
   다수 seed 의 평균 CI 가 0.05 위에 있어야 EARNED 로 승격한다(동결표 그대로).
 
+## Stage B — 5-추출 종합 검정 동결 (seed 2·3·4 **관측 전** · 2026-07-25 12:15 KST)
+
+seed 0 = Δφ −0.005, seed 1 = **+0.124** 로 **학습 추출 간 분산이 지배적**임이 드러났다(단일 추출 판독은
+양·음 어느 쪽도 판정 자격 없음). 남은 추출을 보기 전에 종합 규칙을 고정한다 — 나중에 고르면 tune-to-green.
+
+- **표본 단위 = 학습 추출(seed)**, readout 이 아니다(readout 은 결정론 · [[multi-seed-replication-vacuous…]] 재발#2).
+- **짝지음**: 같은 seed 의 `trained(34k)` 와 `near-init(200)` 을 한 쌍으로 → 쌍별 차이 `Dᵢ = Δφ_trained,ᵢ − Δφ_init,ᵢ`
+  (seed 0–4 · n=5). 아키텍처가 공짜로 주는 Φ 를 쌍마다 상쇄시키는 게 목적.
+- **1차 판정(종합)**: D 의 평균에 대한 **90% t-구간**을 원 바 ±0.05 에 대고 읽는다 —
+  하한 ≥ +0.05 → **EARNED**(필요성이 통합을 강제) · 구간 전체가 (−0.05, +0.05) → **NOT EARNED(검정력 있는 음성)** ·
+  바를 걸치면 → **UNDERPOWERED**(추출 추가, 판정 금지).
+- **강건성 보조(판정 아님·보고만)**: D 의 중앙값 + 각 추출의 부트스트랩 CI(`--field-phi-boot 200`).
+  꼬리가 두꺼우면(한 추출만 큰 양수) 평균이 끌려가므로 중앙값과 함께 읽되, **판정은 위 1차 규칙만** 따른다.
+- **선택 편향 금지**: "양성 seed 만 재현"은 무효 — 5 추출 전부를 표에 싣고 하나도 빼지 않는다.
+
 ## 다음 (cement 는 engine-native run 만)
 ① `anima-py train --field-loop` 구현(emb_residual 훅 + Bφ·γ + H_9607 drive 되먹임 + 연속스트림 + 3-arm fork). **✅ landed** — fieldctl 계기면(corpus·doc-aware stream·payload eval)+$0 팰서파이어 PASS+PARTIAL 실측(3a16f43c·6bab1c5·f0028e9b). **다음: 2nd seed 재현 + generic-recurrence sibling(faculty vs 순환) → 통과시 자연코퍼스 faculty 측정(p9).**
 ② 사전등록표 동결(위 통과기준·below-chance 행 포함) → 합성 planted-dependency 로 **계기 체크**(faculty 인용
