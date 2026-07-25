@@ -589,6 +589,76 @@ def _ci_phi(Xb, m):
     return float(E.ci_phi_iit4([list(map(int, r)) for r in Xb], list(range(m))))
 
 
+def field_loop_eval_oow(model, fl, val_bytes, mask, device="cpu", seed=0):
+    """H_9957 NATURAL-corpus carriage DV. Natural text plants no payload byte, so the claim cannot rest on
+    a single scored position; it rests on a SPECIFICITY CONTRAST measured on the same cells:
+
+        Delta_OOW     = CE(no field) - CE(field)  at positions whose >=min_match copy-anchor lies OUT of
+                        the current block but inside the cell   (only the field can reach it)
+        Delta_inblock = the same at positions whose anchor lies INSIDE the block (the trunk window reaches
+                        it by itself) -> a field that helps everything is generic capacity, not carriage
+
+    Arms per position: aligned (the row's own grown field) / yoked (rows' fields deranged = a WRONG cell's
+    trajectory) / sever (no residual at all). Grows the field over each cell exactly as training does.
+    The predictor of byte p lives at local index i-1, so positions at a block start are excluded by the
+    mask builder (the off-by-one that once made every arm read the same constant)."""
+    import torch
+    import torch.nn.functional as F
+    block = int(mask["block"])
+    doc_len = int(mask["doc_len"])
+    cells = mask["positions"]
+    nblk_cell = doc_len // block
+    B = fl.B
+    fl.to(device)
+    core_m = model.module if hasattr(model, "module") else model
+    emb_w = getattr(core_m, "embed", None)
+    emb_rms = (float(emb_w.weight.detach().float().pow(2).mean().sqrt()) if emb_w is not None else 1.0)
+    vec = (fl.kind == "coupled" and fl.write == "vector")
+    data = np.frombuffer(val_bytes, dtype=np.uint8)
+    ncell = min(len(cells), len(data) // doc_len)
+    acc = {a: {"oow": [], "inblock": []} for a in ("aligned", "yoked", "sever")}
+
+    def _logits(xb, res):
+        r = None if res is None else (res * emb_rms).unsqueeze(1)
+        with torch.no_grad():
+            return model(xb.to(device), None, emb_residual=r)["logits"].float()      # [B, V, T]
+
+    for c0 in range(0, ncell - B + 1, B):                       # B cells walk in parallel (rows)
+        rows = list(range(c0, c0 + B))
+        for arm in ("aligned", "yoked", "sever"):
+            fl.reset()
+            fl.yoked = (arm == "yoked")
+            for b in range(nblk_cell):
+                xs = np.stack([data[r * doc_len + b * block:(r * doc_len + b * block) + block] for r in rows])
+                xb = torch.tensor(xs.astype(np.int64))
+                yb = torch.tensor(np.stack([data[r * doc_len + b * block + 1:
+                                                 r * doc_len + b * block + block + 1] for r in rows]
+                                           ).astype(np.int64))
+                res = None if arm == "sever" else fl.residual()
+                lg = _logits(xb, res)
+                ce_bt = F.cross_entropy(lg, yb.to(device), reduction="none").cpu().numpy()   # [B, T]
+                for ri, r in enumerate(rows):                   # harvest this block's masked positions
+                    for kind in ("oow", "inblock"):
+                        for p in cells[r][kind]:
+                            if b * block <= p < (b + 1) * block:
+                                i = p - b * block
+                                if i >= 1:
+                                    acc[arm][kind].append(float(ce_bt[ri, i - 1]))
+                fl.writeback(ce_bt if vec else ce_bt.mean(axis=1), np.zeros(B))
+    out = {"cells_scored": (ncell // B) * B, "B": B}
+    for arm in ("aligned", "yoked", "sever"):
+        for kind in ("oow", "inblock"):
+            v = acc[arm][kind]
+            out[f"{arm}_{kind}"] = float(np.mean(v)) if v else float("nan")
+            out[f"n_{arm}_{kind}"] = len(v)
+    base = min(out["sever_oow"], out["yoked_oow"])
+    out["delta_oow"] = float(base - out["aligned_oow"])
+    out["delta_inblock"] = float(min(out["sever_inblock"], out["yoked_inblock"]) - out["aligned_inblock"])
+    out["specificity"] = float(out["delta_oow"] - out["delta_inblock"])
+    out["gamma"] = float(fl.gamma.detach())
+    return out
+
+
 def field_loop_phi(model, fl, data_bytes, mask, device="cpu", seed=0, n_blocks=400, boot=0):
     """H_9957 MISSION DV (fable): does necessity force integration? Under monopoly carriage (the field
     is the SOLE out-of-window carrier, CE NEEDS it), is the CE-EARNED coupled-cell state INTEGRATED
