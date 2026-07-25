@@ -275,6 +275,20 @@ def fit_and_score(items, heldout, b_vec=None, kernel="r0", kappa=1.0):
 
     cst = 0.0
     uA = vB = None
+    blk = None
+    if kernel == "r0b":
+        # H_9972 — the FROZEN two-block gate. delta is allowed to differ between two stem blocks, and
+        # the block label is a PRE-REGISTERED covariate, not a fitted per-cell table:
+        #     C_A = 1[ |alpha_A| > median(|alpha|) ]      "evaluative" vs "neutral"
+        # Why this is legal on an UNSEEN cell -- the thing that kills the forbidden delta_AB table:
+        # alpha_A is fitted from the stem's B=0 TRAIN rows, and make_heldout holds out only B=1 rows
+        # of stems that ALSO have B=0 rows. So every held-out stem already has a block label before
+        # its B=1 cell is scored; nothing about the held-out cell is used to build it.
+        # Cost: +1 DOF (two scalars instead of one) -- caught by G-PEDESTAL/G-DOF run through THIS
+        # kernel on an additive-truth world. The covariate must be frozen BEFORE any natural read
+        # (burned-gate law); |alpha| median split is the pre-registered choice and is not tuned.
+        med = float(np.median(np.abs(alpha)))
+        blk = (np.abs(alpha) > med).astype(np.int64)
     if kernel == "r1":
         z_tr_all = alpha[A[tr]] + np.where(B[tr] == 1, g1, g0)
         cst = _phi_c(z_tr_all, kappa)
@@ -294,12 +308,24 @@ def fit_and_score(items, heldout, b_vec=None, kernel="r0", kappa=1.0):
     a_t, b_t, t_t = alpha[A[trn]], B[trn], T[trn]
     bas_t, gam_t = _basis(a_t, b_t, A[trn], B[trn])
     grid = np.linspace(-3.0, 3.0, 121)
-    delta = float(grid[int(np.argmin([_ce(a_t + gam_t + d * bas_t, t_t) for d in grid]))]) \
-        if trn.sum() > 0 else 0.0
+    d_blk = None
+    if kernel == "r0b":
+        # Two deltas, one per FROZEN block. The blocks partition the rows, so the CE is separable and
+        # each delta is a plain 1-D grid fit on its own rows -- +1 DOF total, not a per-cell table.
+        d_blk = np.zeros(2)
+        for c in (0, 1):
+            m = blk[A[trn]] == c
+            d_blk[c] = float(grid[int(np.argmin([_ce(a_t[m] + gam_t[m] + d * bas_t[m], t_t[m])
+                                                 for d in grid]))]) if m.sum() > 0 else 0.0
+        delta = float(np.mean(d_blk))          # a display summary only; scoring uses both
+    else:
+        delta = float(grid[int(np.argmin([_ce(a_t + gam_t + d * bas_t, t_t) for d in grid]))]) \
+            if trn.sum() > 0 else 0.0
 
     a_ho, b_ho, t_ho = alpha[A[heldout]], B[heldout], T[heldout]
     bas_ho, gam_ho = _basis(a_ho, b_ho, A[heldout], B[heldout])
-    return _ce(a_ho + gam_ho, t_ho), _ce(a_ho + gam_ho + delta * bas_ho, t_ho), delta
+    dv = d_blk[blk[A[heldout]]] if kernel == "r0b" else delta
+    return _ce(a_ho + gam_ho, t_ho), _ce(a_ho + gam_ho + dv * bas_ho, t_ho), delta
 
 
 def _stratified_shuffle_B(B, T, rng):
@@ -474,7 +500,7 @@ def synth(rng, n_stems, n_rows, mode):
     return np.stack([A, B, T], axis=1)
 
 
-def synth_hetero(rng, n_stems, n_rows, rho, a0=1.0):
+def synth_hetero(rng, n_stems, n_rows, rho, a0=1.0, align=False):
     """H_9971 — a HETEROGENEOUS operator: only a fraction `rho` of stems flips polarity under B=1.
 
     Why a separate arm. Every kernel here commits to ONE global delta shared by all stems, so the
@@ -492,18 +518,31 @@ def synth_hetero(rng, n_stems, n_rows, rho, a0=1.0):
     rho=1 reproduces the xor world (every stem flips) and rho=0 the pedestal (truth additive), which
     is the arm's own built-in self-check. Returns (items, C) -- C is what the oracle reference uses."""
     pol = rng.integers(0, 2, size=n_stems)
-    h = [int(hashlib.sha256(("earned-hetero-v1|%d" % a).encode()).hexdigest()[:16], 16)
-         for a in range(n_stems)]
-    C = np.zeros(n_stems, dtype=np.int64)
-    for p in (0, 1):
-        idx = np.flatnonzero(pol == p)
-        k = int(round(rho * len(idx)))
-        if k:
-            C[sorted(idx, key=lambda a: h[a])[:k]] = 1
     A = rng.integers(0, n_stems, size=n_rows)
     B = rng.integers(0, 2, size=n_rows)
     s = np.where(pol == 1, 1.0, -1.0)
-    z = a0 * s[A] * (1.0 - 2.0 * B * C[A])
+    C = np.zeros(n_stems, dtype=np.int64)
+    if align:
+        # ALIGNED variant — the flip block is the HIGH-polarity-strength half, so a frozen |alpha|
+        # split CAN recover it. This is the MATCHED POSITIVE CONTROL for a covariate-aware kernel
+        # (r0b): in the default variant C_A is orthogonal to alpha by construction, so NO frozen
+        # covariate could ever find it and a covariate-aware kernel would fail there for a reason
+        # that says nothing about the kernel. It is also the realistic story: evaluative words carry
+        # strong polarity AND invert under negation; neutral words carry little and do not.
+        strength = rng.uniform(0.3, 2.0, size=n_stems)
+        k = int(round(rho * n_stems))
+        if k:
+            C[np.argsort(-strength)[:k]] = 1
+        z = strength[A] * s[A] * (1.0 - 2.0 * B * C[A])
+    else:
+        h = [int(hashlib.sha256(("earned-hetero-v1|%d" % a).encode()).hexdigest()[:16], 16)
+             for a in range(n_stems)]
+        for p in (0, 1):
+            idx = np.flatnonzero(pol == p)
+            k = int(round(rho * len(idx)))
+            if k:
+                C[sorted(idx, key=lambda a: h[a])[:k]] = 1
+        z = a0 * s[A] * (1.0 - 2.0 * B * C[A])
     T = (rng.random(n_rows) < 1.0 / (1.0 + np.exp(-z))).astype(np.int64)
     return np.stack([A, B, T], axis=1), C
 
@@ -601,7 +640,8 @@ def earned_run(argv):
     print("=== anima evaluate --earned — corpus-level operator instrument (engine-native) ===")
     _kdesc = {"r0": "  (gating / sign-flip — the XOR class: negation·concession·irony · 1 global scalar)",
               "r1": "  (threshold / order on the SUM — 1 global scalar · MEASURED BLIND on order truth)",
-              "r2": "  (general order on the DIFFERENCE — buys |A|+|B| DOF ⇒ G-DOF gate is mandatory)"}
+              "r2": "  (general order on the DIFFERENCE — buys |A|+|B| DOF ⇒ G-DOF gate is mandatory)",
+              "r0b": "  (FROZEN two-block gate: delta differs across |alpha| median split — +1 DOF ⇒ G-DOF mandatory)"}
     print("kernel: " + kernel + _kdesc.get(kernel, ""))
     _ndesc = {"parametric": "  (additive parametric bootstrap — the marginal pathology cancels in both arms)",
               "real": "  (REAL-INPUT swap: the null AND both control arms are regenerated under the "
@@ -668,10 +708,10 @@ def earned_run(argv):
     # ADDITIVE-TRUTH world (interaction genuinely zero) through the FULL-DOF kernel and demand it
     # still reads zero. A failure here means the operator invents signal, and no main bar may be read.
     dof_ok = True
-    if kernel == "r2":
+    if kernel in ("r2", "r0b"):
         dof_ok = abs(e_a) <= DELTA_EQ    # e_a was measured with THIS kernel (full DOF) already
-        print("G-DOF       additive world through FULL-DOF r2  |EARNED|=%.5f <= %.2f   %s"
-              % (abs(e_a), DELTA_EQ,
+        print("G-DOF       additive world through FULL-DOF %-3s |EARNED|=%.5f <= %.2f   %s"
+              % (kernel, abs(e_a), DELTA_EQ,
                  "PASS — the added capacity does not invent signal"
                  if dof_ok else "FAIL — r2 hallucinates a held-out gain; demote to r1"))
         res["G_DOF"] = {"earned_additive_full_dof": e_a, "pass": bool(dof_ok)}
@@ -684,14 +724,15 @@ def earned_run(argv):
     het_spec = evaluate_strval(argv, "--calib-hetero", "")
     if het_spec:
         a0 = float(evaluate_strval(argv, "--calib-a0", "1.0"))
+        halign = "--calib-hetero-align" in argv
         print("")
         print("G-HET       HETEROGENEOUS operator — only a fraction rho of stems flips under B=1"
-              "  (a0=%.2f · kernel %s)" % (a0, kernel))
+              "  (a0=%.2f · kernel %s%s)" % (a0, kernel, " · ALIGNED to |alpha|" if halign else ""))
         print("            SCOPE PROBE, NOT A GATE. blind = what the shipped covariate-free estimator")
         print("            reads · oracle = generous UPPER BOUND for one that KNEW the frozen block.")
         het_rows = []
         for r in [float(x) for x in het_spec.split(",") if x.strip()]:
-            sh, Cb = synth_hetero(rng, 200, 60000, r, a0)
+            sh, Cb = synth_hetero(rng, 200, 60000, r, a0, halign)
             ho_h, _ = make_heldout(sh, rng)
             e_b, _, _, _, d_h = earned(sh, ho_h, rng, min(200, k_perm), null, kernel, kappa)
             e_o = _hetero_oracle(sh, Cb, ho_h, rng, min(200, k_perm), null, kernel, kappa)
@@ -702,7 +743,7 @@ def earned_run(argv):
                   % (r, e_b, d_h, e_o, e_o - e_b,
                      "BLIND — a real transferable operator sits under the %.2f margin" % DELTA_EQ
                      if blindspot else "seen"))
-        res["G_HET"] = {"a0": a0, "kernel": kernel, "rows": het_rows,
+        res["G_HET"] = {"a0": a0, "kernel": kernel, "aligned": bool(halign), "rows": het_rows,
                         "note": "scope probe, not a gate; oracle is a generous reference, not a shipped arm"}
 
     # ---- G-POWER (census + null sd, measured BEFORE the effect is read) -------------------
