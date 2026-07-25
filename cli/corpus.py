@@ -30,6 +30,7 @@ Usage:
   anima corpus flat       --out flat.txt  --held-out 0,1 --seed 7   # same seed => content-matched control
 """
 import json
+import math
 import collections
 import hashlib
 import os
@@ -1250,7 +1251,9 @@ def _parse_args(argv):
             #   VAL scored-byte offsets for `evaluate --field-loop-eval --score-mask`.
             #   INSTRUMENT CHECK ONLY (synthetic · known ground truth) — never a faculty (p9).
             "fc_k": 4, "fc_block": 128, "fc_key_blocks": 2, "fc_filler_blocks": 2, "fc_sites": 3,
-            "fc_docs": 4096, "fc_val_docs": 512, "fc_mask": None}
+            "fc_docs": 4096, "fc_val_docs": 512, "fc_mask": None,
+            "fc_natural": None, "fc_oow_audit": False, "fc_oow_min_match": 8,
+            "fc_oow_order": 4, "fc_oow_bytes": 4 << 20, "fc_audit_out": None, "fc_doc_len_audit": 0}
     i = 1
     while i < len(argv):
         a = argv[i]
@@ -1388,6 +1391,20 @@ def _parse_args(argv):
             opts["fc_val_docs"] = int(argv[i + 1]); i += 2          # H_9957 fieldctl: held-out val docs
         elif a == "--mask":
             opts["fc_mask"] = argv[i + 1]; i += 2                   # H_9957 fieldctl: val score-mask out
+        elif a == "--natural":
+            opts["fc_natural"] = argv[i + 1]; i += 2                # H_9957 G0: natural corpus path
+        elif a == "--oow-audit":
+            opts["fc_oow_audit"] = True; i += 1                     # H_9957 G0: out-of-window supply audit
+        elif a == "--oow-min-match":
+            opts["fc_oow_min_match"] = int(argv[i + 1]); i += 2     # H_9957 G0: copy-anchor match length
+        elif a == "--oow-order":
+            opts["fc_oow_order"] = int(argv[i + 1]); i += 2         # H_9957 G0: n-gram order for S_OOW
+        elif a == "--oow-bytes":
+            opts["fc_oow_bytes"] = int(argv[i + 1]); i += 2         # H_9957 G0: audit slice size
+        elif a == "--audit":
+            opts["fc_audit_out"] = argv[i + 1]; i += 2              # H_9957 G0: audit JSON out
+        elif a == "--field-doc-len":
+            opts["fc_doc_len_audit"] = int(argv[i + 1]); i += 2     # H_9957 G0: cell length (bytes)
         elif a == "--arm":
             opts["arm"] = argv[i + 1]; i += 2          # H_9694 g6bind: targeted|shuf
         elif a == "--stems-per-episode":
@@ -6484,6 +6501,86 @@ def _fc_entropy_dist(h_target_nats, alphabet=256):
     return p
 
 
+def run_oow_audit(opts):
+    """H_9957 G0 PRE-GATE ($0, CPU, ABORT authority) — does a NATURAL corpus even SUPPLY out-of-window
+    dependence on the doc-cell grid FIELD-LOOP trains on? The synthetic `fieldctl` control guarantees the
+    field is the ONLY carrier; natural text guarantees nothing, so a later gamma->0 would be VOID ("no
+    monopoly, nothing to measure") rather than a finding. This gate makes that decidable BEFORE any GPU.
+
+    On the held-out tail of the corpus, carve cells of --field-doc-len and blocks of --block, then for every
+    scored position in blocks j>=1 measure two supplies:
+      f_OOW  = fraction of positions whose nearest copy-anchor (an exact --oow-min-match byte context seen
+               earlier in the SAME cell) lies OUTSIDE the current block  -> episodic/copyable supply
+      S_OOW  = mean bits/byte a plug-in order-k byte model GAINS when its counts come from the whole cell
+               prefix instead of the current block only                  -> distributional supply
+    Reports both per --field-doc-len. The frozen ABORT rule lives in the H_9957 card, not here: this
+    command only measures. p9: a natural-corpus number, but a SUPPLY fact about the corpus, not a faculty.
+    """
+    import json as _json
+    from collections import defaultdict
+    path = os.path.expanduser(opts["fc_natural"] or "")
+    if not path or not os.path.exists(path):
+        raise SystemExit("fieldctl --oow-audit needs --natural <corpus path>")
+    block = int(opts["fc_block"])
+    doc_len = int(opts["fc_doc_len_audit"]) if opts.get("fc_doc_len_audit") else int(opts["fc_block"]) * 11
+    L = int(opts["fc_oow_min_match"])
+    k = int(opts["fc_oow_order"])
+    cap = int(opts["fc_oow_bytes"])
+    alpha = 0.5
+    raw = open(path, "rb").read()
+    tail = raw[int(len(raw) * 0.8):][:cap]                      # held-out tail slice (never the train head)
+    ncell = len(tail) // doc_len
+    if ncell < 1:
+        raise SystemExit(f"audit slice {len(tail)}B < one cell ({doc_len}B) — raise --oow-bytes")
+    n_scored = n_oow = 0
+    bits_block = bits_cell = 0.0
+    for c in range(ncell):
+        cell = tail[c * doc_len:(c + 1) * doc_len]
+        last = {}                                               # L-gram -> last start index inside the cell
+        cnt_cell = defaultdict(lambda: [0] * 256)               # k-gram ctx -> byte counts (whole cell)
+        cnt_blk = defaultdict(lambda: [0] * 256)                # same, reset at each block boundary
+        for p in range(len(cell)):
+            b = cell[p]
+            blk_start = (p // block) * block
+            if p % block == 0:
+                cnt_blk = defaultdict(lambda: [0] * 256)        # block-only model sees nothing before it
+            if p >= block and p >= max(L, k):
+                n_scored += 1
+                key = cell[p - L:p]                             # copy-anchor: has this context appeared?
+                q = last.get(key)
+                if q is not None and q < blk_start:
+                    n_oow += 1                                  # anchor lies OUT of the current block
+                ctx = cell[p - k:p]
+                cc, cb = cnt_cell.get(ctx), cnt_blk.get(ctx)
+                tot_c = (sum(cc) if cc else 0) + alpha * 256
+                tot_b = (sum(cb) if cb else 0) + alpha * 256
+                pc = ((cc[b] if cc else 0) + alpha) / tot_c
+                pb = ((cb[b] if cb else 0) + alpha) / tot_b
+                bits_cell += -math.log2(pc)
+                bits_block += -math.log2(pb)
+            if p >= L:
+                last[cell[p - L:p]] = p - L
+            if p >= k:
+                cnt_cell[cell[p - k:p]][b] += 1
+                cnt_blk[cell[p - k:p]][b] += 1
+    f_oow = (n_oow / n_scored) if n_scored else 0.0
+    s_oow = ((bits_block - bits_cell) / n_scored) if n_scored else 0.0
+    out = {"format": "oow-audit", "corpus": path, "corpus_bytes": len(raw), "audit_bytes": len(tail),
+           "block": block, "doc_len": doc_len, "cells": ncell, "min_match": L, "ngram_order": k,
+           "scored_positions": n_scored, "f_oow": f_oow, "s_oow_bits_per_byte": s_oow}
+    print(f"[oow-audit] {os.path.basename(path)} · slice {len(tail)}B · cells {ncell} × doc_len {doc_len}B "
+          f"· block {block}B")
+    print(f"[oow-audit]   f_OOW = {f_oow * 100:.2f}%  (scored {n_scored} positions · copy-anchor "
+          f">={L}B out-of-block but in-cell)")
+    print(f"[oow-audit]   S_OOW = {s_oow:+.4f} bits/byte  (order-{k} plug-in: cell-prefix counts vs "
+          f"block-only counts)")
+    print("[oow-audit] verdict is NOT computed here — read it against the FROZEN rule in the H_9957 card.")
+    dest = opts["fc_audit_out"] or (opts["out"] or "oow") + ".audit.json"
+    with open(dest, "w", encoding="utf-8") as f:
+        _json.dump(out, f, ensure_ascii=False, indent=1)
+    print(f"[oow-audit] wrote {dest}")
+
+
 def run_fieldctl(opts):
     """H_9957 DIFFICULTY-KEY positive control for `evaluate --field-loop-eval` (fable design).
     Doc layout (block-aligned, uniform length): [key_blocks of i.i.d. p_k bytes | sites x
@@ -6576,6 +6673,9 @@ def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
     if fmt == "fieldctl":
+        if opts["fc_oow_audit"]:
+            run_oow_audit(opts)                       # H_9957 G0 pre-gate (ABORT authority, $0)
+            return
         run_fieldctl(opts)
         return
     if fmt == "ngram-audit" or opts["ngram_recoverable_audit"]:
