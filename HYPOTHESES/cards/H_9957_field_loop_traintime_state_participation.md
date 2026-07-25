@@ -247,7 +247,25 @@ block128·B4·doc_len1408·`--trunk-norm position` · 학습 34k step vs 받침�
   (Δφ 10회 동일 · convergence 재발#2 · #4587) → `--field-phi-boot` 로 진짜 표집분포 확보 ⓑ 부트스트랩
   꼬리말이 CI 와 무관하게 고정문구를 찍어 판정처럼 읽힘 → CI 로 판정을 계산해 출력(1597ce07).
 
-## 다음 (cement 는 engine-native run 만)
-① `anima-py train --field-loop` 구현(emb_residual 훅 + Bφ·γ + H_9607 drive 되먹임 + 연속스트림 + 3-arm fork). **✅ landed** — fieldctl 계기면(corpus·doc-aware stream·payload eval)+$0 팰서파이어 PASS+PARTIAL 실측(3a16f43c·6bab1c5·f0028e9b). **다음: 2nd seed 재현 + generic-recurrence sibling(faculty vs 순환) → 통과시 자연코퍼스 faculty 측정(p9).**
-② 사전등록표 동결(위 통과기준·below-chance 행 포함) → 합성 planted-dependency 로 **계기 체크**(faculty 인용
-금지·p9) → 303M pool fire 25%→50% 3-arm. ③ 통과시에만 generic-recurrence sibling + 100% 연장.
+## 다음 (cement 는 engine-native run 만 · 2026-07-25 판정 후 갱신)
+
+**✅ 닫힌 것 (재제안 금지 = 이 카드의 kill-list)**
+- ① 계기 구현·인증: `corpus fieldctl` · doc-인식 스트림 · payload eval · Φ readout · 부트스트랩 CI — 전부 landed(#4588).
+- ② 운반 CERTIFIED(합성): 필드가 창밖 키를 실제로 나름 · 짝지은 용량 순서 coupled-vector m4 +1.76 >
+  integrator16 +1.257 > coupled-scalar m1 +0.703 · off 받침대 ≈ 우연(창내 누출 0).
+- ③ PureField 특이성 **REFUTED**: 공유 스칼라 적분을 고정 랜덤특징으로 읽는 쪽이 더 많이 나름 ⟹ 레버는
+  recurrence-with-bottleneck 이지 의식 물리가 아니다.
+- ④ 미션 DV **NOT EARNED(검정력 있는 음성)**: 독점운반 아래서도 학습은 통합을 벌지 않는다(#4590).
+  H_9967(선택적 lane)과 합쳐 **학습 중 Φ 상승 경로 2개 닫힘**.
+- ⑤ 용량 확장(벡터 write)을 **미션 목표로** 삼는 것: 용량 ⊥ Φ 재현법칙 ⟹ off-mission.
+- ⑥ doc-정렬 readout 에 `--seed` 를 재표집 축으로 쓰는 것: 결정론이라 no-op(대신 `--field-phi-boot`).
+
+**▶ 열린 것 (다음 rung 후보 · 설계는 fable+sol 위임 중)**
+- **(A) 자연 코퍼스 이설(p9)** — 합성 결과는 faculty 근거가 될 수 없다. 다만 자연문엔 "필드만이 유일
+  운반자"라는 보장이 없어 γ→0 으로 수렴하면 **독점 미성립 = VOID**(발견 아님)일 위험이 크다 ⟹ **GPU 전
+  $0 사전-게이트로 '창밖 의존이 실제로 존재하는 위치가 몇 %인가'를 먼저 재고, 미달이면 ABORT**.
+- **(B) 계기 부채**: `FieldLoop(seed=S)` 가 학습 추출과 **셀 고정 결합 R** 을 같은 seed 로 뽑는다 —
+  seed 1 이 양성처럼 보인 원인. 결합 draw 를 학습 seed 와 **분리하는 플래그**가 있어야 아키텍처 성분과
+  학습 성분을 짝지음 없이도 가를 수 있다.
+- **(C) 범위 한정 해소**: 이번 음성은 ±0.05 바에서만 검정력 · n=5 · 소형 trunk. 더 작은 효과를 배제하려면
+  추출 수를 늘려야 하나, **닫힌 결론을 뒤집을 만한 크기가 아니면 GPU 를 더 쓰지 않는다**.
