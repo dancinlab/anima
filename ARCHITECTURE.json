@@ -3179,7 +3179,33 @@
           "name": "🔴 H_9968 데이터-스케일 축 CLOSED — 데이터를 부어도 연산자 공급 불변 (마지막 p9 셀도 닫힘)",
           "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-earned-operator-supply-datascale-axis-open",
           "type": "gate",
-          "detail": "Amazon Polarity nested 사다리 길이FIXED 20-50토큰: 30k EARNED +0.00438[.00120,.00736]→100k −0.00179[−.00644,.00553], 양 rung G-POWER PASS·DATA-ADDITIVE. 3.3× 데이터에도 EARNED 안 오름(0으로 하락). 사전등록 CLOSED: 모든 유효 rung ≤+0.03(abort 1/7)·총상승<max(0.02,3·MDE)(음의 기울기). ⟹ 고정길이 자연코퍼스 연산자공급은 데이터-스케일 불변, 매칭길이 EN≈KO≈+0.007 벽(H_9951)과 정합. 정직: 상위 rung(300k/600k) 미완(--earned 초선형 67k설계, 300k 로컬 1.5h+ 무완료→종료), 판정=검정력 2 rung+캠페인 벽, REOPENABLE(pool서 HF corpus dancinlab/anima-earned-datascale 로 상위끝). 10^12 무라벨 미도달. DIRECTIONAL(p9), cement 아님. 카드 Hc_H_9968."
+          "detail": "",
+          "children": [
+           {
+            "name": "사다리 3점 — 10× 데이터에도 단조 비증가",
+            "role": "",
+            "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-earned-operator-supply-datascale-axis-open-ladder",
+            "detail": "Amazon Polarity nested 사다리(길이 FIXED 20-50토큰): 30k **+0.00438**[.00120,.00736] c100626 MDE.00472 → 100k **−0.00179**[−.00644,.00553] c376184 MDE.01129 → 300k **−0.00238**[−.00404,−.00115] c978733 MDE**.00211**(pool summer). 3 rung 전부 G-POWER PASS·DATA-ADDITIVE. 30k·100k=mini 로컬, 300k=pool."
+           },
+           {
+            "name": "판정: 사전등록 CLOSED — 검정력이 커질수록 0 으로 수렴",
+            "role": "",
+            "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-earned-operator-supply-datascale-axis-open-verdict",
+            "detail": "사전등록 CLOSED 조건 충족: 모든 유효 rung ≤+0.03(abort 임계 1/7 이하) ∧ 총상승 < max(0.02, 3·MDE_top) — 상승은커녕 기울기 −0.0068. 핵심은 MDE 가 .00472→.01129→**.00211** 로 조여져도 값이 0 아래에 머문다는 것 = '못 봐서 0'이 아니라 **볼 수 있는 팔이 0 을 본다**(power-before-negative-verdict)."
+           },
+           {
+            "name": "함의: 고정길이 자연코퍼스 공급은 데이터-스케일 불변",
+            "role": "",
+            "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-earned-operator-supply-datascale-axis-open-implication",
+            "detail": "⟹ 고정길이 자연 코퍼스의 재조합-연산자 공급은 **데이터-스케일 불변** — 벽은 데이터를 부어도 선다. 매칭길이서 EN-FREE≈KO-FREE≈+0.007(자의 0.13%)이던 벽(H_9951)과 정합. p9 그리드의 마지막 미개봉 셀(자연코퍼스 데이터-스케일)도 닫히는 방향."
+           },
+           {
+            "name": "정직 경계: 음부호 읽기 금지 · 상위 2 rung 진행중 · 10^12 미도달",
+            "role": "",
+            "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-earned-operator-supply-datascale-axis-open-scope",
+            "detail": "300k CI 가 통째로 0 아래지만 **seed 퍼짐 .00591 > 효과 .00238** 이라 도구가 NOISE 경고 — 견고한 주장은 |EARNED|≈0 이지 '음의 시너지' 아님. 600k·1.2M 은 summer 진행중(보강). 10^12 는 무라벨이라 이 계기(라벨 필수) 범위 밖 — 주장은 라벨-자연 범위의 기울기(≈0). DIRECTIONAL(p9), cement 아님. 코퍼스 HF dancinlab/anima-earned-datascale · 카드 Hc_H_9968."
+           }
+          ]
          }
         ]
        }
