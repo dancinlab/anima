@@ -6534,6 +6534,14 @@ def run_oow_audit(opts):
         raise SystemExit(f"audit slice {len(tail)}B < one cell ({doc_len}B) — raise --oow-bytes")
     n_scored = n_oow = 0
     bits_block = bits_cell = 0.0
+    # PEDESTAL for S_OOW (supply-density-is-an-upper-bound): the cell-prefix model also just has MORE
+    # counts than the block-only model, so a positive gain can be pure count-volume rather than real
+    # long-range structure. The yoked arm gives the cell model the SAME amount of context taken from a
+    # DIFFERENT cell — matched volume, wrong content. S_OOW_net = S_OOW - S_OOW_yoked is the part that
+    # only in-cell history can supply.
+    bits_yoke = 0.0
+    n_yoke = 0
+    cnt_prev = None
     for c in range(ncell):
         cell = tail[c * doc_len:(c + 1) * doc_len]
         last = {}                                               # L-gram -> last start index inside the cell
@@ -6558,22 +6566,33 @@ def run_oow_audit(opts):
                 pb = ((cb[b] if cb else 0) + alpha) / tot_b
                 bits_cell += -math.log2(pc)
                 bits_block += -math.log2(pb)
+                if cnt_prev is not None:                        # matched-volume, wrong-cell pedestal
+                    cy = cnt_prev.get(ctx)
+                    tot_y = (sum(cy) if cy else 0) + alpha * 256
+                    bits_yoke += -math.log2(((cy[b] if cy else 0) + alpha) / tot_y)
+                    n_yoke += 1
             if p >= L:
                 last[cell[p - L:p]] = p - L
             if p >= k:
                 cnt_cell[cell[p - k:p]][b] += 1
                 cnt_blk[cell[p - k:p]][b] += 1
+        cnt_prev = cnt_cell                                     # this cell becomes the next cell's pedestal
     f_oow = (n_oow / n_scored) if n_scored else 0.0
     s_oow = ((bits_block - bits_cell) / n_scored) if n_scored else 0.0
+    s_yoke = ((bits_block - bits_yoke) / n_yoke) if n_yoke else 0.0   # gain from a WRONG cell's history
+    s_net = s_oow - s_yoke                                            # the part only THIS cell supplies
     out = {"format": "oow-audit", "corpus": path, "corpus_bytes": len(raw), "audit_bytes": len(tail),
            "block": block, "doc_len": doc_len, "cells": ncell, "min_match": L, "ngram_order": k,
-           "scored_positions": n_scored, "f_oow": f_oow, "s_oow_bits_per_byte": s_oow}
+           "scored_positions": n_scored, "f_oow": f_oow, "s_oow_bits_per_byte": s_oow,
+           "s_oow_yoked_bits_per_byte": s_yoke, "s_oow_net_bits_per_byte": s_net}
     print(f"[oow-audit] {os.path.basename(path)} · slice {len(tail)}B · cells {ncell} × doc_len {doc_len}B "
           f"· block {block}B")
     print(f"[oow-audit]   f_OOW = {f_oow * 100:.2f}%  (scored {n_scored} positions · copy-anchor "
           f">={L}B out-of-block but in-cell)")
     print(f"[oow-audit]   S_OOW = {s_oow:+.4f} bits/byte  (order-{k} plug-in: cell-prefix counts vs "
           f"block-only counts)")
+    print(f"[oow-audit]   S_OOW yoked pedestal = {s_yoke:+.4f} (same volume, WRONG cell's history) "
+          f"-> S_OOW_net = {s_net:+.4f} bits/byte")
     print("[oow-audit] verdict is NOT computed here — read it against the FROZEN rule in the H_9957 card.")
     dest = opts["fc_audit_out"] or (opts["out"] or "oow") + ".audit.json"
     with open(dest, "w", encoding="utf-8") as f:
