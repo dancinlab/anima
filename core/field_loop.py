@@ -137,7 +137,8 @@ class FieldLoop:
     running g_mu, a follow-on)."""
 
     def __init__(self, batch_rows, d, arm="purefield16", gate_rho=1.0, hidden=64,
-                 seed=0, leaky=1.0 / 400.0, drive_gain=-0.6, write="scalar", cells=1):
+                 seed=0, leaky=1.0 / 400.0, drive_gain=-0.6, write="scalar", cells=1,
+                 coupling_seed=None):
         import pure_field as PF
         import clmg as G
         import torch
@@ -150,6 +151,13 @@ class FieldLoop:
         self.leaky = float(leaky)
         self.drive_gain = float(drive_gain)
         self.rng = np.random.default_rng(seed)
+        # H_9957 trap: ONE seed used to draw both the training run AND the FIXED architecture
+        # (coupling R, frozen features). A seed that happened to draw a more-integrated R then
+        # reads as "training earned integration" — seed 1 gave Δφ +0.124 whose own near-init
+        # pedestal was +0.076. coupling_seed=None keeps the legacy single-stream draw
+        # BYTE-IDENTICAL; passing it makes the architecture draw disjoint from the training draw.
+        self.coupling_seed = None if coupling_seed is None else int(coupling_seed)
+        self.crng = self.rng if coupling_seed is None else np.random.default_rng(int(coupling_seed))
         self.yoked = arm.endswith("-yoked")
         base = arm[:-len("-yoked")] if self.yoked else arm
         self.kind = {"off": "off", "purefield16": "purefield", "integrator16": "integrator",
@@ -157,10 +165,10 @@ class FieldLoop:
         self.pf = [PF.pure_field_new() for _ in range(self.B)]        # per-row field
         self.I = np.zeros(self.B, dtype=np.float64)                   # per-row leaky A<->G integral
         # integrator16 (sibling rung 1): FIXED random features of I, C_DIM-wide, frozen at seed (no cell)
-        self.int_w = self.rng.standard_normal(G.C_DIM) if self.kind == "integrator" else None
-        self.int_b = self.rng.standard_normal(G.C_DIM) if self.kind == "integrator" else None
+        self.int_w = self.crng.standard_normal(G.C_DIM) if self.kind == "integrator" else None
+        self.int_b = self.crng.standard_normal(G.C_DIM) if self.kind == "integrator" else None
         # gru16-frozen (sibling rung 2): FIXED random GRU-16, scalar-driven, C_DIM-wide bounded state
-        self.gru = _FrozenGRU(G.C_DIM, self.rng) if self.kind == "gru-frozen" else None
+        self.gru = _FrozenGRU(G.C_DIM, self.crng) if self.kind == "gru-frozen" else None
         self.gru_h = np.zeros((self.B, G.C_DIM)) if self.kind == "gru-frozen" else None
         # coupled (H_9957 Φ-measurability arm · fable): m coupled leaky cells, log-spaced τ, a FIXED weak
         # rotation R so integration is available-by-construction (Φ non-vacuous); write = first m DCT modes
@@ -173,7 +181,7 @@ class FieldLoop:
             tau = np.array([400.0]) if self.m == 1 else np.logspace(2.0, np.log10(6400.0), self.m)
             self.lam = 1.0 / tau                                     # per-cell leak (m=1 -> 1/400)
             self.Ivec = np.zeros((self.B, self.m), dtype=np.float64)
-            self.R = _fixed_rotation(self.m, self.rng)              # weak fixed cell coupling (I if m=1)
+            self.R = _fixed_rotation(self.m, self.crng)              # weak fixed cell coupling (I if m=1)
             self.Wdct = None                                        # DCT basis [m, T], built when T known
         else:
             self.lam = None; self.Ivec = None; self.R = None; self.Wdct = None
@@ -208,7 +216,7 @@ class FieldLoop:
              "int_w": None if self.int_w is None else self.int_w.tolist(),
              "int_b": None if self.int_b is None else self.int_b.tolist(),
              "gru": None if self.gru is None else self.gru.state(),
-             "write": self.write, "m": self.m,
+             "write": self.write, "m": self.m, "coupling_seed": self.coupling_seed,
              "lam": None if self.lam is None else self.lam.tolist(),
              "R": None if self.R is None else self.R.tolist()}, path)
 
@@ -397,7 +405,7 @@ class _FieldStream:
 
 def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, seed=0,
                      device="cpu", hidden=64, g_fn=None, log_every=25, log=print, doc_len=0,
-                     write="scalar", cells=1):
+                     write="scalar", cells=1, coupling_seed=None):
     """One FIELD-LOOP training run (model-agnostic — cli/train.py --field-loop passes the real
     CLMConvMoE; the $0 smoke passes a tiny stand-in). Per contiguous block:
         residual = FieldLoop.residual()   [B,d] broadcast over T at the embedding site
@@ -410,7 +418,8 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
     immune_memory_recall_reach). Returns (FieldLoop, per-step mean-CE history)."""
     import torch
     import torch.nn.functional as F
-    fl = FieldLoop(B, d, arm=arm, hidden=hidden, seed=seed, write=write, cells=cells).to(device)
+    fl = FieldLoop(B, d, arm=arm, hidden=hidden, seed=seed, write=write, cells=cells,
+                   coupling_seed=coupling_seed).to(device)
     vec_wb = (fl.kind == "coupled" and fl.write == "vector")      # per-byte write needs the [B,T] CE
     core_m = model.module if hasattr(model, "module") else model
     emb_w = getattr(core_m, "embed", None)
