@@ -6542,8 +6542,10 @@ def run_oow_audit(opts):
     bits_yoke = 0.0
     n_yoke = 0
     cnt_prev = None
+    cells_mask = []                                             # per-cell scored positions for the eval DV
     for c in range(ncell):
         cell = tail[c * doc_len:(c + 1) * doc_len]
+        pos_oow, pos_in = [], []
         last = {}                                               # L-gram -> last start index inside the cell
         cnt_cell = defaultdict(lambda: [0] * 256)               # k-gram ctx -> byte counts (whole cell)
         cnt_blk = defaultdict(lambda: [0] * 256)                # same, reset at each block boundary
@@ -6558,6 +6560,10 @@ def run_oow_audit(opts):
                 q = last.get(key)
                 if q is not None and q < blk_start:
                     n_oow += 1                                  # anchor lies OUT of the current block
+                    if p % block:                               # i==0 has no in-block predictor (off-by-one)
+                        pos_oow.append(p)
+                elif q is not None and p % block:
+                    pos_in.append(p)                            # anchor INSIDE the block = matched control
                 ctx = cell[p - k:p]
                 cc, cb = cnt_cell.get(ctx), cnt_blk.get(ctx)
                 tot_c = (sum(cc) if cc else 0) + alpha * 256
@@ -6577,6 +6583,12 @@ def run_oow_audit(opts):
                 cnt_cell[cell[p - k:p]][b] += 1
                 cnt_blk[cell[p - k:p]][b] += 1
         cnt_prev = cnt_cell                                     # this cell becomes the next cell's pedestal
+        import random as _random
+        mrng = _random.Random(1000 + c)                         # bounded, reproducible sample per cell
+        cap_pos = 32
+        sel_o = sorted(mrng.sample(pos_oow, min(cap_pos, len(pos_oow)))) if pos_oow else []
+        sel_i = sorted(mrng.sample(pos_in, min(cap_pos, len(pos_in)))) if pos_in else []
+        cells_mask.append({"oow": [int(x) for x in sel_o], "inblock": [int(x) for x in sel_i]})
     f_oow = (n_oow / n_scored) if n_scored else 0.0
     s_oow = ((bits_block - bits_cell) / n_scored) if n_scored else 0.0
     s_yoke = ((bits_block - bits_yoke) / n_yoke) if n_yoke else 0.0   # gain from a WRONG cell's history
@@ -6594,6 +6606,21 @@ def run_oow_audit(opts):
     print(f"[oow-audit]   S_OOW yoked pedestal = {s_yoke:+.4f} (same volume, WRONG cell's history) "
           f"-> S_OOW_net = {s_net:+.4f} bits/byte")
     print("[oow-audit] verdict is NOT computed here — read it against the FROZEN rule in the H_9957 card.")
+    if opts["fc_mask"]:
+        # The DV needs BOTH the exact bytes and the positions. Natural text has no planted payload, so the
+        # claim rests on a SPECIFICITY contrast: gain at copy-anchor-out-of-block positions vs gain at
+        # in-block-anchored positions of the same cells (a field that helps everything is generic capacity).
+        val_path = (opts["out"] or "oow_nat") + ".val"
+        with open(val_path, "wb") as f:
+            f.write(tail[:ncell * doc_len])
+        mk = {"format": "oow", "block": block, "doc_len": doc_len, "cells": ncell,
+              "min_match": L, "val_bytes_path": val_path, "positions": cells_mask,
+              "n_oow_total": sum(len(c["oow"]) for c in cells_mask),
+              "n_inblock_total": sum(len(c["inblock"]) for c in cells_mask)}
+        with open(opts["fc_mask"], "w", encoding="utf-8") as f:
+            _json.dump(mk, f, ensure_ascii=False)
+        print(f"[oow-audit] wrote {val_path} ({ncell * doc_len} B) + mask {opts['fc_mask']} "
+              f"(OOW {mk['n_oow_total']} · in-block control {mk['n_inblock_total']} positions)")
     dest = opts["fc_audit_out"] or (opts["out"] or "oow") + ".audit.json"
     with open(dest, "w", encoding="utf-8") as f:
         _json.dump(out, f, ensure_ascii=False, indent=1)

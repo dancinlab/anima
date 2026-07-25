@@ -4576,6 +4576,21 @@ def main():
             if a.score_mask:                             # H_9957 fieldctl payload-byte DV (doc/mask-aware)
                 import json as _json
                 mask = _json.load(open(a.score_mask))
+                if mask.get("format") == "oow":          # H_9957 NATURAL carriage DV (no planted payload)
+                    fl = FL.FieldLoop.load(a.field_loop_eval, a.field_b, device=device)
+                    ev = FL.field_loop_eval_oow(model, fl, raw, mask, device=device, seed=a.seed)
+                    p0(f"=== anima-py train --field-loop-eval --score-mask (H_9957 NATURAL OOW DV) === "
+                       f"cells={ev['cells_scored']} B={ev['B']} gamma={ev['gamma']:+.5f}", flush=True)
+                    p0(f"[oow-eval] OOW-anchored   aligned={ev['aligned_oow']:.4f} "
+                       f"yoked={ev['yoked_oow']:.4f} sever={ev['sever_oow']:.4f} "
+                       f"(n={ev['n_aligned_oow']})", flush=True)
+                    p0(f"[oow-eval] in-block ctrl  aligned={ev['aligned_inblock']:.4f} "
+                       f"yoked={ev['yoked_inblock']:.4f} sever={ev['sever_inblock']:.4f} "
+                       f"(n={ev['n_aligned_inblock']})", flush=True)
+                    p0(f"[oow-eval] DELTA_OOW = {ev['delta_oow']:+.5f} · DELTA_INBLOCK = "
+                       f"{ev['delta_inblock']:+.5f} · SPECIFICITY = {ev['specificity']:+.5f} nats "
+                       f"(carriage needs Delta_OOW > 0 AND > Delta_inblock)", flush=True)
+                    return 0
                 if a.field_phi:                          # H_9957 MISSION DV: faithful IIT-4 Φ of the state
                     fl = FL.FieldLoop.load(a.field_loop_eval, a.field_b, device=device)
                     pv = FL.field_loop_phi(model, fl, raw, mask, device=device, seed=a.seed,
