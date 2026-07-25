@@ -3677,6 +3677,11 @@ def main():
                     help="H_9957 MISSION DV (coupled arm): with --field-loop-eval + --score-mask, read "
                          "faithful IIT-4 Φ collapse-Δ of the CE-earned m-cell state (Φ_aligned vs shuffle "
                          "pedestal + time-yoked) — does necessity force integration under monopoly carriage?")
+    ap.add_argument("--field-coupling-seed", type=int, default=-1, dest="field_coupling_seed",
+                    help="H_9957: seed for the FIXED architecture draw (the coupled cells' rotation R, "
+                         "frozen features) — kept DISJOINT from --seed (the training draw). Default -1 = "
+                         "legacy single-stream behaviour (byte-identical). Hold it CONSTANT across a seed "
+                         "sweep so an architecture draw cannot masquerade as learned integration.")
     ap.add_argument("--field-phi-boot", type=int, default=0, dest="field_phi_boot",
                     help="H_9957 POWER for the negative: moving-block bootstrap replicates (e.g. 200) over "
                          "the collected state -> mean/sd/90%% CI on Δφ. Needed because the doc-aware readout "
@@ -4622,7 +4627,9 @@ def main():
         fl, hist = FL.field_loop_train(model, raw, a.field_arm, steps, dfl, B=a.field_b,
                                        block=a.field_block, lr=a.lr, seed=a.seed, device=device,
                                        log=lambda s: p0(s, flush=True), doc_len=a.field_doc_len,
-                                       write=a.field_write, cells=a.field_cells)
+                                       write=a.field_write, cells=a.field_cells,
+                                       coupling_seed=(None if a.field_coupling_seed < 0
+                                                      else a.field_coupling_seed))
         if a.out:
             # field-loop never runs the mitosis GROW loop, so mito.e_active is still e0; but a --init'd
             # model carries all `emax` experts. Serialize ALL of them (else _write_clm's e_ser=e_active
