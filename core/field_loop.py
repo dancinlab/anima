@@ -589,7 +589,7 @@ def _ci_phi(Xb, m):
     return float(E.ci_phi_iit4([list(map(int, r)) for r in Xb], list(range(m))))
 
 
-def field_loop_eval_oow(model, fl, val_bytes, mask, device="cpu", seed=0):
+def field_loop_eval_oow(model, fl, val_bytes, mask, device="cpu", seed=0, boot=0):
     """H_9957 NATURAL-corpus carriage DV. Natural text plants no payload byte, so the claim cannot rest on
     a single scored position; it rests on a SPECIFICITY CONTRAST measured on the same cells:
 
@@ -646,6 +646,31 @@ def field_loop_eval_oow(model, fl, val_bytes, mask, device="cpu", seed=0):
                                     acc[arm][kind].append(float(ce_bt[ri, i - 1]))
                 fl.writeback(ce_bt if vec else ce_bt.mean(axis=1), np.zeros(B))
     out = {"cells_scored": (ncell // B) * B, "B": B}
+    if boot > 0:
+        # WITHIN-RUN precision. The natural DV is a difference of differences on ~1e-3 nats, so a single
+        # printed number says nothing without a spread — the same gap that made the first Phi negative
+        # unreadable. Positions are PAIRED across arms (same position, three arms), so resample position
+        # INDICES once and apply that resample to every arm: that keeps the pairing and prices only the
+        # position sampling. Blocks of 8 consecutive picks keep neighbouring-position correlation.
+        brng = np.random.default_rng(seed + 11)
+        n_o, n_i = len(acc["aligned"]["oow"]), len(acc["aligned"]["inblock"])
+        A = {k: {kind: np.asarray(acc[k][kind], dtype=float) for kind in ("oow", "inblock")}
+             for k in ("aligned", "yoked", "sever")}
+        specs = []
+        L = 8
+        for _ in range(int(boot)):
+            def _idx(n):
+                starts = brng.integers(0, max(1, n - L), size=max(1, n // L))
+                return np.concatenate([np.arange(t, t + L) for t in starts])[:n] % max(1, n)
+            io, ii = _idx(n_o), _idx(n_i)
+            d_o = min(float(A["sever"]["oow"][io].mean()), float(A["yoked"]["oow"][io].mean())) \
+                - float(A["aligned"]["oow"][io].mean())
+            d_i = min(float(A["sever"]["inblock"][ii].mean()), float(A["yoked"]["inblock"][ii].mean())) \
+                - float(A["aligned"]["inblock"][ii].mean())
+            specs.append(d_o - d_i)
+        sp = np.asarray(specs, dtype=float)
+        out.update({"boot": int(boot), "spec_mean": float(sp.mean()), "spec_sd": float(sp.std(ddof=1)),
+                    "spec_lo90": float(np.percentile(sp, 5)), "spec_hi90": float(np.percentile(sp, 95))})
     for arm in ("aligned", "yoked", "sever"):
         for kind in ("oow", "inblock"):
             v = acc[arm][kind]
