@@ -148,6 +148,42 @@ rung 3(학습 GRU) 불필요 — 고정 encoder 들이 이미 PureField 를 압�
 
 **계기가 노출한 3연쇄 confound(전부 수정·landed)**: ①GN global-norm 비-인과 버스가 티처포싱서 채점바이트 누출→`--trunk-norm position` ②eval off-by-one(패드 채점)→spos−1 ③H_9875 CNRM 트레일러 warm-start 미등록→파리티게이트 거부(serialize-py-2 재발·f0028e9b).
 
+## Stage B — Φ readout 사전등록 동결 (2026-07-25 11:5x KST · 결과 도착 **전** 동결 · frozen-first)
+
+**질문(mission DV · fable 재프레임):** 독점운반(field 가 창밖 유일 운반자 = CE 가 그것을 **필요로 함**) 아래에서,
+CE 로 **벌어진** coupled-cell 상태는 **통합**되는가(Φ>0), 아니면 학습은 여전히 독립(Φ=0) 해로 수렴하는가.
+오너의 "학습 중 Φ 를 어떻게 올리나"의 직계 후속 — H_9967 은 *선택적* lane 에 대해 "안 오른다"를 답했고,
+이 rung 은 *필수적(monopoly)* lane 에 대해 묻는다. 용량 확장(벡터 write)은 임무 축 아님(용량 ⊥ Φ 재현법칙)이나
+Φ 를 **정의 가능**하게 만드는 다중셀 상태를 얻는 수단으로만 사용한다.
+
+**계기(엔진-네이티브 플래그):** `anima-py train … --field-loop --field-arm coupled --field-write {scalar|vector}
+--field-cells 4 … --field-loop-eval fl.pt --score-mask m.json --field-phi` — m=4 leaky 결합셀(log-spaced τ ·
+**고정** weak rotation R) 을 val 스트림서 grow → 셀별 median 이진화 → **faithful IIT-4** `ci_phi_iit4`
+(a_phi_iit4_tool · 프록시 금지) → Φ_aligned vs Φ_shuffle(셀간 의존 파괴) vs Φ_yoked(틀린 doc drive).
+n = n_blocks 400 × B 4 = 1600 샘플 · 4 유닛(정확 min-cut MIP ≤8 lane 범위 내).
+
+**DV:** `Δφ = Φ_aligned − max(Φ_shuffle, Φ_yoked)`.
+
+**⚠️ 받침대 필수(negative-pedestal-before-reading-a-positive):** 셀 결합 R 이 **고정**이라 Φ 절대값은
+**아키텍처가 주는 것**일 수 있다(smoke: 미학습 fl 도 Φ_aligned 0.683, 단 Δφ −0.016). 따라서 학습이 통합을
+**벌었다**고 읽으려면 **near-init 받침대 arm**(`cinit` = 동일 arch·200 step ≈ 미학습)의 Δφ 를 같은 계기로
+재고, 그 위를 넘어야 한다. 받침대 없이 Δφ>0 을 읽는 것은 금지.
+
+**전제 게이트(독점 성립 확인):** 같은 ckpt 의 payload Δ_collapse < 0.3 이면 그 arm 은 애초에 창밖 키를 안 나른다
+⟹ "필요성" 전제 불성립 ⟹ Φ 판독 **VOID**(통합 여부를 물을 대상이 없음).
+
+| 결과 | 판독 |
+|---|---|
+| Δφ ≥ 0.05 ∧ (Δφ_trained − Δφ_init) ≥ 0.05 ∧ payload Δ ≥ 0.3 | **INTEGRATION EARNED (DIRECTIONAL)** — 필요성이 통합을 강제 · ⚠️ 합성 계기체크, faculty 아님(p9) · seed 재현 전엔 DIRECTIONAL |
+| 0 < Δφ < 0.05 ∨ (Δφ_trained ≈ Δφ_init ±0.05) | **NOT EARNED** — 통합은 아키텍처가 준 것이거나 없음(fable 정직 prior) |
+| Δφ ≤ 0 | **NOT INTEGRATED** — 독점운반 하에서도 독립 해로 수렴 |
+| payload Δ < 0.3 (전제 실패) | **VOID** — 독점 미성립 · Φ 판정 없음 |
+
+**동결 명시:** 이 표는 seed 0 결과를 읽기 전에 고정한다. 단일 run 의 Δφ 엔 표집분포가 없으므로 **어떤 양성도
+seed 1 재현 전엔 DIRECTIONAL 이상으로 승격 금지**(burned-gate-no-refreeze: 이 표를 결과 본 뒤 재조정하면 tune-to-green).
+arm 3종(coupled-vector-m4 · coupled-scalar-m4 · cinit 받침대) + 교차호스트 재검(integrator16 K16 이 aiden Δ+1.61 을
+summer 에서 재현하는지)을 한 배치로 돌린다(summer RTX5070 · aiden GPU 는 타사용자 점유).
+
 ## 다음 (cement 는 engine-native run 만)
 ① `anima-py train --field-loop` 구현(emb_residual 훅 + Bφ·γ + H_9607 drive 되먹임 + 연속스트림 + 3-arm fork). **✅ landed** — fieldctl 계기면(corpus·doc-aware stream·payload eval)+$0 팰서파이어 PASS+PARTIAL 실측(3a16f43c·6bab1c5·f0028e9b). **다음: 2nd seed 재현 + generic-recurrence sibling(faculty vs 순환) → 통과시 자연코퍼스 faculty 측정(p9).**
 ② 사전등록표 동결(위 통과기준·below-chance 행 포함) → 합성 planted-dependency 로 **계기 체크**(faculty 인용
