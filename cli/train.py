@@ -3640,10 +3640,22 @@ def main():
                          "train-time replacement for GRAFT). Reuses the loaded/built model + a "
                          "contiguous-stream loop with per-row field carry + write-back. v1 CLM-only, "
                          "single-process.")
-    ap.add_argument("--field-arm", choices=["off", "purefield16", "purefield16-yoked"],
+    ap.add_argument("--field-arm", choices=["off", "purefield16", "purefield16-yoked",
+                                            "integrator16", "integrator16-yoked",
+                                            "gru16-frozen", "gru16-frozen-yoked",
+                                            "coupled", "coupled-yoked"],
                     default="purefield16", dest="field_arm",
                     help="field-loop arm: off (no residual = ignore + fluency baseline) · purefield16 "
-                         "(live loop) · purefield16-yoked (A/G deranged across rows = fancy-seed control)")
+                         "(live loop) · purefield16-yoked (A/G deranged across rows = fancy-seed control) · "
+                         "integrator16[-yoked] (H_9957 sibling: read the shared H_9607 integral I through "
+                         "fixed random features, no PureField cell — is the channel just the scalar integrator?)")
+    ap.add_argument("--field-write", choices=["scalar", "vector"], default="scalar", dest="field_write",
+                    help="H_9957 coupled arm: scalar (legacy mode-0 mean-CE write) or vector (first "
+                         "--field-cells DCT modes of the per-byte A-G tension profile). Only the coupled arm.")
+    ap.add_argument("--field-cells", type=int, default=1, dest="field_cells",
+                    help="H_9957 coupled arm: m coupled leaky cells (fixed weak rotation coupling). "
+                         "The state faithful IIT-4 reads for the Φ-under-monopoly question; m=1 = the "
+                         "scalar integral (Φ undefined).")
     ap.add_argument("--field-block", type=int, default=256, dest="field_block",
                     help="contiguous block length (bytes) per field-loop step")
     ap.add_argument("--field-b", type=int, default=8, dest="field_b",
@@ -3652,6 +3664,24 @@ def main():
                     help="measure a trained coupling instead of training: load this .fl.pt, grow K "
                          "per-doc fields on --corpus, print Delta_collapse = aligned - yoked (own-field "
                          "vs wrong-field own-byte prediction) + the sever control. No training.")
+    ap.add_argument("--field-doc-len", type=int, default=0, dest="field_doc_len",
+                    help="H_9957 fieldctl: DOC-AWARE field-loop — reset the field at every planted doc "
+                         "boundary of this byte length (blocks align to the doc grid), so the leaky "
+                         "integral carries ONE doc's key not a ~400-block blur. 0 = legacy random-start "
+                         "contiguous stream (natural-corpus path). = the doc_len printed by `corpus fieldctl`.")
+    ap.add_argument("--score-mask", type=str, default="", dest="score_mask",
+                    help="H_9957 fieldctl: with --field-loop-eval, score the payload-byte Delta_collapse "
+                         "using this fieldctl .mask.json (doc geometry + scored-byte position) on the val "
+                         "--corpus, instead of the whole-block DV. The instrument-check DV.")
+    ap.add_argument("--field-phi", action="store_true", dest="field_phi",
+                    help="H_9957 MISSION DV (coupled arm): with --field-loop-eval + --score-mask, read "
+                         "faithful IIT-4 Φ collapse-Δ of the CE-earned m-cell state (Φ_aligned vs shuffle "
+                         "pedestal + time-yoked) — does necessity force integration under monopoly carriage?")
+    ap.add_argument("--field-phi-boot", type=int, default=0, dest="field_phi_boot",
+                    help="H_9957 POWER for the negative: moving-block bootstrap replicates (e.g. 200) over "
+                         "the collected state -> mean/sd/90%% CI on Δφ. Needed because the doc-aware readout "
+                         "is DETERMINISTIC (--seed does not resample it), so a negative Δφ has no sampling "
+                         "spread without this (power-before-negative-verdict · negative-claims-need-tost).")
     ap.add_argument("--ddp-find-unused", action="store_true",
                     help="DDP debug/escape-hatch: pass find_unused_parameters=True to DDP. Off "
                          "by default — the current objective set fires every head every step "
@@ -4538,6 +4568,43 @@ def main():
         if len(raw) < a.field_block + 2:
             sys.exit(f"[field-loop] needs --corpus with >= field-block+2 bytes (got {len(raw)})")
         if a.field_loop_eval:                            # MEASURE a trained coupling (no training)
+            if a.score_mask:                             # H_9957 fieldctl payload-byte DV (doc/mask-aware)
+                import json as _json
+                mask = _json.load(open(a.score_mask))
+                if a.field_phi:                          # H_9957 MISSION DV: faithful IIT-4 Φ of the state
+                    fl = FL.FieldLoop.load(a.field_loop_eval, a.field_b, device=device)
+                    pv = FL.field_loop_phi(model, fl, raw, mask, device=device, seed=a.seed,
+                                           boot=a.field_phi_boot)
+                    p0(f"=== anima-py train --field-loop-eval --field-phi (H_9957 mission Φ-DV) === "
+                       f"m={pv['m']} cells · n={pv['n']} samples · gamma={pv['gamma']:+.5f}", flush=True)
+                    p0(f"[field-phi] faithful IIT-4  Φ_aligned={pv['phi_aligned']:.5f}  "
+                       f"Φ_yoked={pv['phi_yoked']:.5f}  Φ_shuffle={pv['phi_shuffle']:.5f}", flush=True)
+                    p0(f"[field-phi] DELTA_PHI = Φ_aligned - max(yoked,shuffle) = {pv['delta_phi']:+.5f}  "
+                       f"(>bar ⇒ necessity forced integration; ≈0 ⇒ it did not)", flush=True)
+                    if pv.get("boot"):                       # power for the negative (prereg equivalence)
+                        _BAR = 0.05                          # H_9957 prereg bar, frozen before results
+                        _lo, _hi = pv["delta_lo90"], pv["delta_hi90"]
+                        # Read the CI against the frozen bar HERE — printing one fixed trailer whatever the
+                        # numbers say is how a log gets misread as a verdict it never made.
+                        _v = ("EQUIVALENT-TO-ZERO (powered negative: 90% CI inside ±bar)"
+                              if (-_BAR < _lo and _hi < _BAR) else
+                              "EARNED (powered positive: whole 90% CI above +bar)" if _lo >= _BAR else
+                              "UNDERPOWERED (90% CI crosses the bar — not a verdict either way)")
+                        p0(f"[field-phi] BOOT({pv['boot']} moving-block) Δφ mean={pv['delta_mean']:+.5f} "
+                           f"sd={pv['delta_sd']:.5f}  90% CI [{_lo:+.5f}, {_hi:+.5f}]  bar=±{_BAR}", flush=True)
+                        p0(f"[field-phi] PREREG READ: {_v}", flush=True)
+                    return 0
+                fl = FL.FieldLoop.load(a.field_loop_eval, int(mask["K"]), device=device)
+                ev = FL.field_loop_eval_fieldctl(model, fl, raw, mask, device=device, seed=a.seed)
+                p0(f"=== anima-py train --field-loop-eval --score-mask (H_9957 fieldctl payload DV) === "
+                   f"K={ev['K']} docs={ev['docs_scored']} gamma={ev['gamma']:+.5f} "
+                   f"chance=ln K={ev['chance_nats']:.4f} nats", flush=True)
+                p0(f"[fieldctl-eval] payload CE  aligned={ev['aligned_ce']:.4f}  "
+                   f"yoked={ev['yoked_ce']:.4f}  sever={ev['sever_ce']:.4f}", flush=True)
+                p0(f"[fieldctl-eval] DELTA_COLLAPSE = min(yoked,sever)-aligned = "
+                   f"{ev['delta_collapse']:+.4f} nats  (>0 ⇒ the field carried the out-of-window key; "
+                   f"prereg CERTIFIED gate: Δ>=0.8 ∧ aligned<=0.4)", flush=True)
+                return 0
             fl = FL.FieldLoop.load(a.field_loop_eval, a.field_b, device=device)
             ev = FL.field_loop_eval(model, fl, raw, K=a.field_b, block=a.field_block,
                                     seed=a.seed, device=device)
@@ -4554,7 +4621,8 @@ def main():
            f"d={dfl} block={a.field_block} B={a.field_b} steps={steps} corpus={len(raw)}B", flush=True)
         fl, hist = FL.field_loop_train(model, raw, a.field_arm, steps, dfl, B=a.field_b,
                                        block=a.field_block, lr=a.lr, seed=a.seed, device=device,
-                                       log=lambda s: p0(s, flush=True))
+                                       log=lambda s: p0(s, flush=True), doc_len=a.field_doc_len,
+                                       write=a.field_write, cells=a.field_cells)
         if a.out:
             # field-loop never runs the mitosis GROW loop, so mito.e_active is still e0; but a --init'd
             # model carries all `emax` experts. Serialize ALL of them (else _write_clm's e_ser=e_active

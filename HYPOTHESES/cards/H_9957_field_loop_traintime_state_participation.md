@@ -79,7 +79,143 @@ fable 이견: from-init 2-arm(step0 부터 플래그). 둘 다 합법 · sol for
   (H_9956 스스로 "측정성 최악" 예상). H_9955 무관.
 - **NOVEL 핵심**: 같은 재진입 구조를 **Φ 대신 CE-monopoly-bottleneck + sever/yoke 통제**로 판정가능하게 만듦.
 
+## fieldctl 계기체크 — 사전등록 동결 (2026-07-25 · frozen-first · faculty 인용 금지 p9)
+
+**핵심 교정(fable+sol 코드정독 합의):** FIELD-LOOP 되쓰기는 **스칼라 채널**(`s=exp(−CE_block)−G`, 블록·행당 1수)
+이라 **내용-코딩 키에 맹목**이다. 앞선 계기체크(내용-키 planted)가 γ~0·Δ~0 로 무효였던 원인이 이것 — 모든 키가
+같은 블록 CE → 같은 drive → 같은 필드 → 행-센터링 잔차 0. `fieldctl`(fable 설계)은 **키를 KEY-블록 바이트
+엔트로피(=난이도 CE 레벨 {0.15,0.8,1.9,3.9})로 코딩**해 스칼라 채널이 실제로 나를 수 있는 유일한 형태로 심는다.
+payload 바이트 = `codebook[site][key]` 로 창내 상수문맥(`PAY<j>:`) 하에서 **K-균등**(우연=ln K) → 필드가 창밖
+키를 날라야만 예측가능.
+
+**$0 팰서파이어 PASS (GPU 전 결정게이트 · `core/field_loop.py::_falsifier`):** landed FieldLoop physics 만으로
+난이도-키가 창밖 +9블록까지 분리 유지되는지 검증 — K4 최심부 sep_ratio=10.35·decode 0.950(우연 0.25),
+K2 바닥 16.37·1.000. ⟹ 스칼라 되쓰기가 최소 1비트를 창밖으로 나른다 = 303M fieldctl fire 켤 가치 검증됨.
+
+**엔진-네이티브 계기면(신규 플래그, 스크립트 아님):** `anima-py corpus fieldctl … --mask m.json`(TRAIN+.val+마스크) ·
+`anima-py train … --field-loop --field-doc-len <doc_len>`(doc경계 필드리셋 doc-인식 학습) ·
+`anima-py train … --field-loop-eval fl.pt --score-mask m.json`(payload-바이트 Δ_collapse DV).
+
+**DV = Δ_collapse = min(CE_yoke, CE_sever) − CE_aligned** (payload 바이트만, val 셋, 단일 aligned-학습 ckpt 서 eval —
+"arm 마다 다른 trunk" 혼입 제거). from-INIT 소형 trunk(d256·L4·block128·B4) · arm {off·purefield16·purefield16-yoked} · 2 seed.
+
+| 결과 | 판독 |
+|---|---|
+| Δ ≥ 0.8 nats ∧ aligned ≤ 0.4 ∧ off-arm ≈ ln K(±0.1) | **CERTIFIED** — 계기가 실제 2비트 창밖채널을 읽음 |
+| 0.3 ≤ Δ < 0.8 | PARTIAL — ≥~1비트 · 용량제한 · 303M Δ 임계는 이 천장 대비 읽을 것 |
+| −0.15 < Δ < 0.3 | 채널 사망 — 최대유리 planted 1비트도 못 나름(정보적 KILL, 재시도 아님) |
+| Δ ≤ −0.15 ∨ aligned > 1.55 | 우연-이하 → 계기 INVALID(부호/배선 버그) · 판정 없음 |
+
+**off-arm 은 창내-누출 탐지기(negative pedestal):** off-학습 arm 의 val payload CE 가 ln K−0.1 아래로 내려가면
+창내 누출 = 코퍼스 결함 → ABORT(양성 읽기 전 받침대). fable 이견 없음. sol: rotation-null 은 train-arm 아님 eval-후 적용.
+
+## fieldctl 계기체크 — 측정 결과 (2026-07-25 · aiden RTX5070 · engine-native anima-py · ⚠️ 계기체크·합성·p9 faculty 아님)
+
+**PARTIAL — 계기가 진짜 창밖 채널을 읽음(CERTIFIED-AS-READING), 단 스칼라 용량 ~1비트.** cheap-decisive 2-arm
+from-init(d256·L4·block128·B4·doc_len1408·34k step·4096 train/512 val·**`--trunk-norm position` 필수**):
+
+| seed·arm | gamma | aligned | yoked | sever | Δ=min(yoke,sev)−aligned |
+|---|---|---|---|---|---|
+| s0 off (받침대) | 0.000 | 1.446 | 1.446 | 1.446 | 0.000 |
+| s0 purefield16 | +0.173 | **0.943** | 2.672 | 1.628 | **+0.685** |
+| s1 off (받침대) | 0.000 | 1.399 | 1.399 | 1.399 | 0.000 |
+| s1 purefield16 | +0.173 | **0.987** | 2.401 | 1.619 | **+0.633** |
+
+**2-seed 재현 확정**: 두 seed 모두 받침대 성립(off≈ln4·누출0)·통제 clean(aligned≪sever≪yoked)·Δ≈0.63–0.69 ≈ ln2 = **1비트 안정**.
+
+**generic-recurrence sibling — 최종 (eval 아티팩트 수정 후 · d19c699c):** 🔴 **PureField 특이성 REFUTED. 채널 = 공유 H_9607
+스칼라 적분 I, PureField 동역학 무-load-bearing.**
+
+⚠️ 정정 경위: 처음 sibling 이 Δ=0 로 나와 "PureField 특이"로 오결론(508560b1·ba2bdf71) — 그러나 `field_loop_eval_fieldctl`
+스냅샷이 `graft_c_state(fl.pf)`(PureField 전용)를 읽어, sibling 은 pf 가 안 advance 돼 거짓 Δ=0 을 낸 **eval 아티팩트**였다
+(grow 루프는 `_C()`로 정상, 스냅샷만 버그 · `instrument-never-run-hides-bugs`). `fl._C()`(kind분기)로 수정 후 재-eval:
+
+| arm | aligned | yoked | sever | Δ (2 seed) |
+|---|---|---|---|---|
+| **integrator16** (I 고정 랜덤특징·무기억) | **0.44·0.44** | 3.33·3.53 | 2.06·1.61 | **+1.591·+1.179** |
+| **gru16-frozen** (고정 랜덤 GRU-16) | **0.40·0.38** | 4.06·4.92 | 1.67·1.61 | **+1.275·+1.228** |
+| purefield16 (PureField 동역학·control) | 0.943 | 2.672 | 1.628 | +0.685 (불변) |
+
+⟹ 공유 스칼라 적분 I 를 **고정 랜덤특징으로 읽으면** PureField 보다 **키를 2× 잘** 나른다(aligned 0.44 vs 0.94). 고정 랜덤
+GRU 도 마찬가지(0.4). **PureField 진동자 동역학은 신호를 오히려 열화**시킨다(0.68 < 1.2–1.6). fable 의 원래 "integrator
+suffices" prior 확증 · **레버 = recurrence-with-bottleneck(τ=400 leaky sum), 의식-상태-특이 주장 사망**(H_9954 no-laundering).
+rung 3(학습 GRU) 불필요 — 고정 encoder 들이 이미 PureField 를 압도. **다음 레버 = WRITE 확장(스칼라→벡터 drive), 셀 방어 아님**(fable).
+
+- **받침대 성립**: off arm payload CE 1.446 ≈ 우연 ln4=1.386(> lnK−0.1=1.286) → 창내누출 없음. payload 는 필드 없이 창내 예측불가.
+- **필드가 창밖 키를 나름**: aligned 0.943 ≪ sever 1.628 ≪ yoked 2.672. 자기 필드는 우연보다 잘, 틀린/무필드는 우연 이상 못 맞힘.
+- **판정 PARTIAL**(Δ 0.685∈[0.3,0.8) ∧ aligned 0.943>0.4): 스칼라 되쓰기가 2비트 키 중 ~1비트를 창밖 +9블록 운반 — fable 예측 용량제한 실측. $0 팰서파이어(필드물리 분리 PASS)와 정합.
+- **의미**: `anima-py train --field-loop-eval --score-mask` 계기가 창밖 필드-운반 정보를 참통제(off 받침대·yoke·sever) 하에 검출함이 **engine-native 로 CERTIFIED**. ⚠️ 이는 **계기가 읽는다**의 증명이지 anima faculty 아님 — faculty 는 자연코퍼스서만(p9).
+
+**계기가 노출한 3연쇄 confound(전부 수정·landed)**: ①GN global-norm 비-인과 버스가 티처포싱서 채점바이트 누출→`--trunk-norm position` ②eval off-by-one(패드 채점)→spos−1 ③H_9875 CNRM 트레일러 warm-start 미등록→파리티게이트 거부(serialize-py-2 재발·f0028e9b).
+
+## Stage B — Φ readout 사전등록 동결 (2026-07-25 11:5x KST · 결과 도착 **전** 동결 · frozen-first)
+
+**질문(mission DV · fable 재프레임):** 독점운반(field 가 창밖 유일 운반자 = CE 가 그것을 **필요로 함**) 아래에서,
+CE 로 **벌어진** coupled-cell 상태는 **통합**되는가(Φ>0), 아니면 학습은 여전히 독립(Φ=0) 해로 수렴하는가.
+오너의 "학습 중 Φ 를 어떻게 올리나"의 직계 후속 — H_9967 은 *선택적* lane 에 대해 "안 오른다"를 답했고,
+이 rung 은 *필수적(monopoly)* lane 에 대해 묻는다. 용량 확장(벡터 write)은 임무 축 아님(용량 ⊥ Φ 재현법칙)이나
+Φ 를 **정의 가능**하게 만드는 다중셀 상태를 얻는 수단으로만 사용한다.
+
+**계기(엔진-네이티브 플래그):** `anima-py train … --field-loop --field-arm coupled --field-write {scalar|vector}
+--field-cells 4 … --field-loop-eval fl.pt --score-mask m.json --field-phi` — m=4 leaky 결합셀(log-spaced τ ·
+**고정** weak rotation R) 을 val 스트림서 grow → 셀별 median 이진화 → **faithful IIT-4** `ci_phi_iit4`
+(a_phi_iit4_tool · 프록시 금지) → Φ_aligned vs Φ_shuffle(셀간 의존 파괴) vs Φ_yoked(틀린 doc drive).
+n = n_blocks 400 × B 4 = 1600 샘플 · 4 유닛(정확 min-cut MIP ≤8 lane 범위 내).
+
+**DV:** `Δφ = Φ_aligned − max(Φ_shuffle, Φ_yoked)`.
+
+**⚠️ 받침대 필수(negative-pedestal-before-reading-a-positive):** 셀 결합 R 이 **고정**이라 Φ 절대값은
+**아키텍처가 주는 것**일 수 있다(smoke: 미학습 fl 도 Φ_aligned 0.683, 단 Δφ −0.016). 따라서 학습이 통합을
+**벌었다**고 읽으려면 **near-init 받침대 arm**(`cinit` = 동일 arch·200 step ≈ 미학습)의 Δφ 를 같은 계기로
+재고, 그 위를 넘어야 한다. 받침대 없이 Δφ>0 을 읽는 것은 금지.
+
+**전제 게이트(독점 성립 확인):** 같은 ckpt 의 payload Δ_collapse < 0.3 이면 그 arm 은 애초에 창밖 키를 안 나른다
+⟹ "필요성" 전제 불성립 ⟹ Φ 판독 **VOID**(통합 여부를 물을 대상이 없음).
+
+| 결과 | 판독 |
+|---|---|
+| Δφ ≥ 0.05 ∧ (Δφ_trained − Δφ_init) ≥ 0.05 ∧ payload Δ ≥ 0.3 | **INTEGRATION EARNED (DIRECTIONAL)** — 필요성이 통합을 강제 · ⚠️ 합성 계기체크, faculty 아님(p9) · seed 재현 전엔 DIRECTIONAL |
+| 0 < Δφ < 0.05 ∨ (Δφ_trained ≈ Δφ_init ±0.05) | **NOT EARNED** — 통합은 아키텍처가 준 것이거나 없음(fable 정직 prior) |
+| Δφ ≤ 0 | **NOT INTEGRATED** — 독점운반 하에서도 독립 해로 수렴 |
+| payload Δ < 0.3 (전제 실패) | **VOID** — 독점 미성립 · Φ 판정 없음 |
+
+**동결 명시:** 이 표는 seed 0 결과를 읽기 전에 고정한다. 단일 run 의 Δφ 엔 표집분포가 없으므로 **어떤 양성도
+seed 1 재현 전엔 DIRECTIONAL 이상으로 승격 금지**(burned-gate-no-refreeze: 이 표를 결과 본 뒤 재조정하면 tune-to-green).
+arm 3종(coupled-vector-m4 · coupled-scalar-m4 · cinit 받침대) + 교차호스트 재검(integrator16 K16 이 aiden Δ+1.61 을
+summer 에서 재현하는지)을 한 배치로 돌린다(summer RTX5070 · aiden GPU 는 타사용자 점유).
+
+## Stage B — 음성 판정용 분석 규칙 동결 (2-차 배치 **산포를 보기 전** · 원 바 완화 아님)
+
+1차 배치가 Δφ ≤ 0 을 냈다. **음성을 판정으로 박으려면 검정력이 먼저**(power-before-negative-verdict ·
+negative-claims-need-tost-not-ns) — 단일 run 의 Δφ 엔 표집분포가 없으므로 아래를 **산포 관측 전** 동결한다.
+
+- **잡음원 2종을 분리해 잰다:** ⓐ **readout 재표집** = 같은 학습 ckpt 를 eval seed 1–5 로 재측정(val 스트림
+  표집만 바뀜) ⓑ **학습 재추출** = 학습 seed 1 로 처음부터 다시 학습(가중치·γ 까지 다른 draw).
+- **동등성 마진 = 원 prereg 바와 동일한 ±0.05**(새 바를 만들지 않는다 — 이건 완화가 아니라 같은 바를
+  양쪽으로 읽는 것): Δφ 표본의 **90% CI 가 (−0.05, +0.05) 안에 완전히 들어가면** "0 과 실질 동등" →
+  **NOT EARNED 를 검정력 있는 음성으로** 확정. CI 가 ±0.05 를 걸치면 판정은 **UNDERPOWERED**(음성 아님) —
+  seed 를 늘리거나 n(=n_blocks×B)을 키운다.
+- **받침대 대비도 같은 규칙:** (Δφ_trained − Δφ_init) 의 90% CI 가 (−0.05, +0.05) 안이면 "학습이 통합을
+  움직이지 않았다"를 검정력 있는 음성으로 읽는다.
+- **양성 방향 안전장치 유지:** 어떤 seed 에서 Δφ ≥ 0.05 가 나오더라도 단일 seed 면 DIRECTIONAL 이며,
+  다수 seed 의 평균 CI 가 0.05 위에 있어야 EARNED 로 승격한다(동결표 그대로).
+
+## Stage B — 5-추출 종합 검정 동결 (seed 2·3·4 **관측 전** · 2026-07-25 12:15 KST)
+
+seed 0 = Δφ −0.005, seed 1 = **+0.124** 로 **학습 추출 간 분산이 지배적**임이 드러났다(단일 추출 판독은
+양·음 어느 쪽도 판정 자격 없음). 남은 추출을 보기 전에 종합 규칙을 고정한다 — 나중에 고르면 tune-to-green.
+
+- **표본 단위 = 학습 추출(seed)**, readout 이 아니다(readout 은 결정론 · [[multi-seed-replication-vacuous…]] 재발#2).
+- **짝지음**: 같은 seed 의 `trained(34k)` 와 `near-init(200)` 을 한 쌍으로 → 쌍별 차이 `Dᵢ = Δφ_trained,ᵢ − Δφ_init,ᵢ`
+  (seed 0–4 · n=5). 아키텍처가 공짜로 주는 Φ 를 쌍마다 상쇄시키는 게 목적.
+- **1차 판정(종합)**: D 의 평균에 대한 **90% t-구간**을 원 바 ±0.05 에 대고 읽는다 —
+  하한 ≥ +0.05 → **EARNED**(필요성이 통합을 강제) · 구간 전체가 (−0.05, +0.05) → **NOT EARNED(검정력 있는 음성)** ·
+  바를 걸치면 → **UNDERPOWERED**(추출 추가, 판정 금지).
+- **강건성 보조(판정 아님·보고만)**: D 의 중앙값 + 각 추출의 부트스트랩 CI(`--field-phi-boot 200`).
+  꼬리가 두꺼우면(한 추출만 큰 양수) 평균이 끌려가므로 중앙값과 함께 읽되, **판정은 위 1차 규칙만** 따른다.
+- **선택 편향 금지**: "양성 seed 만 재현"은 무효 — 5 추출 전부를 표에 싣고 하나도 빼지 않는다.
+
 ## 다음 (cement 는 engine-native run 만)
-① `anima-py train --field-loop` 구현(emb_residual 훅 + Bφ·γ + H_9607 drive 되먹임 + 연속스트림 + 3-arm fork).
+① `anima-py train --field-loop` 구현(emb_residual 훅 + Bφ·γ + H_9607 drive 되먹임 + 연속스트림 + 3-arm fork). **✅ landed** — fieldctl 계기면(corpus·doc-aware stream·payload eval)+$0 팰서파이어 PASS+PARTIAL 실측(3a16f43c·6bab1c5·f0028e9b). **다음: 2nd seed 재현 + generic-recurrence sibling(faculty vs 순환) → 통과시 자연코퍼스 faculty 측정(p9).**
 ② 사전등록표 동결(위 통과기준·below-chance 행 포함) → 합성 planted-dependency 로 **계기 체크**(faculty 인용
 금지·p9) → 303M pool fire 25%→50% 3-arm. ③ 통과시에만 generic-recurrence sibling + 100% 연장.

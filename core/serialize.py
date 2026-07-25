@@ -81,7 +81,8 @@ _TRAILER_MAGICS = (
     bytes([77, 66, 78, 68]),         # "MBND"   — mouth binder (core/mbnd.py)
     bytes([73, 70, 65, 78]),         # "IFAN"   — core/ifan.py
     bytes([84, 70, 76, 68]),         # "TFLD"   — tension field (core/tension_field.py)
-    bytes([82, 67, 82, 76]),  # RCRL (H_9954 recurrent lane) — chain end after TFLD
+    bytes([67, 78, 82, 77]),         # "CNRM"   — trunk-norm marker (H_9875 · 5 bytes: magic+1)
+    bytes([82, 67, 82, 76]),         # "RCRL"   — recurrent lane (H_9954) · chain end after TFLD
 )
 
 
@@ -1091,6 +1092,21 @@ def _trailer_chain_end(raw: bytes, off: int, d: int, V: int) -> int:
     for rd in (read_clml, read_clms, read_mbnd, read_ifan):
         _, off = rd(raw, off, d, V)
     _, off = read_tfld(raw, off, d)
+    read_rcrl = _rd("recurrent_lane", "read_rcrl")
+    # TWO trailers now each document themselves as "appended LAST": CNRM (H_9875 trunk-norm marker)
+    # and RCRL (H_9954 recurrent lane). A walker that knows only one of them stops early, the
+    # `== len(raw)` parity check fails, and EVERY checkpoint carrying the other is refused at
+    # warm-start — the exact defect that made position-norm .clm un-`--init`-able (serialize-py-2).
+    # So consume either, in either order, until neither matches.
+    while True:
+        if raw[off:off + 4] == CNRM_MAGIC:
+            off += len(CNRM_MAGIC) + 1
+            continue
+        _, off_rc = read_rcrl(raw, off, d)
+        if off_rc > off:
+            off = off_rc
+            continue
+        break
     return off
 
 # ── "CNRM" trunk-norm marker (H_9875) ────────────────────────────────────────────
