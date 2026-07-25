@@ -312,6 +312,39 @@ held-out 꼬리 슬라이스를 doc-cell 격자로 자르고 블록 j≥1 의 �
   앵커가 걸린 지점은 필드와 무관하게도 예측하기 쉬운 자리다. 그래서 DV 를 raw CE 가 아니라 **차이의 차이**
   (특이성)로 둔 것이 필수였다.
 
+## 자연 운반 캠페인 — 사전등록 동결 (발사 **전** · 2026-07-25 13:3x KST · GPU: summer)
+
+**묻는 것**: G0 게이트가 공급을 확인한 조건(D=5632·f_OOW 8.6~9.3%)에서, 학습된 필드가 **창밖에서만**
+예측을 돕는가 — 즉 자연문에서도 운반이 실제로 쓰이는가. (Φ 질문 아님: 결합이 고정인 한 Φ 는 코퍼스와
+무관하다는 것이 이미 확인됐다.)
+
+**설계**: train = `en_general.txt` 앞부분 16MB · val = 꼬리(마스크와 같은 바이트) · D=5632 · block 128 ·
+B=4 · d256·L4 · `--trunk-norm position` · **`--field-coupling-seed 7` 고정**(아키텍처 추출을 학습 추출과
+분리 — Stage B 가짜 양성의 원인 차단) · 학습 추출 seed ∈ {0,1,2} · 각 seed 마다 **34k step(학습본)** 과
+**200 step(near-init 받침대)** 을 쌍으로.
+
+| arm | 역할 |
+|---|---|
+| `coupled --field-write vector --field-cells 4` | 합성에서 가장 잘 나른 운반체 |
+| `integrator16` | generic-recurrence 형제 — "결합셀이 아니라 아무 순환이면 되나" |
+| 각 arm 의 same-seed 200-step | 쌍 받침대(아키텍처 성분 상쇄) |
+| 합성 `fieldctl` 1회 | 양성통제(계기가 여전히 읽는가 · 인용 금지) |
+
+**DV**: 특이성 `S = Δ_OOW − Δ_inblock` (각 Δ = min(yoked, sever) − aligned). 쌍차이
+`D_i = S_trained,i − S_init,i` · n=3 학습추출 · 90% t-구간.
+
+| 결과 | 판정 |
+|---|---|
+| CI 하한 ≥ **+0.01 nats** ∧ 학습본 Δ_OOW > 0 | **CARRIAGE-ON-NATURAL** (DIRECTIONAL · faculty 아님) |
+| CI 전체가 (−0.01, +0.01) 안 ∧ 양성통제 PASS | **DEAD** — 공급이 있는데도 안 쓴다 = lane 종결 |
+| 모든 학습본 \|γ\| < 0.01 | **DEAD(채널 미점화)** — 위와 같은 종결 취급(G0 가 공급을 확인했으므로 VOID 아님) |
+| coupled 와 integrator16 CI 중첩 | **GENERIC** — 레버는 결합셀이 아니라 아무 순환(합성 결론의 자연문 확장) |
+| CI 가 ±0.01 를 걸침 | **UNDERPOWERED** — 추출 추가, 판정 금지 |
+| 양성통제 실패 | **VOID** — 판정 없음, 계기 수리 먼저 |
+
+**동결 명시**: 이 표는 첫 수치를 보기 전에 고정한다. 바(±0.01 nats)는 Stage B 의 ±0.05 와 다른 축(운반 CE)
+이라 새로 정하는 것이며, 결과를 본 뒤 조정하면 tune-to-green 이다. 선택 편향 금지 — 3 추출 전부 표에 싣는다.
+
 ## 다음 (cement 는 engine-native run 만 · 2026-07-25 판정 후 갱신)
 
 **✅ 닫힌 것 (재제안 금지 = 이 카드의 kill-list)**
