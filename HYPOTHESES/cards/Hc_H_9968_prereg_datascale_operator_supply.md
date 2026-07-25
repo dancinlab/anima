@@ -4,25 +4,27 @@
 
 ## 📊 측정 결과 — Amazon Polarity nested 크기 사다리 (길이 FIXED 20-50토큰)
 `--earned amazon_rung_N.tsv --min-occ 100 --k-perm 200 --seeds 9304,9305,9306`. 각 rung 은 in-band pool(1.23M행)의
-동결 blake2b nested 부분집합(30k ⊂ 100k ⊂ 300k ⊂ in-band pool). 코퍼스 HF: `dancinlab/anima-earned-datascale`(sha256 ed326109ac05).
-30k·100k = mini 로컬 · **300k = pool(summer 12c)** — 로컬은 초선형 벽에 막혀 미완이었다.
+동결 blake2b nested 부분집합(30k ⊂ 100k ⊂ 300k ⊂ 600k ⊂ in-band pool). 코퍼스 HF: `dancinlab/anima-earned-datascale`(sha256 ed326109ac05).
+30k·100k = mini 로컬 · **300k·600k = pool(summer 12c)** — 로컬은 초선형 벽에 막혀 미완이었다.
 
 | rung | held-out EARNED | 95% CI | cells (stems) | MDE(3σ) | 판정 |
 |---|---|---|---|---|---|
 | 30k | **+0.00438** | [+0.00120, +0.00736] | 100,626 (281) | 0.00472 · PASS | DATA-ADDITIVE |
 | 100k | **−0.00179** | [−0.00644, +0.00553] | 376,184 (564) | 0.01129 · PASS | DATA-ADDITIVE |
 | **300k** | **−0.00238** | [−0.00404, −0.00115] | **978,733 (948)** | **0.00211 · PASS** | DATA-ADDITIVE |
+| **600k** | **−0.00249** | [−0.00347, −0.00158] | **2,112,481 (1,273)** | **0.00148 · PASS** | DATA-ADDITIVE |
 
 게이트(3 rung 전부): G-ALIVE +5.03675 · G-PEDESTAL +0.00124 · G-POWER PASS. 참조: KO-FREE +0.00597 · 매칭길이 baseline +0.007 · 자의 R=+5.29653.
-**300k 가 곡선의 무게중심** — 셀 97.8만으로 MDE 가 0.00211 까지 조여져, 30k 효과(+0.00438)의 **절반 크기도 검출 가능한 팔**이 −0.00238 을 읽었다.
-300k 도구 판정문: *"DATA-ADDITIVE — no transferable non-additive information at all ⇒ no estimator can ever bank it"*.
+**600k 가 곡선의 무게중심** — 셀 **211 만**으로 MDE 가 **0.00148** 까지 조여져, 30k 효과(+0.00438)의 **1/3 크기도 검출 가능한 팔**이 −0.00249 를 읽었다.
+두 상위 rung 도구 판정문 동일: *"DATA-ADDITIVE — no transferable non-additive information at all ⇒ no estimator can ever bank it"*.
+⚠️ 300k·600k 둘 다 도구가 **SEED-UNSTABLE** 경고를 붙였다(퍼짐 .00591/.00587 > 효과 .00238/.00249) — **부호를 읽지 말 것**. 견고한 건 `|EARNED| ≪ 0.02`.
 
-## 판정 — 🔴 CLOSED (사전등록표) · 3 점 곡선으로 확증
-데이터를 30k→300k(**10×**) 키워도 EARNED 이 **안 오른다** — `+0.00438 → −0.00179 → −0.00238` 으로 **단조 비증가**,
-셋 다 **DATA-ADDITIVE**(연산자 공급 0). 사전등록 CLOSED 조건 충족: **모든 유효 rung ≤ +0.03**(abort 임계의 1/7 이하) ∧
-**총상승 < max(0.02, 3·MDE_top)**(상승은커녕 음의 기울기 −0.0068). ⟹ **고정길이 자연 코퍼스의 재조합-연산자 공급은
+## 판정 — 🔴 CLOSED (사전등록표) · 4 점 곡선으로 확증
+데이터를 30k→600k(**20×**) 키워도 EARNED 이 **안 오른다** — `+0.00438 → −0.00179 → −0.00238 → −0.00249` 으로 **단조 비증가**,
+넷 다 **DATA-ADDITIVE**(연산자 공급 0). 사전등록 CLOSED 조건 충족: **모든 유효 rung ≤ +0.03**(abort 임계의 1/7 이하) ∧
+**총상승 < max(0.02, 3·MDE_top)**(상승은커녕 음의 기울기 −0.0069). ⟹ **고정길이 자연 코퍼스의 재조합-연산자 공급은
 데이터-스케일 불변** — 벽은 데이터를 부어도 서 있다. p9 그리드의 **마지막 미개봉 셀도 닫히는 방향.**
-검정력이 커질수록(MDE 0.00472→0.01129→**0.00211**) 값이 0 아래로 수렴한다는 점이 핵심 — "못 봐서 0"이 아니라
+검정력이 커질수록(MDE 0.00472→0.01129→0.00211→**0.00148**) 값이 0 아래로 수렴한다는 점이 핵심 — "못 봐서 0"이 아니라
 **볼 수 있는 팔이 0 을 본다**(`power-before-negative-verdict`).
 
 캠페인 정합: 매칭길이서 EN-FREE ≈ KO-FREE ≈ +0.007(자의의 0.13%)이던 벽(H_9951)이, 자유부정률 0.50인 대형
@@ -33,9 +35,9 @@
 - **음(−) 부호는 읽지 말 것**: 300k CI 가 통째로 0 아래([−0.00404, −0.00115])지만 **seed 퍼짐 0.00591 > 효과크기 0.00238**
   이라 도구 자신이 *"a single-seed number here would be NOISE"* 라고 경고한다. 견고한 주장은 **|EARNED| ≈ 0**(연산자 부재)
   이지 "음의 시너지"가 아니다. 부호를 실체로 읽으면 `polarity-split-before-headline` 위반.
-- **최상위 rung(600k·1.2M) 미완**: `--earned` 이 행수에 초선형(67k용 설계). 로컬은 300k 에서 막혀 pool 로 이관했고,
-  600k·1.2M 은 summer 에서 **진행 중**(같은 동결 nested 부분집합·같은 flags). 판정은 검정력 있는 **3 rung**에 근거하며
-  상위 2 점은 곡선의 끝을 채우는 **보강**이다(현 3점이 단조 비증가라 늦은 상승은 비개연이나 미측정 — `a_scale_honest_scope`).
+- **최상위 rung(1.2M) 미완**: `--earned` 이 행수에 초선형(67k용 설계). 로컬은 300k 에서 막혀 pool 로 이관했고 600k 까지 완주,
+  1.2M(전체 in-band pool)은 summer 에서 **진행 중**(같은 동결 nested 부분집합·같은 flags). 판정은 검정력 있는 **4 rung**에
+  근거하며 마지막 점은 곡선 끝을 채우는 **보강**이다(현 4점이 단조 비증가라 늦은 상승은 비개연이나 미측정 — `a_scale_honest_scope`).
 - **10¹² 미도달**: LLM 체제는 무라벨·`--earned`는 라벨 필수라 이 계기는 라벨-자연 전범위(~MB-GB)까지만. 주장은 그 범위의
   기울기(≈0/음)지 10¹² 자체 아님. DIRECTIONAL 스크리너(p9), cement 아님.
 
