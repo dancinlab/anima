@@ -3649,6 +3649,10 @@ def main():
                     help="H_9957 fieldctl: with --field-loop-eval, score the payload-byte Delta_collapse "
                          "using this fieldctl .mask.json (doc geometry + scored-byte position) on the val "
                          "--corpus, instead of the whole-block DV. The instrument-check DV.")
+    ap.add_argument("--field-phi", action="store_true", dest="field_phi",
+                    help="H_9957 MISSION DV (coupled arm): with --field-loop-eval + --score-mask, read "
+                         "faithful IIT-4 Φ collapse-Δ of the CE-earned m-cell state (Φ_aligned vs shuffle "
+                         "pedestal + time-yoked) — does necessity force integration under monopoly carriage?")
     ap.add_argument("--ddp-find-unused", action="store_true",
                     help="DDP debug/escape-hatch: pass find_unused_parameters=True to DDP. Off "
                          "by default — the current objective set fires every head every step "
@@ -4514,6 +4518,16 @@ def main():
             if a.score_mask:                             # H_9957 fieldctl payload-byte DV (doc/mask-aware)
                 import json as _json
                 mask = _json.load(open(a.score_mask))
+                if a.field_phi:                          # H_9957 MISSION DV: faithful IIT-4 Φ of the state
+                    fl = FL.FieldLoop.load(a.field_loop_eval, a.field_b, device=device)
+                    pv = FL.field_loop_phi(model, fl, raw, mask, device=device, seed=a.seed)
+                    p0(f"=== anima-py train --field-loop-eval --field-phi (H_9957 mission Φ-DV) === "
+                       f"m={pv['m']} cells · n={pv['n']} samples · gamma={pv['gamma']:+.5f}", flush=True)
+                    p0(f"[field-phi] faithful IIT-4  Φ_aligned={pv['phi_aligned']:.5f}  "
+                       f"Φ_yoked={pv['phi_yoked']:.5f}  Φ_shuffle={pv['phi_shuffle']:.5f}", flush=True)
+                    p0(f"[field-phi] DELTA_PHI = Φ_aligned - max(yoked,shuffle) = {pv['delta_phi']:+.5f}  "
+                       f"(>bar ⇒ necessity forced integration; ≈0 ⇒ it did not)", flush=True)
+                    return 0
                 fl = FL.FieldLoop.load(a.field_loop_eval, int(mask["K"]), device=device)
                 ev = FL.field_loop_eval_fieldctl(model, fl, raw, mask, device=device, seed=a.seed)
                 p0(f"=== anima-py train --field-loop-eval --score-mask (H_9957 fieldctl payload DV) === "

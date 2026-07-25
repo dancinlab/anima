@@ -570,6 +570,70 @@ def field_loop_eval_fieldctl(model, fl, val_bytes, mask, device="cpu", seed=0):
             "delta_collapse": delta, "gamma": float(fl.gamma.detach())}
 
 
+def _ci_phi(Xb, m):
+    """faithful IIT-4 Φ (engine_cli.ci_phi_iit4, a_phi_iit4_tool — never a proxy) on a binary sample
+    matrix [N, m], m in 2..8. Import resolves in both the vendored core/ and the installed wheel."""
+    try:
+        import engine_cli as E
+    except ModuleNotFoundError:
+        import anima_py.core.engine_cli as E
+    return float(E.ci_phi_iit4([list(map(int, r)) for r in Xb], list(range(m))))
+
+
+def field_loop_phi(model, fl, data_bytes, mask, device="cpu", seed=0, n_blocks=400):
+    """H_9957 MISSION DV (fable): does necessity force integration? Under monopoly carriage (the field
+    is the SOLE out-of-window carrier, CE NEEDS it), is the CE-EARNED coupled-cell state INTEGRATED
+    (Φ>0) or does training still converge to an independent (Φ=0) solution — the direct successor to
+    the owner's 'raise Φ in training' that H_9967 answered 'not via optional lanes'? Requires the
+    `coupled` arm with m>=2 cells (Φ undefined on 1 cell). Grows the m cells over the val stream,
+    collects the binarized state per block, and reads faithful IIT-4 Φ (a_phi_iit4_tool): aligned vs a
+    shuffle pedestal (cross-cell dependence destroyed) and a time-yoked control (state gets a wrong
+    doc's drive). Δφ = Φ_aligned − max(Φ_shuffle, Φ_yoked); >bar = integration earned, ≈0 = it was not
+    (fable's honest prior). INSTRUMENT CHECK, never a faculty (p9)."""
+    import torch
+    if fl.kind != "coupled" or fl.m < 2:
+        raise ValueError("field_loop_phi needs the coupled arm with m>=2 cells (Φ undefined otherwise)")
+    fl.to(device)
+    core_m = model.module if hasattr(model, "module") else model
+    emb_w = getattr(core_m, "embed", None)
+    emb_rms = (float(emb_w.weight.detach().float().pow(2).mean().sqrt()) if emb_w is not None else 1.0)
+    block = int(mask["block"])
+    doc_len = int(mask["doc_len"])
+    vec = (fl.write == "vector")
+
+    def _collect(yoke):
+        st = _FieldStream(data_bytes, fl.B, block, seed=seed, doc_len=doc_len)
+        fl.reset()
+        fl.yoked = yoke
+        rows = []
+        for _ in range(n_blocks):
+            xb, yb, wr = st.next_block()
+            if wr:
+                fl.reset(wr)
+            res = fl.residual()
+            res = None if res is None else (res * emb_rms).unsqueeze(1)
+            with torch.no_grad():
+                lg = model(xb.to(device), None, emb_residual=res)["logits"].float()
+                ce = F.cross_entropy(lg, yb.to(device), reduction="none").cpu().numpy()   # [B,T]
+            fl.writeback(ce if vec else ce.mean(axis=1), np.zeros(fl.B))
+            rows.append(fl.Ivec.copy())                                   # [B,m] state after this block
+        return np.concatenate(rows, axis=0)                              # [~n_blocks*B, m]
+
+    import torch.nn.functional as F
+    was_yoked = fl.yoked
+    Xa = _collect(False)                                                 # aligned state samples [N,m]
+    Xy = _collect(True)                                                  # time-yoked control
+    fl.yoked = was_yoked
+    Xb = (Xa > np.median(Xa, axis=0)).astype(int)                        # binarize per cell (median split)
+    Yb = (Xy > np.median(Xy, axis=0)).astype(int)
+    rng = np.random.default_rng(seed + 1)
+    Sb = np.stack([rng.permutation(Xb[:, j]) for j in range(fl.m)], axis=1)   # shuffle pedestal
+    phi_a, phi_y, phi_s = _ci_phi(Xb, fl.m), _ci_phi(Yb, fl.m), _ci_phi(Sb, fl.m)
+    return {"m": fl.m, "n": int(Xb.shape[0]), "phi_aligned": phi_a, "phi_yoked": phi_y,
+            "phi_shuffle": phi_s, "delta_phi": float(phi_a - max(phi_y, phi_s)),
+            "gamma": float(fl.gamma.detach())}
+
+
 def _smoke():
     """$0 mechanism + end-to-end wiring smoke — no GPU, no corpus file, no pool. Certifies the 4
     mechanical witnesses AND that a residual->forward->CE->backward->write-back step trains gamma+bridge
@@ -812,10 +876,43 @@ def _coupled_smoke():
     return 0
 
 
+def _phi_smoke():
+    """$0 CPU smoke for the mission Φ readout — validates the coupled-state collection + faithful
+    IIT-4 call run and return finite Φ on a tiny stand-in LM (untrained). A REAL Δφ needs a trained
+    coupled .clm; this only certifies the machinery, never a faculty (p9)."""
+    import torch
+    dm, block = 16, 32
+    doc_len = block * 4
+
+    class _TinyLM(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.embed = torch.nn.Embedding(256, dm)
+            self.head = torch.nn.Linear(dm, 256)
+
+        def forward(self, tokens, targets=None, emb_residual=None):
+            h = self.embed(tokens)
+            if emb_residual is not None:
+                h = h + emb_residual
+            return {"logits": self.head(h).transpose(1, 2)}
+
+    data = bytes(np.random.default_rng(0).integers(0, 256, size=doc_len * 20).astype(np.uint8).tobytes())
+    fl = FieldLoop(4, dm, arm="coupled", seed=0, write="vector", cells=4)
+    with torch.no_grad():
+        fl.gamma.fill_(0.1)
+    pv = field_loop_phi(_TinyLM(), fl, data, {"block": block, "doc_len": doc_len}, device="cpu",
+                        seed=0, n_blocks=80)
+    assert np.isfinite(pv["phi_aligned"]) and np.isfinite(pv["delta_phi"]), "Φ must be finite"
+    print(f"phi smoke: m={pv['m']} n={pv['n']}  Φ_aligned={pv['phi_aligned']:.4f} "
+          f"Φ_yoked={pv['phi_yoked']:.4f} Φ_shuffle={pv['phi_shuffle']:.4f} Δφ={pv['delta_phi']:+.4f}  OK")
+    print("\nPHI SMOKE PASS (faithful-IIT-4 machinery on the coupled state; a real Δφ needs a trained .clm)")
+    return 0
+
+
 if __name__ == "__main__":
     import os
     import sys
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     mode = sys.argv[1] if len(sys.argv) > 1 else "smoke"
-    fn = {"falsify": _falsifier, "couple": _coupled_smoke}.get(mode, _smoke)
+    fn = {"falsify": _falsifier, "couple": _coupled_smoke, "phi": _phi_smoke}.get(mode, _smoke)
     raise SystemExit(fn())
