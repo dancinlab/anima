@@ -398,6 +398,16 @@ class FieldLoop:
             s = s[self._derangement()]                              # derange the drive across rows
         self.Ivec = (self.Ivec * (1.0 - self.lam)) @ self.R.T + s   # [B,m] coupled leaky update
 
+    def detach_state(self):
+        """Cut the state graph at a window boundary. The TRAINER calls this right after its windowed
+        backward, because the internal counter is not authoritative: a doc-boundary reset rewinds
+        `_wb_steps` to 0, so a window could end with the graph still attached and the next window would
+        backward through freed nodes ('backward through the graph a second time'). Trainer-driven
+        truncation makes the boundary exact."""
+        if getattr(self, "grad_wb", 0) > 0 and self.kind == "coupled":
+            self.Ivec_t = self.Ivec_t.detach()
+            self._wb_steps = 0
+
     def _reset_grad_state(self, rows=None):
         """Zero the torch state (all rows or the given rows) and drop its graph — called at doc
         boundaries so a document never inherits the previous document's credit path."""
@@ -524,6 +534,15 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
         x, y, wrapped = stream.next_block()
         if wrapped:
             fl.reset(wrapped)                                # doc boundary -> reset that row's field
+            if grad_wb > 0 and win_loss is not None:
+                # the reset just cut those rows' state graph; flush the window rather than backward
+                # through a chain that no longer exists for part of the batch
+                opt.zero_grad()
+                (win_loss / max(1, win_n)).backward()
+                torch.nn.utils.clip_grad_norm_(params, 1.0)
+                opt.step()
+                fl.detach_state()
+                win_loss, win_n = None, 0
         x = x.to(device)
         y = y.to(device)
         res = fl.residual()                                  # [B, d] or None (off)
@@ -548,6 +567,7 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
                 (win_loss / win_n).backward()
                 torch.nn.utils.clip_grad_norm_(params, 1.0)
                 opt.step()
+                fl.detach_state()                            # exact truncation at the window boundary
                 win_loss, win_n = None, 0
         else:
             opt.zero_grad()
