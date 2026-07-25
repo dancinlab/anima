@@ -19630,7 +19630,7 @@
    {
     "id": "serialize-py-2",
     "state": "pos-conv",
-    "value": "파리티 게이트가 main blob 재포장을 파일 전체와 비교 → 트레일러 달린 ckpt warm-start 구조적 불가",
+    "value": "파리티 게이트가 main blob 재포장을 파일 전체와 비교 → 트레일러 달린 ckpt warm-start 구조적 불가 ⟳ 재발 #3 (2026-07-25 · H_9954 RCRL, 병렬 세션): 같은 결함이 반대 방향으로 났다 — 새 트레일러 RCRL 을 `_TRAILER_MAGICS` 에는 넣고 `_trailer_chain_end` 워커에는 안 넣어, 순환레인 .clm 이 warm-start 에서 0/524 바이트만 소진돼 전부 거부됨(수정 전 origin/main 에서 실측 재현). 게다가 CNRM 과 RCRL 이 **둘 다** 'appended LAST' 를 자처해 순서 가정이 충돌했다. 해결=워커가 CNRM·RCRL 을 **순서 무관 루프로** 소진하고 4조합(RCRL·CNRM·CNRM+RCRL·RCRL+CNRM) 전부 EOF 정확소진을 $0 로 검증. ⟹ 규칙 강화: 트레일러를 추가하는 쪽이 magic 셋·워커·**순서 가정**까지 셋을 함께 갱신하고, 추가 직후 '그 트레일러만 달린 버퍼가 EOF 까지 소진되는가'를 1줄 테스트로 증명할 것.",
     "threshold": "ckpt 를 '열 수 없다'고 나올 때 ckpt 손상을 의심하기 전에 게이트의 비교 SPAN 을 먼저 봐라 — prefix_eq 한 줄이면 갈린다(파리티 성질 정상 vs 비교범위 오류). 트레일러 검증을 magic-only 로 하지 마라(잘림·위장 통과) — 전체 파싱+EOF 정확소진.",
     "source": "core/serialize.py"
    },
