@@ -4578,7 +4578,8 @@ def main():
                 mask = _json.load(open(a.score_mask))
                 if mask.get("format") == "oow":          # H_9957 NATURAL carriage DV (no planted payload)
                     fl = FL.FieldLoop.load(a.field_loop_eval, a.field_b, device=device)
-                    ev = FL.field_loop_eval_oow(model, fl, raw, mask, device=device, seed=a.seed)
+                    ev = FL.field_loop_eval_oow(model, fl, raw, mask, device=device, seed=a.seed,
+                                                boot=a.field_phi_boot)
                     p0(f"=== anima-py train --field-loop-eval --score-mask (H_9957 NATURAL OOW DV) === "
                        f"cells={ev['cells_scored']} B={ev['B']} gamma={ev['gamma']:+.5f}", flush=True)
                     p0(f"[oow-eval] OOW-anchored   aligned={ev['aligned_oow']:.4f} "
@@ -4590,6 +4591,10 @@ def main():
                     p0(f"[oow-eval] DELTA_OOW = {ev['delta_oow']:+.5f} · DELTA_INBLOCK = "
                        f"{ev['delta_inblock']:+.5f} · SPECIFICITY = {ev['specificity']:+.5f} nats "
                        f"(carriage needs Delta_OOW > 0 AND > Delta_inblock)", flush=True)
+                    if ev.get("boot"):                       # within-run precision on a ~1e-3 nat DV
+                        p0(f"[oow-eval] BOOT({ev['boot']} paired moving-block) specificity "
+                           f"mean={ev['spec_mean']:+.5f} sd={ev['spec_sd']:.5f} "
+                           f"90% CI [{ev['spec_lo90']:+.5f}, {ev['spec_hi90']:+.5f}]", flush=True)
                     return 0
                 if a.field_phi:                          # H_9957 MISSION DV: faithful IIT-4 Φ of the state
                     fl = FL.FieldLoop.load(a.field_loop_eval, a.field_b, device=device)
