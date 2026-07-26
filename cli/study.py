@@ -397,6 +397,52 @@ def _regime_of(borrow_content, recomb_index, n_shared, is_repeat):
     return "COMPOSE" if recomb_index >= 0.5 else "ECHO"
 
 
+def _repeat_dv(transcript):
+    """H_9984 ② pre-registered DV — computed on EVERY return path below, because a REPEAT-dominated
+    run exits through the NO-EVIDENCE branch and that is precisely the run this question is about.
+
+    `modal_emit_share` — the largest byte-identical emit's share of all emits. The kill condition is
+    stated on exactly this number (40 of 60 = 0.667 in the pre-wiring 40-turn run), NOT on the
+    REPEAT class count, which is a per-emit label and moves for reasons of its own.
+    `seed_distinct*` — unique decode-seed fingerprints over rows (`seed_sha8`, written by chat.py
+    from the anchor the mouth ACTUALLY consumed). This is the MOVEMENT witness: the kill only reads
+    if the seed genuinely moved turn to turn, so a run where it did not is INVALID for the question
+    rather than a negative (`flat-across-manipulations-means-the-lane-is-dead`). The silent-tick
+    split is the one that matters — the do() only touches percept-SILENT ticks.
+    Older transcripts carry no `seed_sha8`; those read 0/0 (absent), never a fabricated 1.0.
+
+    ⚠️ STRATIFIED BY CONSTRUCTION (`study-py-1`(e) — the defect this file has already made once):
+    the do() touches ONLY percept-SILENT ticks, so the headline denominator is the SILENT stratum.
+    Pooling the percept-present emits — which the manipulation never reached — into the headline is
+    exactly the error that once flipped this file's conclusion. `modal_emit_share_all` is kept as a
+    SECOND layer only because the card's quoted 0.667 was taken over all 60 emits; it is continuity
+    with that number, not the DV.
+    """
+    def _modal(_rows):
+        _e = [r.get("emit_text") for r in _rows if r.get("did_emit") and r.get("emit_text")]
+        if not _e:
+            return (None, 0, 0)
+        _c = {}
+        for _t in _e:
+            _c[_t] = _c.get(_t, 0) + 1
+        return (round(max(_c.values()) / float(len(_e)), 4), max(_c.values()), len(_e))
+
+    silent = [r for r in transcript if not r.get("percept")]
+    seeded = [r for r in transcript if r.get("percept")]
+    fps = [r.get("seed_sha8") for r in transcript if r.get("seed_sha8")]
+    fps_silent = [r.get("seed_sha8") for r in silent if r.get("seed_sha8")]
+    m_sil, c_sil, n_sil = _modal(silent)       # ← the DV (the manipulated stratum)
+    m_per, c_per, n_per = _modal(seeded)       # untouched stratum, reported separately
+    m_all, c_all, n_all = _modal(transcript)   # continuity with the card's quoted 0.667
+    return {"emits_total": n_all,
+            "modal_emit_share": m_sil, "modal_emit_count": c_sil, "modal_emit_n": n_sil,
+            "modal_emit_share_percept": m_per, "modal_emit_n_percept": n_per,
+            "modal_emit_share_all": m_all, "modal_emit_count_all": c_all,
+            "seed_distinct": len(set(fps)), "seed_rows": len(fps),
+            "seed_distinct_silent": len(set(fps_silent)), "seed_rows_silent": len(fps_silent),
+            "pw_arm": next((r.get("pw_arm") for r in transcript if r.get("pw_arm")), None)}
+
+
 def _growth_metrics(transcript):
     """Annotate transcript rows in place with echo/recombination telemetry + return a summary.
 
@@ -451,27 +497,33 @@ def _growth_metrics(transcript):
         r["distinct_ratio"] = round(len(set(emits)) / len(emits), 4)
         rows.append(r)
     if not rows:
-        return {"emits": 0, "regime": "NO-EMIT",
-                "note": "the substrate never emitted — echo/recombination is UNDEFINED, not 0."}
+        _d = {"emits": 0, "regime": "NO-EMIT",
+              "note": "the substrate never emitted — echo/recombination is UNDEFINED, not 0."}
+        _d.update(_repeat_dv(transcript))
+        return _d
     scored = [r for r in rows if r["recomb_index"] is not None
               and r["borrow_content"] is not None]
     if not scored:
-        return {"emits": len(rows), "regime": "TOO-SHORT",
-                "note": "every emit was too short to score (no bigram / no content token)."}
+        _d = {"emits": len(rows), "regime": "TOO-SHORT",
+              "note": "every emit was too short to score (no bigram / no content token)."}
+        _d.update(_repeat_dv(transcript))
+        return _d
     counts = {"COMPOSE": 0, "ECHO": 0, "DETACHED": 0, "INCONCLUSIVE": 0, "REPEAT": 0}
     for r in scored:
         counts[r["regime"]] += 1
     evidential = counts["COMPOSE"] + counts["ECHO"] + counts["DETACHED"]
     if not evidential:                 # every emit was a repeat / single-token collision
-        return {"emits": len(rows), "scored": len(scored), "regime_counts": counts,
+        _d = {"emits": len(rows), "scored": len(scored), "regime_counts": counts,
                 "recomb_index": round(sum(r["recomb_index"] for r in scored) / len(scored), 4),
                 "borrow_ratio": round(sum(r["borrow_ratio"] for r in scored) / len(scored), 4),
                 "borrow_content": round(sum(r["borrow_content"] for r in scored) / len(scored), 4),
                 "shared_terms": sorted({t for r in scored for t in r["shared_terms"]})[:20],
                 "distinct_ratio": rows[-1]["distinct_ratio"], "regime": "NO-EVIDENCE",
-                "note": ("no emit carries evidence either way — %d percept-invariant repeat(s), "
-                         "%d single-shared-token collision(s)."
-                         % (counts["REPEAT"], counts["INCONCLUSIVE"]))}
+              "note": ("no emit carries evidence either way — %d percept-invariant repeat(s), "
+                       "%d single-shared-token collision(s)."
+                       % (counts["REPEAT"], counts["INCONCLUSIVE"]))}
+        _d.update(_repeat_dv(transcript))
+        return _d
     # Headline = the MAJORITY class, never a mean-then-classify. Averaging the two axes and
     # labelling the average mixes regimes and manufactures the verdict: a DETACHED emit scores
     # recomb≈1.0 BY CONSTRUCTION (nothing shared, so nothing to echo), so a run of mostly
@@ -487,13 +539,15 @@ def _growth_metrics(transcript):
                counts["INCONCLUSIVE"], counts["REPEAT"], len(scored)))
     if counts["COMPOSE"] == 0:
         note += " NO emit qualified as composition."
-    return {"emits": len(rows), "scored": len(scored), "regime_counts": counts,
-            "recomb_index": round(sum(r["recomb_index"] for r in scored) / len(scored), 4),
-            "borrow_ratio": round(sum(r["borrow_ratio"] for r in scored) / len(scored), 4),
-            "borrow_content": round(sum(r["borrow_content"] for r in scored) / len(scored), 4),
-            "shared_terms": sorted({t for r in scored for t in r["shared_terms"]})[:20],
-            "distinct_ratio": rows[-1]["distinct_ratio"],
-            "regime": regime, "note": note}
+    _d = {"emits": len(rows), "scored": len(scored), "regime_counts": counts,
+          "recomb_index": round(sum(r["recomb_index"] for r in scored) / len(scored), 4),
+          "borrow_ratio": round(sum(r["borrow_ratio"] for r in scored) / len(scored), 4),
+          "borrow_content": round(sum(r["borrow_content"] for r in scored) / len(scored), 4),
+          "shared_terms": sorted({t for r in scored for t in r["shared_terms"]})[:20],
+          "distinct_ratio": rows[-1]["distinct_ratio"],
+          "regime": regime, "note": note}
+    _d.update(_repeat_dv(transcript))
+    return _d
 
 
 # --------------------------------------------------------------------------- #
@@ -688,6 +742,22 @@ def _run_study(ckpt, backend, rounds, window, topic, out_path,
         print("    distinct_ratio %.3f  (unique emits / emits)" % summary["distinct_ratio"])
         print("    shared terms: %s"
               % (", ".join(summary["shared_terms"]) if summary["shared_terms"] else "(none)"))
+    # H_9984 ② · the pre-registered DV + its movement witness, printed on EVERY exit path (a
+    # REPEAT-dominated run leaves through NO-EVIDENCE and that is the run this question is about).
+    if summary.get("modal_emit_share") is not None or summary.get("seed_rows"):
+        print("    ── H_9984 ② percept-write DV (arm=%s) ──" % (summary.get("pw_arm") or "off"))
+        print("    modal_emit_share %s  (largest byte-identical emit / emits on percept-SILENT "
+              "ticks = the manipulated stratum · %s of %s)"
+              % (summary.get("modal_emit_share"), summary.get("modal_emit_count"),
+                 summary.get("modal_emit_n")))
+        print("      percept-seeded stratum (do() never applied): %s of %s emits  |  all ticks "
+              "pooled (continuity with the 0.667 the card quotes): %s"
+              % (summary.get("modal_emit_share_percept"), summary.get("modal_emit_n_percept"),
+                 summary.get("modal_emit_share_all")))
+        print("    seed movement    %s distinct / %s silent rows  (all rows %s/%s) — the WITNESS: "
+              "no movement ⇒ the run is INVALID for the question, not a negative"
+              % (summary.get("seed_distinct_silent"), summary.get("seed_rows_silent"),
+                 summary.get("seed_distinct"), summary.get("seed_rows")))
     print("    regime: %s — %s" % (summary["regime"], summary["note"]))
     print("  transcript → %s (%d rows · consolidation-CPT input · NO weight change this MVP)"
           % (out_path, len(transcript)))

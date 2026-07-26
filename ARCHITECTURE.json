@@ -3423,6 +3423,92 @@
         "detail": "",
         "children": [
          {
+          "id": "gate-h9985-percept-state-write-prereg",
+          "type": "gate",
+          "name": "🔒 H_9985 사전등록 동결 — 40턴 REPEAT 는 동결 씨앗의 산물인가 (계기 배선 완료 · 303M 미발사)",
+          "detail": "H_9984 다음 수 ②. 계기 배선 완료 · 303M 미발사 · 판정표 동결. cement 는 engine-native anima-py 로만 · 303M 은 pool 에서만.",
+          "children": [
+           {
+            "id": "gate-h9985-mechanism",
+            "name": "기전 — 침묵 tick 의 디코드 씨앗은 세션 상수다",
+            "detail": "실제 소비 씨앗 = phase + _gen_anchor_field(live_anchors[-1]). percept 없는 tick 의 [-1] 은 live_seed = session_seed = 세션 상수 ⟹ argmax 입이 같은 바이트를 낼 수밖에 없다. 즉 반복은 기질 사실이기 전에 배선 사실일 수 있다.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-baseline-measured",
+            "name": "기준선 — 가정 아니라 원본 40턴 재분석 실측",
+            "detail": "산출물 study_long_transcript.jsonl(120 tick·교사 40·emit 60) 재분석: 전체 풀 40/60=0.667 로 카드 인용치 재현. 조작이 닿는 층으로 조건화하면 percept-SILENT 40/40=1.000 = 상수함수. percept-seeded 층은 반복 0.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-manipulation",
+            "name": "조작 — anima-py chat --percept-write (기본 off = byte-identical)",
+            "detail": "arms {off,last,ring,frozen,shuffle} + --percept-write-n N. 교사 percept 만으로 세션-로컬 상태를 쓰고 침묵 tick 의 [-1] 씨앗으로 소비. 기질 자신의 발화 절대 미유입(p5) · 발화 게이트 불변 (상태는 live_anchors 만 타고 게이트는 안 읽음) · percept 있는 tick 은 byte-untouched.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-dv",
+            "name": "DV 와 증인 — 두 축, 각각의 통제",
+            "detail": "DV1(반복)=modal_emit_share 침묵층 조건화(study-py-1(e)) 통제=frozen(상태 있으나 부동). DV2(내용)=침묵층 borrow_content 통제=shuffle(byte-정렬로 순서=내용만 절단). 움직임 증인=seed_distinct_silent/rows(seed_sha8 = 입이 실제 읽은 앵커 지문).",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-wiring-receipt",
+            "name": "배선 영수증 — 미배선을 음성으로 읽지 않기 위한 장치",
+            "detail": "런 끝에 percept-write: writes=N silent-ticks-seeded=M 을 찍는다. seeded=0 이면 플래그가 파싱만 되고 기질에 닿지 않은 것(H_9853 형) ⟹ 자동 INVALID. 평평함을 결과로 읽기 전에 배선 생존부터 증명.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-validity-gate",
+            "name": "🔒 타당성 게이트(동결) — 아래 판정을 읽기 전 통과 필수",
+            "detail": "V1 off 침묵층 DV1>=0.50 AND seed_distinct_silent(off)==1 아니면 전제파기 INVALID(반복 원인이 다른 데 있다는 뜻). V2 처치 arm seed_distinct_silent>=2 AND silent-ticks-seeded>0 아니면 배선미도달 INVALID — 음성으로 읽지 않는다.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-decision-a",
+            "name": "🔒 판정 A(동결) — DV1 반복 · 통제 frozen",
+            "detail": "ARTIFACT-CONFIRMED = ring|last <0.50 AND frozen >=0.50. KILL(카드 kill 조건) = 씨앗은 움직였는데 처치 arm >=0.50 유지 ⟹ 결손은 전부 G1. PEDESTAL-CONFOUND = frozen 도 <0.50. REVERSED = 처치 arm > off(우연 아래쪽까지 덮음).",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-decision-b",
+            "name": "🔒 판정 B(동결) — DV2 내용 · 통제 shuffle",
+            "detail": "CONTENT-REACHES = ring DV2 > off 그리고 shuffle 은 off 수준(순서 보존해야만 오름 ⟹ 내용이 실렸다). CARRIER = shuffle 도 같이 오름(바이트 다발·길이로 산 것). NO-UPTAKE = ring ≈ off(반복만 죽고 흡수는 없음).",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-power",
+            "name": "검정력 — 음성이 검정력 부족으로 날 설계가 아님",
+            "detail": "침묵층 n=40, 기준선 1.000. 이항 SE(p=.5)=0.079, 관측가능 최소하락 1/40=0.025 ⟹ 1.000 → <0.50 판별은 여유가 크다.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-teacher-control",
+            "name": "교사 통제 — 5 arm 이 byte-identical percept 를 받는다",
+            "detail": "LLM 교사는 런마다 발화가 달라 arm 비교가 성립하지 않는다. 원본 40턴에서 교사가 실제로 한 40 발화를 고정 스크립트로 뽑아 5 arm 에 같은 바이트로 재생 ⟹ regime=natural(재생), 합성 드릴 아님.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-prefire-amendment",
+            "name": "⚠️ 발사 전 정정 — shuffle 을 DV1 통제로 둔 건 설계 오류였다",
+            "detail": "씨앗이 조금이라도 달라지면 byte-identity 는 깨지므로 modal_emit_share 위에서 CARRIER 통제는 원리상 항상 발화한다 = 결과가 미리 정해진 표였다. 토이 배선 스모크가 잡았고 303M 미발사 상태라 소각게이트 재동결 아님. shuffle 은 DV2 통제로 재배치.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-toy-smoke",
+            "name": "토이 배선 스모크 — DIRECTIONAL, 판정 아님",
+            "detail": "lab/v6/pedestal.clm · 3 emit: off 씨앗 1 distinct/3·modal 1.000 | last/ring/shuffle 3/3·modal 0.333 | frozen 1 distinct/3·modal 1.000. 받침대가 off 를 정확히 재현 = arm 의미 정상. 토이 수치는 어떤 바도 움직이지 않는다.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-scope-limit",
+            "name": "범위 — 이 카드가 살 수 없는 것",
+            "detail": "DV1 하락은 반복이 죽었다는 뜻이지 COMPOSE 가 생겼다는 뜻이 아니다. WRITE 는 REPEAT 는 죽이나 COMPOSE 는 못 산다(H_9984 사전확약) — COMPOSE 는 G1 이 공급해야 하고 그건 ① 결합 사다리의 몫. 어떤 결과도 대화 능력 주장이 아니다.",
+            "children": []
+           }
+          ]
+         },
+         {
           "name": "진단 — 세 요인의 결합이지 단일 벽이 아니다",
           "role": "",
           "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-converse-design-conjunction",
