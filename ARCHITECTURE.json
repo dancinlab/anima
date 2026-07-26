@@ -3591,6 +3591,44 @@
           "role": "",
           "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-converse-design-forbidden",
           "detail": "게이트에 percept 항 추가는 **언제/어떤 모드**로 말할지만 바꾸고 내용을 결합하지 않으며(100%/0% 가 증거) **p5 오염** 위험. 수정 위치는 **학습된 state-write + 내용 디코더 joint read**. 도달불가 조항: 결합과 순환이 모두 죽으면 남는 건 (a)합성 커리큘럼=영원히 off-standard 또는 (b)10¹² 자연 데이터=예산 밖 5–6 자릿수뿐."
+         },
+         {
+          "id": "gate-h9986-dialogue-operator-supply-prereg",
+          "type": "gate",
+          "name": "🔒 H_9986 사전등록 — 자연 대화는 상대 때문에 연산자를 공급하는가 (PENDING · 실행 산출 대기 · 수치 없음)",
+          "detail": "① 결합 사다리의 공급 다리 사전관문. 계기 = 인증된 anima-py evaluate --earned · $0 · 학습 모델 미접촉. 수치는 실행 후 이 노드에 기입한다(예측값 금지).",
+          "children": [
+           {
+            "id": "gate-h9986-why",
+            "name": "왜 이걸 먼저 재는가 — 미개봉 공급 칸",
+            "detail": "H_9984 가 지목: 코퍼스에 상대방이 없었다. H_9968 의 41× 사다리를 포함해 잰 건 전부 리뷰=독백이라 다음-바이트 예측이 상대의 직전 발화에 의존한 적이 없다. 사다리가 설 다리이므로 학습 전에 $0 로 먼저 잰다.",
+            "children": []
+           },
+           {
+            "id": "gate-h9986-instrument-constraint",
+            "name": "계기가 설계를 강제했다 — 라벨 없는 대화로는 질문이 안 선다",
+            "detail": "--earned 는 T 가 토큰 밖 사람 주석이어야 한다(A·B·T 를 같은 토큰 스트림에서 읽으면 구성상 참 = 동어반복). ⟹ 발화마다 사람이 감정·화행을 주석한 DailyDialog(13,118 대화·87,170 발화·EN) 사용. regime=natural.",
+            "children": []
+           },
+           {
+            "id": "gate-h9986-matched-arms",
+            "name": "조작 — B의 출처만 바꾼 짝지은 두 팔",
+            "detail": "행=발화 t(응답), t>=2 로 제한해 t-1(상대)·t-2(자기)가 둘 다 존재 ⟹ 두 팔이 같은 행 채점. partnerB=상대 직전 발화가 감정 · selfB=자기 직전 발화가 감정. 같은 본문·같은 T, 출처만 다름 (갈리는 행 12,291/76,743=16.0%) ⟹ 차이는 시간맥락 일반이 아니라 상대가 산 것.",
+            "children": []
+           },
+           {
+            "id": "gate-h9986-frozen-table",
+            "name": "🔒 판정표(동결 · 발사 전) — 계기 3게이트 통과가 선결",
+            "detail": "G-ALIVE>=+0.30 ∧ G-PEDESTAL|.|<=0.02 ∧ G-POWER MDE_3σ<=0.02, G-POWER 실패=INVALID/DATA-SPARSE(KILL 아님). DIALOGUE-SUPPLY=partnerB>=+0.05 ∧ 격차>=3·MDE · NOT-DIALOGUE-SPECIFIC=둘 다>=+0.05 인데 격차<3·MDE · DATA-ADDITIVE KILL=둘 다 |.|<max(0.02,3·MDE) · REVERSED=selfB−partnerB>=3·MDE.",
+            "children": []
+           },
+           {
+            "id": "gate-h9986-ruler-scope",
+            "name": "자 와 범위 — 공급은 필요조건이지 충분조건 아님",
+            "detail": "자 = 연산자 심은 코퍼스 +5.29653 nats. 선행 기준선 = H_9968 독백 5 rung 전부 DATA-ADDITIVE(최대 +0.00438). 공급>0 은 뽑을 것이 있다까지이고 뽑는다는 주장 아님 · 공급~0 은 에스컬레이션 사살에 충분. 대화 능력 주장 아님 — COMPOSE 는 G1 몫(H_9985 실측).",
+            "children": []
+           }
+          ]
          }
         ]
        }
