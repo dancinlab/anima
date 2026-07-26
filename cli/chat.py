@@ -26,6 +26,7 @@ hexa `to_string(float)` == Python `repr(float)` (empirically pinned: 1/3 → "0.
 (utf-8/surrogateescape) so the stream is byte-identical to hexa println.
 """
 import glob
+import hashlib          # H_9984 ② · decode-seed fingerprint for the study transcript (side-channel)
 import os
 import random
 import re
@@ -1883,6 +1884,59 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     _ep_store_ents = []       # FIFO of the last n_slot declared entities (session-local)
     _ep_store_pols = []
     _ep_store_writes = 0      # G-W0: how many times perception actually armed the lane
+    # ── H_9984 ② PERCEPT→STATE WRITE (--percept-write · default off = byte-identical) ──────
+    # The defect this isolates: on a percept-SILENT tick live_anchors[-1] is `live_seed`, a SESSION
+    # CONSTANT (:below), so the actually-consumed decode seed is the same string on every silent
+    # tick and an argmax mouth necessarily re-emits the same bytes. The 40-turn study read
+    # REPEAT 45/60 with the anchor-seeded 40/40 completing the birth anchor VERBATIM — which is
+    # exactly what a frozen seed looks like, so that count cannot be read as a substrate fact until
+    # the seed is allowed to move. This wires ONE new causal surface: a session-local state written
+    # ONLY from TEACHER percepts and consumed as the [-1] decode anchor on silent ticks.
+    #   p5 / self-loop: the state NEVER takes the daemon's own utterance (that is the banned
+    #   self-seed, and it would also launder the substrate's own words back in as exogenous reach
+    #   · teacher-prompted-with-own-output). The write site is the percept branch ALONE.
+    #   The emit GATE is untouched — the state rides live_anchors (the decode seed), which the gate
+    #   never reads. A percept term in the GATE would only change WHEN it speaks, not what it says.
+    #   Percept-PRESENT ticks stay byte-untouched, so the do() is scoped to exactly the frozen ticks.
+    # arms: last    = the most recent percept
+    #       ring    = the last N percepts joined (history-sensitive — accumulating state)
+    #       frozen  = the FIRST percept, never updated. PEDESTAL: state is PRESENT but IMMOBILE, so
+    #                 if REPEAT falls here too the fall bought "an anchor that is not live_seed",
+    #                 not movement (negative-pedestal-before-reading-a-positive).
+    #       shuffle = ring with its bytes SORTED. CARRIER control: byte multiset, length and feat8
+    #                 held EXACTLY, order (and therefore content) severed — the --wm-dual-perm idiom.
+    _pw_mode = anima_flag_value(_cargv, "--percept-write", "ANIMA_PERCEPT_WRITE", "off")
+    if _pw_mode not in ("off", "last", "ring", "frozen", "shuffle"):
+        raise SystemExit("--percept-write: only 'off' (default), 'last', 'ring', 'frozen' or "
+                         "'shuffle' (got %r)" % _pw_mode)
+    try:
+        _pw_n = int(anima_flag_value(_cargv, "--percept-write-n", "ANIMA_PERCEPT_WRITE_N", "3"))
+    except ValueError:
+        raise SystemExit("--percept-write-n: integer >= 1 required")
+    if _pw_n < 1:
+        raise SystemExit("--percept-write-n: integer >= 1 required (got %d)" % _pw_n)
+    if _pw_mode != "off" and percept_source is None:
+        raise SystemExit("--percept-write %s requires an anima-study percept source (the state is "
+                         "written BY perception; with no afferent stream there is nothing to write "
+                         "and the flag would silently be a no-op)" % _pw_mode)
+    _pw_ring = []             # teacher-originated percepts, newest last (session-local · never an emit)
+    _pw_first = ""            # the FIRST percept — the `frozen` pedestal's immobile state
+    _pw_writes = 0            # how many times perception actually moved the state (G-W0 twin)
+    _pw_seeded = 0            # silent ticks whose decode seed the state actually replaced
+
+    def _pw_state_text():
+        """The state string a silent tick's seed anchor carries. '' ⇒ caller appends nothing ⇒
+        live_seed stays [-1] ⇒ byte-identical (nothing has been perceived yet)."""
+        if _pw_mode == "off" or not _pw_ring:
+            return ""
+        if _pw_mode == "frozen":
+            return _pw_first
+        if _pw_mode == "last":
+            return _pw_ring[-1]
+        _txt = " ".join(_pw_ring[-_pw_n:])
+        if _pw_mode == "shuffle":
+            _txt = bytes(sorted(_benc(_txt))).decode("utf-8", "surrogateescape")
+        return _txt
     # H_9729 counterfactual arms (measurement-only · swap ONLY the re-entry carrier text · the
     # wm_withheld write stays FACTUAL so the KNOWN scalar ledger is held EXACTLY — only the re-entered
     # CONTENT is manipulated). --wm-dual-perm = byte-sort the carrier: feat8 is byte-multiset (perm-
@@ -2186,6 +2240,16 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
             percept_text = percept_source(tick, _percept_transcript)
             if percept_text is not None:
                 percept_text = str(percept_text).strip() or None
+        # H_9984 ② · PERCEPT→STATE WRITE. Teacher text only — the daemon's own utterance never
+        # reaches this ring (p5 self-seed root stays closed · :flag block). Consumed only on a
+        # SILENT tick, so a percept-present tick is byte-identical to the off arm.
+        if _pw_mode != "off" and percept_text:
+            if not _pw_ring:
+                _pw_first = percept_text
+            _pw_ring.append(percept_text)
+            while len(_pw_ring) > _pw_n:
+                _pw_ring.pop(0)
+            _pw_writes += 1
         # ── H_9744 STORE-EPISODIC (S3) · perception writes the store ──
         # The transducer knows GRAMMAR ONLY, never content: it matches one fixed shape and copies
         # the bytes through. No entity whitelist, no fact dictionary, no polarity re-interpretation
@@ -2782,6 +2846,16 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         # back (chat-py-5 root ③ stays closed). Guarded: OFF ⇒ live_seed stays [-1] ⇒ byte-identical.
         if percept_text:
             live_anchors.append({"text_payload": percept_text, "name": "percept"})
+        # H_9984 ② · SILENT-TICK SEED. With no percept this tick, live_anchors[-1] is the session
+        # CONSTANT live_seed (:above) — the frozen seed an argmax mouth re-emits verbatim. Append the
+        # percept-written state LAST so the consumed seed carries what the OTHER has said instead.
+        # Nothing perceived yet ⇒ empty ⇒ no append ⇒ byte-identical to the off arm.
+        _pw_seed_text = ""
+        if _pw_mode != "off" and not percept_text:
+            _pw_seed_text = _pw_state_text()
+            if _pw_seed_text:
+                live_anchors.append({"text_payload": _pw_seed_text, "name": "percept_state"})
+                _pw_seeded += 1
         # H_9729 · WITHHELD-CONTENT RE-ENTRY (default OFF ⇒ byte-identical): the LAST silence tick's
         # imagined-but-vetoed candidate (latched at :silence-write) re-enters as the decode-seed
         # anchor (appended LAST ⇒ live_anchors[-1] ⇒ the actually-consumed seed suffix), giving W_S
@@ -2977,9 +3051,20 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         # The percept source may read the returned transcript to decide the next percept; silence
         # (did_emit False) is a real signal it must respect, never a cue to re-prompt/force emit.
         if percept_source is not None:
+            # H_9984 ② · the ACTUALLY-CONSUMED decode anchor's fingerprint, recorded on EVERY arm
+            # (off included). This is the evidence the kill condition needs — "the state really did
+            # move turn to turn" has to be read off the seed the mouth read, not off the flag being
+            # set. Pure side-channel: a hash written into the transcript, never a branch.
+            _seed_fp = None
+            if len(live_anchors) > 0:
+                _seed_fp = hashlib.sha256(
+                    _benc(_gen_anchor_field(live_anchors[len(live_anchors) - 1]))).hexdigest()[:8]
             _percept_transcript.append({
                 "tick": tick, "percept": percept_text,
                 "did_emit": did_emit, "emit_text": g_text if did_emit else None,
+                "pw_arm": _pw_mode, "seed_sha8": _seed_fp,
+                "seed_src": (live_anchors[len(live_anchors) - 1].get("name")
+                             if len(live_anchors) > 0 else None),
             })
             if did_emit:
                 _percept_emits += 1
@@ -3451,6 +3536,15 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         set_clms_store(None)
         _pln("store-episodic  : writes=" + str(_ep_store_writes)
              + "  ring=" + str(len(_ep_store_ents)) + "/" + str(_ep_n_slot) + "  (session store cleared)")
+
+    # H_9984 ② · WIRING RECEIPT. A flag that parsed but never fired is the H_9853 failure mode
+    # (every arm reads the same because none of them reached the substrate), so report the two
+    # counts that separate "no effect" from "no wiring": how often perception WROTE the state and
+    # how often a silent tick's seed was actually REPLACED by it. seeded=0 ⇒ the arm never ran.
+    if _pw_mode != "off":
+        _pln("percept-write   : arm=" + _pw_mode + " n=" + str(_pw_n)
+             + "  writes=" + str(_pw_writes) + "  silent-ticks-seeded=" + str(_pw_seeded)
+             + ("  (⚠️ NEVER FIRED — seed never replaced)" if _pw_seeded == 0 else ""))
 
     if _trace_fh is not None:
         _trace_fh.close()
