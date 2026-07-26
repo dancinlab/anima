@@ -3691,6 +3691,20 @@ def main():
                     help="H_9976 A2 arm: also learn the cell physics (R, lam) under a spectral clamp. "
                          "Default OFF — the primary question is whether a gradient THROUGH the loop "
                          "earns integration, not whether the dynamics can be fitted.")
+    ap.add_argument("--field-mech", choices=["affine", "gated"], default="affine",
+                    dest="field_mech",
+                    help="H_9981 (R11): the cell-to-cell MECHANISM CLASS. 'affine' = today's "
+                         "I'=I(1-lam)R^T+s (every closed lever left this fixed; A2 freed the "
+                         "coefficients on it and Phi did not move). 'gated' adds a LEARNED "
+                         "multiplicative term beta*((I@Ra^T)*(I@Rb^T)) initialised at 0, so init is "
+                         "byte-identical and CE gets to CHOOSE non-separability rather than be forced "
+                         "into it. Rationale: the repo's own hand-TPM reading puts XOR (linearly "
+                         "non-separable) at Phi 2.2500 vs OR/AND 0.5825 vs a COPY pedestal of exactly "
+                         "0. beta joins the optimizer in BOTH arms so parameter counts match (D4).")
+    ap.add_argument("--field-mech-lam0", type=float, default=0.0, dest="field_mech_lam0",
+                    help="H_9981: beta init (default 0.0 = byte-identical null). Non-zero only for "
+                         "the instrument checks; a training arm must start at 0 or the mechanism is "
+                         "imposed rather than chosen.")
     ap.add_argument("--field-coupling-seed", type=int, default=-1, dest="field_coupling_seed",
                     help="H_9957: seed for the FIXED architecture draw (the coupled cells' rotation R, "
                          "frozen features) — kept DISJOINT from --seed (the training draw). Default -1 = "
@@ -4665,7 +4679,8 @@ def main():
                                        coupling_seed=(None if a.field_coupling_seed < 0
                                                       else a.field_coupling_seed),
                                        grad_wb=a.field_bptt, train_physics=a.field_train_physics,
-                                       sg_drive=a.field_sg_drive)
+                                       sg_drive=a.field_sg_drive, mech=a.field_mech,
+                                       mech_lam0=a.field_mech_lam0)
         if a.out:
             # field-loop never runs the mitosis GROW loop, so mito.e_active is still e0; but a --init'd
             # model carries all `emax` experts. Serialize ALL of them (else _write_clm's e_ser=e_active
