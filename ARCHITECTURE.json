@@ -3544,9 +3544,22 @@
            },
            {
             "id": "gate-h9985-measured-downstream",
-            "name": "📌 하류 의무 — 이 결과가 만든 것",
-            "detail": "① 결합 사다리의 COMPOSE 판독은 --percept-write ring 을 켠 상태에서 해야 한다(off 로 재면 자기 상태가 상수라 결합 함수가 구조적으로 퇴화하고 그 음성은 씨앗 artifact). 침묵층이 상수였던 과거 study 의 REPEAT/distinct_ratio 수치는 그 층에서 재해석 대상.",
-            "children": []
+            "name": "📌 하류 의무 — ① 사다리는 ring 을 켜고 읽을 것 · 과거 전사 재해석 부채는 전수조사로 0 건 확정",
+            "detail": "① 결합 사다리의 COMPOSE 판독은 --percept-write ring 을 켠 상태에서(off 로 재면 자기 상태가 상수라 결합 함수가 구조적으로 퇴화하고 그 음성은 씨앗 artifact). 과거 study 재해석 부채 = 0 건 — 아래 전수조사가 경계를 확정했다.",
+            "children": [
+             {
+              "id": "gate-h9985-reread-census",
+              "name": "🔒 전수조사 — 동결 씨앗이 닿은 착륙 런은 40턴 하나뿐",
+              "detail": "로컬+pool summer 착륙 전사 전수($0·원본 불변): study_long(120tick) 침묵층 40/40=1.000 = 유일 피해자. transcript303_long·transcript303·gw2_* 6종·gw2s_* 2종은 전부 rows==교사==emit(tick 마다 교사 발화) ⟹ 침묵층 0/0 = artifact 가 닿을 자리 없음.",
+              "children": []
+             },
+             {
+              "id": "gate-h9985-window-rule",
+              "name": "규칙 — window>1 로 도는 study 는 침묵층 DV 를 따로 보고",
+              "detail": "기전이 경계를 준다: 동결 씨앗은 percept 없는 tick 에서만 생기고 그런 tick 은 --window>1 일 때만 존재한다. 그 층이 상수면 그 수치는 기질이 아니라 배선을 읽은 것이므로, 층화 보고를 기본값으로 한다.",
+              "children": []
+             }
+            ]
            },
            {
             "id": "gate-h9985-measured-infra",
