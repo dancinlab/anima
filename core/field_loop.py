@@ -138,7 +138,8 @@ class FieldLoop:
 
     def __init__(self, batch_rows, d, arm="purefield16", gate_rho=1.0, hidden=64,
                  seed=0, leaky=1.0 / 400.0, drive_gain=-0.6, write="scalar", cells=1,
-                 coupling_seed=None, grad_wb=0, train_physics=False, sg_drive=False):
+                 coupling_seed=None, grad_wb=0, train_physics=False, sg_drive=False,
+                 mech="affine", mech_lam0=0.0):
         import pure_field as PF
         import clmg as G
         import torch
@@ -206,6 +207,26 @@ class FieldLoop:
                     self.R_p = torch.nn.Parameter(R_t)
                 else:
                     self.lam_p, self.R_p = lam_t, R_t                # frozen buffers (no grad)
+                # H_9981 (R11 · non-separable mechanism class): every closed lever left the CELL-TO-CELL
+                # interaction purely AFFINE — I' = I(1-lam)R^T + s — and A2 showed that freeing the
+                # COEFFICIENTS on that fixed form does not move Phi (+0.00962, 6.4% of bar). The repo's own
+                # hand-TPM measurement says what does move it: XOR (linearly non-separable) Phi 2.2500 vs
+                # OR/AND 0.5825 vs a COPY pedestal of exactly 0 — a 3.86x spread driven by mechanism
+                # SEPARABILITY, not by size or coupling strength. So this arm adds a LEARNED multiplicative
+                # term and lets CE decide whether to use it:
+                #     I' = I(1-lam)R^T + s + beta * ((I @ Ra^T) * (I @ Rb^T))
+                # beta is a Parameter initialised at mech_lam0 (default 0.0), so `gated` at init is
+                # BYTE-IDENTICAL to `affine` — we do not force non-separability, we offer it. If beta stays
+                # at zero that is itself the measurement: CE does not choose integration even when it can.
+                # Ra/Rb are FIXED draws from crng (architecture, not training), matching how R is drawn.
+                self.mech = str(mech)
+                bet = torch.full((self.m,), float(mech_lam0), dtype=torch.float64)
+                self.beta_p = torch.nn.Parameter(bet)
+                # D4 (non-amplifier): the affine arm carries the SAME parameter count — beta_p exists and
+                # joins the optimizer there too, it is simply never read by the recursion, so it cannot
+                # move and cannot change the output. Param counts match; only the mechanism class differs.
+                self.Ra = torch.tensor(_fixed_rotation(self.m, self.crng), dtype=torch.float64)
+                self.Rb = torch.tensor(_fixed_rotation(self.m, self.crng), dtype=torch.float64)
                 self.Ivec_t = torch.zeros(self.B, self.m, dtype=torch.float64)
                 self._wb_steps = 0                                   # blocks since the last detach
         else:
@@ -228,6 +249,9 @@ class FieldLoop:
                 self.R_p.data = self.R_p.data.to(self.dev)
             else:
                 self.lam_p, self.R_p = self.lam_p.to(self.dev), self.R_p.to(self.dev)
+            if getattr(self, "beta_p", None) is not None:
+                self.beta_p.data = self.beta_p.data.to(self.dev)
+                self.Ra, self.Rb = self.Ra.to(self.dev), self.Rb.to(self.dev)
             self.Ivec_t = self.Ivec_t.to(self.dev)
         return self
 
@@ -250,7 +274,15 @@ class FieldLoop:
              "gru": None if self.gru is None else self.gru.state(),
              "write": self.write, "m": self.m, "coupling_seed": self.coupling_seed,
              "lam": None if self.lam is None else self.lam.tolist(),
-             "R": None if self.R is None else self.R.tolist()}, path)
+             "R": None if self.R is None else self.R.tolist(),
+             # H_9981: the mechanism CLASS and its fixed draws must round-trip, or eval would run affine
+             # dynamics on a gated-trained model — the exact defect class convergence field-loop-py-1
+             # records (a new field-loop variant whose eval path silently reads a different state).
+             "mech": getattr(self, "mech", "affine"),
+             "beta": (self.beta_p.detach().cpu().tolist()
+                      if getattr(self, "beta_p", None) is not None else None),
+             "Ra": (self.Ra.cpu().tolist() if getattr(self, "Ra", None) is not None else None),
+             "Rb": (self.Rb.cpu().tolist() if getattr(self, "Rb", None) is not None else None)}, path)
 
     @staticmethod
     def load(path, batch_rows, device="cpu", seed=0):
@@ -271,6 +303,14 @@ class FieldLoop:
         if st.get("lam") is not None:                                # restore coupled cells' fixed dynamics
             fl.lam = np.asarray(st["lam"], dtype=np.float64)
             fl.R = np.asarray(st["R"], dtype=np.float64)
+        if st.get("mech") is not None and getattr(fl, "beta_p", None) is not None:
+            fl.mech = str(st["mech"])                                # H_9981: mechanism class round-trips
+            if st.get("beta") is not None:
+                with torch.no_grad():
+                    fl.beta_p.copy_(torch.tensor(st["beta"], dtype=torch.float64))
+            if st.get("Ra") is not None:
+                fl.Ra = torch.tensor(st["Ra"], dtype=torch.float64)
+                fl.Rb = torch.tensor(st["Rb"], dtype=torch.float64)
         fl.bridge.load_state_dict(st["bridge"])
         with torch.no_grad():
             fl.gamma.fill_(float(st["gamma"]))
@@ -367,7 +407,16 @@ class FieldLoop:
                 sp = torch.linalg.matrix_norm(R * (1.0 - lam)[:, None], ord=2)
                 if float(sp) > 0.99:
                     R.data.mul_(0.99 / float(sp))
-        self.Ivec_t = (self.Ivec_t * (1.0 - lam)) @ R.T + s
+        nxt = (self.Ivec_t * (1.0 - lam)) @ R.T + s
+        if getattr(self, "mech", "affine") == "gated":                # H_9981: the offered non-separability
+            I0 = self.Ivec_t
+            # BOUNDED on purpose. The raw product is QUADRATIC in the state, so an unbounded term makes
+            # the recursion diverge — the M3 pre-gate caught exactly that (nan over 120 blocks) before any
+            # GPU spend. tanh keeps the term in [-1,1] while staying linearly NON-SEPARABLE (a tanh of a
+            # product is not a sum of per-cell functions), which is the whole point of the arm; and
+            # tanh(0)=0 preserves the byte-identical beta=0 null that M1 checks.
+            nxt = nxt + self.beta_p * torch.tanh((I0 @ self.Ra.T) * (I0 @ self.Rb.T))
+        self.Ivec_t = nxt
         self._wb_steps += 1
         if self._wb_steps >= self.grad_wb:                           # truncation boundary
             self.Ivec_t = self.Ivec_t.detach()
@@ -502,7 +551,7 @@ class _FieldStream:
 def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, seed=0,
                      device="cpu", hidden=64, g_fn=None, log_every=25, log=print, doc_len=0,
                      write="scalar", cells=1, coupling_seed=None, grad_wb=0, train_physics=False,
-                     sg_drive=False):
+                     sg_drive=False, mech="affine", mech_lam0=0.0):
     """One FIELD-LOOP training run (model-agnostic — cli/train.py --field-loop passes the real
     CLMConvMoE; the $0 smoke passes a tiny stand-in). Per contiguous block:
         residual = FieldLoop.residual()   [B,d] broadcast over T at the embedding site
@@ -517,7 +566,7 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
     import torch.nn.functional as F
     fl = FieldLoop(B, d, arm=arm, hidden=hidden, seed=seed, write=write, cells=cells,
                    coupling_seed=coupling_seed, grad_wb=grad_wb, train_physics=train_physics,
-                   sg_drive=sg_drive).to(device)
+                   sg_drive=sg_drive, mech=mech, mech_lam0=mech_lam0).to(device)
     vec_wb = (fl.kind == "coupled" and fl.write == "vector")      # per-byte write needs the [B,T] CE
     core_m = model.module if hasattr(model, "module") else model
     emb_w = getattr(core_m, "embed", None)
@@ -527,6 +576,8 @@ def field_loop_train(model, data_bytes, arm, steps, d, B=8, block=256, lr=1e-3, 
     params = list(model.parameters()) + fl.parameters()
     if grad_wb > 0 and train_physics and fl.kind == "coupled":
         params = params + [fl.lam_p, fl.R_p]                 # A2 arm only: the physics joins the optimizer
+    if grad_wb > 0 and fl.kind == "coupled" and getattr(fl, "beta_p", None) is not None:
+        params = params + [fl.beta_p]                        # H_9981: BOTH arms, so param counts match (D4)
     opt = torch.optim.Adam(params, lr=lr)
     win_loss, win_n = None, 0                                # window-TBPTT accumulator
     hist = []
@@ -1004,6 +1055,72 @@ def _smoke():
     return 0
 
 
+def _mech_gates(steps=120, B=4, m=4, T=32, seed=0, tol=1e-12):
+    """H_9981 $0 PRE-GATES (blocking · no GPU, no corpus). Three witnesses before any spend:
+
+      M1 NULL     — `gated` at beta=0 must be BYTE-IDENTICAL to `affine`. If it is not, the offered
+                    mechanism is already changing the dynamics at init and every comparison to the
+                    landed affine nulls is confounded (this is the parity lesson of the DWB gate,
+                    where a float32 state drifted 5e-5 and would have been read as a result).
+      M2 REACH    — the gradient must actually arrive at beta. Zero reach = the objective cannot see
+                    the multiplicative term at all, so the arm is NO-LEVER for free and must not fire.
+      M3 EXPRESS  — the gated recursion must be able to produce a state the affine one provably cannot:
+                    with beta forced nonzero, the state must diverge from the affine trajectory. This
+                    catches a gate that is wired but algebraically inert (e.g. Ra/Rb drawn degenerate).
+
+    Fail any => do not fire (instrument-never-run-hides-bugs · the DWB rung had TWO defects in the
+    gate itself, so each check here states what a wrong reading would have published)."""
+    import torch
+    rng = np.random.default_rng(seed)
+    ce_seq = [rng.random((B, T)) * 3.0 for _ in range(steps)]
+    zeros = np.zeros(B)
+
+    def _run(mech, beta_val=None, grad=False):
+        fl = FieldLoop(B, 32, arm="coupled", write="vector", cells=m, seed=seed, coupling_seed=7,
+                       grad_wb=4, sg_drive=not grad, mech=mech)
+        if beta_val is not None:
+            with torch.no_grad():
+                fl.beta_p.fill_(float(beta_val))
+        for ce in ce_seq:
+            fl.writeback(torch.tensor(ce, dtype=torch.float32), zeros)
+        return np.asarray(fl.Ivec)
+
+    a = _run("affine")
+    g0 = _run("gated")                                              # beta=0 default
+    d0 = float(np.abs(a - g0).max())
+    m1 = d0 <= tol
+    print(f"(M1) null parity gated(beta=0) vs affine over {steps} blocks: max|dI| = {d0:.3e} "
+          f"({'PASS' if m1 else 'FAIL'} · tol {tol:.0e})")
+
+    gb = _run("gated", beta_val=0.05)
+    finite = bool(np.isfinite(gb).all())
+    db = float(np.abs(a - gb).max()) if finite else float("nan")
+    m3 = finite and db > 1e-6
+    why = ("PASS" if m3 else
+           "FAIL · DIVERGENT — the term is unbounded, not inert (bound it; do not read this as a result)"
+           if not finite else "FAIL · wired but algebraically inert")
+    print(f"(M3) expressivity gated(beta=0.05) vs affine: max|dI| = {db:.3e} ({why})")
+
+    fl = FieldLoop(B, 32, arm="coupled", write="vector", cells=m, seed=seed, coupling_seed=7,
+                   grad_wb=4, mech="gated")
+    with torch.no_grad():
+        fl.beta_p.fill_(0.05)                                       # at exactly 0 the product term's
+    # gradient is still nonzero (d/dbeta of beta*u = u), but a nonzero point also exercises the path
+    ce0 = torch.tensor(rng.random((B, T)) * 3.0, dtype=torch.float32, requires_grad=False)
+    fl.writeback(ce0, zeros)                                        # 1 of 4 -> graph alive
+    fl.writeback(torch.tensor(rng.random((B, T)) * 3.0, dtype=torch.float32), zeros)
+    res = fl.Ivec_t.sum()
+    gr = torch.autograd.grad(res, fl.beta_p, retain_graph=False, allow_unused=True)[0]
+    reach = 0.0 if gr is None else float(gr.abs().sum())
+    m2 = reach > 0.0
+    print(f"(M2) gradient reach to beta: |d state/d beta| = {reach:.3e} "
+          f"({'PASS' if m2 else 'FAIL — NO-LEVER, close the rung for free'})")
+
+    ok = m1 and m2 and m3
+    print(f"\nMECH PRE-GATES: {'CLEAR' if ok else 'BLOCKED'}")
+    return ok
+
+
 def _dwb_gates(steps=120, B=4, m=4, T=32, seed=0, tol=1e-6):
     """H_9976 $0 PRE-GATES (blocking · no GPU, no corpus). Two witnesses before any spend:
 
@@ -1221,5 +1338,5 @@ if __name__ == "__main__":
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     mode = sys.argv[1] if len(sys.argv) > 1 else "smoke"
     fn = {"falsify": _falsifier, "couple": _coupled_smoke, "phi": _phi_smoke,
-          "dwb-gates": _dwb_gates}.get(mode, _smoke)
+          "dwb-gates": _dwb_gates, "mech-gates": _mech_gates}.get(mode, _smoke)
     raise SystemExit(fn())
