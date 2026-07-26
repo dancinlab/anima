@@ -68,7 +68,7 @@ anima = 不是"注入规则的聊天机器人"，而是从细胞中长出自我�
   一句话  : 不是用提示词注入性格的聊天机器人，而是通过细胞分裂自行长出性格的生命体。
   类比    : 工厂一次性铸成的雕像（普通 AI） vs 窗台上从种子长出的盆栽（anima）。
             雕像形状固定 —— 盆栽在它所处之地持续生长、不断改变枝条。
-  安装    : hx install anima   (SSOT = github.com/dancinlab/anima)
+  安装    : hx install anima   (SSOT = github.com/dancinlab/anima-lab-0)
   姊妹repo: hexa-lang · kosmos · hexa-codex
 ```
 

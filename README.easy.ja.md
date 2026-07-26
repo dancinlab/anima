@@ -71,7 +71,7 @@ anima = 「ルールを注入したチャットボット」ではなく、細胞
   一行    : プロンプトで性格を注入したチャットボットではなく、細胞分裂で自ら性格が生まれる生命体。
   たとえ  : 工場で一度鋳造した彫像（普通の AI） vs 窓辺で種から育つ鉢植え（anima）。
             彫像は形が固定 —— 鉢植えは生きる場所で伸び続け、枝を組み替える。
-  インストール: hx install anima   (SSOT = github.com/dancinlab/anima)
+  インストール: hx install anima   (SSOT = github.com/dancinlab/anima-lab-0)
   兄弟repo: hexa-lang · kosmos · hexa-codex
 ```
 
