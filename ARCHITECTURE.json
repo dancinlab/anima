@@ -3425,8 +3425,8 @@
          {
           "id": "gate-h9985-percept-state-write-prereg",
           "type": "gate",
-          "name": "🔒 H_9985 사전등록 동결 — 40턴 REPEAT 는 동결 씨앗의 산물인가 (계기 배선 완료 · 303M 미발사)",
-          "detail": "H_9984 다음 수 ②. 계기 배선 완료 · 303M 미발사 · 판정표 동결. cement 는 engine-native anima-py 로만 · 303M 은 pool 에서만.",
+          "name": "🟢 H_9985 MEASURED — 40턴 REPEAT 는 동결 씨앗의 산물이었다 (A=ARTIFACT-CONFIRMED · B=CONTENT-REACHES)",
+          "detail": "H_9984 다음 수 ② 완료. 303M py303_full · pool summer · anima-py 0.20.245 · 5 arm × 120 tick. cement 는 engine-native anima-py 로만.",
           "children": [
            {
             "id": "gate-h9985-mechanism",
@@ -3504,6 +3504,54 @@
             "id": "gate-h9985-scope-limit",
             "name": "범위 — 이 카드가 살 수 없는 것",
             "detail": "DV1 하락은 반복이 죽었다는 뜻이지 COMPOSE 가 생겼다는 뜻이 아니다. WRITE 는 REPEAT 는 죽이나 COMPOSE 는 못 산다(H_9984 사전확약) — COMPOSE 는 G1 이 공급해야 하고 그건 ① 결합 사다리의 몫. 어떤 결과도 대화 능력 주장이 아니다.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-measured-table",
+            "name": "📊 실측 5-arm 표 (침묵층 조건화)",
+            "detail": "최빈 byte-identical 비중: off 1.000(40/40) · last 0.200(8/40) · ring 0.125(5/40) · frozen 1.000(40/40) · shuffle 0.575(23/40). 씨앗 distinct(침묵 80행): off·frozen 1, 나머지 40. 배선 영수증 writes=40 silent-ticks-seeded=80 (처치 4 arm 전부).",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-measured-validity",
+            "name": "✅ 타당성 게이트 V1·V2 둘 다 PASS",
+            "detail": "V1: off 침묵층 1.000 이고 seed_distinct_silent=1 — 씨앗이 정말 상수. 나아가 off 가 원본 40턴을 재현 (COMPOSE 0·ECHO 3·DETACHED 12·REPEAT 45 of 60 · 전체풀 0.6667) ⟹ 같은 것을 재고 있다. V2: 처치 arm 배선 도달 확인.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-measured-a",
+            "name": "🟢 판정 A — ARTIFACT-CONFIRMED (통제 frozen)",
+            "detail": "ring 0.125 ∧ last 0.200 < 0.50 이고 받침대 frozen 은 1.000. frozen 은 상태를 갖고도 off 를 완전히 동일 재현(REPEAT 45·0/3/12) ⟹ 반복을 죽인 건 '다른 앵커'가 아니라 씨앗의 움직임. Fisher off↔ring p=2.3e-17 · off↔frozen p=1.000.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-measured-b",
+            "name": "🟢 판정 B — CONTENT-REACHES (통제 shuffle)",
+            "detail": "침묵층 borrow_content: ring 0.2323 vs off 0.000 vs shuffle 0.000. shuffle 은 씨앗을 40/80 움직이고 반복도 일부 줄였는데(0.575) 교사 어휘는 0 ⟹ 상승분은 carrier 아니라 내용. ring ECHO 3→14 동일 방향.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-measured-compose-floor",
+            "name": "🔴 그러나 COMPOSE 는 못 샀다 — 사전확약 확인",
+            "detail": "COMPOSE 0 → 1/60 (last·ring 각 1). 씨앗이 움직이고 내용이 닿았는데도 결합은 바닥 — 들어온 말이 ECHO 로 나가지 COMPOSE 로 안 나온다. WRITE 는 REPEAT 사망 + 내용 도달까지만 산다. 남은 결손은 G1 결합기 = ① 결합 사다리의 몫.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-measured-honesty",
+            "name": "⚠️ 정직 — 정정이 DV1 판정을 바꾸지는 않았다",
+            "detail": "실측 shuffle 0.575 ≥ 0.50 이라 원안(shuffle 을 DV1 CARRIER 통제로 둔 표)대로였어도 DV1 은 똑같이 ARTIFACT-CONFIRMED 였다. 정정의 실익은 결과를 구한 게 아니라 DV2 를 열어 CONTENT-REACHES 판독을 가능하게 한 것. 원안이 우연히 통과했을 뿐 논리는 여전히 결함.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-measured-downstream",
+            "name": "📌 하류 의무 — 이 결과가 만든 것",
+            "detail": "① 결합 사다리의 COMPOSE 판독은 --percept-write ring 을 켠 상태에서 해야 한다(off 로 재면 자기 상태가 상수라 결합 함수가 구조적으로 퇴화하고 그 음성은 씨앗 artifact). 침묵층이 상수였던 과거 study 의 REPEAT/distinct_ratio 수치는 그 층에서 재해석 대상.",
+            "children": []
+           },
+           {
+            "id": "gate-h9985-measured-infra",
+            "name": "🚧 인프라 기록 — aiden wedge 는 판정에 미포함",
+            "detail": "첫 발사 호스트 aiden 이 SSH 도달 불가(sidecar pool list 독립 프로브로도 도달 불가) — 인프라 블로커이지 과학 결과가 아니므로 판정에서 제외. summer 재발사분(19:46~20:53 KST)이 완주했고 모든 수치는 그것.",
             "children": []
            }
           ]

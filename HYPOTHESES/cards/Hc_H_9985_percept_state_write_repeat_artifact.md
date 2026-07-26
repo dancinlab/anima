@@ -132,3 +132,69 @@ anima-py study ~/anima-weights/py303_full.clm --teacher script --script percepts
 303M 은 **pool 에서만**(mini 금지 · [[heavy-anima-eval-pool-not-mini]]). 5 arm × 120 tick.
 
 regime: `natural`(교사 발화 재생) · tier-ceiling: 이 카드는 **계기/배선 판정**이며 대화 능력 주장 아님.
+
+---
+
+# 📊 MEASURED (2026-07-26 · 303M · pool summer · engine-native `anima-py` 0.20.245)
+
+**판정 A = 🟢 ARTIFACT-CONFIRMED · 판정 B = 🟢 CONTENT-REACHES**
+
+5 arm × 120 tick · 교사 40 발화 byte-identical 재생 · 산출 `~/h9985/{arm}.{jsonl,json,log}`.
+
+| arm | DV1 침묵층 최빈 반복 | 씨앗 distinct(침묵) | writes/seeded | DV2 borrow_content(침묵) | REPEAT | COMPOSE/ECHO/DETACHED |
+|---|---|---|---|---|---|---|
+| `off` | **1.000** (40/40) | 1/80 | — | 0.000 | 45 | 0/3/12 |
+| `last` | **0.200** (8/40) | 40/80 | 40/80 | 0.093 | 37 | 1/4/18 |
+| `ring` | **0.125** (5/40) | 40/80 | 40/80 | **0.2323** | 30 | 1/**14**/15 |
+| `frozen` 🧱 | **1.000** (40/40) | **1/80** | 40/80 | 0.000 | 45 | 0/3/12 |
+| `shuffle` 🧪 | 0.575 (23/40) | 40/80 | 40/80 | **0.000** | 33 | 0/3/16 |
+
+Fisher 정확검정(침묵층 40): off↔ring **p=2.3e-17** · off↔last **p=7.0e-15** · off↔frozen **p=1.000** ·
+frozen↔ring **p=2.3e-17**. 검정력은 사전등록대로 남아돌았다.
+
+## 타당성 게이트 — 둘 다 PASS
+
+- **V1 PASS**: `off` 침묵층 1.000 ≥ 0.50 이고 `seed_distinct_silent(off) = 1` — 씨앗이 정말 상수였다.
+  더 나아가 `off` 는 원본 40턴을 **재현**했다: `COMPOSE 0 · ECHO 3 · DETACHED 12 · REPEAT 45 (of 60)` ·
+  전체 풀 0.6667. 카드가 인용하던 수와 동일 ⟹ 이 실행은 원본과 같은 것을 재고 있다.
+- **V2 PASS**: 처치 arm 이 `writes=40 · silent-ticks-seeded=80` · `seed_distinct_silent=40`.
+  플래그가 파싱만 되고 만 것이 아니라 **기질에 도달**했다.
+
+## 판정 A (DV1 · 통제 `frozen`) — 🟢 ARTIFACT-CONFIRMED
+
+`ring` 0.125 < 0.50 ∧ `last` 0.200 < 0.50 ∧ **`frozen` 1.000 ≥ 0.50**.
+받침대가 결정적이다 — `frozen` 은 상태가 **있는데도** off 를 `1.000 · REPEAT 45 · 0/3/12` 까지
+**완전히 동일하게** 재현했다. 즉 반복을 죽인 건 "`live_seed` 아닌 다른 앵커"가 아니라 **씨앗의 움직임**이다.
+
+⟹ **원본 40턴의 `REPEAT 45` 는 대체로 동결 씨앗의 산물이었다.** emit 풀의 2/3(침묵층 전량)이 상수 씨앗에
+대한 상수 응답이었으므로, 그 수를 결합 능력에 대한 기질 사실로 읽을 수 없다.
+
+## 판정 B (DV2 · 통제 `shuffle`) — 🟢 CONTENT-REACHES
+
+`ring` 침묵층 borrow_content **0.2323** vs `off` 0.000 — 그리고 **`shuffle` 은 정확히 0.000**.
+`shuffle` 은 씨앗을 40/80 로 움직였고 반복도 일부 줄였는데(0.575) 교사 어휘는 **하나도** 못 실었다.
+바이트 다발·길이·feat8 은 같고 순서만 끊었으므로 ⟹ 상승분은 **carrier 가 아니라 내용**이다.
+`ring` 의 ECHO 3→**14** 도 같은 방향(교사 말이 입에 도달).
+
+## ⚠️ 정직 — 정정이 DV1 판정을 바꾸지는 않았다
+
+발사 전 `shuffle` 을 DV1 통제에서 뺐지만, 실측 `shuffle` = 0.575 **≥ 0.50** 이라 원안대로 뒀어도
+DV1 은 똑같이 ARTIFACT-CONFIRMED 였다. 정정의 실익은 결과를 구한 게 아니라 **DV2 를 열어
+CONTENT-REACHES 를 판독 가능하게 만든 것**이다. 원안이 우연히 통과했을 뿐 논리는 여전히 결함이었다.
+
+## 🔴 그리고 사전확약대로 — COMPOSE 는 사지 못했다
+
+`COMPOSE` 는 0 → **1/60** (last·ring 각 1건). 씨앗이 움직이고(40 distinct) 교사 내용이 입에 닿았는데도
+(borrow 0.2323 · ECHO 14) 결합은 **바닥 그대로**다. 들어온 말은 ECHO 로 나가지 COMPOSE 로 나오지 않는다.
+
+⟹ H_9984 의 사전확약이 실측으로 확인됐다: **WRITE 는 REPEAT 를 죽이고 내용 도달까지 사지만 COMPOSE 는
+못 산다.** 남은 결손은 결합기(G1)의 몫이고, 그건 ① 결합 사다리에서만 살 수 있다.
+
+## 하류 의무 (이 결과가 만든 것)
+
+- ① 결합 사다리의 `COMPOSE` 판독은 **`--percept-write ring` 을 켠 상태에서** 해야 한다. off 로 재면
+  자기 상태가 상수라 어떤 결합 함수든 구조적으로 퇴화하고, 그 음성은 결합 사망이 아니라 씨앗 artifact 다.
+- 침묵층이 상수였던 과거 study 수치(REPEAT·distinct_ratio 계열)는 **그 층에서 재해석 대상**이다.
+
+인프라 기록: 첫 발사 호스트 `aiden` 은 SSH 도달 불가로 wedge(독립 프로브 확인) — **인프라 블로커이지
+과학 결과가 아니므로 판정에 넣지 않았다**. `summer` 재발사분이 완주했고 위 수치는 전부 그것이다.
