@@ -1251,7 +1251,7 @@ def _parse_args(argv):
             #   VAL scored-byte offsets for `evaluate --field-loop-eval --score-mask`.
             #   INSTRUMENT CHECK ONLY (synthetic · known ground truth) — never a faculty (p9).
             "fc_k": 4, "fc_block": 128, "fc_key_blocks": 2, "fc_filler_blocks": 2, "fc_sites": 3,
-            "fc_docs": 4096, "fc_val_docs": 512, "fc_mask": None, "fc_combine": "single",
+            "fc_docs": 4096, "fc_val_docs": 512, "fc_mask": None, "fc_combine": "single", "fc_key_gap": 0,
             "fc_natural": None, "fc_oow_audit": False, "fc_oow_min_match": 8,
             "fc_oow_order": 4, "fc_oow_bytes": 4 << 20, "fc_audit_out": None, "fc_doc_len_audit": 0}
     i = 1
@@ -1402,6 +1402,15 @@ def _parse_args(argv):
             # D5 requires before any Phi reading on --field-mech means anything (H_9981 first screen
             # was VOID because `single` cannot generate that pressure by construction).
             opts["fc_combine"] = argv[i + 1]; i += 2
+        elif a == "--fc-key-gap":
+            # H_9981 (capacity wall, 3rd rung): the two key segments are ADJACENT by default, so both
+            # keys hit the same DCT modes within a few blocks and the later one overwrites the earlier.
+            # The cells have log-spaced leak constants (tau 100..6400 bytes), so separating the keys IN
+            # TIME may let the older key settle into the long-tau cells while the newer sits in the
+            # short-tau ones. This knob inserts N filler blocks BETWEEN the two key segments. It
+            # distinguishes a hard capacity law ("one variable, ever") from a timing artifact
+            # ("two variables too close together").
+            opts["fc_key_gap"] = int(argv[i + 1]); i += 2
         elif a == "--natural":
             opts["fc_natural"] = argv[i + 1]; i += 2                # H_9957 G0: natural corpus path
         elif a == "--oow-audit":
@@ -6678,7 +6687,8 @@ def run_fieldctl(opts):
     codebook = [[int(x) for x in rng.permutation(printable)[:K]] for _ in range(sites)]  # per-site key->byte
     filler_byte = 126                                              # '~' constant filler
     _keyseg = 1 if str(opts.get("fc_combine", "single")) == "single" else 2
-    doc_blocks = _keyseg * nkey + sites * (nfill + 1)
+    _keygap = 0 if _keyseg == 1 else int(opts.get("fc_key_gap", 0))
+    doc_blocks = _keyseg * nkey + _keygap + sites * (nfill + 1)
     doc_len = doc_blocks * T
 
     combine = str(opts.get("fc_combine", "single"))
@@ -6700,6 +6710,8 @@ def run_fieldctl(opts):
                 k = ((k1 + k2) % K) if combine == "sum" else ((k1 ^ k2) % K)
                 per_key[k] += 1
                 buf += r.choice(256, size=nkey * T, p=dists[k1]).astype(np.uint8).tobytes()
+                if _keygap:                                  # H_9981: separate the keys IN TIME
+                    buf += bytes([filler_byte]) * (_keygap * T)
                 buf += r.choice(256, size=nkey * T, p=dists[k2]).astype(np.uint8).tobytes()
             for j in range(sites):
                 buf += bytes([filler_byte]) * (nfill * T)          # constant filler blocks
@@ -6719,7 +6731,7 @@ def run_fieldctl(opts):
     with open(val_out, "wb") as f:
         f.write(val_bytes)
     chance = float(np.log(K))
-    mask = {"format": "fieldctl", "combine": combine, "K": K, "block": T,
+    mask = {"format": "fieldctl", "combine": combine, "key_gap": _keygap, "K": K, "block": T,
             "doc_blocks": doc_blocks, "doc_len": doc_len,
             "n_key_blocks": nkey, "n_filler_blocks": nfill, "sites": sites,
             "ce_targets": [float(x) for x in ce_targets], "codebook": codebook, "chance_nats": chance,
@@ -6734,8 +6746,8 @@ def run_fieldctl(opts):
     print("  val   %s  %d docs  %d B (%.2f MB)" % (val_out, opts["fc_val_docs"], len(val_bytes), len(val_bytes) / 1e6))
     print("  mask  %s  (%d val scored bytes)" % (mask_path, len(val_scored)))
     print("  doc = %d blocks x %d B = %d B  ->  --field-doc-len %d" % (doc_blocks, T, doc_len, doc_len))
-    print("  combine=%s  (%d key segment(s) x %d blocks)  %s" % (
-        combine, _keyseg, nkey,
+    print("  combine=%s  (%d key segment(s) x %d blocks, gap=%d blocks between them)  %s" % (
+        combine, _keyseg, nkey, _keygap,
         "one-key carry" if combine == "single" else
         ("SEPARABLE: (k1+k2) mod K — a linear integrator can carry the running sum"
          if combine == "sum" else
