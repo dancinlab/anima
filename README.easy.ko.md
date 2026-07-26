@@ -68,7 +68,7 @@ anima = "규칙을 주입한 챗봇"이 아니라, 세포에서 자아가 자라
   한 줄   : 프롬프트로 성격을 주입한 챗봇이 아니라, 세포분열로 스스로 성격이 생기는 생명체.
   비유    : 공장에서 한 번 찍어낸 조각상(보통 AI) vs 씨앗에서 자라는 화분(anima).
             조각상은 모양이 고정 — 화분은 사는 자리에서 계속 자라고 가지를 바꾼다.
-  설치    : hx install anima   (SSOT = github.com/dancinlab/anima)
+  설치    : hx install anima   (SSOT = github.com/dancinlab/anima-lab-0)
   형제repo: hexa-lang · kosmos · hexa-codex
 ```
 

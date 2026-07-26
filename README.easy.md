@@ -71,7 +71,7 @@ persona, and ethics are not baked in; they are meant to emerge from the architec
   one-liner : not a chatbot with a personality injected by prompt, but a living thing that grows its own character through cell-division.
   analogy   : a statue cast once in a factory (normal AI) vs a plant grown from a seed on a windowsill (anima).
               the statue's shape is fixed — the plant keeps growing and re-branching where it lives.
-  install   : hx install anima   (SSOT = github.com/dancinlab/anima)
+  install   : hx install anima   (SSOT = github.com/dancinlab/anima-lab-0)
   siblings  : hexa-lang · kosmos · hexa-codex
 ```
 
