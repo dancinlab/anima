@@ -1251,7 +1251,7 @@ def _parse_args(argv):
             #   VAL scored-byte offsets for `evaluate --field-loop-eval --score-mask`.
             #   INSTRUMENT CHECK ONLY (synthetic · known ground truth) — never a faculty (p9).
             "fc_k": 4, "fc_block": 128, "fc_key_blocks": 2, "fc_filler_blocks": 2, "fc_sites": 3,
-            "fc_docs": 4096, "fc_val_docs": 512, "fc_mask": None,
+            "fc_docs": 4096, "fc_val_docs": 512, "fc_mask": None, "fc_combine": "single",
             "fc_natural": None, "fc_oow_audit": False, "fc_oow_min_match": 8,
             "fc_oow_order": 4, "fc_oow_bytes": 4 << 20, "fc_audit_out": None, "fc_doc_len_audit": 0}
     i = 1
@@ -1391,6 +1391,17 @@ def _parse_args(argv):
             opts["fc_val_docs"] = int(argv[i + 1]); i += 2          # H_9957 fieldctl: held-out val docs
         elif a == "--mask":
             opts["fc_mask"] = argv[i + 1]; i += 2                   # H_9957 fieldctl: val score-mask out
+        elif a == "--fc-combine":
+            # H_9981 (R11 D5): make the payload index a function of TWO keys carried across the filler.
+            #   single = today's one-key carry (a leaky integrator already solves it -> no pressure)
+            #   sum    = (k1+k2) mod K  — SEPARABLE: a linear integrator can carry the running sum
+            #   xor    = k1 XOR k2      — linearly NON-SEPARABLE: no additive summary of the two keys
+            #                             determines the answer, so an affine cell recursion cannot
+            #                             solve it while a multiplicative one can.
+            # sum is the positive control that the CARRYING channel works; xor is the pressure task
+            # D5 requires before any Phi reading on --field-mech means anything (H_9981 first screen
+            # was VOID because `single` cannot generate that pressure by construction).
+            opts["fc_combine"] = argv[i + 1]; i += 2
         elif a == "--natural":
             opts["fc_natural"] = argv[i + 1]; i += 2                # H_9957 G0: natural corpus path
         elif a == "--oow-audit":
@@ -6666,17 +6677,30 @@ def run_fieldctl(opts):
     printable = np.arange(33, 127, dtype=np.int64)                  # 94 printable bytes (no space/ctrl)
     codebook = [[int(x) for x in rng.permutation(printable)[:K]] for _ in range(sites)]  # per-site key->byte
     filler_byte = 126                                              # '~' constant filler
-    doc_blocks = nkey + sites * (nfill + 1)
+    _keyseg = 1 if str(opts.get("fc_combine", "single")) == "single" else 2
+    doc_blocks = _keyseg * nkey + sites * (nfill + 1)
     doc_len = doc_blocks * T
+
+    combine = str(opts.get("fc_combine", "single"))
+    if combine not in ("single", "sum", "xor"):
+        print("--fc-combine must be single|sum|xor"); sys.exit(2)
 
     def build(ndocs, r):
         buf = bytearray()
         scored = []
         per_key = [0] * K
         for _ in range(ndocs):
-            k = int(r.integers(K))
-            per_key[k] += 1
-            buf += r.choice(256, size=nkey * T, p=dists[k]).astype(np.uint8).tobytes()   # KEY blocks
+            if combine == "single":
+                k = int(r.integers(K))
+                per_key[k] += 1
+                buf += r.choice(256, size=nkey * T, p=dists[k]).astype(np.uint8).tobytes()   # KEY blocks
+            else:
+                # TWO independent key segments; the answer index is a function of BOTH.
+                k1 = int(r.integers(K)); k2 = int(r.integers(K))
+                k = ((k1 + k2) % K) if combine == "sum" else ((k1 ^ k2) % K)
+                per_key[k] += 1
+                buf += r.choice(256, size=nkey * T, p=dists[k1]).astype(np.uint8).tobytes()
+                buf += r.choice(256, size=nkey * T, p=dists[k2]).astype(np.uint8).tobytes()
             for j in range(sites):
                 buf += bytes([filler_byte]) * (nfill * T)          # constant filler blocks
                 marker = ("PAY%d:" % j).encode()
@@ -6695,7 +6719,8 @@ def run_fieldctl(opts):
     with open(val_out, "wb") as f:
         f.write(val_bytes)
     chance = float(np.log(K))
-    mask = {"format": "fieldctl", "K": K, "block": T, "doc_blocks": doc_blocks, "doc_len": doc_len,
+    mask = {"format": "fieldctl", "combine": combine, "K": K, "block": T,
+            "doc_blocks": doc_blocks, "doc_len": doc_len,
             "n_key_blocks": nkey, "n_filler_blocks": nfill, "sites": sites,
             "ce_targets": [float(x) for x in ce_targets], "codebook": codebook, "chance_nats": chance,
             "deepest_payload_block": doc_blocks - 1, "scored_pos_in_block": len(("PAY%d:" % (sites - 1)).encode()),
@@ -6709,6 +6734,12 @@ def run_fieldctl(opts):
     print("  val   %s  %d docs  %d B (%.2f MB)" % (val_out, opts["fc_val_docs"], len(val_bytes), len(val_bytes) / 1e6))
     print("  mask  %s  (%d val scored bytes)" % (mask_path, len(val_scored)))
     print("  doc = %d blocks x %d B = %d B  ->  --field-doc-len %d" % (doc_blocks, T, doc_len, doc_len))
+    print("  combine=%s  (%d key segment(s) x %d blocks)  %s" % (
+        combine, _keyseg, nkey,
+        "one-key carry" if combine == "single" else
+        ("SEPARABLE: (k1+k2) mod K — a linear integrator can carry the running sum"
+         if combine == "sum" else
+         "NON-SEPARABLE: k1 XOR k2 — no additive summary of the two keys determines the answer")))
     print("  K=%d  CE-targets=%s  chance=ln K=%.4f nats  codebook(per-site key->byte)=%s"
           % (K, ["%.2f" % x for x in ce_targets], chance, codebook))
     print("  train key balance=%s  val=%s" % (tr_key, val_key))
