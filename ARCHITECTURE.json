@@ -3678,6 +3678,50 @@
             "children": []
            }
           ]
+         },
+         {
+          "id": "gate-h9987-conjunction-ladder-two-legs",
+          "type": "gate",
+          "name": "🔒 H_9987 사전등록 — ① 결합 사다리를 두 다리로 재설계 (PENDING · 미발사 · 수치 없음)",
+          "detail": "H_9986 이 공급 다리를 죽여 ① 은 (1)reach × (2)용량굶기기 로만 선다. $0 산술이 코퍼스 미고정 결함을 잡아 코퍼스를 동결했다. 수치는 실행 후 기입(예측값 금지).",
+          "children": [
+           {
+            "id": "gate-h9987-leg-lost",
+            "name": "다리 하나가 없다 — H_9986 이 (3) 공급을 닫았다",
+            "detail": "H_9984 는 (1)reach ∧ (2)용량희소 ∧ (3)관계공급 동시 필요라 했고 자연 대화를 (3)의 미개봉 칸으로 지목했다. 대화 partner-팔 +0.00332 는 독백 최댓값 +0.00438 과 같은 범위이고 짝지은 자기-팔과도 동등, 계기 3게이트 PASS ⟹ 그 칸은 닫혔다.",
+            "children": []
+           },
+           {
+            "id": "gate-h9987-corpus-crossing",
+            "name": "⚠️ $0 산술이 잡은 결함 — 카드의 '가장 중요한 rung'이 압박 영역 밖이었다",
+            "detail": "H_9984 는 사다리를 잡되 코퍼스를 못 박지 않았다. 303M≈170MB 상수로 계산하면 교차점이 코퍼스에 따라 13배 이동: clean 4칸(~4.5MB) 교차 N<8.0M ⟹ 30M 3.74×·10M 1.25× 과잉(둘 다 조작을 못 받음) vs en_general 60.05MB 교차 N<107M ⟹ 30M·10M·3M 전부 안쪽.",
+            "children": []
+           },
+           {
+            "id": "gate-h9987-corpus-frozen",
+            "name": "🔒 코퍼스 동결 — 강건성이 선택을 강제했다",
+            "detail": "작은 코퍼스는 10M 이 1.25× 로 경계에 붙어 170MB 상수가 2배만 틀려도 판정이 뒤집힌다. 60MB 에서는 30M 여유 3.6배로 상수 오차에 강건 ⟹ en_general.txt(60,049,637 B · pool 실측 · 자연 EN)로 동결. p9 natural · EN-FIRST 부합.",
+            "children": []
+           },
+           {
+            "id": "gate-h9987-readout-rule",
+            "name": "판독 규칙 — COMPOSE 는 ring 을 켜고 읽는다",
+            "detail": "H_9985 가 강제: off 로 재면 침묵 tick 씨앗이 세션 상수라(실측 40/40=1.000) 결합 함수가 구조적으로 퇴화하고 그 음성은 결합 사망이 아니라 씨앗 artifact 다. --percept-write ring 필수 + 배선 영수증 확인.",
+            "children": []
+           },
+           {
+            "id": "gate-h9987-abort-gate",
+            "name": "🚦 ABORT 게이트 — 유창성 바닥이 먼저 무너지면 판독 무효",
+            "detail": "rung 마다 G0 를 먼저 본다. 미통과 rung 은 INVALID/FLUENCY-FLOOR 로 닫고 판정에서 제외 — 말을 못 하는 모델의 침묵은 결합에 대한 증거가 아니므로 KILL 로 세지 않는다. 살아있는 rung 0 이면 사다리 전체 INVALID = 결과가 아니라 설계 실패로 적는다.",
+            "children": []
+           },
+           {
+            "id": "gate-h9987-table",
+            "name": "🔒 판정표(동결) — 5칸",
+            "detail": "CONJUNCTION-OPENS=살아있는 압박 rung 이 G1>0 ∧ COMPOSE>0 이고 과잉 rung 은 둘 다 0 · CONJUNCTION-KILL=살아있는 rung 전부 0 인데 G0 PASS ∧ 양성통제 green ⟹ 도달불가 조항 발동 · CAPACITY-ONLY=압박 rung G1>0 인데 COMPOSE=0 · FLUENCY-BOUND=압박 rung 전부 G0 미통과 · REVERSED.",
+            "children": []
+           }
+          ]
          }
         ]
        }
