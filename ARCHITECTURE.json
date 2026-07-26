@@ -3608,8 +3608,8 @@
          {
           "id": "gate-h9986-dialogue-operator-supply-prereg",
           "type": "gate",
-          "name": "🔒 H_9986 사전등록 — 자연 대화는 상대 때문에 연산자를 공급하는가 (PENDING · 실행 산출 대기 · 수치 없음)",
-          "detail": "① 결합 사다리의 공급 다리 사전관문. 계기 = 인증된 anima-py evaluate --earned · $0 · 학습 모델 미접촉. 수치는 실행 후 이 노드에 기입한다(예측값 금지).",
+          "name": "🔴 H_9986 MEASURED — 대화도 연산자를 공급하지 않는다 (DATA-ADDITIVE KILL · 미개봉 공급 칸 닫힘)",
+          "detail": "① 결합 사다리의 공급 다리 사전관문 완료. pool summer · anima-py evaluate --earned 0.20.245 · $0 · 학습 모델 미접촉. 계기 3게이트 두 팔 모두 PASS ⟹ '못 재서 0'이 아니라 '재봤더니 0'.",
           "children": [
            {
             "id": "gate-h9986-why",
@@ -3639,6 +3639,42 @@
             "id": "gate-h9986-ruler-scope",
             "name": "자 와 범위 — 공급은 필요조건이지 충분조건 아님",
             "detail": "자 = 연산자 심은 코퍼스 +5.29653 nats. 선행 기준선 = H_9968 독백 5 rung 전부 DATA-ADDITIVE(최대 +0.00438). 공급>0 은 뽑을 것이 있다까지이고 뽑는다는 주장 아님 · 공급~0 은 에스컬레이션 사살에 충분. 대화 능력 주장 아님 — COMPOSE 는 G1 몫(H_9985 실측).",
+            "children": []
+           },
+           {
+            "id": "gate-h9986-measured-gates",
+            "name": "✅ 계기 게이트 3/3 PASS (두 팔)",
+            "detail": "G-ALIVE 심은 XOR +5.03675(바 +0.30) · G-PEDESTAL 참값0 +0.00124(바 |.|<=0.02) · G-POWER MDE(3σ) partner 0.00477 / self 0.00703(바 <=0.02). 계기는 살아있고 0 에서 0 을 읽으며 검정력도 남는다.",
+            "children": []
+           },
+           {
+            "id": "gate-h9986-measured-result",
+            "name": "📊 본 판정 — 두 팔 다 DATA-ADDITIVE",
+            "detail": "partnerB EARNED +0.00332 nats CI[+0.00035,+0.00678] = 자의 0.063%(held-out 16,864셀/245어간) · selfB +0.00404 CI[-0.00063,+0.00866] = 0.076%(15,013셀). DIALOGUE-SUPPLY 바 +0.05 대비 15배 아래 · 두 팔 다 |EARNED| < max(0.02, 3·MDE) ⟹ KILL. REVERSED 아님(격차 +0.00072 << 3·MDE).",
+            "children": []
+           },
+           {
+            "id": "gate-h9986-measured-no-ranking",
+            "name": "⚠️ 순위 주장 금지 — 계기가 SEED-UNSTABLE 경고를 띄웠다",
+            "detail": "partnerB seed 산포 0.00277 이 효과 0.00332 와 맞먹는다. '상대가 자기보다 크다/작다'는 말할 수 없다(H_9319 이 정확히 그걸로 철회). 말할 수 있는 건 동등성뿐 — 둘 다 TOST 여백 안, 둘 다 DATA-ADDITIVE.",
+            "children": []
+           },
+           {
+            "id": "gate-h9986-measured-reading",
+            "name": "🔒 읽기 — 미개봉 공급 칸이 닫혔다",
+            "detail": "H_9968 독백 사다리 5 rung 최댓값 +0.00438 vs 대화 partnerB +0.00332 = 같은 범위. '코퍼스에 상대방이 없었다'를 고쳤는데 공급이 움직이지 않았다 ⟹ ① 결합 사다리의 (3) 관계 공급 다리는 대화로도 못 산다. 공급 없으면 어떤 추정기도 못 뽑는다.",
+            "children": []
+           },
+           {
+            "id": "gate-h9986-measured-scope",
+            "name": "📏 이 KILL 이 덮지 않는 것",
+            "detail": "커널 r0(게이팅/부호뒤집기 XOR 부류) 하나 — 확정 범위문장 '공변량 없이 전이 가능한 연산자 부재'까지이고 이질 연산자 눈먼 창 ρ≈3–20%(H_9971)는 열려 있다(닫을 후보는 H_9972 에서 0% 회복 실패). ⚠️ r2 를 음성 렌즈로 쓰는 것 금지(H_9970). 라벨 쌍 감정→감정 하나 · 코퍼스 1종 · 공급은 상한이지 능력 아님.",
+            "children": []
+           },
+           {
+            "id": "gate-h9986-measured-downstream",
+            "name": "📌 하류 — ① 사다리는 두 다리로만 선다",
+            "detail": "'굶긴 용량 × reach-양성 × 자연 대화 코퍼스' 설계는 공급 다리를 잃고 (1) reach 와 (2) 용량 굶기기로만 서게 된다. H_9984 의 도달 불가 조항이 걸리며 남는 후보는 (a) 합성 연산자-밀집 커리큘럼(작동하나 영원히 off-standard) (b) LLM 규모 자연 데이터(예산 밖 5–6 자릿수).",
             "children": []
            }
           ]
