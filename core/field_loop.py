@@ -410,7 +410,12 @@ class FieldLoop:
         nxt = (self.Ivec_t * (1.0 - lam)) @ R.T + s
         if getattr(self, "mech", "affine") == "gated":                # H_9981: the offered non-separability
             I0 = self.Ivec_t
-            nxt = nxt + self.beta_p * ((I0 @ self.Ra.T) * (I0 @ self.Rb.T))
+            # BOUNDED on purpose. The raw product is QUADRATIC in the state, so an unbounded term makes
+            # the recursion diverge — the M3 pre-gate caught exactly that (nan over 120 blocks) before any
+            # GPU spend. tanh keeps the term in [-1,1] while staying linearly NON-SEPARABLE (a tanh of a
+            # product is not a sum of per-cell functions), which is the whole point of the arm; and
+            # tanh(0)=0 preserves the byte-identical beta=0 null that M1 checks.
+            nxt = nxt + self.beta_p * torch.tanh((I0 @ self.Ra.T) * (I0 @ self.Rb.T))
         self.Ivec_t = nxt
         self._wb_steps += 1
         if self._wb_steps >= self.grad_wb:                           # truncation boundary
@@ -1088,10 +1093,13 @@ def _mech_gates(steps=120, B=4, m=4, T=32, seed=0, tol=1e-12):
           f"({'PASS' if m1 else 'FAIL'} · tol {tol:.0e})")
 
     gb = _run("gated", beta_val=0.05)
-    db = float(np.abs(a - gb).max())
-    m3 = db > 1e-6
-    print(f"(M3) expressivity gated(beta=0.05) vs affine: max|dI| = {db:.3e} "
-          f"({'PASS' if m3 else 'FAIL · wired but algebraically inert'})")
+    finite = bool(np.isfinite(gb).all())
+    db = float(np.abs(a - gb).max()) if finite else float("nan")
+    m3 = finite and db > 1e-6
+    why = ("PASS" if m3 else
+           "FAIL · DIVERGENT — the term is unbounded, not inert (bound it; do not read this as a result)"
+           if not finite else "FAIL · wired but algebraically inert")
+    print(f"(M3) expressivity gated(beta=0.05) vs affine: max|dI| = {db:.3e} ({why})")
 
     fl = FieldLoop(B, 32, arm="coupled", write="vector", cells=m, seed=seed, coupling_seed=7,
                    grad_wb=4, mech="gated")
