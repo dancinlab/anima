@@ -3720,6 +3720,50 @@
             "name": "🔒 판정표(동결) — 5칸",
             "detail": "CONJUNCTION-OPENS=살아있는 압박 rung 이 G1>0 ∧ COMPOSE>0 이고 과잉 rung 은 둘 다 0 · CONJUNCTION-KILL=살아있는 rung 전부 0 인데 G0 PASS ∧ 양성통제 green ⟹ 도달불가 조항 발동 · CAPACITY-ONLY=압박 rung G1>0 인데 COMPOSE=0 · FLUENCY-BOUND=압박 rung 전부 G0 미통과 · REVERSED.",
             "children": []
+           },
+           {
+            "id": "gate-h9988-data-diversity-ladder",
+            "type": "gate",
+            "name": "🔒 H_9988 사전등록 — 재조합 벽은 데이터 다양성으로 움직이는가 (PENDING · 조달 중 · 수치 없음)",
+            "detail": "오너 지시 조건부 갈래: H_9987 재조합 미개방시 즉시 진행. 공개 대용량 자연 코퍼스로 GB~30GB 구간을 연다. 수치는 실행 후 기입(예측값 금지).",
+            "children": [
+             {
+              "id": "gate-h9988-why",
+              "name": "왜 이 축인가 — 저장소가 스스로 '유일하게 안 열린 축'이라 적어 둔 칸",
+              "detail": "루트 CLAUDE.md: LLM 데이터 스케일의 자연 코퍼스가 유일한 빈 칸이며, 파라미터 스케일이 증폭기-아닌-레버로 측정된 건 '같은 작은 코퍼스 위에서'라 데이터 축을 구속하지 않는다. H_9984 사전확약: 비율 동형이 실패하면 남는 가설은 '비율이 아니라 다양성'.",
+              "children": []
+             },
+             {
+              "id": "gate-h9988-exposure-fixed",
+              "name": "🔑 설계 핵심 — 노출량 고정으로 다양성 하나만 움직인다",
+              "detail": "코퍼스를 키우면 양과 다양성이 같이 움직여 원인이 안 갈린다. 총 학습 바이트(steps)를 모든 rung 에서 고정하면 코퍼스가 클수록 같은 바이트를 덜 반복하므로 움직이는 변수는 고유 내용의 다양성 하나. D0 60MB / D1 600MB / D2 6GB / D3 30GB = 1×/10×/100×/500×, 중첩이라 범위 차이만.",
+              "children": []
+             },
+             {
+              "id": "gate-h9988-corpus",
+              "name": "코퍼스 조달 — 실측 확인됨",
+              "detail": "fineweb-edu sample/10BT · 14 샤드 × 2.15GB = 28.5GB parquet · 샤드당 726,000 문서 · 평균 4KB → 샤드당 약 2.9GB 텍스트 · 공개 자연 EN(CommonCrawl 교육필터) · p9 natural · EN-FIRST 부합. 수신 약 63MB/s · 디스크 239G→216G. D1(600.0MB·131,200 문서) 빌드 완료.",
+              "children": []
+             },
+             {
+              "id": "gate-h9988-no-cheap-gate",
+              "name": "⚠️ 계기 제약 — 여기엔 $0 사전관문이 없다",
+              "detail": "--earned 는 T 가 토큰 밖 사람 주석이어야 하고 ngram-audit 도 라벨 필수. 라벨 없는 웹 텍스트에는 싼 스크리너가 존재하지 않는다 ⟹ rung 마다 학습 비용을 낸다. 그게 이 축이 지금까지 안 열린 이유이기도 하다.",
+              "children": []
+             },
+             {
+              "id": "gate-h9988-table",
+              "name": "🔒 판정표(동결) — 5칸",
+              "detail": "DIVERSITY-OPENS=어떤 rung 이 ρ·weave PASS(2 seed↑) ∧ 아래 rung 은 FAIL · DIVERSITY-TREND=PASS 없으나 best_distinct 단조 상승(예산 결론) · DIVERSITY-KILL=전부 FAIL ∧ 추세 없음 ⟹ 데이터 축 전면 종결 · FLUENCY-BOUND=상위 rung ρ·form 미통과 · REVERSED=하락.",
+              "children": []
+             },
+             {
+              "id": "gate-h9988-scope",
+              "name": "📏 범위 — 30GB 까지",
+              "detail": "LLM 체제(~10^12 토큰 ≈ TB급)는 이 디스크로 도달 불가 ⟹ 어떤 결과도 'LLM 스케일에서도 그렇다'로 확장 금지. 여는 건 GB~30GB 구간뿐이고 H_9968 이 닫은 MB~GB 바로 위. ρ·weave 는 재조합 도달이지 대화가 아니다.",
+              "children": []
+             }
+            ]
            }
           ]
          }
