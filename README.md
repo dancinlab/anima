@@ -543,6 +543,50 @@ raises Φ. The wall bounds Φ over a substrate with *no* binding; it does not bo
 lane. *(Φ leg always faithful exact-MIP, `a_phi_iit4_tool`; the lanes are TOY — scale-transfer
 UNVERIFIED.)*
 
+### 📏 Novelty-controlled BPC — a held-out span is not a test until the model cannot recall it
+
+Measured 2026-07-26/27 on the sibling [`anima-lab-3`](https://github.com/dancinlab/anima-lab-3)
+(27.7M x 3 corpora x 2 seeds + one 300M run, RTX5070). Recorded here because the finding is about
+the **instrument**, not that repo's architecture: any lane in this family reporting bits-per-character
+on a held-out span inherits it.
+
+**Holding out lines does not hold out the material.** Re-scored on windows the model provably cannot
+recall, the reported number moves by up to **6.1x**, and the largest run stops clearing its own gate:
+
+| run | reported BPC | novelty-controlled | vs its train bigram floor |
+|---|---|---|---|
+| 300M · raw 70MB corpus | 0.65 | **3.9881** | 114% — **FAIL** |
+| 27.7M · deduped 60MB | 0.86 | 2.4627 | 68% — PASS |
+| 27.7M · deduped 15MB | 0.51 | 0.4064 | 11% — PASS |
+
+**Why line-level dedup fails.** Short lines are the ones that repeat, so filtering held-out lines by
+verbatim absence selects *long* lines — the most near-duplicated material, absent as lines and present
+as substrings. On the raw corpus that filter *raised* 32-byte familiarity 79.5% → 91.8%, and the same
+checkpoint scored **0.299 BPC on the "honest" span against 0.654 on the unfiltered one**. Corpus dedup
+is what makes the filter safe, not the filter.
+
+**What works — select windows, not lines.** Keep a 257-byte window only when three 64-byte probes
+(head/middle/tail) are each absent from *every* train split under comparison. The keep rate is itself
+the diagnostic:
+
+```
+usable (non-recallable) test material per corpus
+  deduped merge 66MB  ████████████████░░  16.6%
+  raw corpus    70MB  ████░░░░░░░░░░░░░░   4.7%   ← bigger file, one third the material
+```
+
+**Two claims it killed, one it kept.** "More unique data is the binding constraint at 27.7M" came from
+a two-point comparison; the three-point curve is non-monotonic (14.2% / 48.4% / 24.0% of each corpus's
+own bigram floor) and every arm replicated at a second seed to within 0.2–4.0% against an 11x spread —
+so the arms genuinely differ and data volume is not the variable. "The failing arm is stuck at the
+unigram floor" named a *location* as a *mechanism*: destroying context order still costs that arm
+**8.42 BPC** (a byte histogram would lose nothing). The 70%-budget objective switch survives as a
+partial cause — ablating it recovers only 39% / 26% of two arms' degradation.
+
+Wired consequence: both trainers there now print `[data] novelty: N% of 64B windows already in train`
+beside every span, so an unmeasurable span announces itself instead of returning a confident number.
+Full chain + tools: `anima-lab-3:docs/hypotheses/DATA-3…DATA-7`, `anima-lab-3:measurement/*.py`.
+
 ## Governance
 
 The full governance SSOT is [`CLAUDE.md`](CLAUDE.md) (the 8 philosophy principles + the `a_*`
