@@ -587,6 +587,39 @@ Wired consequence: both trainers there now print `[data] novelty: N% of 64B wind
 beside every span, so an unmeasurable span announces itself instead of returning a confident number.
 Full chain + tools: `anima-lab-3:docs/hypotheses/DATA-3…DATA-7`, `anima-lab-3:measurement/*.py`.
 
+### 🪜 The λ-ladder — a screen is not a verdict, and the corpus was the confound
+
+Continued 2026-07-28 on the same lane. Two results, both against a bar frozen from this repo's own
+`CONDITIONS.md` — retuning one to fit would be the tune-to-green ⑤ forbids.
+
+**The gate outcome that lane spent a week explaining was the corpus, not the model.** Its
+constructed corpora reported a non-monotone curve in training size — PASS(15.7M) FAIL(30.3M)
+FAIL(30.2M) PASS(60.5M) — and two *disjoint* halves at the same size both failed, so it was never
+about which lines were present. On a natural corpus (Korean Wikipedia; `corpus_regime.py` measures
+the old ones as CONSTRUCTED — one repeats its three commonest lines 2,538x each *on the subject of
+the project itself*) the same sweep is **flat**: 46% of floor at 17.2M, 33.3M and 66.1M alike. The
+honest-window acceptance rate tells the same story from the other side — 16.6% on constructed bytes,
+**98.1%** on natural ones. Building an unrecallable test span was hard because of the data.
+
+**p7 applies to us: BPC is perplexity, so every gate reading there is a SCREEN.** The lane now runs
+a five-rung ladder — Λ REGIME (natural or not) → λ0 span-unrecallable → λ1 screen → λ2 coherence
+(this repo's G0 bar) → λ3 novelty (G2) → λ4 recombination (G1's question, damage-matched). All rungs
+pass together at dropout 0.37, **reproduced across two seeds** (λ4 −0.0029 t=−3.8 / −0.0050 t=−6.5).
+The window is narrow: below it λ4 fails, above it λ2 collapses, and λ2's own bar is what caps it.
+
+Three things that cost retractions and are worth carrying:
+- **Only regularisation moved λ4.** 3.8x the data and 2x the context both improved overall BPC
+  substantially and left the novel-combination penalty untouched — the two are different axes.
+- **A rung presupposes the rungs below it.** dropout 0.5 "passes" λ4 while λ2 collapses (kwr
+  0.362): a model that stops making words stops making combinations. Scored as an artefact, not a pass.
+- **Single-seed passes were retracted twice** before seed pairs went into the *design* rather than
+  into a follow-up. What survives that is `preflight.py` P2, which refuses a full-ladder PASS whose
+  seed sibling does not also pass.
+
+Scope, per p9: one natural corpus of one register (encyclopedic prose), 28M byte-level models. Not a
+faculty claim — a reading of what these instruments ask. Snapshot at the passing point:
+[`anima-success-1`](https://github.com/dancinlab/anima-success-1).
+
 ## Governance
 
 The full governance SSOT is [`CLAUDE.md`](CLAUDE.md) (the 8 philosophy principles + the `a_*`
