@@ -1,0 +1,103 @@
+{
+  "schema": "anima-store-causality-repro/v1",
+  "verdict": "NOT-REPRODUCED",
+  "commit": "989b5a5cfbd8706a3ceb9537b623c75cc572c4c2",
+  "panel": {
+    "path": "state/store_causality_2026_08_09/panel.txt.compose2.json",
+    "sha256": "f2e5bd175f264ec22cc90a6e6367f78994334c3a56f889c1294e77d50a411939",
+    "chance": 0.5,
+    "n": 128
+  },
+  "bars": {
+    "oracle": 0.9,
+    "positive": 0.75,
+    "control": 0.56
+  },
+  "protocol": {
+    "steps": 24000,
+    "store_batch": 32,
+    "store_win": 24,
+    "seeds": [
+      7,
+      11
+    ],
+    "controls_after_oracle_only": true,
+    "panel_regenerated": false,
+    "thresholds_changed": false
+  },
+  "runs": {
+    "7": {
+      "checkpoint": ".fire-recover/store_causality_2026_08_10/compose2_dual_causal_s7.clm",
+      "checkpoint_sha256": "878dc66e56a26f54c0bd4c67220fb0779497d30d8394e0b1ea1a6ca2e5e650c5",
+      "verdict": "SUPPORTED-CAUSAL",
+      "arms": {
+        "oracle_pair": {
+          "correct": 128,
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "normal": {
+          "correct": 117,
+          "n": 128,
+          "accuracy": 0.9140625
+        },
+        "drop_a": {
+          "correct": 64,
+          "n": 128,
+          "accuracy": 0.5
+        },
+        "drop_b": {
+          "correct": 62,
+          "n": 128,
+          "accuracy": 0.484375
+        },
+        "shuffle": {
+          "correct": 58,
+          "n": 128,
+          "accuracy": 0.453125
+        },
+        "recovery": {
+          "correct": 117,
+          "n": 128,
+          "accuracy": 0.9140625
+        }
+      }
+    },
+    "11": {
+      "checkpoint": ".fire-recover/store_causality_2026_08_10/seed11_repro/compose2_dual_causal_s11.clm",
+      "checkpoint_sha256": "50ec38bc5742540e8bb9384f6bf22a35181dba510b6517c307184ffbd2076582",
+      "recovery_pt": ".fire-recover/store_causality_2026_08_10/seed11_repro/compose2_dual_causal_s11.clm.pt",
+      "recovery_pt_sha256": "beab2a8338025495f949ae932f6b25259c41e3a00d165ad56dee3c71d4c266ce",
+      "train_wall_s": 1257.4,
+      "train_final": {
+        "address_accuracy": 1.0,
+        "store_accuracy": 1.0,
+        "address_ce": 0.000002086156882796786
+      },
+      "verdict": "INVALID-INSTRUMENT",
+      "controls_run": false,
+      "arms": {
+        "oracle_pair": {
+          "correct": 32,
+          "n": 128,
+          "accuracy": 0.25
+        }
+      }
+    }
+  },
+  "checks": {
+    "seed_7_reproduced": true,
+    "seed_11_oracle_alive": false,
+    "seed_11_controls_not_read": true,
+    "main_blob_unchanged_from_warm_start": true,
+    "multi_seed_reproduced": false
+  },
+  "qa": {
+    "pytest_collected": 14,
+    "pytest_passed": 14,
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "decode": "CUDA via cupy 13.6.0",
+    "vast_instance": 47293424,
+    "vast_active_instances_after_teardown": 0
+  }
+}

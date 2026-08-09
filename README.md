@@ -60,6 +60,11 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > **SUPPORTED-CAUSAL**. Pair-oracle scored 1.0000; normal/recovery scored 0.9141; clue-A removal,
 > clue-B removal, and address shuffle scored 0.5000, 0.4844, and 0.4531. The earlier 0.5078 and
 > 0.5859 pair-oracle failures remain recorded. The panel, randomness, and bars remain frozen.
+>
+> A frozen-recipe seed-11 repeat did **not** reproduce the instrument: pair-oracle was 0.2500, so
+> no control arm was read. The seed-7 causal result remains valid for that checkpoint, but the
+> shared training path is not yet multi-seed stable. See
+> `state/store_causality_repro_2026_08_10/result.json`.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the

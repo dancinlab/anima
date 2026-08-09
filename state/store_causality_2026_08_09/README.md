@@ -40,3 +40,8 @@ Frozen panel SHA-256: `f2e5bd175f264ec22cc90a6e6367f78994334c3a56f889c1294e77d50
 Verdict: `SUPPORTED-CAUSAL`. Measured chance remained 0.50 and the address derangement had zero
 fixed points. `result.json` is the machine-readable record, including the failed pair-oracle runs.
 Do not tune or regenerate this panel, its randomization, or its bars.
+
+Multi-seed follow-up: the same frozen training recipe at seed 11 scored 32/128 = 0.2500 on
+pair-oracle and stopped before all controls. This does not retract the seed-7 checkpoint result,
+but it shows the training path is not multi-seed stable. The run and recovered artifact hashes are
+recorded in `../store_causality_repro_2026_08_10/`.

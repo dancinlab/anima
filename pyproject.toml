@@ -69,3 +69,12 @@ anima_py = "anima_py"
 
 [tool.setuptools.dynamic]
 version = { file = "VERSION" }
+
+[tool.pytest.ini_options]
+testpaths = [
+  "tests",
+  "state/h1058_agency_daemon",
+  "lab/v3/tool",
+]
+python_files = ["test_*.py"]
+pythonpath = [".", "core"]

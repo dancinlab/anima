@@ -55,6 +55,10 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > (SUPPORTED-CAUSAL)**다. pair-oracle은 1.0000, 정상·복구는 0.9141이며, 단서 A 제거·단서 B
 > 제거·주소 섞기는 각각 0.5000, 0.4844, 0.4531이다. 앞선 pair-oracle 실패 0.5078과 0.5859도
 > 그대로 기록했다. 자료·난수·기준은 계속 동결한다.
+>
+> 같은 레시피의 seed 11 반복은 pair-oracle 0.2500으로 **재현에 실패**해 대조군을 읽지 않았다.
+> seed 7 인과 결과는 해당 체크포인트에 대해 유효하지만 공용 학습 경로는 아직 다중 시드에서
+> 안정적이지 않다. 상세 기록은 `state/store_causality_repro_2026_08_10/result.json`에 있다.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /
