@@ -2,10 +2,10 @@
 """serve.py — static server + browser auto-open for the architecture viewer.
 
 The architecture SSOT is ARCHITECTURE.json; humans read it through
-architecture.html. Browsers block fetch() over file://, so this serves the repo
+ARCHITECTURE.html. Browsers block fetch() over file://, so this serves the repo
 root over http:// and opens the viewer.
 
-    python3 serve.py            # serve on :8000, open architecture.html
+    python3 serve.py            # serve on :8000, open ARCHITECTURE.html
     python3 serve.py 9000       # custom port
 """
 import http.server
@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
-PAGE = "architecture.html"
+PAGE = "ARCHITECTURE.html"
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):

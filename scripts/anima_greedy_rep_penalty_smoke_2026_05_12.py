@@ -12,11 +12,8 @@ import sys
 import time
 from pathlib import Path
 
-# bend the ANIMA_ROOT lookup to the Linux-side path so the Mac-absolute
-# default in anima_chat._find_default_ckpt() falls through cleanly.
-os.environ.setdefault("ANIMA_ROOT", "/home/summer/mac_home/core/anima")
-
-REPO = Path(os.environ["ANIMA_ROOT"])
+# Use the current checkout unless the caller selects another checkout explicitly.
+REPO = Path(os.environ.get("ANIMA_ROOT", Path(__file__).resolve().parents[1])).resolve()
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "training"))
 

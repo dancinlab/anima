@@ -76,10 +76,10 @@ GATES per run     : G0 coherence · G1 recombine · G2 novelty · G3 phil · G5 
 ```
 
 Full cross-product is large; fire in PROBE-FIRST staged phases (a_completeness_over_cheap,
-cost-smart). Each run = a frozen falsifier, $0–tens-of-$ (summer-GPU or one small rented GPU),
+cost-smart). Each run = a frozen falsifier, $0–tens-of-$ (an available registered GPU runner or one small rented GPU),
 reports the per-gate tally above. NO 7B unless a 303M result demands scale (a_scale_honest_scope).
 
-### Phase 0 — $0 mechanism probes (local/summer, gate the spend)
+### Phase 0 — $0 mechanism probes (local or an available GPU runner, gate the spend)
 - **R0.1** H_1147 RETRO toy: trained-copy vs prepend on un-memorizable facts → validates the grounding mechanism BEFORE any 303M RETRO build. (in flight)
 - **R0.2** 303M corpus-axis dry checks: confirm corpus registry (CORPUS) covers EN-broad / 5-lang / dialogue / persona / SNS with sha256.
 
@@ -113,6 +113,6 @@ reports the per-gate tally above. NO 7B unless a 303M result demands scale (a_sc
 - probe-first → scale only on a measured green slope (h1141-recovery discipline).
 - self-terminating pod or inline-poll (a_cpu_local_no_waiter); teardown via GraphQL podTerminate + 404-verify; pull artifacts BEFORE teardown (a_fire_recover_complete); HF + /HF.jsonl row.
 - record per-run verdict in `.verdicts/<slug>/`, domain log `domains/<DOMAIN>.log.md`, MAIN.tape @L.
-- summer co-tenant safe (rbfe-prod untouched); never touch other-project pods.
+- keep shared runners isolated; never touch another project's jobs or data.
 
 > STATUS: conditions frozen 2026-06-13. Open: a303m_pass (R4.1) undefined until the matrix lands; G5 non-fabrication is the gating blocker (RETRO path, Phase 2). a7b_pass remains FALSE; 7B deferred behind the 303M matrix.

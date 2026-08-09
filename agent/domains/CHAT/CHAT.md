@@ -12,6 +12,22 @@ TRADING role 이 `broker.hexa` 로 거래소에 붙듯, CHAT role 은 `broker.py
 | 파일 | 무엇 |
 |---|---|
 | `broker.py` | group-chat WebSocket hub (FastAPI). 채널: `/ws` user · `/ws/anima` participant ingest · `/ws/motivation` 8-factor telemetry · `/ws/akida_ingest` 칩 스파이크 수신 · `/ws/akida` fanout. self-contained (stdlib + fastapi). |
+| `static/index.html` | 접근 가능한 반응형 웹 채팅 화면. broker의 `/`에서 직접 제공한다. |
+
+## macOS 운영
+
+공개 주소 `chat.dancinlab.org`의 Cloudflare Tunnel은 로컬 `127.0.0.1:8000`을 바라본다.
+로컬 broker는 저장소의 `runtime` 추가 의존성과 LaunchAgent 설치 도구로 관리한다.
+
+```bash
+python3 -m venv .venv-runtime
+.venv-runtime/bin/python -m pip install -e '.[runtime]'
+.venv-runtime/bin/python scripts/deploy_local_chat.py install
+.venv-runtime/bin/python scripts/deploy_local_chat.py status
+```
+
+경로와 사용자 이름은 하드코딩하지 않는다. 설치 도구가 현재 저장소와 사용자 홈을 기준으로
+`com.dancinlab.anima-chat-broker`를 만들며, `/health`가 응답할 때만 성공으로 끝난다.
 
 ## COFFESHOP-on-AKIDA 양방향 폐루프 (live)
 

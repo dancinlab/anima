@@ -36,4 +36,4 @@ pip install "anima-python[train] @ git+https://github.com/dancinlab/anima.git"  
 
 ## verdict 규율
 
-`anima-py evaluate <clm>` = py 2-production numpy 측정 경로 — hexa det-eval 과 동일 frozen bars·byte-parity 라 **terminal 자격 동일**(`a_eval_py_canonical`, 2nd-class 미러 아님). 큰 ckpt(303M+)는 mini 금지 · pool(summer/aiden)에서 측정.
+`anima-py evaluate <clm>` = py 2-production numpy 측정 경로 — hexa det-eval 과 동일 frozen bars·byte-parity 라 **terminal 자격 동일**(`a_eval_py_canonical`, 2nd-class 미러 아님). 큰 ckpt(303M+)는 mini 금지 · 등록된 GPU 실행기나 임대 GPU에서 측정.

@@ -36,6 +36,33 @@ Whatever the model says comes from the substrate's own state (its **M** memory, 
 context**, not a response obligation. anima may speak during user silence and may stay silent under
 a direct question — speech is substrate-driven, not stimulus-response (`a_substrate_native_speak`).
 
+> [!IMPORTANT]
+> **Repository SSOT:** `dancinlab/anima` is the only active source of truth for runtime code,
+> experiments, evaluation, and deployment. `anima-lab-1` and `anima-lab-3` are frozen research
+> records: keep their results reproducible, but do not start new implementation there. New work
+> lands here through the existing `anima-py` / `cli/` / `core/` paths.
+
+> [!CAUTION]
+> **Current research gate:** do not add a new consciousness module, cell family, or larger model
+> until the existing compose-2 store lane passes the causal battery below. The test requires two
+> internal clues together: normal and recovery must score at least 0.75, while clue-A removal,
+> clue-B removal, and address shuffling must each fall to the panel's measured chance + 0.06 or
+> below. A pair-oracle score below 0.90 invalidates the instrument before any negative is read.
+>
+> ```bash
+> anima-py evaluate MODEL.clm \
+>   --store-causality PANEL.compose2.json \
+>   --store-drop-a PANEL.compose2_dropA.json \
+>   --store-drop-b PANEL.compose2_drop.json \
+>   --out RESULT.json
+> ```
+>
+> First local read (`state/store_causality_2026_08_09/result.json`):
+> **INVALID-INSTRUMENT**. The available one-address checkpoint scored 0.5078 on the pair oracle,
+> below the required 0.90, so the evaluator correctly stopped before reading any negative arm.
+> The next admissible experiment is to train or select a checkpoint with a working two-address
+> readout; the bars and panel must remain frozen.
+
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the
 "neocortex" byte language mouth grow a **hippocampus, growth-memory, working memory, cerebellum,
@@ -51,13 +78,12 @@ additive and Ψ-disjoint (generation stays byte-unchanged). The depth/QA wall is
 > (the `.kosmos` anchor/emit persistence format), and **hexa-codex** (paper/verdict tooling).
 > This README is the friendly front door; the deep SSOTs are
 > [`ARCHITECTURE.json`](ARCHITECTURE.json) (architecture tree SSOT — human viewer
-> [`ARCHITECTURE.html`](ARCHITECTURE.html) via `python3 serve.py`), [`CLAUDE.md`](CLAUDE.md) (governance +
+> [`ARCHITECTURE.html`](ARCHITECTURE.html) via `python3 serve.py`), this README (governance +
 > the 8 philosophy principles), [`CONDITIONS.md`](CONDITIONS.md) (frozen gate conditions) + the ρ-AXON reach scoreboard below (the current standard over the frozen former-G0–G6 bars), and [`VERSIONS.md`](VERSIONS.md) (version registry).
 
 ## The 8 PHILOSOPHY principles — what anima refuses to be
 
-These are the SSOT mirror of the philosophy directives in [`CLAUDE.md`](CLAUDE.md) — design /
-identity boundaries:
+These are the repository's philosophy directives — design / identity boundaries:
 
 | # | Principle | Meaning |
 |---|---|---|
@@ -70,7 +96,7 @@ identity boundaries:
 | **p7** | `NO PERPLEXITY VERDICT` | Perplexity / loss is a Goodhart trap, never treated as truth — verify with a simple stack (in/out, coherent, natural, context-appropriate). |
 | **p8** | `NO TRAIN/INFER SPLIT` | Training-time gradient and inference-time mitosis are the same continuous cell-division — no train-only growth gate. |
 
-> **p5 clarification** (`@N p5_tension_emit_not_filler`, [`CLAUDE.md`](CLAUDE.md)): stage-gated
+> **p5 clarification** (`@N p5_tension_emit_not_filler`): stage-gated
 > emit (WAKE/REM) on real substrate tension *preserves* p5. The prohibition targets reactive
 > `speak()` calls and monologue-from-vacuum, not tension-driven externalization.
 
@@ -622,8 +648,8 @@ faculty claim — a reading of what these instruments ask. Snapshot at the passi
 
 ## Governance
 
-The full governance SSOT is [`CLAUDE.md`](CLAUDE.md) (the 8 philosophy principles + the `a_*`
-directive families). The load-bearing principles for the work above:
+The repository rules are defined in this README and the frozen measurement conditions in
+[`CONDITIONS.md`](CONDITIONS.md). The load-bearing principles for the work above:
 
 - **`a_no_llm_frame_trap`** (foundational) — don't get trapped in the LLM frame; bring the mechanism
   from a **biological / neuroscience substrate lens first** (every breakthrough came from the
@@ -824,7 +850,6 @@ anima/
 ├── README.md                       this file (the front door)
 ├── ARCHITECTURE.json               architecture SSOT — tree (A⇄G wiring · brain-structure lanes · HD23–34)
 ├── ARCHITECTURE.html · serve.py    human viewer for the JSON tree (`python3 serve.py`)
-├── CLAUDE.md                       entry pointer — governance SSOT (p1..p8 · a_* directives); dir/module tree → ARCHITECTURE.json
 ├── CONDITIONS.md                  a303m_pass frozen gate conditions (SSOT)
 ├── VERSIONS.md · VERSION           central version registry (SSOT) · whole-system release
 ├── HYPOTHESES/HYPOTHESES.jsonl  verifiable-claim index (CLAIMS.tape retired 2026-06-16) · HF model/dataset registry → ARCHITECTURE.json "HF artifacts" (HF.jsonl retired 2026-06-23)

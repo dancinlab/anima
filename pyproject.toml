@@ -24,6 +24,7 @@ dependencies = ["numpy>=1.24"]
 
 [project.optional-dependencies]
 train = ["torch>=2.1,<2.13", "datasets"]
+runtime = ["fastapi>=0.116,<1", "uvicorn>=0.35,<1", "websockets>=15,<17", "langdetect>=1.0.9,<2"]
 # ⚠ torch UPPER BOUND IS LOAD-BEARING — torch 2.13+cu130 SILENTLY regresses store-addr
 # held-out address generalization on Blackwell sm_120 bf16 training (H_9734: same code /
 # corpus / base / seed / recipe, torch 2.11.0 generalizes addr 0.95, torch 2.13.0 memorizes
@@ -31,9 +32,9 @@ train = ["torch>=2.1,<2.13", "datasets"]
 # JIT / first-kernel-crash trap. An unbounded torch>=2.1 lets a fresh install pull 2.13
 # from the cu130 index → broken training. Pin < 2.13 until a newer torch is re-verified.
 # cupy wheel is CUDA-major-version-specific; cupy-cuda12x covers CUDA 12.x runtimes
-# (verified on RTX 5070 sm_120 · driver 580.x · pool hosts `summer` and `aiden`).
+# (verified on RTX 5070 sm_120 · driver 580.x).
 #
-# ⚠ UPPER BOUND IS LOAD-BEARING — cupy 14.x is BROKEN on sm_120 (2026-07-14, aiden,
+# ⚠ UPPER BOUND IS LOAD-BEARING — cupy 14.x is BROKEN on sm_120 (measured 2026-07-14,
 # CUDA 13.0 / driver 580 / RTX 5070). Every JIT kernel compile fails because the
 # cuda_fp8.hpp header cupy 14 bundles does not parse under nvrtc:
 #     nvidia/cu13/include/cuda_fp8.hpp(1460): error: this declaration has no storage
@@ -48,7 +49,7 @@ train = ["torch>=2.1,<2.13", "datasets"]
 # directly — core/decode.py only requires `import cupy` to succeed, it has no hard
 # dependency on this exact wheel name. The <14 bound applies there too.
 gpu = ["cupy-cuda12x>=13.0,<14"]
-# CUDA 13 hosts (e.g. pool host `aiden`: RTX 5070 sm_120, CUDA 13.0) need the cuda13 wheel — the
+# CUDA 13 hosts (for example RTX 5070 sm_120, CUDA 13.0) need the cuda13 wheel — the
 # cuda12 one imports but then dies on `libnvrtc.so.12: cannot open shared object file`, which
 # cuda_available() now catches and reports, falling back to numpy. Install it explicitly:
 #     pip install "anima-python[gpu]" && pip install "cupy-cuda13x>=13.0,<14"

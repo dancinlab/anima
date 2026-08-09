@@ -17,7 +17,12 @@ def _bootstrap():
     # package-dir 매핑으로 그대로 실은 형제 디렉토리). flat import (`import anima`,
     # `import decode` 등) 해석을 위해 두 디렉토리를 sys.path 선두에 삽입 —
     # cli/evaluate.py 등이 spawn 된 뒤에는 각자의 __file__-상대 shim 이 이어받는다.
-    for p in (os.path.join(_PKG, "core"), os.path.join(_PKG, "cli")):
+    installed = (os.path.join(_PKG, "core"), os.path.join(_PKG, "cli"))
+    repo = os.path.dirname(_PKG)
+    editable = (os.path.join(repo, "core"), os.path.join(repo, "cli"))
+    for p in installed + editable:
+        if not os.path.isdir(p):
+            continue
         if p not in sys.path:
             sys.path.insert(0, p)
 

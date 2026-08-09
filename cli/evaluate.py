@@ -1316,6 +1316,12 @@ def evaluate_usage():
     print("      every-token fires on every row (free ideation carries no marker) and REQUIRES")
     print("      --store-fuse gated-add — overwriting every row deletes the trunk (fluency dead).")
     print("      Defaults (qpos·overwrite) reproduce the H_9423 lane byte-for-byte. cards H_9423/9672/9695")
+    print("  <ckpt> --store-causality <compose2.json> --store-drop-a <dropA.json>")
+    print("      --store-drop-b <dropB.json> [--out <result.json>]")
+    print("      Runs one frozen compose-2 causal gate through the existing store evaluator:")
+    print("      pair-oracle → normal → clue-A blocked → clue-B blocked → address shuffled → recovery.")
+    print("      A negative is read only after pair-oracle ≥.90. Positive/recovery require ≥.75;")
+    print("      every control must be at measured chance +.06 or below.")
     print("  --store-component-swap <groups> --store-swap-from <donor.clm>: EVAL-ONLY causal")
     print("      surgery (H_9724) — graft CLMS bridge components from a donor ckpt into the host")
     print("      before scoring, to localize the seed-fragility source (ORACLE 0.99 vs 0.50).")
@@ -7617,7 +7623,168 @@ def fan_bind_run(argv):
     return 0
 
 
-def store_run(argv):
+def _store_causality_load(main_path, drop_a_path, drop_b_path):
+    """Validate the existing compose-2 panel and its two one-clue controls."""
+    manifests = []
+    for label, path in (("normal", main_path), ("drop_a", drop_a_path), ("drop_b", drop_b_path)):
+        try:
+            with open(path, "r", encoding="utf-8") as handle:
+                manifest = json.load(handle)
+        except (OSError, ValueError) as exc:
+            raise ValueError("%s manifest unreadable: %s" % (label, exc)) from exc
+        if not isinstance(manifest, dict):
+            raise ValueError("%s manifest root must be an object" % label)
+        entries = manifest.get("entries")
+        if manifest.get("schema") != "anima-storebind/v1" or manifest.get("compose") != 2:
+            raise ValueError("%s must be an anima-storebind/v1 compose-2 manifest" % label)
+        if not isinstance(entries, list) or not entries:
+            raise ValueError("%s manifest has no entries" % label)
+        manifests.append((manifest, entries))
+
+    normal, drop_a, drop_b = (pair[1] for pair in manifests)
+    if not (len(normal) == len(drop_a) == len(drop_b)):
+        raise ValueError("normal/drop manifests must have the same number of entries")
+
+    golds = []
+    for idx, (base, arm_a, arm_b) in enumerate(zip(normal, drop_a, drop_b)):
+        for arm in (arm_a, arm_b):
+            if arm.get("prompt") != base.get("prompt") or arm.get("gold") != base.get("gold"):
+                raise ValueError("entry %d changes prompt/gold; controls may change only one store entity" % idx)
+            if arm.get("store", {}).get("pols") != base.get("store", {}).get("pols"):
+                raise ValueError("entry %d changes store polarity" % idx)
+        base_entities = base.get("store", {}).get("entities")
+        if not isinstance(base_entities, list) or not base_entities:
+            raise ValueError("entry %d has no store entities" % idx)
+        for name, arm, target_key in (("drop_a", arm_a, "target_slot"),
+                                      ("drop_b", arm_b, "target_slot_b")):
+            arm_entities = arm.get("store", {}).get("entities")
+            if not isinstance(arm_entities, list) or len(arm_entities) != len(base_entities):
+                raise ValueError("entry %d %s store shape differs" % (idx, name))
+            changed = [i for i, (left, right) in enumerate(zip(base_entities, arm_entities))
+                       if left != right]
+            if changed != [base.get(target_key)]:
+                raise ValueError("entry %d %s must replace exactly %s" % (idx, name, target_key))
+        if base.get("target_slot") == base.get("target_slot_b"):
+            raise ValueError("entry %d names the same slot twice" % idx)
+        golds.append(base.get("gold"))
+
+    classes = {gold: golds.count(gold) for gold in set(golds)}
+    if set(classes) != {"good", "bad"}:
+        raise ValueError("compose-2 gold must contain both good and bad")
+    chance = max(classes.values()) / float(len(golds))
+    return {"n": len(golds), "chance": chance, "gold_counts": classes}
+
+
+def _store_causality_decide(oracle, normal, drop_a, drop_b, shuffled, recovery, chance):
+    control_bar = chance + 0.06
+    checks = {
+        "oracle_alive": oracle >= 0.90,
+        "normal_positive": normal >= 0.75,
+        "drop_a_collapses": drop_a <= control_bar,
+        "drop_b_collapses": drop_b <= control_bar,
+        "shuffle_collapses": shuffled <= control_bar,
+        "recovery_positive": recovery >= 0.75,
+        "recovery_exact": abs(recovery - normal) <= 1e-12,
+    }
+    return checks, "SUPPORTED-CAUSAL" if all(checks.values()) else "FALSIFIED"
+
+
+def _store_causality_write(path, payload):
+    if not path:
+        return
+    out = os.path.abspath(path)
+    parent = os.path.dirname(out)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    tmp = out + ".tmp.%d" % os.getpid()
+    try:
+        with open(tmp, "w", encoding="utf-8") as handle:
+            json.dump(payload, handle, ensure_ascii=False, indent=2, sort_keys=True)
+            handle.write("\n")
+        os.replace(tmp, out)
+    finally:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+
+
+def store_causality_run(argv):
+    """Run the compose-2 normal/block/shuffle/recovery battery through store_run."""
+    if not argv:
+        print("ERROR: --store-causality needs a checkpoint", file=sys.stderr)
+        return 2
+    ckpt = argv[0]
+    main_path = evaluate_strval(argv[1:], "--store-causality", "")
+    drop_a_path = evaluate_strval(argv[1:], "--store-drop-a", "")
+    drop_b_path = evaluate_strval(argv[1:], "--store-drop-b", "")
+    out_path = evaluate_strval(argv[1:], "--out", "")
+    if not main_path or not drop_a_path or not drop_b_path:
+        print("ERROR: --store-causality, --store-drop-a and --store-drop-b are all required",
+              file=sys.stderr)
+        return 2
+    try:
+        audit = _store_causality_load(main_path, drop_a_path, drop_b_path)
+    except ValueError as exc:
+        print("ERROR: invalid causality panel: %s" % exc, file=sys.stderr)
+        return 2
+
+    forwarded = []
+    for flag in ("--win", "--store-query", "--store-fuse", "--store-readout",
+                 "--store-ctrl-seed", "--store-lambda", "--gn-freeze"):
+        if flag in argv:
+            pos = argv.index(flag)
+            if pos + 1 >= len(argv):
+                print("ERROR: %s needs a value" % flag, file=sys.stderr)
+                return 2
+            forwarded.extend((flag, argv[pos + 1]))
+
+    def run(path, *flags):
+        result = store_run([ckpt, "--store", path, *flags, *forwarded], _return_result=True)
+        if not isinstance(result, dict):
+            raise RuntimeError("store arm failed with exit %r" % result)
+        return result
+
+    print("=== anima evaluate --store-causality — compose-2 causal gate ===")
+    print("panel: n=%d · measured chance=%.4f · controls must be ≤ %.4f"
+          % (audit["n"], audit["chance"], audit["chance"] + 0.06))
+    try:
+        oracle = run(main_path, "--store-oracle-pair")
+        if oracle["accuracy"] < 0.90:
+            payload = {"schema": "anima-store-causality/v1", "verdict": "INVALID-INSTRUMENT",
+                       "audit": audit, "arms": {"oracle_pair": oracle}}
+            _store_causality_write(out_path, payload)
+            print("VERDICT: INVALID-INSTRUMENT — pair oracle < 0.90; no negative arm was read")
+            return 0
+        normal = run(main_path)
+        drop_a = run(drop_a_path)
+        drop_b = run(drop_b_path)
+        shuffled = run(main_path, "--store-shuffle")
+        recovery = run(main_path)
+    except RuntimeError as exc:
+        print("ERROR: %s" % exc, file=sys.stderr)
+        return 2
+
+    arms = {"oracle_pair": oracle, "normal": normal, "drop_a": drop_a,
+            "drop_b": drop_b, "shuffle": shuffled, "recovery": recovery}
+    if not shuffled["shuffle_integrity"]:
+        payload = {"schema": "anima-store-causality/v1", "verdict": "INVALID-INSTRUMENT",
+                   "audit": audit, "arms": arms,
+                   "reason": "address shuffle did not move every unique entity"}
+        _store_causality_write(out_path, payload)
+        print("VERDICT: INVALID-INSTRUMENT — address shuffle integrity failed")
+        return 0
+    checks, verdict = _store_causality_decide(
+        oracle["accuracy"], normal["accuracy"], drop_a["accuracy"], drop_b["accuracy"],
+        shuffled["accuracy"], recovery["accuracy"], audit["chance"])
+    payload = {"schema": "anima-store-causality/v1", "verdict": verdict,
+               "audit": audit, "bars": {"oracle": 0.90, "positive": 0.75,
+                                           "control": audit["chance"] + 0.06},
+               "checks": checks, "arms": arms}
+    _store_causality_write(out_path, payload)
+    print("VERDICT: %s" % verdict)
+    return 0
+
+
+def store_run(argv, _return_result=False):
     """`anima-py evaluate <ckpt> --store <held.json> [--store-oracle] [--store-lambda λ]` — H_9423
     CLMS store-bridge lane eval (the CO-TRAINED bridge, NOT the H_9392 --store-mix bolt-on actuator:
     the boundary is "does the fusion parameter live inside the .clm and enter the forward pass"). Each
@@ -8086,7 +8253,17 @@ def store_run(argv):
     if oracle:
         print("  → C0-e ORACLE: ≥0.90 REQUIRED before any negative is read (mixing/value/MLP/λ paths die "
               "silently below this). oracle+shuffle→1.00 & oracle+flip→1.00(vs flipped gold) = control plumbing OK.")
-    return 0
+    result = {
+        "arm": arm,
+        "oracle": oracle,
+        "mode": mode or "normal",
+        "n": n,
+        "correct": correct,
+        "accuracy": acc,
+        "readable": readable_n,
+        "shuffle_integrity": not (mode == "shuffle" and (fixed_points_total or dup_entities)),
+    }
+    return result if _return_result else 0
 
 
 def store_mix_run(argv):
@@ -12104,6 +12281,7 @@ _KNOWN_FLAGS = frozenset((
     "--gen-ctx-2afc",
     "--store-component-swap", "--store-swap-from",
     "--store", "--store-oracle", "--store-oracle-pair", "--store-dual-ctrl",
+    "--store-causality", "--store-drop-a", "--store-drop-b",
     "--store-source", "--store-source-nulls", "--store-source-build", "--build-prompts",   # V6_36 lane_type 9 SRC
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
     "--store-addr-audit", "--store-telemetry", "--store-telemetry-floor", "--store-telemetry-oracle", "--weave-null", "--grow-window", "--seed-class", "--fan-temp-ladder", "--seed-offset",
@@ -12446,7 +12624,7 @@ def _z_census(argv):
     print("  FOLLOW-ON (to close the literal ζ½ cell · card contingency (b))")
     print("     · needs a posterior-gap recorder on the decode path (e.g. an `anima-py chat`")
     print("       flag logging per-lm-step top-2 logit gap + in-window mass), then a ζ sweep.")
-    print("     · 303M decode is POOL-only (summer/aiden), never mini (heavy-anima-eval-pool-not-mini).")
+    print("     · 303M decode is registered-GPU-runner only, never mini (heavy-anima-eval-pool-not-mini).")
     return 0
 
 
@@ -17374,7 +17552,7 @@ def _pc2_cascade_null(d, argv):
     print("     saturation positive control both need a live decode; the ckpt is pool-side, so they")
     print("     are NOT in these numbers. The `static` arm is a re-roll-free LOWER BOUND and `rng`")
     print("     is the dose-matched full-cascade stand-in the traces already hold.")
-    print("   · pool spec (summer/aiden · never mini · heavy-anima-eval-pool-not-mini):")
+    print("   · pool spec (registered GPU runner · never mini · heavy-anima-eval-pool-not-mini):")
     print("       anima-py chat --pc2-mouth cascade --pc2-zeta 0   <ckpt>  # 2nd-best byte @ 1 lm-step")
     print("       anima-py chat --pc2-mouth bias    --pc2-zeta 4   <ckpt>  # ζ=+4 saturation arm")
     print("       anima-py chat --pc2-mouth bias    --pc2-zeta -4  <ckpt>  # ζ=-4 saturation arm")
@@ -19323,6 +19501,8 @@ def main(argv):
         return store_source_build(argv)
     if "--store-source" in argv:               # V6_36 lane_type 9 (SRC) authorship route
         return store_source_run(argv)
+    if "--store-causality" in argv:
+        return store_causality_run(argv)
     if "--store" in argv:
         return store_run(argv)
     if "--xbind" in argv:

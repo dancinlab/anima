@@ -13,10 +13,11 @@ Tiers:
 Also appends a single note line to frontmatter "notes" field with
 the verify3 evidence summary.
 """
-import json, re, glob
+import json, re, glob, os
 from pathlib import Path
 
-ROOT = Path("/home/summer/mac_home/core/anima/hypotheses_candidates")
+ANIMA_ROOT = Path(os.environ.get("ANIMA_ROOT", Path(__file__).resolve().parents[2])).resolve()
+ROOT = ANIMA_ROOT / "hypotheses_candidates"
 results = []
 with open("/tmp/verify3.jsonl") as f:
     for ln in f:

@@ -40,8 +40,8 @@ fn _maxdiff(a: int, b: int, n: int) -> float {
 
 fn main() {
     // fixture path: scan argv for the first *.bin arg (index-0 script-path
-    // tolerant); else the default summer location.
-    let mut bin = "/root/anima-weights/bytegpt303_h1129/h1129.bin"
+    // tolerant); otherwise read the shared environment contract.
+    let mut bin = to_string(env("ANIMA_BYTEGPT303_BIN"))
     let av = args()
     let mut ai = 0
     while ai < len(av) {
@@ -50,6 +50,7 @@ fn main() {
         if al > 4 && substring(a, al - 4, al) == ".bin" { bin = a }
         ai = ai + 1
     }
+    if bin == "" { println("[devres-smoke] SKIP — pass a .bin path or set ANIMA_BYTEGPT303_BIN"); return }
     let have = exec("test -f '" + bin + "' && printf y || printf n") == "y"
     if !have {
         println("[devres-smoke] SKIP — no fixture at " + bin

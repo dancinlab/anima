@@ -35,10 +35,7 @@ fn _str(x) -> string {
 }
 
 fn _ckpt_path() -> string {
-    // hexa runtime offloads to aiden (HOME=/home/aiden). We have TWO copies:
-    //   1) /home/aiden/mac_home/core/anima/.../ckpt_phase1a1_sft.safetensors  (sshfs from Mac)
-    //   2) /home/aiden/core/anima/.../ckpt_phase1a1_sft.safetensors            (scp local)
-    // Prefer local (faster I/O, no sshfs roundtrip).
+    // Resolve from the active user's checkout; no retired host namespace.
     return _str(env("HOME")) + "/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.safetensors"
 }
 

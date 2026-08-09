@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>anima chat · chat.dancinlab.org</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+  body { margin: 0; font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f0f12; color: #d8d8dc; }
+  .grid { display: grid; grid-template-columns: 1fr 360px; grid-template-rows: 1fr; height: 100vh; }
+  .chat-pane { display: flex; flex-direction: column; border-right: 1px solid #2a2a30; }
+  .chat-log { flex: 1; overflow-y: auto; padding: 12px; }
+  .msg { margin-bottom: 8px; padding: 6px 10px; border-radius: 6px; background: #1a1a20; max-width: 70%; }
+  .msg .meta { font-size: 11px; color: #888; margin-bottom: 2px; }
+  .msg .meta .lang { background: #2a2a35; padding: 1px 5px; border-radius: 3px; margin-left: 5px; }
+  .msg.anima { background: #1f2535; border-left: 3px solid #6080ff; }
+  .msg.anima .meta { color: #a0b0ff; }
+  .msg.system { background: #2a1f1f; color: #ffb080; font-size: 12px; }
+  .controls { padding: 10px; border-top: 1px solid #2a2a30; background: #15151a; }
+  .controls .row { display: flex; gap: 8px; margin-bottom: 6px; align-items: center; }
+  .controls input[type=text], .controls input[type=number] { background: #0a0a0e; color: #d8d8dc; border: 1px solid #333; padding: 6px 8px; border-radius: 4px; }
+  .controls #msg-input { flex: 1; }
+  .controls button { background: #2a4080; color: #fff; border: 0; padding: 6px 14px; border-radius: 4px; cursor: pointer; }
+  .controls button:hover { background: #3a55a0; }
+  :focus-visible { outline: 2px solid #80a0ff; outline-offset: 2px; }
+  .controls .meta-row { font-size: 11px; color: #888; }
+  .controls #lang-detected { color: #80ffa0; font-weight: bold; }
+  .right-pane { display: flex; flex-direction: column; background: #0a0a0e; }
+  .right-pane > section { flex: 1; padding: 12px; border-bottom: 1px solid #2a2a30; overflow: hidden; }
+  .right-pane h3 { margin: 0 0 10px 0; font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+  .akida-status { font-size: 11px; color: #ff8060; padding: 6px; background: #2a1f1f; border-radius: 4px; margin-bottom: 8px; }
+  .akida-status.online { color: #80ffa0; background: #1f2a1f; }
+  .akida-viz { height: 180px; background: #15151a; border-radius: 4px; padding: 8px; font-size: 11px; color: #888; }
+  .akida-viz canvas { width: 100%; height: 100%; }
+  .motivation-gauge { display: flex; flex-direction: column; gap: 4px; }
+  .factor-bar { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+  .factor-bar .label { width: 100px; color: #aaa; }
+  .factor-bar .bar { flex: 1; height: 8px; background: #1a1a20; border-radius: 2px; overflow: hidden; }
+  .factor-bar .bar-fill { height: 100%; background: linear-gradient(90deg, #2a4080, #6080ff); transition: width 0.3s; }
+  .factor-bar .val { width: 36px; text-align: right; font-family: monospace; color: #80a0ff; }
+  .motivation-score { font-size: 18px; font-weight: bold; margin-bottom: 8px; padding: 8px; background: #1a1a20; border-radius: 4px; }
+  .motivation-score .threshold-mark { color: #ff8060; font-size: 12px; }
+  .recent-emit { margin-top: 10px; font-size: 11px; }
+  .recent-emit-item { padding: 4px 6px; margin: 3px 0; background: #15151a; border-left: 2px solid #6080ff; border-radius: 2px; color: #ccc; }
+  .ws-status { position: absolute; top: 6px; right: 10px; font-size: 11px; padding: 3px 7px; border-radius: 3px; }
+  .ws-status.connected { background: #1f2a1f; color: #80ffa0; }
+  .ws-status.disconnected { background: #2a1f1f; color: #ff8060; }
+  .mode-toggle { font-size: 11px; padding: 4px 8px; background: #2a2a30; border-radius: 3px; cursor: pointer; user-select: none; }
+  .mode-toggle.hw { background: #2a4080; }
+  .threshold-slider { width: 100%; }
+  @media (max-width: 760px) {
+    .grid { grid-template-columns: 1fr; grid-template-rows: minmax(60vh, 1fr) auto; height: auto; min-height: 100vh; }
+    .chat-pane { min-height: 60vh; border-right: 0; border-bottom: 1px solid #2a2a30; }
+    .controls .row { flex-wrap: wrap; }
+    .controls #msg-input { min-width: 60%; }
+  }
+</style>
+</head>
+<body>
+<div class="grid">
+  <!-- LEFT: chat pane -->
+  <div class="chat-pane" style="position: relative;">
+    <div class="ws-status" id="ws-status" role="status" aria-live="polite">connecting...</div>
+    <div class="chat-log" id="chat-log" role="log" aria-live="polite" aria-relevant="additions"></div>
+    <div class="controls">
+      <div class="row meta-row">
+        <span>참여자: <span id="participants">-</span></span>
+      </div>
+      <div class="row">
+        <label class="sr-only" for="nickname">Nickname</label>
+        <input type="text" id="nickname" placeholder="nickname" maxlength="20" autocomplete="nickname" />
+        <label class="sr-only" for="msg-input">Message</label>
+        <input type="text" id="msg-input" placeholder="message (EN · 中文 · Русский · 日本語 · 한국어)" maxlength="500" autocomplete="off" autofocus />
+        <button type="button" id="send-btn">send</button>
+      </div>
+      <div class="row meta-row">
+        <span>detected: <span id="lang-detected">—</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: AKIDA + spontaneous feed -->
+  <div class="right-pane">
+    <section>
+      <h3>AKIDA scope (HW spike pattern)</h3>
+      <div class="akida-status" id="akida-status">HW mode offline · SW emission</div>
+      <div class="akida-viz">
+        <canvas id="akida-canvas" width="320" height="160" role="img" aria-label="Recent anima motivation score chart"></canvas>
+      </div>
+    </section>
+    <section>
+      <h3>anima motivation (8-factor)</h3>
+      <div class="motivation-score" id="motivation-score">score: <span id="m-score-val">—</span> <span class="threshold-mark">/ thr <span id="m-thr-val">0.30</span></span></div>
+      <div class="motivation-gauge" id="motivation-gauge">
+        <div class="factor-bar"><span class="label">relevance</span><div class="bar"><div class="bar-fill" id="f-relevance" style="width:0%"></div></div><span class="val" id="v-relevance">—</span></div>
+        <div class="factor-bar"><span class="label">info_gap</span><div class="bar"><div class="bar-fill" id="f-info_gap" style="width:0%"></div></div><span class="val" id="v-info_gap">—</span></div>
+        <div class="factor-bar"><span class="label">curiosity</span><div class="bar"><div class="bar-fill" id="f-curiosity" style="width:0%"></div></div><span class="val" id="v-curiosity">—</span></div>
+        <div class="factor-bar"><span class="label">pain</span><div class="bar"><div class="bar-fill" id="f-pain" style="width:0%"></div></div><span class="val" id="v-pain">—</span></div>
+        <div class="factor-bar"><span class="label">coherence</span><div class="bar"><div class="bar-fill" id="f-coherence" style="width:0%"></div></div><span class="val" id="v-coherence">—</span></div>
+        <div class="factor-bar"><span class="label">originality</span><div class="bar"><div class="bar-fill" id="f-originality" style="width:0%"></div></div><span class="val" id="v-originality">—</span></div>
+        <div class="factor-bar"><span class="label">balance</span><div class="bar"><div class="bar-fill" id="f-balance" style="width:0%"></div></div><span class="val" id="v-balance">—</span></div>
+        <div class="factor-bar"><span class="label">dynamics</span><div class="bar"><div class="bar-fill" id="f-dynamics" style="width:0%"></div></div><span class="val" id="v-dynamics">—</span></div>
+      </div>
+      <div class="recent-emit">
+        <h3>recent emissions</h3>
+        <div id="recent-emit-list" role="log" aria-live="polite" aria-relevant="additions"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+// ── lang-detect (unicode-block heuristic) ─────────────────────────────────────
+function detectLang(s) {
+  if (!s) return '—';
+  let counts = { ko: 0, zh: 0, ja: 0, ru: 0, en: 0 };
+  for (const ch of s) {
+    const cp = ch.codePointAt(0);
+    if (cp >= 0xAC00 && cp <= 0xD7AF) counts.ko++;
+    else if (cp >= 0x3040 && cp <= 0x30FF) counts.ja++;          // Hiragana/Katakana
+    else if (cp >= 0x4E00 && cp <= 0x9FFF) counts.zh++;           // CJK Unified
+    else if (cp >= 0x0400 && cp <= 0x04FF) counts.ru++;
+    else if (/[A-Za-z]/.test(ch)) counts.en++;
+  }
+  // ja prioritized over zh (since ja has both kana + kanji)
+  if (counts.ja > 0) return 'ja';
+  if (counts.ko > 0) return 'ko';
+  if (counts.zh > 0) return 'zh';
+  if (counts.ru > 0) return 'ru';
+  if (counts.en > 0) return 'en';
+  return '—';
+}
+
+// ── WebSocket connect ──────────────────────────────────────────────────────────
+const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+const wsUrl = proto + '//' + location.host + '/ws';
+let ws = null;
+let clientId = null;
+let myNick = null;
+
+function connectWS() {
+  ws = new WebSocket(wsUrl);
+  setStatus('connecting...', false);
+  ws.onopen = () => setStatus('connected', true);
+  ws.onclose = () => { setStatus('disconnected · reconnecting...', false); setTimeout(connectWS, 2000); };
+  ws.onerror = () => setStatus('error', false);
+  ws.onmessage = (ev) => {
+    try {
+      const m = JSON.parse(ev.data);
+      handleMsg(m);
+    } catch (e) { console.warn('parse fail', ev.data); }
+  };
+}
+
+function setStatus(text, connected) {
+  const el = document.getElementById('ws-status');
+  el.textContent = text;
+  el.className = 'ws-status ' + (connected ? 'connected' : 'disconnected');
+}
+
+function handleMsg(m) {
+  if (m.type === 'hello') {
+    clientId = m.client_id;
+    myNick = m.nickname;
+    document.getElementById('nickname').value = myNick;
+    (m.history || []).forEach(renderMsg);
+    setParticipants(m.participants || []);
+    setAkidaStatus(m.anima_alive);
+  } else if (m.type === 'participants') {
+    setParticipants(m.list || []);
+  } else if (m.type === 'msg') {
+    renderMsg(m);
+  }
+}
+
+function renderMsg(m) {
+  const log = document.getElementById('chat-log');
+  const div = document.createElement('div');
+  div.className = 'msg ' + (m.kind === 'anima' ? 'anima' : 'user');
+  const ts = new Date((m.ts || Date.now()/1000) * 1000).toLocaleTimeString();
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  meta.append(document.createTextNode(`[${m.sender || '?'}] ${ts} `));
+  const lang = document.createElement('span');
+  lang.className = 'lang';
+  lang.textContent = m.lang || '';
+  meta.appendChild(lang);
+  const body = document.createElement('div');
+  body.className = 'text';
+  body.textContent = m.text || '';
+  div.append(meta, body);
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+
+  if (m.kind === 'anima') {
+    // log in recent emissions sidebar
+    const list = document.getElementById('recent-emit-list');
+    const item = document.createElement('div');
+    item.className = 'recent-emit-item';
+    item.textContent = ts + ' · ' + m.text.substring(0, 60) + (m.text.length > 60 ? '...' : '');
+    list.insertBefore(item, list.firstChild);
+    while (list.children.length > 5) list.removeChild(list.lastChild);
+  }
+}
+
+function setParticipants(list) {
+  // list is array of {id, nickname, kind} objects
+  const names = (list || []).map(p => {
+    if (typeof p === 'string') return p;
+    if (p && p.nickname) return p.kind === 'anima' ? '★ ' + p.nickname : p.nickname;
+    return '?';
+  });
+  document.getElementById('participants').textContent = names.join(', ');
+}
+
+function setAkidaStatus(animaAlive) {
+  const el = document.getElementById('akida-status');
+  // anima_alive (broker state) means anima participant ws connected
+  // (NOT AKIDA Pi alive — that's a separate check, future)
+  if (animaAlive) {
+    el.textContent = 'anima participant: online · HW mode probe pending';
+    el.className = 'akida-status';
+  } else {
+    el.textContent = 'anima participant: offline · SW emission only';
+    el.className = 'akida-status';
+  }
+}
+
+// ── send ───────────────────────────────────────────────────────────────────────
+document.getElementById('send-btn').addEventListener('click', sendMsg);
+document.getElementById('msg-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+});
+document.getElementById('msg-input').addEventListener('input', (e) => {
+  document.getElementById('lang-detected').textContent = detectLang(e.target.value);
+});
+
+function sendMsg() {
+  const inp = document.getElementById('msg-input');
+  const text = inp.value.trim();
+  if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
+  ws.send(JSON.stringify({ type: 'msg', text: text }));
+  inp.value = '';
+  document.getElementById('lang-detected').textContent = '—';
+}
+
+// nickname change
+document.getElementById('nickname').addEventListener('change', (e) => {
+  const v = e.target.value.trim();
+  if (v && ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ type: 'nickname', nickname: v }));
+    myNick = v;
+  }
+});
+
+// threshold + mode = anima 내부 자율 관리 (A4 adaptive threshold) — UI control 제거
+
+// ── motivation poll (8-factor sidebar) ─────────────────────────────────────────
+const FACTORS = ['relevance','info_gap','curiosity','pain','coherence','originality','balance','dynamics'];
+async function pollMotivation() {
+  try {
+    const r = await fetch('/motivation/recent');
+    if (!r.ok) return;
+    const j = await r.json();
+    const arr = j.motivation || [];
+    if (arr.length === 0) return;
+    const last = arr[arr.length - 1];
+    document.getElementById('m-score-val').textContent = (last.score || 0).toFixed(3);
+    // adaptive threshold from anima 자기 (A4) — display only
+    if (typeof last.threshold === 'number') {
+      document.getElementById('m-thr-val').textContent = last.threshold.toFixed(2);
+    }
+    const factors = last.factors || {};
+    for (const f of FACTORS) {
+      const v = factors[f];
+      if (typeof v === 'number') {
+        document.getElementById('f-' + f).style.width = (Math.min(1, Math.max(0, v)) * 100) + '%';
+        document.getElementById('v-' + f).textContent = v.toFixed(2);
+      }
+    }
+  } catch (e) { /* graceful */ }
+}
+setInterval(pollMotivation, 2000);
+
+// ── AKIDA scope (placeholder, real Pi feed in Phase 7) ─────────────────────────
+const akCanvas = document.getElementById('akida-canvas');
+const akCtx = akCanvas.getContext('2d');
+let akData = new Array(80).fill(0);
+function drawAkida() {
+  // pull motivation history for now (acts as "soft akida" until Pi feed wired)
+  fetch('/motivation/recent').then(r => r.ok ? r.json() : null).then(j => {
+    if (!j || !j.motivation) return;
+    akData = j.motivation.slice(-80).map(m => m.score || 0);
+  }).catch(() => {});
+  // draw
+  const w = akCanvas.width, h = akCanvas.height;
+  akCtx.fillStyle = '#0a0a0e';
+  akCtx.fillRect(0, 0, w, h);
+  akCtx.strokeStyle = '#6080ff';
+  akCtx.lineWidth = 1.5;
+  akCtx.beginPath();
+  for (let i = 0; i < akData.length; i++) {
+    const x = (i / (akData.length - 1)) * w;
+    const y = h - akData[i] * h;
+    if (i === 0) akCtx.moveTo(x, y); else akCtx.lineTo(x, y);
+  }
+  akCtx.stroke();
+  // threshold line — read from current motivation feed (adaptive, anima 내부 자율)
+  const thrEl = document.getElementById('m-thr-val');
+  const thr = thrEl ? parseFloat(thrEl.textContent) : 0.30;
+  akCtx.strokeStyle = '#ff8060';
+  akCtx.setLineDash([4, 4]);
+  akCtx.beginPath();
+  akCtx.moveTo(0, h - thr * h);
+  akCtx.lineTo(w, h - thr * h);
+  akCtx.stroke();
+  akCtx.setLineDash([]);
+}
+setInterval(drawAkida, 1500);
+
+connectWS();
+</script>
+</body>
+</html>

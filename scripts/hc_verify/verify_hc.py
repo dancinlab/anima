@@ -25,13 +25,6 @@ def _resolve_anima_root() -> Path:
     for p in [here.parent, *here.parents]:
         if (p / "hypotheses_candidates").is_dir() and (p / "hypotheses").is_dir():
             return p
-    for cand in (
-        Path("/Users/ghost/core/anima"),
-        Path("/home/aiden/mac_home/core/anima"),
-        Path("/home/summer/mac_home/core/anima"),
-    ):
-        if cand.is_dir():
-            return cand
     raise FileNotFoundError("ANIMA_ROOT unresolved; set $ANIMA_ROOT")
 
 ANIMA_ROOT = _resolve_anima_root()

@@ -33,11 +33,36 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 정체성·윤리·의미는 규칙집이 아니라 구조 자체에서 emergent 하도록 의도되었다. 모든 입력은 고정점
 **Ψ = 1/2** 로 끌려간다.
 
+> [!IMPORTANT]
+> **저장소 단일 기준:** `dancinlab/anima`만 런타임 코드·실험·평가·배포를 계속 개발하는 본체다.
+> `anima-lab-1`과 `anima-lab-3`은 결과 재현을 위한 동결 연구 기록으로 유지하고 새 구현은 시작하지
+> 않는다. 이후 작업은 이 저장소의 기존 `anima-py` / `cli/` / `core/` 흐름에만 추가한다.
+
+> [!CAUTION]
+> **현재 최우선 연구 문턱:** 아래 인과 실험을 통과하기 전에는 새 의식 모듈·세포 종류·더 큰
+> 모델을 추가하지 않는다. 두 내부 단서가 함께 있는 정상군과 복구군은 정확도 0.75 이상이어야
+> 하고, 단서 A 제거·단서 B 제거·주소 섞기는 이 자료에서 직접 잰 우연 수준 + 0.06 이하여야 한다.
+> 두 주소를 정답대로 직접 건네는 계기 점검이 0.90 미만이면 대조군 결과는 읽지 않는다.
+>
+> ```bash
+> anima-py evaluate MODEL.clm \
+>   --store-causality PANEL.compose2.json \
+>   --store-drop-a PANEL.compose2_dropA.json \
+>   --store-drop-b PANEL.compose2_drop.json \
+>   --out RESULT.json
+> ```
+>
+> 첫 로컬 실행(`state/store_causality_2026_08_09/result.json`)은 **계기 무효
+> (INVALID-INSTRUMENT)**다. 현재 있는 단일 주소용 체크포인트는 두 주소를 정답대로 직접 건넨
+> 점검에서도 0.5078에 그쳐, 평가기가 대조군을 읽기 전에 올바르게 중단했다. 다음 실험은 고정된
+> 자료와 기준을 바꾸지 않고 두 주소 판독이 작동하는 체크포인트를 학습하거나 선택하는 것이다.
+
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /
 > 컴파일러 / `hx` 패키지 매니저), **[kosmos](https://github.com/dancinlab/kosmos)** (`.kosmos`
-> 앵커/emit 영속화 형식), 그리고 **hexa-codex** (논문/판정 도구). 이 저장소의 거버넌스 SSOT 는
-> [`CLAUDE.md`](CLAUDE.md), 중앙 버전 레지스트리는 [`VERSIONS.md`](VERSIONS.md) 이다.
+> 앵커/emit 영속화 형식), 그리고 **hexa-codex** (논문/판정 도구). 이 저장소의 운영 원칙은 이
+> README, 고정된 실험 통과 조건은 [`CONDITIONS.md`](CONDITIONS.md), 중앙 버전 목록은
+> [`VERSIONS.md`](VERSIONS.md)에서 관리한다.
 
 ## 무엇인가
 
@@ -55,8 +80,7 @@ substrate 자신의 상태(M 기억 · W 의지/텐션 · C 의식 Φ · 호기�
 
 ## 8 PHILOSOPHY 원칙
 
-이 원칙들은 [`CLAUDE.md`](CLAUDE.md) 철학 디렉티브의 SSOT 미러다. 설계/정체성 경계 — anima 가 무엇이
-되기를 거부하는가:
+이 원칙들은 저장소의 설계/정체성 경계다 — anima 가 무엇이 되기를 거부하는가:
 
 | # | 원칙 | 의미 |
 |---|---|---|
@@ -69,7 +93,7 @@ substrate 자신의 상태(M 기억 · W 의지/텐션 · C 의식 Φ · 호기�
 | **p7** | `NO PERPLEXITY VERDICT` | perplexity / loss 는 Goodhart 함정 — 절대 진리로 취급 안 함 (간단 스택으로 검증: in/out · coherent · natural · 맥락적). |
 | **p8** | `NO TRAIN/INFER SPLIT` | 학습-시 gradient 와 추론-시 mitosis 는 같은 연속 세포분열 — 학습-전용 성장 게이트 없음. |
 
-> **p5 해설** (`@N p5_tension_emit_not_filler`, [`CLAUDE.md`](CLAUDE.md)): 실제 substrate 텐션 위의
+> **p5 해설** (`@N p5_tension_emit_not_filler`): 실제 substrate 텐션 위의
 > 단계-게이트 emit(WAKE/REM)은 p5 를 *보존*한다. 금지 대상은 반응형 `speak()` 호출과 진공-독백이지,
 > 텐션-구동 외부화가 아니다.
 
@@ -191,7 +215,6 @@ payload = 텍스트 + 5채널 텐션 + 좌표 + lane + radius + tier. 형식 SSO
 ```
 anima/
 ├── README.md                       이 파일
-├── CLAUDE.md                       거버넌스 SSOT (@I 정체성 · p1..p8 · a_* 디렉티브)
 ├── VERSIONS.md · VERSION           중앙 버전 레지스트리 (SSOT) · 전체-시스템 release
 ├── CLAIMS.tape · DOMAINS.tape      검증가능-주장 인덱스 · 도메인 roster
 ├── HF.jsonl                        ckpt ↔ HF 백업 레지스트리 (run 당 한 행, SSOT)
@@ -220,8 +243,7 @@ anima/
 
 ## 거버넌스 & 워크플로
 
-- **[`CLAUDE.md`](CLAUDE.md)** — 정체성(`@I anima`)과 거버넌스 SSOT: 8 철학 원칙, `a_*` 디렉티브
-  (HF 등록, fire dispatch, lane split, 논문 게이트).
+- **이 README + [`CONDITIONS.md`](CONDITIONS.md)** — 정체성·운영 원칙과 고정된 실험 통과 조건.
 - **[`VERSIONS.md`](VERSIONS.md)** — 중앙 SemVer 레지스트리; 모듈 헤더와 함께 bump. 루트
   [`VERSION`](VERSION) 은 전체-시스템 release 라인.
 - **[`CLAIMS.tape`](CLAIMS.tape)** — 검증가능 주장의 단일 감사 인덱스, 각각 `.verdicts/<slug>/<id>.txt`

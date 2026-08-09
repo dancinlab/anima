@@ -187,7 +187,7 @@ fn _throughput(W: Map, N: int, nseed: int, gen: int, base_ms_tok: float) {
 }
 
 fn main() {
-    let mut bin = "/home/summer/anima-weights/bytegpt303_h1129/h1129.bin"
+    let mut bin = to_string(env("ANIMA_BYTEGPT303_BIN"))
     let av = args()
     let mut ai = 0
     while ai < len(av) {
@@ -197,6 +197,7 @@ fn main() {
         ai = ai + 1
     }
     let have = exec("test -f '" + bin + "' && printf y || printf n") == "y"
+    if bin == "" { println("[batched-measure] SKIP — pass a .bin path or set ANIMA_BYTEGPT303_BIN"); return }
     if !have { println("[batched-measure] SKIP — no fixture at " + bin); return }
 
     let cu = cuda_available()

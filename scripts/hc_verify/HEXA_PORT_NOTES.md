@@ -4,7 +4,7 @@
 
 > "필요시 hexa-lang upstream 개선가능"
 
-hexa-lang upstream 위치: `/home/summer/core/hexa-lang`
+hexa-lang upstream 위치는 고정 호스트 경로가 아니라 현재 `hx` 설치 또는 등록된 저장소에서 찾는다.
 
 포팅 중 missing feature 발견 시:
 1. 포팅 가능한 경우 (substring + line scan 으로 우회) — 우선 해당 방식으로 처리, 한계는 `tool/verify_hc.hexa` 헤더 주석에 명시

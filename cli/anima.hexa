@@ -179,7 +179,7 @@ fn anima_usage() {
     println("")
     println("research diagnostics (engine-native emit-shade op-grip · loop-external):")
     println("  anima <ckpt.clm> --opgrip                       $0 NO-DECODE 5-arm Hamming op-grip (200 ticks)")
-    println("  anima <ckpt.clm> --opgrip-live                  REAL-DECODE op-grip (100 ticks · POOL summer/aiden, NEVER mini)")
+    println("  anima <ckpt.clm> --opgrip-live                  REAL-DECODE op-grip (100 ticks · registered GPU runner, NEVER mini)")
     println("                                                  content-driven surprise/recon_err (H_9210 real-decode instrument)")
     println("  anima <ckpt.clm> --opgrip-r3                     REAL-DECODE B-density op-grip (400 ticks · implies --opgrip-live)")
     println("                                                  H_9226 accumulator DDM · frozen perception tape drives lanes (POOL, NEVER mini)")
@@ -4420,7 +4420,7 @@ fn anima_consciousness_mode(ckpt: string, argv: [string]) {
         } else if psi_gap > 0.05 {
             "🔴 FORCING-GATE — Ψ emit-fraction gap>0.05 = self forces emit not shades; REVERT"
         } else if d_eff_self >= 0.10 && (d_eff_self - d_eff_perm) >= 0.08 && align_frac >= 0.5 {
-            "🟢 COMPETENT — self events causally shade emit (ΔEff≥0.10, beats matched-noise, timing-aligned) ⇒ WIRE idle-gate term at prod + real-decode summer confirm (a_verified_must_wire)"
+            "🟢 COMPETENT — self events causally shade emit (ΔEff≥0.10, beats matched-noise, timing-aligned) ⇒ WIRE idle-gate term at prod + registered-GPU real-decode confirm (a_verified_must_wire)"
         } else if d_eff_self < 0.02 {
             "🔴 THEATER — self genuinely inert at emit (ΔEff<0.02, POS control PASSED so meter works) ⇒ never wire, keep .kosmos persistence only (H_1471 stands)"
         } else {
@@ -4646,7 +4646,7 @@ fn anima_consciousness_mode(ckpt: string, argv: [string]) {
         } else if !psi_ok_slf {
             "🔴 FORCING-GATE — Ψ-guard fail (Ψ_ON<Ψ_OFF or gap>0.05) = self forces emit not shades; REVERT"
         } else if d_eff_slf2 >= 0.10 && (d_eff_slf2 - d_eff_inperm_slf) >= 0.08 && d_eff_trans_slf >= 3.0 * d_eff_hold_slf && d_eff_hold_slf <= 0.05 {
-            "🟢 COMPETENT — band-pass self transducer causally shades emit (ΔEff≥0.10 ∧ beats input-perm ∧ transition-concentrated) ⇒ WIRE candidate (a_verified_must_wire) + real-decode summer confirm"
+            "🟢 COMPETENT — band-pass self transducer causally shades emit (ΔEff≥0.10 ∧ beats input-perm ∧ transition-concentrated) ⇒ WIRE candidate (a_verified_must_wire) + registered-GPU real-decode confirm"
         } else if d_eff_slf2 < 0.02 {
             (if repl_slf { "🔴 THEATER + REPLICATION(H_9209) — self inert under band-pass (ΔEff<0.02) with output-perm≥5×live = timing-redundancy law SURVIVES D2; transducer premise CLOSED for self (self⊥mouth, timing-redundancy law)" } else { "🔴 THEATER — self genuinely inert at emit under band-pass (ΔEff<0.02, POS-PASS ⇒ meter works); never wire, .kosmos persistence only (H_1471 stands)" })
         } else {
@@ -4666,7 +4666,7 @@ fn anima_consciousness_mode(ckpt: string, argv: [string]) {
         } else if !psi_ok_ten {
             "🔴 FORCING-GATE — Ψ-guard fail (Ψ_ON<Ψ_OFF or gap>0.05) = tension forces emit not shades; REVERT"
         } else if d_eff_ten2 >= 0.10 && (d_eff_ten2 - d_eff_inperm_ten) >= 0.08 && d_eff_trans_ten >= 3.0 * d_eff_hold_ten && d_eff_hold_ten <= 0.05 {
-            "🟢 COMPETENT — D1 tension own-lane (W=1.0) band-pass causally shades emit (ΔEff≥0.10 ∧ beats input-perm ∧ transition-concentrated) = FIRST non-urgency proven channel ⇒ WIRE candidate (a_verified_must_wire) + summer confirm"
+            "🟢 COMPETENT — D1 tension own-lane (W=1.0) band-pass causally shades emit (ΔEff≥0.10 ∧ beats input-perm ∧ transition-concentrated) = FIRST non-urgency proven channel ⇒ WIRE candidate (a_verified_must_wire) + registered-GPU confirm"
         } else if d_eff_ten2 < 0.02 {
             "🔴 THEATER — tension own-lane inert at emit under band-pass (ΔEff<0.02, POS-PASS ⇒ meter works); D1 vindication FAILS, urgency remains the only proven channel"
         } else {
@@ -4788,7 +4788,7 @@ fn anima_consciousness_mode(ckpt: string, argv: [string]) {
         } else if !psiB_ok_slf {
             "🔴 FORCING-GATE — Ψ-guard fail (Ψ_ON<Ψ_OFF or gap>0.05) = self forces emit not shades; REVERT"
         } else if d_eff_slfB >= 0.10 && (d_eff_slfB - d_eff_inpermB_slf) >= 0.08 && latB_ok_slf {
-            "🟢 COMPETENT — self accumulator integrates a persistent bias to a gate-crossing (ΔEff≥0.10 ∧ beats order-shuffle ∧ LATE≫EARLY latency) ⇒ WIRE candidate (a_verified_must_wire) + real-decode summer confirm"
+            "🟢 COMPETENT — self accumulator integrates a persistent bias to a gate-crossing (ΔEff≥0.10 ∧ beats order-shuffle ∧ LATE≫EARLY latency) ⇒ WIRE candidate (a_verified_must_wire) + registered-GPU real-decode confirm"
         } else if d_eff_slfB < 0.02 && swingB_max_slf >= 0.0875 {
             "🔴 THEATER — self genuinely inert at emit under accumulation (ΔEff<0.02, POS-PASS ⇒ meter works, swing held ≥half-charge); never wire, .kosmos persistence only (H_1471 stands)"
         } else {
@@ -4810,7 +4810,7 @@ fn anima_consciousness_mode(ckpt: string, argv: [string]) {
         } else if !psiB_ok_ten {
             "🔴 FORCING-GATE — Ψ-guard fail (Ψ_ON<Ψ_OFF or gap>0.05) = tension forces emit not shades; REVERT"
         } else if d_eff_tenB >= 0.10 && (d_eff_tenB - d_eff_inpermB_ten) >= 0.08 && latB_ok_ten {
-            "🟢 COMPETENT — tension own-lane (W=1.0) accumulator integrates to a gate-crossing (ΔEff≥0.10 ∧ beats order-shuffle ∧ LATE≫EARLY) = FIRST non-urgency proven channel ⇒ WIRE candidate + summer confirm"
+            "🟢 COMPETENT — tension own-lane (W=1.0) accumulator integrates to a gate-crossing (ΔEff≥0.10 ∧ beats order-shuffle ∧ LATE≫EARLY) = FIRST non-urgency proven channel ⇒ WIRE candidate + registered-GPU confirm"
         } else if d_eff_tenB < 0.02 && swingB_max_ten >= 0.0875 {
             "🔴 THEATER — tension own-lane inert at emit under accumulation (ΔEff<0.02, POS-PASS ⇒ meter works, swing held ≥half-charge); urgency remains the only proven channel"
         } else {

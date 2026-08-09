@@ -194,9 +194,12 @@ async def ws_user(ws: WebSocket):
                 msg = json.loads(raw)
             except Exception:
                 continue
+            if not isinstance(msg, dict):
+                continue
             kind = msg.get("type", "msg")
             if kind == "nickname":
-                new = (msg.get("nickname") or "").strip()[:40]
+                new = "".join(ch for ch in str(msg.get("nickname") or "").strip()
+                              if ch.isprintable())[:20]
                 if new:
                     STATE.users[client_id]["nickname"] = new
                     nickname = new
@@ -253,6 +256,8 @@ async def ws_anima(ws: WebSocket):
             try:
                 msg = json.loads(raw)
             except Exception:
+                continue
+            if not isinstance(msg, dict):
                 continue
             kind = msg.get("type", "")
             if kind == "msg":

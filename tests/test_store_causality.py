@@ -1,0 +1,69 @@
+import copy
+import json
+
+from cli import evaluate
+
+
+def _manifests():
+    normal = {
+        "schema": "anima-storebind/v1",
+        "compose": 2,
+        "entries": [],
+    }
+    for gold, a, b in (("good", 0, 1), ("bad", 1, 2)):
+        normal["entries"].append({
+            "prompt": f"is e{a} and e{b} => ",
+            "gold": gold,
+            "target_slot": a,
+            "target_slot_b": b,
+            "store": {"entities": ["e0", "e1", "e2", "e3"], "pols": [0, 1, 0, 1]},
+        })
+    drop_a = copy.deepcopy(normal)
+    drop_b = copy.deepcopy(normal)
+    for base, arm_a, arm_b in zip(normal["entries"], drop_a["entries"], drop_b["entries"]):
+        arm_a["store"]["entities"][base["target_slot"]] = "zzqqx"
+        arm_b["store"]["entities"][base["target_slot_b"]] = "zzqqx"
+    drop_a["control"] = "one-slot-only-A-deleted"
+    drop_b["control"] = "one-slot-only"
+    return normal, drop_a, drop_b
+
+
+def _write(tmp_path, name, payload):
+    path = tmp_path / name
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    return str(path)
+
+
+def test_store_causality_panel_validates_and_derives_chance(tmp_path):
+    normal, drop_a, drop_b = _manifests()
+    audit = evaluate._store_causality_load(
+        _write(tmp_path, "normal.json", normal),
+        _write(tmp_path, "drop_a.json", drop_a),
+        _write(tmp_path, "drop_b.json", drop_b),
+    )
+    assert audit == {"n": 2, "chance": 0.5, "gold_counts": {"good": 1, "bad": 1}}
+
+
+def test_store_causality_rejects_control_that_changes_more_than_target(tmp_path):
+    normal, drop_a, drop_b = _manifests()
+    drop_a["entries"][0]["store"]["entities"][3] = "also-changed"
+    try:
+        evaluate._store_causality_load(
+            _write(tmp_path, "normal.json", normal),
+            _write(tmp_path, "drop_a.json", drop_a),
+            _write(tmp_path, "drop_b.json", drop_b),
+        )
+    except ValueError as exc:
+        assert "replace exactly" in str(exc)
+    else:
+        raise AssertionError("malformed control was accepted")
+
+
+def test_store_causality_verdict_requires_all_controls_and_recovery():
+    checks, verdict = evaluate._store_causality_decide(0.95, 0.80, 0.50, 0.55, 0.52, 0.80, 0.50)
+    assert verdict == "SUPPORTED-CAUSAL"
+    assert all(checks.values())
+
+    checks, verdict = evaluate._store_causality_decide(0.95, 0.80, 0.50, 0.70, 0.52, 0.80, 0.50)
+    assert verdict == "FALSIFIED"
+    assert not checks["drop_b_collapses"]

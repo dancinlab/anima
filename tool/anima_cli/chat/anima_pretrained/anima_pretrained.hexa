@@ -48,10 +48,7 @@ fn _fexists(p: string) -> bool {
 }
 
 fn _ckpt_for(key: string) -> string {
-    // Returns ckpt path RELATIVE TO MAC HOME (~ expands inside ssh mac '...').
-    // raw#9 EXCEPTION: hexa runtime routes through ubu1 (aiden) — direct
-    // exec() lands in /home/aiden namespace where ckpts do not exist. We
-    // therefore wrap in `ssh mac '...'` so the Mac shell expands ~ correctly.
+    // Returns a checkpoint path relative to the active user's home.
     if key == "anima-v05" || key == "phase1a1" {
         return "~/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.pt"
     }

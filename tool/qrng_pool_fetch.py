@@ -24,15 +24,15 @@ ONLY. If the ANU API is unreachable / returns success=false / short reads, this
 tool reports the failure HONESTLY and EXITS NON-ZERO — it NEVER fabricates
 quantum bytes and NEVER writes PRNG bytes into the pool and calls them quantum.
 
-CREDENTIALS (c7): the paid key is read at call time from env ANU_KEY (set by the
-caller via `harness secret get flat.anu_key_paid`), passed ONLY in the x-api-key
-HTTP header, NEVER echoed / logged / written to any file. The fetch shells out to
+CREDENTIALS (c7): the paid key is read at call time from `secret get anu_key_paid`
+(or the ANU_KEY environment variable for a managed runtime), passed ONLY through
+curl's standard input as the x-api-key HTTP header, NEVER placed in process arguments,
+echoed, logged, or written to any file. The fetch shells out to
 `curl` (the ANU API Gateway WAF currently 403s the python-urllib TLS/UA
 fingerprint but serves curl cleanly — observed 2026-06-15; curl is the robust
 REAL path here, NOT a fallback to fake data).
 
 USAGE:
-    export ANU_KEY=$(harness secret get flat.anu_key_paid)
     python3 tool/qrng_pool_fetch.py [--bytes N] [--out PATH]
 
 Writes a raw .bin of N REAL quantum uint8 bytes. Logs ONLY the byte count drawn
@@ -51,15 +51,15 @@ class QRNGError(RuntimeError):
 
 def _curl_fetch_chunk(n, key):
     """Fetch n (<=1024) REAL quantum uint8 bytes via curl. Raise QRNGError on any
-    failure. The key is passed ONLY in the -H x-api-key header argv (never logged;
-    curl does not echo headers to stdout). Returns a list[int] of length n."""
+    failure. The key is passed through curl's config on stdin, never process argv.
+    Returns a list[int] of length n."""
     url = f"{ANU_ENDPOINT}?length={n}&type=uint8"
     # -s silent, -S show errors, -m hard timeout; -w appends the HTTP code so we can
-    # gate on it; the header carries the key (argv only, never printed).
+    # gate on it. The secret header enters through stdin to avoid `ps` exposure.
     proc = subprocess.run(
         ["curl", "-sS", "-m", "30", "-w", "\n%{http_code}",
-         "-H", f"x-api-key: {key}", url],
-        capture_output=True, text=True,
+         "--config", "-", url],
+        input=f'header = "x-api-key: {key}"\n', capture_output=True, text=True,
     )
     out = proc.stdout
     if "\n" in out:
@@ -88,7 +88,7 @@ def fetch_real_qrng(total, key):
     """Fetch `total` REAL quantum bytes (chunked at ANU_MAX_PER_REQ). REAL-ONLY:
     raises QRNGError on ANY failure (no fabricated bytes, no PRNG fallback here)."""
     if not key:
-        raise QRNGError("ANU_KEY env empty — provide via `harness secret get flat.anu_key_paid` (c7).")
+        raise QRNGError("ANU key unavailable — store it with `secret set anu_key_paid` (c7).")
     out = []
     remaining = total
     while remaining > 0:
@@ -103,10 +103,21 @@ def main():
     ap.add_argument("--bytes", type=int, default=512, help="number of REAL quantum bytes to fetch (default 512)")
     ap.add_argument("--out", type=str, default="state/qrng_pool.bin", help="pool output path (git-ignored)")
     args = ap.parse_args()
+    if args.bytes < 1:
+        print("FATAL: --bytes must be at least 1", file=sys.stderr)
+        return 2
 
-    key = os.environ.get("ANU_KEY", "")
+    key = os.environ.get("ANU_KEY", "").strip()
     if not key:
-        print("FATAL: ANU_KEY not in env. Run: export ANU_KEY=$(harness secret get flat.anu_key_paid)", file=sys.stderr)
+        try:
+            key = subprocess.run(
+                ["secret", "get", "anu_key_paid"], capture_output=True, text=True,
+                timeout=10, check=True,
+            ).stdout.strip()
+        except (FileNotFoundError, subprocess.SubprocessError):
+            key = ""
+    if not key:
+        print("FATAL: ANU key unavailable. Run: secret set anu_key_paid", file=sys.stderr)
         print("REAL-ONLY: no PRNG-as-quantum fallback in the pool. STOP.", file=sys.stderr)
         return 2
 
@@ -120,18 +131,33 @@ def main():
 
     out_dir = os.path.dirname(os.path.abspath(args.out))
     os.makedirs(out_dir, exist_ok=True)
-    with open(args.out, "wb") as f:
-        f.write(qbytes)
-    # Sidecar manifest (NO bytes, NO key) — provenance only.
+    pool_tmp = args.out + f".tmp.{os.getpid()}"
+    manifest_path = args.out + ".manifest.json"
+    manifest_tmp = manifest_path + f".tmp.{os.getpid()}"
+    # Provenance manifest (NO bytes, NO key).
     manifest = {
         "source": "ANU QRNG (api.quantumnumbers.anu.edu.au, vacuum-fluctuation uint8)",
         "real": True, "bytes": len(qbytes), "pool": args.out,
         "note": "REAL quantum entropy pool for CORE/engine_cli.hexa qrng_pool_draw (H_1289 R2). Key NEVER stored (c7).",
     }
-    with open(args.out + ".manifest.json", "w") as f:
-        json.dump(manifest, f, indent=2)
+    try:
+        with open(pool_tmp, "wb") as f:
+            f.write(qbytes)
+            f.flush()
+            os.fsync(f.fileno())
+        with open(manifest_tmp, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=2)
+            f.write("\n")
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(pool_tmp, args.out)
+        os.replace(manifest_tmp, manifest_path)
+    finally:
+        for tmp in (pool_tmp, manifest_tmp):
+            if os.path.exists(tmp):
+                os.unlink(tmp)
     print(f"[qrng_pool_fetch] OK — wrote {len(qbytes)} REAL quantum bytes to {args.out} (success=true).")
-    print(f"[qrng_pool_fetch] manifest -> {args.out}.manifest.json")
+    print(f"[qrng_pool_fetch] manifest -> {manifest_path}")
     return 0
 
 
