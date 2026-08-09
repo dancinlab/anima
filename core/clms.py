@@ -251,11 +251,12 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
             # Symmetric by construction, because the target function (xor) is symmetric — an
             # order-sensitive combiner could pass by memorising which mention came first.
             ra, rb = store.get("mention_rows", (None, None))
+            ro = store.get("operator_row")
             v_dtype = yn.dtype
-            if ra is None or rb is None:
+            if ra is None or rb is None or ro is None:
                 raise ValueError("store_apply: lane_type 8 needs store['mention_rows'] = (row_A, row_B) "
-                                 "— build the panel with `corpus storebind --compose 2` (it carries "
-                                 "mention_a/mention_b) and let the caller map them to window rows")
+                                 "and store['operator_row'] — build the panel with `corpus storebind "
+                                 "--compose 2` and let the caller map its prompt positions")
             v_pair = []
             # A 1-slot panel is the A=B case (the corpus emits mention_a == mention_b), so its
             # oracle hands the SAME slot to both reads rather than refusing.
@@ -278,7 +279,11 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
                 v_pair.append(a_m @ V_slots)
             vA, vB = v_pair
             v = np.concatenate([vA + vB, (vA - vB) * (vA - vB)])
-            g = h @ clms["W_g"]
+            # The gate is the operator, not a second content route. Reading it at qpos let g carry
+            # both entity identities and memorize composed training rows while pair-oracle stayed
+            # dead on held-out names. On a causal/position-normalized trunk the operator mention is
+            # upstream of both entities, so this tap can carry is/not but cannot bypass vA/vB.
+            g = yn[int(ro)] @ clms["W_g"]
             z = _gelu(np.concatenate([v, g]) @ clms["W_h"] + clms["b_h"])
         elif lane_type in (2, 3, 4, 5, 6, 7):
             if lane_type == 7:
@@ -614,8 +619,8 @@ if _HAS_TORCH:
                 rows.append(self.key_emb[ids].mean(dim=0))
             return _torch.stack(rows)
 
-        def forward(self, yn_q, K, pols, oracle_slot=None, need_att=False, yn_fresh=None,
-                    yn_a=None, yn_b=None):
+        def forward(self, yn_q, K, pols, oracle_slot=None, oracle_slot_b=None,
+                    need_att=False, yn_fresh=None, yn_a=None, yn_b=None, yn_op=None):
             # yn_q:(B,d) query-position penultimate · K:(B,n_slot,d_k) · pols:(B,n_slot) in {0,1}
             # yn_fresh:(B,d) H_9720-ⓐ early-layer tap (trainer detaches it); when present + fresh_k>0 the
             # ADDRESS query comes from the disjoint fresh lane, but yn_q STILL drives the W_g op-gate below.
@@ -638,16 +643,33 @@ if _HAS_TORCH:
             if self.dual:
                 # H_9888 — the caller supplies the trunk state AT each mention; the SAME W_q reads
                 # both (no new query parameters), and the two values are combined symmetrically.
-                if yn_a is None or yn_b is None:
-                    raise ValueError("CLMSModule(dual=True).forward needs yn_a and yn_b — the trunk "
-                                     "rows at each mention (corpus emits mention_a/mention_b)")
+                # The dual attention logits are also the address-supervision surface. Previously
+                # this branch recomputed two ordinary softmaxes after `oracle_slot` had already
+                # been applied to the unused qpos read, so oracle warmup/aux and L_addr supervised
+                # neither live mention read. Keep the single-read contract unchanged, but return
+                # both live attention rows and hand each its own oracle target on a dual lane.
+                if yn_a is None or yn_b is None or yn_op is None:
+                    raise ValueError("CLMSModule(dual=True).forward needs yn_a, yn_b and yn_op — "
+                                     "the causal trunk rows at both clues and the operator")
                 vs = []
-                for ynx in (yn_a, yn_b):
+                atts = []
+                oracle_slots = (oracle_slot, oracle_slot_b)
+                for head, ynx in enumerate((yn_a, yn_b)):
                     qx = self.W_q(ynx)
-                    ax = _torch.softmax(_torch.bmm(K, qx.unsqueeze(-1)).squeeze(-1) * self.scale, dim=-1)
+                    attx = _torch.bmm(K, qx.unsqueeze(-1)).squeeze(-1) * self.scale
+                    atts.append(attx)
+                    if oracle_slot is not None:
+                        osx = oracle_slots[head]
+                        if osx is None:
+                            raise ValueError("CLMSModule(dual=True) oracle needs oracle_slot_b")
+                        ax = _F.one_hot(osx, self.n_slot).to(qx.dtype)
+                    else:
+                        ax = _torch.softmax(attx, dim=-1)
                     ax = ax - (1.0 / self.n_slot)
                     vs.append(_torch.bmm(ax.unsqueeze(1), V_slots).squeeze(1))
+                att = _torch.stack(atts, dim=1)                         # (B,2,n_slot), live reads
                 v = _torch.cat([vs[0] + vs[1], (vs[0] - vs[1]) ** 2], dim=-1)
+                g = self.W_g(yn_op)                                     # operator-only causal tap
             z = _F.gelu(self.W_h(_torch.cat([v, g], dim=-1)), approximate="tanh")   # (B,r) [v; g] fusion
             s = self.W_out(z)                                             # (B,V)
             if self.fangate:
@@ -779,6 +801,42 @@ if _HAS_TORCH:
             ok_catch = ok_catch and caught
             out_rows.append((nm, dv, caught))
         ok = ok_par and ok_point and ok_catch
+        # The original parity guard covered only the one-read lane, which is why the dual
+        # training/inference drift survived it. Exercise the real mention-conditioned path in
+        # both learned-address and pair-oracle modes. The numpy side consumes the same serialized
+        # weights and manifest coordinates that `evaluate --store-causality` uses.
+        dual = CLMSModule(d, V, n_slot=n_slot, d_k=d_k, d_s=d_s, r=r, lam0=0.7,
+                          val_center=True, dual=True).double().eval()
+        wd = clms_weights_from_torch(dual)
+        for k in ("key_emb", "W_q", "W_g", "val", "W_h", "b_h", "W_out", "lam"):
+            wd[k] = np.asarray(wd[k], dtype=np.float64)
+        Kd = np.stack([_entity_key(wd["key_emb"], e, "mean") for e in ents])
+        mention_rows = (1, 3)
+        dual_store = {"entities": ents, "pols": pols, "target_slot": 2,
+                      "target_slot_b": 5, "mention_rows": mention_rows,
+                      "operator_row": 0}
+        with _torch.no_grad():
+            td = dual(_torch.from_numpy(yn[qpos]), _torch.from_numpy(Kd)[None, :, :],
+                      _torch.tensor([pols], dtype=_torch.long),
+                      yn_a=_torch.from_numpy(yn[[mention_rows[0]]]),
+                      yn_b=_torch.from_numpy(yn[[mention_rows[1]]]),
+                      yn_op=_torch.from_numpy(yn[[0]])).numpy()[0]
+            to = dual(_torch.from_numpy(yn[qpos]), _torch.from_numpy(Kd)[None, :, :],
+                      _torch.tensor([pols], dtype=_torch.long),
+                      oracle_slot=_torch.tensor([2]), oracle_slot_b=_torch.tensor([5]),
+                      yn_a=_torch.from_numpy(yn[[mention_rows[0]]]),
+                      yn_b=_torch.from_numpy(yn[[mention_rows[1]]]),
+                      yn_op=_torch.from_numpy(yn[[0]])).numpy()[0]
+        nd = store_apply(logits, yn, wd, dual_store, qpos, fuse="overwrite")[qpos[0]]
+        no = store_apply(logits, yn, wd, dual_store, qpos, oracle="pair",
+                         fuse="overwrite")[qpos[0]]
+        dual_par = float(np.max(np.abs(nd - td)))
+        dual_oracle_par = float(np.max(np.abs(no - to)))
+        dual_ok = (dual_par == dual_par and dual_par <= tol and
+                   dual_oracle_par == dual_oracle_par and dual_oracle_par <= tol)
+        ok = ok and dual_ok
+        out_rows.extend([("dual parity", dual_par, None),
+                         ("dual pair-oracle parity", dual_oracle_par, None)])
         if verbose:
             print("  tolerance = %.1e   (torch fp64 vs numpy fp64) · q_scale = %.1f · key_fn = %s "
                   "(lane_type %d)" % (tol, q_scale, _kf, w["lane_type"]))
@@ -788,6 +846,9 @@ if _HAS_TORCH:
                   ("address influence", a_max, a_unif,
                    "PASS" if ok_point else "FAIL <-- dead-flat point, corruption arms unreadable"))
             for nm, dv, caught in out_rows[2:]:
-                print("    %-24s max|delta| = %.3e   %s" %
-                      (nm, dv, "CAUGHT" if caught else "MISSED <-- guard blind to this tensor"))
+                if caught is None:
+                    status = "PASS" if dv <= tol else "FAIL <-- dual mirror diverged"
+                else:
+                    status = "CAUGHT" if caught else "MISSED <-- guard blind to this tensor"
+                print("    %-24s max|delta| = %.3e   %s" % (nm, dv, status))
         return ok, out_rows

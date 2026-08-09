@@ -1270,7 +1270,7 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
         main_n = len(S._pack_main_blob(np_sd, L, E))
         next_magic = raw[main_n:main_n + 4]
         slw_loaded = False
-        clms_loaded = False
+        clms_status = "absent"
         if next_magic == bytes([83, 76, 87, 1]):
             if getattr(model, "slw", None) is None:
                 raise ValueError(
@@ -1314,26 +1314,48 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
                     "does not. Pass --store-bridge/--freeze-trunk with matching --clms-n-slot/"
                     "--clms-d-k/--clms-d-s/--clms-r; silently dropping a trained store lane would "
                     "not be a valid warm-start.")
-            from clms import read_clms
-            cs, _cs_end = read_clms(raw, main_n, int(expect_cfg["d"]), int(expect_cfg["V"]))
+            from clms import read_clms, clms_weights_from_torch
+            cm = model.clms
+            cs, _cs_end = read_clms(raw, main_n, int(expect_cfg["d"]), int(cm.V))
             if cs is None:
                 raise ValueError(f"--init {init_path}: malformed CLMS trailer")
-            cm = model.clms
             if (int(cs["n_slot"]), int(cs["d_k"]), int(cs["d_s"]), int(cs["r"])) != \
                     (int(cm.n_slot), int(cm.d_k), int(cm.d_s), int(cm.r)):
                 raise ValueError(
                     f"--init {init_path}: CLMS shape "
                     f"{(cs['n_slot'], cs['d_k'], cs['d_s'], cs['r'])} != built "
                     f"{(cm.n_slot, cm.d_k, cm.d_s, cm.r)}")
+            source_lane = int(cs.get("lane_type", 1))
+            built_lane = int(clms_weights_from_torch(cm).get("lane_type", 1))
+            dual_upgrade = built_lane == 8 and source_lane in (2, 3, 6, 7)
+            if source_lane != built_lane and not dual_upgrade:
+                raise ValueError(
+                    f"--init {init_path}: CLMS lane_type {source_lane} != built {built_lane}. "
+                    "Only the explicit --clms-dual arity upgrade may reuse a one-read checkpoint; "
+                    "silently recasting any other lane would change its semantics.")
             clms_sd = {"key_emb": cs["key_emb"], "W_q.weight": cs["W_q"].T,
                        "val": cs["val"], "W_h.weight": cs["W_h"].T, "W_h.bias": cs["b_h"],
                        "W_out.weight": cs["W_out"].T, "lam": cs["lam"]}
             if "W_g" in cs and getattr(cm, "W_g", None) is not None:
                 clms_sd["W_g.weight"] = cs["W_g"].T
             ct = cm.state_dict()
-            cm.load_state_dict({k: torch.as_tensor(v, dtype=ct[k].dtype)
-                                for k, v in clms_sd.items() if k in ct}, strict=False)
-            clms_loaded = True
+            compatible = {k: torch.as_tensor(v, dtype=ct[k].dtype)
+                          for k, v in clms_sd.items()
+                          if k in ct and tuple(ct[k].shape) == tuple(torch.as_tensor(v).shape)}
+            incompatible = sorted(k for k, v in clms_sd.items()
+                                  if k in ct and tuple(ct[k].shape) != tuple(torch.as_tensor(v).shape))
+            cm.load_state_dict(compatible, strict=False)
+            if source_lane == built_lane:
+                if incompatible:
+                    raise ValueError(f"--init {init_path}: CLMS lane {source_lane} shape mismatch "
+                                     f"on {incompatible}")
+                clms_status = "restored"
+            else:
+                # Current migration only: a compatible one-read lane -> lane 8. Shared address/value/
+                # gate/readout tensors retain learned state; the wider pair-fusion W_h is freshly
+                # initialized because no one-read tensor has that canonical shape.
+                clms_status = (f"upgraded-{source_lane}-to-{built_lane}"
+                               f"(shared={len(compatible)},fresh={','.join(incompatible)})")
         model_sd = model.state_dict()
         loadable, shape_bad = {}, []
         for k, v in sd.items():                     # same H_247 hard guard as the .pt path
@@ -1352,7 +1374,7 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
         return (f"warm-start ✓ .clm int4-dequant loaded {len(loadable)}/{len(model_sd)} keys "
                 f"(L={L} E={E} · round-trip BYTE-IDENTICAL · untouched={len(missing)}"
                 f" · SLW={'restored' if slw_loaded else 'absent'}"
-                f" · CLMS={'restored' if clms_loaded else 'absent'})")
+                f" · CLMS={clms_status})")
 
     if low.endswith(".bin"):
         if not is_bytegpt:
@@ -1552,7 +1574,7 @@ class TrainShell(nn.Module):
         # not detach — the trunk logit is never in the answer-CE graph). The non-answer rows keep the
         # ordinary trunk LM CE (the trunk learns the prompt spelling + query formation via yn_q).
         if sb is not None:
-            x_s, y_s, K, pols, tgt, mrows = sb                  # mrows:(Bs,2) H_9888 mention rows
+            x_s, y_s, K, pols, tgt, tgt_b, mrows = sb           # rows: A, B, operator
             out_s = model(x_s)                                  # (targets None → CE assembled here, fp32)
             logits_s = out_s["logits"].float()                 # (Bs, V, T)
             pen_s = out_s["pen_trunk"].float()                 # (Bs, d, T) pre-slot trunk penultimate
@@ -1563,6 +1585,7 @@ class TrainShell(nn.Module):
             # value-read layer (a) from the address-learning layer (c): if val differentiates under free
             # address (ORACLE≥.90) the residual 303M wall is pure W_q address-learning; if not, deeper.
             osl = tgt if sb_oracle else None
+            osl_b = tgt_b if sb_oracle else None
             # H_9720-ⓐ EN-disjoint fresh query: the address reads the DETACHED early-layer tap (store-CE
             # never pushes the trunk through this path ⇒ no EN-occupancy competition). None ⇒ W_q(yn_q).
             # H_9720 C2 detach-ablation: 'detached' (default) = store-CE never reaches the trunk through
@@ -1577,17 +1600,21 @@ class TrainShell(nn.Module):
             # H_9888 dual read: tap the trunk AT each mention. gather along T with the per-item rows
             # the cell computed; a lane that needs them and did not get them raises rather than
             # silently reading the answer row twice.
-            yn_a = yn_b = None
+            yn_a = yn_b = yn_op = None
             if getattr(model.clms, "dual", False):
                 if int(mrows.min()) < 0:
                     raise SystemExit("[store-bridge] --clms-dual needs a compose panel carrying "
                                      "mention_a/mention_b (build with `corpus storebind --compose 2`)")
                 _ia = mrows[:, 0].view(Bs, 1, 1).expand(Bs, pen_s.shape[1], 1)
                 _ib = mrows[:, 1].view(Bs, 1, 1).expand(Bs, pen_s.shape[1], 1)
+                _io = mrows[:, 2].view(Bs, 1, 1).expand(Bs, pen_s.shape[1], 1)
                 yn_a = pen_s.gather(2, _ia).squeeze(-1)         # (Bs,d) trunk state at mention A
                 yn_b = pen_s.gather(2, _ib).squeeze(-1)         # (Bs,d) trunk state at mention B
-            store_logits, att = model.clms(yn_q, K, pols, oracle_slot=osl, need_att=True,
-                                           yn_fresh=yn_fresh, yn_a=yn_a, yn_b=yn_b)   # (Bs,V),(Bs,n_slot)
+                yn_op = pen_s.gather(2, _io).squeeze(-1)        # (Bs,d) causal operator state
+            store_logits, att = model.clms(yn_q, K, pols, oracle_slot=osl,
+                                           oracle_slot_b=osl_b, need_att=True,
+                                           yn_fresh=yn_fresh, yn_a=yn_a, yn_b=yn_b,
+                                           yn_op=yn_op)   # (Bs,V),(Bs,2,n_slot) on dual
             ce_ans = F.cross_entropy(store_logits, y_s[:, Ts - 1])
             # non-answer trunk CE (prompt spelling): every row but qpos, standard next-byte LM.
             ce_tok = F.cross_entropy(logits_s[:, :, :Ts - 1].transpose(1, 2).reshape(-1, V),
@@ -1596,9 +1623,16 @@ class TrainShell(nn.Module):
             aux["sb_ans_ce"] = float(ce_ans.detach()); aux["sb_tok_ce"] = float(ce_tok.detach())
             # H_9672 addr-loss: direct supervision of the softmax address (att) → cut the (2) bootstrap
             # deadlock W_q could not escape at 303M (Stage1.5 proof). OBJECTIVE (loss term, sb_addr_acc is
-            # the monitor). tgt = the 5-tuple target_slot. sb_addr_w=0 (default) → byte-identical.
+            # the monitor). A dual lane supervises BOTH live mention attentions; the old path
+            # supervised the unused qpos attention and discarded target_slot_b. sb_addr_w=0
+            # (default) keeps the objective byte-identical.
             if sb_addr_w > 0.0:
-                ce_addr = F.cross_entropy(att, tgt)
+                if getattr(model.clms, "dual", False):
+                    tgt_pair = torch.stack((tgt, tgt_b), dim=1)
+                    ce_addr = F.cross_entropy(att.reshape(-1, att.shape[-1]),
+                                              tgt_pair.reshape(-1))
+                else:
+                    ce_addr = F.cross_entropy(att, tgt)
                 loss = loss + sb_addr_w * ce_addr
                 aux["sb_addr_ce"] = float(ce_addr.detach())
             # H_9691 RV-1 oracle-aux dual-path: ALSO train the value/MLP path on the ORACLE (correct one-hot)
@@ -1609,12 +1643,15 @@ class TrainShell(nn.Module):
             # oracle (osl==tgt → identical). 0 → byte-identical.
             if sb_oracle_aux > 0.0 and not sb_oracle:
                 store_logits_orc = model.clms(yn_q, K, pols, oracle_slot=tgt,
-                                              yn_a=yn_a, yn_b=yn_b)
+                                              oracle_slot_b=tgt_b,
+                                              yn_a=yn_a, yn_b=yn_b, yn_op=yn_op)
                 ce_orc = F.cross_entropy(store_logits_orc, y_s[:, Ts - 1])
                 loss = loss + sb_oracle_aux * ce_orc
                 aux["sb_orc_ce"] = float(ce_orc.detach())
             with torch.no_grad():
-                aux["sb_addr_acc"] = float((att.argmax(-1) == tgt).float().mean())   # monitor-only
+                addr_target = (torch.stack((tgt, tgt_b), dim=1)
+                               if getattr(model.clms, "dual", False) else tgt)
+                aux["sb_addr_acc"] = float((att.argmax(-1) == addr_target).float().mean())
             with torch.no_grad():                              # monitor-only (a_train_inline_gauge)
                 g_id, b_id = 103, 98                           # ord('g'), ord('b') — eval store_run binary
                 gold_g = (y_s[:, Ts - 1] == g_id)
@@ -1801,6 +1838,7 @@ class StoreBindCell:
             K = np.stack([_clms._entity_key(key_emb_np, e, _key_fn)
                           for e in ents]).astype(np.float32)          # (n_slot, d_k)
             tgt = int(r["target_slot"])                              # H_9423 Stage1.5: query-entity slot (oracle-train)
+            tgt_b = int(r.get("target_slot_b", tgt))                  # 1-slot is the A=B dual case
             # H_9888 mention rows: the window is prompt-aligned (left-padded to T), so a prompt byte
             # p lands on row T - len(prompt) + p. A dual-read lane taps the trunk THERE instead of at
             # the answer position. Rows are -1 when the manifest carries no mentions (every non-compose
@@ -1809,11 +1847,15 @@ class StoreBindCell:
             _ma = int(r.get("mention_a", -1)); _mb = int(r.get("mention_b", -1))
             m_a = (_off + _ma) if _ma >= 0 else -1
             m_b = (_off + _mb) if _mb >= 0 else -1
-            if m_a >= 0 and not (0 <= m_a < T and 0 <= m_b < T):
-                sys.exit(f"[store-bridge] mention row out of window (T={T}, rows={m_a},{m_b})")
+            _op_end = prompt.find(" ") - 1
+            m_op = (_off + _op_end) if _op_end >= 0 else -1
+            if m_a >= 0 and not (0 <= m_a < T and 0 <= m_b < T and 0 <= m_op < T):
+                sys.exit(f"[store-bridge] mention row out of window "
+                         f"(T={T}, rows={m_a},{m_b},{m_op})")
             self.ex.append((x, y, torch.from_numpy(K), torch.tensor(pols, dtype=torch.long),
                             torch.tensor(tgt, dtype=torch.long),
-                            torch.tensor([m_a, m_b], dtype=torch.long)))
+                            torch.tensor(tgt_b, dtype=torch.long),
+                            torch.tensor([m_a, m_b, m_op], dtype=torch.long)))
         n_blocks = len(self.ex) // n_slot
         vb = max(1, int(n_blocks * val_frac))
         self.train_n = max(n_slot, (n_blocks - vb) * n_slot)          # [0,train_n) train · rest val
@@ -4326,11 +4368,12 @@ def main():
     def get_store_batch():
         idx = torch.randint(0, sb_cell.train_n, (Bs_global,), generator=sb_gen)   # all ranks identical
         sl = idx[rank * Bs_local:(rank + 1) * Bs_local].tolist()
-        xs, ys, Ks, Ps, Ts_, Ms = zip(*[sb_cell.ex[i] for i in sl])
+        xs, ys, Ks, Ps, Ts_, Tbs, Ms = zip(*[sb_cell.ex[i] for i in sl])
         return (torch.stack(xs).to(device), torch.stack(ys).to(device),
                 torch.stack(Ks).to(device), torch.stack(Ps).to(device),
                 torch.stack(Ts_).to(device),                          # H_9423 Stage1.5 target_slot
-                torch.stack(Ms).to(device))                           # H_9888 mention rows (B,2)
+                torch.stack(Tbs).to(device),                          # H_9888 second target slot
+                torch.stack(Ms).to(device))                           # H_9888 A/B/operator rows (B,3)
 
     # H_9803 — deterministic document sampler for the ideation sub-batch. Its own generator so
     # turning the lane on does not perturb the main batch draw (which would confound every

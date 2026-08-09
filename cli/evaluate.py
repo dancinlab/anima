@@ -7749,7 +7749,8 @@ def store_causality_run(argv):
     try:
         oracle = run(main_path, "--store-oracle-pair")
         if oracle["accuracy"] < 0.90:
-            payload = {"schema": "anima-store-causality/v1", "verdict": "INVALID-INSTRUMENT",
+            payload = {"schema": "anima-store-causality/v1", "checkpoint": ckpt,
+                       "verdict": "INVALID-INSTRUMENT",
                        "audit": audit, "arms": {"oracle_pair": oracle}}
             _store_causality_write(out_path, payload)
             print("VERDICT: INVALID-INSTRUMENT — pair oracle < 0.90; no negative arm was read")
@@ -7766,7 +7767,8 @@ def store_causality_run(argv):
     arms = {"oracle_pair": oracle, "normal": normal, "drop_a": drop_a,
             "drop_b": drop_b, "shuffle": shuffled, "recovery": recovery}
     if not shuffled["shuffle_integrity"]:
-        payload = {"schema": "anima-store-causality/v1", "verdict": "INVALID-INSTRUMENT",
+        payload = {"schema": "anima-store-causality/v1", "checkpoint": ckpt,
+                   "verdict": "INVALID-INSTRUMENT",
                    "audit": audit, "arms": arms,
                    "reason": "address shuffle did not move every unique entity"}
         _store_causality_write(out_path, payload)
@@ -7775,7 +7777,8 @@ def store_causality_run(argv):
     checks, verdict = _store_causality_decide(
         oracle["accuracy"], normal["accuracy"], drop_a["accuracy"], drop_b["accuracy"],
         shuffled["accuracy"], recovery["accuracy"], audit["chance"])
-    payload = {"schema": "anima-store-causality/v1", "verdict": verdict,
+    payload = {"schema": "anima-store-causality/v1", "checkpoint": ckpt,
+               "verdict": verdict,
                "audit": audit, "bars": {"oracle": 0.90, "positive": 0.75,
                                            "control": audit["chance"] + 0.06},
                "checks": checks, "arms": arms}
@@ -8067,11 +8070,16 @@ def store_run(argv, _return_result=False):
         # prompt byte p sits on row T - len(prompt) + p. Mirrors StoreBindCell's offset exactly; a
         # panel without mentions yields None and the dual lane refuses rather than guessing a row.
         _ma, _mb = it.get("mention_a"), it.get("mention_b")
+        _op_end = prompt.find(" ") - 1
         if _ma is None or _mb is None:
             mrows = None
+            operator_row = None
         else:
             _o = T - len(prompt)
             mrows = (_o + int(_ma), _o + int(_mb))
+            operator_row = _o + _op_end
+            if not (0 <= operator_row < T):
+                operator_row = None
             if dual_ctrl == "collapse":
                 mrows = (mrows[0], mrows[0])          # aB := aA — one address, read twice
             elif dual_ctrl == "wrong-second":
@@ -8094,10 +8102,12 @@ def store_run(argv, _return_result=False):
             ents2 = [ents[perm[i]] for i in range(n_slot)]   # entities-only derange · pols/target_slot fixed
             fixed_points_total += sum(1 for i in range(n_slot) if ents2[i] == ents[i])
             store = {"entities": ents2, "pols": pols, "target_slot": tslot,
-                     "target_slot_b": tslot_b, "mention_rows": mrows}
+                     "target_slot_b": tslot_b, "mention_rows": mrows,
+                     "operator_row": operator_row}
         elif mode == "flip":
             store = {"entities": ents, "pols": [1 - p for p in pols], "target_slot": tslot,
-                     "target_slot_b": tslot_b, "mention_rows": mrows}
+                     "target_slot_b": tslot_b, "mention_rows": mrows,
+                     "operator_row": operator_row}
         elif mode == "neutral":
             rng = np.random.default_rng(ctrl_seed * 100003 + idx + 7)
             # length-matched nonce filler (control-must-match-mediating-covariate): CVCVC not in this entry
@@ -8107,13 +8117,16 @@ def store_run(argv, _return_result=False):
                         + cons[int(rng.integers(0, 14))] + vow[int(rng.integers(0, 5))]
                         + cons[int(rng.integers(0, 14))])
             store = {"entities": [_nonce() for _ in range(n_slot)], "pols": pols,
-                     "target_slot": tslot, "target_slot_b": tslot_b, "mention_rows": mrows}
+                     "target_slot": tslot, "target_slot_b": tslot_b, "mention_rows": mrows,
+                     "operator_row": operator_row}
         else:
             store = {"entities": ents, "pols": pols, "target_slot": tslot,
-                     "target_slot_b": tslot_b, "mention_rows": mrows}
+                     "target_slot_b": tslot_b, "mention_rows": mrows,
+                     "operator_row": operator_row}
         if mode == "flip":
             base = _predict({"entities": ents, "pols": pols, "target_slot": tslot,
-                             "target_slot_b": tslot_b, "mention_rows": mrows})
+                             "target_slot_b": tslot_b, "mention_rows": mrows,
+                             "operator_row": operator_row})
             flip = _predict(store)
             if base is None or flip is None:
                 continue

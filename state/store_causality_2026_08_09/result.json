@@ -1,12 +1,62 @@
 {
   "arms": {
+    "drop_a": {
+      "accuracy": 0.5,
+      "arm": "lookup",
+      "correct": 64,
+      "mode": "normal",
+      "n": 128,
+      "oracle": false,
+      "readable": 128,
+      "shuffle_integrity": true
+    },
+    "drop_b": {
+      "accuracy": 0.484375,
+      "arm": "lookup",
+      "correct": 62,
+      "mode": "normal",
+      "n": 128,
+      "oracle": false,
+      "readable": 128,
+      "shuffle_integrity": true
+    },
+    "normal": {
+      "accuracy": 0.9140625,
+      "arm": "lookup",
+      "correct": 117,
+      "mode": "normal",
+      "n": 128,
+      "oracle": false,
+      "readable": 128,
+      "shuffle_integrity": true
+    },
     "oracle_pair": {
-      "accuracy": 0.5078125,
+      "accuracy": 1.0,
       "arm": "oracle",
-      "correct": 65,
+      "correct": 128,
       "mode": "normal",
       "n": 128,
       "oracle": "pair",
+      "readable": 128,
+      "shuffle_integrity": true
+    },
+    "recovery": {
+      "accuracy": 0.9140625,
+      "arm": "lookup",
+      "correct": 117,
+      "mode": "normal",
+      "n": 128,
+      "oracle": false,
+      "readable": 128,
+      "shuffle_integrity": true
+    },
+    "shuffle": {
+      "accuracy": 0.453125,
+      "arm": "shuffle",
+      "correct": 58,
+      "mode": "shuffle",
+      "n": 128,
+      "oracle": false,
       "readable": 128,
       "shuffle_integrity": true
     }
@@ -19,6 +69,55 @@
     },
     "n": 128
   },
+  "checkpoint": ".fire-recover/store_causality_2026_08_10/compose2_dual_causal_s7.clm",
+  "checkpoint_sha256": "878dc66e56a26f54c0bd4c67220fb0779497d30d8394e0b1ea1a6ca2e5e650c5",
+  "bars": {
+    "control": 0.56,
+    "oracle": 0.9,
+    "positive": 0.75
+  },
+  "checks": {
+    "drop_a_collapses": true,
+    "drop_b_collapses": true,
+    "normal_positive": true,
+    "oracle_alive": true,
+    "recovery_exact": true,
+    "recovery_positive": true,
+    "shuffle_collapses": true
+  },
+  "runs": [
+    {
+      "checkpoint": ".fire-recover/h9672_rv_sweep/RV3c_13_CONFIRM_orc1.00_p1_0.99_flip0.99.clm",
+      "controls_run": false,
+      "pair_oracle": {
+        "accuracy": 0.5078125,
+        "correct": 65,
+        "n": 128
+      },
+      "verdict": "INVALID-INSTRUMENT"
+    },
+    {
+      "checkpoint": ".fire-recover/store_causality_2026_08_10/compose2_dual_s7.clm",
+      "controls_run": false,
+      "pair_oracle": {
+        "accuracy": 0.5859375,
+        "correct": 75,
+        "n": 128
+      },
+      "verdict": "INVALID-INSTRUMENT"
+    },
+    {
+      "checkpoint": ".fire-recover/store_causality_2026_08_10/compose2_dual_causal_s7.clm",
+      "controls_run": true,
+      "pair_oracle": {
+        "accuracy": 1.0,
+        "correct": 128,
+        "n": 128
+      },
+      "verdict": "SUPPORTED-CAUSAL"
+    }
+  ],
+  "panel_sha256": "f2e5bd175f264ec22cc90a6e6367f78994334c3a56f889c1294e77d50a411939",
   "schema": "anima-store-causality/v1",
-  "verdict": "INVALID-INSTRUMENT"
+  "verdict": "SUPPORTED-CAUSAL"
 }

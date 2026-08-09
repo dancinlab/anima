@@ -67,3 +67,62 @@ def test_store_causality_verdict_requires_all_controls_and_recovery():
     checks, verdict = evaluate._store_causality_decide(0.95, 0.80, 0.50, 0.70, 0.52, 0.80, 0.50)
     assert verdict == "FALSIFIED"
     assert not checks["drop_b_collapses"]
+
+
+def test_store_causality_stops_after_failed_pair_oracle(tmp_path, monkeypatch):
+    normal, drop_a, drop_b = _manifests()
+    paths = [
+        _write(tmp_path, "normal.json", normal),
+        _write(tmp_path, "drop_a.json", drop_a),
+        _write(tmp_path, "drop_b.json", drop_b),
+    ]
+    calls = []
+
+    def fake_store_run(argv, _return_result=False):
+        calls.append(list(argv))
+        return {"accuracy": 0.89, "shuffle_integrity": True}
+
+    monkeypatch.setattr(evaluate, "store_run", fake_store_run)
+    out = tmp_path / "result.json"
+    rc = evaluate.store_causality_run([
+        "model.clm", "--store-causality", paths[0],
+        "--store-drop-a", paths[1], "--store-drop-b", paths[2],
+        "--out", str(out),
+    ])
+
+    assert rc == 0
+    assert len(calls) == 1
+    assert "--store-oracle-pair" in calls[0]
+    assert json.loads(out.read_text())["verdict"] == "INVALID-INSTRUMENT"
+
+
+def test_store_causality_runs_frozen_arm_order_after_oracle_pass(tmp_path, monkeypatch):
+    normal, drop_a, drop_b = _manifests()
+    paths = [
+        _write(tmp_path, "normal.json", normal),
+        _write(tmp_path, "drop_a.json", drop_a),
+        _write(tmp_path, "drop_b.json", drop_b),
+    ]
+    calls = []
+    scores = iter((0.95, 0.80, 0.50, 0.50, 0.50, 0.80))
+
+    def fake_store_run(argv, _return_result=False):
+        calls.append(list(argv))
+        return {"accuracy": next(scores), "shuffle_integrity": True}
+
+    monkeypatch.setattr(evaluate, "store_run", fake_store_run)
+    rc = evaluate.store_causality_run([
+        "model.clm", "--store-causality", paths[0],
+        "--store-drop-a", paths[1], "--store-drop-b", paths[2],
+    ])
+
+    assert rc == 0
+    assert [(call[call.index("--store") + 1], "--store-shuffle" in call,
+             "--store-oracle-pair" in call) for call in calls] == [
+        (paths[0], False, True),
+        (paths[0], False, False),
+        (paths[1], False, False),
+        (paths[2], False, False),
+        (paths[0], True, False),
+        (paths[0], False, False),
+    ]

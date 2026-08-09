@@ -43,8 +43,7 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > lands here through the existing `anima-py` / `cli/` / `core/` paths.
 
 > [!CAUTION]
-> **Current research gate:** do not add a new consciousness module, cell family, or larger model
-> until the existing compose-2 store lane passes the causal battery below. The test requires two
+> **Compose-2 causal gate:** the test requires two
 > internal clues together: normal and recovery must score at least 0.75, while clue-A removal,
 > clue-B removal, and address shuffling must each fall to the panel's measured chance + 0.06 or
 > below. A pair-oracle score below 0.90 invalidates the instrument before any negative is read.
@@ -57,11 +56,10 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 >   --out RESULT.json
 > ```
 >
-> First local read (`state/store_causality_2026_08_09/result.json`):
-> **INVALID-INSTRUMENT**. The available one-address checkpoint scored 0.5078 on the pair oracle,
-> below the required 0.90, so the evaluator correctly stopped before reading any negative arm.
-> The next admissible experiment is to train or select a checkpoint with a working two-address
-> readout; the bars and panel must remain frozen.
+> Latest frozen-panel result (`state/store_causality_2026_08_09/result.json`):
+> **SUPPORTED-CAUSAL**. Pair-oracle scored 1.0000; normal/recovery scored 0.9141; clue-A removal,
+> clue-B removal, and address shuffle scored 0.5000, 0.4844, and 0.4531. The earlier 0.5078 and
+> 0.5859 pair-oracle failures remain recorded. The panel, randomness, and bars remain frozen.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the
