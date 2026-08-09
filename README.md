@@ -61,10 +61,14 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > clue-B removal, and address shuffle scored 0.5000, 0.4844, and 0.4531. The earlier 0.5078 and
 > 0.5859 pair-oracle failures remain recorded. The panel, randomness, and bars remain frozen.
 >
-> A frozen-recipe seed-11 repeat did **not** reproduce the instrument: pair-oracle was 0.2500, so
-> no control arm was read. The seed-7 causal result remains valid for that checkpoint, but the
-> shared training path is not yet multi-seed stable. See
-> `state/store_causality_repro_2026_08_10/result.json`.
+> A frozen-recipe seed-11 repeat first failed at pair-oracle 0.2500. The root cause was the legacy
+> dual fusion's off-diagonal block: every one-clue training row made it exactly zero, so held-out
+> pairs activated random untrained weights. The canonical CLMS parity operator `a+b-2ab` removes
+> that unreachable region without adding composed training rows. New lane-10 checkpoints now
+> reproduce on seeds 7 and 11: both score pair-oracle/normal/recovery 1.0000 and all three controls
+> at or below 0.4766. The failed run remains recorded in
+> `state/store_causality_repro_2026_08_10`; the closing record is
+> `state/store_causality_canonical_2026_08_10/result.json`.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the

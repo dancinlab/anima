@@ -56,9 +56,13 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > 제거·주소 섞기는 각각 0.5000, 0.4844, 0.4531이다. 앞선 pair-oracle 실패 0.5078과 0.5859도
 > 그대로 기록했다. 자료·난수·기준은 계속 동결한다.
 >
-> 같은 레시피의 seed 11 반복은 pair-oracle 0.2500으로 **재현에 실패**해 대조군을 읽지 않았다.
-> seed 7 인과 결과는 해당 체크포인트에 대해 유효하지만 공용 학습 경로는 아직 다중 시드에서
-> 안정적이지 않다. 상세 기록은 `state/store_causality_repro_2026_08_10/result.json`에 있다.
+> 같은 레시피의 seed 11 반복은 처음에 pair-oracle 0.2500으로 실패했다. 근본 원인은 기존 이중
+> 결합의 off-diagonal 블록이 모든 단일 단서 학습 행에서 정확히 0이라, 합성 평가에서만 임의의
+> 무학습 가중치가 처음 활성화된 것이었다. 합성 학습 행을 추가하지 않고 표준 parity 연산
+> `a+b-2ab`로 이 도달 불가능 영역을 제거했다. 새 lane-10 체크포인트는 seed 7·11 모두에서
+> pair-oracle/정상/복구 1.0000, 세 대조군 0.4766 이하로 재현됐다. 이전 실패는
+> `state/store_causality_repro_2026_08_10`에 보존했고, 최종 기록은
+> `state/store_causality_canonical_2026_08_10/result.json`에 있다.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /

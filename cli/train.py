@@ -1327,7 +1327,7 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
                     f"{(cm.n_slot, cm.d_k, cm.d_s, cm.r)}")
             source_lane = int(cs.get("lane_type", 1))
             built_lane = int(clms_weights_from_torch(cm).get("lane_type", 1))
-            dual_upgrade = built_lane == 8 and source_lane in (2, 3, 6, 7)
+            dual_upgrade = built_lane in (8, 10) and source_lane in (2, 3, 6, 7)
             if source_lane != built_lane and not dual_upgrade:
                 raise ValueError(
                     f"--init {init_path}: CLMS lane_type {source_lane} != built {built_lane}. "
@@ -1351,9 +1351,9 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
                                      f"on {incompatible}")
                 clms_status = "restored"
             else:
-                # Current migration only: a compatible one-read lane -> lane 8. Shared address/value/
-                # gate/readout tensors retain learned state; the wider pair-fusion W_h is freshly
-                # initialized because no one-read tensor has that canonical shape.
+                # Current migration only: a compatible one-read lane -> a dual lane. Shared tensors
+                # retain learned state when their shapes match; legacy lane 8 alone widens W_h and
+                # therefore leaves that tensor freshly initialized.
                 clms_status = (f"upgraded-{source_lane}-to-{built_lane}"
                                f"(shared={len(compatible)},fresh={','.join(incompatible)})")
         model_sd = model.state_dict()
@@ -1584,8 +1584,10 @@ class TrainShell(nn.Module):
             # target_slot) so ∂L/∂v is not gated on the softmax lookup bootstrapping first. Separates the
             # value-read layer (a) from the address-learning layer (c): if val differentiates under free
             # address (ORACLE≥.90) the residual 303M wall is pure W_q address-learning; if not, deeper.
+            pair_active = tgt_b >= 0
             osl = tgt if sb_oracle else None
-            osl_b = tgt_b if sb_oracle else None
+            osl_b = (torch.where(pair_active, tgt_b, torch.zeros_like(tgt_b))
+                     if sb_oracle else None)
             # H_9720-ⓐ EN-disjoint fresh query: the address reads the DETACHED early-layer tap (store-CE
             # never pushes the trunk through this path ⇒ no EN-occupancy competition). None ⇒ W_q(yn_q).
             # H_9720 C2 detach-ablation: 'detached' (default) = store-CE never reaches the trunk through
@@ -1614,7 +1616,7 @@ class TrainShell(nn.Module):
             store_logits, att = model.clms(yn_q, K, pols, oracle_slot=osl,
                                            oracle_slot_b=osl_b, need_att=True,
                                            yn_fresh=yn_fresh, yn_a=yn_a, yn_b=yn_b,
-                                           yn_op=yn_op)   # (Bs,V),(Bs,2,n_slot) on dual
+                                           yn_op=yn_op, pair_active=pair_active) # dual: (Bs,V),(Bs,2,n_slot)
             ce_ans = F.cross_entropy(store_logits, y_s[:, Ts - 1])
             # non-answer trunk CE (prompt spelling): every row but qpos, standard next-byte LM.
             ce_tok = F.cross_entropy(logits_s[:, :, :Ts - 1].transpose(1, 2).reshape(-1, V),
@@ -1628,9 +1630,12 @@ class TrainShell(nn.Module):
             # (default) keeps the objective byte-identical.
             if sb_addr_w > 0.0:
                 if getattr(model.clms, "dual", False):
-                    tgt_pair = torch.stack((tgt, tgt_b), dim=1)
-                    ce_addr = F.cross_entropy(att.reshape(-1, att.shape[-1]),
-                                              tgt_pair.reshape(-1))
+                    # Every row supervises A. B exists only on genuine composed training rows;
+                    # a one-clue row uses the parity identity and must not create a fake B target.
+                    ce_parts = [F.cross_entropy(att[:, 0], tgt)]
+                    if bool(pair_active.any()):
+                        ce_parts.append(F.cross_entropy(att[pair_active, 1], tgt_b[pair_active]))
+                    ce_addr = torch.stack(ce_parts).mean()
                 else:
                     ce_addr = F.cross_entropy(att, tgt)
                 loss = loss + sb_addr_w * ce_addr
@@ -1643,15 +1648,20 @@ class TrainShell(nn.Module):
             # oracle (osl==tgt → identical). 0 → byte-identical.
             if sb_oracle_aux > 0.0 and not sb_oracle:
                 store_logits_orc = model.clms(yn_q, K, pols, oracle_slot=tgt,
-                                              oracle_slot_b=tgt_b,
-                                              yn_a=yn_a, yn_b=yn_b, yn_op=yn_op)
+                                              oracle_slot_b=torch.where(pair_active, tgt_b, torch.zeros_like(tgt_b)),
+                                              yn_a=yn_a, yn_b=yn_b, yn_op=yn_op,
+                                              pair_active=pair_active)
                 ce_orc = F.cross_entropy(store_logits_orc, y_s[:, Ts - 1])
                 loss = loss + sb_oracle_aux * ce_orc
                 aux["sb_orc_ce"] = float(ce_orc.detach())
             with torch.no_grad():
-                addr_target = (torch.stack((tgt, tgt_b), dim=1)
-                               if getattr(model.clms, "dual", False) else tgt)
-                aux["sb_addr_acc"] = float((att.argmax(-1) == addr_target).float().mean())
+                if getattr(model.clms, "dual", False):
+                    addr_ok = [att[:, 0].argmax(-1) == tgt]
+                    if bool(pair_active.any()):
+                        addr_ok.append(att[pair_active, 1].argmax(-1) == tgt_b[pair_active])
+                    aux["sb_addr_acc"] = float(torch.cat(addr_ok).float().mean())
+                else:
+                    aux["sb_addr_acc"] = float((att.argmax(-1) == tgt).float().mean())
             with torch.no_grad():                              # monitor-only (a_train_inline_gauge)
                 g_id, b_id = 103, 98                           # ord('g'), ord('b') — eval store_run binary
                 gold_g = (y_s[:, Ts - 1] == g_id)
@@ -1838,7 +1848,9 @@ class StoreBindCell:
             K = np.stack([_clms._entity_key(key_emb_np, e, _key_fn)
                           for e in ents]).astype(np.float32)          # (n_slot, d_k)
             tgt = int(r["target_slot"])                              # H_9423 Stage1.5: query-entity slot (oracle-train)
-            tgt_b = int(r.get("target_slot_b", tgt))                  # 1-slot is the A=B dual case
+            # -1 marks the canonical XOR identity for a missing second clue. Legacy lane 8 used
+            # A=B here, making its off-diagonal feature identically zero throughout training.
+            tgt_b = int(r.get("target_slot_b", -1))
             # H_9888 mention rows: the window is prompt-aligned (left-padded to T), so a prompt byte
             # p lands on row T - len(prompt) + p. A dual-read lane taps the trunk THERE instead of at
             # the answer position. Rows are -1 when the manifest carries no mentions (every non-compose
@@ -3283,10 +3295,10 @@ def main():
                          "differentiated val). Fixes the val-read seed-fragility addr-loss alone left. 0=off.")
     ap.add_argument("--clms-r", type=int, default=128, help="CLMS GELU-MLP fusion bottleneck")
     ap.add_argument("--clms-dual", action="store_true",
-                    help="H_9888 (lane_type 8): read the store TWICE, once at each mention, through "
-                         "the SAME W_q (no new query parameters), and fuse the two values "
-                         "permutation-invariantly as [vA+vB ; (vA-vB)^2]. One query and one softmax "
-                         "cannot address a two-element set; this asks whether two can.")
+                    help="read the store twice through the shared W_q and compose the two soft binary "
+                         "values with canonical parity a+b-2ab (lane_type 10). Single-clue rows use "
+                         "B=0, so train and held-out pairs share one learned value manifold; legacy "
+                         "lane-8 checkpoints remain decode-compatible.")
     ap.add_argument("--clms-vonly", action="store_true",
                     help="H_9885 (lane_type 7): hold the g half of the CLMS fusion input at ZERO so the "
                          "answer can only be a function of the retrieved store value. This REMOVES "

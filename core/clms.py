@@ -98,7 +98,7 @@ def _key_fn_of(lane_type):
     """lane_type -> address function. 6 = lane_type 3 semantics (W_g fusion + majority-null
     centering) with the order-aware key; every other lane keeps the shipped mean, so existing
     checkpoints are byte-identical."""
-    # NOTE lane_type 8 (H_9888 dual read) is NOT in this set: it is orthogonal to the address
+    # NOTE lane_type 8/10 (dual read) are NOT in this set: they are orthogonal to the address
     # function and ships with the DEFAULT mean key, exactly as the trainer builds it. Putting it
     # here silently made the reader address with `roll` while training addressed with `mean` — the
     # lane learned (train store-acc .97) and then read chance through the .clm, which is what a
@@ -241,25 +241,26 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
         if lane_type in (3, 6, 7, 8):                                     # RV-3 majority-null centering (H_9710)
             a = a - (1.0 / n_slot)                                        # v≡0 at uniform a → shortcut basin gone
         v = a @ V_slots                                                   # (d_s,) = Σ (aᵢ−c)·val[polᵢ]
-        if lane_type == 8:
+        if lane_type in (8, 10):
             # ── H_9888 DUAL READ ────────────────────────────────────────────────────────────
             # One query and one softmax cannot address a TWO-ELEMENT SET: the single final-state
             # vector is asked to encode both names at once. Here the query is read AT each mention
             # instead, through the SAME W_q (no new query parameters — that is what keeps a pass
-            # from being "more capacity"), and the two reads are combined permutation-invariantly:
-            #   pair = [vA + vB ; (vA − vB)²]
+            # from being "more capacity"). Lane 8 retains the legacy invariant pair
+            # [vA + vB ; (vA − vB)²]; lane 10 uses canonical soft binary parity on the same reads.
             # Symmetric by construction, because the target function (xor) is symmetric — an
             # order-sensitive combiner could pass by memorising which mention came first.
             ra, rb = store.get("mention_rows", (None, None))
             ro = store.get("operator_row")
             v_dtype = yn.dtype
             if ra is None or rb is None or ro is None:
-                raise ValueError("store_apply: lane_type 8 needs store['mention_rows'] = (row_A, row_B) "
+                raise ValueError("store_apply: dual lane needs store['mention_rows'] = (row_A, row_B) "
                                  "and store['operator_row'] — build the panel with `corpus storebind "
                                  "--compose 2` and let the caller map its prompt positions")
             v_pair = []
-            # A 1-slot panel is the A=B case (the corpus emits mention_a == mention_b), so its
-            # oracle hands the SAME slot to both reads rather than refusing.
+            p_pair = []
+            # Legacy lane 8 treats a 1-slot panel as A=B. Lane 10 gives a missing B the parity
+            # identity below, keeping unary training and composed inference on one value manifold.
             _t0 = store.get("target_slot")
             _tg = (_t0, store.get("target_slot_b", _t0) if store.get("target_slot_b") is not None else _t0)
             for _i, rr in enumerate((int(ra), int(rb))):
@@ -268,17 +269,32 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
                     # positive control silently measures the ordinary path (the oracle argument was
                     # accepted and ignored), so a dead fusion and a dead address look identical.
                     if _tg[_i] is None:
-                        raise ValueError("store_apply: lane_type 8 oracle needs target_slot AND "
+                        raise ValueError("store_apply: dual-lane oracle needs target_slot AND "
                                          "target_slot_b")
                     a_m = np.zeros(n_slot, dtype=v_dtype)
                     a_m[int(_tg[_i])] = 1.0
-                    a_m = a_m - (1.0 / n_slot)
                 else:
                     q_m = yn[rr] @ clms["W_q"]
-                    a_m = _softmax(q_m @ K.T * scale) - (1.0 / n_slot)
-                v_pair.append(a_m @ V_slots)
-            vA, vB = v_pair
-            v = np.concatenate([vA + vB, (vA - vB) * (vA - vB)])
+                    a_m = _softmax(q_m @ K.T * scale)
+                if lane_type == 10:
+                    # Canonical soft XOR: P(A xor B)=a+b-2ab. A single-clue row has no
+                    # target_slot_b and therefore uses the XOR identity B=0. Training and composed
+                    # inference stay on the same learned value endpoints; lane 8 instead exposed
+                    # never-trained off-diagonal weights only on held-out pairs.
+                    p_pair.append(float(a_m @ pols.astype(a_m.dtype)))
+                else:
+                    v_pair.append((a_m - (1.0 / n_slot)) @ V_slots)
+            if lane_type == 10:
+                pA = p_pair[0]
+                pB = p_pair[1] if store.get("target_slot_b") is not None else 0.0
+                p_xor = pA + pB - 2.0 * pA * pB
+                v = clms["val"][0] + p_xor * (clms["val"][1] - clms["val"][0])
+                # lane 10 is the canonical successor to the centered dual lane. A fixed binary
+                # midpoint is the SSOT; it cannot move with a store's incidental class balance.
+                v = v - 0.5 * (clms["val"][0] + clms["val"][1])
+            else:
+                vA, vB = v_pair
+                v = np.concatenate([vA + vB, (vA - vB) * (vA - vB)])
             # The gate is the operator, not a second content route. Reading it at qpos let g carry
             # both entity identities and memorize composed training rows while pair-oracle stayed
             # dead on held-out names. On a causal/position-normalized trunk the operator mention is
@@ -302,14 +318,14 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
         s = z @ clms["W_out"]                                             # (V,)
         if fuse == "odd":                                                 # H_9760 odd-symmetrized fusion:
             v_neg = -v                                                    #   s_odd = ½(s(v,g) − s(−v,g)) cancels the
-            if lane_type in (2, 3, 4, 5, 6, 7, 8):                           #   even (op-gate g-path) prior that emits a
+            if lane_type in (2, 3, 4, 5, 6, 7, 8, 10):                       #   even (op-gate g-path) prior that emits a
                 z_neg = _gelu(np.concatenate([v_neg, g]) @ clms["W_h"] + clms["b_h"])  # polarity-invariant constant on
             else:                                                         #   op=0 (H_9744 flip-coh gap). For lane_type 3
                 z_neg = _gelu(np.concatenate([v_neg, h]) @ clms["W_h"] + clms["b_h"])  # (Σ(aᵢ−1/n)=0 ⟹ v_flip≡−v) this
             s = 0.5 * (s - z_neg @ clms["W_out"])                         #   makes fixed-address flip-coherence = 1.
         elif fuse == "pairodd":                                           # H_9775 Π-equivariant pair-odd: full-row odd
             v_neg = -v                                                    #   (H_9760) killed the g/b argmax because it
-            if lane_type in (2, 3, 4, 5, 6, 7, 8):                           #   subtracted the even level that made g/b the
+            if lane_type in (2, 3, 4, 5, 6, 7, 8, 10):                       #   subtracted the even level that made g/b the
                 z_neg = _gelu(np.concatenate([v_neg, g]) @ clms["W_h"] + clms["b_h"])  # top logits. Here out[c∉{g,b}]=
             else:                                                         #   ½(s⁺+s⁻) PRESERVES that even level (argmax
                 z_neg = _gelu(np.concatenate([v_neg, h]) @ clms["W_h"] + clms["b_h"])  # stays g/b = readable) while
@@ -360,6 +376,9 @@ _ARR_ORDER_V5 = ("key_emb", "W_q", "W_fresh", "W_q_fresh", "W_g", "val", "W_h", 
 # UNCHANGED (the lane cannot write the mouth → V6_34 NLL-probe is a structural invariant). Header is the
 # V2 <BIIIIII form with d_g=0, r=0 (both unused). Address = order-aware `roll` key (in _key_fn_of's set).
 _ARR_ORDER_V9 = ("key_emb", "W_q", "val", "w_A", "b_A", "lam")
+# lane_type 10: canonical two-address parity. It uses the ordinary V2 tensors/header, but W_h
+# receives d_s+d_g because the two soft binary reads close under a+b-2ab before learned fusion.
+# Lane 8 remains decodable so existing checkpoints preserve their historical semantics and hashes.
 
 
 # ── H_9696 (R4) perceptual charging — what the store holds during free ideation ──────────
@@ -435,7 +454,7 @@ def pack_clms(w: dict) -> bytes:
         out += struct.pack("<BIIIIII", 9, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
                            0, 0, int(w["key_seed"]))
         order = _ARR_ORDER_V9
-    elif lane_type in (2, 3, 6, 7, 8):  # 8 = H_9888 dual read (same header; W_h input is 2*d_s+d_g) · 2 = W_g fusion (H_9423) · 3 = 2 + majority-null centering (H_9710 RV-3) · 6 = 3 + order-aware key (H_9852) · 7 = 6 with the g half of the fusion input held at 0 (H_9885 v-only)
+    elif lane_type in (2, 3, 6, 7, 8, 10):  # 8 = legacy learned dual; 10 = canonical parity dual
         out += struct.pack("<BIIIIII", lane_type, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
                            int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
         order = _ARR_ORDER_V2
@@ -462,7 +481,7 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
         if p + 32 > len(buf):
             return None, off
         n_slot, d_k, d_s, d_g, r, key_seed, fresh_k, fresh_L = struct.unpack_from("<IIIIIIII", buf, p); p += 32
-    elif lane_type in (2, 3, 4, 6, 7, 8, 9):              # 9 = V6_36 SRC (d_g=0,r=0) · 8 = H_9888 dual read · 2 = W_g · 3 = +centering (RV-3) · 4 = CLMS-FAN · 6 = 3 + order-aware key · 7 = 6 with g:=0 (H_9885)
+    elif lane_type in (2, 3, 4, 6, 7, 8, 9, 10):          # 9 = SRC; 8 = legacy dual; 10 = canonical parity dual
         if p + 24 > len(buf):
             return None, off
         n_slot, d_k, d_s, d_g, r, key_seed = struct.unpack_from("<IIIIII", buf, p); p += 24
@@ -491,7 +510,7 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
     if lane_type == 5:                                    # H_9720-ⓐ fresh lane: W_fresh · W_q_fresh (pack order)
         clms["W_fresh"] = take(d * fresh_k, (d, fresh_k))
         clms["W_q_fresh"] = take(fresh_k * d_k, (fresh_k, d_k))
-    if lane_type in (2, 3, 4, 5, 6, 7, 8):
+    if lane_type in (2, 3, 4, 5, 6, 7, 8, 10):
         clms["W_g"] = take(d * d_g, (d, d_g))
     if lane_type == 4:                                     # H_9696: value-from-key + learned gate
         clms["W_v"] = take(d_k * d_s, (d_k, d_s))
@@ -499,7 +518,7 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
     if lane_type != 4:                                     # lane 4 has no polarity table (W_v replaces it)
         clms["val"] = take(2 * d_s, (2, d_s))
     w_h_in = ((2 * d_s + d_g) if lane_type == 8 else
-              ((d_s + d_g) if lane_type in (2, 3, 4, 5, 6, 7) else (d_s + d)))
+              ((d_s + d_g) if lane_type in (2, 3, 4, 5, 6, 7, 10) else (d_s + d)))
     clms["W_h"] = take(w_h_in * r, (w_h_in, r))
     clms["b_h"] = take(r, (r,))
     clms["W_out"] = take(r * V, (r, V))
@@ -514,12 +533,13 @@ def clms_weights_from_torch(mod) -> dict:
     def n(t):
         return t.detach().cpu().numpy().astype("<f4")
     out = {
-        "lane_type": (8 if getattr(mod, "dual", False) else                # 8=H_9888 dual read (mention taps)
+        "lane_type": (10 if getattr(mod, "pair_canonical", False) else     # 10=canonical parity dual
+                  (8 if getattr(mod, "dual", False) else                    # 8=legacy learned dual fusion
                   (7 if getattr(mod, "vonly", False) else              # 7=H_9885 v-only fusion (6 + g:=0)
                       (6 if getattr(mod, "key_fn", "mean") == "roll" else  # 6=H_9852 order-aware key (3+roll)
                       (5 if int(getattr(mod, "fresh_k", 0)) > 0 else       # 5=H_9720-ⓐ fresh query lane
                       (4 if getattr(mod, "fangate", False) else
-                       (3 if getattr(mod, "val_center", False) else 2)))))),  # 4=CLMS-FAN · 3=RV-3 · 2=W_g
+                       (3 if getattr(mod, "val_center", False) else 2))))))), # 4=CLMS-FAN · 3=RV-3 · 2=W_g
         "n_slot": mod.n_slot, "d_k": mod.d_k, "d_s": mod.d_s,
         "d_g": mod.d_g, "r": mod.r, "key_seed": mod.key_seed,
         "fresh_k": int(getattr(mod, "fresh_k", 0)), "fresh_L": int(getattr(mod, "fresh_L", 3)),
@@ -566,7 +586,8 @@ if _HAS_TORCH:
 
         def __init__(self, d, V, n_slot=8, d_k=64, d_s=64, r=128,
                      key_seed=9423, key_emb=None, lam0=1.0, d_g=64, val_center=False, fangate=False,
-                     fresh_k=0, fresh_L=3, key_fn="mean", vonly=False, dual=False):
+                     fresh_k=0, fresh_L=3, key_fn="mean", vonly=False, dual=False,
+                     pair_canonical=False):
             super().__init__()
             self.key_fn = key_fn          # H_9852 address function (mean | roll)
             self.d, self.V, self.n_slot = d, V, n_slot
@@ -575,7 +596,10 @@ if _HAS_TORCH:
             self.val_center = bool(val_center)                     # RV-3 majority-null centering (lane_type 3)
             self.fangate = bool(fangate)                           # H_9696 CLMS-FAN (lane_type 4)
             self.vonly = bool(vonly)                               # H_9885 v-only fusion (lane_type 7)
-            self.dual = bool(dual)                                 # H_9888 dual read (lane_type 8)
+            self.dual = bool(dual)                                 # two mention-conditioned address reads
+            self.pair_canonical = bool(pair_canonical)
+            if self.pair_canonical and not self.dual:
+                raise ValueError("CLMSModule pair_canonical needs dual=True")
             # H_9720-ⓐ EN-disjoint fresh query lane (lane_type 5): the ADDRESS query is read from an
             # early-layer tap (detached from the trunk in the trainer) through W_fresh·W_q_fresh — store-CE
             # co-adapts an entity basis that does NOT compete with EN-CE for the penultimate. fresh_k=0 =
@@ -604,9 +628,10 @@ if _HAS_TORCH:
                 # `val` stays allocated but is UNUSED on this lane (and is not packed).
                 self.W_v = _nn.Linear(d_k, d_s, bias=False)
                 self.W_gate = _nn.Linear(d, 1, bias=False)
-            # H_9888: the dual-read lane fuses a PAIR summary ([vA+vB ; (vA−vB)²]), so the value
-            # half of the fusion input is 2*d_s wide. Every other lane is unchanged.
-            self.W_h = _nn.Linear((2 * d_s if self.dual else d_s) + d_g, r)
+            # Legacy lane 8 widens the fusion with an off-diagonal block. Canonical lane 10 first
+            # closes the two soft reads under parity, so it stays on the ordinary d_s manifold.
+            self.W_h = _nn.Linear(
+                (2 * d_s if self.dual and not self.pair_canonical else d_s) + d_g, r)
             self.W_out = _nn.Linear(r, V, bias=False)
             self.lam = _nn.Parameter(_torch.tensor(float(lam0)))   # monitor-only scalar (no loss term)
 
@@ -620,7 +645,8 @@ if _HAS_TORCH:
             return _torch.stack(rows)
 
         def forward(self, yn_q, K, pols, oracle_slot=None, oracle_slot_b=None,
-                    need_att=False, yn_fresh=None, yn_a=None, yn_b=None, yn_op=None):
+                    need_att=False, yn_fresh=None, yn_a=None, yn_b=None, yn_op=None,
+                    pair_active=None):
             # yn_q:(B,d) query-position penultimate · K:(B,n_slot,d_k) · pols:(B,n_slot) in {0,1}
             # yn_fresh:(B,d) H_9720-ⓐ early-layer tap (trainer detaches it); when present + fresh_k>0 the
             # ADDRESS query comes from the disjoint fresh lane, but yn_q STILL drives the W_g op-gate below.
@@ -652,6 +678,7 @@ if _HAS_TORCH:
                     raise ValueError("CLMSModule(dual=True).forward needs yn_a, yn_b and yn_op — "
                                      "the causal trunk rows at both clues and the operator")
                 vs = []
+                ps = []
                 atts = []
                 oracle_slots = (oracle_slot, oracle_slot_b)
                 for head, ynx in enumerate((yn_a, yn_b)):
@@ -661,14 +688,30 @@ if _HAS_TORCH:
                     if oracle_slot is not None:
                         osx = oracle_slots[head]
                         if osx is None:
-                            raise ValueError("CLMSModule(dual=True) oracle needs oracle_slot_b")
-                        ax = _F.one_hot(osx, self.n_slot).to(qx.dtype)
+                            inactive_b = (self.pair_canonical and head == 1 and
+                                          pair_active is not None and not bool(pair_active.any()))
+                            if not inactive_b:
+                                raise ValueError("CLMSModule(dual=True) oracle needs oracle_slot_b")
+                            ax = _torch.softmax(attx, dim=-1)  # ignored by parity identity B=0
+                        else:
+                            ax = _F.one_hot(osx, self.n_slot).to(qx.dtype)
                     else:
                         ax = _torch.softmax(attx, dim=-1)
-                    ax = ax - (1.0 / self.n_slot)
-                    vs.append(_torch.bmm(ax.unsqueeze(1), V_slots).squeeze(1))
+                    if self.pair_canonical:
+                        ps.append((ax * pols.to(ax.dtype)).sum(dim=-1))
+                    else:
+                        ax = ax - (1.0 / self.n_slot)
+                        vs.append(_torch.bmm(ax.unsqueeze(1), V_slots).squeeze(1))
                 att = _torch.stack(atts, dim=1)                         # (B,2,n_slot), live reads
-                v = _torch.cat([vs[0] + vs[1], (vs[0] - vs[1]) ** 2], dim=-1)
+                if self.pair_canonical:
+                    if pair_active is None:
+                        pair_active = _torch.ones_like(ps[0], dtype=_torch.bool)
+                    pB = _torch.where(pair_active.to(_torch.bool), ps[1], _torch.zeros_like(ps[1]))
+                    p_xor = ps[0] + pB - 2.0 * ps[0] * pB
+                    v = self.val[0] + p_xor.unsqueeze(-1) * (self.val[1] - self.val[0])
+                    v = v - 0.5 * (self.val[0] + self.val[1])
+                else:
+                    v = _torch.cat([vs[0] + vs[1], (vs[0] - vs[1]) ** 2], dim=-1)
                 g = self.W_g(yn_op)                                     # operator-only causal tap
             z = _F.gelu(self.W_h(_torch.cat([v, g], dim=-1)), approximate="tanh")   # (B,r) [v; g] fusion
             s = self.W_out(z)                                             # (B,V)
@@ -806,7 +849,7 @@ if _HAS_TORCH:
         # both learned-address and pair-oracle modes. The numpy side consumes the same serialized
         # weights and manifest coordinates that `evaluate --store-causality` uses.
         dual = CLMSModule(d, V, n_slot=n_slot, d_k=d_k, d_s=d_s, r=r, lam0=0.7,
-                          val_center=True, dual=True).double().eval()
+                          val_center=True, dual=True, pair_canonical=True).double().eval()
         wd = clms_weights_from_torch(dual)
         for k in ("key_emb", "W_q", "W_g", "val", "W_h", "b_h", "W_out", "lam"):
             wd[k] = np.asarray(wd[k], dtype=np.float64)

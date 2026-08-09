@@ -54,7 +54,7 @@ class TrainWarmStartTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "carries an SLW trailer"):
                 _warm_start(plain, path, False, {"d": 8, "L": 1, "E": 1})
 
-    def test_one_read_clms_can_upgrade_to_dual_without_recasting_pair_fusion(self):
+    def test_one_read_clms_can_upgrade_to_canonical_dual_on_same_value_manifold(self):
         _canonical_train_imports()
         import torch
         import serialize as serializer
@@ -68,9 +68,9 @@ class TrainWarmStartTest(unittest.TestCase):
         with torch.no_grad():
             source.clms.W_q.weight.fill_(0.125)
             source.clms.val.fill_(0.25)
+            source.clms.W_h.weight.fill_(0.375)
 
         target = CLMConvMoE(CLMConfig(**common, clms_dual=True))
-        fresh_pair_fusion = target.clms.W_h.weight.detach().clone()
 
         with tempfile.TemporaryDirectory() as td:
             path = os.path.join(td, "one-read.clm")
@@ -79,10 +79,10 @@ class TrainWarmStartTest(unittest.TestCase):
 
             report = _warm_start(target, path, False, {"d": 8, "L": 1, "E": 1})
 
-        self.assertIn("upgraded-3-to-8", report)
+        self.assertIn("upgraded-3-to-10", report)
         self.assertTrue(torch.equal(target.clms.W_q.weight, source.clms.W_q.weight))
         self.assertTrue(torch.equal(target.clms.val, source.clms.val))
-        self.assertTrue(torch.equal(target.clms.W_h.weight, fresh_pair_fusion))
+        self.assertTrue(torch.equal(target.clms.W_h.weight, source.clms.W_h.weight))
 
 
 if __name__ == "__main__":

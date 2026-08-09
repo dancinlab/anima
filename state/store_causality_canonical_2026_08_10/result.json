@@ -1,0 +1,81 @@
+{
+  "schema": "anima-store-causality-canonical/v1",
+  "verdict": "REPRODUCED",
+  "base_commit": "60ec97476",
+  "panel": {
+    "path": "state/store_causality_2026_08_09/panel.txt.compose2.json",
+    "sha256": "f2e5bd175f264ec22cc90a6e6367f78994334c3a56f889c1294e77d50a411939",
+    "chance": 0.5,
+    "n": 128,
+    "regenerated": false
+  },
+  "bars": {
+    "oracle": 0.9,
+    "positive": 0.75,
+    "control": 0.56,
+    "changed": false
+  },
+  "root_cause": {
+    "training_rows": 512,
+    "rows_with_target_slot_b": 0,
+    "rows_with_equal_mentions": 512,
+    "legacy_pair_feature": "[vA+vB;(vA-vB)^2]",
+    "legacy_off_diagonal_nonzero_training_rows": 0,
+    "canonical_operator": "p=a+b-2ab",
+    "new_lane_type": 10,
+    "legacy_lane_8_preserved": true
+  },
+  "protocol": {
+    "steps": 24000,
+    "store_batch": 32,
+    "store_win": 24,
+    "seeds": [7, 11],
+    "controls_after_oracle_only": true,
+    "training_composed_rows_added": 0,
+    "randomness_changed": false
+  },
+  "runs": {
+    "7": {
+      "checkpoint": ".fire-recover/store_causality_canonical_2026_08_10/seed7/compose2_dual_parity_s7.clm",
+      "checkpoint_sha256": "0073bfb60d4686e96d1029b5c581231f51b2a17a122dd454f18365b4c88c5e89",
+      "recovery_pt_sha256": "1dcea452f041af45999b6979e4785cf1afa17d2d02a275a7221b69d994d09682",
+      "train_wall_s": 2062.3,
+      "verdict": "SUPPORTED-CAUSAL",
+      "arms": {
+        "oracle_pair": {"correct": 128, "n": 128, "accuracy": 1.0},
+        "normal": {"correct": 128, "n": 128, "accuracy": 1.0},
+        "drop_a": {"correct": 51, "n": 128, "accuracy": 0.3984375},
+        "drop_b": {"correct": 57, "n": 128, "accuracy": 0.4453125},
+        "shuffle": {"correct": 61, "n": 128, "accuracy": 0.4765625},
+        "recovery": {"correct": 128, "n": 128, "accuracy": 1.0}
+      }
+    },
+    "11": {
+      "checkpoint": ".fire-recover/store_causality_canonical_2026_08_10/seed11/compose2_dual_parity_s11.clm",
+      "checkpoint_sha256": "d13cc3603ee3295b8d6fec3f3d7b256b8da6c063258097a6d9bc247a17b162cb",
+      "recovery_pt_sha256": "14880777e2449e9b38ea9364d6f460b861b88e9a4af3b12478d1bd4ca180e8ad",
+      "train_wall_s": 1893.8,
+      "verdict": "SUPPORTED-CAUSAL",
+      "arms": {
+        "oracle_pair": {"correct": 128, "n": 128, "accuracy": 1.0},
+        "normal": {"correct": 128, "n": 128, "accuracy": 1.0},
+        "drop_a": {"correct": 50, "n": 128, "accuracy": 0.390625},
+        "drop_b": {"correct": 59, "n": 128, "accuracy": 0.4609375},
+        "shuffle": {"correct": 61, "n": 128, "accuracy": 0.4765625},
+        "recovery": {"correct": 128, "n": 128, "accuracy": 1.0}
+      }
+    }
+  },
+  "qa": {
+    "pytest_collected": 17,
+    "pytest_passed": 17,
+    "torch_numpy_learned_max_abs": 6.245e-17,
+    "torch_numpy_pair_oracle_max_abs": 5.898e-17,
+    "legacy_lane_8_exact_regression": true,
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "decode": "CUDA via cupy 13.6.0",
+    "vast_instance": 47297500,
+    "vast_active_instances_after_teardown": 0,
+    "estimated_cost_usd": 0.26
+  }
+}
