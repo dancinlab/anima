@@ -137,6 +137,16 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > `rho-form >=0.70`일 때만 기존 2,200-step compose-2 CLMS 학습과 pair-oracle/인과/서빙 시험을
 > 실행한다. 평가기·자료·시드·decode 옵션·문턱값은 변경하지 않는다. 전체 규약:
 > `state/store_causality_7b_rho_form_recovery_2026_08_11/README.md`.
+>
+> **7B rho-form 복구 결과(2026-08-11):** 호출 흐름 추적으로 frozen-trunk warm-start가
+> legacy-global 정규화를 position 정규화로 바꿔 공용 forward 의미를 변경한 사실을 확인했다.
+> canonical warm-start 경로는 이제 이 불일치를 거부한다. 호환되는 완료 step-3,500 trunk에서
+> rho-form은 `1.00`, pair-oracle은 `1.0000`으로 복구됐고 대조군은 A 제거 `0.5469`, B 제거
+> `0.4609`, 주소 섞기 `0.4688`이었다. 그러나 정상과 정확 복구가 기준 `0.75`에 `0.6094`여서
+> 사전등록 실행은 `FALSIFIED`다. serving/soak와 프로덕션 배포는 실행하지 않았다. 실패
+> 체크포인트는 비공개 HF `dancinlab` 저장소에만 보존했고 Vast.ai 인스턴스는 삭제했다(활성
+> 임대 `0`, 추정 비용 `$2.82`). 전체 근거:
+> `state/store_causality_7b_rho_form_recovery_2026_08_11/result.json`.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /

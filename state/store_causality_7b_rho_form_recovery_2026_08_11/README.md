@@ -1,6 +1,7 @@
 # Compose-2 CLMConvMoE 7B rho-form recovery gate — 2026-08-11
 
-Status: IN PROGRESS — fixed diagnostic completed; common warm-start fix pending QA.
+Status: FALSIFIED — rho-form and pair-oracle recovered, but normal/recovery stayed below the
+frozen positive bar; production serving was not run.
 
 This gate follows `state/store_causality_7b_serving_2026_08_11`. It keeps the frozen rho-form
 detector, compose-2 fixture, causal controls, seeds, and bars unchanged. It reuses
@@ -73,3 +74,32 @@ model, data, seed, step, decode, or threshold change. The common warm-start path
 future source/request normalization mismatches, with a regression proving both rejection and a
 matching warm-start. The original registered position setting remains documented here as the
 falsified configuration.
+
+## Result
+
+The common warm-start path now reads the source `.clm` normalization through the canonical trailer
+walker and refuses a source/request mismatch before training. A matching legacy-global warm-start
+still round-trips byte-identically. The focused Vast.ai H100 regression suite passed `20/20` and
+the local CPU-capable subset passed `7/7` (`6` Torch-dependent tests skipped because mini has no
+Torch).
+
+The fixed diagnostic and registered recovery run produced:
+
+- step-2,000 source rho-form: `0.60`; failed position-normalized store checkpoint: `0.20`;
+  completed step-3,500 source: `1.00`; every self-shuffle control: `0.00`;
+- fresh source-preserving global checkpoint rho-form: `1.00`, self-shuffle `0.00`; its five raw
+  store-absent continuations are exactly equal to the step-3,500 source cache
+  (`9ac73185e0d4049579e30cb87276212a8a96864f41306b1c34fcd200b2594114`);
+- pair-oracle: `1.0000`, which unlocked the complete causal battery;
+- normal `0.6094` -> clue A removed `0.5469` -> clue B removed `0.4609` -> address shuffled
+  `0.4688` -> recovery `0.6094`.
+
+The controls are at or below the measured chance `0.50 + 0.06` ceiling and recovery exactly
+matches normal, but normal and recovery both miss the frozen `0.75` positive bar. The engine-native
+verdict is therefore `FALSIFIED`. No retry, extension, seed/data/decode/bar change, serving test, or
+production deployment was performed after that failure.
+
+The failed checkpoint and exact-resume state are preserved only in the private HF model repository
+`dancinlab/anima-store-causality-7b-rho-form-recovery-2026-08-11`; HF metadata independently
+matches both local SHA-256 values and byte sizes. The Vast.ai H100 instance was deleted after
+upload (active rentals `0`, estimated cost `$2.82`). Machine-readable evidence is in `result.json`.

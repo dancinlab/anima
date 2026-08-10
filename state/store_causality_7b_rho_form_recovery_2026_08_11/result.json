@@ -1,0 +1,101 @@
+{
+  "schema": "anima-store-causality-7b-rho-form-recovery/v1",
+  "date": "2026-08-11",
+  "verdict": "FALSIFIED",
+  "production_deployment": "BLOCKED",
+  "root_cause": {
+    "component": "cli/train.py warm-start configuration",
+    "description": "The frozen legacy-global trunk was rebuilt with position normalization, changing the common forward pass despite frozen tensors.",
+    "fix": "Read the source normalization through the canonical serialized trailer chain and reject source/request mismatches before training."
+  },
+  "fixed_inputs": {
+    "seed": 7,
+    "steps": 2200,
+    "store_window": 24,
+    "store_batch": 32,
+    "store_address_weight": 1.0,
+    "freeze_trunk": true,
+    "trunk_norm": "global",
+    "value_centering": true,
+    "canonical_parity_lane": 10,
+    "dataset_repo": "dancinlab/anima-store-causality-compose2-2026-08-09",
+    "dataset_commit": "8f29c2f16f214734d9b5fa4010c57c48fff3979e",
+    "source_model_repo": "dancinlab/clm-7b-undertrained-step3500",
+    "source_model_commit": "c3c6d127545ccde6737fb96f99b51a2ac581d9e9",
+    "source_clm_sha256": "5e0db1371bc4ed7246ef5adcebe245c3991c053acd5fbde8107873add7853de5"
+  },
+  "diagnostic": {
+    "step2000_rho_form": 0.6,
+    "failed_store2000_rho_form": 0.2,
+    "step3500_rho_form": 1.0,
+    "self_shuffle": 0.0
+  },
+  "checkpoint": {
+    "hf_repo": "dancinlab/anima-store-causality-7b-rho-form-recovery-2026-08-11",
+    "hf_blob_commit": "5d309aff5f1bf9cee7cde994302bc75068774a07",
+    "visibility": "private",
+    "clm_file": "compose2_dual_parity_7b_global_s7.clm",
+    "clm_bytes": 3541601483,
+    "clm_sha256": "d6de508b7a1dd440812dc5304bb5c702d03b5c8ccdc8bfdff798668807308db2",
+    "clm_decodable": true,
+    "serialized_trunk_norm": "global",
+    "exact_resume_file": "compose2_dual_parity_7b_global_s7.clm.pt",
+    "exact_resume_bytes": 28237556838,
+    "exact_resume_sha256": "bc3d016070961916bb22cfc2f2614513f6858b957a9058e08aa09389c486406d",
+    "exact_resume_state_sha256": "68f6104ce96602d599dd8396fdf4b5429e55c2f96a5aaf67b6f979dc7d32165c"
+  },
+  "rho_form": {
+    "value": 1.0,
+    "bar": 0.7,
+    "self_shuffle": 0.0,
+    "self_shuffle_cap": 0.05,
+    "verdict": "PASS",
+    "source_output_cache_equal": true,
+    "canonical_output_set_sha256": "9ac73185e0d4049579e30cb87276212a8a96864f41306b1c34fcd200b2594114"
+  },
+  "causality": {
+    "measured_chance": 0.5,
+    "bars": {
+      "pair_oracle": 0.9,
+      "positive": 0.75,
+      "control": 0.56
+    },
+    "arms": {
+      "pair_oracle": 1.0,
+      "normal": 0.609375,
+      "drop_a": 0.546875,
+      "drop_b": 0.4609375,
+      "shuffle": 0.46875,
+      "recovery": 0.609375
+    },
+    "shuffle_integrity": true,
+    "recovery_exact": true,
+    "verdict": "FALSIFIED"
+  },
+  "qa": {
+    "vast_gpu_regression": {
+      "passed": 20,
+      "failed": 0
+    },
+    "local_regression": {
+      "passed": 7,
+      "failed": 0,
+      "skipped": 6,
+      "skip_reason": "Torch-dependent GPU tests; Torch is not installed on mini."
+    },
+    "python_compile": "PASS",
+    "git_diff_check": "PASS",
+    "serving_soak_rollback": "NOT-RUN: positive causal gate failed",
+    "live_http_websocket": "NOT-RUN: live runtime unchanged"
+  },
+  "artifacts": {
+    "model_and_training_data_policy": "HF dancinlab private repositories only",
+    "hf_metadata_sha256_verified": true,
+    "vast_instance_id": 47392119,
+    "vast_instance_destroyed": true,
+    "vast_active_rentals_after_cleanup": 0,
+    "vast_estimated_cost_usd": 2.82,
+    "ing_jsonl_preserved": true,
+    "stream_mi_json_preserved": true
+  }
+}

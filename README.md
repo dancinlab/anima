@@ -150,6 +150,17 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > final trunk. Only a `rho-form >=0.70` result unlocks the unchanged 2,200-update compose-2 CLMS
 > training and pair-oracle/causal/serving battery. No evaluator, data, seed, decode option, or bar
 > changes. Protocol: `state/store_causality_7b_rho_form_recovery_2026_08_11/README.md`.
+>
+> **7B rho-form recovery result (2026-08-11):** tracing found that the frozen-trunk warm start had
+> changed legacy-global normalization to position normalization, altering the shared forward pass.
+> The canonical warm-start path now refuses that mismatch. With the compatible completed
+> step-3,500 trunk, rho-form recovered to `1.00` and pair-oracle reached `1.0000`; controls were
+> A removed `0.5469`, B removed `0.4609`, and address shuffled `0.4688`. Normal and exact recovery,
+> however, were only `0.6094` against the frozen `0.75` bar, so the registered run is `FALSIFIED`.
+> Serving/soak and production deployment were not run. The failed checkpoint is retained only in
+> the private HF `dancinlab` repository; the Vast.ai instance was then deleted (active rentals
+> `0`, estimated cost `$2.82`). Full evidence:
+> `state/store_causality_7b_rho_form_recovery_2026_08_11/result.json`.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the
