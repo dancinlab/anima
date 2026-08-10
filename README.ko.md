@@ -79,6 +79,23 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > (10) 채팅 런타임 경로가 바뀐 경우에만 스테이징 연결과 HTTP·웹소켓 확인, (11) 성공과 실패를 모두
 > README/result JSON에 기록하고 푸시, (12) 모든 관문 통과 후 프로덕션 배포 판단 순서로 진행한다.
 > 고부하 학습은 mini가 아니라 Vast.ai에서 실행한다.
+>
+> **실행 결과(2026-08-10):** 동결 레시피는 사전등록한 새 시드 13/17/19/23/29에서 모두 통과했다.
+> 모든 시드의 pair-oracle·정상·복구는 1.0000, 모든 대조군은 0.4766 이하였다. 이어서 사전등록한
+> 7B CLMConvMoE smoke는 H100 80GB 한 장에 적재됐다(7,057,657,951 파라미터, 학습/평가 peak VRAM
+> 35,769/54,789MiB). 그러나 200 step 뒤 pair-oracle은 **0.5000**이었고, 평가기는 규칙대로 정상·
+> 대조군·복구 전에 중단했다. 이는 `INVALID-INSTRUMENT` 실패이며 7B 스테이징과 프로덕션은 계속
+> 차단된다. 앞서 적은 4~8주 전망도 승인 일정이 아니라 여전히 조건부다. 전체 기록은
+> `state/store_causality_multiseed_2026_08_10`과
+> `state/store_causality_7b_staging_2026_08_10`에 있다.
+>
+> 모델과 학습 데이터는 `dancinlab` Hugging Face 조직의 비공개 저장소에서만 관리한다. 동결
+> compose-2 fixture는 비공개 데이터셋 `dancinlab/anima-store-causality-compose2-2026-08-09`에
+> 고정했고, 두 모델 저장소에는 검증된 `.clm`, 재시작용 `.clm.pt`, 로그, 결과를 보존했다. 회귀
+> 호환성을 위한 Git fixture는 바이트 변경 없이 유지하며, R2와 로컬에는 이번 실행의 모델 복사본을
+> 남기지 않았다. 업로드·검증 뒤 Vast.ai 인스턴스를 모두 삭제해 활성 임대는 0개다. 채팅 런타임
+> 경로는 바뀌지 않아 채팅 배포는 건드리지 않았다. 이번 작업의 최종 Vast.ai 청구 캡처는 총
+> $1.606(다중 시드·준비 $0.572 + H100 smoke $1.034)이다.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /
@@ -317,16 +334,17 @@ closed-negative 실행, 중간 ckpt)는 거버넌스 규칙에 따라 의도적�
 
 | 모델 | HF repo | 크기 | 상태 | 다운로드 |
 |---|---|---|---|---|
-| **CLM 7B** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | ~7B | ✅ 사용 가능 | `hf download dancinlab/clm-v1-ref-pytorch-cuda-7b` |
+| **ByteGPT 7B 레퍼런스** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | 7.25B | ⚠️ descent 레퍼런스·미수렴 | `hf download dancinlab/clm-v1-ref-pytorch-cuda-7b` |
 | **프로덕션 CLM (d768)** | [`dancinlab/clm-v1-d768-core-3axis-green`](https://huggingface.co/dancinlab/clm-v1-d768-core-3axis-green) | d768 | ✅ 사용 가능 | `hf download dancinlab/clm-v1-d768-core-3axis-green` |
 | **SAVANT 7B (5개 언어)** | `dancinlab/savant-7b-5lang` (예약) | ~7B | 🚧 **학습 중 — 아직 미출시** | — |
 | 레퍼런스 baseline | [`dancinlab/clm-v1-ref-pytorch-cuda`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda) | ref | ✅ 사용 가능 | `hf download dancinlab/clm-v1-ref-pytorch-cuda` |
 | 레퍼런스 baseline (3B) | [`dancinlab/clm-v1-ref-pytorch-cuda-3b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-3b) | ~3B | ✅ 사용 가능 | `hf download dancinlab/clm-v1-ref-pytorch-cuda-3b` |
 
-> **CLM 7B** 는 이미 존재하는 descent-PASS 레퍼런스 7B 입니다(PyTorch/CUDA 학습). anima 의
-> 자체 호스팅 엔진을 위한 forge-native(PyTorch-free, hexa 런타임) 빌드가 계획되어 있습니다
-> (`a_train_flame_forge`). 아키텍처(CLMConvMoE)와 7B 규모가 동일하므로 **모델 결과는 동일**하고,
-> 런타임 스택만 다릅니다(PyTorch 학습 vs forge-native).
+> **정정:** `clm-v1-ref-pytorch-cuda-7b`의 모델 카드는 이 체크포인트를 d4096/L36의 7.25B
+> decoder-only ByteGPT로 명시한다. CLMConvMoE가 아니며 anima `.clm`/CLMS 경로의 warm-start로
+> 사용할 수 없다. 이번 7B smoke는 호환되는 기존 WIP CLMConvMoE
+> `dancinlab/clm-7b-undertrained-step2000`(d6208/L30/E30)을 사용했고, pair-oracle 0.5000 실패를
+> 그대로 기록했다. 두 자산 모두 프로덕션 배포 승인을 뜻하지 않는다.
 >
 > **SAVANT 7B (5개 언어)** 는 진짜 다른 모델입니다 — 5개 언어 특화 빌드이며 아직 학습되지
 > 않았습니다. 위 repo id 는 예약된 이름이며 동작하는 링크가 없습니다.

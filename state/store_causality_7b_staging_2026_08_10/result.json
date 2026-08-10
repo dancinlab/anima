@@ -1,6 +1,7 @@
 {
   "schema": "anima-store-causality-7b-staging/v1",
-  "status": "BLOCKED_ON_MULTISEED_GATE",
+  "status": "COMPLETE",
+  "verdict": "INVALID-INSTRUMENT",
   "source_commit": "ed369736e",
   "registered_before_execution": true,
   "base_checkpoint": {
@@ -38,6 +39,90 @@
     "gpu_memory_gib": 80,
     "host_memory_gib": 96
   },
-  "measurements": {},
-  "evaluation": {}
+  "measurements": {
+    "instance_id": 47362407,
+    "gpu": "NVIDIA H100 PCIe",
+    "gpu_memory_mib": 81559,
+    "host_memory_mib": 226488,
+    "model_parameters": 7057657951,
+    "train_compute_wall_s": 85.5,
+    "train_end_to_end_wall_s": 880.01,
+    "train_max_rss_kib": 89906664,
+    "train_gpu": {
+      "samples": 1759,
+      "util_mean_percent": 10.0534,
+      "util_active_mean_percent": 64.3055,
+      "util_peak_percent": 100.0,
+      "vram_peak_mib": 35769,
+      "power_peak_w": 294.27
+    },
+    "evaluation_wall_s": 284.04,
+    "evaluation_max_rss_kib": 116490164,
+    "evaluation_gpu": {
+      "samples": 568,
+      "util_mean_percent": 8.2077,
+      "util_active_mean_percent": 42.0,
+      "util_peak_percent": 51.0,
+      "vram_peak_mib": 54789,
+      "power_peak_w": 108.73
+    },
+    "last_training_batch": {
+      "address_accuracy": 0.8125,
+      "store_accuracy": 0.59375,
+      "address_ce": 1.2102367877960205
+    }
+  },
+  "evaluation": {
+    "oracle_pair": {
+      "accuracy": 0.5,
+      "correct": 64,
+      "n": 128
+    },
+    "oracle_gate_passed": false,
+    "controls_executed": false,
+    "positive_arms_executed": false,
+    "verdict": "INVALID-INSTRUMENT"
+  },
+  "checkpoints": {
+    "clm": {
+      "bytes": 3541601488,
+      "sha256": "991a18fbebefc00715817cadbc9085940d04f061ac5db52706d51ec3a1e98b67",
+      "decodable": true
+    },
+    "pt": {
+      "bytes": 28230763335,
+      "sha256": "f2148dc82957dd7dbe0701fb4de8c15d044758e8800792af1e3c80e85c489cf4"
+    }
+  },
+  "qa": {
+    "pytest_passed": 17,
+    "pytest_failed": 0,
+    "checkpoint_sha_verified": true,
+    "gpu_decode_path": "CUDA"
+  },
+  "artifacts": {
+    "hf_repo": "dancinlab/anima-store-causality-7b-staging-2026-08-10",
+    "hf_private": true,
+    "hf_commit": "780558eb2f5fc19609d63fdec95cb7d9c1923429",
+    "hf_initial_metadata_commit": "87ad9127ac02dccb9432e67eb52dd90d8ded9e3d",
+    "hf_file_count": 13,
+    "hf_total_bytes": 31772494874,
+    "hf_dataset_repo": "dancinlab/anima-store-causality-compose2-2026-08-09",
+    "hf_dataset_private": true,
+    "hf_dataset_commit": "8f29c2f16f214734d9b5fa4010c57c48fff3979e",
+    "hf_dataset_file_count": 13,
+    "hf_dataset_total_bytes": 412153,
+    "local_records": ".fire-recover/store_causality_7b_staging_2026_08_10",
+    "models_and_training_data_hf_only": true,
+    "r2_copy": false
+  },
+  "infrastructure": {
+    "provider": "Vast.ai",
+    "instance_duration_s": 2445.0452020168304,
+    "hourly_usd": 1.517777777777778,
+    "metered_estimate_usd": 1.0308431314675897,
+    "invoice_usd_at_teardown": 1.034,
+    "active_instances_after_teardown": 0
+  },
+  "production_approved": false
 }

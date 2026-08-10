@@ -89,6 +89,26 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > verify HTTP/WebSocket only if its runtime path changes; (11) record every pass or failure in
 > README/result JSON and push it; (12) make a production decision only after every gate passes.
 > Heavy training runs on Vast.ai, not on mini.
+>
+> **Execution result (2026-08-10):** the frozen recipe passed all five pre-registered new seeds
+> (13/17/19/23/29): pair-oracle, normal, and recovery were 1.0000 on every seed; all controls were
+> at most 0.4766. The subsequent pre-registered 7B CLMConvMoE smoke fit one H100 80 GB
+> (7,057,657,951 parameters; train/eval peak VRAM 35,769/54,789 MiB), but its pair-oracle was
+> **0.5000** after 200 steps. The evaluator therefore stopped before normal, controls, or recovery.
+> This is an honest `INVALID-INSTRUMENT` result: 7B staging and production remain blocked, and the
+> earlier 4–8 week production estimate is still conditional rather than an approval. Full records
+> are in `state/store_causality_multiseed_2026_08_10` and
+> `state/store_causality_7b_staging_2026_08_10`.
+>
+> Models and training data are managed only in private repositories under the `dancinlab` Hugging
+> Face organization. The frozen compose-2 fixture is pinned in the private dataset
+> `dancinlab/anima-store-causality-compose2-2026-08-09`; the multi-seed and 7B model repositories
+> contain the verified `.clm`, resumable `.clm.pt`, logs, and results. The Git copy of the fixture
+> remains byte-unchanged for regression compatibility, while no model copy from these runs remains
+> in R2 or local recovery storage. Vast.ai instances were removed after upload and verification,
+> and the active instance count is zero. No chat runtime path changed, so chat deployment was not
+> touched. Final Vast.ai invoice capture for this turn was $1.606 total ($0.572 multi-seed/setup +
+> $1.034 H100 smoke).
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the

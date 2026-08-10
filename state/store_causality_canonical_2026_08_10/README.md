@@ -79,3 +79,11 @@ VRAM, throughput, latency, wall time, and cost are measured, followed by checkpo
 long-run stability gate. Chat staging HTTP/WebSocket QA is required only if the chat runtime path is
 changed. Production remains blocked until every recorded gate passes. GPU-heavy work runs on
 Vast.ai rather than mini.
+
+Closure update: the five new seeds all passed and are recorded in
+`state/store_causality_multiseed_2026_08_10`. The pre-registered 7B smoke then reached only
+pair-oracle 0.5000, so no negative arm was read; see
+`state/store_causality_7b_staging_2026_08_10`. Production remains blocked. Models and training data
+are stored only in private repositories under the `dancinlab` Hugging Face organization;
+the frozen compose-2 fixture is pinned in private dataset
+`dancinlab/anima-store-causality-compose2-2026-08-09`.

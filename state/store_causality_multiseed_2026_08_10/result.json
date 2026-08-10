@@ -1,6 +1,7 @@
 {
   "schema": "anima-store-causality-multiseed/v1",
-  "status": "RUNNING",
+  "status": "COMPLETE",
+  "verdict": "REPRODUCED_5_OF_5",
   "source_commit": "2bd7fa198",
   "panel": {
     "path": "state/store_causality_2026_08_09/panel.txt.compose2.json",
@@ -23,9 +24,112 @@
     "controls_after_oracle_only": true,
     "randomness_changed": false
   },
-  "runs": {},
+  "runs": {
+    "13": {
+      "wall_s": 1559.7,
+      "oracle_pair": 1.0,
+      "normal": 1.0,
+      "drop_a": 0.4140625,
+      "drop_b": 0.4453125,
+      "shuffle": 0.4765625,
+      "recovery": 1.0,
+      "verdict": "SUPPORTED-CAUSAL",
+      "clm_sha256": "739847462745afa84aa71e2049b7ef02f2a5d84198177ab88429ffb438b51ebf",
+      "pt_sha256": "1eb9f486ab221687ed9277e2df926eca13cb46f84b76d9b283b1b3ff13780072"
+    },
+    "17": {
+      "wall_s": 1565.1,
+      "oracle_pair": 1.0,
+      "normal": 1.0,
+      "drop_a": 0.3984375,
+      "drop_b": 0.4453125,
+      "shuffle": 0.4765625,
+      "recovery": 1.0,
+      "verdict": "SUPPORTED-CAUSAL",
+      "clm_sha256": "db70ffe216c0a79bb6d5a3ca4388f9dc5d60dc34cdc5460010bf74ce2208bbc4",
+      "pt_sha256": "85e10ec173d0a2575777fa820ff7a983c2f8597a1dd2d4ec91b396ecda20408f"
+    },
+    "19": {
+      "wall_s": 1778.8,
+      "oracle_pair": 1.0,
+      "normal": 1.0,
+      "drop_a": 0.3984375,
+      "drop_b": 0.453125,
+      "shuffle": 0.4765625,
+      "recovery": 1.0,
+      "verdict": "SUPPORTED-CAUSAL",
+      "clm_sha256": "00833d71a1b4a72db02b688cac34aca05ac081c101a9d0287929f3e9156622b7",
+      "pt_sha256": "fc0a5f84684a8e1b9c3db83e162f9ecc00e3116bc21c61ad3f9106f078fc1dae"
+    },
+    "23": {
+      "wall_s": 1654.9,
+      "oracle_pair": 1.0,
+      "normal": 1.0,
+      "drop_a": 0.390625,
+      "drop_b": 0.4453125,
+      "shuffle": 0.4765625,
+      "recovery": 1.0,
+      "verdict": "SUPPORTED-CAUSAL",
+      "clm_sha256": "c4e080da4152350a5103de1a5f4a7e97af5e2027ef9f99af69c5f1dec4ad4da4",
+      "pt_sha256": "4930a2724a70994c3e384bbd10b7b5be535ff0424db744fc8234ba29d800999c"
+    },
+    "29": {
+      "wall_s": 2224.8,
+      "oracle_pair": 1.0,
+      "normal": 1.0,
+      "drop_a": 0.390625,
+      "drop_b": 0.4296875,
+      "shuffle": 0.4765625,
+      "recovery": 1.0,
+      "verdict": "SUPPORTED-CAUSAL",
+      "clm_sha256": "2305f36fc670b38f0a76da000340d4ec62e82db55a97b4ad6643f4a68a994cfb",
+      "pt_sha256": "84d349785d21d63befb12be867acfba708c3280df24a72ee0d50ad355053390a"
+    }
+  },
+  "baseline_seed7_recheck": {
+    "oracle_pair": 1.0,
+    "normal": 1.0,
+    "drop_a": 0.3984375,
+    "drop_b": 0.4453125,
+    "shuffle": 0.4765625,
+    "recovery": 1.0,
+    "matches_frozen_result": true
+  },
+  "qa": {
+    "pytest_passed": 17,
+    "pytest_failed": 0,
+    "rtx3090": true,
+    "h100_pcie": true
+  },
+  "artifacts": {
+    "hf_repo": "dancinlab/anima-store-causality-multiseed-2026-08-10",
+    "hf_private": true,
+    "hf_commit": "16731bacb8bf449e22563917aefe0d5ebe87c85d",
+    "hf_initial_metadata_commit": "8c9a45409719a43513a0ca3f05c98eefa6b29615",
+    "hf_file_count": 35,
+    "hf_total_bytes": 7818835789,
+    "hf_dataset_repo": "dancinlab/anima-store-causality-compose2-2026-08-09",
+    "hf_dataset_private": true,
+    "hf_dataset_commit": "8f29c2f16f214734d9b5fa4010c57c48fff3979e",
+    "hf_dataset_file_count": 13,
+    "hf_dataset_total_bytes": 412153,
+    "local_records": ".fire-recover/store_causality_multiseed_2026_08_10",
+    "models_and_training_data_hf_only": true,
+    "r2_copy": false
+  },
+  "infrastructure": {
+    "provider": "Vast.ai",
+    "run_instance": 47348313,
+    "discarded_setup_instances": [47347401, 47347734, 47348146],
+    "gpu": "RTX 3090 24GB",
+    "invoice_usd_at_teardown": 0.572,
+    "active_instances_after_teardown": 0
+  },
   "seven_b": {
-    "status": "BLOCKED_ON_MULTISEED_GATE",
-    "protocol": "state/store_causality_7b_staging_2026_08_10/result.json"
+    "status": "FAILED_PAIR_ORACLE",
+    "oracle_pair": 0.5,
+    "controls_executed": false,
+    "protocol": "state/store_causality_7b_staging_2026_08_10/result.json",
+    "hf_repo": "dancinlab/anima-store-causality-7b-staging-2026-08-10"
   }
 }

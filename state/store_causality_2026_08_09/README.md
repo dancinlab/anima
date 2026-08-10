@@ -41,6 +41,12 @@ Verdict: `SUPPORTED-CAUSAL`. Measured chance remained 0.50 and the address deran
 fixed points. `result.json` is the machine-readable record, including the failed pair-oracle runs.
 Do not tune or regenerate this panel, its randomization, or its bars.
 
+The frozen compose-2 data, panel, controls, and result are also pinned at commit
+`8f29c2f16f214734d9b5fa4010c57c48fff3979e` in the private Hugging Face dataset
+`dancinlab/anima-store-causality-compose2-2026-08-09` (13 repository files including
+`.gitattributes`, 412,153 bytes). Hugging Face is the training-data management SSOT; the existing
+Git data and panel files remain byte-unchanged as regression fixtures.
+
 Multi-seed follow-up: the same frozen training recipe at seed 11 scored 32/128 = 0.2500 on
 pair-oracle and stopped before all controls. This does not retract the seed-7 checkpoint result,
 but it shows the training path is not multi-seed stable. The run and recovered artifact hashes are
