@@ -7736,6 +7736,9 @@ def store_causality_run(argv):
                 print("ERROR: %s needs a value" % flag, file=sys.stderr)
                 return 2
             forwarded.extend((flag, argv[pos + 1]))
+    for flag in ("--store-addr-audit", "--store-telemetry"):
+        if flag in argv:
+            forwarded.append(flag)
 
     def run(path, *flags):
         result = store_run([ckpt, "--store", path, *flags, *forwarded], _return_result=True)
@@ -8042,7 +8045,11 @@ def store_run(argv, _return_result=False):
     # pointer, neither routing answer is available — training the address cannot fix it.
     tel_oracle = float(evaluate_strval(argv, "--store-telemetry-oracle", "nan"))
     tel_n = 0; tel_amax = 0.0; tel_aent = 0.0
-    addr_top1 = addr_mass = addr_n = 0                  # (mean a[target]) — soft-address diagnostic
+    addr_top1 = addr_mass = addr_n = 0                  # legacy one-read/qpos diagnostic
+    dual_addr = {
+        "a": {"top1": 0, "mass": 0.0, "amax": 0.0, "ent": 0.0, "n": 0},
+        "b": {"top1": 0, "mass": 0.0, "amax": 0.0, "ent": 0.0, "n": 0},
+    }
 
     print("=== anima evaluate --store — H_9423 CLMS store-bridge lane (co-trained) ===")
     arm = mode or ("oracle" if oracle else ("lambda0" if lam_override == 0.0 else "lookup"))
@@ -8155,9 +8162,21 @@ def store_run(argv, _return_result=False):
                 tel_aent += float(_e.get("a_ent", 1.0))
         if au and addr_audit:                             # H_9672 addr-audit: last qpos entry
             e = au[-1]
-            addr_n += 1
-            addr_top1 += int(e["argmax"] == e["target"])
-            addr_mass += float(e["a_target"])
+            reads = e.get("dual_reads", [])
+            if reads:
+                for read in reads:
+                    rec = dual_addr.get(read.get("read"))
+                    if rec is None or int(read.get("target", -1)) < 0:
+                        continue
+                    rec["n"] += 1
+                    rec["top1"] += int(read["argmax"] == read["target"])
+                    rec["mass"] += float(read["a_target"])
+                    rec["amax"] += float(read["a_max"])
+                    rec["ent"] += float(read["a_ent"])
+            else:
+                addr_n += 1
+                addr_top1 += int(e["argmax"] == e["target"])
+                addr_mass += float(e["a_target"])
         n += 1
         readable_n += int(pred in ("good", "bad"))    # H_9775 vocab: readability witness ('unreadable'≠gold=0)
         correct += int(pred == gold)
@@ -8218,6 +8237,16 @@ def store_run(argv, _return_result=False):
               "1.0=one-hot sharp · ~%.3f=uniform)" % (addr_top1 / addr_n, addr_n, addr_mass / addr_n, 1.0 / 8))
         print("    → addr_top1 high ∧ addr_mass low = argmax correct but softmax NOT peaked (v = Σaᵢ·valᵢ "
               "blurred → value-read starved despite correct pointer); addr_top1 low = W_q not pointing.")
+    if addr_audit and any(rec["n"] for rec in dual_addr.values()):
+        print("  dual-addr-audit (MONITOR-ONLY · attentions consumed by lane 10):")
+        for name in ("a", "b"):
+            rec = dual_addr[name]
+            if not rec["n"]:
+                continue
+            dn = float(rec["n"])
+            print("    read-%s: top1=%.4f · target_mass=%.4f · a_max=%.4f · entropy=%.4f · n=%d"
+                  % (name.upper(), rec["top1"] / dn, rec["mass"] / dn,
+                     rec["amax"] / dn, rec["ent"] / dn, rec["n"]))
     if store_telemetry:
         if tel_n:
             n_slot_obs = int(store.get("n_slot", 8)) if isinstance(store, dict) else 8
@@ -8276,6 +8305,17 @@ def store_run(argv, _return_result=False):
         "readable": readable_n,
         "shuffle_integrity": not (mode == "shuffle" and (fixed_points_total or dup_entities)),
     }
+    if any(rec["n"] for rec in dual_addr.values()):
+        result["dual_address"] = {
+            name: {
+                "n": rec["n"],
+                "top1": rec["top1"] / float(rec["n"]),
+                "target_mass": rec["mass"] / float(rec["n"]),
+                "a_max": rec["amax"] / float(rec["n"]),
+                "entropy": rec["ent"] / float(rec["n"]),
+            }
+            for name, rec in dual_addr.items() if rec["n"]
+        }
     return result if _return_result else 0
 
 

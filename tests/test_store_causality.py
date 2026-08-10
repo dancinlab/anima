@@ -1,7 +1,10 @@
 import copy
 import json
 
+import numpy as np
+
 from cli import evaluate
+from core import clms
 
 
 def _manifests():
@@ -126,3 +129,39 @@ def test_store_causality_runs_frozen_arm_order_after_oracle_pass(tmp_path, monke
         (paths[0], True, False),
         (paths[0], False, False),
     ]
+
+
+def test_dual_address_audit_reports_the_two_consumed_reads():
+    d, vocab, n_slot, d_k, d_s, d_g, rank = 4, 256, 4, 3, 2, 2, 3
+    rng = np.random.default_rng(10)
+    weights = {
+        "lane_type": 10,
+        "n_slot": n_slot,
+        "d_k": d_k,
+        "key_emb": rng.standard_normal((256, d_k)),
+        "W_q": rng.standard_normal((d, d_k)),
+        "W_g": rng.standard_normal((d, d_g)),
+        "val": rng.standard_normal((2, d_s)),
+        "W_h": rng.standard_normal((d_s + d_g, rank)),
+        "b_h": rng.standard_normal(rank),
+        "W_out": rng.standard_normal((rank, vocab)),
+        "lam": np.asarray([1.0]),
+    }
+    yn = rng.standard_normal((4, d))
+    store = {
+        "entities": ["e0", "e1", "e2", "e3"],
+        "pols": [0, 1, 0, 1],
+        "target_slot": 0,
+        "target_slot_b": 2,
+        "mention_rows": (0, 1),
+        "operator_row": 2,
+    }
+    audit = []
+
+    clms.store_apply(np.zeros((4, vocab)), yn, weights, store, [3], audit=audit)
+
+    assert len(audit) == 1
+    assert [read["read"] for read in audit[0]["dual_reads"]] == ["a", "b"]
+    assert [read["row"] for read in audit[0]["dual_reads"]] == [0, 1]
+    assert [read["target"] for read in audit[0]["dual_reads"]] == [0, 2]
+    assert all(0.0 <= read["a_target"] <= 1.0 for read in audit[0]["dual_reads"])

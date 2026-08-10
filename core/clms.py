@@ -276,6 +276,24 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
                 else:
                     q_m = yn[rr] @ clms["W_q"]
                     a_m = _softmax(q_m @ K.T * scale)
+                if audit is not None:
+                    # The answer-row distribution appended above is not consumed by a dual lane.
+                    # Expose the two actual mention-conditioned reads without changing forward
+                    # values or loss. This remains monitor-only evidence.
+                    _am = a_m / (a_m.sum() + 1e-12)
+                    _ae = float(-(_am * np.log(_am + 1e-12)).sum()
+                                / (np.log(n_slot) + 1e-12))
+                    _target = _tg[_i]
+                    audit[-1].setdefault("dual_reads", []).append({
+                        "read": "a" if _i == 0 else "b",
+                        "row": int(rr),
+                        "argmax": int(np.argmax(a_m)),
+                        "target": int(_target) if _target is not None else -1,
+                        "a_target": (float(a_m[int(_target)])
+                                     if _target is not None else -1.0),
+                        "a_max": float(np.max(a_m)),
+                        "a_ent": _ae,
+                    })
                 if lane_type == 10:
                     # Canonical soft XOR: P(A xor B)=a+b-2ab. A single-clue row has no
                     # target_slot_b and therefore uses the XOR identity B=0. Training and composed
