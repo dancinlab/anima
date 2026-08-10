@@ -66,3 +66,16 @@ validation remain required gates. This canonical change was committed as `87b504
 to `origin/main`. Chat runtime code was not changed, so neither the local LaunchAgent nor
 `https://chat.dancinlab.org` was redeployed. The user-owned untracked files `ING.jsonl` and
 `stream_mi.json` remain preserved.
+
+## Registered next run
+
+The next run keeps this compose-2 panel, recipe, randomness, and bars frozen. It first verifies the
+baseline artifacts, then runs at least five new seeds on Vast.ai. A failed pair-oracle is recorded
+and diagnosed in the shared training/runtime path; it is never repaired by selecting a new seed or
+changing the panel. Only seeds reaching pair-oracle 0.90 proceed to the five-arm causal battery.
+
+After multi-seed closure, the same canonical training path is scaled to a bounded 7B staging smoke:
+VRAM, throughput, latency, wall time, and cost are measured, followed by checkpoint recovery and a
+long-run stability gate. Chat staging HTTP/WebSocket QA is required only if the chat runtime path is
+changed. Production remains blocked until every recorded gate passes. GPU-heavy work runs on
+Vast.ai rather than mini.

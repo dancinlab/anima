@@ -70,6 +70,15 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > 푸시됐고, Vast.ai에서 회귀 시험 17/17·Torch↔NumPy 패리티·legacy lane-8 호환을 확인한 뒤
 > 모든 인스턴스를 제거했다(추정 비용 $0.26). 채팅 런타임 코드는 바뀌지 않아 재배포하지 않았으며,
 > 사용자 소유 `ING.jsonl`과 `stream_mi.json`은 보존했다.
+>
+> **다음 실행 관문(2026-08-10 등록):** (1) canonical compose-2 기준선·체크포인트 동결 및 확인,
+> (2) Vast.ai에서 추가 시드 5개 이상 반복, (3) 실패 시 자료·난수·문턱값을 바꾸지 않고 공용 저장소
+> 학습 흐름의 근본 원인 수정, (4) 7B 스테이징 학습 구성과 VRAM 산정, (5) 범위를 제한한 7B smoke
+> 학습, (6) pair-oracle 0.90 이상 확인, (7) 통과 후에만 정상 → 단서 A 제거 → 단서 B 제거 → 주소
+> 섞기 → 복구 전체 시험, (8) 처리량·지연·VRAM·비용 측정, (9) 장시간 학습과 체크포인트 복구 시험,
+> (10) 채팅 런타임 경로가 바뀐 경우에만 스테이징 연결과 HTTP·웹소켓 확인, (11) 성공과 실패를 모두
+> README/result JSON에 기록하고 푸시, (12) 모든 관문 통과 후 프로덕션 배포 판단 순서로 진행한다.
+> 고부하 학습은 mini가 아니라 Vast.ai에서 실행한다.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /

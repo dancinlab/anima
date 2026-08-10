@@ -78,6 +78,17 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > lane-8 compatibility, then all instances were removed (estimated cost: $0.26). Chat runtime code
 > was unchanged, so no chat redeployment was performed. User-owned `ING.jsonl` and `stream_mi.json`
 > remain preserved.
+>
+> **Next execution gates (registered 2026-08-10):** (1) freeze and verify the canonical compose-2
+> baseline/checkpoints; (2) run at least five additional seeds on Vast.ai; (3) if any seed fails,
+> repair the root cause in the shared store-training path without changing data, randomness, or
+> bars; (4) size the 7B staging training configuration and VRAM requirement; (5) run a bounded 7B
+> smoke train; (6) require pair-oracle at least 0.90 before reading controls; (7) only then run the
+> complete normal → drop A → drop B → shuffle → recovery battery; (8) measure throughput, latency,
+> VRAM, and cost; (9) test long-run training and checkpoint recovery; (10) connect chat staging and
+> verify HTTP/WebSocket only if its runtime path changes; (11) record every pass or failure in
+> README/result JSON and push it; (12) make a production decision only after every gate passes.
+> Heavy training runs on Vast.ai, not on mini.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the
