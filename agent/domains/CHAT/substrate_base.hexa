@@ -13,6 +13,7 @@
 //   a hexa-native marker documenting that substrate_base.py is a deliberate
 //   WRAPPER-class file with no port, alongside its two concrete impls:
 //     - substrate_lora.py  (Qwen2.5-1.5B + LoRA r32 hot-swap router)
+//     - substrate_clm.py   (serialized CLMConvMoE via core/decode)
 //     - substrate_v3.py    (ConsciousDecoderV3 pure-HEXAD substrate)
 //   both of which are likewise torch/transformers/peft-bound WRAPPERs.
 //
@@ -22,5 +23,5 @@
 fn main() {
     println("substrate_base.py — pluggable-substrate ABC (torch-typed).")
     println("Not runnable standalone; imported by anima_participant.py.")
-    println("Concrete impls: substrate_lora.py, substrate_v3.py (both WRAPPER).")
+    println("Concrete impls: substrate_lora.py, substrate_v3.py, substrate_clm.py (WRAPPER).")
 }

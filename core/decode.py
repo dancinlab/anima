@@ -58,6 +58,10 @@ import os
 import struct
 import numpy as np
 
+# Canonical CLM causal context width. The serializer/trainer and both production decoders use
+# this fixed byte window; serving plugins import the same value instead of restating it.
+CLM_DECODE_WINDOW = 24
+
 # ════════════════════════════════════════════════════════════════════════
 # Session weight cache (perf) — the .clm/.bin is IMMUTABLE for a run, yet every
 # decode entry (clm_load_weights / bg_load) re-read + int4-dequantized +
@@ -1364,7 +1368,7 @@ def clm_penult_pooled_W(W, seed):
     bytes into the T-window (_seed_to_tok, IDENTICAL to the decode window fill), run the pure-trunk
     forward (clm_forward_hidden = _fwd_trunk, byte-parity with the hexa penult), then MEAN-POOL the
     yn:[T,d] over the T positions → pooled:[d]. Read-only; NO readout / sampling / perturbation."""
-    T = 24
+    T = CLM_DECODE_WINDOW
     tok = _seed_to_tok(seed, T)
     yn = clm_forward_hidden(W, tok, T)            # [T, d] pre-readout, pre-slot penultimate
     d = W["d"]
@@ -1582,7 +1586,7 @@ def clm_forward_ce(path, corpus, nwin_max):
     d = W["d"]; E = W["E"]; V = W["V"]; K = W["K"]
     bytes_arr = np.frombuffer(open(corpus, 'rb').read(), dtype=np.uint8)
     n_bytes = len(bytes_arr)
-    T = 24
+    T = CLM_DECODE_WINDOW
     stride = (n_bytes - T - 1) // nwin_max
     if stride < 1:
         stride = 1
@@ -1615,7 +1619,7 @@ def clm_decode_argmax(path, seed, gen):
         return {"ok": False, "text": ""}
     W = clm_load_weights(path)
     V = W["V"]
-    T = 24
+    T = CLM_DECODE_WINDOW
     seed_b = seed.encode('utf-8', 'surrogateescape')
     slen = len(seed_b)
     tok = np.empty(T, dtype=np.float64)
@@ -1648,7 +1652,7 @@ def clm_decode_topk_sampled(path, seed, gen, top_k, temp, seed_rng):
 
 def clm_decode_topk_sampled_W(W, seed, gen, top_k, temp, seed_rng):
     V = W["V"]
-    T = 24 if _CONSULT_DECODE_T is None else int(_CONSULT_DECODE_T)   # H_9407 consult-decode window (None=prod 24)
+    T = CLM_DECODE_WINDOW if _CONSULT_DECODE_T is None else int(_CONSULT_DECODE_T)   # H_9407 consult-decode window
     seed_b = seed.encode('utf-8', 'surrogateescape')
     slen = len(seed_b)
     tok = np.empty(T, dtype=np.float64)
@@ -2259,7 +2263,7 @@ def decode_auto_argmax(path, seed, gen):
     kind, W = decode_load(path)
     if kind == "clm":
         # clm_decode_argmax loads-from-path; re-wrap on the already-loaded W path
-        V = W["V"]; T = 24
+        V = W["V"]; T = CLM_DECODE_WINDOW
         seed_b = seed.encode('utf-8', 'surrogateescape')
         slen = len(seed_b)
         tok = np.empty(T, dtype=np.float64)
@@ -2394,7 +2398,7 @@ def clm_decode_grounded(path, seed, gen, anchor_texts, l_min, mouth=None):
         return {"ok": False, "text": "", "grounded": 0, "lm": 0}
     W = clm_load_weights(path)
     V = W["V"]
-    T = 24
+    T = CLM_DECODE_WINDOW
     tok = np.empty(T, dtype=np.float64)          # H_1400: reused window
     seed_b = _dg_to_bytes(seed)
     anchors = [_dg_to_bytes(a) for a in anchor_texts]

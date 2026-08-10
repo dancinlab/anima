@@ -289,6 +289,9 @@ def build_substrate(kind: str) -> Substrate:
         # fallback (provenance akida-sw-fallback). No crash when absent.
         from substrate_akida import SubstrateAKIDA
         return SubstrateAKIDA(device=DEVICE)
+    if kind == "clm":
+        from substrate_clm import CLMSubstrate
+        return CLMSubstrate(ckpt_path=os.environ.get("ANIMA_CLM_CKPT", ""))
     raise ValueError(f"unknown substrate kind: {kind!r}")
 
 
@@ -716,9 +719,10 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--threshold", type=float, default=IM_THRESHOLD_DEFAULT)
-    ap.add_argument("--substrate", choices=["lora", "v3", "akida"], default="lora",
+    ap.add_argument("--substrate", choices=["lora", "v3", "akida", "clm"], default="lora",
                     help="pluggable substrate (SUBSTRATE_PLUGIN.md). "
-                         "akida = BrainChip AKD1000 (HW) w/ numpy-LIF SW fallback.")
+                         "akida = BrainChip AKD1000 (HW) w/ numpy-LIF SW fallback; "
+                         "clm = ANIMA_CLM_CKPT via canonical core/decode.")
     args = ap.parse_args()
     # AKIDA_BACKEND env override (akida-backend-wiring): selects the akida
     # substrate without --substrate. Explicit --substrate akida also works.

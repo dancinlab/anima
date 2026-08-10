@@ -49,6 +49,7 @@ async def main():
     ok = ("hi from alice" in a_texts and "hi from bob" in a_texts and
           "hi from alice" in b_texts and "hi from bob" in b_texts)
     print("PHASE3_BROADCAST_PASS" if ok else "PHASE3_BROADCAST_FAIL")
-    sys.exit(0 if ok else 1)
+    return 0 if ok else 1
 
-asyncio.run(main())
+if __name__ == "__main__":
+    raise SystemExit(asyncio.run(main()))

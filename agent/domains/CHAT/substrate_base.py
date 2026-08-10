@@ -8,6 +8,7 @@ motivation 8-factor + KOSMOS + lang-detect + broker connection 은 substrate 무
 Substrate impls:
 - substrate_lora.py: vP21M (Qwen2.5-1.5B + LoRA r32 + mitosis aux)
 - substrate_v3.py:   ConsciousDecoderV3 (pure HEXAD substrate)
+- substrate_clm.py:  serialized CLMConvMoE via core/decode.py
 - future: substrate_llama.py, substrate_hf_instruct.py, etc.
 """
 from __future__ import annotations
@@ -22,7 +23,7 @@ class Substrate(ABC):
     LoRA / V3 / future 가 이 ABC 충족하면 anima_participant 그대로 작동.
 
     Required attributes (subclass __init__ 에서 설정):
-        name        : str  ("lora" | "v3" | "llama" etc)
+        name        : str  ("lora" | "v3" | "clm" etc)
         device      : str  ("mps" | "cuda" | "cpu")
         vocab_size  : int
 
