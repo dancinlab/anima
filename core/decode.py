@@ -862,23 +862,28 @@ def clm_config(path):
 
 def _load_block(rb, off):
     """_clmd_load_block — int4-sym dequant: w = (nibble-8) * per-channel-scale.
-    Returns (w_2d[cout,rest], new_off)."""
+    Returns the C-contiguous production orientation (w.T[rest,cout], new_off).
+
+    Decode consumes every serialized block transposed. Building a float64 [cout,rest]
+    followed by `.T.copy()` doubled the live 7B host tensor and the older int64 nibble
+    intermediates added three more full-size arrays before the GPU upload. Decode directly
+    from the byte codebook into the one final float64 orientation instead; the elementwise
+    values and production matmul layout are unchanged.
+    """
     cout = _rd_u32(rb, off); off += 4
     rest = _rd_u32(rb, off); off += 4
     n = cout * rest
     nbytes = (n + 1) // 2
-    raw = np.frombuffer(rb, dtype=np.uint8, count=nbytes, offset=off).astype(np.int64)
+    raw = np.frombuffer(rb, dtype=np.uint8, count=nbytes, offset=off)
     off += nbytes
-    low = (raw & 0xF) - 8
-    high = ((raw >> 4) & 0xF) - 8
-    codes = np.empty(2 * len(raw), dtype=np.float64)
-    codes[0::2] = low
-    codes[1::2] = high
-    codes = codes[:n]
+    codes = np.empty(2 * len(raw), dtype=np.int8)
+    codes[0::2] = (raw & 0xF).astype(np.int8) - 8
+    codes[1::2] = ((raw >> 4) & 0xF).astype(np.int8) - 8
     scales = np.frombuffer(rb, dtype='<f4', count=cout, offset=off).astype(np.float64)
     off += cout * 4
-    w = codes.reshape(cout, rest) * scales[:, None]
-    return w, off
+    wt = np.empty((rest, cout), dtype=np.float64)
+    np.multiply(codes[:n].reshape(cout, rest).T, scales[None, :], out=wt)
+    return wt, off
 
 
 def _load_ext(rb, off):
@@ -925,15 +930,15 @@ def clm_load_weights(path):
 
     # ── conv blocks, in order: ec, tc[L], eW[E], rW, roW ──
     off = 5
-    ecW, off = _load_block(rb, off)              # [d, d*K]
-    tcW = []
+    ecWt, off = _load_block(rb, off)             # [d*K, d]
+    tcWt = []
     for _ in range(L):
-        w, off = _load_block(rb, off); tcW.append(w)   # [d, d*K]
-    eW = []
+        wt, off = _load_block(rb, off); tcWt.append(wt)   # [d*K, d]
+    eWt = []
     for _ in range(E):
-        w, off = _load_block(rb, off); eW.append(w)    # [d, d*K]
-    rW, off = _load_block(rb, off)               # [E, d]
-    roW, off = _load_block(rb, off)              # [V, d]
+        wt, off = _load_block(rb, off); eWt.append(wt)    # [d*K, d]
+    rWt, off = _load_block(rb, off)               # [d, E]
+    roWt, off = _load_block(rb, off)              # [d, V]
     off = off + 5                                # skip "CLMX" + n_ext byte
 
     # ── ext tensors, in order ──
@@ -972,11 +977,11 @@ def clm_load_weights(path):
         "ok": True, "d": d, "E": E, "V": V, "K": K, "L": L,
         "n_factions": n_factions, "fbLam": fbLam, "faction_lam": None,
         "fbG": fbG, "fbW": fbW, "fbB": fbB,
-        "ecWt": ecW.T.copy(), "ecB": ecB,
-        "tcWt": [w.T.copy() for w in tcW], "tcB": tcB,
-        "eWt": [w.T.copy() for w in eW], "eB": eB,
-        "rWt": rW.T.copy(), "rB": rB,
-        "roWt": roW.T.copy(), "roB": roB,
+        "ecWt": ecWt, "ecB": ecB,
+        "tcWt": tcWt, "tcB": tcB,
+        "eWt": eWt, "eB": eB,
+        "rWt": rWt, "rB": rB,
+        "roWt": roWt, "roB": roB,
         "embed": embed.reshape(V, d),
         "tgG": tgG, "tgB": tgB, "noG": noG, "noB": noB,
         "bind_type": 0,
@@ -999,13 +1004,13 @@ def clm_load_weights(path):
             and rb[off + 2] == 77 and rb[off + 3] == 66):
         off += 4                                   # skip "CLMB"
         bind_type = rb[off]; off += 1
-        WaW, off = _load_block(rb, off)            # (k, d)
-        WbW, off = _load_block(rb, off)            # (k, d)
+        WaWt, off = _load_block(rb, off)           # (d, k)
+        WbWt, off = _load_block(rb, off)           # (d, k)
         WaB_ext, off = _load_ext(rb, off)          # (k,)
         WbB_ext, off = _load_ext(rb, off)          # (k,)
         W["bind_type"] = int(bind_type)
-        W["WaWt"] = WaW.T.copy()                   # (d, k)
-        W["WbWt"] = WbW.T.copy()                   # (d, k)
+        W["WaWt"] = WaWt                           # (d, k)
+        W["WbWt"] = WbWt                           # (d, k)
         W["WaB"] = WaB_ext
         W["WbB"] = WbB_ext
         # roWt is already Wo.T = (k, V); roB is already WoB (V,) — loaded above.
