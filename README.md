@@ -161,6 +161,14 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > the private HF `dancinlab` repository; the Vast.ai instance was then deleted (active rentals
 > `0`, estimated cost `$2.82`). Full evidence:
 > `state/store_causality_7b_rho_form_recovery_2026_08_11/result.json`.
+>
+> **Next active gate (registered 2026-08-11):** diagnose the remaining actual-lookup gap without
+> changing the frozen data or recipe. The unary training rows supervise the first mention context,
+> while compose-2 inference reads a second address after `and`; existing telemetry does not expose
+> the two live dual-read attentions. The fixed Vast.ai run first adds monitor-only A/B telemetry and
+> Torch↔NumPy parity, then corrects only a proven shared-path cause and repeats the unchanged
+> rho-form → pair-oracle → five-arm causal order. Full protocol:
+> `state/store_causality_7b_lookup_recovery_2026_08_11/README.md`.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the

@@ -147,6 +147,13 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > 체크포인트는 비공개 HF `dancinlab` 저장소에만 보존했고 Vast.ai 인스턴스는 삭제했다(활성
 > 임대 `0`, 추정 비용 `$2.82`). 전체 근거:
 > `state/store_causality_7b_rho_form_recovery_2026_08_11/result.json`.
+>
+> **다음 활성 관문(2026-08-11 등록):** 고정 자료와 학습 규약을 바꾸지 않고 남은 실제 lookup
+> 격차를 진단한다. 단일 단서 학습행은 첫 mention 문맥만 감독하지만 compose-2 추론은 `and` 뒤의
+> 두 번째 주소를 읽고, 기존 telemetry는 실제 두 dual-read attention을 노출하지 않는다. 고정된
+> Vast.ai 실행에서 먼저 monitor-only A/B telemetry와 Torch↔NumPy parity를 추가하고, 증명된 공용
+> 흐름 원인만 수정한 뒤 기존 rho-form → pair-oracle → 5단계 인과 순서를 그대로 반복한다. 전체 규약:
+> `state/store_causality_7b_lookup_recovery_2026_08_11/README.md`.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /
