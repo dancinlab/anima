@@ -111,6 +111,14 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > `dancinlab/anima-store-causality-7b-longrun-2026-08-10`에 있다. 프로덕션은 채팅 스테이징
 > 연결, serving 지연/처리량, HTTP/웹소켓 QA, soak/rollback 시험 전까지 계속 차단한다.
 
+> **다음 활성 관문(2026-08-11 사전등록):** 비공개 HF 7B `.clm`을 기존 채팅 참가자의
+> `Substrate` 경계와 canonical `core/decode.py` 경로로 연결한 뒤 Vast.ai에서 고정 시험을
+> 실행한다. 순서는 pair-oracle 사전점검, HTTP/WebSocket fan-out, 생성 지연/처리량,
+> VRAM, 30분 soak, 기존 AKIDA 소프트웨어 fallback 참가자로의 rollback이다. 모든 관문이
+> 통과하고 별도 프로덕션 승인이 있기 전에는 프로덕션 DNS와 현재 참가자를 변경하지
+> 않는다. 전체 프로토콜:
+> `state/store_causality_7b_serving_2026_08_11/README.md`.
+
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /
 > 컴파일러 / `hx` 패키지 매니저), **[kosmos](https://github.com/dancinlab/kosmos)** (`.kosmos`

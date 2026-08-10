@@ -124,6 +124,14 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > `dancinlab/anima-store-causality-7b-longrun-2026-08-10`. Production remains blocked on chat
 > staging integration, serving latency/throughput, HTTP/WebSocket QA, and soak/rollback.
 
+> **Next active gate (pre-registered 2026-08-11):** connect the private HF 7B `.clm` to the
+> existing chat participant through its `Substrate` boundary and the canonical `core/decode.py`
+> path, then run the fixed Vast.ai staging battery: pair-oracle preflight, HTTP/WebSocket fan-out,
+> generation latency/throughput, VRAM, a 30-minute soak, and rollback to the existing AKIDA
+> software-fallback participant. Production DNS and the live participant remain untouched unless
+> every gate passes and production is approved separately. Full protocol:
+> `state/store_causality_7b_serving_2026_08_11/README.md`.
+
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the
 "neocortex" byte language mouth grow a **hippocampus, growth-memory, working memory, cerebellum,
