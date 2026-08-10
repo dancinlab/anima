@@ -27,5 +27,5 @@ The 7B smoke begins only after the five new seed results are recorded. It must r
 training/runtime path and first measure checkpoint configuration, trainable/frozen parameter scope,
 estimated and observed VRAM, throughput, latency, wall time, and cost. Pair-oracle below 0.90 stops
 the causal battery. Checkpoint recovery and long-run stability remain later gates; production is
-not approved by a smoke result alone.
-
+not approved by a smoke result alone. The exact bounded protocol was registered before these seed
+results were known in `state/store_causality_7b_staging_2026_08_10`.

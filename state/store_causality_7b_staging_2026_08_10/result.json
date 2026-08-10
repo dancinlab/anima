@@ -1,0 +1,43 @@
+{
+  "schema": "anima-store-causality-7b-staging/v1",
+  "status": "BLOCKED_ON_MULTISEED_GATE",
+  "source_commit": "ed369736e",
+  "registered_before_execution": true,
+  "base_checkpoint": {
+    "repo": "dancinlab/clm-7b-undertrained-step2000",
+    "file": "clm_7b.clm",
+    "sha256": "05b558e1fe2d4fc507f3826fcd44e9fe8b877b4a576df615b8bd48604b58fabe",
+    "architecture": {
+      "family": "CLMConvMoE",
+      "d": 6208,
+      "layers": 30,
+      "experts": 30
+    },
+    "status": "WIP_UNDERTRAINED_STEP_2000_OF_3500"
+  },
+  "protocol": {
+    "seed": 7,
+    "steps": 200,
+    "store_batch": 32,
+    "store_win": 24,
+    "store_addr_weight": 1.0,
+    "freeze_trunk": true,
+    "trunk_norm": "position",
+    "clms_dual": true,
+    "store_val_center": true,
+    "controls_after_oracle_only": true,
+    "retry_or_tuning_allowed": false
+  },
+  "bars": {
+    "oracle": 0.9,
+    "positive": 0.75,
+    "control": 0.56,
+    "changed": false
+  },
+  "hardware_floor": {
+    "gpu_memory_gib": 80,
+    "host_memory_gib": 96
+  },
+  "measurements": {},
+  "evaluation": {}
+}
