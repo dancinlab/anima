@@ -84,6 +84,71 @@ class TrainWarmStartTest(unittest.TestCase):
         self.assertTrue(torch.equal(target.clms.val, source.clms.val))
         self.assertTrue(torch.equal(target.clms.W_h.weight, source.clms.W_h.weight))
 
+    def test_exact_resume_matches_uninterrupted_optimizer_and_rng_trajectory(self):
+        _canonical_train_imports()
+
+        import random
+        import torch
+        from train import _restore_resume_state, resume_state_digest
+
+        torch.manual_seed(41)
+        base = torch.nn.Sequential(
+            torch.nn.Linear(4, 5), torch.nn.Dropout(0.25), torch.nn.Linear(5, 2))
+        initial = {k: v.detach().clone() for k, v in base.state_dict().items()}
+
+        def fresh():
+            model = torch.nn.Sequential(
+                torch.nn.Linear(4, 5), torch.nn.Dropout(0.25), torch.nn.Linear(5, 2))
+            model.load_state_dict(initial)
+            return model, torch.optim.AdamW(model.parameters(), lr=1e-2, weight_decay=0.0)
+
+        def update(model, optimizer, generator):
+            x = torch.randn(3, 4, generator=generator)
+            y = torch.randn(3, 2, generator=generator)
+            optimizer.zero_grad(set_to_none=True)
+            torch.nn.functional.mse_loss(model(x), y).backward()
+            optimizer.step()
+
+        full, full_opt = fresh()
+        full_gen = torch.Generator().manual_seed(73)
+        torch.manual_seed(97)
+        random.seed(101)
+        for _ in range(4):
+            update(full, full_opt, full_gen)
+
+        interrupted, interrupted_opt = fresh()
+        interrupted_gen = torch.Generator().manual_seed(73)
+        torch.manual_seed(97)
+        random.seed(101)
+        for _ in range(2):
+            update(interrupted, interrupted_opt, interrupted_gen)
+
+        model_state = {k: v.detach().cpu() for k, v in interrupted.state_dict().items()}
+        optimizer_state = interrupted_opt.state_dict()
+        rng = {
+            "torch_cpu": torch.get_rng_state(), "torch_cuda": [],
+            "python": random.getstate(),
+            "generators": {"data": interrupted_gen.get_state()},
+        }
+        digest = resume_state_digest(model_state, optimizer_state, 2, rng)
+        payload = {
+            "optimizer": optimizer_state, "completed_step": 2,
+            "rng": rng, "state_digest": digest,
+        }
+
+        resumed, resumed_opt = fresh()
+        resumed.load_state_dict(model_state)
+        resumed_gen = torch.Generator().manual_seed(999)
+        step, restored_digest = _restore_resume_state(
+            payload, resumed, resumed_opt, {"data": resumed_gen}, "cpu")
+        self.assertEqual(step, 2)
+        self.assertEqual(restored_digest, digest)
+        for _ in range(step, 4):
+            update(resumed, resumed_opt, resumed_gen)
+
+        for name, tensor in full.state_dict().items():
+            self.assertTrue(torch.equal(tensor, resumed.state_dict()[name]), name)
+
 
 if __name__ == "__main__":
     unittest.main()

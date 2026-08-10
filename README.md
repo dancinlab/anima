@@ -110,6 +110,13 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > touched. Final Vast.ai invoice capture for this turn was $1.606 total ($0.572 multi-seed/setup +
 > $1.034 H100 smoke).
 
+> **Next active gate (pre-registered 2026-08-10):** the failed 200-step 7B smoke is followed by a
+> fixed 2,000-additional-step run on Vast.ai, with a deliberate process boundary at step 1,000 and
+> exact checkpoint recovery before continuing. The unchanged endpoint order is pair-oracle first,
+> then—only at 0.90 or better—the five-arm causal battery. The common trainer must first preserve
+> optimizer, completed-step, and all RNG/sampler state because the previous `.resume.pt` path saved
+> model weights only. Full protocol: `state/store_causality_7b_longrun_2026_08_10/README.md`.
+
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the
 "neocortex" byte language mouth grow a **hippocampus, growth-memory, working memory, cerebellum,

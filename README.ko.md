@@ -97,6 +97,13 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > 경로는 바뀌지 않아 채팅 배포는 건드리지 않았다. 이번 작업의 최종 Vast.ai 청구 캡처는 총
 > $1.606(다중 시드·준비 $0.572 + H100 smoke $1.034)이다.
 
+> **다음 활성 관문(2026-08-10 사전등록):** 실패한 200-step 7B smoke 다음에는 Vast.ai에서
+> 정확히 2,000 additional step을 실행한다. 1,000 step에서 프로세스를 의도적으로 종료하고
+> 체크포인트를 정확히 복구한 뒤 2,000 step까지 계속한다. 최종 평가는 기존대로 pair-oracle을
+> 먼저 읽고 0.90 이상일 때만 5단계 인과 시험을 실행한다. 기존 `.resume.pt`가 모델 가중치만
+> 저장했던 공용 결함을 먼저 고쳐 optimizer·완료 step·모든 RNG/샘플러 상태를 보존해야 한다.
+> 전체 규약은 `state/store_causality_7b_longrun_2026_08_10/README.md`에 고정했다.
+
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /
 > 컴파일러 / `hx` 패키지 매니저), **[kosmos](https://github.com/dancinlab/kosmos)** (`.kosmos`

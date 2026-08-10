@@ -110,7 +110,7 @@ USAGE (installed `anima` PATH command after `hx install anima`):
       --gauges-out ckpt/bg_ctrl_cnce.json
 """
 from __future__ import annotations
-import argparse, json, math, os, random, re, sys, time   # `random`: H_9841 replay-selection control
+import argparse, hashlib, json, math, os, random, re, sys, time   # `random`: H_9841 replay-selection control
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -169,6 +169,95 @@ import dream_lib as DR                                # core/dream_lib.py — H_
 GZ_LOWER = 0.21231792755821914   # 1/2 - ln(4/3)  (sa_gz_lower)
 GZ_UPPER = 0.5                    # sa_gz_upper
 LN2 = 0.6931471805599453
+
+RESUME_SCHEMA = "anima-train-resume/v1"
+
+
+class WarmStartReport(str):
+    """String-compatible warm-start report carrying optional exact-resume state."""
+
+    def __new__(cls, text: str, resume=None):
+        value = str.__new__(cls, text)
+        value.resume = resume
+        return value
+
+
+def _digest_update(h, value):
+    """Canonical recursive hash for tensors and checkpoint control state."""
+    if torch.is_tensor(value):
+        t = value.detach().cpu().contiguous()
+        h.update(b"tensor\0")
+        h.update(str(t.dtype).encode())
+        h.update(repr(tuple(t.shape)).encode())
+        h.update(t.view(torch.uint8).numpy().tobytes())
+    elif isinstance(value, dict):
+        h.update(b"dict\0")
+        for key in sorted(value, key=lambda item: repr(item)):
+            _digest_update(h, key)
+            _digest_update(h, value[key])
+    elif isinstance(value, (list, tuple)):
+        h.update((b"list\0" if isinstance(value, list) else b"tuple\0"))
+        for item in value:
+            _digest_update(h, item)
+    elif value is None:
+        h.update(b"none\0")
+    else:
+        h.update(type(value).__name__.encode() + b"\0" + repr(value).encode())
+
+
+def resume_state_digest(model_state, optimizer_state, completed_step, rng_state):
+    h = hashlib.sha256()
+    _digest_update(h, {"model": model_state, "optimizer": optimizer_state,
+                       "completed_step": int(completed_step), "rng": rng_state})
+    return h.hexdigest()
+
+
+def _restore_resume_state(payload, model, optimizer, generators, device):
+    """Restore and verify an exact trainer checkpoint after runtime objects exist."""
+    if not payload:
+        return 0, ""
+    required = {"optimizer", "completed_step", "rng", "state_digest"}
+    missing = sorted(required - set(payload))
+    if missing:
+        raise ValueError(f"resume checkpoint missing exact state: {missing}")
+    model_state = {k: v.detach().cpu() for k, v in model.state_dict().items()}
+    before = resume_state_digest(model_state, payload["optimizer"],
+                                 payload["completed_step"], payload["rng"])
+    if before != payload["state_digest"]:
+        raise ValueError("resume checkpoint state digest mismatch before restore")
+
+    optimizer.load_state_dict(payload["optimizer"])
+    rng = payload["rng"]
+    torch.set_rng_state(rng["torch_cpu"])
+    if str(device).startswith("cuda") and rng.get("torch_cuda"):
+        if len(rng["torch_cuda"]) != torch.cuda.device_count():
+            raise ValueError("resume CUDA RNG device count differs from checkpoint")
+        torch.cuda.set_rng_state_all(rng["torch_cuda"])
+    random.setstate(rng["python"])
+    saved_generators = rng.get("generators", {})
+    for name, generator in generators.items():
+        saved = saved_generators.get(name)
+        if generator is None:
+            if saved is not None:
+                raise ValueError(f"resume sampler {name} exists but runtime lane is disabled")
+        elif saved is None:
+            raise ValueError(f"resume checkpoint missing sampler state: {name}")
+        else:
+            generator.set_state(saved)
+
+    restored_model = {k: v.detach().cpu() for k, v in model.state_dict().items()}
+    restored_rng = {
+        "torch_cpu": torch.get_rng_state(),
+        "torch_cuda": torch.cuda.get_rng_state_all() if str(device).startswith("cuda") else [],
+        "python": random.getstate(),
+        "generators": {name: (gen.get_state() if gen is not None else None)
+                       for name, gen in generators.items()},
+    }
+    after = resume_state_digest(restored_model, optimizer.state_dict(),
+                                payload["completed_step"], restored_rng)
+    if after != payload["state_digest"]:
+        raise ValueError("resume checkpoint state digest mismatch after restore")
+    return int(payload["completed_step"]), after
 
 
 def savant_inhibition(step: int, n_steps: int, i0: float, i_floor: float,
@@ -1371,10 +1460,11 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
             raise ValueError(f"--init {init_path}: 0 keys overlap the built model "
                              f"(ckpt keys e.g. {list(sd)[:4]})")
         missing, unexpected = model.load_state_dict(loadable, strict=False)
-        return (f"warm-start ✓ .clm int4-dequant loaded {len(loadable)}/{len(model_sd)} keys "
-                f"(L={L} E={E} · round-trip BYTE-IDENTICAL · untouched={len(missing)}"
-                f" · SLW={'restored' if slw_loaded else 'absent'}"
-                f" · CLMS={clms_status})")
+        return WarmStartReport(
+            f"warm-start ✓ .clm int4-dequant loaded {len(loadable)}/{len(model_sd)} keys "
+            f"(L={L} E={E} · round-trip BYTE-IDENTICAL · untouched={len(missing)}"
+            f" · SLW={'restored' if slw_loaded else 'absent'}"
+            f" · CLMS={clms_status})")
 
     if low.endswith(".bin"):
         if not is_bytegpt:
@@ -1393,11 +1483,13 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
         if bad_missing or unexpected:
             raise ValueError(f"--init {init_path}: state_dict key mismatch "
                              f"missing={list(missing)} unexpected={list(unexpected)}")
-        return (f"warm-start ✓ ByteGPT .bin loaded ({cfg['n_layer']}L d={cfg['d']} "
-                f"block={cfg['block']}) missing={list(missing)} unexpected={list(unexpected)}")
+        return WarmStartReport(
+            f"warm-start ✓ ByteGPT .bin loaded ({cfg['n_layer']}L d={cfg['d']} "
+            f"block={cfg['block']}) missing={list(missing)} unexpected={list(unexpected)}")
 
     if low.endswith(".pt") or low.endswith(".pth"):
         ck = torch.load(init_path, map_location="cpu", weights_only=False)
+        is_resume = isinstance(ck, dict) and ck.get("schema") == RESUME_SCHEMA
         sd = ck.get("model", ck) if isinstance(ck, dict) else ck
         model_sd = model.state_dict()
         # per-key HARD shape guard (H_247) — reject any shape-mismatched overlap.
@@ -1415,8 +1507,14 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
             raise ValueError(f"--init {init_path}: 0 keys overlap the built model — "
                              f"wrong arch/config? (ckpt keys e.g. {list(sd)[:4]})")
         missing, unexpected = model.load_state_dict(loadable, strict=False)
-        return (f"warm-start ✓ .pt loaded {len(loadable)}/{len(model_sd)} keys "
-                f"(untouched={len(missing)} extra-in-ckpt={len(sd) - len(loadable)})")
+        resume = None
+        if is_resume:
+            resume = {k: v for k, v in ck.items() if k != "model"}
+        return WarmStartReport(
+            f"warm-start ✓ .pt loaded {len(loadable)}/{len(model_sd)} keys "
+            f"(untouched={len(missing)} extra-in-ckpt={len(sd) - len(loadable)}"
+            f" · {'exact resume pending' if is_resume else 'legacy weights only'})",
+            resume=resume)
 
     raise ValueError(f"--init {init_path}: unknown extension — expected .bin (ByteGPT engine) "
                      f"or .pt/.pth (torch state_dict).")
@@ -3581,10 +3679,13 @@ def main():
     ap.add_argument("--ckpt-every", type=int, default=0,
                     help="0=final .clm only; N=every N steps dump <out>.step<N>.clm "
                          "(step-window multiplex — 1 run yields 2000/4000/… checkpoints, "
-                         "train-py-4 isolation) AND a rolling <out>.resume.pt. The .clm is "
-                         "quantized and --init refuses it, so the .pt is what makes a killed "
-                         "long run restartable: `--init <out>.resume.pt`. Set this on any "
-                         "multi-hour fire (train-py-7).")
+                         "train-py-4 isolation) AND a rolling <out>.resume.pt containing model, "
+                         "optimizer, completed step, and RNG/sampler state. Resume it with "
+                         "`--init <out>.resume.pt`; the requested --steps remains the original "
+                         "absolute endpoint. Set this on any multi-hour fire (train-py-7).")
+    ap.add_argument("--stop-after-ckpt", action="store_true",
+                    help="exit cleanly immediately after the first --ckpt-every boundary; used to "
+                         "prove process-level recovery without changing the requested endpoint")
     ap.add_argument("--out", default="")
     ap.add_argument("--ckpt-out", default="")
     ap.add_argument("--gauges-out", default="")
@@ -4155,10 +4256,12 @@ def main():
     # ── warm-start (`--init`): load a base ckpt into the freshly-built model. Done AFTER
     #    the full architecture is built (tlora/mitosis installed) so state_dict keys line up;
     #    strict=False tolerates lever-only keys (tlora/mito) absent from a plain-trunk base.
+    resume_payload = None
     if a.init:
         expect_cfg = ({"vocab": V, "d": d, "n_layer": L, "n_head": bg_n_head, "block": seq_len}
                       if is_bytegpt else {"d": d, "L": L, "E": emax})
         report = _warm_start(model, a.init, is_bytegpt, expect_cfg)
+        resume_payload = getattr(report, "resume", None)
         model.to(device)
         p0(f"  [--init] {report}", flush=True)
 
@@ -4408,6 +4511,38 @@ def main():
     slp_gen = torch.Generator().manual_seed(int(a.seed) ^ 0x9840) if slp is not None else None
     slp_replay = []                    # FIFO of (cell, start) specs consumed while awake
 
+    # Exact recovery is restored only after every optimizer/sampler object exists. `steps` is
+    # deliberately excluded: a checkpoint made against the original endpoint resumes toward that
+    # same endpoint, while a legacy weights-only warm start begins a new run at step 1.
+    run_recipe = {
+        "arch": a.arch, "d": d, "L": L, "e0": e0, "emax": emax,
+        "seed": a.seed, "seq_len": seq_len, "batch_size": a.batch_size,
+        "corpus": list(a.corpus), "store_bridge": a.store_bridge,
+        "store_batch": a.store_batch, "store_win": a.store_win,
+        "store_addr_weight": a.store_addr_weight, "freeze_trunk": bool(a.freeze_trunk),
+        "trunk_norm": a.trunk_norm, "clms_dual": bool(a.clms_dual),
+        "store_val_center": bool(a.store_val_center), "bf16": bool(a.bf16),
+        "sample": a.sample,
+    }
+    resume_generators = {
+        "corpus": gen, "validation": val_gen, "objective": obj_gen,
+        "store": sb_gen, "ideation": idl_gen, "sleep": slp_gen,
+    }
+    resume_step = 0
+    resume_digest = ""
+    if resume_payload is not None:
+        saved_recipe = resume_payload.get("recipe")
+        if saved_recipe != run_recipe:
+            raise ValueError(
+                "resume recipe differs from checkpoint; exact recovery refuses changed data, "
+                f"seed, batch, architecture, or CLMS settings\nsaved={saved_recipe}\nrun={run_recipe}")
+        resume_step, resume_digest = _restore_resume_state(
+            resume_payload, core_model, opt, resume_generators, device)
+        if resume_step >= steps:
+            raise ValueError(f"resume completed_step={resume_step} must be below --steps={steps}")
+        p0(f"  [exact-resume] state digest {resume_digest} verified · completed={resume_step} "
+           f"· next={resume_step + 1} · endpoint={steps}", flush=True)
+
     def get_batch(step):
         if cells:
             # ── H_9840: SLEEP step ⇒ rehearse the wake buffer instead of drawing fresh corpus.
@@ -4593,14 +4728,34 @@ def main():
     #   Without the .pt an interrupted long run is unrecoverable — a killed 13h fire
     #   restarts from step 0 (N2 2026-07-13: 17h of GPU lost across two kills, one to a
     #   pod stop that wiped /workspace, one to earlyoom).
-    def _write_pt(out_path):
+    def _write_pt(out_path, completed_step):
         sd = {k: v.detach().cpu() for k, v in core_model.state_dict().items()}
         if jamo_head:
             for k, v in jamo_head.state_dict().items():
                 sd[f"_jamo_head.{k}"] = v.detach().cpu()
-        torch.save(sd, out_path)
+        optimizer_state = opt.state_dict()
+        rng_state = {
+            "torch_cpu": torch.get_rng_state(),
+            "torch_cuda": (torch.cuda.get_rng_state_all()
+                           if str(device).startswith("cuda") else []),
+            "python": random.getstate(),
+            "generators": {name: (generator.get_state() if generator is not None else None)
+                           for name, generator in resume_generators.items()},
+        }
+        state_digest = resume_state_digest(sd, optimizer_state, completed_step, rng_state)
+        checkpoint = {
+            "schema": RESUME_SCHEMA,
+            "model": sd,
+            "optimizer": optimizer_state,
+            "completed_step": int(completed_step),
+            "endpoint_steps": int(steps),
+            "recipe": run_recipe,
+            "rng": rng_state,
+            "state_digest": state_digest,
+        }
+        torch.save(checkpoint, out_path)
         print(f"  torch ckpt -> {out_path} ({os.path.getsize(out_path)} bytes · "
-              f"resume with --init)", flush=True)
+              f"exact resume at step {completed_step} · state={state_digest})", flush=True)
 
     # ── train loop ───────────────────────────────────────────────────────────
     model.train()
@@ -4758,22 +4913,28 @@ def main():
         p0(f"  [imagination] H_9841 lane ON — ratio={a.imagination_replay:g} "
            f"every={a.reconsolidate_every} vadapt_on_replay={a.vadapt_on_replay} "
            f"select={a.imagination_select} (p5 invariant watch armed)", flush=True)
-    for step in range(1, steps + 1):
+    for step in range(resume_step + 1, steps + 1):
         # --ckpt-every: dump an intermediate ckpt of the state AFTER (step-1) updates
         # (step-window multiplex — one run yields 2000/4000/… checkpoints, no re-train).
         # §6 rank-0-only intermediate serialize on the UNWRAPPED core_model; barrier AFTER the
         # write (nothing to protect before) so non-zero ranks don't race into the next step's
         # collective while rank 0 serializes a 303M .clm.
-        if a.ckpt_every > 0 and a.out and step > 1 and (step - 1) % a.ckpt_every == 0:
+        if (a.ckpt_every > 0 and a.out and step > 1 and
+                (step - 1) % a.ckpt_every == 0 and (step - 1) > resume_step):
             if rank == 0:
                 _write_clm(f"{a.out}.step{step - 1}{_ck_ext}")
-                # …and the RESUMABLE twin: the .clm above is quantized and --init refuses
-                # it, so a .clm-only intermediate cannot restart a killed run. Overwrite a
-                # single rolling .pt (not per-step) — 13h of GPU is worth ~1.4GB on disk.
-                _write_pt(f"{a.out}.resume.pt")
+                # …and the exact-resume twin. Overwrite one rolling file: model, optimizer,
+                # completed step and every RNG/sampler stream are one atomic trajectory state.
+                _write_pt(f"{a.out}.resume.pt", step - 1)
                 model.train()
             if ddp_on:
                 dist.barrier()
+            if a.stop_after_ckpt:
+                p0(f"  [stop-after-ckpt] clean process boundary after step {step - 1}; "
+                   f"resume with --init {a.out}.resume.pt --steps {steps}", flush=True)
+                if ddp_on:
+                    dist.destroy_process_group()
+                return 0
         if savant_on:
             inh = savant_inhibition(step, steps, i0, i_floor, latch)
             wd = inhibition_to_wd(inh); dp = inhibition_to_dropout(inh)
@@ -5042,9 +5203,9 @@ def main():
         # survive serialization at all (convergence serialize-py-1, measured in H_9313). Without a
         # .pt beside it there is no way to even SEE that, let alone recover the run.
         if a.ckpt_out:
-            _write_pt(a.ckpt_out)
+            _write_pt(a.ckpt_out, steps)
         elif a.out:
-            _write_pt(f"{a.out}.pt")
+            _write_pt(f"{a.out}.pt", steps)
 
         # ── QUANT-SWALLOW guard (serialize-py-1) ─────────────────────────────────
         # The failure this catches is silent and it cost H_9313 a full 4-run battery: training
