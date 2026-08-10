@@ -130,6 +130,13 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > H100 회귀 시험은 16/16 통과했고 Vast.ai 인스턴스는 삭제했다(활성 임대 0, 추정 비용
 > `$3.4527`). 전체 결과:
 > `state/store_causality_7b_serving_2026_08_11/result.json`.
+>
+> **7B rho-form 복구 관문(2026-08-11 등록):** 실패한 저장소 체크포인트는 동결된
+> step 2,000/3,500 WIP 언어 trunk를 사용했으므로, 변경하지 않은 canonical rho-form 경로에서
+> 먼저 그 부모와 저장소 체크포인트를 비교한 뒤 호환되는 고정 step-3,500 최종 trunk를 측정한다.
+> `rho-form >=0.70`일 때만 기존 2,200-step compose-2 CLMS 학습과 pair-oracle/인과/서빙 시험을
+> 실행한다. 평가기·자료·시드·decode 옵션·문턱값은 변경하지 않는다. 전체 규약:
+> `state/store_causality_7b_rho_form_recovery_2026_08_11/README.md`.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /

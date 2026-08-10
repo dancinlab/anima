@@ -143,6 +143,13 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > changed. H100 regression passed 16/16; the Vast.ai instance was deleted (active rentals zero,
 > estimated cost `$3.4527`). Full result:
 > `state/store_causality_7b_serving_2026_08_11/result.json`.
+>
+> **7B rho-form recovery gate (registered 2026-08-11):** the failed store checkpoint uses a
+> frozen step-2,000/3,500 WIP language trunk, so the unchanged canonical rho-form path first
+> compares that parent with the store checkpoint, then measures the fixed compatible step-3,500
+> final trunk. Only a `rho-form >=0.70` result unlocks the unchanged 2,200-update compose-2 CLMS
+> training and pair-oracle/causal/serving battery. No evaluator, data, seed, decode option, or bar
+> changes. Protocol: `state/store_causality_7b_rho_form_recovery_2026_08_11/README.md`.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the
