@@ -63,6 +63,13 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > pair-oracle/정상/복구 1.0000, 세 대조군 0.4766 이하로 재현됐다. 이전 실패는
 > `state/store_causality_repro_2026_08_10`에 보존했고, 최종 기록은
 > `state/store_causality_canonical_2026_08_10/result.json`에 있다.
+>
+> **7B 배포 전망(2026-08-10):** 실험용 7B 스테이징은 **1~2주**, 프로덕션은 **4~8주**로
+> 예상한다. 이는 출시 확정일이 아니라, 더 많은 시드 반복·7B 스테이징 학습과 메모리/지연 측정·
+> 장시간 안정성 검증을 모두 통과한다는 조건부 예상이다. 커밋 `87b504489`는 `origin/main`에
+> 푸시됐고, Vast.ai에서 회귀 시험 17/17·Torch↔NumPy 패리티·legacy lane-8 호환을 확인한 뒤
+> 모든 인스턴스를 제거했다(추정 비용 $0.26). 채팅 런타임 코드는 바뀌지 않아 재배포하지 않았으며,
+> 사용자 소유 `ING.jsonl`과 `stream_mi.json`은 보존했다.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /

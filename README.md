@@ -69,6 +69,15 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > at or below 0.4766. The failed run remains recorded in
 > `state/store_causality_repro_2026_08_10`; the closing record is
 > `state/store_causality_canonical_2026_08_10/result.json`.
+>
+> **7B deployment outlook (2026-08-10):** an experimental 7B staging deployment is estimated at
+> **1–2 weeks**, and production at **4–8 weeks**. These are conditional estimates, not release
+> commitments. The remaining gates are broader multi-seed repetition, 7B staging training with
+> measured memory and latency, and long-running stability validation. Commit `87b504489` is pushed
+> to `origin/main`; the Vast.ai runs passed 17/17 regressions with Torch↔NumPy parity and legacy
+> lane-8 compatibility, then all instances were removed (estimated cost: $0.26). Chat runtime code
+> was unchanged, so no chat redeployment was performed. User-owned `ING.jsonl` and `stream_mi.json`
+> remain preserved.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the

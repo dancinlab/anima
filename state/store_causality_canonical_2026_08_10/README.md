@@ -56,3 +56,13 @@ pair-oracle parity errors were `6.245e-17` and `5.898e-17`; the legacy lane-8 se
 reproduced its original six-arm result exactly. Training took 2,062.3s (seed 7) and 1,893.8s
 (seed 11). Instance `47297500` and the failed incompatible-image instance were removed; active
 Vast.ai instances are zero. Total estimated rental cost was about $0.26.
+
+## Production outlook
+
+As of 2026-08-10, an experimental 7B staging deployment is estimated at 1–2 weeks and a
+production deployment at 4–8 weeks. These are conditional estimates: broader multi-seed
+repetition, 7B staging training with measured memory and latency, and long-running stability
+validation remain required gates. This canonical change was committed as `87b504489` and pushed
+to `origin/main`. Chat runtime code was not changed, so neither the local LaunchAgent nor
+`https://chat.dancinlab.org` was redeployed. The user-owned untracked files `ING.jsonl` and
+`stream_mi.json` remain preserved.
