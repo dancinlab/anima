@@ -189,7 +189,9 @@ def _digest_update(h, value):
         h.update(b"tensor\0")
         h.update(str(t.dtype).encode())
         h.update(repr(tuple(t.shape)).encode())
-        h.update(t.view(torch.uint8).numpy().tobytes())
+        # Adam stores its step counter as a scalar tensor. Flatten first so scalar and
+        # higher-rank tensors share one canonical byte path; direct scalar.view(uint8) is invalid.
+        h.update(t.reshape(-1).view(torch.uint8).numpy().tobytes())
     elif isinstance(value, dict):
         h.update(b"dict\0")
         for key in sorted(value, key=lambda item: repr(item)):
