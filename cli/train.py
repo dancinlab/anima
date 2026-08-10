@@ -4203,6 +4203,10 @@ def main():
         p0(f"  mps: Apple Metal backend torch={torch.__version__}", flush=True)
 
     torch.manual_seed(a.seed)
+    # Exact process recovery includes Python's global RNG alongside Torch/CUDA and the named
+    # samplers. Seed it canonically even when today's active recipe uses only dedicated Random
+    # instances; otherwise two fresh processes begin with unrelated OS-derived Python states.
+    random.seed(a.seed)
 
     if is_bytegpt:
         # ByteGPT block = the context window; use seq_len as the positional block size so a
