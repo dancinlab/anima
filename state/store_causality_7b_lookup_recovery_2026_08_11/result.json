@@ -1,0 +1,209 @@
+{
+  "schema": "anima-store-causality-7b-lookup-recovery/v1",
+  "date": "2026-08-11",
+  "verdict": "SUPPORTED-CAUSAL",
+  "production_deployment": "BLOCKED-SERVING-THROUGHPUT",
+  "source_commits": {
+    "registered_baseline": "137dd0ec30cdc5173c75ac5917f91b4248b3f86e",
+    "implementation": "ef79eb0e371ee31b4218c23a0d99304d4d9e3a9f"
+  },
+  "root_cause": {
+    "component": "core/clms.py canonical lane-10 address query",
+    "description": "The store key represented the mean of every byte in an entity, while the query projected only the final-byte trunk state. The mismatched unit overfit seen names and did not reliably address unseen spellings.",
+    "fix": "Pool each complete entity mention before the existing shared query projection in both training and NumPy runtime. Mention starts are derived from existing mention-end coordinates and entity byte lengths; no target, polarity, gold answer, new row, lane, or evaluator enters the operator."
+  },
+  "fixed_inputs": {
+    "seed": 7,
+    "steps": 2200,
+    "store_window": 24,
+    "store_batch": 32,
+    "store_address_weight": 1.0,
+    "freeze_trunk": true,
+    "trunk_norm": "global",
+    "value_centering": true,
+    "canonical_parity_lane": 10,
+    "dataset_repo": "dancinlab/anima-store-causality-compose2-2026-08-09",
+    "dataset_commit": "8f29c2f16f214734d9b5fa4010c57c48fff3979e",
+    "source_model_repo": "dancinlab/clm-7b-undertrained-step3500",
+    "source_model_commit": "c3c6d127545ccde6737fb96f99b51a2ac581d9e9",
+    "source_clm_sha256": "5e0db1371bc4ed7246ef5adcebe245c3991c053acd5fbde8107873add7853de5"
+  },
+  "diagnostic": {
+    "failed_checkpoint": {
+      "pair_oracle": 1.0,
+      "normal": 0.609375,
+      "read_a_top1": 0.703125,
+      "read_a_target_mass": 0.5497902323029069,
+      "read_b_top1": 0.5703125,
+      "read_b_target_mass": 0.4829902378142683
+    },
+    "seen_name_accuracy": 0.8125,
+    "seen_read_a_top1": 0.75,
+    "seen_read_b_top1": 0.75
+  },
+  "training": {
+    "final_step": 2200,
+    "wall_seconds": 942.8,
+    "final_batch_address_accuracy": 0.9688,
+    "final_batch_store_accuracy": 1.0,
+    "peak_gpu_mib": 34923,
+    "exact_resume_state_sha256": "7b7e0b84782384e0660b750f8eb94d4b573cb36a91d6a380c373fba46240ca9b"
+  },
+  "checkpoint": {
+    "hf_repo": "dancinlab/anima-store-causality-7b-lookup-recovery-2026-08-11",
+    "hf_blob_commit": "3726f6f3237b18ec2e9398f2874946112525a9db",
+    "visibility": "private",
+    "clm_file": "compose2_dual_parity_7b_pooled_s7.clm",
+    "clm_bytes": 3541601483,
+    "clm_sha256": "215ee8f300b6fd5ab1bf3a8ac908c2ddadd524df695c86bb6f77d4fa3ee1953f",
+    "clm_decodable": true,
+    "serialized_trunk_norm": "global",
+    "exact_resume_file": "compose2_dual_parity_7b_pooled_s7.clm.pt",
+    "exact_resume_bytes": 28237557259,
+    "exact_resume_sha256": "876239d699775d64082577d1b5b8e020dfee703e9e753c6cbb6f7e2482c3c37f",
+    "hf_metadata_sha256_verified": true
+  },
+  "rho_form": {
+    "value": 1.0,
+    "bar": 0.7,
+    "self_shuffle": 0.0,
+    "self_shuffle_cap": 0.05,
+    "verdict": "PASS"
+  },
+  "causality": {
+    "measured_chance": 0.5,
+    "bars": {
+      "pair_oracle": 0.9,
+      "positive": 0.75,
+      "control": 0.56
+    },
+    "arms": {
+      "pair_oracle": 1.0,
+      "normal": 0.7734375,
+      "drop_a": 0.46875,
+      "drop_b": 0.4453125,
+      "shuffle": 0.5234375,
+      "recovery": 0.7734375
+    },
+    "normal_dual_address": {
+      "read_a_top1": 0.6875,
+      "read_a_target_mass": 0.5299047263592528,
+      "read_b_top1": 0.6484375,
+      "read_b_target_mass": 0.4896693738617296
+    },
+    "shuffle_dual_address": {
+      "read_a_top1": 0.0625,
+      "read_a_target_mass": 0.07242532536386313,
+      "read_b_top1": 0.0390625,
+      "read_b_target_mass": 0.06430621431448594
+    },
+    "shuffle_integrity": true,
+    "recovery_exact": true,
+    "verdict": "SUPPORTED-CAUSAL"
+  },
+  "serving": {
+    "cold_ready_seconds": 11.027361154556274,
+    "cold_ready_bar_seconds_max": 300,
+    "http": {
+      "requests": 100,
+      "failures": 0,
+      "p95_ms": 0.6352132186293602,
+      "bar_p95_ms_max": 250,
+      "pass": true
+    },
+    "websocket": {
+      "frames": 100,
+      "failures": 0,
+      "recipients_per_frame": 3,
+      "p95_ms": 0.540819950401783,
+      "bar_p95_ms_max": 500,
+      "pass": true
+    },
+    "generation": {
+      "emissions": 20,
+      "engine_bytes_per_emission": 32,
+      "p50_wall_seconds": 17.744450598023832,
+      "p95_wall_seconds": 18.14016451081261,
+      "min_engine_bytes_per_second": 1.762520789485348,
+      "mean_engine_bytes_per_second": 1.794815065738487,
+      "bar_p95_wall_seconds_max": 45,
+      "bar_bytes_per_second_min": 2.0,
+      "pass": false
+    },
+    "memory": {
+      "peak_gpu_mib": 54733,
+      "peak_gpu_gib": 53.4501953125,
+      "bar_gpu_gib_max": 70,
+      "pass": true
+    },
+    "soak": {
+      "requested_seconds": 1800,
+      "elapsed_seconds": 1802.7711594570428,
+      "probes": 360,
+      "failures": 0,
+      "http_p95_ms": 2.2183782421052456,
+      "websocket_p95_ms": 1.007655169814825,
+      "warm_rss_kib": 1144752,
+      "end_rss_kib": 1146076,
+      "rss_growth_percent": 0.11565736823372819,
+      "warm_gpu_mib": 54733,
+      "end_gpu_mib": 54733,
+      "gpu_growth_percent": 0.0,
+      "bar_growth_percent_max": 5.0,
+      "pass": true
+    },
+    "rollback": {
+      "clm_stopped_anima_alive": false,
+      "fallback": "SubstrateAKIDA numpy software fallback",
+      "recovery_seconds": 1.4010276794433594,
+      "recovered_anima_alive": true,
+      "two_user_broadcast_probe": "PASS",
+      "bar_seconds_max": 120,
+      "pass": true
+    },
+    "verdict": "FAIL-THROUGHPUT"
+  },
+  "qa": {
+    "vast_h100_regression": {
+      "passed": 17,
+      "failed": 0
+    },
+    "torch_numpy_parity_max_abs": 4.5102810375396984e-17,
+    "pair_oracle_parity_max_abs": 3.469446951953614e-17,
+    "local_regression": {
+      "passed": 8,
+      "failed": 0,
+      "skipped": 2,
+      "skip_reason": "Torch/GPU paths; both passed on Vast.ai H100."
+    },
+    "python_compile": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "infrastructure": {
+    "primary_vast_instance_id": 47397828,
+    "gpu": "H100 PCIe 80GB",
+    "fractional_instance_excluded": {
+      "instance_id": 47396721,
+      "reason": "The offer exposed gpu_frac=0.125 despite a one-GPU request; the fixed-condition run was stopped before training and repeated on a full GPU."
+    },
+    "vast_final_billed_cost_usd": 5.133,
+    "instance_destroyed": true,
+    "active_vast_instances_after_teardown": 0,
+    "model_downloaded_to_mini": false,
+    "production_runtime_changed": false,
+    "live_verification": {
+      "broker_launch_agent_running": true,
+      "https_status": 200,
+      "websocket_hello_received": true,
+      "anima_alive": false,
+      "note": "Read-only verification of the unchanged production runtime; no deployment or restart was performed."
+    },
+    "ing_jsonl_preserved": true,
+    "stream_mi_json_preserved": true
+  },
+  "remaining_issues": [
+    "Minimum 32-byte generation throughput on the fixed H100 PCIe run was 1.763 bytes/s, below the unchanged 2.0 bytes/s production bar.",
+    "Production deployment remains blocked; the live broker and LaunchAgent were not changed.",
+    "The unchanged live broker is reachable, but its pre-existing production participant reports anima_alive=false."
+  ]
+}

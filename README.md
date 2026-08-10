@@ -169,6 +169,16 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > Torch↔NumPy parity, then corrects only a proven shared-path cause and repeats the unchanged
 > rho-form → pair-oracle → five-arm causal order. Full protocol:
 > `state/store_causality_7b_lookup_recovery_2026_08_11/README.md`.
+>
+> **7B lookup recovery result (2026-08-11):** the shared lane now pools each complete entity
+> mention before the existing query projection, matching the whole-entity store key without new
+> data, targets, lanes, or evaluator logic. The fixed run passed rho-form `1.00`, pair-oracle
+> `1.0000`, normal/recovery `0.7734`, and every causal control (`0.4453`–`0.5234`), yielding
+> `SUPPORTED-CAUSAL`. Cold start, HTTP/WS, VRAM, 30-minute soak, and AKIDA rollback passed.
+> Production remains blocked because minimum H100 PCIe generation throughput was `1.763 bytes/s`
+> against the frozen `2.0` bar; no result-dependent retry or threshold change was made. Artifacts
+> remain private under HF `dancinlab`. Full evidence:
+> `state/store_causality_7b_lookup_recovery_2026_08_11/result.json`.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the

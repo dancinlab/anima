@@ -154,6 +154,15 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > Vast.ai 실행에서 먼저 monitor-only A/B telemetry와 Torch↔NumPy parity를 추가하고, 증명된 공용
 > 흐름 원인만 수정한 뒤 기존 rho-form → pair-oracle → 5단계 인과 순서를 그대로 반복한다. 전체 규약:
 > `state/store_causality_7b_lookup_recovery_2026_08_11/README.md`.
+>
+> **7B lookup 복구 결과(2026-08-11):** 공용 lane이 기존 query projection 전에 각 엔티티의
+> 전체 mention을 pooling하도록 수정해, 새 자료·target·lane·평가기 없이 전체-엔티티 store key와
+> 표현 단위를 맞췄다. 고정 실행은 rho-form `1.00`, pair-oracle `1.0000`, 정상/복구 `0.7734`,
+> 모든 인과 대조군(`0.4453`–`0.5234`)을 통과해 `SUPPORTED-CAUSAL` 판정을 받았다. cold start,
+> HTTP/WS, VRAM, 30분 soak, AKIDA rollback도 통과했다. 다만 H100 PCIe의 최저 생성 처리량이
+> 고정 기준 `2.0 bytes/s`에 `1.763 bytes/s`여서 프로덕션은 계속 차단한다. 결과에 따른 재시도나
+> 기준 변경은 하지 않았고 artifact는 HF `dancinlab` 비공개 저장소에만 보관한다. 전체 근거:
+> `state/store_causality_7b_lookup_recovery_2026_08_11/result.json`.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /

@@ -1,6 +1,6 @@
 # Compose-2 CLMConvMoE 7B lookup recovery gate — 2026-08-11
 
-Status: REGISTERED — awaiting fixed-condition Vast.ai diagnosis and execution.
+Status: SUPPORTED-CAUSAL — lookup recovered; production remains blocked by serving throughput.
 
 This gate follows the honest `FALSIFIED` result in
 `state/store_causality_7b_rho_form_recovery_2026_08_11`. It keeps the compatible step-3,500 trunk,
@@ -78,3 +78,33 @@ before applying the shared `W_q`. Mention ends already exist in the frozen manif
 derived canonically from each entity's byte length. No target slot, polarity, gold answer, new row,
 or evaluator value enters the pooling operator. The store key and mention query now share the same
 whole-entity unit.
+
+## Fixed-condition result
+
+The exact seed-7, 2,200-update recovery run completed on one full H100 PCIe. The serialized model
+kept the source's global normalization and passed the unchanged canonical form gate at `1.00`
+(self-shuffle `0.00`). Pair-oracle then passed at `1.0000`, unlocking the complete battery:
+
+- normal `0.7734` -> clue A removed `0.4688` -> clue B removed `0.4453` -> address shuffled
+  `0.5234` -> exact recovery `0.7734`;
+- normal/recovery exceed the frozen `0.75` bar; all controls remain below `0.56`; shuffle integrity
+  and exact recovery passed; the engine verdict is `SUPPORTED-CAUSAL`;
+- live normal read-A/read-B top-1 improved to `0.6875`/`0.6484`; the pair oracle remained
+  `1.0000`/`1.0000`, while shuffle reduced target top-1 to `0.0625`/`0.0391`.
+
+The unlocked staging battery passed cold readiness (`11.03 s`), HTTP 100/100 (p95 `0.635 ms`),
+three-recipient WebSocket fan-out 100/100 (p95 `0.541 ms`), serving VRAM (`54,733 MiB`), a
+30-minute soak (360 probes, zero failures, RSS/GPU growth `0.116%`/`0%`), and CLM-to-AKIDA
+rollback (`1.401 s` plus two-user broadcast). Generation latency passed at p95 `18.140 s`, but the
+minimum fixed 32-byte throughput was `1.763 bytes/s`, below the unchanged `2.0 bytes/s` production
+bar on this H100 PCIe. No faster-GPU retry or bar adjustment was made. The causal result is closed,
+but production deployment remains blocked by serving throughput; the live broker and LaunchAgent
+were not changed.
+
+The checkpoint and exact-resume state are retained only in the private HF model repository
+`dancinlab/anima-store-causality-7b-lookup-recovery-2026-08-11`. H100 regression passed `17/17`;
+the local CPU-capable subset passed `8/8` with two Torch/GPU paths skipped. Full machine-readable
+evidence is in `result.json`. Both Vast.ai instances were deleted after verified upload (active
+rentals `0`, final billed total `$5.133`, including the excluded fractional offer). The unchanged
+live broker LaunchAgent remained running; read-only production verification returned HTTP 200 and
+a WebSocket `hello`. Its pre-existing participant state remains `anima_alive=false`.
