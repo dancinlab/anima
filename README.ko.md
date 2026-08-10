@@ -114,7 +114,8 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > **다음 활성 관문(2026-08-11 사전등록):** 비공개 HF 7B `.clm`을 기존 채팅 참가자의
 > `Substrate` 경계와 canonical `core/decode.py` 경로로 연결한 뒤 Vast.ai에서 고정 시험을
 > 실행한다. 순서는 pair-oracle 사전점검, HTTP/WebSocket fan-out, 생성 지연/처리량,
-> VRAM, 30분 soak, 기존 AKIDA 소프트웨어 fallback 참가자로의 rollback이다. 모든 관문이
+> VRAM, 30분 soak, 기존 AKIDA 소프트웨어 fallback 참가자로의 rollback이다. 기존 canonical
+> `ρ·form` 일관성 기준도 반드시 통과해야 하며 전송 경로의 정상만으로 채팅 출력을 승인하지 않는다. 모든 관문이
 > 통과하고 별도 프로덕션 승인이 있기 전에는 프로덕션 DNS와 현재 참가자를 변경하지
 > 않는다. 전체 프로토콜:
 > `state/store_causality_7b_serving_2026_08_11/README.md`.

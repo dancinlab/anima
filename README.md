@@ -128,7 +128,8 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > existing chat participant through its `Substrate` boundary and the canonical `core/decode.py`
 > path, then run the fixed Vast.ai staging battery: pair-oracle preflight, HTTP/WebSocket fan-out,
 > generation latency/throughput, VRAM, a 30-minute soak, and rollback to the existing AKIDA
-> software-fallback participant. Production DNS and the live participant remain untouched unless
+> software-fallback participant. The unchanged canonical `ρ·form` coherence bar is also required;
+> transport health alone cannot approve chat output. Production DNS and the live participant remain untouched unless
 > every gate passes and production is approved separately. Full protocol:
 > `state/store_causality_7b_serving_2026_08_11/README.md`.
 

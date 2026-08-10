@@ -48,6 +48,12 @@ allowed. Infrastructure failure may be rerun only with the same inputs and bars.
    software-fallback substrate without changing broker code, recover `anima_alive=true`, and pass
    HTTP/WS probes within 120 seconds.
 
+Chat output is not approved from transport health alone. The unchanged canonical `ρ·form` reach
+measurement in `anima-py evaluate` must also pass its existing frozen coherence bar (at least four
+of five continuations at KWR 0.50 or above). This is recorded as a production gate, not replaced by
+a new serving scorer. A `ρ·form` failure blocks production but does not suppress the transport and
+performance measurements needed to diagnose the staging runtime.
+
 The 7B causal instrument is checked once before serving measurements using the existing
 `anima-py evaluate --store-causality` path. Pair-oracle below 0.90 stops the run before serving
 interpretation. A passing pair-oracle does not rerun or reinterpret the already closed causal
@@ -55,7 +61,8 @@ battery.
 
 ## Production decision
 
-Every functional, performance, soak, and rollback bar must pass before production can be approved.
+Every functional, performance, soak, rollback, and existing `ρ·form` bar must pass before production
+can be approved.
 Failure is recorded unchanged in this README and `result.json`; production remains blocked. The
 production LaunchAgent and `https://chat.dancinlab.org` are restarted or changed only after a
 separate explicit production approval. This staging gate itself ends by deleting the Vast.ai
