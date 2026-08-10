@@ -251,6 +251,7 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
             # Symmetric by construction, because the target function (xor) is symmetric — an
             # order-sensitive combiner could pass by memorising which mention came first.
             ra, rb = store.get("mention_rows", (None, None))
+            mention_spans = store.get("mention_spans")
             ro = store.get("operator_row")
             v_dtype = yn.dtype
             if ra is None or rb is None or ro is None:
@@ -264,6 +265,19 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
             _t0 = store.get("target_slot")
             _tg = (_t0, store.get("target_slot_b", _t0) if store.get("target_slot_b") is not None else _t0)
             for _i, rr in enumerate((int(ra), int(rb))):
+                if mention_spans is None:
+                    mention_state = yn[rr]
+                    span = (rr, rr)
+                else:
+                    span = tuple(int(x) for x in mention_spans[_i])
+                    if not (0 <= span[0] <= span[1] < len(yn)):
+                        raise ValueError("store_apply: dual mention span %r is outside T=%d"
+                                         % (span, len(yn)))
+                    # K is the mean of every byte in an entity name. Pool the matching complete
+                    # mention on the query side too; a single final-byte state makes the learned
+                    # random key projection depend on incidental prefix context and fails unseen
+                    # spellings at scale.
+                    mention_state = yn[span[0]:span[1] + 1].mean(axis=0)
                 if oracle:
                     # C0-e for a TWO-read lane: hand each read its own address. Without this the
                     # positive control silently measures the ordinary path (the oracle argument was
@@ -274,7 +288,7 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
                     a_m = np.zeros(n_slot, dtype=v_dtype)
                     a_m[int(_tg[_i])] = 1.0
                 else:
-                    q_m = yn[rr] @ clms["W_q"]
+                    q_m = mention_state @ clms["W_q"]
                     a_m = _softmax(q_m @ K.T * scale)
                 if audit is not None:
                     # The answer-row distribution appended above is not consumed by a dual lane.
@@ -287,6 +301,7 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
                     audit[-1].setdefault("dual_reads", []).append({
                         "read": "a" if _i == 0 else "b",
                         "row": int(rr),
+                        "span": [int(span[0]), int(span[1])],
                         "argmax": int(np.argmax(a_m)),
                         "target": int(_target) if _target is not None else -1,
                         "a_target": (float(a_m[int(_target)])
@@ -685,8 +700,9 @@ if _HAS_TORCH:
             if self.vonly:
                 g = _torch.zeros_like(g)                                  # H_9885: answer must ride v alone
             if self.dual:
-                # H_9888 — the caller supplies the trunk state AT each mention; the SAME W_q reads
-                # both (no new query parameters), and the two values are combined symmetrically.
+                # H_9888 — the caller supplies the canonical state pooled across each complete
+                # mention; the SAME W_q reads both (no new query parameters), and the two values
+                # are combined symmetrically.
                 # The dual attention logits are also the address-supervision surface. Previously
                 # this branch recomputed two ordinary softmaxes after `oracle_slot` had already
                 # been applied to the unused qpos read, so oracle warmup/aux and L_addr supervised

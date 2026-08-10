@@ -57,3 +57,24 @@ Models, checkpoints, and training data remain only in private Hugging Face repos
 `dancinlab`. Heavy work runs only on Vast.ai; scratch is deleted after verified HF upload. A failed
 result is recorded without serving or production deployment. `ING.jsonl` and `stream_mi.json`
 remain untouched.
+
+## Fixed diagnostic amendment
+
+The exact failed checkpoint reproduced pair-oracle `1.0000`, normal/recovery `0.6094`, clue-A
+removal `0.5469`, clue-B removal `0.4609`, and shuffle `0.4688`. The new monitor-only audit exposed
+the attentions actually consumed by lane 10: on the held-out panel read A had top-1 `0.7031` and
+target mass `0.5498`; read B had top-1 `0.5703` and target mass `0.4830`. The oracle handed both
+addresses and measured `1.0000`/`1.0000`, confirming that value/parity/readout remain intact.
+
+The existing-name `compose2_seen` diagnostic scored `0.8125`, with both read-A and read-B top-1 at
+`0.7500`. Thus second-position context alone does not explain the held-out collapse. The common
+address path instead projects one final-byte trunk state into a key that is defined as the mean of
+all bytes in the entity. At 7B this mismatched query/key unit retains seen-name identity but does
+not reliably generalize unseen spellings.
+
+The registered correction therefore keeps the same lane, tensors, data rows, loss, seed, update
+count, and evaluator, but makes both training and NumPy runtime pool the complete entity mention
+before applying the shared `W_q`. Mention ends already exist in the frozen manifests; starts are
+derived canonically from each entity's byte length. No target slot, polarity, gold answer, new row,
+or evaluator value enters the pooling operator. The store key and mention query now share the same
+whole-entity unit.

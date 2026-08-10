@@ -8077,18 +8077,28 @@ def store_run(argv, _return_result=False):
         # prompt byte p sits on row T - len(prompt) + p. Mirrors StoreBindCell's offset exactly; a
         # panel without mentions yields None and the dual lane refuses rather than guessing a row.
         _ma, _mb = it.get("mention_a"), it.get("mention_b")
+        _ea = it.get("entity")
+        _eb = it.get("entity_b", _ea)
         _op_end = prompt.find(" ") - 1
         if _ma is None or _mb is None:
             mrows = None
+            mspans = None
             operator_row = None
         else:
             _o = T - len(prompt)
             mrows = (_o + int(_ma), _o + int(_mb))
+            if not isinstance(_ea, str) or not isinstance(_eb, str) or not _ea or not _eb:
+                raise ValueError("dual store entry needs non-empty entity/entity_b for canonical spans")
+            mspans = ((mrows[0] - len(_ea) + 1, mrows[0]),
+                      (mrows[1] - len(_eb) + 1, mrows[1]))
+            if not all(0 <= start <= end < T for start, end in mspans):
+                raise ValueError("dual mention spans %r are outside T=%d" % (mspans, T))
             operator_row = _o + _op_end
             if not (0 <= operator_row < T):
                 operator_row = None
             if dual_ctrl == "collapse":
                 mrows = (mrows[0], mrows[0])          # aB := aA — one address, read twice
+                mspans = (mspans[0], mspans[0])
             elif dual_ctrl == "wrong-second":
                 # second read lands on the OTHER item's mention offset (same window geometry, wrong
                 # content). Deterministic in idx so the control is reproducible.
@@ -8098,6 +8108,9 @@ def store_run(argv, _return_result=False):
                     _r = (T - len(_ap)) + int(_am)
                     if 0 <= _r < T:
                         mrows = (mrows[0], _r)
+                        _ae = _alt.get("entity_b")
+                        if isinstance(_ae, str) and _ae:
+                            mspans = (mspans[0], (_r - len(_ae) + 1, _r))
         n_slot = len(ents)
         if len(set(ents)) != n_slot:
             dup_entities += 1                         # loud, never silent — derangement fixed-point-leak risk
@@ -8109,11 +8122,11 @@ def store_run(argv, _return_result=False):
             ents2 = [ents[perm[i]] for i in range(n_slot)]   # entities-only derange · pols/target_slot fixed
             fixed_points_total += sum(1 for i in range(n_slot) if ents2[i] == ents[i])
             store = {"entities": ents2, "pols": pols, "target_slot": tslot,
-                     "target_slot_b": tslot_b, "mention_rows": mrows,
+                     "target_slot_b": tslot_b, "mention_rows": mrows, "mention_spans": mspans,
                      "operator_row": operator_row}
         elif mode == "flip":
             store = {"entities": ents, "pols": [1 - p for p in pols], "target_slot": tslot,
-                     "target_slot_b": tslot_b, "mention_rows": mrows,
+                     "target_slot_b": tslot_b, "mention_rows": mrows, "mention_spans": mspans,
                      "operator_row": operator_row}
         elif mode == "neutral":
             rng = np.random.default_rng(ctrl_seed * 100003 + idx + 7)
@@ -8125,14 +8138,16 @@ def store_run(argv, _return_result=False):
                         + cons[int(rng.integers(0, 14))])
             store = {"entities": [_nonce() for _ in range(n_slot)], "pols": pols,
                      "target_slot": tslot, "target_slot_b": tslot_b, "mention_rows": mrows,
+                     "mention_spans": mspans,
                      "operator_row": operator_row}
         else:
             store = {"entities": ents, "pols": pols, "target_slot": tslot,
-                     "target_slot_b": tslot_b, "mention_rows": mrows,
+                     "target_slot_b": tslot_b, "mention_rows": mrows, "mention_spans": mspans,
                      "operator_row": operator_row}
         if mode == "flip":
             base = _predict({"entities": ents, "pols": pols, "target_slot": tslot,
                              "target_slot_b": tslot_b, "mention_rows": mrows,
+                             "mention_spans": mspans,
                              "operator_row": operator_row})
             flip = _predict(store)
             if base is None or flip is None:

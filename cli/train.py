@@ -1685,7 +1685,7 @@ class TrainShell(nn.Module):
         # not detach — the trunk logit is never in the answer-CE graph). The non-answer rows keep the
         # ordinary trunk LM CE (the trunk learns the prompt spelling + query formation via yn_q).
         if sb is not None:
-            x_s, y_s, K, pols, tgt, tgt_b, mrows = sb           # rows: A, B, operator
+            x_s, y_s, K, pols, tgt, tgt_b, mrows = sb  # columns: A span, B span, operator
             out_s = model(x_s)                                  # (targets None → CE assembled here, fp32)
             logits_s = out_s["logits"].float()                 # (Bs, V, T)
             pen_s = out_s["pen_trunk"].float()                 # (Bs, d, T) pre-slot trunk penultimate
@@ -1710,19 +1710,21 @@ class TrainShell(nn.Module):
             else:
                 _fy = _pf.float()[:, :, Ts - 1]
                 yn_fresh = _fy.detach() if sb_tap_grad != "shared" else _fy
-            # H_9888 dual read: tap the trunk AT each mention. gather along T with the per-item rows
-            # the cell computed; a lane that needs them and did not get them raises rather than
-            # silently reading the answer row twice.
+            # H_9888 dual read: pool the trunk across each complete entity mention. Store keys are
+            # means over every entity byte, so the query side must use the same canonical unit;
+            # taking only the final-byte state makes addressing depend on incidental prefix context.
             yn_a = yn_b = yn_op = None
             if getattr(model.clms, "dual", False):
                 if int(mrows.min()) < 0:
                     raise SystemExit("[store-bridge] --clms-dual needs a compose panel carrying "
                                      "mention_a/mention_b (build with `corpus storebind --compose 2`)")
-                _ia = mrows[:, 0].view(Bs, 1, 1).expand(Bs, pen_s.shape[1], 1)
-                _ib = mrows[:, 1].view(Bs, 1, 1).expand(Bs, pen_s.shape[1], 1)
-                _io = mrows[:, 2].view(Bs, 1, 1).expand(Bs, pen_s.shape[1], 1)
-                yn_a = pen_s.gather(2, _ia).squeeze(-1)         # (Bs,d) trunk state at mention A
-                yn_b = pen_s.gather(2, _ib).squeeze(-1)         # (Bs,d) trunk state at mention B
+                _pos = torch.arange(Ts, device=pen_s.device).view(1, Ts)
+                def _pool_span(start, end):
+                    _mask = ((_pos >= start.view(Bs, 1)) & (_pos <= end.view(Bs, 1))).to(pen_s.dtype)
+                    return (pen_s * _mask.unsqueeze(1)).sum(dim=2) / _mask.sum(dim=1, keepdim=True)
+                yn_a = _pool_span(mrows[:, 0], mrows[:, 1])      # (Bs,d), complete mention A
+                yn_b = _pool_span(mrows[:, 2], mrows[:, 3])      # (Bs,d), complete mention B
+                _io = mrows[:, 4].view(Bs, 1, 1).expand(Bs, pen_s.shape[1], 1)
                 yn_op = pen_s.gather(2, _io).squeeze(-1)        # (Bs,d) causal operator state
             store_logits, att = model.clms(yn_q, K, pols, oracle_slot=osl,
                                            oracle_slot_b=osl_b, need_att=True,
@@ -1970,15 +1972,20 @@ class StoreBindCell:
             _ma = int(r.get("mention_a", -1)); _mb = int(r.get("mention_b", -1))
             m_a = (_off + _ma) if _ma >= 0 else -1
             m_b = (_off + _mb) if _mb >= 0 else -1
+            _ea = r.get("entity")
+            _eb = r.get("entity_b", _ea)
+            m_a0 = (m_a - len(_ea) + 1) if m_a >= 0 and isinstance(_ea, str) and _ea else -1
+            m_b0 = (m_b - len(_eb) + 1) if m_b >= 0 and isinstance(_eb, str) and _eb else -1
             _op_end = prompt.find(" ") - 1
             m_op = (_off + _op_end) if _op_end >= 0 else -1
-            if m_a >= 0 and not (0 <= m_a < T and 0 <= m_b < T and 0 <= m_op < T):
+            if m_a >= 0 and not (0 <= m_a0 <= m_a < T and 0 <= m_b0 <= m_b < T
+                                 and 0 <= m_op < T):
                 sys.exit(f"[store-bridge] mention row out of window "
-                         f"(T={T}, rows={m_a},{m_b},{m_op})")
+                         f"(T={T}, spans={m_a0}:{m_a},{m_b0}:{m_b}, op={m_op})")
             self.ex.append((x, y, torch.from_numpy(K), torch.tensor(pols, dtype=torch.long),
                             torch.tensor(tgt, dtype=torch.long),
                             torch.tensor(tgt_b, dtype=torch.long),
-                            torch.tensor([m_a, m_b, m_op], dtype=torch.long)))
+                            torch.tensor([m_a0, m_a, m_b0, m_b, m_op], dtype=torch.long)))
         n_blocks = len(self.ex) // n_slot
         vb = max(1, int(n_blocks * val_frac))
         self.train_n = max(n_slot, (n_blocks - vb) * n_slot)          # [0,train_n) train · rest val

@@ -154,6 +154,7 @@ def test_dual_address_audit_reports_the_two_consumed_reads():
         "target_slot": 0,
         "target_slot_b": 2,
         "mention_rows": (0, 1),
+        "mention_spans": ((0, 0), (1, 1)),
         "operator_row": 2,
     }
     audit = []
@@ -163,5 +164,6 @@ def test_dual_address_audit_reports_the_two_consumed_reads():
     assert len(audit) == 1
     assert [read["read"] for read in audit[0]["dual_reads"]] == ["a", "b"]
     assert [read["row"] for read in audit[0]["dual_reads"]] == [0, 1]
+    assert [read["span"] for read in audit[0]["dual_reads"]] == [[0, 0], [1, 1]]
     assert [read["target"] for read in audit[0]["dual_reads"]] == [0, 2]
     assert all(0.0 <= read["a_target"] <= 1.0 for read in audit[0]["dual_reads"])
