@@ -860,7 +860,7 @@ def clm_config(path):
     return {"ok": True, "d": d, "K": K, "V": V, "E": E, "L": L, "nblk": nblk}
 
 
-def _load_block(rb, off):
+def _load_block(rb, off, xp=None):
     """_clmd_load_block — int4-sym dequant: w = (nibble-8) * per-channel-scale.
     Returns the C-contiguous production orientation (w.T[rest,cout], new_off).
 
@@ -874,22 +874,28 @@ def _load_block(rb, off):
     rest = _rd_u32(rb, off); off += 4
     n = cout * rest
     nbytes = (n + 1) // 2
-    raw = np.frombuffer(rb, dtype=np.uint8, count=nbytes, offset=off)
+    raw_host = np.frombuffer(rb, dtype=np.uint8, count=nbytes, offset=off)
+    use_xp = np if xp is None else xp
+    raw = raw_host if use_xp is np else use_xp.asarray(raw_host)
     off += nbytes
-    codes = np.empty(2 * len(raw), dtype=np.int8)
-    codes[0::2] = (raw & 0xF).astype(np.int8) - 8
-    codes[1::2] = ((raw >> 4) & 0xF).astype(np.int8) - 8
-    scales = np.frombuffer(rb, dtype='<f4', count=cout, offset=off).astype(np.float64)
+    codes = use_xp.empty(2 * len(raw_host), dtype=use_xp.int8)
+    codes[0::2] = (raw & 0xF).astype(use_xp.int8) - 8
+    codes[1::2] = ((raw >> 4) & 0xF).astype(use_xp.int8) - 8
+    scales_host = np.frombuffer(rb, dtype='<f4', count=cout, offset=off)
+    scales = (scales_host.astype(np.float64) if use_xp is np
+              else use_xp.asarray(scales_host, dtype=use_xp.float64))
     off += cout * 4
-    wt = np.empty((rest, cout), dtype=np.float64)
-    np.multiply(codes[:n].reshape(cout, rest).T, scales[None, :], out=wt)
+    wt = use_xp.empty((rest, cout), dtype=use_xp.float64)
+    use_xp.multiply(codes[:n].reshape(cout, rest).T, scales[None, :], out=wt)
     return wt, off
 
 
-def _load_ext(rb, off):
+def _load_ext(rb, off, xp=None):
     """_clmd_load_ext — length-prefixed fp32 tensor (n:u32, then n*f32 LE)."""
     n = _rd_u32(rb, off); off += 4
-    vals = np.frombuffer(rb, dtype='<f4', count=n, offset=off).astype(np.float64)
+    host = np.frombuffer(rb, dtype='<f4', count=n, offset=off)
+    vals = (host.astype(np.float64) if xp is None
+            else xp.asarray(host, dtype=xp.float64))
     off += n * 4
     return vals, off
 
@@ -897,7 +903,7 @@ def _load_ext(rb, off):
 _TRUNK_NORM = "global"     # H_9875 · set per-ckpt by clm_load_weights from the CNRM trailer
 
 
-def clm_load_weights(path):
+def _clm_load_weights_impl(path, direct_device=False):
     """_clmd_load — full file parse into a weight dict. Conv weights are kept
     pre-transposed as Wt[Kdim,Cout] (the _clmd_scratch_new transpose, applied
     once) since the py forward GEMMs xcol[T,Kdim] @ Wt[Kdim,Cout]."""
@@ -929,37 +935,43 @@ def clm_load_weights(path):
     L = nblk - E - 3
 
     # ── conv blocks, in order: ec, tc[L], eW[E], rW, roW ──
+    # On a healthy CUDA host, unpack the serialized int4 bytes directly into their final
+    # float64 device orientation. The old host-first route materialized ~112 GiB and then
+    # uploaded another ~56 GiB for this 7B checkpoint, making cold start take 920 seconds.
+    # CPU hosts retain the exact numpy path; the public wrapper below falls back to it on OOM.
+    load_xp = _cupy if direct_device else None
+    _log_gpu_status_once()
     off = 5
-    ecWt, off = _load_block(rb, off)             # [d*K, d]
+    ecWt, off = _load_block(rb, off, load_xp)    # [d*K, d]
     tcWt = []
     for _ in range(L):
-        wt, off = _load_block(rb, off); tcWt.append(wt)   # [d*K, d]
+        wt, off = _load_block(rb, off, load_xp); tcWt.append(wt)   # [d*K, d]
     eWt = []
     for _ in range(E):
-        wt, off = _load_block(rb, off); eWt.append(wt)    # [d*K, d]
-    rWt, off = _load_block(rb, off)               # [d, E]
-    roWt, off = _load_block(rb, off)              # [d, V]
+        wt, off = _load_block(rb, off, load_xp); eWt.append(wt)    # [d*K, d]
+    rWt, off = _load_block(rb, off, load_xp)       # [d, E]
+    roWt, off = _load_block(rb, off, load_xp)      # [d, V]
     off = off + 5                                # skip "CLMX" + n_ext byte
 
     # ── ext tensors, in order ──
-    embed, off = _load_ext(rb, off)              # [V*d]
-    ecB, off = _load_ext(rb, off)                # [d]
+    embed, off = _load_ext(rb, off, load_xp)     # [V*d]
+    ecB, off = _load_ext(rb, off, load_xp)       # [d]
     tcB = []
     for _ in range(L):
-        v, off = _load_ext(rb, off); tcB.append(v)     # [d]
+        v, off = _load_ext(rb, off, load_xp); tcB.append(v)     # [d]
     eB = []
     for _ in range(E):
-        v, off = _load_ext(rb, off); eB.append(v)      # [d]
-    rB, off = _load_ext(rb, off)                 # [E]
-    roB, off = _load_ext(rb, off)                # [V]
+        v, off = _load_ext(rb, off, load_xp); eB.append(v)      # [d]
+    rB, off = _load_ext(rb, off, load_xp)        # [E]
+    roB, off = _load_ext(rb, off, load_xp)       # [V]
     tgG = []
     for _ in range(L):
-        v, off = _load_ext(rb, off); tgG.append(v)     # [d]
+        v, off = _load_ext(rb, off, load_xp); tgG.append(v)     # [d]
     tgB = []
     for _ in range(L):
-        v, off = _load_ext(rb, off); tgB.append(v)     # [d]
-    noG, off = _load_ext(rb, off)                # [d]
-    noB, off = _load_ext(rb, off)                # [d]
+        v, off = _load_ext(rb, off, load_xp); tgB.append(v)     # [d]
+    noG, off = _load_ext(rb, off, load_xp)       # [d]
+    noB, off = _load_ext(rb, off, load_xp)       # [d]
 
     # ── H_9643 CLMF (optional) — the faction lane. Absent on every pre-H_9643 .clm, in which
     # case n_factions stays 0, GroupNorm keeps G=1 and the bridge is skipped => byte-identical.
@@ -968,9 +980,9 @@ def clm_load_weights(path):
         off = off + 4
         n_factions = int(struct.unpack_from("<I", rb, off)[0]); off = off + 4
         fbLam = float(struct.unpack_from("<f", rb, off)[0]); off = off + 4
-        fbG, off = _load_ext(rb, off)            # [d]   pre-sigmoid channel gate
-        fbW, off = _load_ext(rb, off)            # [d*d] 1x1 bridge conv (unmasked — the mask is
-        fbB, off = _load_ext(rb, off)            # [d]   re-derived from n_factions at forward)
+        fbG, off = _load_ext(rb, off, load_xp)   # [d]   pre-sigmoid channel gate
+        fbW, off = _load_ext(rb, off, load_xp)   # [d*d] 1x1 bridge conv (unmasked — the mask is
+        fbB, off = _load_ext(rb, off, load_xp)   # [d]   re-derived from n_factions at forward)
 
     # pre-transpose conv weights -> Wt[Kdim, Cout] (= w_2d.T)
     W = {
@@ -1004,10 +1016,10 @@ def clm_load_weights(path):
             and rb[off + 2] == 77 and rb[off + 3] == 66):
         off += 4                                   # skip "CLMB"
         bind_type = rb[off]; off += 1
-        WaWt, off = _load_block(rb, off)           # (d, k)
-        WbWt, off = _load_block(rb, off)           # (d, k)
-        WaB_ext, off = _load_ext(rb, off)          # (k,)
-        WbB_ext, off = _load_ext(rb, off)          # (k,)
+        WaWt, off = _load_block(rb, off, load_xp)  # (d, k)
+        WbWt, off = _load_block(rb, off, load_xp)  # (d, k)
+        WaB_ext, off = _load_ext(rb, off, load_xp) # (k,)
+        WbB_ext, off = _load_ext(rb, off, load_xp) # (k,)
         W["bind_type"] = int(bind_type)
         W["WaWt"] = WaWt                           # (d, k)
         W["WbWt"] = WbWt                           # (d, k)
@@ -1086,6 +1098,30 @@ def clm_load_weights(path):
     if _k is not None:
         _WLOAD_CACHE[_k] = W
     return W
+
+
+def clm_load_weights(path):
+    """Load a CLM checkpoint, preferring direct CUDA dequant with safe CPU fallback."""
+    global _CUDA_AVAILABLE
+    direct = cuda_available()
+    if direct:
+        failed_oom = False
+        try:
+            return _clm_load_weights_impl(path, direct_device=True)
+        except _CUPY_OOM:
+            failed_oom = True
+        if failed_oom:
+            # The failed implementation frame and its partially materialized arrays are gone
+            # before clearing the pool and restarting the identical parser on numpy.
+            import gc
+            _CUDA_AVAILABLE = False
+            gc.collect()
+            try:
+                _cupy.get_default_memory_pool().free_all_blocks()
+            except Exception:
+                pass
+            print("[GPU-OOM-FALLBACK] direct int4 load OOM -> CPU-numpy", file=sys.stderr)
+    return _clm_load_weights_impl(path, direct_device=False)
 
 
 # ── forward — 1:1 from clm_decode.hexa _clmd_conv1d / _clmd_fwd_logits_sc ──
