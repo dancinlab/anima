@@ -9,8 +9,9 @@ not introduce a trainer, engine, evaluator, corpus, panel, control, randomizatio
 ## Frozen inputs and bars
 
 - source baseline: Git commit `095b0e1bc`
-- exact-recovery runtime under test: Git commit `8056061af`; this commit was pushed before any
-  Vast.ai regression or long-run result was read
+- exact-recovery runtime under test: Git commit `6bc95f69f` (implementation `8056061af`, scalar
+  digest fix `0dcbfeac2`, canonical Python-RNG seed fix `6bc95f69f`); every commit was pushed
+  before long-run execution
 - warm start: private HF model
   `dancinlab/anima-store-causality-7b-staging-2026-08-10`, artifact commit
   `780558eb2f5fc19609d63fdec95cb7d9c1923429`, file
@@ -31,6 +32,15 @@ not introduce a trainer, engine, evaluator, corpus, panel, control, randomizatio
 The run uses one H100/H200-class 80 GB GPU on Vast.ai. It is stopped as infrastructure failure if
 the instance exceeds three hours or USD 5 before teardown; that stop does not become a model result.
 Heavy work does not run on mini.
+
+## Preflight QA
+
+Before the 7B run, Vast.ai H100 GPU regression passed 18/18. An actual tiny canonical CLMS run was
+then executed both continuously and with a process stop at step 2 followed by resume to step 4.
+The two final engine `.clm` files had the same SHA-256
+`bcefdd6f84930790ceddc4609e747892485c432aa02de9e28f59eb570add40b5`, and their complete resume
+state digests were both
+`ebd7b4be755231dbbf2cd10952f38ff36452cbce2061463574c43880cbf65d8e`.
 
 ## Recovery requirement
 
