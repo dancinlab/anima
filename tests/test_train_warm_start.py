@@ -24,6 +24,32 @@ def _canonical_train_imports():
 
 @unittest.skipUnless(TORCH_AVAILABLE, "PyTorch training extra is not installed")
 class TrainWarmStartTest(unittest.TestCase):
+    def test_clm_warm_start_rejects_trunk_norm_forward_mismatch(self):
+        _canonical_train_imports()
+
+        import serialize as serializer
+        from model import CLMConfig, CLMConvMoE
+        from train import _warm_start
+
+        source = CLMConvMoE(CLMConfig(n_experts=1, n_trunk_layers=1, d_model=8,
+                                      trunk_norm="global"))
+        target = CLMConvMoE(CLMConfig(n_experts=1, n_trunk_layers=1, d_model=8,
+                                      trunk_norm="position"))
+
+        with tempfile.TemporaryDirectory() as td:
+            path = os.path.join(td, "global.clm")
+            serializer.serialize_v3(source.state_dict(), 1, 1, path)
+
+            with self.assertRaisesRegex(ValueError, "changes the forward pass"):
+                _warm_start(target, path, False,
+                            {"d": 8, "L": 1, "E": 1, "trunk_norm": "position"})
+
+            restored = CLMConvMoE(CLMConfig(n_experts=1, n_trunk_layers=1, d_model=8,
+                                            trunk_norm="global"))
+            report = _warm_start(restored, path, False,
+                                 {"d": 8, "L": 1, "E": 1, "trunk_norm": "global"})
+            self.assertIn("trunk_norm=global", report)
+
     def test_slw_trailer_is_restored_and_cannot_be_silently_dropped(self):
         _canonical_train_imports()
 

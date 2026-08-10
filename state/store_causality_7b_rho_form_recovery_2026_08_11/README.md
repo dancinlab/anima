@@ -1,6 +1,6 @@
 # Compose-2 CLMConvMoE 7B rho-form recovery gate — 2026-08-11
 
-Status: REGISTERED — execution pending.
+Status: IN PROGRESS — fixed diagnostic completed; common warm-start fix pending QA.
 
 This gate follows `state/store_causality_7b_serving_2026_08_11`. It keeps the frozen rho-form
 detector, compose-2 fixture, causal controls, seeds, and bars unchanged. It reuses
@@ -11,10 +11,10 @@ prompt, corpus, randomization, or threshold.
 ## Root-cause hypothesis and fixed diagnostic order
 
 The failed serving checkpoint descends from `dancinlab/clm-7b-undertrained-step2000`, whose model
-card identifies it as step 2,000 of 3,500 and WIP/undertrained. Store training froze that trunk and
-trained only the CLMS trailer. With no runtime store injection, the trailer is an exact passthrough,
-so it cannot repair or cause ordinary rho-form generation. The common failure is therefore allowed
-to be a checkpoint-readiness error, not assumed to be a decoder defect.
+card identifies it as step 2,000 of 3,500 and WIP/undertrained. Store training froze its tensors and
+trained only the CLMS trailer. The diagnostic found that the lane itself remains a store-absent
+passthrough, but warm-start rebuilt the legacy-global trunk as position-normalized and serialized a
+`CNRM` marker. That changed the common forward pass despite `--freeze-trunk`.
 
 The following read-only checks run in this order on Vast.ai:
 
@@ -46,7 +46,7 @@ The following read-only checks run in this order on Vast.ai:
   `dancinlab/anima-store-causality-compose2-2026-08-09`, commit
   `8f29c2f16f214734d9b5fa4010c57c48fff3979e`
 - store recipe: seed 7, 24-byte window, batch 32, direct-address weight 1.0, frozen trunk,
-  position normalization, value centering, canonical parity lane 10
+  source-preserving global normalization, value centering, canonical parity lane 10
 - rho-form: canonical five probes and seeds, KWR `>=0.50`, form-rate `>=0.70`, self-shuffle
   `<=0.05`; no alternate draw or retry
 - causal bars: pair-oracle `>=0.90`; normal/recovery `>=0.75`; controls `<=0.56`
@@ -57,3 +57,19 @@ or bar change is allowed. Infrastructure failure may be rerun only with identica
 checkpoints, and training data remain HF-only in private repositories under `dancinlab`; Vast.ai
 scratch is deleted after verified upload. Heavy work never runs on mini. `ING.jsonl` and
 `stream_mi.json` remain untouched. A failed result is recorded without production deployment.
+
+## Root-cause amendment after the fixed diagnostic
+
+The registered diagnostic measured the step-2,000 source at rho-form `0.60`, the derived CLMS
+checkpoint at `0.20`, and the fixed completed step-3,500 source at `1.00`; all self-shuffle controls
+were `0.00`. Raw cache entries also differed between the step-2,000 source and derived checkpoint,
+falsifying the original assumption that the complete store checkpoint was store-absent identical.
+
+The configuration trace explains the difference: the source `.clm` has no `CNRM` trailer and is
+therefore legacy-global, while the store runs explicitly rebuilt it with `--trunk-norm position`.
+Changing only that reduction changes every trunk activation. The recovery run is therefore amended
+to use the source's canonical global setting. This is a root-cause correction, not a result-driven
+model, data, seed, step, decode, or threshold change. The common warm-start path must first reject
+future source/request normalization mismatches, with a regression proving both rejection and a
+matching warm-start. The original registered position setting remains documented here as the
+falsified configuration.

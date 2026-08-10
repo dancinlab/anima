@@ -1067,6 +1067,10 @@ def clm_roundtrip_is_identity(clm_path: str, n_trunk_layers: int, n_experts: int
 
 
 def _trailer_chain_end(raw: bytes, off: int, d: int, V: int) -> int:
+    return _trailer_chain_info(raw, off, d, V)[0]
+
+
+def _trailer_chain_info(raw: bytes, off: int, d: int, V: int) -> tuple[int, str]:
     """Offset after walking the appended-trailer chain at `off`, in the ONE legal chain order
     SLW→CLML→CLMS→MBND→IFAN→TFLD. Each reader passthroughs (returns `off` unchanged) when its magic
     is absent, so a partial chain walks fine; a trailer out of order simply stops the walk and the
@@ -1098,8 +1102,12 @@ def _trailer_chain_end(raw: bytes, off: int, d: int, V: int) -> int:
     # `== len(raw)` parity check fails, and EVERY checkpoint carrying the other is refused at
     # warm-start — the exact defect that made position-norm .clm un-`--init`-able (serialize-py-2).
     # So consume either, in either order, until neither matches.
+    trunk_norm = "global"
     while True:
         if raw[off:off + 4] == CNRM_MAGIC:
+            if off + len(CNRM_MAGIC) >= len(raw):
+                break
+            trunk_norm = "position" if raw[off + len(CNRM_MAGIC)] == 1 else "global"
             off += len(CNRM_MAGIC) + 1
             continue
         _, off_rc = read_rcrl(raw, off, d)
@@ -1107,7 +1115,19 @@ def _trailer_chain_end(raw: bytes, off: int, d: int, V: int) -> int:
             off = off_rc
             continue
         break
-    return off
+    return off, trunk_norm
+
+
+def serialized_trunk_norm(raw: bytes, off: int, d: int, V: int) -> str:
+    """Read the forward-semantic trunk norm through the canonical trailer walker.
+
+    `off` is the end of the main CLM blob. Refuse malformed or unknown trailing bytes: treating a
+    corrupt chain as legacy-global would make a warm-start configuration guard silently lie.
+    """
+    end, trunk_norm = _trailer_chain_info(raw, off, d, V)
+    if end != len(raw):
+        raise ValueError("malformed .clm trailer chain while reading trunk normalization")
+    return trunk_norm
 
 # ── "CNRM" trunk-norm marker (H_9875) ────────────────────────────────────────────
 # One byte at the very end of the trailer chain: 1 = the trunk was trained with per-position

@@ -1359,6 +1359,16 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
         with open(init_path, "rb") as init_file:
             raw = init_file.read()
         main_n = len(S._pack_main_blob(np_sd, L, E))
+        source_norm = S.serialized_trunk_norm(
+            raw, main_n, int(np_sd["embed.weight"].shape[1]),
+            int(np_sd["embed.weight"].shape[0]))
+        expected_norm = expect_cfg.get("trunk_norm")
+        if expected_norm is not None and source_norm != expected_norm:
+            raise ValueError(
+                f"--init {init_path}: trunk_norm={source_norm} in the serialized checkpoint "
+                f"but the requested model uses trunk_norm={expected_norm}. This changes the "
+                "forward pass even when every trunk tensor is frozen. Match --trunk-norm to the "
+                "source checkpoint, or run an explicitly separate non-frozen conversion study.")
         next_magic = raw[main_n:main_n + 4]
         slw_loaded = False
         clms_status = "absent"
@@ -1464,7 +1474,8 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
         missing, unexpected = model.load_state_dict(loadable, strict=False)
         return WarmStartReport(
             f"warm-start ✓ .clm int4-dequant loaded {len(loadable)}/{len(model_sd)} keys "
-            f"(L={L} E={E} · round-trip BYTE-IDENTICAL · untouched={len(missing)}"
+            f"(L={L} E={E} · round-trip BYTE-IDENTICAL · trunk_norm={source_norm}"
+            f" · untouched={len(missing)}"
             f" · SLW={'restored' if slw_loaded else 'absent'}"
             f" · CLMS={clms_status})")
 
@@ -3483,8 +3494,9 @@ def main():
                     help="H_9814: trunk normalization statistics. global = legacy GroupNorm over "
                          "(C,T) — measurably NON-CAUSAL (H_9813: masking input bytes AFTER t moved "
                          "the prediction AT t by 0.5964 nats). position = per-position (causal-safe "
-                         "contrast arm). ⚠️ .clm decode implements GLOBAL semantics, so a position "
-                         "ckpt is a torch-side DIRECTIONAL screen only until a decode lane exists.")
+                         "contrast arm). The .clm trailer preserves this forward setting. A .clm "
+                         "warm-start must match the source setting; changing it mutates the forward "
+                         "pass even under --freeze-trunk and is rejected.")
     ap.add_argument("--serialize-parity", default="",
                     help="H_9813: after writing the .clm, re-score this bind-panel through BOTH "
                          "the trained torch model and the serialized .clm and report agreement. "
@@ -4265,7 +4277,8 @@ def main():
     resume_payload = None
     if a.init:
         expect_cfg = ({"vocab": V, "d": d, "n_layer": L, "n_head": bg_n_head, "block": seq_len}
-                      if is_bytegpt else {"d": d, "L": L, "E": emax})
+                      if is_bytegpt else {"d": d, "L": L, "E": emax,
+                                          "trunk_norm": a.trunk_norm})
         report = _warm_start(model, a.init, is_bytegpt, expect_cfg)
         resume_payload = getattr(report, "resume", None)
         model.to(device)
