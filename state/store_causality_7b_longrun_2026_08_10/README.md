@@ -9,6 +9,8 @@ not introduce a trainer, engine, evaluator, corpus, panel, control, randomizatio
 ## Frozen inputs and bars
 
 - source baseline: Git commit `095b0e1bc`
+- exact-recovery runtime under test: Git commit `8056061af`; this commit was pushed before any
+  Vast.ai regression or long-run result was read
 - warm start: private HF model
   `dancinlab/anima-store-causality-7b-staging-2026-08-10`, artifact commit
   `780558eb2f5fc19609d63fdec95cb7d9c1923429`, file
