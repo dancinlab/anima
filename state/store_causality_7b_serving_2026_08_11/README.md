@@ -1,6 +1,6 @@
 # Compose-2 CLMConvMoE 7B chat-staging serving gate — 2026-08-11
 
-Status: PRE-REGISTERED — execution pending.
+Status: COMPLETE — serving mechanics passed; production blocked by canonical `ρ·form` failure.
 
 This gate follows `state/store_causality_7b_longrun_2026_08_10`. It reuses the live chat
 participant boundary (`agent/domains/CHAT/anima_participant.py`), its existing `Substrate`
@@ -67,3 +67,53 @@ Failure is recorded unchanged in this README and `result.json`; production remai
 production LaunchAgent and `https://chat.dancinlab.org` are restarted or changed only after a
 separate explicit production approval. This staging gate itself ends by deleting the Vast.ai
 instance and its ephemeral HF cache.
+
+## Implementation and actual call flow
+
+The existing participant now selects `CLMSubstrate` through `build_substrate("clm")`. Each emission
+continues through `CLMSubstrate.generate` → `core/decode.py::clm_decode_argmax` → the canonical
+CLMConvMoE forward; broker routing remains the existing `/ws/anima` broadcast path. No request-
+response endpoint, prompt, engine, evaluator, or model format was added.
+
+The first real 7B load exposed the common loader's scale failure: every int4 block was expanded
+through full-size int64 and float64 intermediates, transposed with another copy, and only then moved
+to CUDA. `core/decode.py` now decodes blocks in their production transposed orientation and
+dequantizes directly into CUDA-owned arrays. Small-fixture block equality tests and the real H100
+checkpoint verified that the canonical values and forward path are unchanged. The final runtime
+source under test was `0688b29a4`.
+
+## Execution result
+
+The unchanged store-causality preflight returned pair-oracle `1.0000` and `SUPPORTED-CAUSAL`
+(normal/recovery `0.8359375`; A removal `0.421875`; B removal `0.46875`; shuffle `0.4921875`).
+The serving measurements then completed on one Vast.ai H100 SXM 80 GB:
+
+- cold process-to-CLM-ready log interval: `8.07 s` (bar `≤300 s`);
+- HTTP health: 100/100, p95 `1.111 ms` (bar `≤250 ms`);
+- two-user + participant WebSocket fan-out: 100/100 to all three recipients, p95 `13.978 ms`
+  (bar `≤500 ms`);
+- canonical `CLMSubstrate.generate`: 20 fixed 32-byte emissions, p95 `11.677 s`, minimum
+  `2.152 bytes/s`, mean `2.763 bytes/s` (bars `≤45 s`, `≥2.0 bytes/s`);
+- peak serving VRAM: `54,801 MiB` (`53.52 GiB`, bar `≤70 GiB`);
+- soak: `1,804.121 s`, 359 HTTP/WS probes, zero failures, HTTP/WS p95
+  `3.606/21.024 ms`; warm-to-end RSS `862,044→862,716 KiB` (`+0.078%`) and GPU memory
+  `54,801→54,801 MiB` (`0%`), both below the `5%` growth cap;
+- rollback: CLM stop exposed `anima_alive=false`; the existing AKIDA numpy software fallback
+  restored `anima_alive=true` in `1.350 s`, then passed the existing two-user broadcast probe
+  (bar `≤120 s`).
+
+The required canonical `ρ·form` measurement failed unchanged: form-rate `0.20` (one of five
+continuations), self-shuffle `0.00`, frozen gate `0.70`. Therefore transport, performance, memory,
+soak, and rollback pass, but the overall staging gate fails and production remains blocked. The
+failure is generation coherence, not serving infrastructure; no retry, alternate checkpoint, or
+threshold change was attempted.
+
+H100 regression QA passed 16/16 across the int4 block loader, CLM substrate, store-causality
+evaluator, and dual-address CLMS training/parity tests. The instance was deleted after measurement;
+active Vast.ai rentals are zero, the delete-time estimated cost was `$3.4527`, and no model copy was
+downloaded to mini. `ING.jsonl` and `stream_mi.json` remained untouched. Production DNS,
+LaunchAgent, and `chat.dancinlab.org` were not changed because production was not approved.
+The existing broker LaunchAgent remained running, and read-only live verification returned HTTP
+200 plus a WebSocket `hello` frame through Cloudflare. Its pre-existing production participant was
+not connected (`anima_alive=false`); this run did not replace or restart it because the production
+gate failed.

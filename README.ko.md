@@ -120,6 +120,17 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > 않는다. 전체 프로토콜:
 > `state/store_causality_7b_serving_2026_08_11/README.md`.
 
+> **7B 채팅 스테이징 결과(2026-08-11):** 기존 참가자가 비공개 HF 7B 체크포인트를
+> `CLMSubstrate`와 canonical `core/decode.py`로 서빙한다. pair-oracle은 `1.0000`을 유지했다.
+> H100에서 cold load(`8.07초`), HTTP(p95 `1.111ms`), 3수신자 WebSocket fan-out(p95
+> `13.978ms`), 32-byte 생성 20회(p95 `11.677초`, 최소 `2.152 bytes/s`), peak VRAM
+> (`54,801MiB`), 30분 soak(359 probe, 실패 0, RSS/GPU 증가 `0.078%/0%`), AKIDA software
+> fallback rollback(`1.350초`)을 모두 통과했다. 그러나 변경하지 않은 canonical `ρ·form`은
+> 기준 `0.70`에 `0.20`으로 실패해 프로덕션은 계속 차단되며 라이브 서비스는 변경하지 않았다.
+> H100 회귀 시험은 16/16 통과했고 Vast.ai 인스턴스는 삭제했다(활성 임대 0, 추정 비용
+> `$3.4527`). 전체 결과:
+> `state/store_causality_7b_serving_2026_08_11/result.json`.
+
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /
 > 컴파일러 / `hx` 패키지 매니저), **[kosmos](https://github.com/dancinlab/kosmos)** (`.kosmos`

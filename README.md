@@ -133,6 +133,17 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > every gate passes and production is approved separately. Full protocol:
 > `state/store_causality_7b_serving_2026_08_11/README.md`.
 
+> **7B chat-staging result (2026-08-11):** the existing participant now serves the private HF 7B
+> checkpoint through `CLMSubstrate` and canonical `core/decode.py`. Pair-oracle remained `1.0000`.
+> H100 serving passed cold load (`8.07 s`), HTTP (`1.111 ms` p95), three-recipient WebSocket fan-out
+> (`13.978 ms` p95), 20×32-byte generation (`11.677 s` p95, minimum `2.152 bytes/s`), peak VRAM
+> (`54,801 MiB`), a 30-minute soak (359 probes, zero failures, RSS/GPU growth `0.078%/0%`), and
+> rollback to AKIDA software fallback (`1.350 s`). However the unchanged canonical `ρ·form` gate
+> failed at `0.20` with a `0.70` bar, so production remains blocked and the live service was not
+> changed. H100 regression passed 16/16; the Vast.ai instance was deleted (active rentals zero,
+> estimated cost `$3.4527`). Full result:
+> `state/store_causality_7b_serving_2026_08_11/result.json`.
+
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the
 "neocortex" byte language mouth grow a **hippocampus, growth-memory, working memory, cerebellum,

@@ -1,0 +1,145 @@
+{
+  "schema": "anima-store-causality-7b-serving/v1",
+  "date": "2026-08-11",
+  "source_commit": "0688b29a4f48d79f04b01a6c41378fe2bc17be8f",
+  "checkpoint": {
+    "hf_repo": "dancinlab/anima-store-causality-7b-longrun-2026-08-10",
+    "hf_commit": "0e26f4623c514bc6192a93f14e7a466a6f8bd59a",
+    "filename": "compose2_dual_parity_7b_long_s7.clm",
+    "sha256": "0e4ff48cbba04ac49f1f005350a9c51a74de87393c35c20551b9374a1a2c9b04"
+  },
+  "call_flow": [
+    "agent/domains/CHAT/anima_participant.py::build_substrate(clm)",
+    "agent/domains/CHAT/substrate_clm.py::CLMSubstrate.generate",
+    "core/decode.py::clm_decode_argmax",
+    "broker /ws/anima broadcast"
+  ],
+  "causal_preflight": {
+    "verdict": "SUPPORTED-CAUSAL",
+    "pair_oracle": 1.0,
+    "normal": 0.8359375,
+    "drop_a": 0.421875,
+    "drop_b": 0.46875,
+    "shuffle": 0.4921875,
+    "recovery": 0.8359375
+  },
+  "rho_form": {
+    "verdict": "FAIL",
+    "form_rate": 0.2,
+    "self_shuffle": 0.0,
+    "delta": 0.2,
+    "gate": 0.7
+  },
+  "cold_start": {
+    "process_to_clm_ready_seconds": 8.07,
+    "bar_seconds_max": 300,
+    "pass": true
+  },
+  "transport": {
+    "http": {
+      "requests": 100,
+      "failures": 0,
+      "p50_ms": 0.3576410235837102,
+      "p95_ms": 1.1114480439573526,
+      "max_ms": 4.4948081485927105,
+      "bar_p95_ms_max": 250,
+      "pass": true
+    },
+    "websocket": {
+      "frames": 100,
+      "failures": 0,
+      "recipients_per_frame": 3,
+      "p50_ms": 7.294072885997593,
+      "p95_ms": 13.978152070194483,
+      "max_ms": 143.10441398993134,
+      "bar_p95_ms_max": 500,
+      "pass": true
+    }
+  },
+  "generation": {
+    "scope": "CLMSubstrate.generate via canonical core/decode",
+    "emissions": 20,
+    "engine_bytes_per_emission": 32,
+    "p50_wall_seconds": 11.412499794387259,
+    "p95_wall_seconds": 11.677042898954824,
+    "min_engine_bytes_per_second": 2.152485776230956,
+    "mean_engine_bytes_per_second": 2.7629795227264307,
+    "bar_p95_wall_seconds_max": 45,
+    "bar_bytes_per_second_min": 2.0,
+    "pass": true
+  },
+  "memory": {
+    "peak_gpu_mib": 54801,
+    "peak_gpu_gib": 53.5166015625,
+    "bar_gpu_gib_max": 70,
+    "pass": true
+  },
+  "soak": {
+    "requested_seconds": 1800,
+    "elapsed_seconds": 1804.1205101220403,
+    "probes": 359,
+    "failures": 0,
+    "http_p95_ms": 3.6056460812687874,
+    "websocket_p95_ms": 21.023981040343642,
+    "warm_rss_kib": 862044,
+    "end_rss_kib": 862716,
+    "rss_growth_percent": 0.0779542563952659,
+    "warm_gpu_mib": 54801,
+    "end_gpu_mib": 54801,
+    "gpu_growth_percent": 0.0,
+    "bar_growth_percent_max": 5.0,
+    "participant_crash": false,
+    "broker_crash": false,
+    "reconnect_loss": false,
+    "pass": true
+  },
+  "rollback": {
+    "clm_stopped_anima_alive": false,
+    "fallback": "SubstrateAKIDA numpy software fallback",
+    "recovery_seconds": 1.35,
+    "recovered_anima_alive": true,
+    "two_user_broadcast_probe": "PASS",
+    "bar_seconds_max": 120,
+    "pass": true
+  },
+  "qa": {
+    "vast_h100_pytest": {
+      "passed": 16,
+      "failed": 0,
+      "targets": [
+        "tests/test_decode_block_loader.py",
+        "agent/domains/CHAT/test_substrate_clm.py",
+        "tests/test_store_causality.py",
+        "tests/test_clms_dual_training.py"
+      ]
+    },
+    "mini_pytest": {
+      "passed": 7,
+      "failed": 0,
+      "skipped": 2,
+      "skip_reason": "torch is not installed in .venv-runtime; both skipped GPU paths passed on H100"
+    }
+  },
+  "infrastructure": {
+    "vast_instance_id": 47383996,
+    "gpu": "H100 SXM 80GB",
+    "delete_time_estimated_cost_usd": 3.4527,
+    "instance_deleted": true,
+    "active_vast_instances_after_teardown": 0,
+    "model_downloaded_to_mini": false,
+    "production_runtime_changed": false,
+    "live_verification": {
+      "broker_launch_agent_running": true,
+      "https_status": 200,
+      "websocket_hello_received": true,
+      "anima_alive": false
+    }
+  },
+  "serving_mechanics": "PASS",
+  "verdict": "FAIL-RHO-FORM",
+  "production_approved": false,
+  "remaining_issues": [
+    "The frozen canonical rho-form coherence gate scored 0.20 against its 0.70 bar.",
+    "The unchanged live broker is reachable but its pre-existing production participant reports anima_alive=false."
+  ]
+}
