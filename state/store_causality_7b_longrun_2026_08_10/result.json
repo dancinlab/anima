@@ -1,0 +1,138 @@
+{
+  "schema": "anima-store-causality-7b-longrun/v1",
+  "status": "COMPLETE",
+  "verdict": "SUPPORTED-CAUSAL",
+  "registered_before_execution": true,
+  "source": {
+    "baseline_commit": "095b0e1bc",
+    "runtime_commit": "6bc95f69f",
+    "preregistered_record_commit": "ffb383b11"
+  },
+  "protocol": {
+    "warm_start_updates": 200,
+    "additional_updates": 2000,
+    "process_boundary_update": 1000,
+    "seed": 7,
+    "store_batch": 32,
+    "store_win": 24,
+    "store_addr_weight": 1.0,
+    "freeze_trunk": true,
+    "trunk_norm": "position",
+    "clms_dual": true,
+    "store_val_center": true,
+    "retry_or_tuning_allowed": false
+  },
+  "bars": {
+    "oracle": 0.9,
+    "positive": 0.75,
+    "control": 0.56,
+    "changed": false
+  },
+  "recovery": {
+    "schema": "anima-train-resume/v1",
+    "midpoint_state_digest": "b200b6a47fa5dddfdf19c3ecfbac74b0f4664552bf74172d69b48af956acddf3",
+    "restored_digest_verified": true,
+    "completed_step": 1000,
+    "resumed_at_step": 1001,
+    "endpoint_step": 2000,
+    "final_state_digest": "9c17b098006efde6e9b8c1ad58f42db5a7c3c7f352fa1b830691dfac51e908ca"
+  },
+  "evaluation": {
+    "midpoint_pair_oracle": {
+      "correct": 128,
+      "n": 128,
+      "accuracy": 1.0
+    },
+    "endpoint": {
+      "oracle_pair": {"correct": 128, "n": 128, "accuracy": 1.0},
+      "normal": {"correct": 107, "n": 128, "accuracy": 0.8359375},
+      "drop_a": {"correct": 54, "n": 128, "accuracy": 0.421875},
+      "drop_b": {"correct": 60, "n": 128, "accuracy": 0.46875},
+      "shuffle": {"correct": 63, "n": 128, "accuracy": 0.4921875},
+      "recovery": {"correct": 107, "n": 128, "accuracy": 0.8359375}
+    },
+    "checks": {
+      "oracle_alive": true,
+      "normal_positive": true,
+      "drop_a_collapses": true,
+      "drop_b_collapses": true,
+      "shuffle_collapses": true,
+      "recovery_positive": true,
+      "recovery_exact": true
+    },
+    "verdict": "SUPPORTED-CAUSAL"
+  },
+  "measurements": {
+    "instance_id": 47378938,
+    "provider": "Vast.ai",
+    "gpu": "NVIDIA H100 PCIe",
+    "gpu_memory_mib": 81559,
+    "host_memory_mib": 1547820,
+    "model_parameters": 7057657951,
+    "leg1_end_to_end_wall_s": 585.49,
+    "leg2_end_to_end_wall_s": 695.0,
+    "leg2_train_loop_wall_s": 417.6,
+    "leg2_updates_per_s": 2.3946,
+    "midpoint_evaluation_wall_s": 370.61,
+    "endpoint_battery_wall_s": 276.5,
+    "endpoint_items_per_s": 2.7776,
+    "train_vram_peak_mib": 35407,
+    "evaluation_vram_peak_mib": 54601,
+    "train_gpu_util_peak_percent": 100.0,
+    "leg1_gpu_util_active_mean_percent": 92.487,
+    "leg2_gpu_util_active_mean_percent": 86.7783,
+    "evaluation_gpu_util_active_mean_percent": 36.3148,
+    "power_peak_w": 304.0,
+    "metered_usd_before_teardown": 1.598,
+    "invoice_usd_at_teardown": 1.686,
+    "active_instances_after_teardown": 0
+  },
+  "checkpoints": {
+    "midpoint_clm": {
+      "bytes": 3541601488,
+      "sha256": "2cf624f981f268402787dc084ab50cca338465e0d54b8b1e24b3c39818312f8e",
+      "decodable": true
+    },
+    "midpoint_resume_pt": {
+      "bytes": 28237557983,
+      "sha256": "b17b7ab535dea2eeadb907d624be8dfc679074e14ba4e03456e856d627a61419"
+    },
+    "final_clm": {
+      "bytes": 3541601488,
+      "sha256": "0e4ff48cbba04ac49f1f005350a9c51a74de87393c35c20551b9374a1a2c9b04",
+      "decodable": true
+    },
+    "final_resume_pt": {
+      "bytes": 28237556380,
+      "sha256": "ff797d48b26196d367cb25882bc4277b44c159c9c28d895626e9a8b33aca49e7"
+    }
+  },
+  "qa": {
+    "gpu_pytest_passed": 18,
+    "gpu_pytest_failed": 0,
+    "tiny_uninterrupted_clm_sha256": "bcefdd6f84930790ceddc4609e747892485c432aa02de9e28f59eb570add40b5",
+    "tiny_resumed_clm_sha256": "bcefdd6f84930790ceddc4609e747892485c432aa02de9e28f59eb570add40b5",
+    "tiny_final_state_digest": "ebd7b4be755231dbbf2cd10952f38ff36452cbce2061463574c43880cbf65d8e",
+    "gpu_decode_path": "CUDA",
+    "checkpoint_sha_verified": true
+  },
+  "artifacts": {
+    "hf_repo": "dancinlab/anima-store-causality-7b-longrun-2026-08-10",
+    "hf_private": true,
+    "hf_artifact_commit": "0e26f4623c514bc6192a93f14e7a466a6f8bd59a",
+    "hf_file_count": 24,
+    "hf_total_bytes": 63558694473,
+    "hf_dataset_repo": "dancinlab/anima-store-causality-compose2-2026-08-09",
+    "hf_dataset_commit": "8f29c2f16f214734d9b5fa4010c57c48fff3979e",
+    "models_and_training_data_hf_only": true,
+    "r2_copy": false,
+    "local_model_copy": false
+  },
+  "production_approved": false,
+  "remaining_gates": [
+    "7B chat-staging integration",
+    "serving latency and throughput measurement",
+    "HTTP and WebSocket staging QA",
+    "serving soak and rollback test"
+  ]
+}

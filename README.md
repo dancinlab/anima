@@ -117,6 +117,13 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > optimizer, completed-step, and all RNG/sampler state because the previous `.resume.pt` path saved
 > model weights only. Full protocol: `state/store_causality_7b_longrun_2026_08_10/README.md`.
 
+> **7B long-run result (2026-08-10):** exact process recovery passed and the fixed endpoint returned
+> `SUPPORTED-CAUSAL`: pair-oracle 1.0000, normal/recovery 0.8359, clue-A removal 0.4219, clue-B
+> removal 0.4688, and address shuffle 0.4922. Vast.ai H100 QA passed 18/18; train/eval peak VRAM was
+> 35,407/54,601 MiB. Private HF artifacts are in
+> `dancinlab/anima-store-causality-7b-longrun-2026-08-10`. Production remains blocked on chat
+> staging integration, serving latency/throughput, HTTP/WebSocket QA, and soak/rollback.
+
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the
 "neocortex" byte language mouth grow a **hippocampus, growth-memory, working memory, cerebellum,

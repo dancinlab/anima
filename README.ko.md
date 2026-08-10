@@ -104,6 +104,13 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > 저장했던 공용 결함을 먼저 고쳐 optimizer·완료 step·모든 RNG/샘플러 상태를 보존해야 한다.
 > 전체 규약은 `state/store_causality_7b_longrun_2026_08_10/README.md`에 고정했다.
 
+> **7B 장기 실행 결과(2026-08-10):** 정확한 프로세스 복구가 통과했고 고정 endpoint는
+> `SUPPORTED-CAUSAL`을 반환했다. pair-oracle 1.0000, 정상/복구 0.8359, 단서 A 제거 0.4219,
+> 단서 B 제거 0.4688, 주소 섞기 0.4922다. Vast.ai H100 QA는 18/18, 학습/평가 peak VRAM은
+> 35,407/54,601MiB였다. 비공개 HF 산출물은
+> `dancinlab/anima-store-causality-7b-longrun-2026-08-10`에 있다. 프로덕션은 채팅 스테이징
+> 연결, serving 지연/처리량, HTTP/웹소켓 QA, soak/rollback 시험 전까지 계속 차단한다.
+
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /
 > 컴파일러 / `hx` 패키지 매니저), **[kosmos](https://github.com/dancinlab/kosmos)** (`.kosmos`
