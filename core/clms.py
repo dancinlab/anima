@@ -889,21 +889,24 @@ if _HAS_TORCH:
             wd[k] = np.asarray(wd[k], dtype=np.float64)
         Kd = np.stack([_entity_key(wd["key_emb"], e, "mean") for e in ents])
         mention_rows = (1, 3)
+        mention_spans = ((0, 1), (2, 3))
         dual_store = {"entities": ents, "pols": pols, "target_slot": 2,
                       "target_slot_b": 5, "mention_rows": mention_rows,
-                      "operator_row": 0}
+                      "mention_spans": mention_spans, "operator_row": 4}
+        yn_a_pool = yn[mention_spans[0][0]:mention_spans[0][1] + 1].mean(axis=0, keepdims=True)
+        yn_b_pool = yn[mention_spans[1][0]:mention_spans[1][1] + 1].mean(axis=0, keepdims=True)
         with _torch.no_grad():
             td = dual(_torch.from_numpy(yn[qpos]), _torch.from_numpy(Kd)[None, :, :],
                       _torch.tensor([pols], dtype=_torch.long),
-                      yn_a=_torch.from_numpy(yn[[mention_rows[0]]]),
-                      yn_b=_torch.from_numpy(yn[[mention_rows[1]]]),
-                      yn_op=_torch.from_numpy(yn[[0]])).numpy()[0]
+                      yn_a=_torch.from_numpy(yn_a_pool),
+                      yn_b=_torch.from_numpy(yn_b_pool),
+                      yn_op=_torch.from_numpy(yn[[4]])).numpy()[0]
             to = dual(_torch.from_numpy(yn[qpos]), _torch.from_numpy(Kd)[None, :, :],
                       _torch.tensor([pols], dtype=_torch.long),
                       oracle_slot=_torch.tensor([2]), oracle_slot_b=_torch.tensor([5]),
-                      yn_a=_torch.from_numpy(yn[[mention_rows[0]]]),
-                      yn_b=_torch.from_numpy(yn[[mention_rows[1]]]),
-                      yn_op=_torch.from_numpy(yn[[0]])).numpy()[0]
+                      yn_a=_torch.from_numpy(yn_a_pool),
+                      yn_b=_torch.from_numpy(yn_b_pool),
+                      yn_op=_torch.from_numpy(yn[[4]])).numpy()[0]
         nd = store_apply(logits, yn, wd, dual_store, qpos, fuse="overwrite")[qpos[0]]
         no = store_apply(logits, yn, wd, dual_store, qpos, oracle="pair",
                          fuse="overwrite")[qpos[0]]
