@@ -201,6 +201,18 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > 참가자 프로세스를 실제 종료한 뒤에도 복구되어 의미 응답을 다시 통과했다. 공개 HTTP p95
 > `285.577ms`는 과거 내부 기준 `250ms`보다 높아 남은 성능 문제로 그대로 기록한다. 전체 정정
 > 근거: `state/chat_7b_conversation_recovery_2026_08_11/result.json`.
+>
+> **303M from-scratch 재구축 사전등록(2026-08-11):** 대화 복구는 배포된 base-only Qwen이
+> 답변할 수 있음을 보였지만 anima 고유 byte mouth는 아니다. 따라서 과거 7B 레퍼런스나 합성
+> compose-2 체크포인트의 재배포를 중단한다. 대체 모델은 기존 `cli/train.py --arch bytegpt`,
+> `core/serialize.py`, `core/decode.py`, participant 경로를 그대로 사용해 고정 303M ByteGPT
+> 기준 규모에서 무작위 초기화로 시작한다. Stage A는 HF
+> `dancinlab/anima-corpus-en-general`의 정확한 revision, seed 7, d1024/24L/16H, block 512,
+> global batch 32, 6,000 update를 사용한다. 고정 G0 coherence 관문을 통과한 경우에만 Stage A
+> 체크포인트와 HF `dancinlab/anima-chat-corpus-mix-70wiki-30dialogue`의 정확한 revision으로
+> Stage B를 실행한다. 303M engine-native·공개 대화 관문 통과 전에는 7B 확장과 프로덕션 승격을
+> 금지한다. 모델·학습 자료는 HF `dancinlab`에만 보존하고 기록된 실행이 끝나면 Vast.ai H100을
+> 삭제한다. 고정 프로토콜: `state/anima_303m_from_scratch_2026_08_11/README.md`.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /

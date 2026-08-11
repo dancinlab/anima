@@ -220,6 +220,19 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > was `285.577 ms`, above the earlier internal `250 ms` bar, and remains recorded as a performance
 > issue. Full corrected evidence:
 > `state/chat_7b_conversation_recovery_2026_08_11/result.json`.
+>
+> **303M from-scratch rebuild registered (2026-08-11):** the conversation recovery proved that the
+> deployed base-only Qwen model can answer, but it is not anima's native byte mouth. Reusing an old
+> 7B reference or the synthetic compose-2 checkpoint is therefore stopped. The replacement starts
+> from random initialization at the frozen 303M ByteGPT reference scale through the existing
+> `cli/train.py --arch bytegpt`, `core/serialize.py`, `core/decode.py`, and participant path. Stage A
+> uses the exact HF `dancinlab/anima-corpus-en-general` revision with seed 7, d1024/24L/16H,
+> block 512, global batch 32, and 6,000 updates; Stage B may start only after the frozen G0
+> coherence gate passes and uses only its Stage-A checkpoint plus the exact HF
+> `dancinlab/anima-chat-corpus-mix-70wiki-30dialogue` revision. No 7B scale-up or production
+> promotion is allowed before the 303M engine-native and public conversation gates pass. Models and
+> training data remain in HF `dancinlab`; the Vast.ai H100 is deleted after the recorded run. Frozen
+> protocol: `state/anima_303m_from_scratch_2026_08_11/README.md`.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the

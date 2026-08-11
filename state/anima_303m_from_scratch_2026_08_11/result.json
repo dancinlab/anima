@@ -1,0 +1,57 @@
+{
+  "schema": "anima-303m-from-scratch/v1",
+  "date": "2026-08-11",
+  "status": "REGISTERED",
+  "verdict": "PENDING",
+  "registered_before_execution": true,
+  "source": {
+    "baseline_commit": "3708481ca"
+  },
+  "protocol": {
+    "provider": "Vast.ai",
+    "instance_id": 47431163,
+    "seed": 7,
+    "architecture": {
+      "family": "ByteGPT",
+      "vocab": 256,
+      "d": 1024,
+      "layers": 24,
+      "heads": 16,
+      "block": 512
+    },
+    "stage_a": {
+      "random_initialization": true,
+      "dataset": "dancinlab/anima-corpus-en-general",
+      "dataset_commit": "e1c4ef4f595d72b959d0aa73a5cc5c8ba2a065a0",
+      "steps": 6000,
+      "batch": 32,
+      "lr": 0.0003
+    },
+    "stage_b": {
+      "requires_stage_a_g0": true,
+      "only_parent": "stage_a",
+      "dataset": "dancinlab/anima-chat-corpus-mix-70wiki-30dialogue",
+      "dataset_commit": "32e16ed21ab6b86c22b2993a9a2c3de7a96638a7",
+      "steps": 2000,
+      "batch": 16,
+      "lr": 0.00008
+    },
+    "tuning_or_retry_allowed": false,
+    "scale_up_before_303m_pass": false,
+    "delete_h100_after_completion": true
+  },
+  "bars": {
+    "g0_known_word_ratio": 0.5,
+    "g0_passes_required": 4,
+    "g0_items": 5,
+    "chat_single_passes_required": 4,
+    "chat_single_items": 5,
+    "chat_multi_passes_required": 3,
+    "chat_multi_items": 5,
+    "changed": false
+  },
+  "execution": null,
+  "hf_artifacts": null,
+  "deployment": null,
+  "remaining_issues": []
+}
