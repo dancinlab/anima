@@ -1,8 +1,8 @@
 {
   "schema": "anima-303m-r0-rebuild-result/v1",
   "date": "2026-08-11",
-  "status": "IN_PROGRESS",
-  "verdict": "R0_SEED_7_FAILED_REMAINING_SEEDS_RUNNING",
+  "status": "COMPLETE",
+  "verdict": "R0_FAILED_0_OF_3",
   "protocol": "protocol.json",
   "r0": {
     "seeds": [7, 11, 13],
@@ -26,8 +26,51 @@
         "engine_sha256": "6b30cce18221fa541f310122833c4cdf7d1c2e9fd027d3fc4a2aca959767e0da",
         "exact_resume_sha256": "e872714f75a9648aafc40e0646d30bb04434ff81abc59db232bd001972416614",
         "rho_form_sha256": "e4e625f2bcd43d143a55c0c310641785623744eab93c5992358c39ffc731d4b7"
+      },
+      {
+        "seed": 11,
+        "steps": 14000,
+        "parameters": 303097856,
+        "heldout_ce": 0.999855075776577,
+        "registers_descent": "5/5",
+        "hillock": "LIVE",
+        "aggregate_rho_form": 0.6,
+        "aggregate_self_shuffle": 0.0,
+        "cells": {
+          "en_general": {"rho_form": 0.6, "verdict": "FAIL"},
+          "en_sns": {"rho_form": 0.2, "verdict": "FAIL"},
+          "ko_general": {"rho_form": 0.4, "verdict": "PASS"},
+          "ko_sns": {"rho_form": 0.4, "verdict": "PASS"}
+        },
+        "verdict": "FAIL",
+        "engine_sha256": "18ef733d9779bc68ad057264590199a16406dba1f1d09f68344dfc9a5a68eefc",
+        "exact_resume_sha256": "112436539e2531a3677ac32a916f214e28a68cb512ccdef7c892b2e1a7d3a6b5",
+        "rho_form_sha256": "95f40d71e676f4edc5e24f20a48cbf9b3aebbe24cdbac44baab9fbc4509a292a"
+      },
+      {
+        "seed": 13,
+        "steps": 14000,
+        "parameters": 303097856,
+        "heldout_ce": 1.0099284403026103,
+        "registers_descent": "5/5",
+        "hillock": "LIVE",
+        "aggregate_rho_form": 0.2,
+        "aggregate_self_shuffle": 0.0,
+        "cells": {
+          "en_general": {"rho_form": 0.2, "verdict": "FAIL"},
+          "en_sns": {"rho_form": 0.6, "verdict": "FAIL"},
+          "ko_general": {"rho_form": 0.2, "verdict": "PASS"},
+          "ko_sns": {"rho_form": 0.2, "verdict": "PASS"}
+        },
+        "verdict": "FAIL",
+        "engine_sha256": "0a05a9cf8d522f4a077b345a2fc68ffc184aa6383328739936b92026a1216ee0",
+        "exact_resume_sha256": "88211aa463c55a2db560ce5855aaa5554d558546ccd7cb39133a9d160b457476",
+        "rho_form_sha256": "44c28c0a26625b68cc4bdbfa510380aa5e7ac485cb5bb1a4e5949a5e5d61847a"
       }
-    ]
+    ],
+    "seeds_passed": 0,
+    "seeds_required": 3,
+    "result_dependent_changes": false
   },
   "r1": {
     "status": "LOCKED",
@@ -35,7 +78,8 @@
   },
   "deployment": {
     "model_deployed": false,
-    "h100_active": true
+    "h100_active": false,
+    "reason": "R0 failed before R1 or chat deployment could unlock."
   },
   "runtime_qa": {
     "bytegpt_cuda_enabled": true,
@@ -44,6 +88,36 @@
     "real_303m_load_seconds": 2.038,
     "real_303m_8byte_decode_seconds": 0.552,
     "raw_surrogate_json_lossless": true
+  },
+  "qa": {
+    "h100_pytest": "15 passed, 3 subtests passed",
+    "local_pytest": "3 passed, 8 skipped (Torch/CUDA unavailable)",
+    "cpu_cuda_logits_rtol": 1e-10,
+    "seeded_token_stream_parity": true,
+    "exact_resume_smoke": true,
+    "all_raw_evidence_counts": "25 per seed"
+  },
+  "artifacts": {
+    "provider": "Hugging Face",
+    "organization": "dancinlab",
+    "repository": "dancinlab/anima-303m-r0-rebuild-2026-08-11",
+    "private": true,
+    "seed7_revision": "26b28fd1b377af110c9ef4b9760f16d7a4d48cd5",
+    "seed11_revision": "25ef37b442cbee2264356dc1f684aea1ec5c47af",
+    "seed13_revision": "ac3671814e0b433cad1058e692507ef8a1f800b2",
+    "final_repository_revision": "ac3671814e0b433cad1058e692507ef8a1f800b2",
+    "repository_file_count": 116,
+    "training_data_revisions": "protocol.json",
+    "model_artifacts_sha256_verified": true,
+    "sha256_entries_verified": 9
+  },
+  "vast_ai": {
+    "instance_id": 47446530,
+    "gpu": "NVIDIA H100 PCIe 80GB",
+    "hourly_usd": 1.9083333333333332,
+    "final_cost_usd": 13.9287,
+    "cost_basis": "duration_seconds * dph_total immediately before deletion",
+    "active_instances_after_cleanup": 0
   },
   "preservation": {
     "ING.jsonl": "PRESERVED",

@@ -1,6 +1,6 @@
 # Anima 303M R0 native-mouth rebuild — 2026-08-11
 
-Status: IN PROGRESS — seed 7 complete; seeds 11 and 13 remain.
+Status: COMPLETE — R0 failed 0/3; R1 remained locked.
 
 The previous 303M run honestly failed at `rho-form 3/5`, but it did not reproduce the successful
 native-byte lineage: it used one 60.05 MB general-English cell, constant LR, AdamW beta2 `0.999`,
@@ -42,18 +42,33 @@ JSON, committed, and pushed. The H100 is deleted at completion even when the gat
 
 `ING.jsonl` and `stream_mi.json` are existing user files and remain untouched.
 
-## Interim execution record
+## Execution result
 
 Vast.ai seed 7 reached the fixed 14,000-step endpoint with pooled held-out CE `0.99906`; all five
 registered cells were below the uniform baseline. Its final engine SHA-256 is
 `6b30cce18221fa541f310122833c4cdf7d1c2e9fd027d3fc4a2aca959767e0da`.
 
-The frozen final-checkpoint panel returned HILLOCK `LIVE`, aggregate rho-form `0.40`, and
-self-shuffle `0.00`, so seed 7 failed the aggregate `0.70` gate. The English general and SNS cells
-both returned `0.40`/FAIL; Korean general returned `0.40`/PASS under its registered `0.20` bar and
-Korean SNS returned `0.60`/PASS. Raw generation, KWR, shuffle KWR, and seeds are retained in the
-machine result. R1 is therefore locked; the remaining preregistered R0 seeds still run so the
-failure's reproducibility is measured without a result-dependent retry.
+All three fixed-endpoint runs completed and all five registers showed held-out descent, but none
+passed the frozen aggregate rho-form gate:
+
+| seed | pooled held-out CE | aggregate rho-form | shuffle | HILLOCK | result |
+|---:|---:|---:|---:|---|---|
+| 7 | 0.99906 | 0.40 | 0.00 | LIVE | FAIL |
+| 11 | 0.99986 | 0.60 | 0.00 | LIVE | FAIL |
+| 13 | 1.00993 | 0.20 | 0.00 | LIVE | FAIL |
+
+The English general and SNS cells failed on every seed. The Korean general and SNS cells passed
+their pre-registered language-keyed bars on every seed. Raw generation, KWR, shuffle KWR, decode
+seed, logs, intermediate engines, final engines, and exact-resume states are preserved in the
+private HF repository `dancinlab/anima-303m-r0-rebuild-2026-08-11`. No endpoint, data, seed,
+sampling rule, prompt, detector, or threshold changed after reading a result.
+
+R0 therefore failed `0/3`, and R1 remained locked exactly as registered. No recurrent workspace
+arm, chat model, or production deployment was built from these failed mouths. The result rules out
+the claim that merely restoring broad+dialogue bilingual data and the historical optimizer
+schedule is sufficient at this compute budget. It does not rule out the ByteGPT family: all three
+runs saw only about 229 million target bytes (`14,000 × 32 × 512`), below one target byte per model
+parameter and below one pass over the 282.4 MB registered mixture.
 
 This run also exposed two shared runtime defects before the seed result could be preserved. The
 ByteGPT loader and KV forward were NumPy-only even when the existing canonical CUDA dispatcher was
@@ -62,3 +77,12 @@ attention/KV path while preserving the CPU path. H100 tests verified CPU/CUDA lo
 `1e-10` and identical seeded token streams; the real 303M load took `2.038 s` and an 8-byte decode
 `0.552 s`. The second defect was rho JSON serialization rejecting arbitrary byte-mouth
 surrogateescape output. Raw bytes are now retained losslessly as standards-compliant escaped JSON.
+
+Vast.ai H100 regression passed `15 tests + 3 subtests`; the final local CPU suite passed with only
+the expected Torch/CUDA skips (`3 passed, 8 skipped`). Models and training data stayed under HF
+`dancinlab` custody. The final private HF revision is
+`ac3671814e0b433cad1058e692507ef8a1f800b2`; all nine registered artifact hashes matched the 116-file
+repository. Vast.ai instance `47446530` was deleted after verification, leaving zero active rentals.
+Its final runtime estimate was `$13.9287` from elapsed duration multiplied by the listed hourly rate.
+`ING.jsonl` and `stream_mi.json` remained untouched. The next run must be separately pre-registered;
+this failed endpoint is not extended after the fact.

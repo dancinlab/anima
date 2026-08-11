@@ -39,6 +39,17 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > 않는다. 이후 작업은 이 저장소의 기존 `anima-py` / `cli/` / `core/` 흐름에만 추가한다.
 
 > [!CAUTION]
+> **303M from-scratch R0 결과(2026-08-11):** 고정한 bilingual broad+dialogue 재구축은 사전등록
+> 시드 3개 모두 native-mouth 관문에 실패했다. pooled held-out CE는
+> `0.99906/0.99986/1.00993`까지 내려갔지만 aggregate rho-form은 기준 `0.70`에
+> `0.40/0.60/0.20`이었다. 모든 시드에서 HILLOCK은 LIVE, shuffle은 `0.00`이었다. 따라서 R1
+> recurrent workspace는 잠긴 채로 두었고 모델은 배포하지 않았다. 공용 ByteGPT decode는 이제
+> CPU/CUDA 토큰 패리티를 유지하며 실제 CUDA에서 실행되고, 임의 raw byte 평가 증거도 JSON에
+> 손실 없이 보존한다. 전체 기록은 `state/anima_303m_r0_rebuild_2026_08_11/result.json`이다.
+> 모델·자료는 HF `dancinlab` 비공개 저장소에만 두었고 최종 HF revision과 등록 해시 9개를
+> 검증한 뒤 Vast.ai H100을 삭제했다(활성 임대 `0`, 추정 실행 비용 `$13.9287`).
+
+> [!CAUTION]
 > **Compose-2 인과 문턱:** 두 내부 단서가 함께 있는 정상군과 복구군은 정확도 0.75 이상이어야
 > 하고, 단서 A 제거·단서 B 제거·주소 섞기는 이 자료에서 직접 잰 우연 수준 + 0.06 이하여야 한다.
 > 두 주소를 정답대로 직접 건네는 계기 점검이 0.90 미만이면 대조군 결과는 읽지 않는다.

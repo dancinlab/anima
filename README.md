@@ -43,6 +43,17 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > lands here through the existing `anima-py` / `cli/` / `core/` paths.
 
 > [!CAUTION]
+> **303M from-scratch R0 result (2026-08-11):** the fixed bilingual broad+dialogue rebuild failed
+> the native-mouth gate on all three preregistered seeds. Pooled held-out CE was
+> `0.99906/0.99986/1.00993`, but aggregate rho-form was only `0.40/0.60/0.20` against `0.70`;
+> HILLOCK was LIVE and shuffle was `0.00` for every seed. R1 recurrent-workspace work therefore
+> remained locked and no model was deployed. The shared ByteGPT decode path now genuinely runs on
+> CUDA with CPU/CUDA token parity, and arbitrary raw byte evidence is retained losslessly in JSON.
+> Full record: `state/anima_303m_r0_rebuild_2026_08_11/result.json`. Models and data are private
+> under HF `dancinlab`; the final HF revision and nine registered hashes were verified before the
+> Vast.ai H100 was removed (active rentals `0`, estimated runtime cost `$13.9287`).
+
+> [!CAUTION]
 > **Compose-2 causal gate:** the test requires two
 > internal clues together: normal and recovery must score at least 0.75, while clue-A removal,
 > clue-B removal, and address shuffling must each fall to the panel's measured chance + 0.06 or
