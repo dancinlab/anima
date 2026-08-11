@@ -95,4 +95,5 @@ The failed engine checkpoint, exact-resume checkpoint, training summary, logs, d
 protocol, panel, and all 14 lossless responses are private in
 `dancinlab/anima-303m-r0-conversation-seed7-2026-08-12@ff2ccc5c945bfb6f5e1765948591cd8fb6cc3db9`.
 Nine registered artifacts were downloaded from that revision and SHA-256 verified. Full structured
-evidence is in `result.json`.
+evidence is in `result.json`. The L40S instance was deleted after HF and Git preservation; final
+Vast.ai active instances were `0`, with an estimated run cost of `$1.141`.
