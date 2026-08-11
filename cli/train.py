@@ -110,7 +110,7 @@ USAGE (installed `anima` PATH command after `hx install anima`):
       --gauges-out ckpt/bg_ctrl_cnce.json
 """
 from __future__ import annotations
-import argparse, hashlib, json, math, os, random, re, sys, time   # `random`: H_9841 replay-selection control
+import argparse, hashlib, json, math, os, random, re, sys, tempfile, time   # `random`: H_9841 replay-selection control
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -142,8 +142,14 @@ _CORE = None
 for _r in _ROOTS:
     _c = os.path.join(_r, "core")
     if os.path.isdir(_c):
-        if _c not in sys.path:
-            sys.path.insert(0, _c)
+        # The script directory (cli/) is always sys.path[0].  When callers also
+        # provide core/ through PYTHONPATH, the old membership guard left that
+        # existing entry behind cli/ and bare ``import serialize`` resolved to
+        # cli/serialize.py instead of the engine SSOT core/serialize.py.  Always
+        # promote the resolved core directory to the front.
+        if _c in sys.path:
+            sys.path.remove(_c)
+        sys.path.insert(0, _c)
         if _CORE is None and os.path.exists(os.path.join(_c, "model.py")):
             _CORE = _c
 if _CORE is None:
@@ -4665,19 +4671,33 @@ def main():
     #   header). The engine (generator L3 mouth-sniff) auto-dispatches .bin to the bytegpt
     #   decode; `anima-py evaluate` auto-detects .bin vs .clm by header, so no eval change.
     def _write_bin(out_path):
-        # write the torch .pt in the exact shape bytegpt_serialize.serialize reads, next to
-        # the .bin, then bridge it. The aux-head objective params are OUTSIDE model.state_dict
-        # (they live on objfn), so serialize sees only the standard ByteGPT weights.
-        pt_path = out_path + ".pt" if not out_path.endswith(".pt") else out_path
-        bin_path = out_path
+        # Write the model-only bridge input to a temporary file.  It must never share
+        # <out>.pt with _write_pt(): that path is the exact-resume checkpoint carrying
+        # optimizer/RNG/sampler state.  The old collision silently replaced the resumable
+        # checkpoint at shutdown.  Serialize to a sibling temporary output and atomically
+        # publish the engine checkpoint only after the bridge succeeds.
+        out_dir = os.path.dirname(os.path.abspath(out_path))
+        os.makedirs(out_dir, exist_ok=True)
+        pt_fd, pt_path = tempfile.mkstemp(prefix=".bytegpt-bridge-", suffix=".pt",
+                                          dir=out_dir)
+        os.close(pt_fd)
+        bin_fd, bin_tmp = tempfile.mkstemp(prefix=".bytegpt-engine-", suffix=".bin",
+                                            dir=out_dir)
+        os.close(bin_fd)
         sd = {k: v.detach().cpu() for k, v in model.state_dict().items()}
         ck = {"model": sd, "config": model.cfg.as_dict(),
               "val_ce": (round(lossF, 5) if lossF is not None else None),
               "step": steps, "nparam": n_params}
-        torch.save(ck, pt_path)
-        BGS.serialize(pt_path, bin_path)
-        print(f"  .bin WRITTEN {os.path.getsize(bin_path)} bytes -> {bin_path} "
-              f"(via {pt_path})", flush=True)
+        try:
+            torch.save(ck, pt_path)
+            BGS.serialize(pt_path, bin_tmp)
+            os.replace(bin_tmp, out_path)
+        finally:
+            if os.path.exists(pt_path):
+                os.unlink(pt_path)
+            if os.path.exists(bin_tmp):
+                os.unlink(bin_tmp)
+        print(f"  .bin WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
 
     def _write_clm(out_path):
         if is_bytegpt:

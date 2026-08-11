@@ -221,7 +221,7 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > issue. Full corrected evidence:
 > `state/chat_7b_conversation_recovery_2026_08_11/result.json`.
 >
-> **303M from-scratch rebuild registered (2026-08-11):** the conversation recovery proved that the
+> **303M from-scratch rebuild result (2026-08-11):** the conversation recovery proved that the
 > deployed base-only Qwen model can answer, but it is not anima's native byte mouth. Reusing an old
 > 7B reference or the synthetic compose-2 checkpoint is therefore stopped. The replacement starts
 > from random initialization at the frozen 303M ByteGPT reference scale through the existing
@@ -230,9 +230,14 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > block 512, global batch 32, and 6,000 updates; Stage B may start only after the frozen G0
 > coherence gate passes and uses only its Stage-A checkpoint plus the exact HF
 > `dancinlab/anima-chat-corpus-mix-70wiki-30dialogue` revision. No 7B scale-up or production
-> promotion is allowed before the 303M engine-native and public conversation gates pass. Models and
-> training data remain in HF `dancinlab`; the Vast.ai H100 is deleted after the recorded run. Frozen
-> protocol: `state/anima_303m_from_scratch_2026_08_11/README.md`.
+> promotion is allowed before the 303M engine-native and public conversation gates pass. Stage A
+> completed all 6,000 registered updates (`303.098M` parameters; held-out CE `1.63467`, DESCENT),
+> but frozen engine-native rho-form was only `0.60 = 3/5` against the unchanged `0.70 = 4/5` gate;
+> self-shuffle was `0.0` and HILLOCK was LIVE. The result is therefore `FALSIFIED`: Stage B, chat
+> staging, and runtime deployment were not run. The failed model and checkpoints are retained in
+> private HF `dancinlab/anima-303m-from-scratch-2026-08-11`. The run also fixed canonical trainer
+> module shadowing and exact-resume checkpoint overwrite; H100 regression passed 12/12. Full result:
+> `state/anima_303m_from_scratch_2026_08_11/result.json`.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the

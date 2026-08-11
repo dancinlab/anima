@@ -1,6 +1,6 @@
 # Anima-native 303M from-scratch rebuild — 2026-08-11
 
-Status: REGISTERED BEFORE EXECUTION.
+Status: COMPLETE — FALSIFIED AT THE STAGE-A G0 GATE.
 
 Live inspection falsified the intended model identity of the current H100 deployment. The running
 participant uses `--substrate lora`, `ANIMA_BASE=/workspace/qwen7b`, and no adapters. The recovered
@@ -15,7 +15,9 @@ trainer, model architecture, evaluator, prompt, or threshold. Training uses the 
 
 ## Frozen custody and protocol
 
-- provider: Vast.ai, existing H100 PCIe instance `47431163`; heavy work does not run on mini;
+- provider: Vast.ai H100 PCIe. The registered instance `47431163` was already absent when execution
+  began, so the same GPU class was rented as execution instance `47440997`; heavy work did not run
+  on mini;
 - all model and training-data custody: Hugging Face organization `dancinlab` only;
 - Stage-A data: `dancinlab/anima-corpus-en-general`, commit
   `e1c4ef4f595d72b959d0aa73a5cc5c8ba2a065a0`, file SHA-256
@@ -46,7 +48,34 @@ its only parent is the random-initialized Stage-A model trained in this run.
    semantic conversation, HTTP/WebSocket, VRAM, process recovery, and a non-injecting soak.
 5. Results, hashes, HF revision, cost, and failures are written here and to `result.json`, committed,
    and pushed to `origin/main`.
-6. After all recording and push work, instance `47431163` is deleted and the Vast.ai API must report
+6. After all recording and push work, instance `47440997` is deleted and the Vast.ai API must report
    zero active rentals. `anima_alive=false` after teardown is the expected final live state.
 
 `ING.jsonl` and `stream_mi.json` are existing user files and remain untouched.
+
+## Result
+
+Stage A ran exactly as registered from random initialization on a Vast.ai H100 PCIe. The 303.098M
+model completed 6,000 updates in `1,425.9 s`; train CE moved from `543.36487` to `1.59991`, and the
+final held-out CE was `1.63467` versus the uniform `5.5452` baseline (`DESCENT`, 1/1 register).
+Peak observed training VRAM was `19,947 MiB`.
+
+The serialized engine was a valid ByteGPT mouth and the adjacent checkpoint retained
+`anima-train-resume/v1`, optimizer, RNG, sampler state, and completed step 6,000. Its state digest is
+`715c4b1b2357b2e0e0dbe75f05f36d02d7d47cb4c8ab82f706c6ee3628962506`. The final engine SHA-256 is
+`db49408438aa66fd534d68ea3668f240d193df7dbaacd7fd9e3b5fdb72eff69d`; the exact-resume SHA-256 is
+`f79baa77bc2831260bf6320992bcb183f26a87c9723b5294877a349662cbce4e`.
+
+The frozen engine-native Stage-A gate then measured HILLOCK `LIVE` (`rep=0.0`, `distinct2=0.975`)
+but rho-form only `0.60 = 3/5`, below the unchanged `0.70 = 4/5` gate. The self-shuffle control was
+`0.0`, so this is a clean capability failure rather than detector leakage. Per the registered stop
+rule, Stage B, chat gates, participant staging, HTTP/WebSocket conversation QA, and runtime
+deployment were not run or interpreted. The final verdict is `FALSIFIED`.
+
+Two shared trainer defects were repaired during the preflight smoke: an existing `core/` entry in
+`PYTHONPATH` no longer lets the script directory shadow `core/serialize.py`, and ByteGPT conversion
+now uses temporary bridge files instead of overwriting the exact-resume `<out>.pt`. H100 regression
+finished `12/12`; the 303M smoke and five intermediate serialize/resume boundaries also passed.
+The failed model, final exact-resume state, 1,000-step engine checkpoints, logs, hashes, and gate
+outputs are preserved in the private HF repository
+`dancinlab/anima-303m-from-scratch-2026-08-11`.

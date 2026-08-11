@@ -202,7 +202,7 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > `285.577ms`는 과거 내부 기준 `250ms`보다 높아 남은 성능 문제로 그대로 기록한다. 전체 정정
 > 근거: `state/chat_7b_conversation_recovery_2026_08_11/result.json`.
 >
-> **303M from-scratch 재구축 사전등록(2026-08-11):** 대화 복구는 배포된 base-only Qwen이
+> **303M from-scratch 재구축 결과(2026-08-11):** 대화 복구는 배포된 base-only Qwen이
 > 답변할 수 있음을 보였지만 anima 고유 byte mouth는 아니다. 따라서 과거 7B 레퍼런스나 합성
 > compose-2 체크포인트의 재배포를 중단한다. 대체 모델은 기존 `cli/train.py --arch bytegpt`,
 > `core/serialize.py`, `core/decode.py`, participant 경로를 그대로 사용해 고정 303M ByteGPT
@@ -210,9 +210,14 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > `dancinlab/anima-corpus-en-general`의 정확한 revision, seed 7, d1024/24L/16H, block 512,
 > global batch 32, 6,000 update를 사용한다. 고정 G0 coherence 관문을 통과한 경우에만 Stage A
 > 체크포인트와 HF `dancinlab/anima-chat-corpus-mix-70wiki-30dialogue`의 정확한 revision으로
-> Stage B를 실행한다. 303M engine-native·공개 대화 관문 통과 전에는 7B 확장과 프로덕션 승격을
-> 금지한다. 모델·학습 자료는 HF `dancinlab`에만 보존하고 기록된 실행이 끝나면 Vast.ai H100을
-> 삭제한다. 고정 프로토콜: `state/anima_303m_from_scratch_2026_08_11/README.md`.
+> Stage B를 실행한다. Stage A는 등록한 6,000 update를 모두 완료했다(303.098M 파라미터,
+> held-out CE `1.63467`, DESCENT). 그러나 고정 engine-native rho-form은 `0.60 = 3/5`로 변경하지
+> 않은 기준 `0.70 = 4/5`에 미달했고, self-shuffle은 `0.0`, HILLOCK은 LIVE였다. 따라서 최종
+> 판정은 `FALSIFIED`이며 Stage B·채팅 스테이징·런타임 배포는 실행하지 않았다. 실패 모델과
+> 체크포인트는 HF 비공개 `dancinlab/anima-303m-from-scratch-2026-08-11`에 보존한다. 또한
+> canonical trainer의 모듈 shadowing과 exact-resume 체크포인트 덮어쓰기를 수정했고 H100 회귀
+> 시험 12/12를 통과했다. 전체 결과:
+> `state/anima_303m_from_scratch_2026_08_11/result.json`.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /

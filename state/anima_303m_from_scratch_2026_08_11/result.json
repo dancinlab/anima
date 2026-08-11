@@ -1,15 +1,20 @@
 {
   "schema": "anima-303m-from-scratch/v1",
   "date": "2026-08-11",
-  "status": "REGISTERED",
-  "verdict": "PENDING",
+  "status": "COMPLETE",
+  "verdict": "FALSIFIED",
   "registered_before_execution": true,
   "source": {
-    "baseline_commit": "3708481ca"
+    "baseline_commit": "3708481ca",
+    "preregistration_commit": "aaf203389"
   },
   "protocol": {
     "provider": "Vast.ai",
-    "instance_id": 47431163,
+    "registered_instance_id": 47431163,
+    "registered_instance_state_at_execution": "ABSENT",
+    "execution_instance_id": 47440997,
+    "gpu": "NVIDIA H100 PCIe 80GB",
+    "hourly_total_usd": 1.8888888888888886,
     "seed": 7,
     "architecture": {
       "family": "ByteGPT",
@@ -17,26 +22,32 @@
       "d": 1024,
       "layers": 24,
       "heads": 16,
-      "block": 512
+      "block": 512,
+      "parameters": 303097856
     },
     "stage_a": {
       "random_initialization": true,
       "dataset": "dancinlab/anima-corpus-en-general",
       "dataset_commit": "e1c4ef4f595d72b959d0aa73a5cc5c8ba2a065a0",
+      "dataset_file_sha256": "6614094432707127c82d6ee1ffd3a65f27c5aa118498be1623f1394f182f8ef9",
       "steps": 6000,
       "batch": 32,
-      "lr": 0.0003
+      "lr": 0.0003,
+      "bf16": true,
+      "checkpoint_every": 1000
     },
     "stage_b": {
       "requires_stage_a_g0": true,
       "only_parent": "stage_a",
       "dataset": "dancinlab/anima-chat-corpus-mix-70wiki-30dialogue",
       "dataset_commit": "32e16ed21ab6b86c22b2993a9a2c3de7a96638a7",
+      "dataset_file_sha256": "05179fb6684d41e4cefa928fe1c24683294c17997666eed5c03a00480e5acb70",
       "steps": 2000,
       "batch": 16,
       "lr": 0.00008
     },
     "tuning_or_retry_allowed": false,
+    "tuning_or_retry_performed": false,
     "scale_up_before_303m_pass": false,
     "delete_h100_after_completion": true
   },
@@ -44,14 +55,111 @@
     "g0_known_word_ratio": 0.5,
     "g0_passes_required": 4,
     "g0_items": 5,
+    "rho_form_gate": 0.7,
+    "rho_form_shuffle_cap": 0.05,
     "chat_single_passes_required": 4,
     "chat_single_items": 5,
     "chat_multi_passes_required": 3,
     "chat_multi_items": 5,
     "changed": false
   },
-  "execution": null,
-  "hf_artifacts": null,
-  "deployment": null,
-  "remaining_issues": []
+  "implementation": {
+    "root_causes": [
+      {
+        "flow": "cli/train.py -> import serialize -> ByteGPT final bridge",
+        "cause": "An existing core path supplied by PYTHONPATH was not promoted ahead of the cli script directory, so cli/serialize.py shadowed core/serialize.py.",
+        "fix": "Always promote the canonical core directory to sys.path[0]."
+      },
+      {
+        "flow": "cli/train.py::_write_pt -> cli/train.py::_write_bin",
+        "cause": "Both exact-resume persistence and the model-only ByteGPT bridge used <out>.pt, so final serialization overwrote optimizer and RNG recovery state.",
+        "fix": "Use temporary bridge input/output files and atomically publish only the engine .bin."
+      }
+    ],
+    "new_engine": false,
+    "new_evaluator": false,
+    "threshold_or_data_change": false
+  },
+  "execution": {
+    "stage_a": {
+      "completed": true,
+      "wall_seconds": 1425.9,
+      "loss_initial": 543.36487,
+      "loss_final": 1.59991,
+      "heldout_val_ce": 1.6346671283245087,
+      "uniform_val_ce": 5.5452,
+      "descent_registers": 1,
+      "descent_registers_total": 1,
+      "peak_observed_vram_mib": 19947,
+      "exact_resume_schema": "anima-train-resume/v1",
+      "exact_resume_completed_step": 6000,
+      "exact_resume_state_digest": "715c4b1b2357b2e0e0dbe75f05f36d02d7d47cb4c8ab82f706c6ee3628962506",
+      "engine_sha256": "db49408438aa66fd534d68ea3668f240d193df7dbaacd7fd9e3b5fdb72eff69d",
+      "exact_resume_sha256": "f79baa77bc2831260bf6320992bcb183f26a87c9723b5294877a349662cbce4e"
+    },
+    "stage_a_gate": {
+      "tier": "TERMINAL",
+      "gen": 40,
+      "hillock": {
+        "verdict": "LIVE",
+        "rep_ratio": 0.0,
+        "distinct2": 0.975
+      },
+      "rho_form": {
+        "verdict": "FAIL",
+        "value": 0.6,
+        "passes": 3,
+        "items": 5,
+        "self_shuffle": 0.0,
+        "delta": 0.6
+      }
+    },
+    "stage_b": {
+      "status": "SKIPPED",
+      "reason": "Stage-A rho-form 0.60 was below the frozen 0.70 gate."
+    },
+    "chat_and_runtime": {
+      "status": "SKIPPED",
+      "reason": "Stage B was not unlocked."
+    },
+    "qa": {
+      "h100_regression": {
+        "passed": 12,
+        "failed": 0
+      },
+      "full_scale_gpu_smoke": "PASS",
+      "intermediate_engine_resume_boundaries": 5,
+      "python_compile": "PASS",
+      "local_pytest": "NOT RUN: pytest is not installed in the mini project environment"
+    }
+  },
+  "hf_artifacts": {
+    "repo": "dancinlab/anima-303m-from-scratch-2026-08-11",
+    "repo_type": "model",
+    "private": true,
+    "upload_status": "VERIFIED",
+    "revision": "566bca4f60ce0e3452c866afe5c8d294783e7a03",
+    "files": 14,
+    "artifact_bytes": 14557839349,
+    "engine_lfs_sha256_verified": true,
+    "exact_resume_lfs_sha256_verified": true
+  },
+  "deployment": {
+    "model_deployed": false,
+    "runtime_changed": false,
+    "live_health_before_teardown": {
+      "http_ok": true,
+      "anima_alive": false
+    },
+    "vast_active_rentals_after_teardown": null,
+    "cost_usd": null
+  },
+  "preservation": {
+    "ING.jsonl": "PRESERVED",
+    "stream_mi.json": "PRESERVED"
+  },
+  "remaining_issues": [
+    "The from-scratch Stage-A model reached only 3/5 rho-form, below the frozen 4/5 gate.",
+    "No anima-native conversational model is deployed; anima_alive remains false."
+  ]
 }
