@@ -2,8 +2,8 @@
 # anima_py — anima py CLI 의 pip 콘솔 런처 (pyproject.toml [project.scripts]).
 # 단일진입(a_cli_single_entry): 이 파일은 디스패처가 아니다 — sys.path 부트만
 # 하고 canonical 디스패처 cli/anima.py:main 에 그대로 위임한다(동일 진입,
-# 채널만 pip). hexa 호스트 = `anima`(hx install anima) · hexa-less 호스트
-# (pi5 등) = `anima-py`(pip install anima-python). #2603 가드는 __main__ 전용이라
+# 채널은 pip). 유일한 활성 진입은 `anima-py`(pip install anima-python)다.
+# #2603 가드는 __main__ 전용이라
 # import 경유인 이 경로에선 발화하지 않는다(무손상).
 # ==========================================================================
 import os

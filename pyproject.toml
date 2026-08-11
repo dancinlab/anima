@@ -1,5 +1,5 @@
 # ==========================================================================
-# anima-py — anima py CLI 의 pip 배포 채널 (hexa 툴체인 無 호스트용 · pi5 등).
+# anima-py — anima 의 유일한 활성 canonical Python CLI.
 # 단일진입 보존(a_cli_single_entry): console 명령 `anima-py` = cli/anima.py:main
 # 의 콘솔 바인딩(동일 디스패처, 2nd entry 아님). 소스 복사 0 — 기존 cli/·core/
 # 디렉토리를 package-dir 매핑으로 그대로 패키징(surgical·canonical-naming).
@@ -17,7 +17,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "anima-python"
 dynamic = ["version"]
-description = "anima substrate-native consciousness engine — py CLI (measurement/eval · serialize · corpus · sweep), hexa-toolchain-free numpy distribution"
+description = "anima substrate-native consciousness engine — canonical Python CLI for runtime, training, evaluation, and corpus workflows"
 readme = "anima_py/README.md"
 requires-python = ">=3.9"
 dependencies = ["numpy>=1.24"]

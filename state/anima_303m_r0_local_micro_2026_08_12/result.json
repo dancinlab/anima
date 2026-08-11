@@ -288,13 +288,20 @@
     "canonical_train_smoke": "PASS",
     "canonical_evaluate_smoke": "PASS",
     "hf_private_revision": "PASS",
-    "hexa_compile": "UNAVAILABLE_LOCAL_COMPILER"
+    "hexa_compile": "UNAVAILABLE_LOCAL_COMPILER",
+    "python_only_policy_cli_smoke": "PASS",
+    "python_only_policy_regression": "15 tests + 3 subtests passed"
+  },
+  "execution_policy": {
+    "effective_date": "2026-08-12",
+    "canonical_path": "python_anima_py_only",
+    "implementation": "cli/*.py and core/*.py shared paths",
+    "hexa_status": "historical_provenance_only_not_a_release_gate"
   },
   "remaining": [
     "R1 remains locked because the frozen Web2 shuffle instrument is not calibrated to its own null.",
     "Any replacement measurement must be preregistered independently; no post-result word filter or threshold change is permitted.",
-    "Pre-register any future deduplicated/document-disjoint corpus revision; do not rewrite frozen R0 data.",
-    "Run a compiled Hexa smoke on a host with the Hexa toolchain before a native runtime release."
+    "Pre-register any future deduplicated/document-disjoint corpus revision; do not rewrite frozen R0 data."
   ],
   "preservation": {"ING.jsonl": "PRESERVED", "stream_mi.json": "PRESERVED"}
 }

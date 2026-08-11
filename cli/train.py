@@ -1,27 +1,17 @@
 #!/usr/bin/env python3
 """cli/train.py — the CANONICAL anima python training entry (`anima-py train`).
 
->>> This file is the working python training entry, SYMMETRIC to cli/evaluate.py
->>> (the canonical python eval entry). `anima-py train <args>` (pip channel) dispatches HERE;
->>> hexa `anima train <args>` dispatches to the hexa-native cli/train.hexa.
->>>
->>> WHY python is the canonical working path RIGHT NOW: the hexa-native production
->>> trainer cli/train.hexa (a_train_flame_forge) is single-thread native-CPU-scalar-
->>> bound (#2598/#2600: util peak ~65% / sustained <30%) and is temporarily under a
->>> GPU-utilization fix, so a real 303M GPU train on it idles the GPU. This torch
->>> Lane-P path is GPU-BOUND (cuda GEMM-saturating), so it trains the real clm303
->>> (L4·d3784·E2->Emax4) efficiently today — the explicitly-sanctioned REFERENCE +
->>> BRIDGE path (a_clm_gen_pipeline: "Lane-P torch = REFERENCE + bridge, forge is the
->>> PUBLIC production trainer"). It trains a CLMConvMoE GPU-bound, then SERIALIZES to
->>> a .clm v0.3 (CLM\\x01 magic + CLMX trailer) that CORE core/clm_decode.hexa loads
->>> back byte-exact for the engine-native ρ-AXON reach verdict (former G0-G6).
+>>> This file is the sole active training entry, paired with cli/evaluate.py.
+>>> `anima-py train <args>` dispatches HERE. The torch path is GPU-bound and trains the
+>>> real clm303 (L4·d3784·E2->Emax4), then serializes the existing checkpoint formats
+>>> consumed by the canonical Python decode/evaluation path.
 >>>
 >>>   ENGINE-NATIVE GATE (a_engine_native_learning, HARD-GATE): torch-side CE / gauges
 >>>   here = DIRECTIONAL only (NOT terminal). TERMINAL verdict = CORE re-measure of the
 >>>   serialized .clm via `anima-py evaluate <clm>` on the frozen ρ-AXON reach bars (former G0-G6). Pull the
 >>>   trained ckpt before teardown (a_fire_recover_complete) so engine-check is possible.
 
-This trainer carries the full SAVANT + MITOSIS recipe (parity with cli/train.hexa) AND
+This trainer carries the full SAVANT + MITOSIS recipe and
 the H_1640 OBJECTIVE-DISCOVERY surface: `--arm {ctrl,tlora,tlora_dict,tlora_jamo}` ×
 `--objective {ce_marginal,infonce,contrastive_equilibrium,predictive_info,
 constructive_bind,composed_nce}`. The last THREE objectives are the NEW compositional

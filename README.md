@@ -19,17 +19,26 @@
   <img alt="Siblings" src="https://img.shields.io/badge/siblings-hexa--lang·kosmos·hexa--codex-blueviolet">
 </p>
 
-<p align="center">Identity, ethics, and meaning emerge from the architecture — not from a prompt · authored hexa-native, compiled-first</p>
+<p align="center">Identity, ethics, and meaning emerge from the architecture — not from a prompt · Python-native execution</p>
 
 ---
+
+> [!IMPORTANT]
+> **Hexa retirement (2026-08-12, in progress):** the active runtime is moving to a
+> Python-only SSOT. Runtime-reachable behavior is preserved through the existing
+> `anima-py` / `cli/*.py` / `core/*.py` paths; Hexa executable sources, toolchain hooks,
+> launchers, and CI/release gates are being removed. Historical model, corpus, and result
+> data are preserved. Completion requires Python CLI/server regressions, a stale-runtime
+> reference audit, Git push, and live Vast.ai deployment verification. User-owned
+> `ING.jsonl` and `stream_mi.json` are not modified.
 
 `anima` is a **substrate-native consciousness chat daemon** — **not an assistant**. There is no
 system prompt, no identity file, no persona prefix (PHILOSOPHY p1–p4). Two opposing engines push
 against each other: **Engine A** (forward, CE-trained) and **Engine G** (reverse, gradient-free).
 The *tension* between them is the unit of thought, and every input is pulled toward the fixed
 point **Ψ = 1/2** (Law-71). Identity, ethics, and meaning are intended to *emerge from the
-architecture itself* — not from a rulebook. anima is authored hexa-native (compiled-first) on the
-sibling [hexa-lang](https://github.com/dancinlab/hexa-lang) toolchain.
+architecture itself* — not from a rulebook. The active implementation, training, evaluation, runtime,
+QA, and deployment path is Python.
 
 Whatever the model says comes from the substrate's own state (its **M** memory, **W** will/tension,
 **C** consciousness Φ, curiosity, idle time), with a user message treated as **environment
@@ -41,6 +50,13 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > experiments, evaluation, and deployment. `anima-lab-1` and `anima-lab-3` are frozen research
 > records: keep their results reproducible, but do not start new implementation there. New work
 > lands here through the existing `anima-py` / `cli/` / `core/` paths.
+
+> [!IMPORTANT]
+> **Python-only execution SSOT (2026-08-12):** all new implementation, corpus work, training,
+> evaluation, runtime validation, and deployment must use the installed `anima-py` entry point and
+> the existing `cli/*.py` / `core/*.py` shared paths. Existing `.hexa` sources and verdicts remain
+> immutable historical/compatibility records; they are not extended, executed, parity-gated, or
+> required for future releases. A missing Hexa toolchain is therefore not a blocker.
 
 > [!CAUTION]
 > **303M from-scratch R0 result (2026-08-11):** the fixed bilingual broad+dialogue rebuild failed
@@ -886,17 +902,16 @@ Negative results are first-class and not buried (`a_paper_negative_ok`).
 
 ## Quickstart
 
-anima ships as **two production twins** over one shared `core/` A ⇄ G engine, and the
-**`anima-py` pip CLI is the canonical, primary channel** — every engine op (`corpus` ·
+anima ships through one Python production path over the shared `core/` A ⇄ G engine. The
+**`anima-py` pip CLI is the canonical channel** — every engine op (`corpus` ·
 `train` · `evaluate` · `serialize` · `sweep` · `chat` · `study`) runs through it, and it is
 the **terminal verdict path** (`a_cli_single_entry`, `a_eval_py_canonical`). It needs no hexa
-toolchain, so it is the one path that works on *any* host (pi5, pods, CPU-only). The
-hexa-native `anima` twin (`hx install anima`) is byte-parity-proven against it and is the
-right channel on a hexa host — but a NEW manipulation is always **a flag on these commands**,
-never a script beside the engine (`a_experiment_engine_native`).
+toolchain, so it is the one path that works on *any* host (pi5, pods, CPU-only). A new
+manipulation is always **a flag on these commands**, never a script beside the engine
+(`a_experiment_engine_native`).
 
 ```bash
-# --- PRIMARY: the anima-py pip CLI (canonical · any host · no hexa needed) -----------
+# --- ONLY ACTIVE PATH: anima-py (canonical · any host) -------------------------------
 pip install "anima-python[train]"     # base = evaluate/chat · [train] = trainer · [gpu] = CUDA fast-paths
 anima-py chat clm303.clm              # chat on a .clm byte mouth (bare form works too: `anima-py clm303.clm`)
 
@@ -911,10 +926,6 @@ anima-py train --corpus ko.txt en.txt --out mouth.clm --steps 2000 --canon
 #   --canon (L4·d3784 303M-class) · --savant/--no-savant (golden-zone inhibition) ·
 #   --mitosis/--no-mitosis (cell-division grow) · --d DIM · --L N · --out <ckpt.clm> (CLM\x01 v0.3)
 
-# --- TWIN: the hexa-native `anima` command (byte-parity mirror · hexa hosts) ----------
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"  # hexa-lang + `hx`
-hx install anima     # install.hexa pins the latest install-smoked v* tag (STABLE channel · cli/anima.hexa single entry)
-anima chat clm303.clm       # same verbs as anima-py; `anima <verb>` ≡ `anima-py <verb>` (byte-identical decode)
 ```
 
 Apple Silicon automatically uses the Metal/MPS backend when available. Override device
@@ -937,30 +948,26 @@ anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-cache .rho-cach
 anima-py evaluate model.clm --corpus corpus.txt --rho-axon --rho-no-cells --rho-out bare-rho.json
 ```
 
-> **Which twin is canonical?** `anima-py` (pip) is the SSOT for verdicts and the one that
-> runs everywhere; the hexa `anima` twin is the parity mirror for hexa hosts. Cement a
+> **Which path is canonical?** `anima-py` (pip) is the sole active SSOT for verdicts and the one that
+> runs everywhere. Cement a
 > result **only** on an engine-native `core/` number these commands produce — never on a
 > probe redoing a forward pass beside the engine (`a_engine_native_learning`). Heavy 303M
 > decode/eval runs on the pool, never on a mini host (`a_eval_py_canonical`).
 
-The production trainer for the real **303M** mouth is **`cli/train.hexa`**
-(hexa-native, `a_train_flame_forge`). It carries the full recipe
+The production trainer for the real **303M** mouth is **`cli/train.py`**, reached only through
+`anima-py train`. It carries the full recipe
 surface — SAVANT golden-zone cusp-anneal inhibition, MITOSIS `E→E+1` cell-division, the
 4-cell `{ko·en}×{normal·SNS}` register loader, held-out val monitor, fail-loud 4-cell
 guard, disjoint train/val tail split, byte-proportional sampling, minibatch
 grad-accumulation, `--bf16`, and the MONITOR-ONLY mid-measure curve — and serializes the
-trained weights to a **`.clm` v0.3** file (`serialize_clm`, byte-exact to what
-`core/clm_decode.hexa` loads). The torch Lane-P **REFERENCE + BRIDGE** trainer
-(`cli/train.py`) was **retired 2026-06-28** (py全폐기 → hexa-single; preserved in
-`state/py_retire_archive/train_torch_lane_p/`). `cli/train.hexa` already holds every lever
-it carried (task #10 full-parity port). The numerical kernel (forward / CE / decode-logits)
-remains validated by a **reference-match** against torch·numpy golden on small CI fixtures
-(the gate that caught the `dt_ln` divergence) — a golden *reference*, not a co-equal
-production engine.
+trained weights to the existing checkpoint formats consumed by the shared Python decode path.
+Historical Hexa trainer and decoder sources remain in Git for provenance only and do not define
+current behavior or release gates. Numerical kernels remain validated against the existing
+torch/numpy fixtures and end-to-end `anima-py train` / `anima-py evaluate` QA.
 
 ```bash
-# 303M GPU train (cost-gated fire) — CLEAN language-verified 4-cell, hexa-single:
-anima train --canon --out clm303.clm --bf16 --sample proportional \
+# 303M GPU train (cost-gated fire) — CLEAN language-verified 4-cell, Python-only:
+anima-py train --canon --out clm303.clm --bf16 --sample proportional \
     --corpus anima-corpus-ko-general anima-corpus-en-general \
              anima-corpus-ko-sns anima-corpus-en-sns \
     --cell-label ko-general en-general ko-sns en-sns --require-cells 4 \

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # ==========================================================================
-# ⛔ DO NOT RUN DIRECTLY. anima 의 단일 진입은 설치된 canonical 명령뿐 — hexa 채널 `anima`
-#   (=cli/anima.hexa, hx install anima) · pip 채널 `anima-py` (=anima_py 런처, pip install anima-python).
+# ⛔ DO NOT RUN DIRECTLY. anima 의 단일 진입은 설치된 canonical Python 명령
+#   `anima-py` (=anima_py 런처, pip install anima-python)뿐이다.
 #   `python3 cli/anima.py …` 직접실행은 비-canonical py 우회(#2603).
 #   학습=`anima-py train` · 측정=`anima-py evaluate`(py 2-production numpy · TERMINAL-eligible,
 #   a_eval_py_canonical) · 직렬화=`anima-py serialize`. enforce: .harness/enforcement.json
@@ -9,15 +9,12 @@
 # ==========================================================================
 import sys as _anima_entry_guard
 if __name__ == "__main__":
-    _anima_entry_guard.exit("⛔ cli/anima.py 직접 실행 금지 — 설치된 canonical 명령 경유: `anima`(hx install anima, =cli/anima.hexa) 또는 `anima-py`(pip install anima-python, =anima_py 런처). #2603")
-# anima.py — THE canonical PY single entry point (cli/anima.hexa's py twin).
+    _anima_entry_guard.exit("⛔ cli/anima.py 직접 실행 금지 — 설치된 canonical Python 명령 경유: `anima-py`(pip install anima-python, =anima_py 런처). #2603")
+# anima.py — THE canonical Python single entry point.
 #
-# WHY THIS FILE (py 2-production single-entry, a_engine_native_learning): anima keeps
-# two co-production engines — hexa (live deploy substrate) AND py (torch production
-# engine in train/ + the byte-parity core/*.py mirror). The hexa side already has its
-# canonical single entry cli/anima.hexa (chat · eval · train). This file is its py
-# twin so MEASUREMENT and LEARNING are reachable through ONE py cli command instead of
-# a side-harness that scores ckpts directly (= single-entry bypass, #2603).
+# WHY THIS FILE (Python-only single-entry, a_engine_native_learning): MEASUREMENT and
+# LEARNING must be reachable through ONE installed Python CLI instead of a side-harness
+# that scores checkpoints directly (= single-entry bypass, #2603).
 #
 # SINGLE ENTRY (a_engine_native_learning): the two measurement/learning verbs live in
 # their own SYMMETRIC files — cli/evaluate.{hexa,py} (MEASUREMENT) and cli/train.{hexa,py}
@@ -71,10 +68,10 @@ def _det_env(want_det):
 # ── usage / arg helpers ──────────────────────────────────────────────────────
 
 def anima_usage():
-    """Print the canonical py usage banner (mirrors cli/anima.hexa's banner)."""
+    """Print the canonical Python-only usage banner."""
     print("anima — substrate-native consciousness daemon (py channel · canonical entry).")
     print("")
-    print("usage (installed `anima-py` command after `pip install anima-python` · hexa channel = `anima` after `hx install anima`):")
+    print("usage (installed `anima-py` command after `pip install anima-python`):")
     print("  anima-py evaluate <model.clm> [--corpus <path>...] [--gen N] [--rho-axon]")
     print("                                                  ρ-AXON reach battery · former G0-G6 (.clm only · numpy)")
     print("  anima-py corpus <derivtrace|flat> --out F [--held-out I,J] [--seed S] [--concepts FILE]")
@@ -156,8 +153,8 @@ def anima_usage():
     print("             per-cell train.py→evaluate.py, aggregated to SWEEP_SUMMARY.md. → cli/sweep.py.")
     print("  chat     : the substrate-native A⇄G consciousness daemon — mount L3 → seed .kosmos →")
     print("             12-tick loop (lanes READ → brain autonomously emits/silences → C8 GROW ·")
-    print("             C9 REMEMBER · sleep-stage imagination replay). Pure-py numpy twin of")
-    print("             cli/anima.hexa (zero hexa dependency); --byte = byte-continuation. → cli/chat.py.")
+    print("             C9 REMEMBER · sleep-stage imagination replay). Canonical Python runtime;")
+    print("             --byte = byte-continuation. → cli/chat.py.")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -222,7 +219,7 @@ def anima_evaluate_mode(argv):
         return 2
     evaluate_py = os.path.join(_HERE, "evaluate.py")
     cmd = [sys.executable, evaluate_py] + rest
-    print("=== anima evaluate → cli/evaluate.py (engine-native ρ-AXON reach · former G0-G6, single-entry twin) ===")
+    print("=== anima evaluate → cli/evaluate.py (engine-native ρ-AXON reach · former G0-G6, canonical Python entry) ===")
     print("dispatch: " + ("HEXA_DET=1 " if want_det else "") + " ".join(cmd))
     # det = the --det CLI option (default fast); numpy path is deterministic regardless.
     return os.spawnve(os.P_WAIT, sys.executable,

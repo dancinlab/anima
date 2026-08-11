@@ -2,6 +2,12 @@
 
 Status: COMPLETE — 25 local experiments exhausted the shared-path hypotheses; R1 remains locked.
 
+Follow-up execution policy (2026-08-12): all future Anima implementation, experiments, training,
+evaluation, runtime QA, and deployment use the canonical Python `anima-py` path only. Existing Hexa
+artifacts are retained for provenance but are no longer an execution or release gate. The source
+`python -m anima_py` entry smoke, Python compilation, JSON validation, Markdown diff validation, and
+the targeted evaluator/trainer regression (`15 tests + 3 subtests`) passed after this policy update.
+
 This audit started with the ten predeclared low-load local experiments and continued until the shared
 evaluator, corpus, sampler, optimizer, ByteGPT forward, initialization, serialization, and decode
 hypotheses were exhausted. It did not train or load a 303M checkpoint, change any R0 data, seed,
@@ -122,8 +128,7 @@ instrument and an immutable new corpus revision, respectively. They were not tun
 
 Final regression passed 17/17 executable tests with one expected CUDA/CuPy skip. Python compilation,
 JSON validation, Markdown diff checks, canonical two-step train/evaluate smokes, checkpoint overwrite,
-and the private HF dataset revision also passed. A Hexa compiler was not installed locally; the Hexa
-mirror uses repository-existing `env`, `sha256_file`, and `panic` primitives and was statically checked,
-but a compiled Hexa smoke remains unavailable on this host. Models and training data remained under HF
+and the private HF dataset revision also passed. The unavailable compiled Hexa smoke is preserved as a
+historical QA fact but is not a remaining task under the Python-only execution policy. Models and training data remained under HF
 `dancinlab`; temporary corpus and tiny-model files were diagnostic only and were not added to Git or
 model custody. `ING.jsonl` and `stream_mi.json` remained untouched.
