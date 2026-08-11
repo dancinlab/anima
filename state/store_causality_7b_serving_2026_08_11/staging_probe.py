@@ -21,7 +21,9 @@ def _percentile(values: list[float], q: float) -> float:
 
 def _http_health(url: str) -> tuple[float, dict]:
     started = time.perf_counter()
-    with urllib.request.urlopen(url, timeout=5) as response:
+    request = urllib.request.Request(
+        url, headers={"User-Agent": "anima-staging-probe/1"})
+    with urllib.request.urlopen(request, timeout=5) as response:
         body = json.loads(response.read())
         if response.status != 200:
             raise RuntimeError(f"health status {response.status}")
