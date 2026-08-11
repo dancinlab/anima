@@ -1,0 +1,130 @@
+{
+  "schema": "anima-303m-r0-meaningful-conversation/v1",
+  "date": "2026-08-12",
+  "status": "PREREGISTERED",
+  "execution": {
+    "entry": "anima-py",
+    "language": "Python only",
+    "provider": "Vast.ai",
+    "gpu_memory_gib": [24, 48],
+    "h100_allowed": false,
+    "models_and_training_data": "private Hugging Face dancinlab repositories only",
+    "delete_instance_after_completion": true
+  },
+  "architecture": {
+    "family": "ByteGPT",
+    "vocab": 256,
+    "d": 1024,
+    "layers": 24,
+    "heads": 16,
+    "block": 512,
+    "parameters_expected": 303097856,
+    "random_initialization": true,
+    "initialization": "canonical-gpt-v1"
+  },
+  "source_data": [
+    {
+      "label": "en_general",
+      "repo": "dancinlab/anima-corpus-en-general",
+      "revision": "e1c4ef4f595d72b959d0aa73a5cc5c8ba2a065a0",
+      "file": "anima-corpus-en-general.txt",
+      "license_provenance": "preserved from the existing private dancinlab dataset"
+    },
+    {
+      "label": "ko_general",
+      "repo": "dancinlab/anima-corpus-ko-general",
+      "revision": "9f03495689d52fb50b5b7d8d673d77e38266afcc",
+      "file": "anima-corpus-ko-general.txt",
+      "license_provenance": "preserved from the existing private dancinlab dataset"
+    },
+    {
+      "label": "en_dialogue",
+      "repo": "OpenAssistant/oasst1",
+      "revision": "fdf72ae0827c1cda404aff25b6603abec9e3399b",
+      "files": [
+        "data/train-00000-of-00001-b42a775f407cee45.parquet",
+        "data/validation-00000-of-00001-134b8fd0c89408b6.parquet"
+      ],
+      "license": "Apache-2.0",
+      "selection": "English, human-generated, one deterministic best reviewed path per message tree"
+    },
+    {
+      "label": "ko_dialogue",
+      "repo": "klue/klue",
+      "revision": "349481ec73fff722f88e0453ca05c77a447d967c",
+      "files": [
+        "mrc/train-00000-of-00001.parquet",
+        "mrc/validation-00000-of-00001.parquet"
+      ],
+      "license": "CC-BY-SA-4.0",
+      "selection": "official KLUE MRC train/validation records rendered as user/assistant QA"
+    }
+  ],
+  "data_rules": {
+    "excluded_previous_cells": ["broad_dialogue", "en_sns", "ko_sns"],
+    "dialogue_template": "user: {text}\\nassistant: {text}",
+    "system_prompt": false,
+    "normalization": "Unicode NFC, whitespace collapse, trim",
+    "exact_document_dedup": true,
+    "general_validation_assignment": "sha256(normalized_document) modulo 20 equals 0",
+    "official_split_preserved_for": ["OpenAssistant/oasst1", "klue/klue:mrc"],
+    "cross_cell_train_validation_overlap_required": 0,
+    "evaluation_decontamination": "before training, remove and report any normalized document containing an exact registered panel user turn",
+    "near_duplicate_audit": {
+      "policy": "report only; no result-dependent filtering",
+      "sample": "100000 lexicographically smallest normalized document SHA-256 hashes",
+      "fingerprint": "64-bit SimHash over at most the first 256 Unicode character 5-grams",
+      "candidate_index": "four 16-bit bands",
+      "near_hamming_distance_max": 3
+    },
+    "duplicate_split_ownership": "validation wins before model training",
+    "output_repository": "dancinlab/anima-303m-r0-conversation-data-2026-08-12",
+    "output_private": true,
+    "immutable_revision_required": true
+  },
+  "training": {
+    "screen_seed": 7,
+    "steps": 14000,
+    "global_batch": 32,
+    "sequence_bytes": 512,
+    "sample": "roundrobin",
+    "required_cells": 4,
+    "validation_files": "one explicit file per training cell",
+    "optimizer": "AdamW",
+    "beta1": 0.9,
+    "beta2": 0.95,
+    "weight_decay": 0.1,
+    "peak_lr": 0.0003,
+    "schedule": "linear-warmup-cosine",
+    "warmup_steps": 500,
+    "decay_steps": 14000,
+    "min_lr_ratio": 0.1,
+    "precision": "bf16",
+    "checkpoint_every": 2000,
+    "checkpoint_selection": "fixed final step 14000"
+  },
+  "gate_order": [
+    "conversation_scorer_controls",
+    "data_integrity",
+    "clean_validation_descent",
+    "meaningful_conversation_automatic",
+    "meaningful_conversation_manual_all_responses",
+    "remaining_language_and_reach_diagnostics"
+  ],
+  "conversation_gate": {
+    "panel": "conversation_panel.json",
+    "engine": "cli/evaluate.py --conversation-panel",
+    "decode": "canonical ByteGPT greedy continuation",
+    "all_structural_responses_required": true,
+    "semantic_min_per_language": "6/7",
+    "all_multiturn_final_answers_required": true,
+    "cross_question_duplicate_responses_allowed": false,
+    "manual_meaning_review": "all 14 responses must be relevant and intelligible",
+    "result_dependent_changes_allowed": false
+  },
+  "r1": {
+    "status": "LOCKED",
+    "unlock": "separate multi-seed R0 protocol and pass required"
+  },
+  "preserve": ["ING.jsonl", "stream_mi.json"]
+}

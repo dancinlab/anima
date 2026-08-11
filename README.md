@@ -38,6 +38,36 @@ Status on 2026-08-12:
 
 User-owned `ING.jsonl` and `stream_mi.json` are outside this work and must remain unchanged.
 
+## Current experiment — meaningful-conversation R0
+
+The next 303M from-scratch checkpoint is blocked on meaningful Korean and English conversation,
+not merely valid-looking text. The preregistered Python-only protocol and lossless result record
+live in `state/anima_303m_r0_conversation_2026_08_12/`.
+
+- The previous synthetic/misaligned dialogue and SNS cells are excluded. Replacement dialogue
+  comes from pinned human OpenAssistant English paths and pinned KLUE MRC Korean question-answer
+  records, alongside the existing pinned general-language sources.
+- Training and validation are explicit, separate files. Exact document dedup, validation-first
+  ownership, panel decontamination, source/file hashes, and a report-only near-duplicate audit run
+  before training. The resulting dataset is private and immutable under HF `dancinlab`.
+- `anima-py evaluate --conversation-panel` now rejects empty, broken UTF-8, wrong-language,
+  question-copy, repeated, cross-question duplicate, irrelevant, and failed multi-turn
+  memory/correction replies. Every automatic pass still requires manual review of all 14 replies.
+- The shared chat mouth stops at a generated next-user role boundary instead of leaking a
+  fabricated following turn. The shared trainer accepts one explicit validation file per cell.
+- Local scorer/trainer/runtime regressions and a tiny corpus → train → serialize → conversation
+  evaluation flow passed. The fixed Vast.ai L40S 48 GB seed-7 run completed without H100.
+- The model failed meaningful conversation: English semantic relevance `0/7`, Korean `0/7`, and
+  manual review `0/14`. Examples include answering the Korean ice question with `모스크바 3상회의`
+  and the remembered cat-name question with `영지주의자`.
+- Train CE descended `5.63180 → 0.71687`, but final dialogue validation diverged, especially Korean
+  dialogue at `2.29729`. Equal-cell round-robin repeatedly exposed the 1.30 MB Korean QA cell to
+  the same byte budget as approximately 57 MB general cells; this is the leading shared-flow cause.
+- The failed model and all lossless responses are private at HF revision
+  `dancinlab/anima-303m-r0-conversation-seed7-2026-08-12@ff2ccc5c945bfb6f5e1765948591cd8fb6cc3db9`.
+- R1 recurrent-workspace work and production deployment remain locked unless this conversation
+  gate passes without changing the registered panel, data, seed, endpoint, decode, or bars.
+
 ## Canonical entry
 
 ```bash

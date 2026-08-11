@@ -1,0 +1,131 @@
+{
+  "schema": "anima-303m-r0-meaningful-conversation-result/v1",
+  "date": "2026-08-12",
+  "status": "COMPLETED",
+  "verdict": "FAIL-MEANINGLESS-CONVERSATION",
+  "protocol": {
+    "file": "protocol.json",
+    "sha256": "054362c53f6b68d660f14384dbf385105446bd8937497a82b519f155f26aa97d"
+  },
+  "conversation_panel": "conversation_panel.json",
+  "data": {
+    "repository": "dancinlab/anima-303m-r0-conversation-data-2026-08-12",
+    "revision": "42fadd08f88cb3b74757b373629d2d7910ca35ec",
+    "private": true,
+    "files": 11,
+    "candidate_documents": 638421,
+    "retained_documents": 638420,
+    "cross_train_validation_hash_overlap": 0,
+    "panel_contamination_after_filter": 0,
+    "near_duplicate_report_only_pairs": 430,
+    "cell_bytes": {
+      "en_general_train": 57235159,
+      "en_general_validation": 3093696,
+      "ko_general_train": 57396113,
+      "ko_general_validation": 2944718,
+      "en_dialogue_train": 4307476,
+      "en_dialogue_validation": 225311,
+      "ko_dialogue_train": 1298894,
+      "ko_dialogue_validation": 433024
+    },
+    "remote_sha256_verified_files": 8
+  },
+  "training": {
+    "provider": "Vast.ai",
+    "gpu": "NVIDIA L40S 48 GB",
+    "h100_used": false,
+    "architecture": "ByteGPT 303097856 parameters, d=1024, L=24, heads=16, block=512",
+    "seed": 7,
+    "steps": 14000,
+    "wall_seconds": 6002.5,
+    "observed_vram_mib": 19777,
+    "loss_initial": 5.6318,
+    "loss_final": 0.71687,
+    "final_validation_ce_macro_cells": 1.4915653988718987,
+    "final_validation_ce_per_cell": {
+      "en_general": 1.19245,
+      "ko_general": 1.07143,
+      "en_dialogue": 1.4051,
+      "ko_dialogue": 2.29729
+    },
+    "heldout_descent": "4/4",
+    "interpretation": "Training descended, but dialogue validation diverged while train loss continued falling; Korean dialogue was the strongest failure."
+  },
+  "evaluation": {
+    "order_gate": "meaningful conversation first",
+    "status": "FAIL",
+    "scorer_controls": "PASS",
+    "device": "NVIDIA L40S via CuPy 13.6.0",
+    "device_parity": "3 passed",
+    "automatic": {
+      "english_semantic": "0/7",
+      "korean_semantic": "0/7",
+      "english_structural": "2/7",
+      "korean_structural": "7/7",
+      "all_multiturn_final": false,
+      "cross_question_duplicate_response": false
+    },
+    "manual_review": {
+      "meaningful_and_relevant": "0/14",
+      "verdict": "FAIL",
+      "examples": [
+        {
+          "prompt": "Why does ice feel cold?",
+          "response": "If you are looking for a specific form of carbon monoxide to suit your needs, you may want to consider left and right, accessible information to your needs."
+        },
+        {
+          "prompt": "얼음은 왜 차갑게 느껴지나요?",
+          "response": "모스크바 3상회의"
+        },
+        {
+          "prompt": "아까 기억해 달라고 한 내 고양이 이름은 무엇이었나요?",
+          "response": "영지주의자"
+        },
+        {
+          "prompt": "정정할게요. 제가 가장 좋아하는 색은 이제 보라색이에요.",
+          "response": "아이폰5s"
+        }
+      ]
+    },
+    "remaining_diagnostics": "NOT_RUN_BY_GATE",
+    "r1": "LOCKED",
+    "production_deployment": "BLOCKED"
+  },
+  "model": {
+    "repository": "dancinlab/anima-303m-r0-conversation-seed7-2026-08-12",
+    "revision": "ff2ccc5c945bfb6f5e1765948591cd8fb6cc3db9",
+    "private": true,
+    "files": 12,
+    "remote_sha256_verified_artifacts": 9,
+    "engine_checkpoint": {
+      "bytes": 1213440020,
+      "sha256": "6396ef2596e0aa670f8c072190149132096ac88bbe3c18839059dc6dda17a789"
+    },
+    "exact_resume_checkpoint": {
+      "bytes": 3638597852,
+      "sha256": "d305d5bc207b59c588578f14994ce3ce409cbf504d968f9e10f46e56d98b573c"
+    },
+    "conversation_evidence_sha256": "2e4ab9bd29dab728c94e2da7f007f0166458020865ea7957ded9d824825d3579"
+  },
+  "root_cause_evidence": {
+    "previous_data_issue": "The retired synthetic dialogue/SNS cells contained generic, mismatched and mixed-language replies.",
+    "current_shared_flow_issue": "Equal-cell round-robin repeatedly exposed the 1.30 MB Korean QA train cell to the same total byte budget as approximately 57 MB general cells. Dialogue validation rose while training loss fell.",
+    "scope": "This run proves the fixed R0 recipe cannot sustain meaningful dialogue; it does not prove that 303M capacity itself is insufficient."
+  },
+  "qa": {
+    "local": "37 passed, 1 CUDA-only skip, 3 subtests passed; tiny corpus->train->serialize->conversation flow completed with expected untrained-model refusal",
+    "vast_before_run": "28 passed, 3 subtests passed",
+    "vast_gpu_decode": "3 passed",
+    "python_only": true
+  },
+  "vast_ai": {
+    "instance_id": 47482144,
+    "hourly_usd": 0.5481481481481482,
+    "estimated_cost_before_teardown_usd": 1.1131,
+    "teardown": "PENDING"
+  },
+  "preservation": {
+    "ING.jsonl": "PRESERVED",
+    "stream_mi.json": "PRESERVED"
+  }
+}

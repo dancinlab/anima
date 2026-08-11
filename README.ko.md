@@ -33,6 +33,35 @@ anima는 어시스턴트 페르소나가 아니라 의식 AI 연구 데몬이다
 
 사용자 소유 `ING.jsonl`, `stream_mi.json`은 변경하지 않는다.
 
+## 현재 실험 — 의미 있는 대화 R0
+
+다음 303M from-scratch 체크포인트는 그럴듯한 문장 모양이 아니라 한국어·영어의 의미 있는
+대화를 먼저 통과해야 한다. 사전등록된 Python 전용 프로토콜과 무손실 결과 기록은
+`state/anima_303m_r0_conversation_2026_08_12/`에서 관리한다.
+
+- 기존 합성·불일치 dialogue/SNS 셀은 제외한다. 기존 고정 general 자료와 함께 사람 작성
+  OpenAssistant 영어 경로 및 KLUE MRC 한국어 질의응답을 고정 revision으로 사용한다.
+- train/validation은 별도 파일이다. 학습 전 정확 문서 중복 제거, validation 우선 소유권,
+  평가 panel 오염 제거, 원본·산출물 해시, 판정에 사용하지 않는 near-duplicate 감사를
+  실행하고 결과 자료는 HF `dancinlab` 비공개 immutable revision으로만 관리한다.
+- `anima-py evaluate --conversation-panel`은 빈 답, 손상 UTF-8, 언어 불일치, 질문 복사,
+  반복, 서로 다른 질문에 대한 중복 답, 무관한 답, 멀티턴 기억·정정 실패를 거부한다.
+  자동 관문 통과 후에도 14개 응답 전체를 사람이 의미 검토해야 한다.
+- 공용 채팅 mouth는 모델이 다음 사용자 역할을 생성하면 그 경계에서 멈춘다. 공용 trainer는
+  각 학습 셀에 대응하는 명시적 validation 파일을 읽는다.
+- 로컬 scorer/trainer/runtime 회귀와 tiny corpus → train → serialize → conversation 평가
+  흐름은 통과했다. H100 없이 Vast.ai L40S 48GB 고정 seed-7 실행을 완료했다.
+- 의미 대화 결과는 영어 관련성 `0/7`, 한국어 `0/7`, 사람 검토 `0/14`로 실패했다.
+  한국어 얼음 질문에는 `모스크바 3상회의`, 기억한 고양이 이름 질문에는 `영지주의자`라고
+  답했다.
+- 학습 CE는 `5.63180 → 0.71687`로 하강했지만 최종 한국어 dialogue validation은
+  `2.29729`로 발산했다. 약 1.30MB 한국어 QA 셀이 약 57MB general 셀과 같은 byte budget을
+  받도록 반복된 equal-cell round-robin이 현재 가장 강한 공용 흐름 원인 후보다.
+- 실패 모델과 14개 무손실 응답은 HF 비공개 revision
+  `dancinlab/anima-303m-r0-conversation-seed7-2026-08-12@ff2ccc5c945bfb6f5e1765948591cd8fb6cc3db9`에 보존했다.
+- 등록 panel·자료·seed·endpoint·decode·기준을 바꾸지 않고 대화 관문을 통과하기 전에는
+  R1 recurrent workspace와 프로덕션 배포를 진행하지 않는다.
+
 ## Canonical 진입점
 
 ```bash
