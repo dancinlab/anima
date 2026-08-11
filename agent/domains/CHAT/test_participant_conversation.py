@@ -70,3 +70,16 @@ def test_broker_history_is_context_but_not_a_pending_reply():
 
     assert state.pending_reply() is None
     assert state.m_buffer[-1]["text"] == "old context"
+
+
+def test_pending_turn_is_not_blocked_by_self_monologue_refractory():
+    state = AnimaState(_Substrate())
+    state.last_emit_time = time.time()
+    state.ingest_user_msg({
+        "id": "live-turn", "sender": "user", "text": "한글 가능해?", "lang": "ko",
+    })
+
+    decision = state.tick(0.0)
+
+    assert not decision["in_refractory"]
+    assert decision["threshold"] == pytest.approx(0.30)

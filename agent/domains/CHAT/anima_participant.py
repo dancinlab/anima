@@ -442,13 +442,19 @@ class AnimaState:
              "coherence": coh, "originality": orig, "balance": bal, "dynamics": dyn}
         score = sum(W[k] * f[k] for k in W)
 
-        # A4: adaptive threshold — peak right after emit, decay to base
-        eff_thr = ADAPTIVE_THR_BASE + (ADAPTIVE_THR_PEAK - ADAPTIVE_THR_BASE) * math.exp(-silence / ADAPTIVE_THR_TAU)
+        # A4: the adaptive peak prevents an autonomous self-monologue loop.
+        # A pending user turn still goes through the same motivation score and
+        # caller threshold, but must not inherit cooldown from unrelated speech.
+        if reply_turn:
+            eff_thr = ADAPTIVE_THR_BASE
+        else:
+            eff_thr = ADAPTIVE_THR_BASE + (ADAPTIVE_THR_PEAK - ADAPTIVE_THR_BASE) * math.exp(-silence / ADAPTIVE_THR_TAU)
         # don't drop below caller threshold (UI may still inform a floor)
         eff_thr = max(eff_thr, threshold)
 
-        # A2: post-emit refractory lock — force score 0 if within REFRACTORY_S
-        in_refractory = silence < REFRACTORY_S
+        # A2: post-emit lock is an anti-self-monologue control, not a lockout
+        # for a queued conversation turn.
+        in_refractory = silence < REFRACTORY_S and reply_turn is None
         if in_refractory:
             score = 0.0
 
