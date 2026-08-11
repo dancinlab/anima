@@ -47,6 +47,7 @@ from rho_fan import (
     _rho_fan_stopwords, _rho_fan_derangement,          # H_9693 --fan-bind (frozen gate reuse)
     # H_9212 ③ per-cell dispatch: 4 register cells + ko codepoint-aware tokenizer + kwr_ko gate
     _rho_fan_cells, _rho_fan_cell_lang, _rho_fan_words_uni, _rho_fan_ko_known_word_ratio,
+    RHO_FORM_WORDS_SHA256,
     KWR_KO_GATE,
 )
 
@@ -1001,6 +1002,13 @@ def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_
     panel = rho_axon.run_panel(
         mouth, corpus_paths, g, dets, cell_dets=cell_dets, selected_axes=selected_axes,
         weave_panel=weave_panel, fals_draws=fals_draws)
+    # The English lexicality detector is part of the measurement instrument.
+    # Persist its identity with every raw panel so a host-dependent lexicon can
+    # never again look like a comparable model result.
+    panel["instrument"] = {
+        "rho_form_words_sha256": RHO_FORM_WORDS_SHA256,
+        "rho_form_words_count": len(known),
+    }
     print(rho_axon.render_panel(panel), flush=True)
     breakout = rho_axon.render_cells(panel)
     if breakout:

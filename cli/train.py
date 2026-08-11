@@ -5293,7 +5293,7 @@ def main():
             descent[lab] = {"val_ce": round(vc, 5), "descent": ok}
             print(f"     {lab:<12s} val_CE={vc:.5f}  {'DESCENT' if ok else 'NO-DESCENT'}", flush=True)
         final_val = (sum(per.values()) / len(per)) if per else None
-        print(f"  FINAL val_CE(pooled)={final_val}  registers_DESCENT={n_desc}/{len(per)}", flush=True)
+        print(f"  FINAL val_CE(macro_cells)={final_val}  registers_DESCENT={n_desc}/{len(per)}", flush=True)
         if getattr(shell, "comp_lane", None) is not None and a.comp_probe_panel:
             # H_9904 — DIRECTIONAL lane readout (see comp_lane_heldout). Printed, never cemented.
             _lp = comp_lane_heldout(shell, a.comp_probe_panel, device)
@@ -5401,6 +5401,10 @@ def main():
                                  "warmup_steps": a.warmup_steps,
                                  "decay_steps": lr_decay_steps,
                                  "min_lr_ratio": a.min_lr_ratio},
+                   "initialization": ({"name": "gpt2-canonical",
+                                       "std": bg_cfg.init_std,
+                                       "residual_projection_scale": "std/sqrt(2*n_layer)"}
+                                      if is_bytegpt else None),
                    "ddp": {"world_size": world, "global_batch": B_global,
                            "per_rank_batch": B_local, "gpus": a.gpus},
                    "obj_aux_params": (sum(p.numel() for p in objfn.parameters())
@@ -5411,7 +5415,12 @@ def main():
                               "dropout_floor": a.dropout_floor},
                    "n_params": n_params, "loss0": round(loss0, 5), "lossF": round(lossF, 5),
                    "wall_s": round(wall, 1), "uniform_ce": round(uniform, 5),
-                   "final_val_ce_pooled": (round(final_val, 5) if final_val else None),
+                   # Compatibility alias retained for old readers. The value has always been
+                   # an equal-cell macro average, never a sample-count-pooled CE.
+                   "final_val_ce_pooled": (round(final_val, 5) if final_val is not None else None),
+                   "final_val_ce_macro_cells": (round(final_val, 5)
+                                                if final_val is not None else None),
+                   "validation_aggregation": "equal-cell macro average",
                    "registers_descent": f"{n_desc}/{len(per)}", "heldout_descent": descent,
                    "last_aux": last_aux, "dbes_final": dbes_final, "dbes_log": dbes_log,
                    # §4 diagnostic honesty: under DDP the rank-0 DBES probe runs on a rank-LOCAL

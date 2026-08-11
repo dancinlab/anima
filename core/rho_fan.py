@@ -9,6 +9,9 @@ import sys as _anima_entry_guard
 if __name__ == "__main__":
     _anima_entry_guard.exit("⛔ rho_fan.py 직접 실행 금지 — cli/ 단일진입(anima eval/train/serialize, canonical=hexa) 경유. #2603")
 
+import hashlib
+import os
+
 """core/rho_fan.py — py production mirror of core/rho_fan.hexa.
 
 Ported 1:1 from the hexa SSOT (ρ·fan IDEATION scoring ops · reach axis, was G6 · frozen bar): the FROZEN structural
@@ -333,23 +336,44 @@ def _rho_fan_cells_selftest():
 # ════════════════════════════════════════════════════════════════════════
 
 
-def _rho_fan_dict_load():
-    """rho_fan.hexa::_rho_fan_dict_load — stopwords + concept words + /usr/share/dict/words."""
+RHO_FORM_WORDS_ENV = "ANIMA_RHO_FORM_WORDS"
+RHO_FORM_WORDS_DEFAULT = "/usr/share/dict/words"
+RHO_FORM_WORDS_SHA256 = "be41ad97963bf8dabedd5871d5d691596175269d540956b0f9965a885c2bbab9"
+
+
+def _rho_fan_dict_load(path=None):
+    """Load the frozen Web2 lexicon used by the English rho-form detector.
+
+    The old fallback silently reduced a 234k-word detector to 49 stop/concept words on
+    GPU images without ``/usr/share/dict/words``. That made the same raw generations
+    pass or fail solely by host image. The lexicon is verdict input, so absence or hash
+    drift is an invalid instrument and must fail before any model result is scored.
+    """
+    words_path = path or os.environ.get(RHO_FORM_WORDS_ENV, RHO_FORM_WORDS_DEFAULT)
+    try:
+        with open(words_path, "rb") as dictionary:
+            raw = dictionary.read()
+    except OSError as exc:
+        raise RuntimeError(
+            "rho-form canonical Web2 lexicon is unavailable: " + words_path + ". "
+            "Provision the pinned dancinlab lexicon and set " + RHO_FORM_WORDS_ENV + "."
+        ) from exc
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest != RHO_FORM_WORDS_SHA256:
+        raise RuntimeError(
+            "rho-form canonical Web2 lexicon hash mismatch: " + words_path +
+            " (got " + digest + ", expected " + RHO_FORM_WORDS_SHA256 + ")"
+        )
+
     known = set(_rho_fan_stopwords())
     for c in _rho_fan_concepts():
         for w in _rho_fan_words(c):
             known.add(w)
-    try:
-        with open("/usr/share/dict/words", "rb") as dictionary:
-            raw = dictionary.read()
-    except Exception:
-        raw = b""
-    if len(raw) > 0:
-        for line in raw.split(b"\n"):
-            w = line.strip()
-            wl = _rho_fan_words(w)
-            if len(wl) == 1:
-                known.add(wl[0])
+    for line in raw.split(b"\n"):
+        w = line.strip()
+        wl = _rho_fan_words(w)
+        if len(wl) == 1:
+            known.add(wl[0])
     return known
 
 

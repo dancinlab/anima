@@ -825,7 +825,8 @@ def serialize_bind(base_bin: str, injected_pt: str, out_bin: str) -> str:
     torch is imported ONLY to unpickle the .pt (irreducible); the byte layout is
     reference-matched to `serialize` (per-layer write) + core/decode.py bg_load."""
     import torch  # training family — torch OK here (.pt bridge)
-    base = open(base_bin, "rb").read()
+    with open(base_bin, "rb") as handle:
+        base = handle.read()
     if len(base) < 20:
         raise ValueError("base .bin too small (no 5xu32 header): " + base_bin)
     vocab, d, n_layer, n_head, block = struct.unpack("<5I", base[:20])
@@ -874,7 +875,11 @@ def deserialize_bytegpt(bin_path: str) -> "Tuple[Dict[str, Any], Dict[str, int]]
     same tensor order and reshapes each little-endian float32 slice to torch's native
     [out,in] orientation (serialize wrote torch's layout VERBATIM, so no transpose)."""
     import torch  # training/warm-start family — torch OK here (.bin bridge, a_clm_gen_pipeline)
-    rb = open(bin_path, "rb").read() if not isinstance(bin_path, (bytes, bytearray)) else bin_path
+    if isinstance(bin_path, (bytes, bytearray)):
+        rb = bin_path
+    else:
+        with open(bin_path, "rb") as handle:
+            rb = handle.read()
     if len(rb) < 20:
         raise ValueError(f"deserialize_bytegpt: {bin_path} too short ({len(rb)}B) for a 5×u32 header")
     vocab, d, n_layer, n_head, block = struct.unpack_from("<5I", rb, 0)
@@ -981,7 +986,8 @@ def deserialize_v3(clm_path: str, n_trunk_layers: int, n_experts: int, K: int = 
     if np is None:
         raise RuntimeError("numpy is required for deserialize_v3")
     L, E = int(n_trunk_layers), int(n_experts)
-    blob = open(clm_path, "rb").read()
+    with open(clm_path, "rb") as handle:
+        blob = handle.read()
     if blob[:4] != MAGIC:
         raise ValueError(f"{clm_path}: not a CLM\\x01 file (magic={blob[:4]!r})")
 
@@ -1038,7 +1044,8 @@ def clm_roundtrip_is_identity(clm_path: str, n_trunk_layers: int, n_experts: int
     """
     sd = deserialize_v3(clm_path, n_trunk_layers, n_experts)
     repacked = bytes(_pack_main_blob(sd, int(n_trunk_layers), int(n_experts)))
-    raw = open(clm_path, "rb").read()
+    with open(clm_path, "rb") as handle:
+        raw = handle.read()
     if repacked == raw:
         return True
     # A lane-carrying model IS "a normal .clm + trailer chain" (CLMB→SLW→CLML→CLMS→MBND→IFAN→TFLD,

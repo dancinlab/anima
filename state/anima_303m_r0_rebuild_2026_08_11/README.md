@@ -1,6 +1,6 @@
 # Anima 303M R0 native-mouth rebuild — 2026-08-11
 
-Status: COMPLETE — R0 failed 0/3; R1 remained locked.
+Status: COMPLETE_POSTHOC_INVALIDATED — the original run scored 0/3; R1 remains locked.
 
 The previous 303M run honestly failed at `rho-form 3/5`, but it did not reproduce the successful
 native-byte lineage: it used one 60.05 MB general-English cell, constant LR, AdamW beta2 `0.999`,
@@ -86,3 +86,27 @@ repository. Vast.ai instance `47446530` was deleted after verification, leaving 
 Its final runtime estimate was `$13.9287` from elapsed duration multiplied by the listed hourly rate.
 `ING.jsonl` and `stream_mi.json` remained untouched. The next run must be separately pre-registered;
 this failed endpoint is not extended after the fact.
+
+## Post-hoc local micro audit — 2026-08-12
+
+The ten-experiment local audit found that the H100 lacked `/usr/share/dict/words`, and the shared
+English rho-form detector silently shrank from its intended 234k-word Web2 lexicon to 49
+stop/concept words. That fallback reproduces all 75 saved KWR values exactly. Replaying the unchanged
+raw generations with the intended Web2 bytes yields aggregate form `1.00/1.00/0.80` for seeds
+7/11/13, but the same replay raises self-shuffle to `0.20/0.20/0.20` against the fixed `0.05` cap,
+so the complete rho-form verdict still fails 0/3. A 3,000-draw null calibration then measured a
+`0.216` Web2 false-positive rate, driven by single-letter dictionary entries. The stored
+`R0_FAILED_0_OF_3` conclusion is therefore invalidated as `INVALID-MEASUREMENT`, not converted into
+a terminal pass or retained as a valid model failure. Repeating the same checkpoint evaluation cannot
+certify R0; a replacement instrument must be separately preregistered before R1 can unlock.
+
+The common Python/Hexa detector now verifies one pinned lexicon hash and fails before scoring if it
+is missing or different. The immutable evaluation input is in private HF
+`dancinlab/anima-rho-form-web2-2026-08-12@0ec91c65c3d97c6a20a691fbf7f3cf6216fa4d30`.
+The audit also found that the exact sampler is correct but exposes only `0.85–0.86` pass per cell,
+and that the broad-dialogue validation tail has 1,363,153 normalized train-line matches; its low
+validation CE is not clean generalization evidence. It also corrected the macro-CE label and fixed
+future ByteGPT random starts from a default embedding scale that produced step-1 CE `531–550` to
+canonical GPT initialization; existing checkpoints and their byte grammar remain compatible. Frozen
+R0 corpora and bars were not changed. Full record:
+`../anima_303m_r0_local_micro_2026_08_12/result.json`.

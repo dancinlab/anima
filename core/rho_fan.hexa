@@ -331,9 +331,10 @@ pub fn rho_fan_cells_selftest() -> Map {
 // ── end H_9212 ② 4-cell + ko known-word proxy (ADDITIVE · UNWIRED) ──
 // ════════════════════════════════════════════════════════════════════════
 
-// _rho_fan_dict_load — load /usr/share/dict/words into a Map set ONCE (membership for the
-// content-word check). Falls back to the concept+stopword lexicon if the dict is absent
-// (scoped honestly — the detector then sees a smaller _KNOWN; calibration prints regardless).
+// _rho_fan_dict_load — load the frozen Web2 lexicon into a Map set ONCE (membership for the
+// content-word check). The lexicon is verdict input: missing bytes or hash drift are an invalid
+// instrument, never a smaller silent fallback. ANIMA_RHO_FORM_WORDS only relocates the exact
+// pinned bytes; it cannot select a different dictionary.
 fn _rho_fan_dict_load() -> Map {
     let known = _rho_fan_stopwords()
     // seed the concept words + comparator/measurable marks into _KNOWN (always present)
@@ -345,19 +346,27 @@ fn _rho_fan_dict_load() -> Map {
         while k < len(cw) { known[to_string(cw[k])] = 1; k = k + 1 }
         ci = ci + 1
     }
-    // /usr/share/dict/words — one word per line. read_file then split.
-    let raw = read_file("/usr/share/dict/words")
-    if byte_len(raw) > 0 {
-        let lines = raw.split("\n")
-        let mut li = 0
-        let nl = len(lines)
-        while li < nl {
-            let w = to_string(lines[li]).trim()
-            // lowercase + alpha-only (matches w.isalpha() lower in _build_known_lexicon)
-            let wl = _rho_fan_words(w)
-            if len(wl) == 1 { known[to_string(wl[0])] = 1 }
-            li = li + 1
-        }
+    let env_path = env("ANIMA_RHO_FORM_WORDS")
+    let words_path = if env_path == "" { "/usr/share/dict/words" } else { env_path }
+    let raw = read_file(words_path)
+    if byte_len(raw) == 0 {
+        panic("rho-form canonical Web2 lexicon is unavailable: " + words_path)
+    }
+    let expected = "be41ad97963bf8dabedd5871d5d691596175269d540956b0f9965a885c2bbab9"
+    let actual = sha256_file(words_path)
+    if actual != expected {
+        panic("rho-form canonical Web2 lexicon hash mismatch: " + words_path
+              + " (got " + actual + ", expected " + expected + ")")
+    }
+    let lines = raw.split("\n")
+    let mut li = 0
+    let nl = len(lines)
+    while li < nl {
+        let w = to_string(lines[li]).trim()
+        // lowercase + alpha-only (matches w.isalpha() lower in _build_known_lexicon)
+        let wl = _rho_fan_words(w)
+        if len(wl) == 1 { known[to_string(wl[0])] = 1 }
+        li = li + 1
     }
     return known
 }

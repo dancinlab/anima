@@ -53,6 +53,26 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > under HF `dancinlab`; the final HF revision and nine registered hashes were verified before the
 > Vast.ai H100 was removed (active rentals `0`, estimated runtime cost `$13.9287`).
 
+> [!WARNING]
+> **303M R0 post-hoc evaluator audit (2026-08-12):** the H100 image lacked
+> `/usr/share/dict/words`, and the English rho-form detector silently substituted a 49-word
+> fallback for its intended 234k-word Web2 lexicon. The fallback reproduces all 75 saved KWR
+> values. With the intended immutable lexicon, the same raw generations clear the aggregate form
+> bar at `1.00/1.00/0.80`, but the fixed self-shuffle control becomes `0.20/0.20/0.20` against its
+> `0.05` cap, so the full replay still fails 0/3. A 3,000-draw null audit measured a `0.216`
+> false-positive rate because Web2 includes single-letter entries. The earlier stored
+> `R0_FAILED_0_OF_3` conclusion is therefore `INVALID-MEASUREMENT`, not a terminal pass or a valid
+> model failure. R1 remains locked; rerunning the same checkpoints cannot certify it, and any repaired
+> instrument must be separately preregistered. Python and Hexa now fail closed on a missing or
+> hash-mismatched lexicon and new panels persist its identity; the exact bytes are pinned under private HF `dancinlab` at
+> `anima-rho-form-web2-2026-08-12@0ec91c65c3d97c6a20a691fbf7f3cf6216fa4d30`. The local audit also
+> confirmed correct causal/serialization/decode behavior, found heavy broad-dialogue
+> train/validation duplication, corrected the macro-CE label, and fixed a shared ByteGPT random-start
+> defect where default embedding scale made step-1 CE reach `531–550`. Frozen R0 data and bars were
+> not changed; existing checkpoints are byte-compatible. Twenty-five local experiments exhausted the
+> evaluator/data/RNG/optimizer/forward/codec hypotheses. Full evidence:
+> `state/anima_303m_r0_local_micro_2026_08_12/result.json`.
+
 > [!CAUTION]
 > **Compose-2 causal gate:** the test requires two
 > internal clues together: normal and recovery must score at least 0.75, while clue-A removal,

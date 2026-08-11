@@ -1,8 +1,8 @@
 {
   "schema": "anima-303m-r0-rebuild-result/v1",
   "date": "2026-08-11",
-  "status": "COMPLETE",
-  "verdict": "R0_FAILED_0_OF_3",
+  "status": "COMPLETE_POSTHOC_INVALIDATED",
+  "verdict": "R0_INVALID_MEASUREMENT",
   "protocol": "protocol.json",
   "r0": {
     "seeds": [7, 11, 13],
@@ -118,6 +118,29 @@
     "final_cost_usd": 13.9287,
     "cost_basis": "duration_seconds * dph_total immediately before deletion",
     "active_instances_after_cleanup": 0
+  },
+  "posthoc_local_micro_audit": {
+    "date": "2026-08-12",
+    "record": "../anima_303m_r0_local_micro_2026_08_12/result.json",
+    "original_verdict": "R0_FAILED_0_OF_3",
+    "audit_verdict": "INVALID_MEASUREMENT",
+    "stored_kwr_reproduced_by_49_word_fallback": "75/75",
+    "canonical_web2_replay_aggregate": {"7": 1.0, "11": 1.0, "13": 0.8},
+    "canonical_web2_replay_self_shuffle": {"7": 0.2, "11": 0.2, "13": 0.2},
+    "canonical_web2_replay_full_verdict": {"7": "FAIL", "11": "FAIL", "13": "FAIL"},
+    "all_registered_cells_pass_replay": false,
+    "web2_shuffle_null_draws": 3000,
+    "web2_shuffle_false_positive_rate": 0.216,
+    "same_checkpoint_rerun_can_certify_r0": false,
+    "replacement_instrument_requires_preregistration": true,
+    "r1_status": "LOCKED",
+    "bars_changed": false,
+    "data_changed": false,
+    "canonical_lexicon": {
+      "repository": "dancinlab/anima-rho-form-web2-2026-08-12",
+      "revision": "0ec91c65c3d97c6a20a691fbf7f3cf6216fa4d30",
+      "sha256": "be41ad97963bf8dabedd5871d5d691596175269d540956b0f9965a885c2bbab9"
+    }
   },
   "preservation": {
     "ING.jsonl": "PRESERVED",

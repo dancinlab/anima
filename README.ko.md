@@ -46,6 +46,25 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > recurrent workspace는 잠긴 채로 두었고 모델은 배포하지 않았다. 공용 ByteGPT decode는 이제
 > CPU/CUDA 토큰 패리티를 유지하며 실제 CUDA에서 실행되고, 임의 raw byte 평가 증거도 JSON에
 > 손실 없이 보존한다. 전체 기록은 `state/anima_303m_r0_rebuild_2026_08_11/result.json`이다.
+
+> [!WARNING]
+> **303M R0 사후 평가기 감사(2026-08-12):** H100 이미지에 `/usr/share/dict/words`가 없어
+> 영어 rho-form 평가기가 의도한 234k Web2 사전 대신 49단어 fallback을 조용히 사용했다.
+> fallback은 저장된 KWR 75개를 모두 정확히 재현한다. 같은 생성문은 고정 Web2에서 aggregate
+> form `1.00/1.00/0.80`을 넘지만, 고정 self-shuffle도 `0.20/0.20/0.20`으로 올라 `0.05` cap을
+> 넘으므로 전체 재생은 여전히 0/3 실패다. 3,000회 null 감사에서는 Web2의 한 글자 단어 때문에
+> 오탐률이 `0.216`이었다. 따라서 이전 저장 `R0_FAILED_0_OF_3` 결론은 terminal PASS나 유효한
+> 모델 실패가 아니라 `INVALID-MEASUREMENT`로 무효화한다. 같은 체크포인트 재실행만으로는 인증할
+> 수 없으며, 새 측정 수단은 별도로 사전등록하기 전까지 R1을 계속 잠근다. Python/Hexa는 이제
+> 사전 누락·해시 불일치 시 평가 전에 실패하고 새 panel에 사전 신원을 기록한다. 정확한 바이트는
+> private HF `dancinlab/anima-rho-form-web2-2026-08-12`의
+> revision `0ec91c65c3d97c6a20a691fbf7f3cf6216fa4d30`에 고정했다. 로컬 감사는 schedule,
+> sampler, resume, causal/직렬화/decode가 정상임을 확인했고 broad-dialogue의 심한 train/validation
+> 중복, macro CE 오표기, 기본 embedding scale 때문에 step-1 CE가 `531–550`까지 폭발하던 공용
+> ByteGPT 초기화 결함도 발견·수정했다. 기존 체크포인트 바이트 호환성은 유지했고 고정 R0 자료와
+> 문턱값은 변경하지 않았다. 로컬 실험 25개로 평가기·자료·RNG·optimizer·forward·codec 가설을
+> 소진했다. 전체 기록은
+> `state/anima_303m_r0_local_micro_2026_08_12/result.json`이다.
 > 모델·자료는 HF `dancinlab` 비공개 저장소에만 두었고 최종 HF revision과 등록 해시 9개를
 > 검증한 뒤 Vast.ai H100을 삭제했다(활성 임대 `0`, 추정 실행 비용 `$13.9287`).
 

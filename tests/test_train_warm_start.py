@@ -24,6 +24,91 @@ def _canonical_train_imports():
 
 @unittest.skipUnless(TORCH_AVAILABLE, "PyTorch training extra is not installed")
 class TrainWarmStartTest(unittest.TestCase):
+    def test_bytegpt_random_start_uses_canonical_scale_and_tied_head(self):
+        _canonical_train_imports()
+
+        import torch
+        from model import ByteGPT, ByteGPTConfig
+
+        torch.manual_seed(20260812)
+        model = ByteGPT(ByteGPTConfig(d=64, n_layer=2, n_head=4, block=32))
+        self.assertIs(model.head.weight, model.tok.weight)
+        self.assertAlmostEqual(float(model.tok.weight.std().detach()), 0.02, delta=0.001)
+        self.assertAlmostEqual(
+            float(model.blocks[0].attn.in_proj_weight.std().detach()), 0.02, delta=0.001)
+        self.assertAlmostEqual(
+            float(model.blocks[0].attn.out_proj.weight.std().detach()), 0.01, delta=0.001)
+        self.assertAlmostEqual(
+            float(model.blocks[0].mlp[2].weight.std().detach()), 0.01, delta=0.001)
+        self.assertTrue(torch.count_nonzero(model.blocks[0].attn.in_proj_bias) == 0)
+
+        inputs = torch.randint(0, 256, (2, 32))
+        targets = torch.randint(0, 256, (2, 32))
+        ce = float(model(inputs, targets)["loss"].detach())
+        self.assertLess(ce, 6.0)
+
+    def test_bytegpt_is_causal_and_engine_serialization_matches_torch(self):
+        _canonical_train_imports()
+
+        import numpy as np
+        import torch
+        import decode
+        import serialize as serializer
+        from model import ByteGPT, ByteGPTConfig
+
+        torch.manual_seed(20260812)
+        cfg = ByteGPTConfig(d=32, n_layer=2, n_head=4, block=64)
+        model = ByteGPT(cfg).eval()
+        original = torch.randint(0, 256, (1, 48))
+        changed = original.clone()
+        changed[:, 24:] = torch.randint(0, 256, (1, 24))
+        with torch.no_grad():
+            logits_original = model(original)["logits"]
+            logits_changed = model(changed)["logits"]
+        self.assertTrue(torch.equal(logits_original[:, :, :24], logits_changed[:, :, :24]))
+        self.assertGreater(float((logits_original[:, :, 24:] -
+                                  logits_changed[:, :, 24:]).abs().max()), 0.0)
+
+        with tempfile.TemporaryDirectory() as directory:
+            pt_path = os.path.join(directory, "tiny.pt")
+            bin_path = os.path.join(directory, "tiny.bin")
+            torch.save({"model": model.state_dict(), "config": cfg.as_dict(),
+                        "step": 0, "val_ce": None, "nparam": model.num_params()}, pt_path)
+            serializer.serialize(pt_path, bin_path)
+            weights = decode.bg_load(bin_path)
+            ids = list(b"causal serializer parity")
+            with torch.no_grad():
+                torch_logits = model(torch.tensor(ids)[None, :])["logits"][0, :, -1].numpy()
+            engine_logits = decode.bg_forward_last_W(weights, ids, len(ids))
+        np.testing.assert_allclose(engine_logits, torch_logits, rtol=1e-5, atol=1e-6)
+
+    def test_bytegpt_engine_checkpoint_overwrites_new_initialization_exactly(self):
+        _canonical_train_imports()
+
+        import torch
+        import serialize as serializer
+        from model import ByteGPT, ByteGPTConfig
+        from train import _warm_start
+
+        cfg = ByteGPTConfig(d=32, n_layer=2, n_head=4, block=64)
+        torch.manual_seed(7)
+        source = ByteGPT(cfg)
+        torch.manual_seed(11)
+        restored = ByteGPT(cfg)
+        self.assertFalse(torch.equal(source.tok.weight, restored.tok.weight))
+
+        with tempfile.TemporaryDirectory() as directory:
+            pt_path = os.path.join(directory, "source.pt")
+            bin_path = os.path.join(directory, "source.bin")
+            torch.save({"model": source.state_dict(), "config": cfg.as_dict(),
+                        "step": 0, "val_ce": None, "nparam": source.num_params()}, pt_path)
+            serializer.serialize(pt_path, bin_path)
+            report = _warm_start(restored, bin_path, True, cfg.as_dict())
+
+        self.assertIn("ByteGPT .bin loaded", report)
+        for name, tensor in source.state_dict().items():
+            self.assertTrue(torch.equal(tensor, restored.state_dict()[name]), name)
+
     def test_canonical_lr_schedule_has_exact_warmup_peak_and_cosine_floor(self):
         _canonical_train_imports()
         from train import scheduled_lr

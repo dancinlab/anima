@@ -1,0 +1,300 @@
+{
+  "schema": "anima-303m-r0-local-micro-audit/v1",
+  "date": "2026-08-12",
+  "status": "COMPLETE",
+  "verdict": "INVALID_MEASUREMENT_R1_LOCKED",
+  "scope": {
+    "checkpoint_loaded": false,
+    "r0_data_changed": false,
+    "r0_threshold_changed": false,
+    "r1_unlocked": false,
+    "cpu_threads_max": 2
+  },
+  "experiments": {
+    "1_evaluation_replay": {
+      "stored_values_reproduced_with_fallback": "75/75",
+      "fallback_lexicon_words": 49,
+      "canonical_lexicon_words": 234461,
+      "stored_aggregate_by_seed": {"7": 0.4, "11": 0.6, "13": 0.2},
+      "canonical_replay_aggregate_by_seed": {"7": 1.0, "11": 1.0, "13": 0.8},
+      "canonical_replay_self_shuffle_by_seed": {"7": 0.2, "11": 0.2, "13": 0.2},
+      "canonical_replay_full_verdict_by_seed": {"7": "FAIL", "11": "FAIL", "13": "FAIL"},
+      "all_registered_cells_pass_canonical_replay": false,
+      "terminal_checkpoint_rerun_sufficient": false
+    },
+    "2_checkpoint_series": {
+      "fixed_endpoint": 14000,
+      "final_pooled_heldout_ce": {"7": 0.9990635398775339, "11": 0.999855075776577, "13": 1.0099284403026103},
+      "continued_descent_through_endpoint": true,
+      "intermediate_rho_text_available": false,
+      "result_selected_checkpoint": false
+    },
+    "3_utf8_roundtrip": {
+      "files": 5,
+      "bytes": 282414903,
+      "invalid_utf8_bytes": 0,
+      "surrogateescape_roundtrip_exact": true,
+      "sampled_windows": 5000,
+      "sampled_window_roundtrip_exact": true,
+      "split_inside_utf8_codepoint": ["ko_general", "ko_sns"],
+      "byte_targets_lost": 0
+    },
+    "4_sampler_dry_run": {
+      "sampler_seed": 42,
+      "steps": 14000,
+      "global_batch": 32,
+      "sequence_bytes": 512,
+      "draws": 448000,
+      "target_bytes": 229376000,
+      "target_bytes_per_parameter": 0.7567720967316905,
+      "max_fraction_error": 0.0011291375500553369,
+      "cells": {
+        "broad_dialogue": {"draws": 245604, "fraction": 0.5482232142857143, "effective_epochs": 0.8547844710774144},
+        "en_general": {"draws": 94752, "fraction": 0.2115, "effective_epochs": 0.8504021629124187},
+        "ko_general": {"draws": 95672, "fraction": 0.21355357142857143, "effective_epochs": 0.8593644479792383},
+        "en_sns": {"draws": 2107, "fraction": 0.004703125, "effective_epochs": 0.8563103019911812},
+        "ko_sns": {"draws": 9865, "fraction": 0.022020089285714285, "effective_epochs": 0.8597784030653846}
+      }
+    },
+    "5_contamination": {
+      "validation_lines": 188215,
+      "train_lines": 3545238,
+      "boundary_documents_split": 5,
+      "exact_normalized_train_to_validation_matches": 1363155,
+      "broad_dialogue_exact_matches": 1363153,
+      "near_method": "20k deterministic validation sample; 1/16 deterministic train sample; 64-bit token SimHash; Hamming<=3",
+      "near_train_checked": 174458,
+      "near_pairs": 64531,
+      "data_modified": false
+    },
+    "6_lr_optimizer": {
+      "logged_points": 45,
+      "max_lr_abs_error": 4.540746413855129e-12,
+      "adam_beta2": 0.95,
+      "weight_decay": 0.1,
+      "lr_step_1": 6e-7,
+      "lr_step_500": 0.0003,
+      "lr_step_14000": 0.00003,
+      "protocol_match": true
+    },
+    "7_evaluation_path_parity": {
+      "seeds": 3,
+      "train_entry": "anima-py train",
+      "evaluate_entry": "anima-py evaluate",
+      "mouth": "bytegpt",
+      "fixed_step": 14000,
+      "corpora": 5,
+      "generation_bytes": 40,
+      "all_match": true
+    },
+    "8_tiny_overfit": {
+      "parameters": 120576,
+      "steps": 200,
+      "initial_ce": 42.77996063232422,
+      "final_ce": 5.476173328133882e-7,
+      "pass": true
+    },
+    "9_tiny_exact_resume": {
+      "trajectory_equal": true,
+      "regression": "tests.test_train_warm_start.TrainWarmStartTest.test_exact_resume_matches_uninterrupted_optimizer_and_rng_trajectory"
+    },
+    "10_short_decode": {
+      "generated": "ows through memo",
+      "expected": "ows through memo",
+      "matches_expected": true,
+      "deterministic": true,
+      "kv_full_parity": true,
+      "strict_utf8": true
+    },
+    "11_web2_self_shuffle_replay": {
+      "aggregate_by_seed": {"7": 0.2, "11": 0.2, "13": 0.2},
+      "cap": 0.05,
+      "full_verdict_by_seed": {"7": "FAIL", "11": "FAIL", "13": "FAIL"},
+      "english_cell_failures": true,
+      "korean_cells_shuffle": 0.0
+    },
+    "12_shuffle_null_calibration": {
+      "stored_english_outputs": 30,
+      "shuffles_per_output": 100,
+      "draws": 3000,
+      "fallback49_false_positives": 4,
+      "fallback49_false_positive_rate": 0.0013333333333333333,
+      "web2_false_positives": 648,
+      "web2_false_positive_rate": 0.216,
+      "dominant_web2_matches": ["e", "t", "a", "n", "o", "i", "s", "h"],
+      "instrument_compatible_with_frozen_cap": false,
+      "scorer_or_cap_changed": false
+    },
+    "13_panel_exact_contamination": {
+      "concept_strings": 20,
+      "corpus_cells": 5,
+      "train_exact_matches": 0,
+      "validation_exact_matches": 0
+    },
+    "14_sampler_rng_separation": {
+      "uninterrupted_draws": 100,
+      "split_draws": "50+snapshot+50",
+      "trajectory_equal": true,
+      "validation_calls_perturb_train_rng": false,
+      "model_seeds_share_corpus_stream": true,
+      "corpus_stream_seed": 42
+    },
+    "15_validation_aggregation": {
+      "legacy_field": "final_val_ce_pooled",
+      "actual_aggregation": "equal-cell macro average",
+      "macro_by_seed": {"7": 0.9990635398775339, "11": 0.999855075776577, "13": 1.0099284403026103},
+      "proportional_by_seed": {"7": 0.617689, "11": 0.617241, "13": 0.620623},
+      "fix": "Retain the legacy alias and add final_val_ce_macro_cells plus validation_aggregation."
+    },
+    "16_corpus_multiplicity": {
+      "broad_train_substantive": 2182065,
+      "broad_train_unique": 711831,
+      "broad_train_duplicate_instances": 1470234,
+      "broad_train_max_multiplicity": 43547,
+      "broad_validation_substantive": 116890,
+      "broad_validation_unique": 47605,
+      "broad_validation_duplicate_instances": 69285,
+      "broad_validation_max_multiplicity": 2362,
+      "shared_unique_lines": 15286,
+      "shared_train_instances": 1363153,
+      "shared_validation_instances": 84370,
+      "other_cell_exact_intersections": {"en_general": 1, "ko_general": 1, "en_sns": 0, "ko_sns": 0},
+      "zlib_ratio_broad": 0.299,
+      "zlib_ratio_other_range": [0.396, 0.456]
+    },
+    "17_byte_window_boundaries": {
+      "train_windows_per_cell": 1000,
+      "validation_windows_per_cell": 100,
+      "cells": 5,
+      "all_train_windows_inside_train_region": true,
+      "all_validation_windows_inside_validation_region": true,
+      "all_shapes": "512 input bytes -> 512 target bytes",
+      "document_boundary_split_cells": 5,
+      "script_assignment_confirmed": true
+    },
+    "18_initialization_scale_matrix": {
+      "legacy_embedding_std": "approximately 1.0",
+      "canonical_embedding_std": 0.02,
+      "uniform_ce": 5.545177444479562,
+      "legacy_ce": {"d32_l1": 23.04029083251953, "d64_l2": 40.68262481689453, "d128_l8": 73.4114990234375, "d256_l8": 159.6566619873047},
+      "canonical_ce": {"d32_l1": 5.546345233917236, "d64_l2": 5.545121669769287, "d128_l8": 5.558780670166016, "d256_l8": 5.511996746063232},
+      "actual_r0_step1_ce_range": [531.87488, 550.08136],
+      "root_defect_confirmed": true
+    },
+    "19_initialization_seed_sweep": {
+      "configuration": "d128/L8/H8/block32",
+      "seeds": 20,
+      "ce_min": 5.545359134674072,
+      "ce_mean": 5.578101849555969,
+      "ce_max": 5.653815269470215,
+      "logit_std_range": [0.23041805624961853, 0.2392457127571106],
+      "embedding_std_range": [0.019899828359484673, 0.020212722942233086],
+      "all_ce_below_6": true,
+      "d64_l2_block64_parameters": 120576
+    },
+    "20_forward_codec_interventions": {
+      "causal_prefix_max_abs": 0.0,
+      "changed_suffix_max_abs": 0.6649194955825806,
+      "torch_engine_last_logit_max_abs": 5.8634782140742914e-08,
+      "block_rollover_kv_full_equal": true,
+      "rollovers": 17,
+      "same_rng_repeat_equal": true,
+      "different_rng_differs": true,
+      "random_byte_output_strict_utf8": false,
+      "surrogateescape_evidence_required": true
+    },
+    "21_canonical_cli_smoke": {
+      "entry": "anima-py train",
+      "architecture": "existing ByteGPT d32/L1/H2/block32",
+      "corpus_cells": 5,
+      "steps": 2,
+      "step1_ce": 5.54626,
+      "final_val_ce_macro_cells": 5.53918,
+      "legacy_alias_equal": true,
+      "initialization_provenance_written": true,
+      "engine_bin_written": true
+    },
+    "22_require_cells_guard": {
+      "required": 5,
+      "provided_usable": 4,
+      "exit_code": 1,
+      "updates_executed": 0,
+      "pass": true
+    },
+    "23_canonical_evaluator_smoke": {
+      "entry": "anima-py evaluate --rho-axon",
+      "tiny_random_model_interpreted": false,
+      "panel_instrument_words": 234461,
+      "panel_instrument_sha256": "be41ad97963bf8dabedd5871d5d691596175269d540956b0f9965a885c2bbab9",
+      "identity_persisted": true
+    },
+    "24_full_width_initialization_isolation": {
+      "configuration": "d768/L1/H12/block8",
+      "seeds": 5,
+      "legacy_tied_head_mean_ce": 521.3873291015625,
+      "canonical_mean_ce": 5.635877323150635,
+      "legacy_embedding_std": "0.99737-1.00143",
+      "actual_r0_step1_ce_range": [531.87488, 550.08136],
+      "causal_mechanism": "The tied output head inherited nn.Embedding scale near 1.0, making the current-byte logit dominate at width."
+    },
+    "25_resource_lifetime": {
+      "affected_paths": ["CLM decode", "ByteGPT decode", "ByteGPT inverse", "CLM inverse and roundtrip"],
+      "deterministic_close": true,
+      "resource_warning_promoted_to_error": true,
+      "regression_pass": true
+    }
+  },
+  "root_causes": [
+    {
+      "flow": "cli/evaluate.py::eval_rho_axon -> core/rho_fan.py::_rho_fan_dict_load -> rho_axon.py::rho_form",
+      "defect": "Missing host /usr/share/dict/words silently changed the English detector from Web2 lexicality to a 49-word fallback.",
+      "fix": "Pin the Web2 SHA-256, fail closed, and persist instrument identity with raw panels."
+    },
+    {
+      "flow": "rho_axon.py::rho_form -> byte shuffle -> _rho_fan_known_word_ratio",
+      "defect": "Web2 single-letter entries give the frozen byte-shuffle null a 0.216 false-positive rate against a 0.05 cap.",
+      "fix": "NOT CHANGED; requires a separately preregistered measurement instrument."
+    },
+    {
+      "flow": "cli/train.py -> ByteGPT.__init__ -> nn.Embedding defaults -> tied head",
+      "defect": "Embedding standard deviation near 1.0 makes random-start logits and CE grow catastrophically with width.",
+      "fix": "Canonical 0.02 GPT initialization and 1/sqrt(2L) residual projection scaling for future random starts."
+    },
+    {
+      "flow": "cli/train.py final validation -> equal-cell mean -> summary",
+      "defect": "An equal-cell macro CE was labeled pooled.",
+      "fix": "Add truthful macro metadata while retaining the legacy key as a compatibility alias."
+    }
+  ],
+  "bars_changed": false,
+  "canonical_lexicon": {
+    "provider": "Hugging Face",
+    "organization": "dancinlab",
+    "repository": "dancinlab/anima-rho-form-web2-2026-08-12",
+    "revision": "0ec91c65c3d97c6a20a691fbf7f3cf6216fa4d30",
+    "private": true,
+    "filename": "web2",
+    "bytes": 2493885,
+    "sha256": "be41ad97963bf8dabedd5871d5d691596175269d540956b0f9965a885c2bbab9"
+  },
+  "qa": {
+    "pre_fix_micro_regression": "11 tests passed, 1 CUDA/CuPy skip",
+    "post_fix_rho_regression": "4 tests passed",
+    "full_post_fix_regression": "17/17 executable tests passed, 1 CUDA/CuPy skip",
+    "resource_warning_policy": "error",
+    "python_compile": "PASS",
+    "json_validation": "PASS",
+    "diff_check": "PASS",
+    "canonical_train_smoke": "PASS",
+    "canonical_evaluate_smoke": "PASS",
+    "hf_private_revision": "PASS",
+    "hexa_compile": "UNAVAILABLE_LOCAL_COMPILER"
+  },
+  "remaining": [
+    "R1 remains locked because the frozen Web2 shuffle instrument is not calibrated to its own null.",
+    "Any replacement measurement must be preregistered independently; no post-result word filter or threshold change is permitted.",
+    "Pre-register any future deduplicated/document-disjoint corpus revision; do not rewrite frozen R0 data.",
+    "Run a compiled Hexa smoke on a host with the Hexa toolchain before a native runtime release."
+  ],
+  "preservation": {"ING.jsonl": "PRESERVED", "stream_mi.json": "PRESERVED"}
+}

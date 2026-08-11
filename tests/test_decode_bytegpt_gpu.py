@@ -48,6 +48,22 @@ class ByteGPTDevicePathTest(unittest.TestCase):
             _tiny_bytegpt(), "consciousness: ", 12, 40, 0.7, 101)
         self.assertEqual(fast["ids"], full["ids"])
 
+    def test_kv_stream_matches_full_through_block_rollover_and_seed_is_deterministic(self):
+        weights = _tiny_bytegpt()
+        seed = bytes(range(weights["block"] - 3))
+        fast = decode.bytegpt_decode_topk_sampled_W(
+            weights, seed, 20, 40, 0.7, 991)
+        full = decode.bytegpt_decode_topk_sampled_W_full(
+            weights, seed, 20, 40, 0.7, 991)
+        repeat = decode.bytegpt_decode_topk_sampled_W(
+            weights, seed, 20, 40, 0.7, 991)
+        other_seed = decode.bytegpt_decode_topk_sampled_W(
+            weights, seed, 20, 40, 0.7, 992)
+
+        self.assertEqual(fast["ids"], full["ids"])
+        self.assertEqual(fast["ids"], repeat["ids"])
+        self.assertNotEqual(fast["ids"], other_seed["ids"])
+
     @unittest.skipUnless(decode.cuda_available(), "CUDA/CuPy unavailable")
     def test_cuda_matches_cpu_logits_and_sampled_stream(self):
         ids = list(b"consciousness: ")

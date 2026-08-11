@@ -665,16 +665,21 @@ class ByteGPTConfig:
     """Minimal config carrying the serializer's 5 header fields. vocab=256 (byte LM)."""
 
     def __init__(self, vocab: int = 256, d: int = 768, n_layer: int = 24,
-                 n_head: int = 12, block: int = 1024):
+                 n_head: int = 12, block: int = 1024, init_std: float = 0.02):
         self.vocab = vocab
         self.d = d
         self.n_layer = n_layer
         self.n_head = n_head
         self.block = block
+        # GPT-2 canonical random-start scale. This is training provenance only;
+        # the engine checkpoint stores the realized float weights, so the five-field
+        # decode header and every existing .bin remain unchanged.
+        self.init_std = init_std
 
     def as_dict(self) -> dict:
         return {"vocab": self.vocab, "d": self.d, "n_layer": self.n_layer,
-                "n_head": self.n_head, "block": self.block}
+                "n_head": self.n_head, "block": self.block,
+                "init_std": self.init_std}
 
 
 class ByteGPT(nn.Module):
@@ -704,7 +709,27 @@ class ByteGPT(nn.Module):
         self.blocks = nn.ModuleList([Block(d, H, 0.0) for _ in range(L)])
         self.ln_f = nn.LayerNorm(d)
         self.head = nn.Linear(d, V, bias=False)
+        self.apply(self._init_weights)
+        # nn.MultiheadAttention keeps QKV in a direct Parameter rather than an
+        # nn.Linear child, so Module.apply cannot reach it. Residual projections
+        # use GPT-2's 1/sqrt(2L) scale to keep depth from inflating the residual.
+        residual_std = cfg.init_std / math.sqrt(2 * L)
+        for block_layer in self.blocks:
+            nn.init.normal_(block_layer.attn.in_proj_weight, mean=0.0, std=cfg.init_std)
+            nn.init.zeros_(block_layer.attn.in_proj_bias)
+            nn.init.normal_(block_layer.attn.out_proj.weight, mean=0.0, std=residual_std)
+            nn.init.normal_(block_layer.mlp[2].weight, mean=0.0, std=residual_std)
         self.head.weight = self.tok.weight        # tied head (serializer reads tok as head)
+
+    def _init_weights(self, module):
+        """Canonical GPT random initialization for new ByteGPT training runs."""
+        if isinstance(module, (nn.Linear, nn.Embedding)):
+            nn.init.normal_(module.weight, mean=0.0, std=self.cfg.init_std)
+            if getattr(module, "bias", None) is not None:
+                nn.init.zeros_(module.bias)
+        elif isinstance(module, nn.LayerNorm):
+            nn.init.ones_(module.weight)
+            nn.init.zeros_(module.bias)
 
     def _penultimate(self, idx):
         """Run the trunk to the post-final-LN hidden (pre-head). Returns (B,T,d)."""

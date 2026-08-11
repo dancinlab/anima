@@ -830,7 +830,8 @@ def _rd_u32(rb, off):
 def clm_decodable(path):
     """clm_decode.hexa::clm_decodable — CLM\\x01 header AND CLMX v0.2 trailer."""
     try:
-        rb = open(path, 'rb').read()
+        with open(path, 'rb') as handle:
+            rb = handle.read()
     except Exception:
         return False
     if len(rb) < 5:
@@ -859,7 +860,8 @@ def clm_config(path):
     """clm_decode.hexa::clm_config — recover (d,K,V,E,L,nblk) from header."""
     if not clm_decodable(path):
         return {"ok": False}
-    rb = open(path, 'rb').read()
+    with open(path, 'rb') as handle:
+        rb = handle.read()
     nblk = rb[4]
     d = _rd_u32(rb, 5)
     rest0 = _rd_u32(rb, 9)
@@ -934,7 +936,8 @@ def _clm_load_weights_impl(path, direct_device=False):
         return _WLOAD_CACHE[_k]
     if not clm_decodable(path):
         return {"ok": False}
-    rb = open(path, 'rb').read()
+    with open(path, 'rb') as handle:
+        rb = handle.read()
     nblk = rb[4]
     d = _rd_u32(rb, 5)
     rest0 = _rd_u32(rb, 9)
@@ -1903,7 +1906,8 @@ def bg_load(path):
     _k = _wload_key(path)
     if _k is not None and _k in _WLOAD_CACHE:
         return _WLOAD_CACHE[_k]
-    rb = open(path, 'rb').read()
+    with open(path, 'rb') as handle:
+        rb = handle.read()
     vocab = _bg_rd_u32(rb, 0)
     d = _bg_rd_u32(rb, 4)
     nlay = _bg_rd_u32(rb, 8)
