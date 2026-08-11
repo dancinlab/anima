@@ -163,6 +163,14 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > 고정 기준 `2.0 bytes/s`에 `1.763 bytes/s`여서 프로덕션은 계속 차단한다. 결과에 따른 재시도나
 > 기준 변경은 하지 않았고 artifact는 HF `dancinlab` 비공개 저장소에만 보관한다. 전체 근거:
 > `state/store_causality_7b_lookup_recovery_2026_08_11/result.json`.
+>
+> **다음 활성 관문(2026-08-11 등록):** 고정 H100 PCIe 생성 결과를 재현하고 기존
+> `CLMSubstrate.generate` → canonical decode 경로를 trunk·정규화·MoE·readout·동기화·전송으로
+> 나눠 측정한 뒤, 증명된 공용 런타임 원인만 수정한다. 체크포인트, 20×32-byte 패널, warm-up,
+> 하드웨어 등급, 인과 기준, 프로덕션 `2.0 bytes/s` 기준은 바꾸지 않는다. rho-form,
+> pair-oracle, 전체 인과 시험, 처리량, HTTP/WebSocket, VRAM, soak, 복구, rollback을 모두
+> 통과하기 전에는 프로덕션을 계속 차단한다. 전체 규약:
+> `state/store_causality_7b_throughput_recovery_2026_08_11/README.md`.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /

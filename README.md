@@ -179,6 +179,14 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > against the frozen `2.0` bar; no result-dependent retry or threshold change was made. Artifacts
 > remain private under HF `dancinlab`. Full evidence:
 > `state/store_causality_7b_lookup_recovery_2026_08_11/result.json`.
+>
+> **Next active gate (registered 2026-08-11):** reproduce the fixed H100 PCIe generation result,
+> profile the existing `CLMSubstrate.generate` → canonical decode path by trunk, normalization,
+> MoE, readout, synchronization, and transport, then correct only a proven shared runtime cause.
+> The checkpoint, 20×32-byte panel, warm-up, hardware class, causal criteria, and `2.0 bytes/s`
+> production bar remain unchanged. Production stays blocked until rho-form, pair-oracle, the full
+> causal battery, throughput, HTTP/WebSocket, VRAM, soak, recovery, and rollback all pass. Protocol:
+> `state/store_causality_7b_throughput_recovery_2026_08_11/README.md`.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the
