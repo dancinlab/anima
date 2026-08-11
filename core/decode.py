@@ -1126,6 +1126,26 @@ def clm_load_weights(path):
 
 # ── forward — 1:1 from clm_decode.hexa _clmd_conv1d / _clmd_fwd_logits_sc ──
 
+def _conv1d_im2col(x, T, Cin, K, dil, xp=None):
+    """Build the canonical causal im2col view once for one shared input."""
+    if xp is None:
+        xp = get_xp(x)
+    x = x.reshape(T, Cin)
+    xcol = xp.zeros((T, Cin, K), dtype=xp.float64)
+    t_idx = xp.arange(T)
+    for k in range(K):
+        offset = dil * (K - 1 - k)
+        p = t_idx - offset
+        valid = p >= 0
+        xcol[valid, :, k] = x[p[valid], :]
+    return xcol.reshape(T, Cin * K)
+
+
+def _conv1d_from_im2col(xcol, Wt, b):
+    """Apply one pre-transposed weight to a canonical im2col view."""
+    return xcol @ Wt + b[None, :]
+
+
 def _conv1d(x, Wt, b, T, Cin, Cout, K, dil, xp=None):
     """_clmd_conv1d_pre (host path) — causal dilated im2col + matmul + bias.
     x:[T,Cin], Wt:[Cin*K, Cout], b:[Cout]. Returns y:[T,Cout].
@@ -1136,18 +1156,8 @@ def _conv1d(x, Wt, b, T, Cin, Cout, K, dil, xp=None):
     to cuBLAS when xp is cupy, unchanged formula otherwise."""
     if xp is None:
         xp = get_xp(x, Wt)
-    Kdim = Cin * K
-    x = x.reshape(T, Cin)
-    xcol = xp.zeros((T, Cin, K), dtype=xp.float64)
-    t_idx = xp.arange(T)
-    for k in range(K):
-        offset = dil * (K - 1 - k)
-        p = t_idx - offset
-        valid = p >= 0
-        xcol[valid, :, k] = x[p[valid], :]
-    xcol = xcol.reshape(T, Kdim)
-    mm = xcol @ Wt                                # [T, Cout]
-    return mm + b[None, :]
+    xcol = _conv1d_im2col(x, T, Cin, K, dil, xp)
+    return _conv1d_from_im2col(xcol, Wt, b)       # [T, Cout]
 
 
 def _apply_edits(xt, edits, li, T, d, xp):
@@ -1298,11 +1308,17 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None, tap_depth=None, ta
         # production forward, so it costs one extra softmax over [T,E] (E=3) and nothing else.
         routes["probs"] = to_host(nn_moe_softmax(logits_r, T, E, xp)).copy()   # [T, E]
         routes["logits"] = to_host(logits_r).copy()                            # [T, E]
-    # E experts: gelu(conv(xt))
+    # E experts all consume the SAME xt with the SAME K/dilation. Build that
+    # causal im2col once, then apply the independent weights and one packed
+    # elementwise GELU. Rebuilding the identical gather and launching the exact
+    # same elementwise graph E times was the 7B serving bottleneck. Stacking is
+    # algebraically disjoint across experts; the values and router layout stay
+    # exactly equal to the former per-expert loop.
+    ex_xcol = _conv1d_im2col(xt, T, d, K, 1, xp)
     ex_out = xp.empty((E, T, d), dtype=xp.float64)
     for ej in range(E):
-        eo = _conv1d(xt, W["eWt"][ej], W["eB"][ej], T, d, d, K, 1, xp)
-        ex_out[ej] = nn_gelu_fwd(eo, xp).reshape(T, d)
+        ex_out[ej] = _conv1d_from_im2col(ex_xcol, W["eWt"][ej], W["eB"][ej])
+    ex_out = nn_gelu_fwd(ex_out, xp).reshape(E, T, d)
     # MoE router mix
     y = nn_moe_router_fwd(logits_r, ex_out, T, E, d, xp)          # [T, d]
     # final groupnorm — H_9643: G follows the faction split (absent CLMF => 0 => G=1 => unchanged)
