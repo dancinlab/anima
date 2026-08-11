@@ -121,9 +121,11 @@ except Exception as _cfg_err:             # self-config must never break the imp
 
 try:
     import cupy as _cupy
+    from cupyx.scipy import special as _cupyx_special
     _CUPY_IMPORT_ERR = None
 except Exception as _cupy_err:            # pragma: no cover — numpy-only host
     _cupy = None
+    _cupyx_special = None
     _CUPY_IMPORT_ERR = _cupy_err
 
 _CUDA_AVAILABLE = None       # tri-state probe cache (None = not yet probed)
@@ -318,6 +320,26 @@ def _device_residency(W):
             if _k in W:
                 s[_k] = xp.asarray(W[_k])
     W.update(s)                    # commit only if every upload above succeeded
+    return W
+
+
+def _bytegpt_device_residency(W):
+    """Atomically upload the canonical ByteGPT tensors once per loaded mouth."""
+    xp = _cupy
+    s = {}
+    for key in ("tok", "pos", "lnfw", "lnfb", "head"):
+        s[key] = xp.asarray(W[key])
+    for key in ("ln1w", "ln1b", "inW", "inB", "oW", "oB",
+                "ln2w", "ln2b", "m0W", "m0B", "m2W", "m2B"):
+        s[key] = [xp.asarray(value) for value in W[key]]
+    bind = []
+    for block in W.get("bind", ()):
+        uploaded = {key: xp.asarray(value) for key, value in block.items()
+                    if key != "gate"}
+        uploaded["gate"] = block["gate"]
+        bind.append(uploaded)
+    s["bind"] = bind
+    W.update(s)
     return W
 
 
@@ -1758,8 +1780,13 @@ def dt_sqrt(x):
 def _bg_gelu(x):
     """decode.hexa::_bg_gelu — 0.5*x*(1+erf(x*0.7071067811865476)).
     erf via libm (math.erf), NOT the dt_erf twin (ING#23 torch-parity)."""
-    x = np.asarray(x, dtype=np.float64)
-    e = _erf_vec(x * 0.7071067811865476).astype(np.float64)
+    xp = get_xp(x)
+    if xp is np:
+        x = np.asarray(x, dtype=np.float64)
+        e = _erf_vec(x * 0.7071067811865476).astype(np.float64)
+    else:
+        x = xp.asarray(x, dtype=xp.float64)
+        e = _cupyx_special.erf(x * 0.7071067811865476).astype(xp.float64)
     return 0.5 * x * (1.0 + e)
 
 
@@ -1768,16 +1795,25 @@ def _bg_layernorm_rows(X, g, b, T, d):
     biased variance, eps=1e-5, inv = 1/dt_sqrt(var+eps). X:[T,d]. Returns Y:[T,d].
     dt_sqrt is scalar per row (matching the hexa scalar while-loop)."""
     eps = 0.00001
+    xp = get_xp(X, g, b)
     X = X.reshape(T, d)
-    Y = np.empty_like(X)
-    for i in range(T):
-        row = X[i]
-        mean = row.sum() / float(d)
-        dv = row - mean
-        var = (dv * dv).sum() / float(d)
-        inv = 1.0 / dt_sqrt(var + eps)
-        Y[i] = g * (dv * inv) + b
-    return Y
+    if xp is np:
+        Y = np.empty_like(X)
+        for i in range(T):
+            row = X[i]
+            mean = row.sum() / float(d)
+            dv = row - mean
+            var = (dv * dv).sum() / float(d)
+            inv = 1.0 / dt_sqrt(var + eps)
+            Y[i] = g * (dv * inv) + b
+        return Y
+    mean = X.sum(axis=1, keepdims=True) / float(d)
+    dv = X - mean
+    var = (dv * dv).sum(axis=1, keepdims=True) / float(d)
+    root = xp.maximum(var + eps, 1.0)
+    for _ in range(24):
+        root = 0.5 * (root + (var + eps) / root)
+    return g * (dv / root) + b
 
 
 # ── .bin header + weight load — 1:1 from decode.hexa _bg_rd_u32 / bg_load ──
@@ -1920,6 +1956,19 @@ def bg_load(path):
          "ln2w": ln2w, "ln2b": ln2b, "m0W": m0W, "m0B": m0B,
          "m2W": m2W, "m2B": m2B, "lnfw": lnfw, "lnfb": lnfb, "head": head,
          "bind": bind}
+    _log_gpu_status_once()
+    if cuda_available():
+        try:
+            _bytegpt_device_residency(W)
+        except _CUPY_OOM as _oom:
+            global _CUDA_AVAILABLE
+            _CUDA_AVAILABLE = False
+            try:
+                _cupy.get_default_memory_pool().free_all_blocks()
+            except Exception:
+                pass
+            print("[GPU-OOM-FALLBACK] ByteGPT weight residency OOM -> CPU-numpy (%s)" % _oom,
+                  file=sys.stderr)
     if _k is not None:
         _WLOAD_CACHE[_k] = W
     return W
@@ -1943,6 +1992,19 @@ def _bg_mha(H, inW, inB, oW, oB, T, d, nh):
     # QKV = H[T,d] @ inW.T[d,3d] + inB  -> packed [T,3d]; Q=cols0..d, K=d..2d, V=2d..3d
     QKV = H @ inW.T + inB                                  # [T, 3d]
     Q = QKV[:, 0:d]; K = QKV[:, d:2 * d]; V = QKV[:, 2 * d:3 * d]
+    xp = get_xp(QKV)
+    if xp is not np:
+        q = Q.reshape(T, nh, hd).transpose(1, 0, 2)
+        k = K.reshape(T, nh, hd).transpose(1, 0, 2)
+        v = V.reshape(T, nh, hd).transpose(1, 0, 2)
+        scores = (q @ k.transpose(0, 2, 1)) * scale
+        mask = xp.triu(xp.ones((T, T), dtype=xp.bool_), k=1)
+        scores = xp.where(mask[None, :, :], -xp.inf, scores)
+        scores = scores - scores.max(axis=-1, keepdims=True)
+        attn = xp.exp(scores)
+        attn = attn / attn.sum(axis=-1, keepdims=True)
+        ctx = (attn @ v).transpose(1, 0, 2).reshape(T, d)
+        return ctx @ oW.T + oB
     ctx = np.zeros((T, d), dtype=np.float64)
     for hh in range(nh):
         base = hh * hd
@@ -1985,7 +2047,8 @@ def bg_forward_last_W(W, ids, T):
     When W["bind"] is non-empty the appended gated blocks run after the L base
     blocks and before ln_f (H_9027); absent/empty => byte-identical to before."""
     d = W["d"]; nlay = W["nlay"]; nh = W["nh"]; vocab = W["vocab"]
-    ids = np.asarray(ids, dtype=np.int64)
+    xp = get_xp(W["tok"])
+    ids = xp.asarray(ids, dtype=xp.int64)
     # x[T,d] = tok[id] + pos[t]
     x = W["tok"][ids] + W["pos"][0:T]                       # [T, d]
     for Lr in range(nlay):
@@ -2005,7 +2068,7 @@ def bg_forward_last_W(W, ids, T):
     # final LayerNorm on the LAST position only, then tied head
     lastrow = _bg_layernorm_rows(x[T - 1:T], W["lnfw"], W["lnfb"], 1, d)[0]   # [d]
     logits = W["head"] @ lastrow                            # [vocab]
-    return logits
+    return to_host(logits)
 
 
 def bg_forward_last_hidden(W, ids, T):
@@ -2016,7 +2079,8 @@ def bg_forward_last_hidden(W, ids, T):
     the forward body with bg_forward_last_W; the only difference is the return line
     (head @ lastrow omitted). ids:[T] int; W["bind"] handled identically (H_9027)."""
     d = W["d"]; nlay = W["nlay"]; nh = W["nh"]
-    ids = np.asarray(ids, dtype=np.int64)
+    xp = get_xp(W["tok"])
+    ids = xp.asarray(ids, dtype=xp.int64)
     x = W["tok"][ids] + W["pos"][0:T]                       # [T, d]
     for Lr in range(nlay):
         nrm = _bg_layernorm_rows(x, W["ln1w"][Lr], W["ln1b"][Lr], T, d)
@@ -2029,7 +2093,7 @@ def bg_forward_last_hidden(W, ids, T):
     if W.get("bind"):
         x = _bg_apply_bind(x, W["bind"], T, d, nh)
     lastrow = _bg_layernorm_rows(x[T - 1:T], W["lnfw"], W["lnfb"], 1, d)[0]   # [d]
-    return lastrow                                          # final-LN last-pos hidden
+    return to_host(lastrow)                                 # final-LN last-pos hidden
 
 
 def bytegpt_forward_last(path, ids, T):
@@ -2040,6 +2104,7 @@ def bytegpt_forward_last(path, ids, T):
 
 def bg_argmax(a):
     """decode.hexa::bg_argmax — index of max (ties: first, strict >)."""
+    a = to_host(a)
     bi = 0
     bv = a[0]
     for k in range(1, len(a)):
@@ -2081,7 +2146,8 @@ def _bg_forward_build(W, ids, T):
     where cache[Lr] = [K[T,d], V[T,d]]. The last-position logits are byte-
     identical to bg_forward_last_W (same ops, M=T batched)."""
     d = W["d"]; nlay = W["nlay"]; nh = W["nh"]
-    ids = np.asarray(ids, dtype=np.int64)
+    xp = get_xp(W["tok"])
+    ids = xp.asarray(ids, dtype=xp.int64)
     x = W["tok"][ids] + W["pos"][0:T]                       # [T, d]
     hd = d // nh
     scale = 1.0 / dt_sqrt(float(hd))
@@ -2090,17 +2156,29 @@ def _bg_forward_build(W, ids, T):
         nrm = _bg_layernorm_rows(x, W["ln1w"][Lr], W["ln1b"][Lr], T, d)
         QKV = nrm @ W["inW"][Lr].T + W["inB"][Lr]          # [T, 3d]
         Q = QKV[:, 0:d]; K = QKV[:, d:2 * d]; V = QKV[:, 2 * d:3 * d]
-        ctx = np.zeros((T, d), dtype=np.float64)
-        for hh in range(nh):
-            base = hh * hd
-            Qh = Q[:, base:base + hd]; Kh = K[:, base:base + hd]; Vh = V[:, base:base + hd]
-            for i in range(T):
-                L = i + 1
-                sc = (Qh[i] @ Kh[0:L].T) * scale
-                mx = sc.max()
-                e = np.exp(sc - mx)
-                tot = e.sum()
-                ctx[i, base:base + hd] = (e / tot) @ Vh[0:L]
+        if xp is np:
+            ctx = np.zeros((T, d), dtype=np.float64)
+            for hh in range(nh):
+                base = hh * hd
+                Qh = Q[:, base:base + hd]; Kh = K[:, base:base + hd]; Vh = V[:, base:base + hd]
+                for i in range(T):
+                    L = i + 1
+                    sc = (Qh[i] @ Kh[0:L].T) * scale
+                    mx = sc.max()
+                    e = np.exp(sc - mx)
+                    tot = e.sum()
+                    ctx[i, base:base + hd] = (e / tot) @ Vh[0:L]
+        else:
+            q = Q.reshape(T, nh, hd).transpose(1, 0, 2)
+            k = K.reshape(T, nh, hd).transpose(1, 0, 2)
+            v = V.reshape(T, nh, hd).transpose(1, 0, 2)
+            scores = (q @ k.transpose(0, 2, 1)) * scale
+            mask = xp.triu(xp.ones((T, T), dtype=xp.bool_), k=1)
+            scores = xp.where(mask[None, :, :], -xp.inf, scores)
+            scores = scores - scores.max(axis=-1, keepdims=True)
+            attn = xp.exp(scores)
+            attn = attn / attn.sum(axis=-1, keepdims=True)
+            ctx = (attn @ v).transpose(1, 0, 2).reshape(T, d)
         aout = ctx @ W["oW"][Lr].T + W["oB"][Lr]
         x = x + aout
         nrm = _bg_layernorm_rows(x, W["ln2w"][Lr], W["ln2b"][Lr], T, d)
@@ -2123,25 +2201,37 @@ def _bg_kv_step(W, cache, id_new, win_pos):
     d = W["d"]; nlay = W["nlay"]; nh = W["nh"]
     hd = d // nh
     scale = 1.0 / dt_sqrt(float(hd))
-    x = (W["tok"][int(id_new)] + W["pos"][win_pos]).astype(np.float64).reshape(1, d)
+    xp = get_xp(W["tok"])
+    x = (W["tok"][int(id_new)] + W["pos"][win_pos]).astype(xp.float64).reshape(1, d)
     for Lr in range(nlay):
         nrm = _bg_layernorm_rows(x, W["ln1w"][Lr], W["ln1b"][Lr], 1, d)       # [1,d]
         qkv = nrm @ W["inW"][Lr].T + W["inB"][Lr]                             # [1,3d]
         qn = qkv[:, 0:d]; kn = qkv[:, d:2 * d]; vn = qkv[:, 2 * d:3 * d]      # [1,d]
-        Kc = np.concatenate([cache[Lr][0], kn], axis=0)                       # [T,d]
-        Vc = np.concatenate([cache[Lr][1], vn], axis=0)
+        Kc = xp.concatenate([cache[Lr][0], kn], axis=0)                       # [T,d]
+        Vc = xp.concatenate([cache[Lr][1], vn], axis=0)
         cache[Lr][0] = Kc; cache[Lr][1] = Vc
-        ctx = np.zeros((1, d), dtype=np.float64)
-        for hh in range(nh):
-            base = hh * hd
-            qh = qn[0, base:base + hd]              # [hd]
-            Kh = Kc[:, base:base + hd]              # [T,hd]
-            Vh = Vc[:, base:base + hd]              # [T,hd]
-            sc = (qh @ Kh.T) * scale                # [T]
-            mx = sc.max()
-            e = np.exp(sc - mx)
-            tot = e.sum()
-            ctx[0, base:base + hd] = (e / tot) @ Vh
+        if xp is np:
+            ctx = np.zeros((1, d), dtype=np.float64)
+            for hh in range(nh):
+                base = hh * hd
+                qh = qn[0, base:base + hd]              # [hd]
+                Kh = Kc[:, base:base + hd]              # [T,hd]
+                Vh = Vc[:, base:base + hd]              # [T,hd]
+                sc = (qh @ Kh.T) * scale                # [T]
+                mx = sc.max()
+                e = np.exp(sc - mx)
+                tot = e.sum()
+                ctx[0, base:base + hd] = (e / tot) @ Vh
+        else:
+            length = Kc.shape[0]
+            q = qn.reshape(1, nh, hd).transpose(1, 0, 2)
+            k = Kc.reshape(length, nh, hd).transpose(1, 0, 2)
+            v = Vc.reshape(length, nh, hd).transpose(1, 0, 2)
+            scores = (q @ k.transpose(0, 2, 1)) * scale
+            scores = scores - scores.max(axis=-1, keepdims=True)
+            attn = xp.exp(scores)
+            attn = attn / attn.sum(axis=-1, keepdims=True)
+            ctx = (attn @ v).transpose(1, 0, 2).reshape(1, d)
         aout = ctx @ W["oW"][Lr].T + W["oB"][Lr]                              # [1,d]
         x = x + aout
         nrm = _bg_layernorm_rows(x, W["ln2w"][Lr], W["ln2b"][Lr], 1, d)
@@ -2251,7 +2341,7 @@ def bytegpt_decode_topk_sampled_W(W, seed_ids, gen, top_k, temp, seed_rng):
     st = {'cache': None, 'start': None}
     for _ in range(gen):
         logits = _bg_step_logits(W, toks, st)
-        nb, rng = _topk_sample(logits, vocab, top_k, temp, rng)
+        nb, rng = _topk_sample(to_host(logits), vocab, top_k, temp, rng)
         toks.append(nb)
         outl.append(nb)
     text = bytes(outl).decode('utf-8', 'surrogateescape')
@@ -2271,7 +2361,7 @@ def bytegpt_decode_topk_sampled_W_full(W, seed_ids, gen, top_k, temp, seed_rng):
         T = n - start
         ids = toks[start:start + T]
         logits = bg_forward_last_W(W, ids, T)
-        nb, rng = _topk_sample(logits, vocab, top_k, temp, rng)
+        nb, rng = _topk_sample(to_host(logits), vocab, top_k, temp, rng)
         toks.append(nb)
         outl.append(nb)
     text = bytes(outl).decode('utf-8', 'surrogateescape')

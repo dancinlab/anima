@@ -1008,6 +1008,16 @@ def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir="", isolated=False, cache_
     return panel
 
 
+def write_rho_panel(path, panel):
+    """Write raw byte-mouth evidence as lossless, standards-compliant JSON."""
+    with open(path, "w", encoding="utf-8") as handle:
+        # Byte mouths decode arbitrary bytes with surrogateescape. ASCII JSON escapes
+        # those U+DCxx code points, so json.load restores them losslessly and the file
+        # remains valid UTF-8 instead of dropping or replacing evaluation evidence.
+        json.dump(panel, handle, ensure_ascii=True, indent=2, sort_keys=True)
+        handle.write("\n")
+
+
 def _build_cell_dets(known, en_corpus_tokens, corpus_paths):
     """H_9212 ③ — the LANG-KEYED per-register-cell dispatch bundle (a_chat_registers 4 cells).
     en cells reuse the SAME frozen objects as the aggregate dets (byte-identity: identical
@@ -2247,9 +2257,7 @@ def evaluate_run(argv):
         )
         rho_out = evaluate_strval(argv[1:], "--rho-out", "")
         if rho_out:
-            with open(rho_out, "w", encoding="utf-8") as handle:
-                json.dump(rho_panel, handle, ensure_ascii=False, indent=2, sort_keys=True)
-                handle.write("\n")
+            write_rho_panel(rho_out, rho_panel)
             print("wrote: " + rho_out)
         return 0
 

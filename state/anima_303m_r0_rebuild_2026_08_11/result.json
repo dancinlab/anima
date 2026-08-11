@@ -1,12 +1,33 @@
 {
   "schema": "anima-303m-r0-rebuild-result/v1",
   "date": "2026-08-11",
-  "status": "PENDING",
-  "verdict": "NOT_YET_MEASURED",
+  "status": "IN_PROGRESS",
+  "verdict": "R0_SEED_7_FAILED_REMAINING_SEEDS_RUNNING",
   "protocol": "protocol.json",
   "r0": {
     "seeds": [7, 11, 13],
-    "completed": []
+    "completed": [
+      {
+        "seed": 7,
+        "steps": 14000,
+        "parameters": 303097856,
+        "heldout_ce": 0.9990635398775339,
+        "registers_descent": "5/5",
+        "hillock": "LIVE",
+        "aggregate_rho_form": 0.4,
+        "aggregate_self_shuffle": 0.0,
+        "cells": {
+          "en_general": {"rho_form": 0.4, "verdict": "FAIL"},
+          "en_sns": {"rho_form": 0.4, "verdict": "FAIL"},
+          "ko_general": {"rho_form": 0.4, "verdict": "PASS"},
+          "ko_sns": {"rho_form": 0.6, "verdict": "PASS"}
+        },
+        "verdict": "FAIL",
+        "engine_sha256": "6b30cce18221fa541f310122833c4cdf7d1c2e9fd027d3fc4a2aca959767e0da",
+        "exact_resume_sha256": "e872714f75a9648aafc40e0646d30bb04434ff81abc59db232bd001972416614",
+        "rho_form_sha256": "e4e625f2bcd43d143a55c0c310641785623744eab93c5992358c39ffc731d4b7"
+      }
+    ]
   },
   "r1": {
     "status": "LOCKED",
@@ -14,7 +35,15 @@
   },
   "deployment": {
     "model_deployed": false,
-    "h100_active": false
+    "h100_active": true
+  },
+  "runtime_qa": {
+    "bytegpt_cuda_enabled": true,
+    "cpu_cuda_logits_rtol": 1e-10,
+    "seeded_token_stream_parity": true,
+    "real_303m_load_seconds": 2.038,
+    "real_303m_8byte_decode_seconds": 0.552,
+    "raw_surrogate_json_lossless": true
   },
   "preservation": {
     "ING.jsonl": "PRESERVED",

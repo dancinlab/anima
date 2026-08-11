@@ -1,6 +1,6 @@
 # Anima 303M R0 native-mouth rebuild — 2026-08-11
 
-Status: PREREGISTERED — implementation and GPU execution in progress.
+Status: IN PROGRESS — seed 7 complete; seeds 11 and 13 remain.
 
 The previous 303M run honestly failed at `rho-form 3/5`, but it did not reproduce the successful
 native-byte lineage: it used one 60.05 MB general-English cell, constant LR, AdamW beta2 `0.999`,
@@ -41,3 +41,24 @@ runs only on Vast.ai. Results, hashes, HF revisions, QA, and cost are recorded h
 JSON, committed, and pushed. The H100 is deleted at completion even when the gate fails.
 
 `ING.jsonl` and `stream_mi.json` are existing user files and remain untouched.
+
+## Interim execution record
+
+Vast.ai seed 7 reached the fixed 14,000-step endpoint with pooled held-out CE `0.99906`; all five
+registered cells were below the uniform baseline. Its final engine SHA-256 is
+`6b30cce18221fa541f310122833c4cdf7d1c2e9fd027d3fc4a2aca959767e0da`.
+
+The frozen final-checkpoint panel returned HILLOCK `LIVE`, aggregate rho-form `0.40`, and
+self-shuffle `0.00`, so seed 7 failed the aggregate `0.70` gate. The English general and SNS cells
+both returned `0.40`/FAIL; Korean general returned `0.40`/PASS under its registered `0.20` bar and
+Korean SNS returned `0.60`/PASS. Raw generation, KWR, shuffle KWR, and seeds are retained in the
+machine result. R1 is therefore locked; the remaining preregistered R0 seeds still run so the
+failure's reproducibility is measured without a result-dependent retry.
+
+This run also exposed two shared runtime defects before the seed result could be preserved. The
+ByteGPT loader and KV forward were NumPy-only even when the existing canonical CUDA dispatcher was
+live, leaving a paid H100 idle. They now use one-time device residency and the same CUDA-backed
+attention/KV path while preserving the CPU path. H100 tests verified CPU/CUDA logits within
+`1e-10` and identical seeded token streams; the real 303M load took `2.038 s` and an 8-byte decode
+`0.552 s`. The second defect was rho JSON serialization rejecting arbitrary byte-mouth
+surrogateescape output. Raw bytes are now retained losslessly as standards-compliant escaped JSON.

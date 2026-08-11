@@ -1,5 +1,7 @@
 import os
 import sys
+import json
+import tempfile
 import unittest
 
 
@@ -9,6 +11,7 @@ if CLI not in sys.path:
     sys.path.insert(0, CLI)
 
 import rho_axon
+import evaluate
 
 
 class _Mouth:
@@ -34,6 +37,15 @@ class RhoFormEvidenceTest(unittest.TestCase):
             self.assertTrue(item["pass"])
             self.assertIn("shuffle_known_word_ratio", item)
             self.assertIn("shuffle_pass", item)
+
+    def test_raw_surrogate_byte_is_written_losslessly(self):
+        raw = b"answer:\xec".decode("utf-8", "surrogateescape")
+        with tempfile.TemporaryDirectory() as directory:
+            path = os.path.join(directory, "rho.json")
+            evaluate.write_rho_panel(path, {"evidence": [{"text": raw}]})
+            with open(path, "r", encoding="utf-8") as handle:
+                restored = json.load(handle)["evidence"][0]["text"]
+        self.assertEqual(restored.encode("utf-8", "surrogateescape"), b"answer:\xec")
 
 
 if __name__ == "__main__":
