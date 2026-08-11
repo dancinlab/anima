@@ -78,4 +78,6 @@ now uses temporary bridge files instead of overwriting the exact-resume `<out>.p
 finished `12/12`; the 303M smoke and five intermediate serialize/resume boundaries also passed.
 The failed model, final exact-resume state, 1,000-step engine checkpoints, logs, hashes, and gate
 outputs are preserved in the private HF repository
-`dancinlab/anima-303m-from-scratch-2026-08-11`.
+`dancinlab/anima-303m-from-scratch-2026-08-11` (verified metadata revision
+`52358c4a996fcb47ddfa94b9f53e667790f386fe`). The pre-teardown Vast.ai cost snapshot was
+approximately `$1.371`.
