@@ -220,6 +220,16 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > `state/anima_303m_from_scratch_2026_08_11/result.json`. 산출물 보존과 Git 배포 후 실행 H100을
 > 삭제했으며 Vast.ai 활성 임대는 0개, `anima_alive=false`다.
 
+> **303M R0 네이티브 mouth 재구축(2026-08-11 사전등록):** 이전 `rho-form 3/5` 실행은
+> 60.05MB 영어 일반문 한 셀과 고정 학습률 legacy optimizer를 사용해 broad+dialogue
+> 네이티브 byte 계보를 재현한 시험이 아니었다. R0는 282.41MB 한·영 broad/dialogue register를
+> HF `dancinlab`의 정확한 커밋에 고정하고 무작위 초기화 ByteGPT-303M seed 7/11/13을 canonical
+> AdamW `beta2=0.95`, weight decay `0.1`, 선형 warm-up과 cosine decay로 학습한다. 고정
+> step-14,000 체크포인트가 세 seed 모두 HILLOCK, aggregate `rho-form >=0.70`, shuffle 대조군,
+> 한·영 셀 breakout을 통과해야 한다. 생성 원문과 KWR도 보존한다. 이 3/3 관문 전에는 R1
+> stateful-workspace 비교를 열지 않는다. 프로토콜·실행 SSOT:
+> `state/anima_303m_r0_rebuild_2026_08_11/protocol.json`.
+
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /
 > 컴파일러 / `hx` 패키지 매니저), **[kosmos](https://github.com/dancinlab/kosmos)** (`.kosmos`

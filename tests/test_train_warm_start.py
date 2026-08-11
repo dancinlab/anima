@@ -24,6 +24,45 @@ def _canonical_train_imports():
 
 @unittest.skipUnless(TORCH_AVAILABLE, "PyTorch training extra is not installed")
 class TrainWarmStartTest(unittest.TestCase):
+    def test_canonical_lr_schedule_has_exact_warmup_peak_and_cosine_floor(self):
+        _canonical_train_imports()
+        from train import scheduled_lr
+
+        values = [scheduled_lr(step, 3e-4, "cosine", 4, 12, 0.1)
+                  for step in range(1, 13)]
+        self.assertAlmostEqual(values[0], 7.5e-5)
+        self.assertAlmostEqual(values[3], 3e-4)
+        self.assertLess(values[4], values[3])
+        self.assertTrue(all(a >= b for a, b in zip(values[3:], values[4:])))
+        self.assertAlmostEqual(values[-1], 3e-5)
+        self.assertAlmostEqual(scheduled_lr(99, 3e-4, "cosine", 4, 12, 0.1), 3e-5)
+
+    def test_legacy_lr_schedule_remains_constant_without_warmup(self):
+        _canonical_train_imports()
+        from train import scheduled_lr
+
+        self.assertEqual(scheduled_lr(1, 3e-4, "constant", 0, 20, 0.0), 3e-4)
+        self.assertEqual(scheduled_lr(20, 3e-4, "constant", 0, 20, 0.0), 3e-4)
+
+    def test_pinned_hf_corpus_uri_requires_commit_and_preserves_full_filename(self):
+        _canonical_train_imports()
+        from train import _parse_hf_corpus_spec
+
+        parsed = _parse_hf_corpus_spec(
+            "hf://datasets/dancinlab/anima-corpus@abc123/data/train.bytes")
+        self.assertEqual(parsed, {
+            "repo_id": "dancinlab/anima-corpus",
+            "revision": "abc123",
+            "filename": "data/train.bytes",
+        })
+        for invalid in (
+            "hf://datasets/dancinlab/anima-corpus/data.bytes",
+            "hf://datasets/dancinlab/anima-corpus@main/data.bytes",
+            "hf://datasets/dancinlab/anima-corpus@abc123/../data.bytes",
+        ):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                _parse_hf_corpus_spec(invalid)
+
     def test_clm_warm_start_rejects_trunk_norm_forward_mismatch(self):
         _canonical_train_imports()
 

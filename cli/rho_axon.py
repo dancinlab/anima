@@ -39,12 +39,15 @@ PENDING = "PENDING"  # 구현됨·미배선: axis defined but its frozen probe s
 SEEDS = (101, 102, 103, 104, 105)
 
 
-def _axis(axis, verdict, value=None, controls=None, delta=None, detail=""):
+def _axis(axis, verdict, value=None, controls=None, delta=None, detail="", evidence=None):
     """One axis result. `controls` = {name: control_value}; `delta` = margin over the
     worst (max) control. A PASS is only legal when delta is present and cleared — the
     renderer refuses to print a raw value without its controls."""
-    return {"axis": axis, "verdict": verdict, "value": value,
-            "controls": controls or {}, "delta": delta, "detail": detail}
+    result = {"axis": axis, "verdict": verdict, "value": value,
+              "controls": controls or {}, "delta": delta, "detail": detail}
+    if evidence is not None:
+        result["evidence"] = evidence
+    return result
 
 
 # ── shared text helpers (reuse the g6 detectors passed in from cli/evaluate.py) ──
@@ -106,13 +109,22 @@ def hillock(mouth, gen, known, kwr_fn, concepts):
 # not length/charset). [4-cell per-corpus detector = follow-on; here kwr on `known`.]
 # ════════════════════════════════════════════════════════════════════════
 def rho_form(mouth, gen, known, kwr_fn, concepts, thr=0.50, gate=0.70, ctrl_cap=0.05):
-    hits = 0; shuf_hits = 0; n = 0; texts = []
+    hits = 0; shuf_hits = 0; n = 0; evidence = []
     for i in range(len(concepts)):
         o = mouth.ideate(concepts[i] + ": ", gen, 40, 0.7, SEEDS[0] + i)
-        texts.append(o); n += 1
-        if kwr_fn(o, known) >= thr:
+        score = kwr_fn(o, known)
+        shuffled_score = kwr_fn(_byte_shuffle(o, SEEDS[0] + i), known)
+        hit = score >= thr
+        shuffled_hit = shuffled_score >= thr
+        evidence.append({"concept": concepts[i], "seed": SEEDS[0] + i,
+                         "text": o, "known_word_ratio": round(float(score), 6),
+                         "pass": hit,
+                         "shuffle_known_word_ratio": round(float(shuffled_score), 6),
+                         "shuffle_pass": shuffled_hit})
+        n += 1
+        if hit:
             hits += 1
-        if kwr_fn(_byte_shuffle(o, SEEDS[0] + i), known) >= thr:
+        if shuffled_hit:
             shuf_hits += 1
     rate = hits / n if n else 0.0
     shuf = shuf_hits / n if n else 0.0
@@ -121,7 +133,8 @@ def rho_form(mouth, gen, known, kwr_fn, concepts, thr=0.50, gate=0.70, ctrl_cap=
     return _axis("ρ·form", PASS if ok else FAIL, value=round(rate, 3),
                  controls={"self-shuffle": round(shuf, 3)}, delta=round(delta, 3),
                  detail="form-rate %.2f (gate %.2f) · shuffle %.2f (cap %.2f)"
-                        % (rate, gate, shuf, ctrl_cap))
+                        % (rate, gate, shuf, ctrl_cap),
+                 evidence=evidence)
 
 
 # ════════════════════════════════════════════════════════════════════════

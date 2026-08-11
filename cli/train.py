@@ -639,6 +639,8 @@ def resolve_corpus_path(spec: str) -> str:
     """Resolve a --corpus entry to a local byte-file path.
 
     * existing local path -> use directly.
+    * ``hf://datasets/<org>/<repo>@<revision>/<file>`` -> fetch that exact
+      immutable Hub file through ``hf_hub_download``.
     * else treat as an HF dataset id (a_chat_registers names like
       'anima-corpus-5lang-unified-v2', 'anima-corpus-ko-fineweb2-broad',
       'anima-persona-sns-corpus') and stream it to a local cached byte file
@@ -647,6 +649,21 @@ def resolve_corpus_path(spec: str) -> str:
     """
     if os.path.exists(spec):
         return spec
+    if spec.startswith("hf://"):
+        parsed = _parse_hf_corpus_spec(spec)
+        try:
+            from huggingface_hub import hf_hub_download
+        except Exception as e:
+            raise FileNotFoundError(
+                f"--corpus '{spec}' requires `huggingface_hub` ({e}). "
+                "Install it or provide an existing local file."
+            )
+        print("  resolve: pinned HF dataset "
+              f"{parsed['repo_id']}@{parsed['revision']}/{parsed['filename']}")
+        return hf_hub_download(repo_id=parsed["repo_id"],
+                               filename=parsed["filename"],
+                               repo_type="dataset",
+                               revision=parsed["revision"])
     cache_root = os.environ.get("ANIMA_CORPUS_CACHE",
                                 os.path.join(os.getcwd(), ".corpus_cache"))
     os.makedirs(cache_root, exist_ok=True)
@@ -683,6 +700,56 @@ def resolve_corpus_path(spec: str) -> str:
             if maxrows > 0 and i + 1 >= maxrows:
                 break
     return local
+
+
+def _parse_hf_corpus_spec(spec: str) -> dict:
+    """Parse the canonical immutable HF raw-file corpus URI.
+
+    The explicit dataset kind, full repo id, revision and file are all required:
+    training data custody must never silently float from one Hub commit to another.
+    """
+    prefix = "hf://datasets/"
+    if not spec.startswith(prefix):
+        raise ValueError(
+            "pinned HF corpus must use hf://datasets/<org>/<repo>@<revision>/<file>")
+    body = spec[len(prefix):]
+    if "@" not in body:
+        raise ValueError(f"pinned HF corpus is missing @revision: {spec}")
+    repo_id, pinned = body.split("@", 1)
+    if repo_id.count("/") != 1 or "/" not in pinned:
+        raise ValueError(
+            "pinned HF corpus must include <org>/<repo>@<revision>/<file>")
+    revision, filename = pinned.split("/", 1)
+    if not all((repo_id, revision, filename)) or revision in {"main", "master"}:
+        raise ValueError(
+            "pinned HF corpus requires a non-floating revision and non-empty file")
+    if any(part in {"", ".", ".."} for part in filename.split("/")):
+        raise ValueError(f"pinned HF corpus contains an unsafe file path: {filename}")
+    return {"repo_id": repo_id, "revision": revision, "filename": filename}
+
+
+def scheduled_lr(step: int, base_lr: float, schedule: str, warmup_steps: int,
+                 decay_steps: int, min_lr_ratio: float) -> float:
+    """Return the deterministic learning rate for one 1-indexed optimizer step.
+
+    The schedule has no mutable state, so an exact-resume checkpoint only needs the
+    completed step plus the recipe already stored beside the optimizer and RNG state.
+    """
+    if step < 1:
+        raise ValueError("scheduled_lr step must be >= 1")
+    if warmup_steps > 0 and step <= warmup_steps:
+        return float(base_lr) * float(step) / float(warmup_steps)
+    if schedule == "constant":
+        return float(base_lr)
+    if schedule != "cosine":
+        raise ValueError(f"unknown lr schedule: {schedule}")
+    if decay_steps <= warmup_steps:
+        raise ValueError("cosine decay_steps must be greater than warmup_steps")
+    progress = min(1.0, max(0.0, (step - warmup_steps) /
+                            float(decay_steps - warmup_steps)))
+    cosine = 0.5 * (1.0 + math.cos(math.pi * progress))
+    return float(base_lr) * (float(min_lr_ratio) +
+                             (1.0 - float(min_lr_ratio)) * cosine)
 
 
 # ── frozen lever hyperparams (pre-registered in PREREG.md — tune-to-green 금지) ──
@@ -3657,6 +3724,18 @@ def main():
     ap.add_argument("--seq-len", type=int, default=0)
     ap.add_argument("--batch-size", type=int, default=8)
     ap.add_argument("--lr", type=float, default=3e-4)
+    ap.add_argument("--adam-beta2", type=float, default=0.999,
+                    help="AdamW beta2 (legacy default 0.999; canonical ByteGPT R0 uses 0.95)")
+    ap.add_argument("--weight-decay", type=float, default=0.0,
+                    help="base AdamW weight decay (legacy default 0.0)")
+    ap.add_argument("--lr-schedule", choices=["constant", "cosine"], default="constant",
+                    help="optimizer-step LR schedule; exact-resume derives it from completed step")
+    ap.add_argument("--warmup-steps", type=int, default=0,
+                    help="linear LR warm-up optimizer steps before constant/cosine schedule")
+    ap.add_argument("--lr-decay-steps", type=int, default=0,
+                    help="cosine endpoint in optimizer steps (0 resolves to --steps)")
+    ap.add_argument("--min-lr-ratio", type=float, default=0.0,
+                    help="cosine floor as a fraction of --lr")
     ap.add_argument("--e0", type=int, default=2)
     ap.add_argument("--emax", type=int, default=3)
     ap.add_argument("--no-savant", action="store_true")
@@ -3903,6 +3982,15 @@ def main():
                          "(§4). Flip ON only if a FUTURE per-step-gated head makes DDP error on "
                          "an unused param.")
     a = ap.parse_args()
+
+    if not (0.0 <= a.adam_beta2 < 1.0):
+        ap.error("--adam-beta2 must be in [0, 1)")
+    if a.weight_decay < 0.0:
+        ap.error("--weight-decay must be >= 0")
+    if a.warmup_steps < 0 or a.lr_decay_steps < 0:
+        ap.error("--warmup-steps and --lr-decay-steps must be >= 0")
+    if not (0.0 <= a.min_lr_ratio <= 1.0):
+        ap.error("--min-lr-ratio must be in [0, 1]")
 
     if a.store_source:                     # V6_36 SRC head training (frozen trunk) — dispatch first
         return _store_source_train(a)
@@ -4159,6 +4247,11 @@ def main():
             d = a.d or 64; L = a.L or 2
             seq_len = a.seq_len or 128; steps = a.steps or 60
     e0, emax = a.e0, a.emax
+    lr_decay_steps = a.lr_decay_steps or steps
+    if a.warmup_steps > lr_decay_steps:
+        sys.exit("--warmup-steps cannot exceed the resolved --lr-decay-steps")
+    if a.lr_schedule == "cosine" and lr_decay_steps <= a.warmup_steps:
+        sys.exit("--lr-schedule cosine requires decay steps greater than warm-up steps")
     V, K = 256, 3
     # §7 device: under DDP each rank pins its own cuda:local_rank; N==1 = today's path.
     if ddp_on:
@@ -4349,7 +4442,8 @@ def main():
         n_obj = sum(p.numel() for p in objfn.parameters())
         p0(f"  objective '{a.objective}' aux params: {n_obj} "
            f"(DROPPED at serialize — not in model.state_dict)", flush=True)
-    opt = torch.optim.AdamW(params, lr=a.lr, betas=(0.9, 0.999), eps=1e-8, weight_decay=0.0)
+    opt = torch.optim.AdamW(params, lr=a.lr, betas=(0.9, a.adam_beta2), eps=1e-8,
+                            weight_decay=a.weight_decay)
 
     # ══ §4 TrainShell + DDP wrap (execution strategy — the recipe is unchanged) ═════
     #   core_model = the UNWRAPPED inner model, used for ALL rank-0 probes/serialize
@@ -4549,6 +4643,10 @@ def main():
     run_recipe = {
         "arch": a.arch, "d": d, "L": L, "e0": e0, "emax": emax,
         "seed": a.seed, "seq_len": seq_len, "batch_size": a.batch_size,
+        "lr": a.lr, "adam_beta2": a.adam_beta2,
+        "weight_decay": a.weight_decay, "lr_schedule": a.lr_schedule,
+        "warmup_steps": a.warmup_steps, "lr_decay_steps": lr_decay_steps,
+        "min_lr_ratio": a.min_lr_ratio,
         "corpus": list(a.corpus), "store_bridge": a.store_bridge,
         "store_batch": a.store_batch, "store_win": a.store_win,
         "store_addr_weight": a.store_addr_weight, "freeze_trunk": bool(a.freeze_trunk),
@@ -4981,15 +5079,18 @@ def main():
                 if ddp_on:
                     dist.destroy_process_group()
                 return 0
+        step_lr = scheduled_lr(step, a.lr, a.lr_schedule, a.warmup_steps,
+                               lr_decay_steps, a.min_lr_ratio)
         if savant_on:
             inh = savant_inhibition(step, steps, i0, i_floor, latch)
             wd = inhibition_to_wd(inh); dp = inhibition_to_dropout(inh)
         else:
-            wd, dp = 0.0, 0.0
+            wd, dp = a.weight_decay, 0.0
         if a.wd_floor >= 0.0: wd = a.wd_floor             # N6 sweep override
         if a.dropout_floor >= 0.0: dp = a.dropout_floor   # N6 sweep override
         for grp in opt.param_groups:
             grp["weight_decay"] = wd
+            grp["lr"] = step_lr
         for m in model.modules():
             if isinstance(m, nn.Dropout):
                 m.p = dp
@@ -5152,7 +5253,7 @@ def main():
                     ptxt = "  per_cell_CE=" + json.dumps(
                         {k: round(v, 5) for k, v in per.items()})
             atxt = (" " + json.dumps({k: round(v, 4) for k, v in aux.items()})) if aux else ""
-            p0(f"  step {step:5d}  CE={ce:.5f}  E={e_now()}  "
+            p0(f"  step {step:5d}  CE={ce:.5f}  E={e_now()}  lr={step_lr:.8g}  "
                f"wd={wd:.4f} dp={dp:.4f}{vtxt}{ptxt}{atxt}", flush=True)
     wall = time.time() - t0
     # H_9840 — freeze the realized schedule counts HERE, before the DBES probe calls get_batch()
@@ -5293,6 +5394,13 @@ def main():
         # ── summary json ──────────────────────────────────────────────────────────
         summary = {"entry": "anima-py train", "arch": a.arch, "arm": a.arm,
                    "objective": a.objective, "seed": a.seed,
+                   "optimizer": {"name": "AdamW", "beta1": 0.9,
+                                 "beta2": a.adam_beta2,
+                                 "weight_decay": a.weight_decay,
+                                 "lr": a.lr, "schedule": a.lr_schedule,
+                                 "warmup_steps": a.warmup_steps,
+                                 "decay_steps": lr_decay_steps,
+                                 "min_lr_ratio": a.min_lr_ratio},
                    "ddp": {"world_size": world, "global_batch": B_global,
                            "per_rank_batch": B_local, "gpus": a.gpus},
                    "obj_aux_params": (sum(p.numel() for p in objfn.parameters())

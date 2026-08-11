@@ -240,6 +240,16 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > `state/anima_303m_from_scratch_2026_08_11/result.json`. The execution H100 was deleted after
 > artifact custody and Git delivery; Vast.ai active rentals are zero and `anima_alive=false`.
 
+> **303M R0 native-mouth rebuild (pre-registered 2026-08-11):** the prior `rho-form 3/5` run used
+> one 60.05 MB English-general cell and a constant-LR legacy optimizer, so it did not reproduce the
+> broad-plus-dialogue native-byte lineage. R0 now pins a 282.41 MB bilingual broad/dialogue register
+> to exact HF `dancinlab` commits and runs random-initialized ByteGPT-303M seeds 7/11/13 with the
+> canonical AdamW `beta2=0.95`, weight decay `0.1`, linear warm-up and cosine decay. The fixed
+> step-14,000 checkpoint must pass HILLOCK, aggregate `rho-form >=0.70`, shuffle control, and the
+> English/Korean cell breakout for all 3/3 seeds. Raw generated text and KWR are preserved. R1's
+> stateful-workspace comparison stays locked until that gate passes. Protocol and execution SSOT:
+> `state/anima_303m_r0_rebuild_2026_08_11/protocol.json`.
+
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the
 "neocortex" byte language mouth grow a **hippocampus, growth-memory, working memory, cerebellum,
