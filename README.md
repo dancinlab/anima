@@ -187,6 +187,20 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > production bar remain unchanged. Production stays blocked until rho-form, pair-oracle, the full
 > causal battery, throughput, HTTP/WebSocket, VRAM, soak, recovery, and rollback all pass. Protocol:
 > `state/store_causality_7b_throughput_recovery_2026_08_11/README.md`.
+>
+> **7B throughput recovery and production result (2026-08-11):** profiling the existing production
+> serving mirror found that all 30 experts consumed one trunk tensor but rebuilt its identical
+> causal im2col input and GELU launch independently for every emitted byte. The canonical path now
+> shares only that common preparation; expert projections, routing, formulas, logits, and generated
+> bytes remain exactly equal. The prior `1.763 bytes/s` failure did not reproduce on the current
+> full H100 PCIe (`2.417` baseline), but the fixed 20×32-byte panel improved to minimum `4.009
+> bytes/s` without changing the bar. Rho-form `1.00`, pair-oracle `1.0000`, normal/recovery
+> `0.7734`, all controls, HTTP/WS, `55,014 MiB` VRAM, 30-minute soak, and rollback passed. The exact
+> pushed source and private HF `dancinlab` checkpoint are now deployed on persistent Vast.ai H100
+> instance `47431163`; live HTTPS, WebSocket, motivation stream, and `anima_alive=true` passed. The
+> active rental costs about `$2.3565/hour`; process restart is supervised, while host replacement
+> and autoscaling remain unconfigured. Full evidence:
+> `state/store_causality_7b_throughput_recovery_2026_08_11/result.json`.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the

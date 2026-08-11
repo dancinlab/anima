@@ -1,0 +1,150 @@
+{
+  "schema": "anima-store-causality-7b-throughput-recovery/v1",
+  "date": "2026-08-11",
+  "verdict": "PRODUCTION-DEPLOYED",
+  "source": {
+    "registered_commit": "16e28fd21",
+    "implementation_commit": "759b316ccc579bf985b58043a33a62955805abcc"
+  },
+  "checkpoint": {
+    "provider": "huggingface",
+    "organization": "dancinlab",
+    "repository": "dancinlab/anima-store-causality-7b-lookup-recovery-2026-08-11",
+    "visibility": "private",
+    "artifact_commit": "3726f6f3237b18ec2e9398f2874946112525a9db",
+    "file": "compose2_dual_parity_7b_pooled_s7.clm",
+    "sha256": "215ee8f300b6fd5ab1bf3a8ac908c2ddadd524df695c86bb6f77d4fa3ee1953f",
+    "mutated_or_reuploaded": false
+  },
+  "root_cause": {
+    "call_path": "CLMSubstrate.generate -> core.decode.clm_decode_argmax -> _fwd_logits -> _fwd_trunk",
+    "finding": "All 30 experts consume the same trunk tensor, but the serving mirror rebuilt the identical causal im2col input and launched the identical GELU graph once per expert for every emitted byte.",
+    "correction": "Build the causal im2col input once, retain independent expert projections and router layout, and apply the unchanged GELU formula once to the packed expert tensor.",
+    "microbenchmark_seconds": {
+      "repeated_expert_conv_and_gelu": 0.1002,
+      "shared_im2col_and_packed_gelu": 0.02277
+    },
+    "microbenchmark_max_abs_error": 0.0
+  },
+  "generation": {
+    "frozen_bar_bytes_per_second": 2.0,
+    "prior_registered_failure": {
+      "minimum_bytes_per_second": 1.762520789,
+      "reproduced_on_current_host": false
+    },
+    "current_host_prechange_baseline": {
+      "samples": 20,
+      "bytes_per_sample": 32,
+      "minimum_bytes_per_second": 2.417225922769793,
+      "mean_bytes_per_second": 2.4335507192155696,
+      "p50_seconds": 13.1464,
+      "p95_seconds": 13.1959
+    },
+    "optimized": {
+      "samples": 20,
+      "bytes_per_sample": 32,
+      "minimum_bytes_per_second": 4.009441012790113,
+      "mean_bytes_per_second": 4.0309913862250655,
+      "p50_seconds": 7.940450795460492,
+      "p95_seconds": 7.965188140049577,
+      "passed": true
+    },
+    "parity": {
+      "logits_array_equal": true,
+      "logits_max_abs_error": 0.0,
+      "generated_bytes_equal": true,
+      "fixed_output_hex": "30206d696c6c696f6e20616e6420746865207374617465207468652073746174"
+    }
+  },
+  "rho_form": {
+    "score": 1.0,
+    "minimum": 0.7,
+    "self_shuffle": 0.0,
+    "passed": true
+  },
+  "store_causality": {
+    "pair_oracle": 1.0,
+    "normal": 0.7734375,
+    "clue_a_removed": 0.46875,
+    "clue_b_removed": 0.4453125,
+    "address_shuffled": 0.5234375,
+    "recovery": 0.7734375,
+    "verdict": "SUPPORTED-CAUSAL",
+    "all_checks_passed": true
+  },
+  "serving": {
+    "cold_ready_seconds": 10.4983,
+    "http": {
+      "requests": 100,
+      "failures": 0,
+      "p95_milliseconds": 0.6136098
+    },
+    "websocket": {
+      "requests": 100,
+      "failures": 0,
+      "recipients": 3,
+      "p95_milliseconds": 0.5899989
+    },
+    "peak_gpu_memory_mib": 55014,
+    "soak": {
+      "duration_seconds": 1802.808,
+      "probes": 360,
+      "failures": 0,
+      "http_p95_milliseconds": 2.0928001,
+      "websocket_p95_milliseconds": 0.983675,
+      "rss_growth_percent": 0.6219765,
+      "gpu_memory_growth_mib": 0
+    },
+    "rollback": {
+      "clm_stopped_and_unhealthy": true,
+      "akida_fallback_recovered": true,
+      "recovery_seconds": 1.486567974,
+      "two_user_hello": true,
+      "two_user_broadcast": true
+    }
+  },
+  "qa": {
+    "local": {
+      "passed": 10,
+      "failed": 0,
+      "skipped": 2,
+      "skip_reason": "Torch CLMS training and substrate tests are unavailable in the local runtime."
+    },
+    "vast_h100": {
+      "passed": 19,
+      "failed": 0
+    }
+  },
+  "infrastructure": {
+    "staging_instance_destroyed": true,
+    "staging_estimated_cost_usd": 2.3,
+    "production_instance_id": 47431163,
+    "production_gpu": "NVIDIA H100 PCIe 80 GB",
+    "production_hourly_cost_usd": 2.356481481481482,
+    "active_production_rentals": 1,
+    "model_copy_on_mini": false,
+    "user_files_preserved": [
+      "ING.jsonl",
+      "stream_mi.json"
+    ]
+  },
+  "production_deployment": {
+    "status": "DEPLOYED",
+    "source_commit": "759b316ccc579bf985b58043a33a62955805abcc",
+    "checkpoint_sha256": "215ee8f300b6fd5ab1bf3a8ac908c2ddadd524df695c86bb6f77d4fa3ee1953f",
+    "participant_supervisor": true,
+    "gpu_memory_mib": 55014,
+    "broker_launch_agent_running": true,
+    "broker_launch_agent_restarted": false,
+    "broker_restart_reason": "The local broker does not import the changed decode path; the production participant is remote.",
+    "https_status": 200,
+    "health_ok": true,
+    "anima_alive": true,
+    "websocket_hello": true,
+    "motivation_websocket": true
+  },
+  "remaining_issues": [
+    "The production Vast.ai H100 remains active at approximately USD 2.3565 per hour.",
+    "The participant supervisor restarts the process, but host replacement and autoscaling are not configured."
+  ]
+}

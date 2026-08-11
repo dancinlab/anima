@@ -52,3 +52,56 @@ production LaunchAgent, DNS, and live participant remain unchanged until every g
 The likely cost center visible from source inspection is not yet a verdict: each emitted byte runs
 a fresh length-24 trunk and full-position readout before copying logits to the host. The profile in
 step 2 must determine which shared operation is actually responsible before code changes are made.
+
+## Result
+
+Status: COMPLETE — PRODUCTION DEPLOYED.
+
+The earlier `1.7625 bytes/s` result did not reproduce on the newly rented full H100 PCIe: the
+unchanged source and checkpoint produced a `2.4172 bytes/s` minimum over the fixed 20×32-byte
+panel. That host difference is retained as evidence rather than treated as a successful
+reproduction. Profiling still localized a shared runtime defect: all 30 experts receive the same
+trunk tensor, while the Python production-serving mirror rebuilt the same causal im2col input and
+launched the same GELU graph separately for every expert and every byte. On the actual 7B tensor,
+the repeated expert convolution/GELU microbenchmark took `0.1002 s`; shared im2col plus packed GELU
+took `0.02277 s`, with maximum absolute error `0.0`.
+
+`core/decode.py` now constructs that common causal im2col input once and applies the unchanged
+GELU formula once to the packed expert tensor. Expert projections, router order, weights, logits,
+and greedy decode remain unchanged. The actual checkpoint produced exactly equal logits
+(`array_equal`, maximum absolute error `0.0`) and the fixed 32-byte output remained byte-identical.
+The frozen panel then reached minimum/mean `4.0094`/`4.0310 bytes/s`, with p95 `7.9652 s`, passing
+the unchanged `2.0 bytes/s` and 45-second bars.
+
+The full gate remained green:
+
+- rho-form `1.00` and pair-oracle `1.0000`;
+- normal/recovery `0.7734`;
+- clue A removed `0.4688`, clue B removed `0.4453`, address shuffled `0.5234`;
+- final causal verdict `SUPPORTED-CAUSAL`;
+- H100 regressions `19/19`; local focused regressions `10 passed, 2 skipped` because Torch is not
+  installed in the local runtime;
+- HTTP and WebSocket 100/100 with zero failures, peak VRAM `55,014 MiB`;
+- 30-minute soak: 360 probes, zero failures, RSS growth `0.622%`, GPU-memory growth `0 MiB`;
+- CLM failure and AKIDA rollback recovery completed in `1.487 s`.
+
+No model or checkpoint changed. The existing artifact remains only in the private HF
+`dancinlab/anima-store-causality-7b-lookup-recovery-2026-08-11` repository at artifact commit
+`3726f6f3237b18ec2e9398f2874946112525a9db`, with SHA-256
+`215ee8f300b6fd5ab1bf3a8ac908c2ddadd524df695c86bb6f77d4fa3ee1953f`. The staging rental was
+deleted; its estimated cost was `$2.30`. `ING.jsonl` and `stream_mi.json` were preserved.
+
+## Production deployment
+
+The exact pushed source commit `759b316ccc579bf985b58043a33a62955805abcc` and the verified HF
+checkpoint were deployed to persistent Vast.ai instance `47431163` on one H100 PCIe 80 GB. The
+remote participant connected to the existing broker and AKIDA co-gate. Live HTTPS returned 200,
+`/health` reported `ok=true` and `anima_alive=true`, the public WebSocket hello included the anima
+participant, and the motivation WebSocket returned live history. The local broker LaunchAgent
+remained healthy and was not restarted because it does not import the changed decode path.
+
+One production rental intentionally remains active at `$2.356481481481482/hour` (approximately
+`$1.7k/month` if continuously rented). The process supervisor restarts the participant, but host
+replacement and autoscaling are not configured. These are the remaining operational and cost
+risks; they do not change the measured gate verdict. Machine-readable evidence is in
+`result.json`.

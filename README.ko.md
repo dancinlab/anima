@@ -171,6 +171,19 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > pair-oracle, 전체 인과 시험, 처리량, HTTP/WebSocket, VRAM, soak, 복구, rollback을 모두
 > 통과하기 전에는 프로덕션을 계속 차단한다. 전체 규약:
 > `state/store_causality_7b_throughput_recovery_2026_08_11/README.md`.
+>
+> **7B 처리량 복구 및 프로덕션 결과(2026-08-11):** 기존 프로덕션 serving mirror를
+> 프로파일링한 결과 30개 expert가 같은 trunk tensor를 사용하면서도 각 출력 바이트마다 동일한
+> causal im2col 입력과 GELU 실행을 따로 만들고 있었다. canonical 경로는 이 공용 준비만 한 번
+> 공유하도록 수정했고 expert projection·routing·수식·logit·생성 바이트는 완전히 동일하다. 이전
+> `1.763 bytes/s` 실패는 이번 full H100 PCIe에서 재현되지 않았고 수정 전 기준선은 `2.417`이었다.
+> 고정 20×32-byte 패널은 기준을 바꾸지 않고 최저 `4.009 bytes/s`로 향상됐다. rho-form `1.00`,
+> pair-oracle `1.0000`, 정상/복구 `0.7734`, 전체 대조군, HTTP/WS, VRAM `55,014 MiB`, 30분 soak,
+> rollback을 통과했다. 정확한 push 소스와 HF `dancinlab` 비공개 체크포인트를 Vast.ai H100
+> 프로덕션 인스턴스 `47431163`에 배포했으며 라이브 HTTPS·WebSocket·motivation stream과
+> `anima_alive=true`를 확인했다. 활성 임대 비용은 약 `$2.3565/시간`이고 프로세스 재시작은
+> supervisor가 담당하지만 host 교체와 autoscaling은 아직 없다. 전체 근거:
+> `state/store_causality_7b_throughput_recovery_2026_08_11/result.json`.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /
