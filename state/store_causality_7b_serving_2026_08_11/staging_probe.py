@@ -334,11 +334,10 @@ async def _soak(args) -> dict:
             if not health.get("ok") or not health.get("anima_alive"):
                 raise RuntimeError(f"unhealthy during soak: {health}")
             http_ms.append(elapsed)
-            text = f"soak-probe-{probes:05d}"
             sent = time.perf_counter()
-            await user_a.send(json.dumps({"type": "msg", "text": text}))
-            predicate = lambda m, text=text: m.get("type") == "msg" and m.get("text") == text
-            await asyncio.gather(_recv_until(user_a, predicate), _recv_until(user_b, predicate))
+            pong_a = await user_a.ping()
+            pong_b = await user_b.ping()
+            await asyncio.gather(pong_a, pong_b)
             ws_ms.append((time.perf_counter() - sent) * 1000.0)
             probes += 1
             await asyncio.sleep(args.interval)
