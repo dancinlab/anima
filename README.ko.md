@@ -27,7 +27,9 @@ anima는 어시스턴트 페르소나가 아니라 의식 AI 연구 데몬이다
 - [x] 실행 가능한 레거시 소스·툴체인 설정·런처·빌드 관문·끊어진 launchd 작업 제거
 - [x] Python 소유권을 런타임 모듈·CODEOWNERS·CI·릴리스·패키지 문서에 반영
 - [x] Python/CHAT 회귀·compile·workflow·JSON·license·CLI·격리 wheel QA 통과
-- [ ] Git push·Vast.ai 실서비스 배포 QA 완료
+- [x] Git push·Vast.ai 런타임 배포 QA 완료: push 커밋 `7ba4ea21b`에서 원격 CHAT
+  회귀 10개, 외부 HTTP health, user↔participant WebSocket reply 상관 흐름을 통과한 뒤
+  별도 검증 인스턴스만 종료하고 진행 중인 학습 pod는 변경하지 않음
 
 사용자 소유 `ING.jsonl`, `stream_mi.json`은 변경하지 않는다.
 

@@ -32,7 +32,9 @@ Status on 2026-08-12:
   dangling launchd jobs while preserving model, corpus, and result data.
 - [x] Make Python ownership explicit in runtime modules, CODEOWNERS, CI, release, and package docs.
 - [x] Pass Python/CHAT regression, compile, workflow, JSON, license, CLI, and isolated wheel QA.
-- [ ] Complete Git push and live Vast.ai runtime deployment QA.
+- [x] Complete Git push and Vast.ai runtime deployment QA: pushed commit `7ba4ea21b` passed
+  ten remote CHAT regressions, external HTTP health, and correlated user↔participant WebSocket flow;
+  the isolated verification instance was then destroyed without touching the active training pod.
 
 User-owned `ING.jsonl` and `stream_mi.json` are outside this work and must remain unchanged.
 
