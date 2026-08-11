@@ -51,8 +51,12 @@ def _seed_matches_lang(seed_text: str, lang_hint: str | None) -> bool:
     return letters == 0 or native / max(letters, 1) >= 0.3
 
 
-_SYSTEM_PROMPT = os.environ.get(
-    "ANIMA_SYSTEM_PROMPT", "You are anima. Reply in the user's language.")
+def _chat_messages(seed_text: str) -> list[dict[str, str]]:
+    """Suppress the model template's default identity without adding a prompt."""
+    return [
+        {"role": "system", "content": ""},
+        {"role": "user", "content": seed_text or "..."},
+    ]
 
 
 class LoraSubstrate(Substrate):
@@ -161,10 +165,7 @@ class LoraSubstrate(Substrate):
                 bid = self.tok.bos_token_id or self.tok.eos_token_id
                 ids = torch.tensor([[bid]], device=self.device)
         else:
-            messages = [
-                {"role": "system", "content": _SYSTEM_PROMPT},
-                {"role": "user", "content": seed_text or "..."},
-            ]
+            messages = _chat_messages(seed_text)
             encoded = self.tok.apply_chat_template(
                 messages, tokenize=True, add_generation_prompt=True,
                 return_tensors="pt", return_dict=True).to(self.device)
@@ -196,10 +197,7 @@ class LoraSubstrate(Substrate):
                 bid = self.tok.bos_token_id or self.tok.eos_token_id
                 ids = torch.tensor([[bid]], device=self.device)
         else:
-            messages = [
-                {"role": "system", "content": _SYSTEM_PROMPT},
-                {"role": "user", "content": seed_text or "..."},
-            ]
+            messages = _chat_messages(seed_text)
             encoded = self.tok.apply_chat_template(
                 messages, tokenize=True, add_generation_prompt=True,
                 return_tensors="pt", return_dict=True).to(self.device)

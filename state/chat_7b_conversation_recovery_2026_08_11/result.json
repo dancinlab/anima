@@ -1,0 +1,119 @@
+{
+  "schema": "anima-chat-7b-conversation-recovery/v1",
+  "date": "2026-08-11",
+  "verdict": "PRODUCTION-CHAT-RECOVERED",
+  "source": {
+    "turn_correlation_commit": "e6b0b5d93",
+    "cooldown_scope_commit": "a84bdb8de",
+    "non_injecting_soak_commit": "13815c0fb",
+    "public_probe_commit": "3db9b7552"
+  },
+  "initial_failure": {
+    "prior_verdict_retracted": "state/store_causality_7b_throughput_recovery_2026_08_11/result.json",
+    "observed_outputs": [
+      "en en el control de la construcción de la construcción de la construcción d",
+      "맞아요. 그래서 컨텍스트 길이가 중요해요.",
+      "한번 과워이 있나요?"
+    ],
+    "english_question_without_attributable_answer": "What is consciousness?",
+    "verdict": "FALSIFIED"
+  },
+  "root_cause": {
+    "call_path": "browser -> broker.ws_user -> AnimaState.ingest_user_msg/tick/emit -> LoraSubstrate.generate -> broker.ws_anima",
+    "findings": [
+      "A synthetic compose-2 store-causality checkpoint was promoted as a chat model.",
+      "One latest-message buffer allowed later users to overwrite the question being answered.",
+      "The current prompt embedding was compared with itself, forcing info_gap to zero.",
+      "User-bound replies used random language rotation instead of the owning turn's language.",
+      "Self-monologue cooldown also blocked queued conversation turns."
+    ],
+    "correction": "Use the existing canonical HF chat-template path, broker-validated reply IDs, a bounded FIFO turn ledger, prior-emission novelty comparison, owning-turn language routing, and self-monologue-only cooldown."
+  },
+  "model": {
+    "provider": "huggingface",
+    "organization": "dancinlab",
+    "repository": "dancinlab/qwen2.5-7b-edge-uncensored",
+    "visibility": "private",
+    "artifact_commit": "393b15fd8ce70c68ec3fb88e6a36b1d839265b68",
+    "file": "model.safetensors",
+    "bytes": 15231272152,
+    "sha256": "08e41efb77ae4af41c1b59c2c03d380d7bcc0f961654ef13b9ca9a0baa4b2827",
+    "local_copy_on_mini": false
+  },
+  "runtime": {
+    "substrate": "existing LoraSubstrate base-only canonical chat-template mode",
+    "system_prompt": null,
+    "tick_seconds": 0.5,
+    "motivation_threshold": 0.3,
+    "motivation_gate_bypassed": false,
+    "peak_gpu_memory_mib": 15338
+  },
+  "conversation_qa": {
+    "sequential": {
+      "passed": true,
+      "korean": {
+        "prompt": "한글 가능해?",
+        "reply": "네, 저는 한국어로 대화할 수 있습니다. 무엇을 도와드릴까요?",
+        "latency_seconds": 1.1880712509,
+        "semantic_contract": true
+      },
+      "english": {
+        "prompt": "What is consciousness?",
+        "latency_seconds": 2.7774171829,
+        "language_contract": true,
+        "semantic_contract": true
+      }
+    },
+    "two_user_pending": {
+      "passed": true,
+      "reply_to_exact": true,
+      "distinct_replies": true,
+      "latency_seconds": [1.1017627716, 3.2898087502]
+    }
+  },
+  "qa": {
+    "local": {
+      "passed": 6,
+      "failed": 0,
+      "skipped_modules": 1,
+      "skip_reason": "Torch is absent from the local runtime."
+    },
+    "vast_h100": {
+      "passed": 18,
+      "failed": 0
+    },
+    "public_soak": {
+      "duration_seconds": 182.900303917,
+      "probes": 34,
+      "failures": 0,
+      "http_p95_milliseconds": 285.5772500043,
+      "websocket_ping_p95_milliseconds": 126.7277920269
+    },
+    "process_recovery": {
+      "passed": true,
+      "old_pid": 4569,
+      "new_pid": 5132,
+      "anima_alive": true,
+      "post_recovery_korean_latency_seconds": 1.1880712509,
+      "post_recovery_english_latency_seconds": 2.7774171829
+    }
+  },
+  "deployment": {
+    "production_instance_id": 47431163,
+    "gpu": "NVIDIA H100 PCIe 80 GB",
+    "hourly_cost_usd": 2.356481481481482,
+    "participant_supervisor": true,
+    "broker_launch_agent_restarted": true,
+    "https_status": 200,
+    "health_ok": true,
+    "anima_alive": true,
+    "websocket_conversation": true,
+    "active_production_rentals": 1,
+    "user_files_preserved": ["ING.jsonl", "stream_mi.json"]
+  },
+  "remaining_issues": [
+    "Public HTTP p95 was 285.577 ms during the short soak, above the earlier internal 250 ms serving bar.",
+    "The production H100 remains active at approximately USD 2.3565 per hour.",
+    "The supervisor replaces the participant process, but host replacement and autoscaling are not configured."
+  ]
+}

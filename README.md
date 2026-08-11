@@ -201,6 +201,25 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > active rental costs about `$2.3565/hour`; process restart is supervised, while host replacement
 > and autoscaling remain unconfigured. Full evidence:
 > `state/store_causality_7b_throughput_recovery_2026_08_11/result.json`.
+>
+> **Production-chat correction and recovery (2026-08-11):** live users then falsified the chat
+> conclusion above. The compose-2 checkpoint proved the registered engine/causality gates but was
+> not a semantic chat model: it emitted repetitive Spanish fragments or unrelated Korean text, and
+> an English consciousness question had no answer attributable to its turn. The prior
+> `PRODUCTION-DEPLOYED` chat verdict is therefore retracted as `INVALID-CHAT-DEPLOYMENT`; its engine
+> measurements remain unchanged. Tracing also found that the broker/participant kept only the
+> latest user message, compared each new prompt embedding with itself (`info_gap=0`), randomly
+> rotated language for user-bound answers, and applied self-monologue cooldown to queued users.
+> The shared flow now carries broker-validated `reply_to` IDs through a bounded FIFO, compares
+> prompts with prior emissions, preserves the owning turn's language, and limits cooldown to
+> autonomous monologue. The existing HF substrate serves the private
+> `dancinlab/qwen2.5-7b-edge-uncensored` canonical chat template without a system prompt on the same
+> Vast.ai H100. Public sequential QA passed in `1.188/2.777 s` for Korean/English; two simultaneous
+> users passed with exact reply ownership in `1.102–3.290 s`; 182.9-second HTTP/WebSocket soak had
+> zero failures; and deliberate process termination recovered with semantic QA. Public HTTP p95
+> was `285.577 ms`, above the earlier internal `250 ms` bar, and remains recorded as a performance
+> issue. Full corrected evidence:
+> `state/chat_7b_conversation_recovery_2026_08_11/result.json`.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the

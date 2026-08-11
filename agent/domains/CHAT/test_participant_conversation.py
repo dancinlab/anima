@@ -15,11 +15,21 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 from anima_participant import AnimaState, SEED_STRATEGIES  # noqa: E402
+from substrate_lora import _chat_messages  # noqa: E402
 
 
 class _Substrate:
     def entropy_of_next(self, _text):
         return 0.5, torch.zeros(4)
+
+
+def test_canonical_chat_messages_add_no_system_prompt():
+    messages = _chat_messages("한글 가능해?")
+
+    assert messages == [
+        {"role": "system", "content": ""},
+        {"role": "user", "content": "한글 가능해?"},
+    ]
 
 
 def test_every_autonomous_strategy_keeps_pending_user_context():

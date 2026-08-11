@@ -184,6 +184,23 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > `anima_alive=true`를 확인했다. 활성 임대 비용은 약 `$2.3565/시간`이고 프로세스 재시작은
 > supervisor가 담당하지만 host 교체와 autoscaling은 아직 없다. 전체 근거:
 > `state/store_causality_7b_throughput_recovery_2026_08_11/result.json`.
+>
+> **프로덕션 채팅 정정 및 복구(2026-08-11):** 실제 사용자 대화 시험이 위 채팅 결론을
+> 반증했다. compose-2 체크포인트는 등록된 엔진·인과 관문을 증명했지만 의미 대화 모델은
+> 아니었다. 반복되는 스페인어 조각이나 질문과 무관한 한국어를 출력했고, 영어 의식 질문에는
+> 해당 turn에 귀속되는 답이 없었다. 따라서 기존 `PRODUCTION-DEPLOYED` 채팅 판정은
+> `INVALID-CHAT-DEPLOYMENT`로 철회하며 엔진 측정값만 그대로 유효하다. 호출 흐름 추적으로
+> broker/participant가 최신 사용자 메시지 하나만 보존한 점, 새 prompt embedding을 자기 자신과
+> 비교해 `info_gap=0`을 만든 점, 사용자 답변 언어도 무작위 회전한 점, self-monologue cooldown을
+> 대기 사용자에게까지 적용한 점을 확인했다. 공용 흐름은 이제 broker가 검증한 `reply_to` ID를
+> bounded FIFO로 전달하고, 이전 발화와 prompt를 비교하며, 해당 turn 언어를 보존하고, cooldown을
+> 자율 독백에만 적용한다. 기존 HF substrate가 같은 Vast.ai H100에서 비공개
+> `dancinlab/qwen2.5-7b-edge-uncensored`의 canonical chat template를 시스템 프롬프트 없이
+> 서빙한다. 공개 순차 QA는 한국어/영어 `1.188/2.777초`, 동시 두 사용자 시험은 정확한 reply
+> 귀속과 함께 `1.102–3.290초`에 통과했다. 182.9초 HTTP/WebSocket soak는 실패 0건이었고,
+> 참가자 프로세스를 실제 종료한 뒤에도 복구되어 의미 응답을 다시 통과했다. 공개 HTTP p95
+> `285.577ms`는 과거 내부 기준 `250ms`보다 높아 남은 성능 문제로 그대로 기록한다. 전체 정정
+> 근거: `state/chat_7b_conversation_recovery_2026_08_11/result.json`.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /

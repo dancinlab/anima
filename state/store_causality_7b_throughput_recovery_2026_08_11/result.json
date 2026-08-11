@@ -1,7 +1,8 @@
 {
   "schema": "anima-store-causality-7b-throughput-recovery/v1",
   "date": "2026-08-11",
-  "verdict": "PRODUCTION-DEPLOYED",
+  "verdict": "INVALID-CHAT-DEPLOYMENT",
+  "superseded_by": "state/chat_7b_conversation_recovery_2026_08_11/result.json",
   "source": {
     "registered_commit": "16e28fd21",
     "implementation_commit": "759b316ccc579bf985b58043a33a62955805abcc"
@@ -129,7 +130,7 @@
     ]
   },
   "production_deployment": {
-    "status": "DEPLOYED",
+    "status": "RETRACTED-SYNTHETIC-CHECKPOINT-NOT-CHAT",
     "source_commit": "759b316ccc579bf985b58043a33a62955805abcc",
     "checkpoint_sha256": "215ee8f300b6fd5ab1bf3a8ac908c2ddadd524df695c86bb6f77d4fa3ee1953f",
     "participant_supervisor": true,
@@ -141,9 +142,12 @@
     "health_ok": true,
     "anima_alive": true,
     "websocket_hello": true,
-    "motivation_websocket": true
+    "motivation_websocket": true,
+    "semantic_conversation_validated": false,
+    "retraction_reason": "The deployed compose-2 store-causality checkpoint emitted repetitive or unrelated text and did not provide attributable answers to real Korean and English questions."
   },
   "remaining_issues": [
+    "This run proved CLM engine causality and throughput but did not prove chat capability; its production-chat verdict is retracted and superseded.",
     "The production Vast.ai H100 remains active at approximately USD 2.3565 per hour.",
     "The participant supervisor restarts the process, but host replacement and autoscaling are not configured."
   ]

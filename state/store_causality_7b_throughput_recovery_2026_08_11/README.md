@@ -55,7 +55,7 @@ step 2 must determine which shared operation is actually responsible before code
 
 ## Result
 
-Status: COMPLETE — PRODUCTION DEPLOYED.
+Status: COMPLETE — ENGINE GATES PASSED; CHAT DEPLOYMENT RETRACTED.
 
 The earlier `1.7625 bytes/s` result did not reproduce on the newly rented full H100 PCIe: the
 unchanged source and checkpoint produced a `2.4172 bytes/s` minimum over the fixed 20×32-byte
@@ -105,3 +105,13 @@ One production rental intentionally remains active at `$2.356481481481482/hour` 
 replacement and autoscaling are not configured. These are the remaining operational and cost
 risks; they do not change the measured gate verdict. Machine-readable evidence is in
 `result.json`.
+
+## Production-chat retraction
+
+Subsequent live conversation testing falsified the chat deployment decision. This checkpoint is a
+synthetic compose-2 store-causality instrument, not a semantic chat model: it produced repetitive
+Spanish fragments or unrelated Korean text, and an English consciousness question had no answer
+attributable to its user turn. The throughput, rho-form, pair-oracle, and causal measurements above
+remain valid for the CLM engine, but `PRODUCTION-DEPLOYED` is not a valid chat verdict. It is
+retracted as `INVALID-CHAT-DEPLOYMENT` and superseded by
+`state/chat_7b_conversation_recovery_2026_08_11/result.json`.
