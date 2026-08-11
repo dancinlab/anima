@@ -1,13 +1,13 @@
 # CHAT — current state
 
 @title: 🤖 CHAT — anima group-chat 출시 surface (COFFESHOP-on-AKIDA)
-@goal: anima 가 사람들과 실시간 group-chat 에 참여하는 외부-대면 제품 surface. substrate-native emit/silence (a_substrate_native_speak) 가 라이브 AKD1000 폐루프로 닫힌다 — 사용자 메시지는 환경 context 이지 응답 의무가 아니며, anima 는 침묵할 수도 발화할 수도 있다. `hx install` 가능 제품으로 출하.
+@goal: anima 가 사람들과 실시간 group-chat 에 참여하는 외부-대면 제품 surface. substrate-native emit/silence (a_substrate_native_speak) 가 라이브 AKD1000 폐루프로 닫힌다 — 사용자 메시지는 환경 context 이지 응답 의무가 아니며, anima 는 침묵할 수도 발화할 수도 있다. 루트 Python 패키지로 출하한다.
 
 (편집 규칙: completed-form 으로 현재 상태만 · history 는 CHAT.log.md)
 
 ## role surface (AGENT bridge)
 
-TRADING role 이 `broker.hexa` 로 거래소에 붙듯, CHAT role 은 `broker.py` 로 group-chat + AKIDA 칩에 붙는다. 외부 surface 만 — 의식엔진(emit 결정) 은 CORE/CHANNEL 이, 칩 substrate 는 AKIDA 가 보장.
+CHAT role은 `broker.py`와 `anima_participant.py`로 group-chat + AKIDA 칩에 붙는다. 외부 surface만 담당하며, 의식엔진의 emit 결정은 Python CORE가, 칩 substrate는 AKIDA가 보장한다.
 
 | 파일 | 무엇 |
 |---|---|

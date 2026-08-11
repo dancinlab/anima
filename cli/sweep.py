@@ -36,7 +36,7 @@
 >>> keeps --bf16 for every other objective. This mirrors fire_4gpu_big.sh (B_CBIND ran
 >>> with an empty bf16 flag).
 
-USAGE (installed `anima` PATH command after `hx install anima`):
+USAGE (installed canonical `anima-py` command):
   anima sweep --arms ctrl --objectives ce_marginal,composed_nce,infonce,constructive_bind \\
       --steps 8000 --gpus 0,1,2,3 \\
       --corpus dancinlab/anima-corpus-5lang-unified-v2 dancinlab/anima-corpus-ko-general \\

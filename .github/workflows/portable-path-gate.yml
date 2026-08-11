@@ -22,7 +22,7 @@ jobs:
           # Exclude data/experiment/archive buckets at PATH level via pathspec,
           # then exclude comment lines and the diff header.
           hits="$(git diff -U0 "$base...HEAD" -- \
-                    '*.hexa' '*.py' '*.sh' '*.c' \
+                    '*.py' '*.sh' '*.c' \
                     ':(exclude)state/**' \
                     ':(exclude)state_legacy/**' \
                     ':(exclude)archive/**' \

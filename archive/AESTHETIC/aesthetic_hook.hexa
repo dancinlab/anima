@@ -1,7 +1,0 @@
-// aesthetic_hook.hexa — minimal Ψ-disjoint substrate lane for AESTHETIC (novelty × coherence).
-// pure fn of substrate Φ + prev Φ → an aesthetic surface scalar. reads pf state, never writes.
-pub fn ae_surface(phi: float, prev: float) -> float {
-    let novelty = if phi - prev >= 0.0 { phi - prev } else { prev - phi }
-    let coherence = 1.0 / (1.0 + (if phi >= 0.0 { phi } else { 0.0 - phi }))
-    return novelty * coherence
-}

@@ -1,23 +1,17 @@
 # ==========================================================================
-# ⛔ ENGINE-INTERNAL / DEPRECATED py-MIRROR — DO NOT RUN OR SCORE DIRECTLY
-# 측정/학습/서빙/직렬화는 cli/ 단일진입만: anima eval | train | serialize
-#   (canonical = hexa core/*.hexa 단일 SSOT; py 미러는 2026-06-28 폐기, DIRECTIONAL).
+# ⛔ ENGINE-INTERNAL — DO NOT RUN OR SCORE DIRECTLY
+# 측정/학습/서빙/직렬화는 `anima-py` 단일진입만 사용한다.
 # 이 파일을 `python3 core/DECODER/flame_mm.py` 로 직접 실행하거나 side-harness로 import-채점하면
 # = 단일진입 우회(#2603 위반) + terminal verdict 불가. cli/가 import하는 경로만 허용.
 # ==========================================================================
 import sys as _anima_entry_guard
 if __name__ == "__main__":
-    _anima_entry_guard.exit("⛔ flame_mm.py 직접 실행 금지 — cli/ 단일진입(anima eval/train/serialize, canonical=hexa) 경유. #2603")
+    _anima_entry_guard.exit("⛔ flame_mm.py 직접 실행 금지 — canonical `anima-py` 경유. #2603")
 
-"""core/DECODER/flame_mm.py — PY PRODUCTION ENGINE: byte-faithful 1:1 port of
-core/DECODER/flame_mm.hexa (RFC-040 matmul dispatch seam).
+"""core/DECODER/flame_mm.py — canonical Python GEMM dispatch seam.
 
-Per CLAUDE.md a_engine_native_learning + core/CLAUDE.md (2-production standard):
-hexa + py are TWO co-equal production engines, kept at byte-parity. This module
-mirrors flame_mm.hexa — the GEMM dispatch foundation that clm_decode.hexa and
-bytegpt_decode.hexa route their matmuls through.
+This module is the NumPy foundation used by both supported decode mouths.
 
-  * SSOT (hexa)  -> core/DECODER/flame_mm.hexa
   * RFC-040 primitives mirrored:
       farr_matmul(A, M, K, B, N)           CPU oracle (ikj k-ascending, runtime.c:8418)
       farr_matmul_gpu(A, M, K, B, N)       cuBLAS Dgemm (CUDA host only)

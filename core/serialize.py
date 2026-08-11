@@ -1,6 +1,6 @@
 # ==========================================================================
 # ⛔ ENGINE-INTERNAL — DO NOT RUN DIRECTLY. 학습/직렬화는 cli/ 단일진입만:
-#   anima train | anima serialize  (canonical=hexa cli/{train,serialize}.hexa).
+#   anima-py train | anima-py serialize.
 # `python3 core/serialize.py` 직접 실행 = 단일진입 우회(#2603) + DIRECTIONAL. cli/ import만 허용.
 # ==========================================================================
 """core/serialize.py — UNIFIED PY SERIALIZE ENGINE: byte-faithful 1:1 merge of the
@@ -50,7 +50,7 @@ from __future__ import annotations
 # 가드는 `from __future__` 뒤에 둔다 — 앞에 두면 SyntaxError(from __future__ must be at top).
 import sys as _anima_entry_guard
 if __name__ == "__main__":
-    _anima_entry_guard.exit("⛔ core/serialize.py 직접 실행 금지 — cli/ 단일진입(anima train/serialize, canonical=hexa) 경유. #2603")
+    _anima_entry_guard.exit("⛔ core/serialize.py 직접 실행 금지 — canonical `anima-py` 경유. #2603")
 
 import struct
 from typing import Dict, Any

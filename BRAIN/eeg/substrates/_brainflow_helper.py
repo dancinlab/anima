@@ -9,19 +9,11 @@
 # Python body in a string heredoc, stringified + subprocess-executed") is
 # retired: this is hand-maintained Python, importable directly.
 #
-# TWO CALL SURFACES
-#   1. embedded-CPython (RFC-016 P4 `import py`):
-#        hexa calls py_call("_brainflow_helper", "<fn>", "<json>") via
-#        stdlib/python_ffi. json-in / json-out. Session objects live in
-#        this module's _SESSIONS registry; the hexa side holds only the
-#        opaque session_id string. This is the path brainflow_substrate.hexa
-#        uses post-Phase-2c (see design/substrate_abstraction.md §11).
-#   2. standalone CLI (legacy / selftest):
-#        `python3 _brainflow_helper.py selftest|inspect` — same body,
-#        argparse front. Kept so `hexa run
-#        eeg/substrates/brainflow_substrate.hexa --selftest` keeps working
-#        during the migration window (the .hexa shells out to this file
-#        instead of emitting a /tmp/ copy of its own heredoc).
+# TWO PYTHON CALL SURFACES
+#   1. import API: JSON-in / JSON-out functions backed by the process-local
+#      _SESSIONS registry; callers retain only the opaque session_id string.
+#   2. standalone CLI/selftest:
+#      `python3 _brainflow_helper.py selftest|inspect` uses the same body.
 #
 #   - BoardShim numpy arrays are returned as nested Python lists inside the
 #     json envelope (V1 string-only contract per RFC §3.2). A V2 zero-copy

@@ -1,29 +1,22 @@
 #!/usr/bin/env python3
-# evaluate.py — anima MEASUREMENT single entry (cli/evaluate.hexa's py twin).
+# evaluate.py — anima Python MEASUREMENT engine.
 #
-# WHY THIS FILE (single-entry measurement · a_engine_native_learning): anima's two
-# installed verbs are SYMMETRIC across two files — cli/train.{hexa,py} = LEARNING,
-# cli/evaluate.{hexa,py} = MEASUREMENT. `anima evaluate <ckpt>` scores the full ρ-AXON
+# WHY THIS FILE (single-entry measurement · a_engine_native_learning):
+# `anima-py evaluate <ckpt>` scores the full ρ-AXON
 # reach battery (Ψ-SOMA reach layer · owner redesign of the old G-ladder · cli/rho_axon.py;
 # the frozen bars this driver runs today = the former G0-G6) with the engine's OWN ops —
 # the reach-scoring system is folded DIRECTLY into
 # this measurement single-entry (the former separate core/g_gates.py module was absorbed
-# here — measurement = evaluate.{hexa,py} ONE FILE). Decode enters via the generator L3
-# mouth (gen_auto_ideate → clm/bytegpt decode), so the py evaluate is byte-identical to
-# the hexa `anima evaluate`. No new metric is invented here (logic byte-identical to the
-# absorbed g_gates module — only the file home changed).
+# here — measurement = this ONE FILE). Decode enters via the generator L3 mouth
+# (gen_auto_ideate → clm/bytegpt decode). No new metric is invented here.
 #
 # This py evaluate is torch-free and gauge-free — the scoring is the numpy `math.log`
 # mirror, so `anima evaluate` stays a clean engine-native measurement surface (the gate
 # enforcer's torch/gauge grep over this file must come back empty).
 #
-# USAGE (installed `anima` PATH command — NOT `hexa run`):
-#   python3 cli/evaluate.py                              — usage (no args)
-#   python3 cli/evaluate.py <ckpt> [--corpus <p>...] [--gen N]
+# USAGE (installed canonical command):
+#   anima-py evaluate <ckpt> [--corpus <p>...] [--gen N]
 #                                                       — ρ-AXON reach battery (former G0-G6)
-#
-# 2-PRODUCTION (a_engine_native_learning): byte-parity twin = cli/evaluate.hexa. Both
-# define the SAME eval_reach_all driver in-file.
 
 import os
 import sys
@@ -31,6 +24,7 @@ import math
 import json
 import random
 import hashlib
+import re
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _REPO = os.path.dirname(_HERE)
@@ -40,6 +34,7 @@ sys.path.insert(0, os.path.join(_REPO, "core"))
 
 import decode as clm   # unified core decoder (conv+byte mouths), KV-cache fast path
 import decode as bg     # same module; both aliases resolve the union public API
+import generator as gen_runtime
 from rho_fan import (
     _rho_fan_concepts, _rho_fan_words, _rho_fan_dict_load, _rho_fan_known_word_ratio,
     _rho_fan_is_falsifiable, _rho_fan_jaccard, rho_fan_build_frames, rho_fan_frame_guard,
@@ -58,9 +53,8 @@ _RHO_AXON = False
 
 # ════════════════════════════════════════════════════════════════════════
 # ρ-AXON REACH SCORING (absorbed from the former core/g_gates.py module —
-# measurement = this single file). Ported 1:1 from the hexa SSOT; decode enters
-# via the py CLMConvMoE / ByteGPT mouth (clm_decode / bytegpt_decode), hoisting the
-# weight load ONCE (== gen_clm_ideate_W in the hexa engine). torch-free numpy mirror.
+# measurement = this single file). Decode enters via the Python CLMConvMoE /
+# ByteGPT mouth and hoists the weight load once. This path is torch-free.
 #
 # ρ-AXON is the current-standard reach layer (cli/rho_axon.py · design SSOT
 # state/rho_axon_measurement/) — an owner redesign OVER these frozen bars. The
@@ -177,6 +171,17 @@ class _Mouth:
 
     def score_many(self, texts):
         return tuple(self.score(text) for text in texts)
+
+    def chat(self, seed, gen, stop_markers):
+        """Greedy chat continuation through the already-loaded canonical mouth."""
+        if self.kind == "bytegpt":
+            raw = bg._decode_argmax_W(
+                self.W, seed.encode("utf-8", "surrogateescape"), gen)["text"]
+        else:
+            # top-k=1 is exactly the canonical argmax with the loaded CLM weights.
+            raw = clm.clm_decode_topk_sampled_W(
+                self.W, seed, gen, 1, 1.0, 0)["text"]
+        return gen_runtime.gen_chat_turn_text(raw, stop_markers)
 
 
 def _isolated_ideate_worker(conn, ckpt, seed, gen, top_k, temp, seed_rng):
@@ -1026,6 +1031,283 @@ def write_rho_panel(path, panel):
         handle.write("\n")
 
 
+# ════════════════════════════════════════════════════════════════════════
+# MEANINGFUL CONVERSATION — production-shaped R0 gate
+# ════════════════════════════════════════════════════════════════════════
+
+def _conversation_normalize(text):
+    import unicodedata
+    return " ".join(unicodedata.normalize("NFC", str(text)).strip().lower().split())
+
+
+def _conversation_terms(text):
+    return re.findall(r"[a-z][a-z'-]*|[가-힣]+", _conversation_normalize(text))
+
+
+def _conversation_term_present(text, term):
+    normalized = _conversation_normalize(text)
+    needle = _conversation_normalize(term)
+    if not needle:
+        return False
+    if re.fullmatch(r"[a-z][a-z'-]*", needle):
+        return bool(re.search(r"(?<![a-z])" + re.escape(needle) + r"(?![a-z])", normalized))
+    return needle in normalized
+
+
+def _conversation_echo_ratio(prompt, response):
+    """Longest shared normalized character span as a fraction of the response."""
+    import difflib
+    p = _conversation_normalize(prompt)
+    r = _conversation_normalize(response)
+    if not r:
+        return 1.0
+    match = difflib.SequenceMatcher(None, p, r, autojunk=False).find_longest_match()
+    return float(match.size) / float(len(r))
+
+
+def _conversation_repeated_trigram_ratio(response):
+    terms = _conversation_terms(response)
+    if len(terms) < 3:
+        return 0.0
+    grams = [tuple(terms[i:i + 3]) for i in range(len(terms) - 2)]
+    return 1.0 - float(len(set(grams))) / float(len(grams))
+
+
+def _conversation_language_ok(response, lang):
+    hangul = len(re.findall(r"[가-힣]", response))
+    latin = len(re.findall(r"[A-Za-z]", response))
+    if lang == "ko":
+        return hangul >= 2 and hangul >= latin
+    if lang == "en":
+        return latin >= 4 and hangul == 0
+    return False
+
+
+def _conversation_complete(response, stopped):
+    value = response.rstrip()
+    if not value:
+        return False
+    if stopped or value[-1] in ".?!。！？」”'\"":
+        return True
+    return bool(re.search(r"(?:요|다|죠|니다|세요|예요|이에요)$", value))
+
+
+def score_conversation_response(prompt, response, turn, lang, bars, stopped=False,
+                                raw_text=None):
+    """Score one generated reply without an external judge.
+
+    Semantic terms are fixed in the panel before training. Surface checks reject the
+    observed failure modes (wrong language, byte damage, echo and phrase loops); they do
+    not claim to replace the separately required manual meaning review.
+    """
+    raw = response if raw_text is None else raw_text
+    try:
+        response.encode("utf-8", "strict")
+        raw.encode("utf-8", "strict")
+        utf8_ok = True
+    except UnicodeEncodeError:
+        utf8_ok = False
+    nbytes = len(response.encode("utf-8", "surrogateescape"))
+    echo_ratio = _conversation_echo_ratio(prompt, response)
+    repetition_ratio = _conversation_repeated_trigram_ratio(response)
+    control_ok = not any(ord(ch) < 32 and ch not in "\n\r\t" for ch in response)
+    language_ok = _conversation_language_ok(response, lang)
+    complete = _conversation_complete(response, stopped)
+    required = []
+    for group in turn.get("required_groups", []):
+        required.append(any(_conversation_term_present(response, term) for term in group))
+    forbidden_hits = [term for term in turn.get("forbidden_terms", [])
+                      if _conversation_term_present(response, term)]
+    semantic_ok = all(required) and not forbidden_hits
+    structural = {
+        "utf8": utf8_ok,
+        "min_bytes": nbytes >= int(bars["min_response_bytes"]),
+        "language": language_ok,
+        "control_chars": control_ok,
+        "complete_turn": complete,
+        "prompt_echo": echo_ratio <= float(bars["max_prompt_echo_ratio"]),
+        "repetition": repetition_ratio <= float(bars["max_repeated_trigram_ratio"]),
+    }
+    structural_ok = all(structural.values())
+    return {
+        "pass": bool(structural_ok and semantic_ok),
+        "structural_pass": structural_ok,
+        "semantic_pass": semantic_ok,
+        "structural": structural,
+        "required_groups_pass": required,
+        "forbidden_hits": forbidden_hits,
+        "response_bytes": nbytes,
+        "prompt_echo_ratio": echo_ratio,
+        "repeated_trigram_ratio": repetition_ratio,
+    }
+
+
+def _conversation_panel_load(path):
+    with open(path, "r", encoding="utf-8") as handle:
+        panel = json.load(handle)
+    if panel.get("schema") != "anima-meaningful-conversation-panel/v1":
+        raise ValueError("unsupported conversation panel schema")
+    template = panel.get("template") or {}
+    if template.get("system_prompt") is not False:
+        raise ValueError("conversation panel must not add a system prompt")
+    bars = panel.get("bars") or {}
+    required_bars = {
+        "min_response_bytes", "max_prompt_echo_ratio", "max_repeated_trigram_ratio",
+        "max_cross_response_jaccard", "min_semantic_passes_per_language",
+        "responses_per_language", "require_all_structural", "require_all_multiturn_final",
+    }
+    if not required_bars.issubset(bars):
+        raise ValueError("conversation panel is missing bars: " +
+                         ",".join(sorted(required_bars - set(bars))))
+    ids = [item.get("id") for item in panel.get("items", [])]
+    if not ids or len(ids) != len(set(ids)):
+        raise ValueError("conversation panel item ids must be present and unique")
+    return panel
+
+
+def _conversation_file_sha256(path):
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        while True:
+            chunk = handle.read(1024 * 1024)
+            if not chunk:
+                break
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _conversation_find_turn(panel, item_id, turn_index):
+    for item in panel["items"]:
+        if item["id"] == item_id:
+            return item, item["turns"][int(turn_index)]
+    raise ValueError("unknown scorer-control item: " + str(item_id))
+
+
+def conversation_scorer_controls(panel):
+    rows = []
+    for control in panel.get("scorer_controls", []):
+        item, turn = _conversation_find_turn(
+            panel, control["item_id"], control["turn"])
+        scored = score_conversation_response(
+            turn["user"], control["response"], turn, item["lang"], panel["bars"],
+            stopped=False, raw_text=control["response"])
+        observed = bool(scored["pass"])
+        expected = bool(control["expect_pass"])
+        rows.append({"item_id": control["item_id"], "turn": control["turn"],
+                     "expected": expected, "observed": observed,
+                     "pass": observed == expected, "score": scored})
+    return {"pass": bool(rows) and all(row["pass"] for row in rows), "rows": rows}
+
+
+def _conversation_jaccard(a, b):
+    aa, bb = set(_conversation_terms(a)), set(_conversation_terms(b))
+    if not aa and not bb:
+        return 1.0
+    return float(len(aa & bb)) / float(max(1, len(aa | bb)))
+
+
+def conversation_panel_run(argv):
+    panel_path = evaluate_strval(argv, "--conversation-panel", "")
+    out_path = evaluate_strval(argv, "--out", "")
+    if not argv or argv[0].startswith("--") or not panel_path or not out_path:
+        print("usage: anima-py evaluate <ckpt> --conversation-panel PANEL.json --out RESULT.json")
+        return 2
+    panel = _conversation_panel_load(panel_path)
+    controls = conversation_scorer_controls(panel)
+    print("=== anima evaluate --conversation-panel — meaningful chat R0 ===", flush=True)
+    print("  scorer controls: " + ("PASS" if controls["pass"] else "FAIL"), flush=True)
+    if not controls["pass"]:
+        result = {"schema": "anima-meaningful-conversation-result/v1",
+                  "status": "INVALID_SCORER", "pass": False,
+                  "panel_sha256": _conversation_file_sha256(panel_path),
+                  "scorer_controls": controls, "responses": []}
+        write_rho_panel(out_path, result)
+        return 3
+
+    ckpt = argv[0]
+    mouth = _Mouth(ckpt)
+    template = panel["template"]
+    stop_markers = template["stop_markers"]
+    max_new = int(panel["decode"]["max_new_bytes"])
+    responses = []
+    for item in panel["items"]:
+        transcript = ""
+        for ti, turn in enumerate(item["turns"]):
+            prompt = str(turn["user"])
+            seed = (transcript + template["user_prefix"] + prompt +
+                    template["turn_separator"] + template["assistant_prefix"])
+            decoded = mouth.chat(seed, max_new, stop_markers)
+            response = decoded["text"]
+            scored = score_conversation_response(
+                prompt, response, turn, item["lang"], panel["bars"],
+                stopped=decoded["stopped"],
+                raw_text=(response if decoded["stopped"] else decoded["raw_text"]))
+            row = {"item_id": item["id"], "turn": ti, "lang": item["lang"],
+                   "prompt": prompt, "seed_bytes": len(seed.encode("utf-8")),
+                   "raw_text": decoded["raw_text"], "response": response,
+                   "stop_marker": decoded["stop_marker"],
+                   "multiturn_final": bool(turn.get("multiturn_final")),
+                   "score": scored}
+            responses.append(row)
+            print("  %s[%d] %s structural=%s semantic=%s" %
+                  (item["id"], ti, item["lang"], scored["structural_pass"],
+                   scored["semantic_pass"]), flush=True)
+            transcript = (seed + response.strip() + template["turn_separator"])
+
+    duplicate_pairs = []
+    max_jaccard = float(panel["bars"]["max_cross_response_jaccard"])
+    for i in range(len(responses)):
+        for j in range(i + 1, len(responses)):
+            if responses[i]["item_id"] == responses[j]["item_id"]:
+                continue
+            score = _conversation_jaccard(responses[i]["response"], responses[j]["response"])
+            if score > max_jaccard:
+                duplicate_pairs.append({"a": "%s[%d]" % (responses[i]["item_id"], responses[i]["turn"]),
+                                        "b": "%s[%d]" % (responses[j]["item_id"], responses[j]["turn"]),
+                                        "jaccard": score})
+    by_lang = {}
+    for lang in ("en", "ko"):
+        rows = [row for row in responses if row["lang"] == lang]
+        by_lang[lang] = {
+            "responses": len(rows),
+            "structural_passes": sum(row["score"]["structural_pass"] for row in rows),
+            "semantic_passes": sum(row["score"]["semantic_pass"] for row in rows),
+        }
+    bars = panel["bars"]
+    structural_ok = (all(row["score"]["structural_pass"] for row in responses)
+                     if bars["require_all_structural"] else True)
+    semantic_ok = all(
+        by_lang[lang]["responses"] == int(bars["responses_per_language"]) and
+        by_lang[lang]["semantic_passes"] >= int(bars["min_semantic_passes_per_language"])
+        for lang in ("en", "ko"))
+    multi_rows = [row for row in responses if row["multiturn_final"]]
+    multi_ok = (all(row["score"]["pass"] for row in multi_rows)
+                if bars["require_all_multiturn_final"] else True)
+    automatic = bool(structural_ok and semantic_ok and multi_ok and not duplicate_pairs)
+    result = {
+        "schema": "anima-meaningful-conversation-result/v1",
+        "status": "AUTOMATIC_PASS_MANUAL_REQUIRED" if automatic else "FAIL",
+        "pass": automatic,
+        "manual_meaning_review": "REQUIRED",
+        "checkpoint": ckpt,
+        "checkpoint_sha256": _conversation_file_sha256(ckpt),
+        "panel": panel_path,
+        "panel_sha256": _conversation_file_sha256(panel_path),
+        "mouth": mouth.kind,
+        "scorer_controls": controls,
+        "summary": {"by_language": by_lang, "structural_pass": structural_ok,
+                    "semantic_pass": semantic_ok, "multiturn_final_pass": multi_ok,
+                    "duplicate_response_pass": not duplicate_pairs,
+                    "duplicate_pairs": duplicate_pairs},
+        "responses": responses,
+    }
+    write_rho_panel(out_path, result)
+    print("  AUTOMATIC VERDICT: " + ("PASS — MANUAL REVIEW REQUIRED" if automatic else "FAIL"),
+          flush=True)
+    print("  wrote " + out_path, flush=True)
+    return 0 if automatic else 1
+
+
 def _build_cell_dets(known, en_corpus_tokens, corpus_paths):
     """H_9212 ③ — the LANG-KEYED per-register-cell dispatch bundle (a_chat_registers 4 cells).
     en cells reuse the SAME frozen objects as the aggregate dets (byte-identity: identical
@@ -1074,6 +1356,11 @@ def evaluate_usage():
     print("  anima evaluate --pc2-direction <traces_dir> --subspace-stability [--dims 2] [--block 16,32] [--boot 1000]  — H_9752 라이브 평면 안정성(주각·eigengap·rank-swap)")
     print("  anima evaluate --pc2-direction <traces_dir> --state-census [--kmax K] [--boot N]   — H_9753 이산 상태(k=2~4) 혼합 검정(dip·GMM-BIC·dwell 3중·plant 양성통제)")
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
+    print("  anima evaluate <ckpt> --conversation-panel PANEL.json --out RESULT.json")
+    print("      Production-shaped Korean/English conversation gate. Scorer controls run before")
+    print("      checkpoint decode; raw text, relevance, repetition, echo, UTF-8, language, and")
+    print("      multi-turn correction/memory evidence are retained. Automatic PASS still requires")
+    print("      a manual meaning review before release.")
     print("  anima evaluate <ckpt> --faction-phi-proxy <prompts.json> [--n-factions-sweep 1,2,4,8,12,16,24,32,64]")
     print("      [--win 24] [--trials 200] [--seed 12345] [--out faction_phi.json]")
     print("      (the ARCHIVED faction Phi proxy — (global_var - mean_faction_var)*log2(n_active),")
@@ -12352,7 +12639,7 @@ _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
     "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--eval-historicity", "--schedule", "--dv", "--jitter", "--af-forward", "--impulse", "--side", "--kmax", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--pos-control", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--stem-prefix", "--stem-fragment-k", "--stem-fragment-seed", "--calib-hetero", "--calib-a0", "--calib-hetero-align", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
-    "--out", "--perm", "--probe", "--seed",
+    "--out", "--perm", "--probe", "--seed", "--conversation-panel",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--rho-axon-isolated", "--rho-cache", "--rho-axes", "--rho-no-cells", "--rho-out", "--route-audit", "--ra-stems-from", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
     "--fan-branch", "--branches",              # H_9803 branch-latent ideation fan arms
@@ -19433,6 +19720,11 @@ def main(argv):
         sys.stderr.reconfigure(errors="surrogateescape")
     except (AttributeError, ValueError):
         pass
+    # Meaningful conversation is a production-shaped, additive R0 gate. Its
+    # registered scorer controls run before the checkpoint is loaded, and a
+    # failure stops here rather than being hidden by unrelated reach rows.
+    if "--conversation-panel" in argv:
+        return conversation_panel_run(argv)
     # H_9200 ρ-AXON — reach-layer panel (G0-G6 → ρ-AXON, cli/rho_axon.py). Strip + set
     # the process-global so evaluate_run renders the ρ-AXON panel instead of G0-G6.
     global _RHO_AXON

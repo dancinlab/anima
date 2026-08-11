@@ -4,36 +4,17 @@
 Compute anima Phi-vector on (a) CPU baseline, (b) AKD1000-quantized model.
 PASS iff max relative error across an N-input panel <= 5%.
 
-Phi calculator source priority:
-  1. anima/tool/phi_extractor_cpu.hexa (canonical)
-  2. anima/ready/experiments/closed_loop_verify.py phi_fast()
-  3. anima/anima/consciousness_mechanisms.json reference values (degenerate fallback)
+The CPU arm uses the in-process Python intrinsic proxy below. It has no
+external runtime or subprocess dependency.
 
 Akida side requires a quantized Phi calculator deployed via Meta TF (cnn2snn);
 this script raises NotImplementedError until that pipeline lands, but the CPU
 side runs and emits a partial evidence file so progress is auditable.
 """
 from __future__ import annotations
-import argparse, importlib.util, json, os, statistics, subprocess, sys, time
+import argparse, json, os, statistics, sys, time
 
 from _akida_runtime import try_akida
-
-REPO = os.path.expanduser("~/core/anima")
-PHI_CPU_HEXA = os.path.join(REPO, "tool/phi_extractor_cpu.hexa")
-PHI_FALLBACK_PY = os.path.join(REPO, "ready/experiments/closed_loop_verify.py")
-
-
-def _load_phi_fallback():
-    if not os.path.exists(PHI_FALLBACK_PY):
-        return None
-    spec = importlib.util.spec_from_file_location("clv", PHI_FALLBACK_PY)
-    mod = importlib.util.module_from_spec(spec)
-    try:
-        spec.loader.exec_module(mod)
-    except Exception:
-        return None
-    return getattr(mod, "phi_fast", None)
-
 
 def synth_panel(n: int, seed: int = 0):
     import numpy as np
@@ -41,37 +22,7 @@ def synth_panel(n: int, seed: int = 0):
     return [rng.normal(size=(8, 16)).astype("float32") for _ in range(n)]
 
 
-def phi_cpu_via_hexa(state) -> float | None:
-    if not os.path.exists(PHI_CPU_HEXA):
-        return None
-    import tempfile, numpy as np
-    with tempfile.NamedTemporaryFile("wb", suffix=".npy", delete=False) as f:
-        np.save(f, state)
-        path = f.name
-    try:
-        proc = subprocess.run(
-            ["hexa", PHI_CPU_HEXA, "--state", path, "--output", "json"],
-            capture_output=True, text=True, timeout=120,
-        )
-        if proc.returncode != 0:
-            return None
-        try:
-            return float(json.loads(proc.stdout).get("phi"))
-        except (json.JSONDecodeError, TypeError, ValueError):
-            return None
-    finally:
-        os.unlink(path)
-
-
-def phi_cpu(state, fallback) -> float:
-    val = phi_cpu_via_hexa(state)
-    if val is not None:
-        return val
-    if fallback is not None:
-        try:
-            return float(fallback(_FakeEngine(state)))
-        except Exception:
-            pass
+def phi_cpu(state) -> float:
     return _phi_intrinsic(state)
 
 
@@ -84,17 +35,10 @@ def _phi_intrinsic(state) -> float:
     return min(1.0, cov / (1.0 + cov))
 
 
-class _FakeEngine:
-    def __init__(self, state):
-        import torch
-        self.cell_states = [type("C", (), {"hidden": torch.tensor(row)})() for row in state]
-        self.n_cells = len(self.cell_states)
-
-
 def phi_akida(ak, state) -> float:
     raise NotImplementedError(
         "Akida Phi requires Meta TF cnn2snn-quantized Phi calculator + AKD1000 deploy. "
-        "Wire anima/tool/phi_extractor_ffi_wire.hexa through cnn2snn.convert() and load .fbz."
+        "Wire the Python intrinsic proxy through cnn2snn.convert() and load the resulting .fbz."
     )
 
 
@@ -107,9 +51,8 @@ def main(argv: list[str]) -> int:
                    help="emit partial evidence with Akida side stubbed (NOT promotion-eligible)")
     args = p.parse_args(argv[1:])
 
-    fallback = _load_phi_fallback()
     panel = synth_panel(args.panel_size)
-    phi_c = [phi_cpu(s, fallback) for s in panel]
+    phi_c = [phi_cpu(s) for s in panel]
 
     ak, dev = try_akida()
     use_hw = (not args.cpu_only) and ak is not None and dev

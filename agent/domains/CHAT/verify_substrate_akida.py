@@ -12,8 +12,8 @@ the new fallback falsifier):
   F-AKWIRE-FALLBACK : in an akida-absent env, provenance == "akida-sw-fallback"
                       AND spikes are produced (total_spikes > 0)
 
-Exit 0 iff 5/5 PASS. Cross-checked against the hexa-native harness
-AKIDA/impl/H_672_spontaneous_firing.hexa (GREEN_NUMERICAL_CONFIRM 4/4).
+Exit 0 iff 5/5 PASS. The registered H_672 evidence remains the numerical
+reference for these Python falsifiers.
 """
 from __future__ import annotations
 

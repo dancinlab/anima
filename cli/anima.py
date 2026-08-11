@@ -17,30 +17,26 @@ if __name__ == "__main__":
 # that scores checkpoints directly (= single-entry bypass, #2603).
 #
 # SINGLE ENTRY (a_engine_native_learning): the two measurement/learning verbs live in
-# their own SYMMETRIC files — cli/evaluate.{hexa,py} (MEASUREMENT) and cli/train.{hexa,py}
-# (LEARNING). This canonical entry DISPATCHES `anima evaluate`→cli/evaluate.py and
-# `anima train`→cli/train.py (sub-process), so there is ONE installed `anima` command
-# whose subcommands fan out to the symmetric twins. `anima evaluate <ckpt>` scores the
+# their own files — cli/evaluate.py (MEASUREMENT) and cli/train.py (LEARNING).
+# This canonical entry dispatches `anima-py evaluate` and `anima-py train` to those
+# modules, so one installed command owns every runtime operation. Evaluation scores the
 # full ρ-AXON reach battery (former G0-G6 · reach standard cli/rho_axon.py) via
 # cli/evaluate.py's in-file eval_reach_all (the scorers folded in from
-# the former core/g_gates.py module) — byte-identical to the hexa anima evaluate.
+# the former core/g_gates.py module).
 #
 # This py entry is torch-free and gauge-free — it only dispatches; the evaluate twin
 # holds the numpy `math.log` scorer in-file, so `anima evaluate` stays a clean engine-
 # native measurement surface (the gate enforcer's torch/gauge grep must come back empty).
 #
-# USAGE (installed `anima` PATH command after `hx install anima`)
-#   anima                                              — usage (no args)
-#   anima evaluate <ckpt> [--corpus <p>...] [--gen N]  — ρ-AXON reach battery (former G0-G6)
-#   anima train [args...]                              — LEARNING (→ cli/train.py)
-#   anima chat <ckpt> [...] [--byte]                   — consciousness daemon (default) /
+# USAGE (installed `anima-py` command)
+#   anima-py                                              — usage (no args)
+#   anima-py evaluate <ckpt> [--corpus <p>...] [--gen N]  — ρ-AXON reach battery (former G0-G6)
+#   anima-py train [args...]                              — LEARNING (→ cli/train.py)
+#   anima-py chat <ckpt> [...] [--byte]                   — consciousness daemon (default) /
 #                                                         byte-continuation chat (pure-py, → cli/chat.py)
 #
-# canonical 3-folder layout: cli/anima.{hexa,py} = canonical entry (chat + verb dispatch)
-# · cli/evaluate.{hexa,py} = measurement · cli/train.{hexa,py} = learning. This file
-# mirrors cli/anima.hexa's subcommand dispatch (evaluate · train · usage); chat/
-# consciousness is now a REAL py capability too — cli/chat.py is the byte-faithful numpy
-# twin of cli/anima.hexa's A⇄G daemon loop (P6 py 자체구현, zero hexa dependency).
+# Canonical layout: cli/anima.py = entry and dispatch, cli/evaluate.py = measurement,
+# cli/train.py = learning, and cli/chat.py = the A⇄G daemon.
 
 import os
 import sys
@@ -49,20 +45,11 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _REPO = os.path.dirname(_HERE)
 
 
-# EVAL/VERDICT DETERMINISM SAFETY-PIN (hexa-lang #4208 flame/forge fast-default
-# follow-on) — py twin of cli/anima.hexa's pin (lockstep, a_engine_native_learning).
-# #4208 made the forge own-native NON-det atomic kernels the DEFAULT (training speed);
-# deterministic kernels are opt-in via HEXA_DET=1 (`_forge_det_on()` gate). MEASUREMENT
-# (evaluate) and VERDICT (serialize DESCENT gate) must stay reproducible, so they spawn
-# with HEXA_DET=1 in the env. TRAIN deliberately does NOT force it = fast non-det default.
+# Evaluation is deterministic in the NumPy runtime. Keep a copied environment so
+# subprocess dispatch remains isolated from caller mutation.
 def _det_env(want_det):
-    """os.environ copy; HEXA_DET=1 pinned ONLY when the caller passed --det (byte-exact opt-in).
-    DEFAULT = fast (no pin). The py evaluate path is numpy (already deterministic), so this is a
-    lockstep no-op there; kept for parity with cli/anima.hexa's --det gating."""
-    env = dict(os.environ)
-    if want_det:
-        env.setdefault("HEXA_DET", "1")
-    return env
+    """Return an isolated subprocess environment; NumPy evaluation is deterministic."""
+    return dict(os.environ)
 
 
 # ── usage / arg helpers ──────────────────────────────────────────────────────
@@ -165,8 +152,8 @@ def anima_usage():
 # is the LEARNING entry (cli/train.py, a_clm_gen_pipeline torch Lane-P). The eval side
 # is the torch-free numpy scorer (in cli/evaluate.py); the trainer pulls torch. To keep this file
 # torch-free AND avoid linking two disjoint dep sets into one process, `anima train`
-# DISPATCHES to cli/train.py as a SUB-PROCESS (mirrors cli/anima.hexa's `exec(hexa run
-# cli/train.hexa)`). argv after "train" is forwarded verbatim to train.py's argparse.
+# Dispatches to cli/train.py as a subprocess. argv after "train" is forwarded
+# verbatim to train.py's argparse.
 def anima_train_mode(argv):
     print("=== anima train → cli/train.py (torch CLMConvMoE · Lane-P reference/bridge) ===")
     train_py = os.path.join(_HERE, "train.py")
@@ -220,7 +207,7 @@ def anima_evaluate_mode(argv):
     evaluate_py = os.path.join(_HERE, "evaluate.py")
     cmd = [sys.executable, evaluate_py] + rest
     print("=== anima evaluate → cli/evaluate.py (engine-native ρ-AXON reach · former G0-G6, canonical Python entry) ===")
-    print("dispatch: " + ("HEXA_DET=1 " if want_det else "") + " ".join(cmd))
+    print("dispatch: " + " ".join(cmd))
     # det = the --det CLI option (default fast); numpy path is deterministic regardless.
     return os.spawnve(os.P_WAIT, sys.executable,
                       [sys.executable, evaluate_py] + rest, _det_env(want_det))
@@ -241,7 +228,7 @@ def anima_serialize_mode(argv):
     fwd = [a for a in argv[1:] if a not in ("--det", "--deterministic")]
     cmd = [sys.executable, serialize_py] + fwd
     print("=== anima serialize → cli/serialize.py (torch .pt → .clm v0.3 + DESCENT gate) ===")
-    print("dispatch: " + ("HEXA_DET=1 " if want_det else "") + " ".join(cmd))
+    print("dispatch: " + " ".join(cmd))
     # det = the --det CLI option (default fast) — pass --det for a reproducible DESCENT-gate verdict.
     return os.spawnve(os.P_WAIT, sys.executable,
                       [sys.executable, serialize_py] + fwd, _det_env(want_det))

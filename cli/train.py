@@ -87,7 +87,7 @@ objective matrix is supported (that's exactly what the G1-lever test needs). `an
 evaluate` auto-detects `.bin` vs `.clm` by header, so a ByteGPT `.bin` measures through
 the bytegpt mouth automatically.
 
-USAGE (installed `anima` PATH command after `hx install anima`):
+USAGE (installed canonical `anima-py` command):
   # CLM trunk (default):
   anima-py train --arm ctrl --objective constructive_bind --steps 8000 \\
       --canon --corpus <p1..p4> --cell-label ko-general en-general ko-sns en-sns \\
@@ -453,14 +453,13 @@ def install_router_mask(model: CLMConvMoE, mito: MitosisMoE):
 class ByteCell:
     """One register cell — a memory-mapped byte file sampled by random windows.
 
-    The TAIL `val_frac` of the file is reserved as a held-out validation region
-    DISJOINT from the train region (overfit detector, a_savant_train held-out
-    monitor). Train windows are sampled only from [0, train_end); val windows
-    only from [train_end, size). A window can NEVER straddle the boundary
-    (start ranges are clamped to keep start+seq_len+1 within the region), so the
-    val region's bytes are never seen by a training gradient step."""
+    Validation comes from an explicit `validation_path` when supplied; otherwise
+    the legacy TAIL `val_frac` of the train file is reserved. A window can NEVER
+    cross from train into validation, so held-out bytes are never seen by a
+    training gradient step."""
 
-    def __init__(self, path: str, val_frac: float = 0.0):
+    def __init__(self, path: str, val_frac: float = 0.0,
+                 validation_path: str | None = None):
         import mmap
         self.path = path
         self.size = os.path.getsize(path)
@@ -471,10 +470,24 @@ class ByteCell:
             self._mm = b""
         # boundary: bytes [0, train_end) = train, [train_end, size) = held-out val.
         vf = max(0.0, min(0.5, val_frac))
-        self.train_end = int(self.size * (1.0 - vf)) if self.size > 0 else 0
+        self.validation_path = validation_path
+        if validation_path is not None:
+            self.train_end = self.size
+            self.val_size = os.path.getsize(validation_path)
+            self._val_f = open(validation_path, "rb")
+            if self.val_size > 0:
+                self._val_mm = mmap.mmap(self._val_f.fileno(), 0, access=mmap.ACCESS_READ)
+            else:
+                self._val_mm = b""
+        else:
+            self.train_end = int(self.size * (1.0 - vf)) if self.size > 0 else 0
+            self.val_size = self.size - self.train_end
+            self._val_f = None
+            self._val_mm = None
 
-    def _window_in(self, lo: int, hi_excl: int, seq_len: int,
-                   gen: torch.Generator):
+    @staticmethod
+    def _window_in_buffer(buffer, lo: int, hi_excl: int, seq_len: int,
+                          gen: torch.Generator):
         """Sample one (x,y) window whose [start, start+seq_len+1) lies entirely
         inside the byte range [lo, hi_excl). Returns None if the range is too
         small for even one window."""
@@ -482,7 +495,7 @@ class ByteCell:
             return None
         hi = hi_excl - seq_len - 1            # last valid start (exclusive upper bound)
         start = int(torch.randint(lo, hi, (1,), generator=gen).item())
-        chunk = self._mm[start:start + seq_len + 1]
+        chunk = buffer[start:start + seq_len + 1]
         buf = torch.frombuffer(bytearray(chunk), dtype=torch.uint8).long()
         return buf[:seq_len], buf[1:seq_len + 1]
 
@@ -518,8 +531,27 @@ class ByteCell:
         return self.materialize(start, seq_len)
 
     def val_window(self, seq_len: int, gen: torch.Generator):
-        """A held-out VAL window — sampled only from [train_end, size)."""
-        return self._window_in(self.train_end, self.size, seq_len, gen)
+        """A held-out VAL window from an explicit file or the legacy train tail."""
+        if self._val_mm is not None:
+            return self._window_in_buffer(self._val_mm, 0, self.val_size, seq_len, gen)
+        return self._window_in_buffer(self._mm, self.train_end, self.size, seq_len, gen)
+
+    def close(self):
+        """Close mmap/file handles without hiding partially initialized objects."""
+        for name in ("_val_mm", "_mm"):
+            mm = getattr(self, name, None)
+            if hasattr(mm, "close"):
+                mm.close()
+        for name in ("_val_f", "_f"):
+            fh = getattr(self, name, None)
+            if fh is not None and not fh.closed:
+                fh.close()
+
+    def __del__(self):
+        try:
+            self.close()
+        except Exception:
+            pass
 
 
 
@@ -3740,6 +3772,8 @@ def main():
     # overfit guard, parity with cli/train.hexa). Default 0 = off. Prevents silently
     # training on an incomplete 4-cell register (the clm303 ko-SNS starvation overfit).
     ap.add_argument("--require-cells", type=int, default=0)
+    ap.add_argument("--validation-corpus", nargs="*", default=[],
+                    help="explicit held-out byte file per --corpus cell; overrides --val-frac")
     ap.add_argument("--val-frac", type=float, default=0.05)
     ap.add_argument("--val-every", type=int, default=200)
     ap.add_argument("--val-batches", type=int, default=4)
@@ -4500,14 +4534,21 @@ def main():
     split_step = max(1, steps // 2)
 
     # ── corpus cells (reuse ByteCell + resolver) ─────────────────────────────
+    if a.validation_corpus and len(a.validation_corpus) != len(a.corpus):
+        sys.exit("[validation-corpus] needs exactly one entry per --corpus cell: "
+                 f"got {len(a.validation_corpus)} validation and {len(a.corpus)} train entries")
     cells, labels = [], []
     for ci, spec in enumerate(a.corpus):
         p = resolve_corpus_path(spec)
-        cells.append(ByteCell(p, val_frac=a.val_frac))
+        vp = (resolve_corpus_path(a.validation_corpus[ci])
+              if a.validation_corpus else None)
+        cells.append(ByteCell(p, val_frac=a.val_frac, validation_path=vp))
         labels.append(a.cell_label[ci] if ci < len(a.cell_label) else f"cell{ci}")
         c = cells[-1]
+        val_desc = (f"val_file={c.validation_path} val={c.val_size}"
+                    if c.validation_path is not None else f"val_tail={c.val_size}")
         p0(f"  corpus cell[{ci}] {labels[ci]:<12s} {p} size={c.size} "
-           f"train={c.train_end} val_tail={c.size - c.train_end}", flush=True)
+           f"train={c.train_end} {val_desc}", flush=True)
     if not cells:
         p0("  corpus: NONE -> synthetic smoke", flush=True)
 
@@ -4637,13 +4678,19 @@ def main():
         "weight_decay": a.weight_decay, "lr_schedule": a.lr_schedule,
         "warmup_steps": a.warmup_steps, "lr_decay_steps": lr_decay_steps,
         "min_lr_ratio": a.min_lr_ratio,
-        "corpus": list(a.corpus), "store_bridge": a.store_bridge,
+        "corpus": list(a.corpus),
+        "store_bridge": a.store_bridge,
         "store_batch": a.store_batch, "store_win": a.store_win,
         "store_addr_weight": a.store_addr_weight, "freeze_trunk": bool(a.freeze_trunk),
         "trunk_norm": a.trunk_norm, "clms_dual": bool(a.clms_dual),
         "store_val_center": bool(a.store_val_center), "bf16": bool(a.bf16),
         "sample": a.sample,
     }
+    # Preserve byte-identical legacy exact-resume recipes when the new explicit
+    # validation path is unused, while binding every external validation file
+    # into the recipe when it is used.
+    if a.validation_corpus:
+        run_recipe["validation_corpus"] = list(a.validation_corpus)
     resume_generators = {
         "corpus": gen, "validation": val_gen, "objective": obj_gen,
         "store": sb_gen, "ideation": idl_gen, "sleep": slp_gen,
@@ -4728,7 +4775,7 @@ def main():
 
     @torch.no_grad()
     def cell_val_ce(c):
-        if c.size - c.train_end < seq_len + 2:
+        if c.val_size < seq_len + 2:
             return None
         was = model.training; model.eval()
         tot, nb = 0.0, 0

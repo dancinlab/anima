@@ -19,7 +19,7 @@
 # enforcer's torch grep targets the measurement surfaces (evaluate / anima dispatch), not
 # the trainer/serializer family (a_engine_native_learning: train/ may use torch).
 #
-# USAGE (installed `anima` PATH command after `hx install anima`)
+# USAGE (installed canonical `anima-py` command)
 #   anima serialize <ckpt.pt> <out.clm> [--heldout <path>] [--train <path>] [--nwin N]
 #     <ckpt.pt>    torch state_dict (or {"state_dict": ...}/{"model": ...}) checkpoint
 #     <out.clm>    output .clm v0.3 path (engine-loadable, CLM magic)

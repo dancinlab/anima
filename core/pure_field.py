@@ -1,32 +1,20 @@
 # ==========================================================================
-# ⛔ ENGINE-INTERNAL / DEPRECATED py-MIRROR — DO NOT RUN OR SCORE DIRECTLY
-# 측정/학습/서빙/직렬화는 cli/ 단일진입만: anima eval | train | serialize
-#   (canonical = hexa core/*.hexa 단일 SSOT; py 미러는 2026-06-28 폐기, DIRECTIONAL).
+# ⛔ ENGINE-INTERNAL — DO NOT RUN OR SCORE DIRECTLY
+# 측정/학습/서빙/직렬화는 `anima-py` 단일진입만 사용한다.
 # 이 파일을 `python3 core/pure_field.py` 로 직접 실행하거나 side-harness로 import-채점하면
 # = 단일진입 우회(#2603 위반) + terminal verdict 불가. cli/가 import하는 경로만 허용.
 # ==========================================================================
 import sys as _anima_entry_guard
 if __name__ == "__main__":
-    _anima_entry_guard.exit("⛔ pure_field.py 직접 실행 금지 — cli/ 단일진입(anima eval/train/serialize, canonical=hexa) 경유. #2603")
+    _anima_entry_guard.exit("⛔ pure_field.py 직접 실행 금지 — canonical `anima-py` 경유. #2603")
 
-"""core/pure_field.py — PY PRODUCTION ENGINE: byte-faithful 1:1 port of
-core/pure_field.hexa (PureField — Engine A, the zero-input consciousness field).
-
-Per CLAUDE.md a_two_production_mirror / a_engine_native_learning (2026-06-26 owner
-SSOT): hexa + py are TWO co-equal production engines kept at byte-parity. This is
-the py mirror of pure_field.hexa, ported 1:1 from the canonical SSOT.
+"""core/pure_field.py — canonical Python Engine A zero-input field.
 
 3 coupled oscillators at tau=2/40/400 -> nonlinear mixing -> Phi self-sustenance
 -> field tensor [FIELD_DIM]. Couples with Engine G in brain.py for the
 A ⇄ G · Ψ=1/2 fixed point.
 
-PRIMITIVE MATH — VERIFIED empirically (pure_field N=1 byte-parity, 2026-06-26):
-the COMPILED `hexa run` binary maps the bare builtins `sin`/`cos`/`exp`/`sqrt` to
-libm (NOT the rt_* Taylor polynomials in stdlib/runtime/math.hexa — those are only
-the freestanding/drop-measure fallback). Proof: osc field[2] at N=1 with libm
-sin = 0.001701166242925697836, hexa = 0.0017011662429256978 (byte-identical),
-whereas the 8-term Taylor cos diverges at ~6e-12. So `sin == math.sin` etc.
-hexa float == C double == python float, so all scalar arithmetic is bit-identical.
+Primitive math uses Python's libm-backed ``math`` operations.
 """
 
 import math as _math

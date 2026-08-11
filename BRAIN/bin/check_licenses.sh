@@ -3,8 +3,8 @@
 #
 # Reads vendor/external_deps.yaml + vendor/license_policy.yaml. Walks the 4
 # protected layers (eeg/, eeg_core/, core/, tool/) and greps each
-# blocked_import_pattern against `.hexa` and `.py` source files. Emits a
-# marker + jsonl ledger row. Skips '//' comment-only matches.
+# blocked_import_pattern against Python source files. Emits a marker + jsonl
+# ledger row. Skips Python comment-only matches.
 #
 # Modes:
 #   bin/check_licenses.sh             # scan tree, exit 0 on clean / 2 on viol.
@@ -20,8 +20,7 @@
 # Ledger:
 #   state/license_firewall_checks.jsonl  (append-only)
 #
-# raw#9 strict: this file is the explicit opt-out — it must run BEFORE any
-# .hexa file is invoked, so it cannot depend on the hexa runtime itself.
+# This check intentionally depends only on the host shell and Python runtime.
 # raw#37: any /tmp helper this script writes is named license_firewall_*.py
 # and is removed on exit.
 # raw#65: idempotent — repeated calls on a clean tree all PASS identically.
@@ -29,8 +28,8 @@
 set -uo pipefail
 
 # ── Resolve repo root ────────────────────────────────────────────────────
-if [[ -n "${HEXA_BRAIN_ROOT:-}" && -d "$HEXA_BRAIN_ROOT" ]]; then
-    ROOT="$HEXA_BRAIN_ROOT"
+if [[ -n "${ANIMA_BRAIN_ROOT:-}" && -d "$ANIMA_BRAIN_ROOT" ]]; then
+    ROOT="$ANIMA_BRAIN_ROOT"
 elif [[ -L "${BASH_SOURCE[0]}" ]]; then
     SELF="$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || readlink "${BASH_SOURCE[0]}")"
     ROOT="$(cd "$(dirname "$SELF")/.." && pwd)"
@@ -49,7 +48,7 @@ mkdir -p "$MARKERS_DIR" "$ROOT/state"
 
 print_help() {
     cat <<EOF
-bin/check_licenses.sh — hexa-brain license firewall enforcer
+bin/check_licenses.sh — anima BRAIN license firewall enforcer
 
 USAGE:
   bin/check_licenses.sh            scan tree, emit marker + ledger row
@@ -220,8 +219,11 @@ for did, pat, spdx, coup in patterns:
     print(f"{did}\t{pat}\t{spdx}\t{coup}")
 PYEOF
 
-# Read patterns into bash arrays.
-mapfile -t PATTERN_LINES < <(python3 "$TMP_HELPER" "$DEPS_YAML" "$POLICY_YAML")
+# Read patterns without Bash 4-only `mapfile` (macOS ships Bash 3.2).
+PATTERN_LINES=()
+while IFS= read -r pattern_line; do
+    PATTERN_LINES+=("$pattern_line")
+done < <(python3 "$TMP_HELPER" "$DEPS_YAML" "$POLICY_YAML")
 
 if [[ "${#PATTERN_LINES[@]}" -eq 0 ]]; then
     : # nothing to block — catalog is policy-empty
@@ -239,19 +241,21 @@ scan_tree() {
 
     local scan_root="${extra_root:-$ROOT}"
     local layer
-    local files=()
+    # Bash 3.2 treats a declared-but-empty array as unbound under `set -u`.
+    # Keep a sentinel at index 0 and iterate real paths from index 1.
+    local files=("__ANIMA_SENTINEL__")
     for layer in "${PROTECTED_LAYERS[@]}"; do
         local dir="$scan_root/$layer"
         if [[ ! -d "$dir" ]]; then
             continue
         fi
-        # find .hexa and .py files; null-delim safe
+        # Find Python sources; null-delimited for path safety.
         while IFS= read -r -d '' f; do
             files+=("$f")
-        done < <(find "$dir" -type f \( -name '*.hexa' -o -name '*.py' \) -print0 2>/dev/null)
+        done < <(find "$dir" -type f -name '*.py' -print0 2>/dev/null)
     done
 
-    CHECKED_FILES="${#files[@]}"
+    CHECKED_FILES=$((${#files[@]} - 1))
 
     if [[ "${#PATTERN_LINES[@]}" -eq 0 ]]; then
         return 0
@@ -259,7 +263,9 @@ scan_tree() {
 
     local f line lineno content pat dep_id spdx coup
     local hit_msg
-    for f in "${files[@]}"; do
+    local file_index=1
+    while [[ "$file_index" -lt "${#files[@]}" ]]; do
+        f="${files[$file_index]}"
         # Read once
         local fcontent
         fcontent="$(cat "$f")"
@@ -268,10 +274,9 @@ scan_tree() {
             lineno=$((lineno + 1))
             # Strip leading whitespace
             local stripped="${line#"${line%%[![:space:]]*}"}"
-            # Skip pure-comment lines (// ... or # ... — both common in hexa
-            # + python). raw#9 hexa-only uses // exclusively but .py uses #.
+            # Skip pure Python comment lines.
             case "$stripped" in
-                "//"*|"#"*) continue ;;
+                "#"*) continue ;;
             esac
             for entry in "${PATTERN_LINES[@]}"; do
                 dep_id="${entry%%$'\t'*}"
@@ -291,6 +296,7 @@ scan_tree() {
                 fi
             done
         done <<<"$fcontent"
+        file_index=$((file_index + 1))
     done
 
     if [[ "$VIOLATIONS_COUNT" -gt 0 ]]; then
@@ -317,7 +323,7 @@ emit_marker_and_ledger() {
         "$exit_code" "$fp" "$ts" "$checked" "$violations" > "$marker"
 
     # Ledger row (jsonl)
-    printf '{"schema":"hexa-brain/license_firewall_check/1","ts":%d,"fingerprint":"%s","exit":%d,"checked_files":%d,"violations":%d,"label":"%s"}\n' \
+    printf '{"schema":"anima-brain/license_firewall_check/1","ts":%d,"fingerprint":"%s","exit":%d,"checked_files":%d,"violations":%d,"label":"%s"}\n' \
         "$ts" "$fp" "$exit_code" "$checked" "$violations" "$label" >> "$LEDGER"
 
     echo "$marker"
@@ -346,7 +352,7 @@ run_selftest() {
 
     # ── F_LF_02: plant `from braingenix import x` → expect exit 2 ──
     echo "[F_LF_02] plant 'from braingenix import x' → expect exit 2"
-    echo 'from braingenix import x' > "$sandbox/eeg/_lf02_fixture.hexa"
+    echo 'from braingenix import x' > "$sandbox/eeg/_lf02_fixture.py"
     CHECKED_FILES=0; VIOLATIONS_COUNT=0; VIOLATIONS_LIST=""
     scan_tree "$sandbox"
     local rc=$?
@@ -357,11 +363,11 @@ run_selftest() {
         echo "  FAIL: F_LF_02 expected rc=2 violations>=1, got rc=$rc count=$VIOLATIONS_COUNT"
         fail=$((fail + 1))
     fi
-    rm -f "$sandbox/eeg/_lf02_fixture.hexa"
+    rm -f "$sandbox/eeg/_lf02_fixture.py"
 
     # ── F_LF_03: comment-only mention → expect exit 0 ──
-    echo "[F_LF_03] '// import cl_sdk' inside comment → expect exit 0"
-    printf '// import cl_sdk should be ignored\n// from cortical_labs import y\n' > "$sandbox/eeg/_lf03_fixture.hexa"
+    echo "[F_LF_03] '# import cl_sdk' inside comment → expect exit 0"
+    printf '# import cl_sdk should be ignored\n# from cortical_labs import y\n' > "$sandbox/eeg/_lf03_fixture.py"
     CHECKED_FILES=0; VIOLATIONS_COUNT=0; VIOLATIONS_LIST=""
     if scan_tree "$sandbox"; then
         echo "  PASS: F_LF_03 comment-only ignored (checked_files=$CHECKED_FILES)"
@@ -371,16 +377,13 @@ run_selftest() {
         echo "$VIOLATIONS_LIST"
         fail=$((fail + 1))
     fi
-    rm -f "$sandbox/eeg/_lf03_fixture.hexa"
+    rm -f "$sandbox/eeg/_lf03_fixture.py"
 
     echo "=== selftest summary: PASS=$pass FAIL=$fail ==="
-    # Emit a synthetic marker so CI has evidence
     if [[ "$fail" -eq 0 ]]; then
-        emit_marker_and_ledger 0 "$pass" 0 license_firewall_selftest >/dev/null
         rm -rf "$sandbox"
         return 0
     else
-        emit_marker_and_ledger 2 "$pass" "$fail" license_firewall_selftest >/dev/null
         rm -rf "$sandbox"
         return 2
     fi

@@ -1,23 +1,12 @@
 name: autotag
 
-# main push 시 Conventional Commits 기준으로 다음 SemVer 태그를 자동 생성한다 —
-# 단, **release-worthy 커밋(feat/fix/perf/BREAKING)이 있을 때만**(hexa-lang 참고).
-#   feat! / BREAKING CHANGE  → major  (vX+1.0.0)
-#   feat:                    → minor  (vX.Y+1.0)
-#   fix: / perf:             → patch  (vX.Y.Z+1)
-#   docs/chore/ci/refactor/style/test-only → 태그 안 함 (= 릴리즈 안 함)
-# 이게 릴리즈 빈도 게이트다 — "수정마다 릴리즈"가 아니라 "의미있는 변경만". install.hexa
-# (최신 v* 태그 빌드)는 직전 검증된 의미버전을 그대로 소비(stale 아님). 태그=release.yml
-# install-smoke→GitHub Release 트리거. GITHUB_TOKEN 푸시 태그는 워크플로 재트리거 안 함.
-# GITHUB_TOKEN 으로 푸시한 태그는 다른 워크플로를 재트리거하지 않음(루프 방지).
-
 on:
   push:
     branches: [main]
 
 permissions:
   contents: write
-  actions: write   # gh workflow run release.yml (workflow_dispatch) on the new tag
+  actions: write
 
 concurrency:
   group: autotag-${{ github.ref }}
@@ -31,82 +20,32 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-
-      - name: Compute + push next SemVer tag + trigger release.yml
-        shell: bash
+      - name: Create semantic release tag
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-
-          # 최신 semver 태그 (없으면 v0.0.0 부터 시작).
-          # NOTE: `sed -n 1p` reads ALL stdin (no early close) so the upstream
-          # `git tag` never gets SIGPIPE — `head -1` closed the pipe early once
-          # tags accumulated, SIGPIPE'd git → exit 141 under `pipefail` (broken
-          # autotag on every main push). sed-take-first keeps pipefail honest.
           last="$(git tag --list 'v*' --sort=-v:refname | sed -n '1p')"
-          [ -z "$last" ] && last="v0.0.0"
-          base="${last#v}"
-          IFS=. read -r MA MI PA <<<"$base"
-          MA="${MA:-0}"; MI="${MI:-0}"; PA="${PA:-0}"
-
-          # 마지막 태그 이후 커밋 메시지 수집 (태그가 실재할 때만 범위 한정).
-          if git rev-parse -q --verify "refs/tags/${last}" >/dev/null 2>&1; then
-            range="${last}..HEAD"
-          else
-            range="HEAD"
-          fi
-          msgs="$(git log --format='%s%x1f%b%x1e' "$range")"
-
-          # ── RELEASE-WORTHY GATE (hexa-lang 참고) ─────────────────────
-          # feat/fix/perf/BREAKING 커밋이 없으면(docs/chore/ci/refactor/style/test-only)
-          # 태그를 찍지 않는다 → "수정마다 릴리즈"가 아니라 "의미있는 변경만 릴리즈".
-          # install.hexa 는 직전 검증된 v* 태그를 그대로 유지(stale 아님, 그게 최신 의미버전).
-          # release.yml(install-smoke → GitHub Release)는 이 태그에만 발사되므로,
-          # 이 게이트가 곧 릴리즈 빈도 게이트다.
+          [ -n "$last" ] || last=v0.0.0
+          range=HEAD
+          git rev-parse -q --verify "refs/tags/$last" >/dev/null && range="$last..HEAD"
           subjects="$(git log --format='%s' "$range")"
+          bodies="$(git log --format='%s%n%b' "$range")"
           if ! grep -qiE '^(feat|fix|perf)(\([^)]*\))?!?:' <<<"$subjects" \
-             && ! grep -q 'BREAKING CHANGE' <<<"$msgs"; then
-            echo "no release-worthy commit (feat/fix/perf/BREAKING) since ${last} — skip tag (docs/chore/ci/refactor-only)."
+             && ! grep -q 'BREAKING CHANGE' <<<"$bodies"; then
+            echo "No release-worthy commit since $last"
             exit 0
           fi
-
-          # ── ATLAS-PATCH HOOK (hexa-lang) ─────────────────────────────
-          # 기본 generic: 아래 줄은 no-op. hexa-lang 에서는 atlas builtin 추가가
-          # 매우 잦으므로 minor 가 아니라 patch 로만 올린다 — feat(atlas)/atlas
-          # register/embedded.gen.hexa 변경은 minor 판정에서 제외한다.
-          ATLAS_PATCH_ONLY=0   # hexa-lang 에서만 1 로 켠다.
-
-          bump=patch
-          if grep -qE '[a-z]+(\([^)]*\))?!:' <<<"$msgs" || grep -q 'BREAKING CHANGE' <<<"$msgs"; then
-            bump=major
+          IFS=. read -r major minor patch <<<"${last#v}"
+          if grep -qE '^[a-z]+(\([^)]*\))?!:' <<<"$subjects" || grep -q 'BREAKING CHANGE' <<<"$bodies"; then
+            major=$((major + 1)); minor=0; patch=0
+          elif grep -qE '^feat(\([^)]*\))?:' <<<"$subjects"; then
+            minor=$((minor + 1)); patch=0
           else
-            feats="$(grep -oE 'feat(\([^)]*\))?:' <<<"$msgs" || true)"
-            if [ "$ATLAS_PATCH_ONLY" = "1" ]; then
-              # atlas 스코프 feat 는 제외하고 남은 feat 가 있을 때만 minor.
-              feats="$(grep -vE 'feat\(atlas\)' <<<"$feats" || true)"
-            fi
-            [ -n "$feats" ] && bump=minor
+            patch=$((patch + 1))
           fi
-
-          case "$bump" in
-            major) MA=$((MA+1)); MI=0; PA=0;;
-            minor) MI=$((MI+1)); PA=0;;
-            patch) PA=$((PA+1));;
-          esac
-          next="v${MA}.${MI}.${PA}"
-          echo "last=$last bump=$bump next=$next"
-
-          if git rev-parse -q --verify "refs/tags/${next}" >/dev/null 2>&1; then
-            echo "tag ${next} already exists — skip"; exit 0
-          fi
-          git tag "$next" "${GITHUB_SHA}"
+          next="v${major}.${minor}.${patch}"
+          git rev-parse -q --verify "refs/tags/$next" >/dev/null && exit 0
+          git tag "$next" "$GITHUB_SHA"
           git push origin "$next"
-
-          # ── release.yml 트리거 (hexa-lang 참고) ──────────────────────
-          # GITHUB_TOKEN 으로 푸시한 태그는 다른 워크플로(release.yml on: push tags v*)를
-          # 재트리거하지 않는다(GitHub loop 방지) → 명시 dispatch 로 발사해야 GitHub Release
-          # 가 그 태그에 발행된다. 이게 빠져서 release.yml 이 한 번도 안 돌았었다.
-          gh workflow run release.yml --ref main -f tag="$next" \
-            && echo "dispatched release.yml for ${next}" \
-            || echo "::warning::release.yml dispatch 실패 — gh workflow run release.yml -f tag=${next} 로 수동 발사 가능"
+          gh workflow run release.yml --ref main -f tag="$next"

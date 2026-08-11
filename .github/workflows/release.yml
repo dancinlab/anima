@@ -1,41 +1,3 @@
-# ============================================================================
-# release — anima 의 `hx install` 무결성 게이트 + GitHub Release 발행
-# ============================================================================
-#
-# WHY (a_install_canonical · release-tag-ci · allgreen-promote):
-#   anima 의 유일한 setup 경로 = `hx install anima` → install.hexa(최신 v* 태그
-#   self-update) → setup.hexa. autotag.yml 이 매 main push 에 v* 태그를 찍지만,
-#   그 태그가 실제로 `hx install` 로 깔리는지는 누구도 검증하지 않았다 — 깨진
-#   태그가 install.hexa 의 "최신 v*" 로 그대로 노출될 수 있었다.
-#
-#   이 워크플로가 그 구멍을 막는다: 매 `v*` 태그에 대해
-#     ① install-smoke (ubuntu + macos, github-hosted) — 그 태그본을 실제로
-#        `hexa run install.hexa` 로 깔고 cli/anima.hexa 단일 진입점이 컴파일되는지
-#        검증. 하나라도 FAIL 이면 Release 미발행(= allgreen-promote).
-#     ② GitHub Release — install-smoke all-green 일 때만 그 태그에 Release 객체
-#        생성(CHANGELOG 최상단 항목을 릴리즈 노트로). 사용자는 Release 페이지에서
-#        검증된 버전을 본다.
-#
-#   anima 는 interpreted hexa-native(compile/바이너리 산출물 없음) → 타깃별 바이너리
-#   업로드는 없다. Release 자산 = git 소스 아카이브(gh 자동 첨부) + 노트뿐.
-#
-# 러너: github-hosted (ubuntu-latest / macos-14) — Blacksmith 은퇴(오너 비용 지시
-#   2026-06-26, blacksmith-ci commons override). 동일 install 경로를 두 OS 에서 검증.
-#   macos-14 = github-hosted 표준 arm64 이미지(가용성 최대; ci.yml hexa-engine 과 lockstep).
-#
-# ⚠️ PyPI(anima-python) 발행은 이 파일에 **없다** — `.github/workflows/pypi-release.yml`
-#   로 분리됨(convergence `release-yml-2` 근본수정). 이유: 이 워크플로는 `v*` git 태그
-#   (autotag.yml, hx-install 채널 전용 semver — 현재 v3.x.x 대) 트리거인데, pip 채널의
-#   `VERSION` 루트파일(0.13.x 대)은 그와 **별개 넘버링**이라 v* 태그가 찍혀도 VERSION 이
-#   안 오르면(사람이 깜빡) PyPI same-VERSION skip-guard 가 영구 스킵 — 실측: `--xbind`/
-#   `--xfan` eval fold 가 v* 태그+GitHub Release 로는 여러 번 나갔지만 VERSION 미bump 로
-#   PyPI 는 0.13.3 에 고착돼 렌트 pod 측정이 블록됐다. pypi-release.yml 은 git 태그가
-#   아니라 **VERSION 파일 변경(paths 필터)** 을 발행 트리거로 삼고, `.harness/
-#   enforce_anima_gates.py` 의 신규 **G5** 게이트가 cli/·core/·pyproject.toml 변경에
-#   VERSION 이 안 따라오면 머지 시점에 하드-block 해 이 간극을 구조적으로 닫는다(main 은
-#   branch-protection 상 봇의 직접 push 가 안 되므로 자동화는 "bump 를 잊을 수 없게 막는
-#   사전 게이트" 형태다) — 세부 = 그 파일들 헤더 참고.
-
 name: release
 
 on:
@@ -44,193 +6,70 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Existing release tag to (re)verify + publish'
+        description: Existing release tag to publish
         required: true
 
 permissions:
-  contents: write   # gh release create/edit
+  contents: write
 
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  # ── ① install-smoke — 그 태그본이 실제로 `hx install` 로 깔리는가 (게이트) ──
-  # 빈도: autotag.yml 이 feat/fix/perf/BREAKING 커밋에만 v* 태그를 찍는다(hexa-lang
-  # 참고: docs/chore/ci-only push 는 태그·릴리즈 안 함) → 릴리즈는 드물고 의미있는
-  # 버전 bump 에만 발생한다. 그래서 매 릴리즈에 ubuntu+macos 둘 다 검증해도 비용 부담
-  # 없음(릴리즈가 잦지 않음) + OS-교차 install 무결성 robust.
-  install-smoke:
-    name: hx install smoke (${{ matrix.os }})
-    # ubuntu-latest hexa `hexa run` (cli/anima.hexa compile+dispatch) hangs ~18min then
-    # SIGSEGV/errors on the github-hosted ubuntu runner — a hexa TOOLCHAIN fault, not an anima
-    # product defect (macos-14 compiles the SAME source clean in ~1m43s). Per infra-wall-noneval
-    # (the same quarantine the pip channel already adopted), macos-14 is the BLOCKING gate and
-    # ubuntu runs informational (continue-on-error) so a one-runner toolchain wall never blocks
-    # the whole hexa Release. Upstream fix = hexa-lang `hexa run` ubuntu SIGSEGV; until then the
-    # hexa channel keeps publishing on macos verification (release-yml-3).
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-latest
-            blocking: false
-          - os: macos-14
-            blocking: true
-    runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ !matrix.blocking }}
-    # 20→75: COLD-cache 런은 cli/anima.hexa 컴파일만으로 20min 캡을 초과 →
-    # SIGTERM 143 → 잡 취소 → Post-Cache save 스킵 → 캐시가 영원히 안 데워지는
-    # chicken-egg(ci.yml engine 잡의 25→50→75와 동일 병리·실측: run 28659123885
-    # 17min 143, 28660975236 16min 143 — 2연속 동일 지점). 75 = ci.yml의 실측
-    # cold 예산과 정합. warm 정상 run(수 분)엔 무해.
-    timeout-minutes: 75
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.tag || github.ref }}
-
-      - name: Install hexa toolchain (released binary)
-        shell: bash
-        run: |
-          set -euo pipefail
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"
-          echo "$HOME/.hx/bin" >> "$GITHUB_PATH"
-
-      # 설치된 toolchain 실버전을 캐시 키 재료로 캡처 — ~/.hexa-cache 엔트리는 버전
-      # 접미(hexa_run.<hash>_vX.Y.Z)라, 버전 없는 키는 "toolchain bump + 소스 불변"
-      # 조합에서 exact-hit 복원(전부 무용) → cold compile → 재저장 스킵(actions/cache
-      # 는 exact-hit 이면 Post save 안 함) = 소스 변경까지 영구-cold 함정 (실측
-      # 2026-07-03, ci.yml 캐시 ② 와 동일 결함·동일 수리).
-      - name: Capture hexa version (warm-cache key)
-        id: hxver
-        shell: bash
-        run: echo "v=$("$HOME/.hx/bin/hexa" --version 2>/dev/null | awk '{print $NF}')" >> "$GITHUB_OUTPUT"
-
-      # ── warm-compile 캐시 (~/.hexa-cache) ONLY — 무결성 게이트 보존 ──
-      # 측정(2026-06-26): 이 잡의 18min 중 install.sh+install.hexa(=fresh install 게이트
-      # 본체)는 ~29s 뿐, 나머지 ~16.5min 은 cli/anima.hexa 의 aprime_cc compile 이다.
-      # 그 compile 만 캐시한다 → 무결성 게이트(fresh `hx install`)는 그대로 fresh.
-      # ⛔ ~/.hx (toolchain) 는 캐시하지 않는다 — fresh curl-install 가 a_install_canonical
-      # 의 게이트 본질이라 캐시하면 게이트가 무력화된다.
-      # ✅ ~/.hexa-cache 는 compile *결과* 만 담는다 — "compile reaches" 체크를 가리지
-      #    않는다(소스 변경 → 해시 변경 → miss → fresh compile; compile 실패는 캐시 못 함).
-      # (이 스텝이 install 뒤에 오는 이유 = 설치된 실버전을 키로 사용; restore 는 스텝
-      #  위치에서, save 는 잡 끝 Post 에서 일어나므로 게이트 의미는 불변.)
-      # ⚠️ `!core/phi/quantum_types.hexa` 제외 필수 (ci.yml L337 과 동일 키 규약) —
-      # hexa-lang sibling 으로 가는 외부 의존 symlink 라 solo checkout 에선 dangling →
-      # hashFiles 가 fatal → 잡이 캐시 스텝에서 즉사 (7일/61연속 릴리스 RED 근본원인 ·
-      # run 28654755504 캡처 · anima#2664 동족).
-      - name: Cache — hexa warm compile only (~/.hexa-cache · NOT toolchain)
-        uses: actions/cache@v4
-        with:
-          path: ~/.hexa-cache
-          key: hexa-cache-release-${{ runner.os }}-${{ runner.arch }}-${{ steps.hxver.outputs.v }}-${{ hashFiles('core/**', 'cli/**', '!core/phi/quantum_types.hexa') }}
-          restore-keys: |
-            hexa-cache-release-${{ runner.os }}-${{ runner.arch }}-${{ steps.hxver.outputs.v }}-
-
-      - name: hx install path — install.hexa → setup.hexa (canonical setup)
-        shell: bash
-        env:
-          # 이미 이 태그를 checkout 했으니 self-update 재-pin 은 끈다(현 트리 검증).
-          ANIMA_NO_SELF_UPDATE: '1'
-        run: |
-          set -euo pipefail
-          hexa --version || true
-          # hexa v0.759.0/Linux isolates the compiled hook's nested /bin/sh
-          # from both GITHUB_PATH and inherited env vars.  Make the already
-          # verified release binary visible on the nested shell's system PATH.
-          if [[ "$RUNNER_OS" == "Linux" ]]; then
-            sudo ln -sf "$(command -v hexa)" /usr/local/bin/hexa
-            env -i PATH=/usr/local/bin:/usr/bin:/bin /bin/sh -c 'command -v hexa'
-          fi
-          # a_install_canonical: 유일 setup 경로를 그대로 실행. setup.hexa 의 ckpt
-          # 다운로드는 best-effort(실패해도 exit≠1) 라 CI 에서 안전.
-          HEXA="$(command -v hexa)" hexa run install.hexa
-
-      - name: Single-entry sanity — cli/anima.hexa 컴파일/디스패치 (stale-cache guarded)
-        shell: bash
-        run: |
-          set -uo pipefail
-          # cli/anima.hexa = canonical 단일 진입점. ckpt 없이도 파싱+컴파일+디스패치는
-          # 돼야 한다(가중치 의존 동작은 warn-only).
-          # warm-compile 캐시 STALE 가드: GPU_RUNBOOK 의 stale ~/.hexa-cache 트랩(중단된
-          # compile 의 빈/12-byte degenerate 바이너리가 캐시히트 → 빈 출력)을 방지.
-          # compile+dispatch 가 닿으면 'L3 mount' 진단줄을 찍는다(measured 2026-06-26).
-          # 출력이 degenerate(빈/극단 short)면 ~/.hexa-cache 퍼지 후 cold 재컴파일.
-          run_entry() { hexa run cli/anima.hexa -- --help 2>&1 || hexa run cli/anima.hexa -- help 2>&1; }
-          out="$(run_entry)"
-          nbytes=$(printf '%s' "$out" | wc -c | tr -d ' ')
-          if [ "$nbytes" -lt 16 ] || ! printf '%s' "$out" | grep -qiE 'mount|anima|usage|help|mouth'; then
-            echo "::warning::cli/anima.hexa produced degenerate/empty output ($nbytes bytes · stale ~/.hexa-cache trap) — purging warm cache + cold recompile"
-            printf '%s\n' "$out" | tail -20
-            rm -f "$HOME"/.hexa-cache/hexa_run.* 2>/dev/null || true
-            out="$(run_entry)"
-            nbytes=$(printf '%s' "$out" | wc -c | tr -d ' ')
-          fi
-          printf '%s\n' "$out" | tail -20
-          # compile+dispatch 가 닿았으면(출력 존재) OK — 가중치/arg 의존 비-zero 는 warn-only.
-          if [ "$nbytes" -lt 16 ]; then
-            echo "::warning::cli/anima.hexa still degenerate after cold recompile — compile may not have reached dispatch"
-          else
-            echo "compile+dispatch reached ($nbytes bytes output)"
-          fi
-
-  # ── ② GitHub Release — install-smoke all-green 일 때만 발행 ──
-  github-release:
-    name: GitHub Release
-    needs: install-smoke
+  python-release:
+    name: Python package and GitHub release
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.event.inputs.tag || github.ref }}
-
-      - name: Resolve tag + extract release notes (top CHANGELOG entry)
-        id: meta
-        shell: bash
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build and verify package
         run: |
-          set -euo pipefail
-          tag="${{ github.event.inputs.tag }}"
-          [ -n "$tag" ] || tag="${GITHUB_REF_NAME}"
+          python -m pip install --upgrade build twine
+          python -m build --outdir dist_py
+          python -m twine check dist_py/*
+          python -m venv /tmp/anima-release-smoke
+          wheel="$(find "$PWD/dist_py" -maxdepth 1 -type f -name '*.whl' -print -quit)"
+          [ -n "$wheel" ]
+          /tmp/anima-release-smoke/bin/pip install --quiet "$wheel"
+          cd /tmp
+          /tmp/anima-release-smoke/bin/anima-py --help
+      - name: Resolve release metadata
+        id: meta
+        env:
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+        run: |
+          tag="$INPUT_TAG"
+          [ -n "$tag" ] || tag="$GITHUB_REF_NAME"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          # 릴리즈 노트 = CHANGELOG.jsonl 의 최신(맨 끝) 항목. (2026-06 #2645 에
-          # CHANGELOG.md → append-only JSONL `{ts,title,body}` 로 이관됨 — 예전
-          # `awk '/^## /' CHANGELOG.md` 는 파일 부재로 항상 빈 노트로 폴백했다.)
-          # autotag 은 changelog 항목을 추가한 그 main push 에 v* 태그를 찍으므로
-          # tail-1 항목 = 이 릴리즈. python3 는 ubuntu·macos 러너 모두 표준 탑재.
-          python3 - "$tag" > /tmp/notes.md <<'PY' || true
-          import json, sys
-          tag = sys.argv[1]
-          notes = ""
-          try:
-              with open("CHANGELOG.jsonl", encoding="utf-8") as fh:
-                  lines = [ln for ln in fh if ln.strip()]
-              if lines:
-                  e = json.loads(lines[-1])
-                  title = e.get("title", "").strip()
-                  body = e.get("body", "").strip()
-                  notes = ("## " + title + "\n\n" + body).strip() if title else body
-          except Exception:
-              notes = ""
-          print(notes if notes else f"anima release {tag}")
-          PY
-          [ -s /tmp/notes.md ] || echo "anima release $tag" > /tmp/notes.md
+          python3 - "$tag" > /tmp/notes.md <<'PY'
+          import json
+          import sys
 
-      - name: Create / update GitHub Release (install-smoke verified)
-        shell: bash
+          tag = sys.argv[1]
+          try:
+              with open('CHANGELOG.jsonl', encoding='utf-8') as handle:
+                  entries = [json.loads(line) for line in handle if line.strip()]
+              latest = entries[-1]
+              title = latest.get('title', '').strip()
+              body = latest.get('body', '').strip()
+              print((f'## {title}\n\n{body}').strip())
+          except Exception:
+              print(f'anima release {tag}')
+          PY
+      - name: Create or update GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          set -euo pipefail
           tag="${{ steps.meta.outputs.tag }}"
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release edit "$tag" --title "anima $tag" --notes-file /tmp/notes.md
           else
             gh release create "$tag" --title "anima $tag" --notes-file /tmp/notes.md --verify-tag
           fi
-
-  # PyPI(anima-python) 발행 잡은 여기 없다 — .github/workflows/pypi-release.yml 참고
-  # (VERSION 파일 변경 트리거, 이 워크플로의 v* 태그 스킴과 별개 · release-yml-2).

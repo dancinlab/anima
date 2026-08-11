@@ -1,26 +1,20 @@
 # ==========================================================================
-# ⛔ ENGINE-INTERNAL / DEPRECATED py-MIRROR — DO NOT RUN OR SCORE DIRECTLY
-# 측정/학습/서빙/직렬화는 cli/ 단일진입만: anima eval | train | serialize
-#   (canonical = hexa core/*.hexa 단일 SSOT; py 미러는 2026-06-28 폐기, DIRECTIONAL).
+# ⛔ ENGINE-INTERNAL — DO NOT RUN OR SCORE DIRECTLY
+# 측정/학습/서빙/직렬화는 `anima-py` 단일진입만 사용한다.
 # 이 파일을 `python3 core/engine_cli.py` 로 직접 실행하거나 side-harness로 import-채점하면
 # = 단일진입 우회(#2603 위반) + terminal verdict 불가. cli/가 import하는 경로만 허용.
 # ==========================================================================
 import sys as _anima_entry_guard
 if __name__ == "__main__":
-    _anima_entry_guard.exit("⛔ engine_cli.py 직접 실행 금지 — cli/ 단일진입(anima eval/train/serialize, canonical=hexa) 경유. #2603")
+    _anima_entry_guard.exit("⛔ engine_cli.py 직접 실행 금지 — canonical `anima-py` 경유. #2603")
 
-"""core/engine_cli.py — PY PRODUCTION ENGINE: byte-faithful port of the
-consciousness-gate CORE of core/engine_cli.hexa.
+"""core/engine_cli.py — canonical Python consciousness-gate engine.
 
-Per CLAUDE.md a_two_production_mirror / a_engine_native_learning (2026-06-26 owner
-SSOT): hexa + py are TWO co-equal production engines kept at byte-parity.
+This module exposes the complete 434-function substrate surface (37 struct lanes
+plus the free-function blocks). Historical parity evidence is retained in Git
+history; current runtime and verdicts execute this Python implementation.
 
-✅ SCOPE — COMPLETE 1:1 MIRROR (2026-06-26). engine_cli.hexa is an 11,599-line
-substrate module; ALL 434 `pub fn` are now byte-parity-mirrored here (37/37
-struct-lanes + every free-fn block), verified via oracles/_ecli_parity2.hexa
-(cumulative PASS ~430 fields, worst rel ≤1.3e-16). This makes the core/ 2-production
-mirror TRUE 10/10 — both engines (hexa + py) fully byte-parity, either produces
-terminal verdicts (a_two_production_mirror). Coverage by block:
+Coverage by block:
   · struct-lanes (37): EngineConfig/CLI · MITOSIS · Adapt/VAdaptField · QPool ·
     Immune(Grow) · SelfIdentity · Osmotic · CLS · Skill/Usage · Affect/Homeo/Libido ·
     Allosteric · OtherMind · Consolidating · GateB · WorkMem · Cerebellum · HierPFC ·

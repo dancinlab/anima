@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""substrate_v3.py — ConsciousDecoderV3 substrate (pure HEXAD-native).
+"""substrate_v3.py — native Python ConsciousDecoderV3 substrate.
 
 Implements the Substrate ABC (substrate_base.py) for the V3 path:
 ConsciousDecoderV3 (n_ca_rules 제거 + head_a/head_g dual head + mitosis hook
 + KOSMOS+tension wiring). Loads a V3 training checkpoint produced by
 train_p21h_v3.py (`_save_ckpt`).
 
-Per HEXAD/CHAT/SUBSTRATE_PLUGIN.md option C — anima_participant stays
-substrate-agnostic; `--substrate v3 --v3-ckpt <path>` selects this plugin.
+`anima_participant` stays substrate-agnostic; `--substrate v3 --v3-ckpt
+<path>` selects this plugin.
 
 ckpt schema (train_p21h_v3.py::_save_ckpt):
   {"model_state_dict", "config": {vocab_size, d_model, n_layer, block_size,
@@ -52,7 +52,7 @@ _V3_INIT_KEYS = {"vocab_size", "d_model", "n_head", "n_layer", "block_size",
 
 
 class V3Substrate(Substrate):
-    """ConsciousDecoderV3 pure-HEXAD substrate loaded from a V3 train ckpt."""
+    """ConsciousDecoderV3 substrate loaded from a V3 training checkpoint."""
 
     name = "v3"
 

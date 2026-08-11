@@ -18,7 +18,7 @@
 # only torch touch. This is the LEARNING-side re-export, NOT the torch-free measurement
 # surface (cli/evaluate.py) the gate enforcer targets.
 #
-# USAGE (installed `anima` PATH command after `hx install anima`)
+# USAGE (installed canonical `anima-py` command)
 #   anima serialize-bind <base.bin> <injected.pt> <out.bin>
 #     <base.bin>      plain engine ByteGPT .bin (5xu32 header, NO trailer)
 #     <injected.pt>   torch {"bind": <Block state_dict | list | dict>,

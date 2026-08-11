@@ -1,13 +1,12 @@
 # ==========================================================================
-# ⛔ ENGINE-INTERNAL / DEPRECATED py-MIRROR — DO NOT RUN OR SCORE DIRECTLY
-# 측정/학습/서빙/직렬화는 cli/ 단일진입만: anima eval | train | serialize
-#   (canonical = hexa core/*.hexa 단일 SSOT; py 미러는 2026-06-28 폐기, DIRECTIONAL).
+# ⛔ ENGINE-INTERNAL — DO NOT RUN OR SCORE DIRECTLY
+# 측정/학습/서빙/직렬화는 `anima-py` 단일진입만 사용한다.
 # 이 파일을 `python3 core/decode.py` 로 직접 실행하거나 side-harness로 import-채점하면
 # = 단일진입 우회(#2603 위반) + terminal verdict 불가. cli/가 import하는 경로만 허용.
 # ==========================================================================
 import sys as _anima_entry_guard
 if __name__ == "__main__":
-    _anima_entry_guard.exit("⛔ decode.py 직접 실행 금지 — cli/ 단일진입(anima eval/train/serialize, canonical=hexa) 경유. #2603")
+    _anima_entry_guard.exit("⛔ decode.py 직접 실행 금지 — canonical `anima-py` 경유. #2603")
 
 """core/decode.py — UNIFIED PY DECODE ENGINE: byte-faithful 1:1 merge of the two
 per-mouth decoder mirrors into ONE module.
@@ -17,9 +16,8 @@ per-mouth decoder mirrors into ONE module.
   * BYTE (ByteGPT transformer) = the verbatim port of core/decode.hexa
                                 (formerly core/bytegpt_decode.py)
 
-Per CLAUDE.md a_engine_native_learning: hexa + py are TWO co-equal production
-engines kept at byte-parity. This module is the numpy mirror of the two decode
-mouths; it exposes the UNION of both modules' public names so a caller can do
+This module is the canonical NumPy implementation of the two decode mouths. It
+exposes the union of both modules' public names so a caller can do
 `import decode as clm` OR `import decode as bg` (or `import decode`) with ZERO
 call-site churn (drop-in for clm_decode.py + bytegpt_decode.py).
 

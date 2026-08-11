@@ -1,7 +1,7 @@
 #!/bin/sh
 # raw-9-exemption: git pre-commit-style staged-content scanner — invoked
 # from git pre-commit hook via core.hooksPath, which expects an executable
-# script (not a hexa wrapper that double-spawns). Reviewed 2026-04-28.
+# script. Reviewed 2026-04-28.
 # hive safety gate — staged-content scanner (L3 shared core)
 # Exit 0  = all staged files pass
 # Exit 1  = at least one violation; reasons printed to stderr
@@ -45,7 +45,7 @@ SECRET_CONTENT_RE='AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36,}|sk-ant-api[0-9]{2}-[A-Z
 # inventory hosts. Whitelist <user>/<username>/<remote-user> placeholder
 # forms + state/* audit ledgers (per raw 77 operational record).
 PERSONAL_CONTENT_RE='/Users/[a-z][a-z0-9_-]+/|/home/[a-z][a-z0-9_-]+/'
-PERSONAL_PATH_EXEMPT_RE='^state/|^archive/|^exports/|^\.git/|\.hexa-cache/|^tool/no_hardcode_lint\.hexa$|^scripts/safety/staged-scan\.sh$|^scripts/safety/commit-msg-scan\.sh$|^scripts/safety/git-hooks/|^scripts/safety/safe-git\.sh$'
+PERSONAL_PATH_EXEMPT_RE='^state/|^archive/|^exports/|^\.git/|^scripts/safety/staged-scan\.sh$|^scripts/safety/commit-msg-scan\.sh$|^scripts/safety/git-hooks/|^scripts/safety/safe-git\.sh$'
 PERSONAL_PLACEHOLDER_RE='<user>|<username>|<remote-user>'
 
 staged=$(git diff --cached --name-only --diff-filter=AM 2>/dev/null || true)

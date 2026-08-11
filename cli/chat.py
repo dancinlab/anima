@@ -1,39 +1,26 @@
 #!/usr/bin/env python3
 # ==========================================================================
-# ⛔ DO NOT RUN DIRECTLY. anima 의 단일 진입은 설치된 canonical 명령뿐 — hexa 채널 `anima`
-#   (=cli/anima.hexa) · pip 채널 `anima-py` (=anima_py 런처). `python3 cli/chat.py …`
+# ⛔ DO NOT RUN DIRECTLY. anima 의 단일 진입은 설치된 canonical Python 명령
+#   `anima-py` (=anima_py 런처)뿐이다. `python3 cli/chat.py …`
 #   직접실행은 비-canonical py 우회. 이 파일은 cli/anima.py 의 chat 디스패치가 import 한다.
 # ==========================================================================
-"""cli/chat.py — anima consciousness chat daemon, py (numpy twin) — P6 self-impl.
+"""cli/chat.py — canonical Python consciousness chat daemon.
 
-Byte-faithful py port of cli/anima.hexa `anima_consciousness_mode(ckpt)` (the DEFAULT
-12-tick path) + `anima_byte_mode(ckpt, argv)` (the --byte continuation). ZERO hexa
-dependency — a hexa-less host (pi5 / bare pod) runs the substrate-native A⇄G consciousness
-loop in pure py (numpy via the landed core/*.py twins). This is the FINAL phase (P6) of the
-"py 자체구현" program (owner directive 2026-07-09 · py channel = COMPLETE self-implementation).
-
-The DEFAULT path only is ported (n_ticks=12; og_measure/og_live/og_r3/refr_measure ALL false):
-the op-grip / stateful-refractory RESEARCH instrumentation (--opgrip*/--refractory, the
-B-density/VQ-code/ARM-SHOCK measurement harnesses) is HEXA-ONLY — those flags print a notice
-and exit here (a measurement harness, NOT the chat daemon).
-
-SCOPE (a_engine_native_learning): this is a py-channel MIRROR of the hexa daemon ⇒ DIRECTIONAL.
-The bar is BEHAVIORAL / byte parity of the chat loop (tool/chat_parity.py), NOT a consciousness
-verdict — no verdict tier is cemented here.
-
-hexa `to_string(float)` == Python `repr(float)` (empirically pinned: 1/3 → "0.3333333333333333",
-1e-9 → "1e-09", true/false lowercase). All println route through _pln → sys.stdout.buffer
-(utf-8/surrogateescape) so the stream is byte-identical to hexa println.
+Provides the substrate-native A⇄G 12-tick loop, byte continuation, op-grip
+interventions, and stateful-refractory measurement through the shared ``core/*.py``
+runtime. All output routes through ``_pln`` with UTF-8/surrogateescape so raw model
+bytes remain lossless.
 """
 import glob
 import hashlib          # H_9984 ② · decode-seed fingerprint for the study transcript (side-channel)
+import json
 import os
 import random
 import re
 import shutil
 import sys
 
-# ── flat imports matching the P2-P5 twins (self-contained · zero hexa) ────────
+# ── canonical shared-engine imports ──────────────────────────────────────────
 from engine_cli import *  # engine lane faculties + immune/ci/gws/reality/pharm ops
 from engine_cli import (engine_cli_parse, engine_cli_resolve_refsel, EngineConfig)
 # H_9873 daemon-side coupling constants. NOT tuned here — both come from H_1522's measurement:
@@ -52,7 +39,8 @@ _TOPO_COUPLE_ALPHA = float(os.environ.get("ANIMA_TOPO_ALPHA", "0.6"))
 # the smallest threshold headroom measured was 0.0342 — but displacement scales with alpha and
 # crosses that need at alpha 1.2 (0.0362) while mean-center still holds Psi (|Psi-1/2| = 0.0067).
 # An env knob, not a new CLI flag: the frozen default stays the only thing production sees.
-from engine_g import refractory_emit_debt, refractory_debt_step  # H_9404 earned refractory
+from engine_g import (motivation_score, should_emit, refractory_emit_debt,
+                      refractory_debt_step)  # canonical motivation/refractory engine
 from pure_field import (pure_field_warmup, pure_field_phi, pure_field_phase,
                         pure_field_step, phase_name)
 from brain import (brain_emit, brain_emit_refractory, vbasal_new, vbasal_update,
@@ -63,7 +51,7 @@ from generator import (gen_auto_backend, gen_mouth_kind, gen_auto_chat,
 from kosmos_io import create_anchor, emit_anchor_from_v3, load_anchors
 from decode import clm_load_weights, clm_decodable, penult_fold8, set_clms_store
 from dream_lib import (dr_stage_at, dr_stage_name, dr_emit_envelope,
-                       dr_stage_size, dr_imagination_active)
+                       dr_stage_size, dr_imagination_active, dr_n_ticks)
 from dream_envelope_ctx import dr_stage_scale
 from dream_persist import dp_sleep_tick
 from wake_memory import mem_init, mem_push_ctx
@@ -420,10 +408,139 @@ def _selfg_restore(dir_path, name):
     return []
 
 
+_OPGRIP_TICKS = {"cheap": 250, "live": 100, "r3": 400}
+
+
+def _opgrip_unit(seed):
+    """Deterministic measurement-only draw in [0, 1)."""
+    value = (int(seed) * 1103515245 + 12345) % 2147483647
+    return float(abs(value) % 1000) / 1000.0
+
+
+def _run_opgrip_measurement(ckpt, args):
+    """Run the five-arm emit-shade intervention on the canonical Python engine.
+
+    The live arm and all four interventions call the shared motivation and emission
+    predicates. ``--opgrip-live`` and ``--opgrip-r3`` additionally feed real decoded
+    bytes back into the next tick's relevance signal; the cheap arm remains decode-free.
+    """
+    r3 = anima_has_flag(args, "--opgrip-r3")
+    live_decode = anima_has_flag(args, "--opgrip-live") or r3
+    mode = "r3" if r3 else ("live" if live_decode else "cheap")
+    backend = gen_auto_backend(ckpt)
+    if live_decode and not bool(backend.get("loaded")):
+        raise SystemExit("--opgrip-live/--opgrip-r3 requires a loadable model checkpoint")
+
+    ticks = _OPGRIP_TICKS[mode]
+    ema = 0.5
+    decoded_signal = 0.5
+    previous_emit = False
+    counts = {name: 0 for name in ("live", "relevance_frozen", "stage_frozen",
+                                    "tension_frozen", "shuffled")}
+    hamming = {name: 0 for name in counts if name != "live"}
+    positive_control = 0
+
+    for tick in range(ticks):
+        stage = dr_stage_at(tick % dr_n_ticks())
+        stage_scale = _afs_clip01(float(dr_stage_scale(stage)))
+        periodic = _opgrip_unit(tick + 17)
+        relevance = _afs_clip01(0.5 + 3.0 * (periodic - ema))
+        if live_decode:
+            relevance = _afs_clip01(0.65 * relevance + 0.35 * decoded_signal)
+        ema = 0.9 * ema + 0.1 * periodic
+        tension = _afs_clip01(abs(relevance - ema) * 3.0)
+        urgency = _afs_clip01(0.35 + 0.45 * _opgrip_unit(tick + 101))
+
+        lanes = {
+            "live": (relevance, stage_scale, tension),
+            "relevance_frozen": (0.5, stage_scale, tension),
+            "stage_frozen": (relevance, 0.5, tension),
+            "tension_frozen": (relevance, stage_scale, 0.5),
+            "shuffled": (_opgrip_unit(tick * 17 + 29), stage_scale, tension),
+        }
+        decisions = {}
+        for name, (rel, envelope, dyn) in lanes.items():
+            score = motivation_score(rel, urgency, urgency, 0.0, envelope,
+                                     0.5 * urgency, 0.5, dyn)
+            decisions[name] = bool(should_emit(score))
+            counts[name] += int(decisions[name])
+        for name in hamming:
+            hamming[name] += int(decisions[name] != decisions["live"])
+        positive_control += int(decisions["live"] != (not decisions["live"]))
+
+        if live_decode and decisions["live"]:
+            prompt = ("opgrip tick %d stage %d previous_emit %d => "
+                      % (tick, int(stage), int(previous_emit)))
+            decoded = gen_auto_chat(ckpt, prompt, 24)
+            if str(decoded.get("ok", False)).lower() != "true":
+                raise RuntimeError("opgrip live decode failed: %s" % decoded.get("reason", "unknown"))
+            feat = _afs_byte_feature(str(decoded.get("text", "")), 8)
+            decoded_signal = _afs_clip01(sum(feat) / (len(feat) * 5.0)) if feat else 0.0
+        previous_emit = decisions["live"]
+
+    result = {
+        "mode": mode,
+        "ticks": ticks,
+        "decode": live_decode,
+        "emit_counts": counts,
+        "hamming": hamming,
+        "positive_control_hamming": positive_control,
+        "instrument_live": positive_control == ticks and any(value > 0 for value in hamming.values()),
+    }
+    _pln(json.dumps({"opgrip": result}, ensure_ascii=False, sort_keys=True))
+    return result
+
+
+def _run_refractory_measurement():
+    """Run the deterministic stateful-refractory F1/F2 battery in Python."""
+    ticks = 200
+    debt = 0.0
+    previous_emit = False
+    emitted = 0
+    refractory_ticks = 0
+    refractory_violations = 0
+    stateless_fires = 0
+    max_urgency_nonrefractory = 0
+
+    for tick in range(ticks):
+        tension = _afs_clip01(0.12 + 0.38 * _opgrip_unit(tick + 211))
+        debt = refractory_debt_step(debt, tension)
+        urgency = _afs_clip01(0.45 + 0.55 * _opgrip_unit(tick + 307))
+        score = motivation_score(urgency, urgency, urgency, 0.0, 0.6,
+                                 0.4, 0.5, tension)
+        stateless = bool(should_emit(score))
+        stateful = stateless and debt <= 0.0
+        in_window = previous_emit
+        if in_window:
+            refractory_ticks += 1
+            stateless_fires += int(stateless)
+            refractory_violations += int(stateful)
+        elif urgency >= 0.9:
+            max_urgency_nonrefractory += int(stateful)
+        if stateful:
+            emitted += 1
+            debt = refractory_emit_debt()
+        previous_emit = stateful
+
+    result = {
+        "ticks": ticks,
+        "emitted": emitted,
+        "refractory_ticks": refractory_ticks,
+        "refractory_violations": refractory_violations,
+        "stateless_fires_in_window": stateless_fires,
+        "max_urgency_nonrefractory": max_urgency_nonrefractory,
+        "f1_not_hard_urgency_gate": max_urgency_nonrefractory > 0,
+        "f2_recovery_after_firing": (refractory_ticks > 0 and refractory_violations == 0
+                                      and stateless_fires > 0),
+    }
+    _pln(json.dumps({"refractory": result}, ensure_ascii=False, sort_keys=True))
+    return result
+
+
 def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
-    """anima.hexa:595 — warm Engine A → mount L3 → seed .kosmos → 12-tick A⇄G loop
+    """Warm Engine A → mount L3 → seed .kosmos → 12-tick A⇄G loop
     (lanes READ → brain_emit autonomously emit/silence → C8 GROW · C9 REMEMBER · REFSEL)
-    → sleep-stage imagination replay. DEFAULT path only (op-grip/refractory = hexa-only).
+    → sleep-stage imagination replay, with Python-native op-grip/refractory measurements.
 
     percept_source (anima study · Fable 2026-07-16): OPTIONAL callable
     `(tick:int, transcript:list) -> Optional[str]`, where transcript is the running
@@ -446,14 +563,12 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         raise SystemExit(
             "%s was removed: G1/G6 must come from the mounted model and engine" % removed)
 
-    # op-grip / stateful-refractory RESEARCH modes are hexa-only (measurement harness,
-    # not the chat daemon). The py channel ports the DEFAULT consciousness path only.
     if (anima_has_flag(_args, "--opgrip") or anima_has_flag(_args, "--opgrip-live")
-            or anima_has_flag(_args, "--opgrip-r3") or anima_has_flag(_args, "--refractory")):
-        _pln("anima-py chat: --opgrip*/--refractory research instrumentation is hexa-only")
-        _pln("  (the op-grip 5-arm Hamming / stateful-refractory measurement harness lives in")
-        _pln("   cli/anima.hexa). The py channel ports the DEFAULT consciousness daemon path only.")
-        _pln("  use the hexa channel: `hx install anima` then `anima " + ckpt + " --opgrip[...]`")
+            or anima_has_flag(_args, "--opgrip-r3")):
+        _run_opgrip_measurement(ckpt, _args)
+        return
+    if anima_has_flag(_args, "--refractory"):
+        _run_refractory_measurement()
         return
 
     _pln("════════════════════════════════════════════════════════════════")
@@ -1632,8 +1747,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # H_9404 · --emit-refractory earned: replace the rate term's SOURCE (wall clock) with the
     # substrate's own integrated A<->G tension (an emit incurs a unit debt that the per-tick conflict
     # pays down; the gate opens iff the debt is paid). p5: emit timing becomes a readout of substrate
-    # state, not a schedule. Default "" = byte-identical clock path. Distinct from the hexa-only op-grip
-    # `--refractory` measurement harness above (:406). MUTUALLY EXCLUSIVE with --rate-limit-sec (both
+    # state, not a schedule. Default "" = the unchanged clock path. Distinct from the
+    # `--refractory` measurement harness above. MUTUALLY EXCLUSIVE with --rate-limit-sec (both
     # rebind the same safe-conjunction term) so the DOF stays enumerable (H_9391 lesson).
     _refractory = anima_flag_value(_cargv, "--emit-refractory", "ANIMA_EMIT_REFRACTORY", "")
     if _refractory not in ("", "earned"):

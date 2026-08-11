@@ -1,25 +1,18 @@
 # ==========================================================================
-# ⛔ ENGINE-INTERNAL / DEPRECATED py-MIRROR — DO NOT RUN OR SCORE DIRECTLY
-# 측정/학습/서빙/직렬화는 cli/ 단일진입만: anima eval | train | serialize
-#   (canonical = hexa core/*.hexa 단일 SSOT; py 미러는 2026-06-28 폐기, DIRECTIONAL).
+# ⛔ ENGINE-INTERNAL — DO NOT RUN OR SCORE DIRECTLY
+# 측정/학습/서빙/직렬화는 `anima-py` 단일진입만 사용한다.
 # 이 파일을 `python3 core/generator.py` 로 직접 실행하거나 side-harness로 import-채점하면
 # = 단일진입 우회(#2603 위반) + terminal verdict 불가. cli/가 import하는 경로만 허용.
 # ==========================================================================
 import sys as _anima_entry_guard
 if __name__ == "__main__":
-    _anima_entry_guard.exit("⛔ generator.py 직접 실행 금지 — cli/ 단일진입(anima eval/train/serialize, canonical=hexa) 경유. #2603")
+    _anima_entry_guard.exit("⛔ generator.py 직접 실행 금지 — canonical `anima-py` 경유. #2603")
 
-"""core/generator.py — PY PRODUCTION ENGINE: byte-faithful 1:1 mirror of the
-L3 MOUTH-DISPATCH surface of core/generator.hexa.
+"""core/generator.py — canonical Python L3 mouth dispatcher.
 
-Per CLAUDE.md a_two_production_mirror / a_core_engine_map: hexa + py are TWO
-co-equal production engines kept at byte-parity. generator.hexa is the SINGLE L3
-typed mouth slot — it sniffs a ckpt header and dispatches to ONE of two mouth
-ARCHITECTURES (conv .clm via the CONV mouth, ByteGPT .bin via the BYTE mouth). This
-module is the py mirror of that dispatcher; it routes to the already-parity-proven
-core/decode.py (the unified decoder that merges the former clm_decode.py +
-bytegpt_decode.py 1:1, itself a port of core/decode.hexa). NO torch in the path —
-stdlib + numpy (via the decoder) only.
+The dispatcher sniffs checkpoint headers and selects one of two mouth
+architectures: Conv ``.clm`` or ByteGPT ``.bin``. It routes both through
+``core/decode.py`` and uses only the standard library plus NumPy.
 
 Scope: this mirrors generator.hexa's PUBLIC dispatch surface (a_core_engine_map):
   gen_mouth_kind      generator.hexa:628  header-sniff CLM\\x01 / 5xu32 / unknown
@@ -38,7 +31,7 @@ in decode.bg_is_bytegpt): generator.hexa::_gen_is_bytegpt requires
 vocab==256, n_layer in 1..64, n_head divides d, block in 1..8192 — these tighter
 bounds are the dispatcher's actual edge-case behavior and must be mirrored exactly.
 
-The VERDICT path stays engine-native (hexa); this is the parity-proven py mirror.
+The installed ``anima-py`` command is the sole verdict entry.
 """
 
 import os
@@ -206,6 +199,43 @@ def gen_auto_backend(ckpt_path):
 # CHAT entries — greedy byte-continuation of a composed dialogue seed
 # ════════════════════════════════════════════════════════════════════════
 
+_CHAT_TURN_STOP_MARKERS = (
+    "\nuser:", "\nUser:", "\n사용자:", "\n<|user|>", "\n<usr>",
+)
+
+
+def gen_chat_turn_text(text, stop_markers=None):
+    """Return only the assistant turn from a raw byte-mouth continuation.
+
+    A dialogue-trained byte model naturally continues with the next user role because
+    vocab 256 has no dedicated EOS token.  Chat must stop at that role boundary; emitting
+    the synthetic next user turn is a runtime framing bug, not additional model content.
+    The raw continuation remains available to evaluators through ``raw_text``.
+    """
+    if not isinstance(text, str):
+        raise TypeError("chat continuation must be str")
+    markers = _CHAT_TURN_STOP_MARKERS if stop_markers is None else tuple(stop_markers)
+    stop = len(text)
+    matched = ""
+    for marker in markers:
+        if not isinstance(marker, str) or not marker:
+            raise ValueError("chat stop markers must be non-empty strings")
+        pos = text.find(marker)
+        if 0 <= pos < stop:
+            stop = pos
+            matched = marker
+    return {"text": text[:stop].strip(), "stop_marker": matched,
+            "stopped": bool(matched), "raw_text": text}
+
+
+def _chat_turn_result(result):
+    if not result.get("ok"):
+        return result
+    turn = gen_chat_turn_text(str(result.get("text", "")))
+    out = dict(result)
+    out.update(turn)
+    return out
+
 def gen_clm_chat(ckpt_path, seed, max_new):
     """generator.hexa:599 gen_clm_chat — thin caller of the ONE .clm decode mouth
     (clm_decode_argmax). ok=False with reason for a v0.1 (non-decodable) file."""
@@ -213,8 +243,10 @@ def gen_clm_chat(ckpt_path, seed, max_new):
         return {"ok": False, "text": "",
                 "reason": "ckpt not v0.2-decodable (no CLMX trailer; embed/GN absent)"}
     r = _clm.clm_decode_argmax(ckpt_path, seed, max_new)
-    return {"ok": r["ok"], "text": r["text"],
-            "reason": "decoded via clm_decode_argmax (CLMConvMoE int4 forward)"}
+    return _chat_turn_result({
+        "ok": r["ok"], "text": r["text"],
+        "reason": "decoded via clm_decode_argmax (CLMConvMoE int4 forward)",
+    })
 
 
 def gen_bytegpt_chat(ckpt_path, seed, max_new):
@@ -226,8 +258,10 @@ def gen_bytegpt_chat(ckpt_path, seed, max_new):
                 "reason": "ckpt not a ByteGPT flat binary (bad 5xu32 [256,d,L,H,block] header)"}
     sids = list(seed.encode('utf-8', 'surrogateescape'))
     r = _bg.bytegpt_decode_argmax_ranged(ckpt_path, sids, max_new)
-    return {"ok": r["ok"], "text": r["text"],
-            "reason": "decoded via bytegpt_decode_argmax_ranged (24-layer GPT-2-class byte forward)"}
+    return _chat_turn_result({
+        "ok": r["ok"], "text": r["text"],
+        "reason": "decoded via bytegpt_decode_argmax_ranged (24-layer GPT-2-class byte forward)",
+    })
 
 
 def gen_auto_chat(ckpt_path, seed, max_new):

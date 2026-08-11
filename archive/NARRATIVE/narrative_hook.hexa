@@ -1,6 +1,0 @@
-// narrative_hook.hexa — minimal Ψ-disjoint substrate lane for NARRATIVE (thread coherence).
-// pure fn: how close current Φ is to the running narrative mean (thread continuity). read-only.
-pub fn na_thread(phi: float, hist_mean: float) -> float {
-    let d = if phi - hist_mean >= 0.0 { phi - hist_mean } else { hist_mean - phi }
-    return 1.0 / (1.0 + d)
-}

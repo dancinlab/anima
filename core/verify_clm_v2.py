@@ -1,10 +1,8 @@
 # ==========================================================================
 # ⛔ ENGINE-INTERNAL TOOL — agent 가 직접 타이핑 금지. 학습/직렬화는 cli/ 단일진입만:
-#   anima train | anima serialize  (canonical=hexa cli/{train,serialize}.hexa).
-# 단, cli/train.hexa 가 held-out DESCENT 게이트를 `python3 … verify_clm_v2.py descent` 로
-# SUBPROCESS 호출한다(=canonical 경로의 정당한 내부 shell-out) — 그래서 __main__ hard-exit 가드는
-# 두지 않는다(그건 canonical 게이트를 깨뜨림). agent 직접실행 차단은 .harness/enforcement.json
-# H-ANIMA-SINGLE-ENTRY pre_bash 룰이 담당(hexa 내부 subprocess 는 안 건드림). #2603
+#   anima-py train | anima-py serialize.
+# cli/train.py 가 held-out DESCENT 게이트를 내부 호출하므로 __main__ hard-exit
+# 가드는 두지 않는다. 직접 실행 차단은 단일진입 정책이 담당한다.
 # ==========================================================================
 #!/usr/bin/env python3
 """Lane P REMEDY — pure-Python mirror of CORE/clm_decode.hexa's clm_decodable()
@@ -926,7 +924,6 @@ def main():
     for cand in [
         os.environ.get("GOLDEN_CLM", ""),
         os.path.join(here, "..", "..", "state", "laneg_d768_recover", "reexport_d768_v2_fast.clm"),
-        "/Users/mini/dancinlab/anima/state/laneg_d768_recover/reexport_d768_v2_fast.clm",
     ]:
         if cand and os.path.exists(cand):
             golden = cand

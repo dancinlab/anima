@@ -24,7 +24,16 @@ dependencies = ["numpy>=1.24"]
 
 [project.optional-dependencies]
 train = ["torch>=2.1,<2.13", "datasets"]
-runtime = ["fastapi>=0.116,<1", "uvicorn>=0.35,<1", "websockets>=15,<17", "langdetect>=1.0.9,<2"]
+runtime = [
+  "fastapi>=0.116,<1",
+  "uvicorn>=0.35,<1",
+  "websockets>=15,<17",
+  "langdetect>=1.0.9,<2",
+  "safetensors>=0.5,<1",
+  "transformers>=4.48,<6",
+  "peft>=0.14,<1",
+]
+test = ["pytest>=8,<10", "httpx2>=2,<3"]
 # ⚠ torch UPPER BOUND IS LOAD-BEARING — torch 2.13+cu130 SILENTLY regresses store-addr
 # held-out address generalization on Blackwell sm_120 bf16 training (H_9734: same code /
 # corpus / base / seed / recipe, torch 2.11.0 generalizes addr 0.95, torch 2.13.0 memorizes

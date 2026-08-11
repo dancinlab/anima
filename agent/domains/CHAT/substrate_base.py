@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """substrate_base.py — pluggable substrate ABC for anima_participant.
 
-Option C (shared core + substrate plugin) per HEXAD/CHAT/SUBSTRATE_PLUGIN.md.
-motivation 8-factor + KOSMOS + lang-detect + broker connection 은 substrate 무관
+The shared-core substrate boundary keeps motivation 8-factor + KOSMOS +
+lang-detect + broker connection substrate-independent.
 (anima 의식 동역학); substrate 만 plugin.
 
 Substrate impls:
 - substrate_lora.py: vP21M (Qwen2.5-1.5B + LoRA r32 + mitosis aux)
-- substrate_v3.py:   ConsciousDecoderV3 (pure HEXAD substrate)
+- substrate_v3.py:   ConsciousDecoderV3 Python substrate
 - substrate_clm.py:  serialized CLMConvMoE via core/decode.py
 - future: substrate_llama.py, substrate_hf_instruct.py, etc.
 """

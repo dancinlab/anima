@@ -1,54 +1,9 @@
-# ============================================================================
-# pypi-release — anima-python (pip 채널) 발행 파이프라인 · VERSION-lockstep
-# ============================================================================
-#
-# WHY (convergence release-yml-2 근본수정):
-#   `pip install anima-python` 는 root `pyproject.toml`(dynamic version ← 루트
-#   `VERSION` 파일) 을 sdist+wheel 로 빌드해 PyPI 에 발행한다. 이 파이프를 예전엔
-#   release.yml 의 `pypi-publish` job 이 담당했는데, 그 잡은 `v*` **git 태그**
-#   (autotag.yml 이 찍는, hx-install 채널 전용 semver — 현재 v3.x.x 대) 로만
-#   트리거됐다. 문제: `VERSION` 루트파일은 그와 **완전히 별개 넘버링**(pip 채널
-#   전용, 0.13.x 대 · VERSIONS.md §0 SSOT)이라, v* 태그가 아무리 자주 찍혀도
-#   `VERSION` 을 사람이 깜빡하고 안 올리면 PyPI publish 스텝의 same-VERSION
-#   skip-guard 가 **영구** 스킵한다 — 발행 시도 자체가 no-op.
-#
-#   실측: `--xbind`/`--xfan` eval fold(#3299 XBIND CRACK · #3317)가 `cli/evaluate.py`
-#   에 머지되며 `VERSION` bump 없이 land. git 태그/GitHub Release 는 정상 발행됐지만
-#   PyPI `anima-python` 은 stale `0.13.3` 에 고착 — 렌트 pod `pip install
-#   anima-python[train]` 후 `anima-py evaluate --help` 에 `--xbind` 가 안 보여
-#   NBIND 측정 스크립트가 xbind json 을 못 만들고 블록됐다.
-#
-#   이 워크플로 + `.harness/enforce_anima_gates.py` 의 새 G5 게이트가 그 구조적
-#   결함을 두 겹으로 막는다:
-#     ① G5 (머지 시점, 사전 게이트) — `cli/**/*.py`·`core/**/*.py`·`pyproject.toml`
-#        (anima-python 휠에 실제로 담기는 파일 — pyproject.toml [tool.setuptools]
-#        packages=anima_py.cli/anima_py.core 는 .py 모듈만 태움, cli/**/*.hexa 는
-#        무관) 이 바뀌었는데 같은 변경분에 루트 `VERSION` 이 안 바뀌면 changed-scope
-#        하드-block(no bypass, c18). `main` 은 branch-protection 으로 PR+리뷰 없는
-#        직접 push 가 막혀있어(required_pull_request_reviews, bypass 리스트 없음)
-#        "CI 가 알아서 bot-commit 으로 자동 bump" 는 구조적으로 불가능하다 — 그래서
-#        자동화는 "사람/에이전트가 bump 를 잊을 수 없게" 만드는 사전 게이트 형태다.
-#     ② pypi-publish(이 워크플로, 사후·반응형) — 트리거는 git 태그가 **아니라
-#        `VERSION` 파일 변경**(paths 필터, ① 의 gate 를 통과해 실제로 병합된 VERSION
-#        bump 에만 반응) 이다. 그래서 hx-install v* 태그 스킴(autotag.yml ·
-#        release.yml)과 넘버링이 전혀 섞이지 않고, 새 `v*` 태그도 만들지 않으므로
-#        release.yml install-smoke/GitHub-Release 잡과 충돌 없음. 게이트는 여전히
-#        자체 PY-SMOKE 뿐(hexa `hx install` 과 완전 무관 — convergence release-yml-1
-#        의 "hexa 툴체인 결함이 hexa-free py 채널을 막으면 안 된다" 원칙 보존) — 그
-#        PY-SMOKE 에 이번 결함과 **동일 유형("eval verb 누락 배포")** 을 원천 차단
-#        하는 하드 assert(`--xbind`·`--xfan` 가 `anima-py evaluate --help` 에 존재)
-#        를 추가했다.
-#
-# 활성 조건: repo variable `PYPI_PUBLISH=true` + secret `PYPI_API_TOKEN` (release.yml
-#   과 동일 페어, 이미 세팅됨) — 어느 한쪽이라도 없으면 이 워크플로 전체가 dormant.
-
 name: pypi-release
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'VERSION'
+    paths: ['VERSION']
   workflow_dispatch:
 
 concurrency:
@@ -56,81 +11,42 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # ── pypi-publish — `VERSION` 파일 변경(G5 게이트를 통과해 실제로 main 에 실린
-  #     bump) 에 반응, 자체 PY-SMOKE 로만 게이트(hexa install-smoke 와 완전 독립
-  #     · release-yml-1). ──
-  pypi-publish:
-    name: PyPI publish (anima-python)
+  publish:
+    name: Publish anima-python
     if: ${{ vars.PYPI_PUBLISH == 'true' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     environment:
       name: pypi
       url: https://pypi.org/project/anima-python/
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
-      - name: Build sdist + wheel (root pyproject.toml · version←VERSION)
+          python-version: '3.12'
+      - name: Build and verify wheel
         run: |
           python -m pip install --upgrade build twine
-          # ⚠️ repo 의 committed `dist/` 는 hexa 배포 아티팩트(dist/_test/·dist/*.bin·
-          # dist/cert_gate/…)를 담아 python 표준 `dist/` 와 이름충돌한다 → `python -m build`
-          # 를 격리 outdir(dist_py)로 빼야 `twine check`/publish 가 non-python 파일(예:
-          # dist/_test → InvalidDistribution)에 걸리지 않는다.
           python -m build --outdir dist_py
           python -m twine check dist_py/*
-      - name: PY-smoke — install built wheel in clean venv + import + dispatch + eval-verb assert (hexa-free gate)
-        shell: bash
-        run: |
-          set -euo pipefail
-          # 이 게이트가 install-smoke 를 대체한다 — py 채널을 hexa 와 독립으로 검증.
-          # _bootstrap sys.path fix 가 깨지면(예전 `import anima` ModuleNotFoundError) 여기서
-          # 잡아 broken wheel 의 발행을 차단한다.
-          WHL="$(ls "$PWD"/dist_py/*.whl | head -1)"
-          python -m venv /tmp/pysmoke
-          /tmp/pysmoke/bin/pip install --quiet "$WHL"
-          # ⚠️ checkout 루트엔 anima_py/ SOURCE 가 있어 `python -m anima_py` 가 설치된 wheel
-          # 대신 CWD 소스(editable 레이아웃 → import anima 실패)를 로드한다 → 반드시 소스
-          # 그림자 밖(/tmp)에서 INSTALLED wheel 을 검증한다(console 스크립트는 CWD-무관).
+          python -m venv /tmp/anima-pypi-smoke
+          wheel="$(find "$PWD/dist_py" -maxdepth 1 -type f -name '*.whl' -print -quit)"
+          [ -n "$wheel" ]
+          /tmp/anima-pypi-smoke/bin/pip install --quiet "$wheel"
           cd /tmp
-          /tmp/pysmoke/bin/python -c "import anima_py; print('import anima_py OK')"
-          # canonical 디스패처(cli/anima.py)까지 import 체인이 해석되고 evaluate 가 디스패치돼야 한다.
-          out="$(/tmp/pysmoke/bin/anima-py evaluate --help 2>&1)"
-          printf '%s\n' "$out" | grep -qiE 'evaluate|reach|usage|ρ-AXON' || { echo "::error::anima-py evaluate --help degenerate"; printf '%s\n' "$out" | tail -20; exit 1; }
-          # ── eval-verb lockstep assert (직접 재발방지 — release-yml-2) ──
-          # 이번 결함의 정확한 재현조건: cli/evaluate.py 의 --xbind/--xfan fold 가 이
-          # help 배너에 있는데 PyPI 휠엔 없었다(stale VERSION). 그 fold 가 반드시 이
-          # 빌드된 wheel 에 실려있는지 하드 assert — 이후 어떤 새 eval verb 가 추가돼도
-          # 이 패턴을 따라 assert 를 늘리면 "verb 배포 누락"류가 구조적으로 막힌다.
-          printf '%s\n' "$out" | grep -q -- '--xbind' || { echo "::error::anima-py evaluate --help MISSING --xbind (wheel-content/VERSION lockstep broke — was this eval-verb fold left out of the published wheel?)"; printf '%s\n' "$out"; exit 1; }
-          printf '%s\n' "$out" | grep -q -- '--xfan' || { echo "::error::anima-py evaluate --help MISSING --xfan (wheel-content/VERSION lockstep broke — was this eval-verb fold left out of the published wheel?)"; printf '%s\n' "$out"; exit 1; }
-          if printf '%s\n' "$out" | grep -q -- '--workspace'; then
-            echo "::error::removed Python workspace scaffold is still exposed by the wheel"
-            printf '%s\n' "$out"
-            exit 1
-          fi
-          echo "PY-SMOKE PASS — anima-python wheel installs + import + dispatch OK, removed workspace verbs absent"
-      - name: Skip if this version already on PyPI (idempotent · no clobber)
-        id: gate
-        shell: bash
+          out="$(/tmp/anima-pypi-smoke/bin/anima-py evaluate --help 2>&1)"
+          printf '%s\n' "$out" | grep -q -- '--xbind'
+          printf '%s\n' "$out" | grep -q -- '--xfan'
+          ! printf '%s\n' "$out" | grep -q -- '--workspace'
+      - name: Check version availability
+        id: version
         run: |
-          set -euo pipefail
           ver="$(cat VERSION)"
           code="$(curl -s -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/anima-python/${ver}/json")"
-          if [ "$code" = "200" ]; then
-            echo "anima-python ${ver} already on PyPI → skip (bump VERSION for a new release)"
-            echo "publish=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "publish=true" >> "$GITHUB_OUTPUT"
-          fi
-      - name: Publish to PyPI (API token)
-        if: ${{ steps.gate.outputs.publish == 'true' }}
+          [ "$code" = 200 ] && echo "publish=false" >> "$GITHUB_OUTPUT" || echo "publish=true" >> "$GITHUB_OUTPUT"
+      - name: Publish
+        if: ${{ steps.version.outputs.publish == 'true' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
-          # 격리 outdir — repo 의 committed dist/(hexa 아티팩트)가 아니라 python 빌드만 업로드.
           packages-dir: dist_py

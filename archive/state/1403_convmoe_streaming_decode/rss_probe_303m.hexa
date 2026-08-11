@@ -1,8 +1,0 @@
-import "core/clm_decode.hexa"
-fn main() {
-    let p = "state/g6-retro303m-fals/retro303m.clm"
-    let gen = to_int(env_var("RSS_GEN"))
-    let t0 = now_ms()
-    let r = clm_decode_argmax(p, "the ", gen)
-    println("GEN=" + to_string(gen) + " ms=" + to_string(now_ms()-t0) + " text=" + to_string(r["text"]))
-}

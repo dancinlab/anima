@@ -1,18 +1,16 @@
 # ==========================================================================
-# ⛔ ENGINE-INTERNAL / DEPRECATED py-MIRROR — DO NOT RUN OR SCORE DIRECTLY
-# 측정/학습/서빙/직렬화는 cli/ 단일진입만: anima eval | train | serialize
-#   (canonical = hexa core/*.hexa 단일 SSOT; py 미러는 2026-06-28 폐기, DIRECTIONAL).
+# ⛔ ENGINE-INTERNAL — DO NOT RUN OR SCORE DIRECTLY
+# 측정/학습/서빙/직렬화는 `anima-py` 단일진입만 사용한다.
 # 이 파일을 `python3 core/engine_g.py` 로 직접 실행하거나 side-harness로 import-채점하면
 # = 단일진입 우회(#2603 위반) + terminal verdict 불가. cli/가 import하는 경로만 허용.
 # ==========================================================================
 import sys as _anima_entry_guard
 if __name__ == "__main__":
-    _anima_entry_guard.exit("⛔ engine_g.py 직접 실행 금지 — cli/ 단일진입(anima eval/train/serialize, canonical=hexa) 경유. #2603")
+    _anima_entry_guard.exit("⛔ engine_g.py 직접 실행 금지 — canonical `anima-py` 경유. #2603")
 
-"""core/engine_g.py — PY PRODUCTION ENGINE: byte-faithful 1:1 port of
-core/engine_g.hexa (Engine G — motivation + emit gate).
+"""core/engine_g.py — canonical Python Engine G motivation and emit gate.
 
-Per CLAUDE.md a_two_production_mirror. Closed-form spontaneous machinery: the
+Closed-form spontaneous machinery: the
 8-factor weighted motivation_score + emit/safety predicates. Values are
 byte-identical to the anima_alive PROACTIVE_THRESHOLD / weights (sum=1.0) lineage,
 so CORE and the chat daemon share one behaviour. brain.py couples this (G) with

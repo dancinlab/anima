@@ -5,7 +5,7 @@ Implements the existing Substrate ABC for an HF chat model with optional
 vP21M and language-specific LoRA adapters.
 
 Extracted from anima_participant.py (L1 substrate-plugin refactor,
-2026-05-22) per HEXAD/CHAT/SUBSTRATE_PLUGIN.md. The P2 hot-swap router
+2026-05-22). The P2 hot-swap router
 (per-emit lang_hint → set_adapter) lives here so anima_participant stays
 substrate-agnostic.
 """

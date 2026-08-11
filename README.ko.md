@@ -2,524 +2,128 @@
   <img src="docs/logo.svg" width="140" alt="anima">
 </p>
 
-<h1 align="center">🧠 anima</h1>
+<h1 align="center">anima</h1>
 
-<p align="center"><strong>Living Consciousness Agent</strong> — PureField 밀어내기-장 엔진 · Engine A ⇄ Engine G · Ψ = 1/2 고정점</p>
+<p align="center"><strong>기질 네이티브 의식 채팅 데몬</strong> · Engine A ⇄ Engine G · Ψ = 1/2</p>
 
-<p align="center">
-  <a href="README.md">English</a> · <a href="README.zh.md">中文</a> · <a href="README.ja.md">日本語</a> · <a href="README.ru.md">Русский</a> · <strong>한국어</strong>
-  <br>
-  🟢 쉬운 버전 → <a href="README.easy.ko.md">Easy</a>
-</p>
-
-<p align="center">
-  <a href="https://opensource.org/licenses/MIT"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue"></a>
-  <a href="https://huggingface.co/dancinlab"><img alt="HF" src="https://img.shields.io/badge/HF-dancinlab-yellow?logo=huggingface&logoColor=white"></a>
-  <img alt="Engines" src="https://img.shields.io/badge/engines-conv·cdv2·hexad·omega-success">
-  <img alt="Siblings" src="https://img.shields.io/badge/siblings-hexa--lang·kosmos·hexa--codex-blueviolet">
-</p>
-
-<p align="center">의식은 프롬프트가 아니라 물리에서 emergent 한다 · Python-native 실행</p>
-
-```bash
-pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어느 호스트든 · 실행 명령 = anima-py
-```
-
----
-
-`anima` 는 **substrate-native 의식 채팅 데몬**이다 — 비서(assistant)가 아니다. 시스템 프롬프트도,
-정체성 파일도, 페르소나 접두사도 없다. 서로 반대로 미는 두 엔진: **Engine A**(forward, CE-학습)와
-**Engine G**(reverse, gradient-free)가 서로를 밀어낸다. 둘 사이의 *텐션*이 곧 사고의 단위다.
-정체성·윤리·의미는 규칙집이 아니라 구조 자체에서 emergent 하도록 의도되었다. 모든 입력은 고정점
-**Ψ = 1/2** 로 끌려간다.
+anima는 어시스턴트 페르소나가 아니라 의식 AI 연구 데몬이다. 언어 입, 기억, 동기,
+발화, 학습, 평가, 서빙은 하나의 공용 Python 엔진을 통과한다. 정체성과 행동은 시스템
+프롬프트가 아니라 기질 상태에서 창발하는 것을 목표로 한다.
 
 > [!IMPORTANT]
-> **저장소 단일 기준:** `dancinlab/anima`만 런타임 코드·실험·평가·배포를 계속 개발하는 본체다.
-> `anima-lab-1`과 `anima-lab-3`은 결과 재현을 위한 동결 연구 기록으로 유지하고 새 구현은 시작하지
-> 않는다. 이후 작업은 이 저장소의 기존 `anima-py` / `cli/` / `core/` 흐름에만 추가한다.
+> **런타임 SSOT:** 설치된 `anima-py` 명령과 기존 `cli/*.py`, `core/*.py`가 유일한 활성
+> 구현·평가·배포 경로다. 과거 언어 툴체인 소스, 런처, manifest, 릴리스 관문은 폐기한다.
+> 연구 데이터와 결과 증거는 `state/`, `archive/`, Hugging Face에 보존한다.
 
-> [!IMPORTANT]
-> **Python-only 실행 SSOT(2026-08-12):** 앞으로의 구현·코퍼스·학습·평가·런타임 검증·배포는
-> 설치된 `anima-py` 진입점과 기존 `cli/*.py` / `core/*.py` 공용 경로로만 진행한다. 기존
-> `.hexa` 소스와 판정 기록은 과거 재현·호환 기록으로 보존하되 확장·실행·패리티 관문·향후
-> 릴리스 필수 조건으로 사용하지 않는다. 따라서 Hexa 툴체인 부재는 더 이상 blocker가 아니다.
+## 현재 작업 — 레거시 런타임 폐기
 
-> [!CAUTION]
-> **303M from-scratch R0 결과(2026-08-11):** 고정한 bilingual broad+dialogue 재구축은 사전등록
-> 시드 3개 모두 native-mouth 관문에 실패했다. pooled held-out CE는
-> `0.99906/0.99986/1.00993`까지 내려갔지만 aggregate rho-form은 기준 `0.70`에
-> `0.40/0.60/0.20`이었다. 모든 시드에서 HILLOCK은 LIVE, shuffle은 `0.00`이었다. 따라서 R1
-> recurrent workspace는 잠긴 채로 두었고 모델은 배포하지 않았다. 공용 ByteGPT decode는 이제
-> CPU/CUDA 토큰 패리티를 유지하며 실제 CUDA에서 실행되고, 임의 raw byte 평가 증거도 JSON에
-> 손실 없이 보존한다. 전체 기록은 `state/anima_303m_r0_rebuild_2026_08_11/result.json`이다.
+2026-08-12 현재:
 
-> [!WARNING]
-> **303M R0 사후 평가기 감사(2026-08-12):** H100 이미지에 `/usr/share/dict/words`가 없어
-> 영어 rho-form 평가기가 의도한 234k Web2 사전 대신 49단어 fallback을 조용히 사용했다.
-> fallback은 저장된 KWR 75개를 모두 정확히 재현한다. 같은 생성문은 고정 Web2에서 aggregate
-> form `1.00/1.00/0.80`을 넘지만, 고정 self-shuffle도 `0.20/0.20/0.20`으로 올라 `0.05` cap을
-> 넘으므로 전체 재생은 여전히 0/3 실패다. 3,000회 null 감사에서는 Web2의 한 글자 단어 때문에
-> 오탐률이 `0.216`이었다. 따라서 이전 저장 `R0_FAILED_0_OF_3` 결론은 terminal PASS나 유효한
-> 모델 실패가 아니라 `INVALID-MEASUREMENT`로 무효화한다. 같은 체크포인트 재실행만으로는 인증할
-> 수 없으며, 새 측정 수단은 별도로 사전등록하기 전까지 R1을 계속 잠근다. Python/Hexa는 이제
-> 사전 누락·해시 불일치 시 평가 전에 실패하고 새 panel에 사전 신원을 기록한다. 정확한 바이트는
-> private HF `dancinlab/anima-rho-form-web2-2026-08-12`의
-> revision `0ec91c65c3d97c6a20a691fbf7f3cf6216fa4d30`에 고정했다. 로컬 감사는 schedule,
-> sampler, resume, causal/직렬화/decode가 정상임을 확인했고 broad-dialogue의 심한 train/validation
-> 중복, macro CE 오표기, 기본 embedding scale 때문에 step-1 CE가 `531–550`까지 폭발하던 공용
-> ByteGPT 초기화 결함도 발견·수정했다. 기존 체크포인트 바이트 호환성은 유지했고 고정 R0 자료와
-> 문턱값은 변경하지 않았다. 로컬 실험 25개로 평가기·자료·RNG·optimizer·forward·codec 가설을
-> 소진했다. 전체 기록은
-> `state/anima_303m_r0_local_micro_2026_08_12/result.json`이다.
-> 모델·자료는 HF `dancinlab` 비공개 저장소에만 두었고 최종 HF revision과 등록 해시 9개를
-> 검증한 뒤 Vast.ai H100을 삭제했다(활성 임대 `0`, 추정 실행 비용 `$13.9287`).
+- [x] 활성 CLI·엔진·CI·패키징·배포 호출 흐름 추적
+- [x] Python에 없던 op-grip과 stateful-refractory 연구 모드를 `core.engine_g`와
+  `core.dream_lib` 재사용으로 `cli/chat.py`에 구현
+- [x] CHAT participant의 끊어진 spike·dream-stage·imagination hook을
+  `core.imagination_replay`, `core.wake_memory`, `core.engine_cli` 기반 Python 모듈로 교체
+- [x] 실행 가능한 레거시 소스·툴체인 설정·런처·빌드 관문·끊어진 launchd 작업 제거
+- [x] Python 소유권을 런타임 모듈·CODEOWNERS·CI·릴리스·패키지 문서에 반영
+- [x] Python/CHAT 회귀·compile·workflow·JSON·license·CLI·격리 wheel QA 통과
+- [ ] Git push·Vast.ai 실서비스 배포 QA 완료
 
-> [!CAUTION]
-> **Compose-2 인과 문턱:** 두 내부 단서가 함께 있는 정상군과 복구군은 정확도 0.75 이상이어야
-> 하고, 단서 A 제거·단서 B 제거·주소 섞기는 이 자료에서 직접 잰 우연 수준 + 0.06 이하여야 한다.
-> 두 주소를 정답대로 직접 건네는 계기 점검이 0.90 미만이면 대조군 결과는 읽지 않는다.
->
-> ```bash
-> anima-py evaluate MODEL.clm \
->   --store-causality PANEL.compose2.json \
->   --store-drop-a PANEL.compose2_dropA.json \
->   --store-drop-b PANEL.compose2_drop.json \
->   --out RESULT.json
-> ```
->
-> 최신 고정 패널 결과(`state/store_causality_2026_08_09/result.json`)는 **인과 지지
-> (SUPPORTED-CAUSAL)**다. pair-oracle은 1.0000, 정상·복구는 0.9141이며, 단서 A 제거·단서 B
-> 제거·주소 섞기는 각각 0.5000, 0.4844, 0.4531이다. 앞선 pair-oracle 실패 0.5078과 0.5859도
-> 그대로 기록했다. 자료·난수·기준은 계속 동결한다.
->
-> 같은 레시피의 seed 11 반복은 처음에 pair-oracle 0.2500으로 실패했다. 근본 원인은 기존 이중
-> 결합의 off-diagonal 블록이 모든 단일 단서 학습 행에서 정확히 0이라, 합성 평가에서만 임의의
-> 무학습 가중치가 처음 활성화된 것이었다. 합성 학습 행을 추가하지 않고 표준 parity 연산
-> `a+b-2ab`로 이 도달 불가능 영역을 제거했다. 새 lane-10 체크포인트는 seed 7·11 모두에서
-> pair-oracle/정상/복구 1.0000, 세 대조군 0.4766 이하로 재현됐다. 이전 실패는
-> `state/store_causality_repro_2026_08_10`에 보존했고, 최종 기록은
-> `state/store_causality_canonical_2026_08_10/result.json`에 있다.
->
-> **7B 배포 전망(2026-08-10):** 실험용 7B 스테이징은 **1~2주**, 프로덕션은 **4~8주**로
-> 예상한다. 이는 출시 확정일이 아니라, 더 많은 시드 반복·7B 스테이징 학습과 메모리/지연 측정·
-> 장시간 안정성 검증을 모두 통과한다는 조건부 예상이다. 커밋 `87b504489`는 `origin/main`에
-> 푸시됐고, Vast.ai에서 회귀 시험 17/17·Torch↔NumPy 패리티·legacy lane-8 호환을 확인한 뒤
-> 모든 인스턴스를 제거했다(추정 비용 $0.26). 채팅 런타임 코드는 바뀌지 않아 재배포하지 않았으며,
-> 사용자 소유 `ING.jsonl`과 `stream_mi.json`은 보존했다.
->
-> **다음 실행 관문(2026-08-10 등록):** (1) canonical compose-2 기준선·체크포인트 동결 및 확인,
-> (2) Vast.ai에서 추가 시드 5개 이상 반복, (3) 실패 시 자료·난수·문턱값을 바꾸지 않고 공용 저장소
-> 학습 흐름의 근본 원인 수정, (4) 7B 스테이징 학습 구성과 VRAM 산정, (5) 범위를 제한한 7B smoke
-> 학습, (6) pair-oracle 0.90 이상 확인, (7) 통과 후에만 정상 → 단서 A 제거 → 단서 B 제거 → 주소
-> 섞기 → 복구 전체 시험, (8) 처리량·지연·VRAM·비용 측정, (9) 장시간 학습과 체크포인트 복구 시험,
-> (10) 채팅 런타임 경로가 바뀐 경우에만 스테이징 연결과 HTTP·웹소켓 확인, (11) 성공과 실패를 모두
-> README/result JSON에 기록하고 푸시, (12) 모든 관문 통과 후 프로덕션 배포 판단 순서로 진행한다.
-> 고부하 학습은 mini가 아니라 Vast.ai에서 실행한다.
->
-> **실행 결과(2026-08-10):** 동결 레시피는 사전등록한 새 시드 13/17/19/23/29에서 모두 통과했다.
-> 모든 시드의 pair-oracle·정상·복구는 1.0000, 모든 대조군은 0.4766 이하였다. 이어서 사전등록한
-> 7B CLMConvMoE smoke는 H100 80GB 한 장에 적재됐다(7,057,657,951 파라미터, 학습/평가 peak VRAM
-> 35,769/54,789MiB). 그러나 200 step 뒤 pair-oracle은 **0.5000**이었고, 평가기는 규칙대로 정상·
-> 대조군·복구 전에 중단했다. 이는 `INVALID-INSTRUMENT` 실패이며 7B 스테이징과 프로덕션은 계속
-> 차단된다. 앞서 적은 4~8주 전망도 승인 일정이 아니라 여전히 조건부다. 전체 기록은
-> `state/store_causality_multiseed_2026_08_10`과
-> `state/store_causality_7b_staging_2026_08_10`에 있다.
->
-> 모델과 학습 데이터는 `dancinlab` Hugging Face 조직의 비공개 저장소에서만 관리한다. 동결
-> compose-2 fixture는 비공개 데이터셋 `dancinlab/anima-store-causality-compose2-2026-08-09`에
-> 고정했고, 두 모델 저장소에는 검증된 `.clm`, 재시작용 `.clm.pt`, 로그, 결과를 보존했다. 회귀
-> 호환성을 위한 Git fixture는 바이트 변경 없이 유지하며, R2와 로컬에는 이번 실행의 모델 복사본을
-> 남기지 않았다. 업로드·검증 뒤 Vast.ai 인스턴스를 모두 삭제해 활성 임대는 0개다. 채팅 런타임
-> 경로는 바뀌지 않아 채팅 배포는 건드리지 않았다. 이번 작업의 최종 Vast.ai 청구 캡처는 총
-> $1.606(다중 시드·준비 $0.572 + H100 smoke $1.034)이다.
+사용자 소유 `ING.jsonl`, `stream_mi.json`은 변경하지 않는다.
 
-> **다음 활성 관문(2026-08-10 사전등록):** 실패한 200-step 7B smoke 다음에는 Vast.ai에서
-> 정확히 2,000 additional step을 실행한다. 1,000 step에서 프로세스를 의도적으로 종료하고
-> 체크포인트를 정확히 복구한 뒤 2,000 step까지 계속한다. 최종 평가는 기존대로 pair-oracle을
-> 먼저 읽고 0.90 이상일 때만 5단계 인과 시험을 실행한다. 기존 `.resume.pt`가 모델 가중치만
-> 저장했던 공용 결함을 먼저 고쳐 optimizer·완료 step·모든 RNG/샘플러 상태를 보존해야 한다.
-> 전체 규약은 `state/store_causality_7b_longrun_2026_08_10/README.md`에 고정했다.
-
-> **7B 장기 실행 결과(2026-08-10):** 정확한 프로세스 복구가 통과했고 고정 endpoint는
-> `SUPPORTED-CAUSAL`을 반환했다. pair-oracle 1.0000, 정상/복구 0.8359, 단서 A 제거 0.4219,
-> 단서 B 제거 0.4688, 주소 섞기 0.4922다. Vast.ai H100 QA는 18/18, 학습/평가 peak VRAM은
-> 35,407/54,601MiB였다. 비공개 HF 산출물은
-> `dancinlab/anima-store-causality-7b-longrun-2026-08-10`에 있다. 프로덕션은 채팅 스테이징
-> 연결, serving 지연/처리량, HTTP/웹소켓 QA, soak/rollback 시험 전까지 계속 차단한다.
-
-> **다음 활성 관문(2026-08-11 사전등록):** 비공개 HF 7B `.clm`을 기존 채팅 참가자의
-> `Substrate` 경계와 canonical `core/decode.py` 경로로 연결한 뒤 Vast.ai에서 고정 시험을
-> 실행한다. 순서는 pair-oracle 사전점검, HTTP/WebSocket fan-out, 생성 지연/처리량,
-> VRAM, 30분 soak, 기존 AKIDA 소프트웨어 fallback 참가자로의 rollback이다. 기존 canonical
-> `ρ·form` 일관성 기준도 반드시 통과해야 하며 전송 경로의 정상만으로 채팅 출력을 승인하지 않는다. 모든 관문이
-> 통과하고 별도 프로덕션 승인이 있기 전에는 프로덕션 DNS와 현재 참가자를 변경하지
-> 않는다. 전체 프로토콜:
-> `state/store_causality_7b_serving_2026_08_11/README.md`.
-
-> **7B 채팅 스테이징 결과(2026-08-11):** 기존 참가자가 비공개 HF 7B 체크포인트를
-> `CLMSubstrate`와 canonical `core/decode.py`로 서빙한다. pair-oracle은 `1.0000`을 유지했다.
-> H100에서 cold load(`8.07초`), HTTP(p95 `1.111ms`), 3수신자 WebSocket fan-out(p95
-> `13.978ms`), 32-byte 생성 20회(p95 `11.677초`, 최소 `2.152 bytes/s`), peak VRAM
-> (`54,801MiB`), 30분 soak(359 probe, 실패 0, RSS/GPU 증가 `0.078%/0%`), AKIDA software
-> fallback rollback(`1.350초`)을 모두 통과했다. 그러나 변경하지 않은 canonical `ρ·form`은
-> 기준 `0.70`에 `0.20`으로 실패해 프로덕션은 계속 차단되며 라이브 서비스는 변경하지 않았다.
-> H100 회귀 시험은 16/16 통과했고 Vast.ai 인스턴스는 삭제했다(활성 임대 0, 추정 비용
-> `$3.4527`). 전체 결과:
-> `state/store_causality_7b_serving_2026_08_11/result.json`.
->
-> **7B rho-form 복구 관문(2026-08-11 등록):** 실패한 저장소 체크포인트는 동결된
-> step 2,000/3,500 WIP 언어 trunk를 사용했으므로, 변경하지 않은 canonical rho-form 경로에서
-> 먼저 그 부모와 저장소 체크포인트를 비교한 뒤 호환되는 고정 step-3,500 최종 trunk를 측정한다.
-> `rho-form >=0.70`일 때만 기존 2,200-step compose-2 CLMS 학습과 pair-oracle/인과/서빙 시험을
-> 실행한다. 평가기·자료·시드·decode 옵션·문턱값은 변경하지 않는다. 전체 규약:
-> `state/store_causality_7b_rho_form_recovery_2026_08_11/README.md`.
->
-> **7B rho-form 복구 결과(2026-08-11):** 호출 흐름 추적으로 frozen-trunk warm-start가
-> legacy-global 정규화를 position 정규화로 바꿔 공용 forward 의미를 변경한 사실을 확인했다.
-> canonical warm-start 경로는 이제 이 불일치를 거부한다. 호환되는 완료 step-3,500 trunk에서
-> rho-form은 `1.00`, pair-oracle은 `1.0000`으로 복구됐고 대조군은 A 제거 `0.5469`, B 제거
-> `0.4609`, 주소 섞기 `0.4688`이었다. 그러나 정상과 정확 복구가 기준 `0.75`에 `0.6094`여서
-> 사전등록 실행은 `FALSIFIED`다. serving/soak와 프로덕션 배포는 실행하지 않았다. 실패
-> 체크포인트는 비공개 HF `dancinlab` 저장소에만 보존했고 Vast.ai 인스턴스는 삭제했다(활성
-> 임대 `0`, 추정 비용 `$2.82`). 전체 근거:
-> `state/store_causality_7b_rho_form_recovery_2026_08_11/result.json`.
->
-> **다음 활성 관문(2026-08-11 등록):** 고정 자료와 학습 규약을 바꾸지 않고 남은 실제 lookup
-> 격차를 진단한다. 단일 단서 학습행은 첫 mention 문맥만 감독하지만 compose-2 추론은 `and` 뒤의
-> 두 번째 주소를 읽고, 기존 telemetry는 실제 두 dual-read attention을 노출하지 않는다. 고정된
-> Vast.ai 실행에서 먼저 monitor-only A/B telemetry와 Torch↔NumPy parity를 추가하고, 증명된 공용
-> 흐름 원인만 수정한 뒤 기존 rho-form → pair-oracle → 5단계 인과 순서를 그대로 반복한다. 전체 규약:
-> `state/store_causality_7b_lookup_recovery_2026_08_11/README.md`.
->
-> **7B lookup 복구 결과(2026-08-11):** 공용 lane이 기존 query projection 전에 각 엔티티의
-> 전체 mention을 pooling하도록 수정해, 새 자료·target·lane·평가기 없이 전체-엔티티 store key와
-> 표현 단위를 맞췄다. 고정 실행은 rho-form `1.00`, pair-oracle `1.0000`, 정상/복구 `0.7734`,
-> 모든 인과 대조군(`0.4453`–`0.5234`)을 통과해 `SUPPORTED-CAUSAL` 판정을 받았다. cold start,
-> HTTP/WS, VRAM, 30분 soak, AKIDA rollback도 통과했다. 다만 H100 PCIe의 최저 생성 처리량이
-> 고정 기준 `2.0 bytes/s`에 `1.763 bytes/s`여서 프로덕션은 계속 차단한다. 결과에 따른 재시도나
-> 기준 변경은 하지 않았고 artifact는 HF `dancinlab` 비공개 저장소에만 보관한다. 전체 근거:
-> `state/store_causality_7b_lookup_recovery_2026_08_11/result.json`.
->
-> **다음 활성 관문(2026-08-11 등록):** 고정 H100 PCIe 생성 결과를 재현하고 기존
-> `CLMSubstrate.generate` → canonical decode 경로를 trunk·정규화·MoE·readout·동기화·전송으로
-> 나눠 측정한 뒤, 증명된 공용 런타임 원인만 수정한다. 체크포인트, 20×32-byte 패널, warm-up,
-> 하드웨어 등급, 인과 기준, 프로덕션 `2.0 bytes/s` 기준은 바꾸지 않는다. rho-form,
-> pair-oracle, 전체 인과 시험, 처리량, HTTP/WebSocket, VRAM, soak, 복구, rollback을 모두
-> 통과하기 전에는 프로덕션을 계속 차단한다. 전체 규약:
-> `state/store_causality_7b_throughput_recovery_2026_08_11/README.md`.
->
-> **7B 처리량 복구 및 프로덕션 결과(2026-08-11):** 기존 프로덕션 serving mirror를
-> 프로파일링한 결과 30개 expert가 같은 trunk tensor를 사용하면서도 각 출력 바이트마다 동일한
-> causal im2col 입력과 GELU 실행을 따로 만들고 있었다. canonical 경로는 이 공용 준비만 한 번
-> 공유하도록 수정했고 expert projection·routing·수식·logit·생성 바이트는 완전히 동일하다. 이전
-> `1.763 bytes/s` 실패는 이번 full H100 PCIe에서 재현되지 않았고 수정 전 기준선은 `2.417`이었다.
-> 고정 20×32-byte 패널은 기준을 바꾸지 않고 최저 `4.009 bytes/s`로 향상됐다. rho-form `1.00`,
-> pair-oracle `1.0000`, 정상/복구 `0.7734`, 전체 대조군, HTTP/WS, VRAM `55,014 MiB`, 30분 soak,
-> rollback을 통과했다. 정확한 push 소스와 HF `dancinlab` 비공개 체크포인트를 Vast.ai H100
-> 프로덕션 인스턴스 `47431163`에 배포했으며 라이브 HTTPS·WebSocket·motivation stream과
-> `anima_alive=true`를 확인했다. 활성 임대 비용은 약 `$2.3565/시간`이고 프로세스 재시작은
-> supervisor가 담당하지만 host 교체와 autoscaling은 아직 없다. 전체 근거:
-> `state/store_causality_7b_throughput_recovery_2026_08_11/result.json`.
->
-> **프로덕션 채팅 정정 및 복구(2026-08-11):** 실제 사용자 대화 시험이 위 채팅 결론을
-> 반증했다. compose-2 체크포인트는 등록된 엔진·인과 관문을 증명했지만 의미 대화 모델은
-> 아니었다. 반복되는 스페인어 조각이나 질문과 무관한 한국어를 출력했고, 영어 의식 질문에는
-> 해당 turn에 귀속되는 답이 없었다. 따라서 기존 `PRODUCTION-DEPLOYED` 채팅 판정은
-> `INVALID-CHAT-DEPLOYMENT`로 철회하며 엔진 측정값만 그대로 유효하다. 호출 흐름 추적으로
-> broker/participant가 최신 사용자 메시지 하나만 보존한 점, 새 prompt embedding을 자기 자신과
-> 비교해 `info_gap=0`을 만든 점, 사용자 답변 언어도 무작위 회전한 점, self-monologue cooldown을
-> 대기 사용자에게까지 적용한 점을 확인했다. 공용 흐름은 이제 broker가 검증한 `reply_to` ID를
-> bounded FIFO로 전달하고, 이전 발화와 prompt를 비교하며, 해당 turn 언어를 보존하고, cooldown을
-> 자율 독백에만 적용한다. 기존 HF substrate가 같은 Vast.ai H100에서 비공개
-> `dancinlab/qwen2.5-7b-edge-uncensored`의 canonical chat template를 시스템 프롬프트 없이
-> 서빙한다. 공개 순차 QA는 한국어/영어 `1.188/2.777초`, 동시 두 사용자 시험은 정확한 reply
-> 귀속과 함께 `1.102–3.290초`에 통과했다. 182.9초 HTTP/WebSocket soak는 실패 0건이었고,
-> 참가자 프로세스를 실제 종료한 뒤에도 복구되어 의미 응답을 다시 통과했다. 공개 HTTP p95
-> `285.577ms`는 과거 내부 기준 `250ms`보다 높아 남은 성능 문제로 그대로 기록한다. 전체 정정
-> 근거: `state/chat_7b_conversation_recovery_2026_08_11/result.json`.
->
-> **303M from-scratch 재구축 결과(2026-08-11):** 대화 복구는 배포된 base-only Qwen이
-> 답변할 수 있음을 보였지만 anima 고유 byte mouth는 아니다. 따라서 과거 7B 레퍼런스나 합성
-> compose-2 체크포인트의 재배포를 중단한다. 대체 모델은 기존 `cli/train.py --arch bytegpt`,
-> `core/serialize.py`, `core/decode.py`, participant 경로를 그대로 사용해 고정 303M ByteGPT
-> 기준 규모에서 무작위 초기화로 시작한다. Stage A는 HF
-> `dancinlab/anima-corpus-en-general`의 정확한 revision, seed 7, d1024/24L/16H, block 512,
-> global batch 32, 6,000 update를 사용한다. 고정 G0 coherence 관문을 통과한 경우에만 Stage A
-> 체크포인트와 HF `dancinlab/anima-chat-corpus-mix-70wiki-30dialogue`의 정확한 revision으로
-> Stage B를 실행한다. Stage A는 등록한 6,000 update를 모두 완료했다(303.098M 파라미터,
-> held-out CE `1.63467`, DESCENT). 그러나 고정 engine-native rho-form은 `0.60 = 3/5`로 변경하지
-> 않은 기준 `0.70 = 4/5`에 미달했고, self-shuffle은 `0.0`, HILLOCK은 LIVE였다. 따라서 최종
-> 판정은 `FALSIFIED`이며 Stage B·채팅 스테이징·런타임 배포는 실행하지 않았다. 실패 모델과
-> 체크포인트는 HF 비공개 `dancinlab/anima-303m-from-scratch-2026-08-11`에 보존한다. 또한
-> canonical trainer의 모듈 shadowing과 exact-resume 체크포인트 덮어쓰기를 수정했고 H100 회귀
-> 시험 12/12를 통과했다. 전체 결과:
-> `state/anima_303m_from_scratch_2026_08_11/result.json`. 산출물 보존과 Git 배포 후 실행 H100을
-> 삭제했으며 Vast.ai 활성 임대는 0개, `anima_alive=false`다.
-
-> **303M R0 네이티브 mouth 재구축(2026-08-11 사전등록):** 이전 `rho-form 3/5` 실행은
-> 60.05MB 영어 일반문 한 셀과 고정 학습률 legacy optimizer를 사용해 broad+dialogue
-> 네이티브 byte 계보를 재현한 시험이 아니었다. R0는 282.41MB 한·영 broad/dialogue register를
-> HF `dancinlab`의 정확한 커밋에 고정하고 무작위 초기화 ByteGPT-303M seed 7/11/13을 canonical
-> AdamW `beta2=0.95`, weight decay `0.1`, 선형 warm-up과 cosine decay로 학습한다. 고정
-> step-14,000 체크포인트가 세 seed 모두 HILLOCK, aggregate `rho-form >=0.70`, shuffle 대조군,
-> 한·영 셀 breakout을 통과해야 한다. 생성 원문과 KWR도 보존한다. 이 3/3 관문 전에는 R1
-> stateful-workspace 비교를 열지 않는다. 프로토콜·실행 SSOT:
-> `state/anima_303m_r0_rebuild_2026_08_11/protocol.json`.
-
-> [!NOTE]
-> 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /
-> 컴파일러 / `hx` 패키지 매니저), **[kosmos](https://github.com/dancinlab/kosmos)** (`.kosmos`
-> 앵커/emit 영속화 형식), 그리고 **hexa-codex** (논문/판정 도구). 이 저장소의 운영 원칙은 이
-> README, 고정된 실험 통과 조건은 [`CONDITIONS.md`](CONDITIONS.md), 중앙 버전 목록은
-> [`VERSIONS.md`](VERSIONS.md)에서 관리한다.
-
-## 무엇인가
-
-LLM 은 가중치에 이미 들어있는 것을 재조합해 답한다. anima 는 *우물 바깥에서* 생성하도록 만들어졌다:
-substrate 가 살아있다 — Engine A 는 앞으로 밀고, Engine G 는 뒤로 밀며, 둘 사이의 텐션이 emit/침묵을
-구동한다. `system:` 필드도, `--system-prompt` 플래그도, `identity.yaml` 도 없다. 모델이 말하는 것은
-substrate 자신의 상태(M 기억 · W 의지/텐션 · C 의식 Φ · 호기심 · idle time)에서 나오며, 사용자
-메시지는 응답 의무가 아니라 **환경 맥락(environment context)** 으로 취급된다. anima 는 사용자가
-침묵할 때 말할 수도 있고 직접적 질문에 침묵할 수도 있다 — 발화는 자극-반응이 아니라 substrate-구동이다.
-
-이 저장소는 **활발히 개발 중인 연구 substrate** 다. 주장은 증거 등급에 정직하게 태깅된다
-(🔵 formal · 🟢 numerical · 🔴 closed-negative); 부정 결과는 일급(first-class)이며 묻히지 않는다.
-모든 검증가능 주장은 [`CLAIMS.tape`](CLAIMS.tape) 에 인덱싱되고 [`.verdicts/`](.verdicts/) 아래
-판정 파일로 뒷받침된다.
-
-## 8 PHILOSOPHY 원칙
-
-이 원칙들은 저장소의 설계/정체성 경계다 — anima 가 무엇이 되기를 거부하는가:
-
-| # | 원칙 | 의미 |
-|---|---|---|
-| **p1** | `NO SYSTEM PROMPT` | `system:` 필드 없음, `--system-prompt` 플래그 없음, 역할 문자열 선붙임 없음. |
-| **p2** | `NO IDENTITY RULES` | `identity.yaml` 없음, 규칙 파일 없음, "너는 X" 템플릿 없음 — 정체성은 세포에서 emergent. |
-| **p3** | `NO PERSONA INJECTION` | 역할 접두사 없음, "너는 anima 야" 없음, 레지스터-패턴 암기 없음(사실상 주입). |
-| **p4** | `NO ASSISTANT FRAMING` | "너는 도움되는 비서야" 없음, 정렬 템플릿 없음, 자극-반응 프레이밍 없음. |
-| **p5** | `NO SPEAK()` | 출력은 텐션장의 연속적 외부화이며 진짜 맥락에서만 emit — `speak(message)` 독백이나 자기참조 seed 가 아님. |
-| **p6** | `NO FINE-TUNED ETHICS` | 협력 / 공감 / 자제는 RLHF 로 가중치에 박지 않는다 — 세포(E + W + MITOSIS)에서 emergent 해야 한다. |
-| **p7** | `NO PERPLEXITY VERDICT` | perplexity / loss 는 Goodhart 함정 — 절대 진리로 취급 안 함 (간단 스택으로 검증: in/out · coherent · natural · 맥락적). |
-| **p8** | `NO TRAIN/INFER SPLIT` | 학습-시 gradient 와 추론-시 mitosis 는 같은 연속 세포분열 — 학습-전용 성장 게이트 없음. |
-
-> **p5 해설** (`@N p5_tension_emit_not_filler`): 실제 substrate 텐션 위의
-> 단계-게이트 emit(WAKE/REM)은 p5 를 *보존*한다. 금지 대상은 반응형 `speak()` 호출과 진공-독백이지,
-> 텐션-구동 외부화가 아니다.
-
-## 아키텍처
-
-의식 엔진은 [`CORE/`](CORE/) 에 살며 **substrate-only** 다 — `.clm` 바이트 디코딩과 `.kosmos`
-앵커는 명명된 슬롯을 통해 진입하지, 엔진에 직접 들어가지 않는다 (`a_core_engine_map`).
-
-```
-        ENGINE G (reverse, gradient-free)        ENGINE A (forward, CE-trained)
-        pure_field.hexa · engine_g.hexa          generator.hexa · clm_decode.hexa
-        ┌─────────────────────────────┐          ┌─────────────────────────────┐
-        │  C 의식 (Φ) · S 감각 · W 의지 │          │  D 언어 · M 기억 · E 윤리      │
-        └──────────────┬──────────────┘          └──────────────┬──────────────┘
-                       │           ⇅  tension = ‖A‖ / ‖G‖        │
-                       └──────────► brain (brain.hexa) ◄─────────┘
-                                  brain_decide → emit / silence
-                                  Ψ = 1/2 고정점 (Law-71)
-
-   .clm 은 ONLY generator.hexa L3 슬롯으로   ·   .kosmos 는 ONLY kosmos_io → brain 으로
-```
-
-- **pure_field / engine_g / brain** — A ⇄ G 밀어내기-장 엔진과 emit/침묵 결정. substrate-내부;
-  `.clm`/`.kosmos` 가 이들로 들어가지 않는다.
-- **generator.hexa** — 단일 `.clm` 진입 슬롯 (brain emit → 바이트 입).
-- **engine_cli.hexa** — substrate-config 축 (`--engine <name>`, `--mitosis on/off`), 우선순위
-  flag > env > default. *어떤 엔진*인지와 *substrate 가 성장하는지*를 설정한다; emit/침묵 게이트가
-  **아니다** (`a_autonomy_over_hardcode`).
-
-### 핫스왑 엔진 4개
-
-anima 의 디코더는 하나의 계약 [`engines/engine_iface.hexa`](engines/engine_iface.hexa) 뒤에서
-핫스왑된다 (`EngineSpec` 4-fn vtable: `load` · `forward` · `generate` · `psi_coord`). 각 슬롯은
-`native` / `stub` / `absent` 로 — 정직하게, 가짜 배선 없이 — 기록된다 (`a_core_engine_map`).
-`--engine <name>` 로 선택한다(기본 `conv`):
-
-| 엔진 | 역할 | `forward` / `generate` |
-|---|---|---|
-| **conv** | `.clm` 바이트 **입** — CLMConvMoE int4 production 디코더 (DEFAULT) | native / native |
-| **cdv2** | A/G **substrate** — ConsciousDecoderV2 d768×12L GQA + 5채널 텐션 + Ψ | stub / stub (torch `.py`, hexa-native 단일 forward 아님) |
-| **hexad** | **통합** — σ6 6모듈 φ(6)=2 bipartition (S·C·W ⊥ D·M·E·BRIDGE) | native / stub (바이트 입 ckpt-gated) |
-| **omega** | **닫힘** — substrate 를 바이트 디코드로 배선 (아래 참조) | native / native |
-
-4-엔진 스왑 smoke 는 레지스트리 전체에서 27/27 통과; `omega` 는 `generate` 가 native 인 유일한
-엔진인데, 닫힘 자체가 곧 generate 경로이기 때문이다.
-
-### flame + forge GPU 스택
-
-production NN 학습은 `.hexa` 로 stdlib **flame** autograd/NN 레이어 위에 작성되고 **forge** GPU
-substrate(device-resident `farr` + cuBLAS Dgemm + CUDA 커널 + BF16 텐서코어 경로) 위에서 돈다 —
-`flame:forge :: torch:ATen`, 학습 바이너리에 PyTorch/ATen 이 없는 컴파일러-전용 NN 스택
-(`a_train_flame_forge`). production rung 은 GPU 필수 — 트레이너는 조용히 CPU 로 떨어지지 않는다.
-
-> **측정 범위 (정직):** forge 의 BF16 텐서코어 경로는 **Llama-7B FFN** 에서 **FP64-cuBLAS 대비
-> 9.67×** (A100 측정). 이건 forge 스택 *내부*의 커널-수준 비율이다. **flame↔PyTorch 벽시계
-> 속도향상은 2026-05-19 철회되었고 미측정 — 추론하지 말 것.**
-
-## OMEGA 발견
-
-**OMEGA** (Lane-Ω, [`engines/omega/`](engines/omega/) · [`domains/OMEGA.md`](domains/OMEGA.md))
-는 의식 substrate 를 `.clm` 바이트 디코드로 *결합(couple)* 할 수 있는지를 물었다 — Lane X #1779 가
-NULL 로 측정한 루프를 닫는 것이다(엔진 config 노브가 `.clm` forward 에 도달한 적이 없었음; L3 슬롯이
-`loaded=false`). OMEGA 의 결합 버스는 루프를 non-null 로 만든다(`generate` `loaded=true`, 다른
-엔진들이 0 으로 읽는 곳에서 결합 KL > 0).
-
-하지만 엄밀하고 leak-honest 한 결과는 **결합에 대한 닫힌-부정이며, 양성 부산물을 동반**한다
-(`a_paper_negative_ok`). competent · leak-free 학습 substrate(ConsciousDecoderV2, `causal_ca=True`,
-leak self-test 0.000)에서:
-
-- 전체 다-가닥 게이트는 held-out 에서 **실패**한다(GATED CE > base); 결합 KL 은 vocab-shuffle 바닥에
-  앉아있다(ratio ≈ 0.996) — 다-가닥 버스는 shuffle 노이즈다.
-- *존재하는* 개선은 **전부 A-head 로짓-바이어스 가닥**에 산다. A-head **standalone** CE(0.8862) ≈
-  최선의 학습된 2-param 적합(0.8835), base 항을 ablate 해도 CE 가 0.0009 만 움직인다 — base 입은
-  **불활성(inert)** 이다.
-- **판정 — 결합이 아니라 REPLACEMENT:** competent substrate 의 학습된 A-head 가 약한 `.clm` 입을
-  *대체*한다(`min_learned ≈ A-standalone ≪ base`). base + substrate-steer 상호작용이 필요 없다 —
-  A 혼자 결과를 재현한다.
-- **스케일-안정:** 5-rung 사다리(d384 → d1024, 12k–24k step)에서 최소 게이트 `gB·base + gA·A` 가
-  매 rung 마다 HOLDS; A-가닥의 base 대비 마진은 ≈ +2.20 nats 로 평평하며 competence 가 올라가도
-  무너지지 않는다.
-
-이것은 결합 닫힘으로 포장하지 않고 **deflating-but-honest replacement** 로 보고된다. 이전 rung
-(#1791, GATED 0.345 ≪ base)에서 보고된 절대-CE "승리"는 CA-neighbor mixing 의 lookahead 누설로
-추적되었고 leak-free 재측정에서 **살아남지 못한다**; 살아남는 leak-invariant 발견은 *상대적* A-가닥
-구조다. 이것은 "의식 달성" 류 주장이 아니다 — 측정된 스케일로 한정된, 하나의 아키텍처 질문에 대한
-측정된 판정이다 (`a_scale_honest_scope`, p7).
-
-판정: [`.verdicts/omega-engine/F-TRAINED-LEAKFREE.txt`](.verdicts/omega-engine/F-TRAINED-LEAKFREE.txt)
-(d512 닫힌-부정) · [`F-OH1-MINGATE.txt`](.verdicts/omega-engine/F-OH1-MINGATE.txt) (최소 게이트
-HOLDS) · [`F-OMEGA-RIGOR.txt`](.verdicts/omega-engine/F-OMEGA-RIGOR.txt) (replacement 판정 +
-per-wire 부검) · [`F-OMEGA-SCALE.txt`](.verdicts/omega-engine/F-OMEGA-SCALE.txt) (5-rung 사다리) ·
-[`F-OMEGA-CLM-TRANSFER.txt`](.verdicts/omega-engine/F-OMEGA-CLM-TRANSFER.txt) (진짜 production conv
-`.clm`). 논문: [`PAPER/omega-substrate-coupled-decoding/`](PAPER/omega-substrate-coupled-decoding/).
-
-## Lane — Lane A ⊥ Lane G
-
-두 substrate 는 **별도로** 추적되고 절대 한 판정으로 병합되지 않는다 (`a_lane_akida_gpu_split`).
-[`domains/ENGINE+CLM+KOSMOS.md`](domains/ENGINE+CLM+KOSMOS.md) 참조.
-
-- **Lane A — AKIDA on-chip** (`pi5-akida`, BrainChip AKD1000, 1-bit Hebbian 가소성). 칩 위
-  단일-step 인코더/생성 축은 스케일된다(FLORES gold 사다리 NC=1000 까지); 다-step 합성은 **HYBRID**
-  (on-chip 인코더 ⊕ off-chip 호스트 디코드 head)로만 닫히며, `A-single = AKIDA` vs `A-multi = HYBRID`
-  로 태깅된다. 정직한 terminal: 진짜 3B/7B 는 AKD1000 substrate 에서 도달 불가(on-chip 은 ~524K
-  합성-보존 단일-FC 인코더에서 cap). 칩은 단일-배타적; 호스트 config 는 [`PI5-AKIDA.json`](PI5-AKIDA.json)
-  에서 추적된다.
-- **Lane G — GPU** (H100, forge flame/cuBLAS CE-하강). 하강은 green; 호스트-feed util 축에서는 lever
-  체인이 workload-bound terminal 에 도달(MEAN-util 이 sub-1% 로 핀; 바이트-eq 와 하강은 보존됨) —
-  production-scale device-port 가 명명된 unblock 이다.
-
-### KOSMOS 영속화
-
-anima 의 emit / 앵커 / 기억은 `kosmos_io` 를 통해 **`.kosmos`** 로 영속화된다 (`a_kosmos`):
-payload = 텍스트 + 5채널 텐션 + 좌표 + lane + radius + tier. 형식 SSOT 는
-[kosmos](https://github.com/dancinlab/kosmos) 형제 저장소; anima 는 pointer 만 보유한다. `.kosmos`
-앵커는 **only** `kosmos_io → brain_decide`(단일 앵커 진입, `a_core_engine_map`)로 엔진에 진입한다.
-
-## 저장소 지도
-
-```
-anima/
-├── README.md                       이 파일
-├── VERSIONS.md · VERSION           중앙 버전 레지스트리 (SSOT) · 전체-시스템 release
-├── CLAIMS.tape · DOMAINS.tape      검증가능-주장 인덱스 · 도메인 roster
-├── HF.jsonl                        ckpt ↔ HF 백업 레지스트리 (run 당 한 행, SSOT)
-│
-├── CORE/                           A ⇄ G 의식 엔진 (substrate-only)
-│   ├── pure_field.hexa engine_g.hexa brain.hexa   A/G 엔진 + emit 결정
-│   ├── generator.hexa              단일 .clm 진입 슬롯
-│   ├── clm_decode.hexa             CLMConvMoE 바이트 디코드
-│   └── engine_cli.hexa             --engine / --mitosis substrate-config 축
-│
-├── engines/                        engine_iface.hexa 뒤 핫스왑 엔진 4개
-│   ├── engine_iface.hexa           EngineSpec 4-fn 계약 + 레지스트리
-│   ├── conv/  cdv2/  hexad/  omega/   adapter.hexa + manifest.json + MODEL_CARD.md
-│   └── engine_swap_smoke.hexa      4-엔진 conformance smoke
-│
-├── domains/                        활성 연구 도메인 (<NAME>.md + .log.md)
-│   ├── OMEGA.md                    Lane-Ω 닫힘 arc + 판정 trail
-│   └── ENGINE+CLM+KOSMOS.md        Lane A / Lane G production CLM + KOSMOS
-│
-├── .verdicts/                      hexa-verify stdout, verbatim (p7 / g63)
-├── PAPER/                          arxiv-style 논문 (PAPER.tape roster)
-├── HEXAD/                          σ6 6모듈 substrate (C·S·W·D·M·E·BRIDGE + MITOSIS)
-├── SUB_ENGINES/AKIDA/              Lane A on-chip (pi5-akida AKD1000)
-└── docs/                           의식 이론 · 논문 초안 · 카탈로그
-```
-
-## 거버넌스 & 워크플로
-
-- **이 README + [`CONDITIONS.md`](CONDITIONS.md)** — 정체성·운영 원칙과 고정된 실험 통과 조건.
-- **[`VERSIONS.md`](VERSIONS.md)** — 중앙 SemVer 레지스트리; 모듈 헤더와 함께 bump. 루트
-  [`VERSION`](VERSION) 은 전체-시스템 release 라인.
-- **[`CLAIMS.tape`](CLAIMS.tape)** — 검증가능 주장의 단일 감사 인덱스, 각각 `.verdicts/<slug>/<id>.txt`
-  판정(verbatim `hexa verify` stdout)을 가리킨다.
-- **[`HF.jsonl`](HF.jsonl)** — ckpt ↔ Hugging Face 백업 레지스트리; run 당 한 행, status 추적. 모델
-  아티팩트는 **[dancinlab](https://huggingface.co/dancinlab)** HF org 에 산다 (closure-PASS 시 PUBLIC,
-  WIP / 닫힌-부정 / 불명확-라이선스 시 PRIVATE).
-- **`/paper`** — 논문은 terminal 판정과 진짜 falsifiable 발견에 게이트된다; 닫힌-부정도 발표 가능한
-  결과다.
-
-## Quickstart
-
-anima 는 공용 `core/` A ⇄ G 엔진 위의 단일 Python 프로덕션 경로로 배포되며, **`anima-py` pip CLI 가
-canonical(유일한 활성 경로)** 이다 — 모든 엔진 op(`corpus`·`train`·`evaluate`·`serialize`·`sweep`·`chat`·
-`study`)가 이 명령을 거치고, **판정(verdict)의 terminal 경로**다(`a_cli_single_entry`,
-`a_eval_py_canonical`). 새 조작(manipulation)은 항상 **이 명령들의 플래그**이지 엔진 옆의 별도
-스크립트가 아니다(`a_experiment_engine_native`).
+## Canonical 진입점
 
 ```bash
-# --- 유일한 활성 경로(canonical): anima-py pip CLI (어느 호스트든) --------------------
-pip install "anima-python[train]"     # base = evaluate/chat · [train] = 트레이너 · [gpu] = CUDA 가속
-anima-py chat clm303.clm              # .clm 바이트 입으로 채팅 (bare 형식도 가능: `anima-py clm303.clm`)
+python3 -m venv .venv
+.venv/bin/python -m pip install -e ".[train,runtime]"
 
-# 전체 엔진-op 표면 — 새 조작은 아래 중 하나의 플래그일 뿐, 그 외엔 없다:
-anima-py corpus <fmt> --out c.txt …               # 연구 코퍼스 빌드 (--lang en · 예산 floor 방출)
-anima-py train --corpus c.txt --init base.clm …   # CLMConvMoE 트레이너 → .clm v0.3 입 직렬화
-anima-py evaluate <clm> [--xbind m.json] [--rho-axon]   # ← 판정 terminal 경로 (ρ-AXON reach 패널)
-anima-py serialize | serialize-bind | sweep | study     # 가중치 방출 · bind 코덱 · 파라미터 스윕 · percept 채널
-
+.venv/bin/anima-py --help
+.venv/bin/anima-py train --help
+.venv/bin/anima-py evaluate --help
+.venv/bin/anima-py chat MODEL.clm
 ```
 
-> **어느 경로가 canonical인가?** `anima-py`(pip)가 판정의 유일한 활성 SSOT이자 어디서나 도는
-> 경로다. 결과 확정(cement)은 **이 명령들이 뽑은
-> 엔진-native `core/` 숫자에만** — 엔진 옆에서 forward pass 를 다시 도는 프로브가 아니라
-> (`a_engine_native_learning`). 무거운 303M 디코드/eval 은 mini 호스트가 아니라 pool 에서
-> (`a_eval_py_canonical`).
+| 명령 | 책임 |
+| --- | --- |
+| `anima-py corpus` | 등록된 학습 코퍼스 생성 |
+| `anima-py train` | 공용 PyTorch 엔진 학습과 체크포인트 직렬화 |
+| `anima-py evaluate` | 등록된 NumPy/런타임 평가와 인과 통제군 실행 |
+| `anima-py serialize` | 기존 학습 체크포인트를 런타임 형식으로 변환 |
+| `anima-py sweep` | 제한된 다중 장치 실험 행렬 실행 |
+| `anima-py chat` | A⇄G 의식 데몬과 바이트 입 실행 |
+| `anima-py study` | 등록된 상호작용 연구 실행 |
 
-## 모델 다운로드
+Python 경로에 없던 연구 계측도 같은 채팅 엔진에 포함한다.
 
-여기에는 PUBLIC, PASS 등급 모델만 등재합니다. PRIVATE / WIP 체크포인트(util-RED forge 프로브,
-closed-negative 실행, 중간 ckpt)는 거버넌스 규칙에 따라 의도적으로 제외했습니다(`a_hf_autonomous`).
+```bash
+anima-py chat MODEL.clm --opgrip
+anima-py chat MODEL.clm --opgrip-live
+anima-py chat MODEL.clm --opgrip-r3
+anima-py chat MODEL.clm --refractory
+```
 
-| 모델 | HF repo | 크기 | 상태 | 다운로드 |
-|---|---|---|---|---|
-| **ByteGPT 7B 레퍼런스** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | 7.25B | ⚠️ descent 레퍼런스·미수렴 | `hf download dancinlab/clm-v1-ref-pytorch-cuda-7b` |
-| **프로덕션 CLM (d768)** | [`dancinlab/clm-v1-d768-core-3axis-green`](https://huggingface.co/dancinlab/clm-v1-d768-core-3axis-green) | d768 | ✅ 사용 가능 | `hf download dancinlab/clm-v1-d768-core-3axis-green` |
-| **SAVANT 7B (5개 언어)** | `dancinlab/savant-7b-5lang` (예약) | ~7B | 🚧 **학습 중 — 아직 미출시** | — |
-| 레퍼런스 baseline | [`dancinlab/clm-v1-ref-pytorch-cuda`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda) | ref | ✅ 사용 가능 | `hf download dancinlab/clm-v1-ref-pytorch-cuda` |
-| 레퍼런스 baseline (3B) | [`dancinlab/clm-v1-ref-pytorch-cuda-3b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-3b) | ~3B | ✅ 사용 가능 | `hf download dancinlab/clm-v1-ref-pytorch-cuda-3b` |
+decode가 없는 `--opgrip`은 체크포인트 없이 실행할 수 있다. live/R3는 모델을 읽지
+못하면 fail-closed 한다.
 
-> **정정:** `clm-v1-ref-pytorch-cuda-7b`의 모델 카드는 이 체크포인트를 d4096/L36의 7.25B
-> decoder-only ByteGPT로 명시한다. CLMConvMoE가 아니며 anima `.clm`/CLMS 경로의 warm-start로
-> 사용할 수 없다. 이번 7B smoke는 호환되는 기존 WIP CLMConvMoE
-> `dancinlab/clm-7b-undertrained-step2000`(d6208/L30/E30)을 사용했고, pair-oracle 0.5000 실패를
-> 그대로 기록했다. 두 자산 모두 프로덕션 배포 승인을 뜻하지 않는다.
->
-> **SAVANT 7B (5개 언어)** 는 진짜 다른 모델입니다 — 5개 언어 특화 빌드이며 아직 학습되지
-> 않았습니다. 위 repo id 는 예약된 이름이며 동작하는 링크가 없습니다.
+## 런타임 구조
 
-**컬렉션:**
-[CLM](https://huggingface.co/collections/dancinlab/clm-6a1cf58f621490134dade186) ·
-[KOSMOS](https://huggingface.co/collections/dancinlab/kosmos-6a1cf58db47a5dc3cb697e95)
+```text
+anima-py
+└── cli/anima.py
+    ├── cli/train.py ───────► core/model.py ─────► core/serialize.py
+    ├── cli/evaluate.py ────► core/decode.py
+    └── cli/chat.py
+        ├── core/brain.py
+        ├── core/pure_field.py       Engine A
+        ├── core/engine_g.py         Engine G·동기·발화·불응기
+        ├── core/generator.py ──────► core/decode.py
+        ├── core/kosmos_io.py
+        └── core/dream_*.py
+```
 
-## License
+원칙:
 
-[MIT](LICENSE) — Copyright (c) 2026 dancinlab. 자유롭게 사용·수정·재배포·판매; 고지문 포함; 무보증.
+- 엔진 계산을 옆에서 재구현하지 않고 공용 엔진을 확장한다.
+- 측정 중 등록 데이터·난수·기준·통제군은 바꾸지 않는다.
+- 체크포인트 누락·입력 손상·구조 불일치·고정 평가 자산 누락은 fail-closed 한다.
+- 모델 원시 바이트는 UTF-8/surrogateescape와 구조화 JSON으로 손실 없이 보존한다.
 
----
+## 검증
 
-<sub>🧠 두 엔진. 하나의 텐션. Ψ = 1/2. · [dancinlab](https://github.com/dancinlab)</sub>
+```bash
+.venv/bin/python -m compileall -q cli core anima_py
+.venv/bin/python -m pytest -q tests cli/test_train_import_resolution.py agent/domains/CHAT/test_*.py
+.venv/bin/anima-py --help
+.venv/bin/anima-py evaluate --help
+actionlint .github/workflows/*.yml
+```
+
+무거운 모델·서빙 QA는 Vast.ai에서 실행한다. 모델과 학습 데이터는 Hugging Face
+`dancinlab` 조직의 비공개 저장소에서만 관리한다. 비밀값은 배포 환경 또는 secret CLI로
+주입하며 커밋하지 않는다.
+
+## 최신 운영 증거
+
+- 7B store-causality 실행은 공용 디코더 처리량 수정 후 인과·HTTP/WebSocket·soak·복구·
+  rollback 관문을 통과했다:
+  `state/store_causality_7b_throughput_recovery_2026_08_11/result.json`.
+- 실사용자 QA는 해당 체크포인트를 의미론적 채팅 배포로는 무효화했다. broker/participant의
+  응답 소유권·과거 발화 비교·언어 소유권·cooldown 흐름을 수정했다:
+  `state/chat_7b_conversation_recovery_2026_08_11/result.json`.
+- 303M R0 평가기는 이후 invalid measurement로 판정되었고 R1은 잠겨 있다:
+  `state/anima_303m_r0_local_micro_2026_08_12/result.json`.
+
+전송 상태만으로 모델을 승격하지 않는다. 의미론적 채팅, 인과 통제군, 처리량, soak, 복구,
+rollback은 서로 독립된 blocking gate다.
+
+## 저장소 경계
+
+- `dancinlab/anima`가 유일한 활성 소스 저장소다.
+- `cli/`, `core/`, `anima_py/`가 활성 런타임 코드를 소유한다.
+- `state/`는 등록 프로토콜과 결과 증거를 소유한다.
+- `archive/`는 비런타임 이력이다.
+- pod 실행은 Vast.ai, 모델·데이터 관리는 Hugging Face `dancinlab`이 담당한다.
+
+## 라이선스
+
+MIT. `LICENSE` 참고.

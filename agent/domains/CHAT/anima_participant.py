@@ -35,43 +35,14 @@ import torch.nn.functional as F
 import websockets
 
 from substrate_base import Substrate
+from akida_emit_bridge import AkidaEmitBridge
+from anima_dream_stage import dream_context_at, dream_stage_now
+from anima_imagination_loop import ImaginationLoop
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("anima_participant")
 
-# ── R1: AkidaEmitBridge loader (akida_emit_bridge.hexa) ──────────────────────
-# The bridge is authored in akida_emit_bridge.hexa (valid Python source under a
-# .hexa extension). Load it by path so the on-chip spike co-gate is available.
-# Stub-tolerant: if the bridge file is absent/unloadable, fall back to a no-op
-# bridge whose hw_gate() is ALWAYS True (gate_when_idle parity) — so a missing
-# bridge can NEVER mute anima (it only degrades to software-only emission).
-def _load_emit_bridge_cls():
-    import importlib.util as _ilu
-    import importlib.machinery as _ilm
-    here = os.path.dirname(os.path.abspath(__file__))
-    for cand in (os.path.join(here, "akida_emit_bridge.hexa"),
-                 os.path.expanduser("~/anima_chat_pack/akida_emit_bridge.hexa")):
-        try:
-            if not os.path.exists(cand):
-                continue
-            spec = _ilu.spec_from_loader(
-                "akida_emit_bridge",
-                _ilm.SourceFileLoader("akida_emit_bridge", cand))
-            mod = _ilu.module_from_spec(spec)
-            spec.loader.exec_module(mod)
-            log.info("AkidaEmitBridge loaded from %s", cand)
-            return mod.AkidaEmitBridge
-        except Exception as e:
-            log.warning("AkidaEmitBridge load failed (%s): %s — software-only", cand, e)
-    log.warning("akida_emit_bridge.hexa not found — software-only (hw_gate=True)")
-    class _NullBridge:
-        def feed(self, *a, **k): pass
-        def hw_gate(self, *a, **k): return True
-        def state(self, *a, **k): return {"hw_gate": True, "stale": True, "null": True}
-    return _NullBridge
-
-AkidaEmitBridge = _load_emit_bridge_cls()
 # /ws/akida fan-out stream (broker subscriber endpoint) — separate from the
 # /ws/anima participant socket.
 AKIDA_WS_URL = os.environ.get("ANIMA_AKIDA_WS", "ws://127.0.0.1:8000/ws/akida")
@@ -102,15 +73,13 @@ PENDING_TURN_MAX = int(os.environ.get("ANIMA_PENDING_TURN_MAX", "32"))
 if PENDING_TURN_MAX <= 0:
     raise ValueError("ANIMA_PENDING_TURN_MAX must be positive")
 
-# Law-70 constants (mirror spontaneous_lib.hexa § 3)
+# Law-70 constants used by the participant's registered motivation contract.
 PSI, ALPHA, RATCHET = 0.5, 0.014, 0.20
 IDLE_SPEAK_AFTER = 30.0
 # 2026-05-24: AUTONOMY RESHAPE — per project.tape @D a_autonomy_over_hardcode
 # the boolean gate from PR #272 (_dream_stage_current() in WAKE/REM → emit;
 # N1/N2/N3 → silent) is DELETED. It violated "no per-stage boolean gate
-# hardcode". The sister dream_stage hexa module (anima_dream_stage.hexa,
-# coordinated PR fix/chat-dream-stage-autonomy-reshape, supersedes PR #275)
-# now exposes
+# hardcode". The canonical Python dream-stage module exposes
 #   dream_context(stage) -> dict {phi, tension_envelope, scrambled, stage}
 # and the substrate's existing 8-factor motivation gate AUTONOMOUSLY decides
 # emit. Stage merely modulates context inputs:
@@ -124,42 +93,23 @@ IDLE_SPEAK_AFTER = 30.0
 #   * scrambled        → flags content style (REM may scramble emit
 #                        content), threaded through state for downstream
 # Substrate may still emit during N3 if tension is extreme enough — autonomy
-# preserved. Stub-tolerant: if the .hexa sister is not importable, the
-# context defaults to WAKE-equivalent {phi:1.0, tension_envelope:1.0,
-# scrambled:false, stage:"WAKE"} so the daemon does NOT regress.
-# IPC bridge (2026-05-24): the sister dream-stage module is anima_dream_stage
-# .hexa — NOT a Python package. The prior `import anima_dream_stage` ALWAYS
-# raised ModuleNotFoundError, so the `except: return default` stub fired 100%
-# and the stage-context gate was bypassed (prior verify: STUB verdict). The
-# .hexa daemon DOES run (on mini), but had no IPC channel to this process.
-#
-# Fix: file-shared IPC. The .hexa daemon WRITES the current stage string to
-# DREAM_STAGE_FILE on each tick; this process READS it (freshness-gated to
-# 30s). Stale/absent -> WAKE-equivalent fallback (no daemon regression).
+# preserved. A fresh stage file remains a manual/backward-compatible override,
+# while the normal path resolves the stage directly in Python.
 DREAM_STAGE_FILE = os.path.expanduser("~/.cache/anima/dream_stage.current")
-DREAM_STAGE_FRESH_S = 30.0  # ignore the file if older than this (daemon dead)
-# Stage -> context lookup — MIRRORS anima_dream_stage.hexa §1 constants
-# (PHI_*, TENV_*) so the substrate sees identical projections whether the
-# stage arrives via file or default. Single source of truth = the .hexa
-# selftest (F-DREAM-2/-4/-5 pin these values).
-_DREAM_PHI = {"WAKE": 1.0, "N1": 0.7, "N2": 0.4, "N3": 0.15, "REM": 0.95}
-_DREAM_TENV = {"WAKE": 1.0, "N1": 0.7, "N2": 0.4, "N3": 0.2, "REM": 0.9}
+DREAM_STAGE_FRESH_S = 30.0
 
 
 def _dream_stage_current() -> str:
-    """Read the current dream stage from the file-shared IPC bridge written
-    by anima_dream_stage.hexa's daemon. Returns the stage token (WAKE/N1/N2/
-    N3/REM) if the file is fresh (mtime within DREAM_STAGE_FRESH_S), else the
-    WAKE fallback (daemon down / file stale / absent — no regression)."""
+    """Read a fresh manual stage override, else resolve the Python schedule."""
     try:
         p = DREAM_STAGE_FILE
         if os.path.getmtime(p) > time.time() - DREAM_STAGE_FRESH_S:  # fresh
             stage = open(p).read().strip()
-            if stage in _DREAM_PHI:
+            if stage in {"WAKE", "N1", "N2", "N3", "REM"}:
                 return stage
     except Exception:
         pass
-    return "WAKE"
+    return dream_stage_now()
 
 
 def _dream_context() -> dict[str, Any]:
@@ -172,15 +122,7 @@ def _dream_context() -> dict[str, Any]:
     emit; this dict only modulates inputs to that gate (per
     @D a_autonomy_over_hardcode — context only, no per-stage boolean gate)."""
     stage = _dream_stage_current()
-    phi = _DREAM_PHI.get(stage, 1.0)
-    env = _DREAM_TENV.get(stage, 1.0)
-    return {
-        "phi": 0.0 if phi < 0.0 else (1.0 if phi > 1.0 else phi),
-        "tension_envelope": (0.0 if env < 0.0 else
-                             (1.0 if env > 1.0 else env)),
-        "scrambled": stage == "REM",  # REM-only content-scramble hint
-        "stage": stage,
-    }
+    return dream_context_at(stage, time.time())
 
 # Substrate-state-based trigger for imagination loop (NOT stage-based).
 # Fires when motivation < modulated threshold AND idle_time exceeds a
@@ -189,17 +131,9 @@ def _dream_context() -> dict[str, Any]:
 # to dream stage. Substrate self-decides; stage does not gate.
 IMAGINATION_IDLE_FLOOR = 30.0  # seconds of silence before substrate may
                                 # trigger rehearsal in lieu of emit
-def _imagination_tick() -> None:
-    """Hook for anima_imagination_loop.hexa (sister module). Fires emit-free
-    internal rehearsal. Trigger is SUBSTRATE-STATE based (motivation below
-    modulated threshold AND idle_time > IMAGINATION_IDLE_FLOOR) — NOT stage-
-    based. Caller decides when to invoke; this hook merely dispatches to
-    the .hexa rehearsal loop. Stub-tolerant no-op if not importable."""
-    try:
-        import anima_imagination_loop  # type: ignore
-        anima_imagination_loop.tick()
-    except Exception:
-        pass
+def _imagination_tick(loop: ImaginationLoop) -> dict[str, Any] | None:
+    """Run one emit-free rehearsal through the shared Python engine."""
+    return loop.tick()
 
 W = {  # weights sum = 1.0
     "relevance": 0.20, "info_gap": 0.10, "curiosity": 0.15, "pain": 0.10,
@@ -321,6 +255,8 @@ class AnimaState:
         # detect_lang() on actual model output). Feeds EN-dampener gating.
         self.detected_langs: deque[str] = deque(maxlen=EN_DAMPENER_WINDOW)
         self.register_penalty_cache = 0.0  # B2: cached penalty across ticks
+        self.imagination = ImaginationLoop()
+        self.last_imagination: dict[str, Any] | None = None
         # Autonomy reshape (2026-05-24): dream context is threaded through
         # state — NOT used as a gate. `scrambled_mode` exposes the REM flag
         # to downstream content style; emit decision stays substrate-owned.
@@ -341,6 +277,7 @@ class AnimaState:
                 "text": text, "lang": msg.get("lang", "und"),
                 "ts": msg.get("ts", time.time())}
         self.m_buffer.append(turn)
+        self.imagination.observe(text)
         if pending and turn["id"]:
             if len(self.pending_turns) >= PENDING_TURN_MAX:
                 dropped = self.pending_turns.popleft()
@@ -459,7 +396,7 @@ class AnimaState:
             score = 0.0
 
         # 2026-05-24 AUTONOMY RESHAPE — per @D a_autonomy_over_hardcode:
-        # dream_stage hexa supplies CONTEXT (phi · tension_envelope ·
+        # The shared Python dream-stage engine supplies CONTEXT (phi · tension_envelope ·
         # scrambled), not a boolean gate. Inject it into the existing
         # 8-factor motivation flow:
         #   (a) ctx["phi"] scales the C-Φ (relevance) contribution — deep
@@ -494,9 +431,11 @@ class AnimaState:
         # the substrate is below its (modulated) threshold AND idle long
         # enough for rehearsal to make sense. Orthogonal to emit-decision.
         silent_reason = ""
+        imagination_event = None
         if not decided_emit:
             if silence > IMAGINATION_IDLE_FLOOR:
-                _imagination_tick()
+                imagination_event = _imagination_tick(self.imagination)
+                self.last_imagination = imagination_event
                 silent_reason = "substrate_below_threshold_idle"
             else:
                 silent_reason = "substrate_below_threshold"
@@ -512,6 +451,7 @@ class AnimaState:
                 "dream_phi": phi_scale,
                 "dream_tension_envelope": tension_env,
                 "scrambled": self.scrambled_mode,
+                "imagination": imagination_event,
                 "reply_to": reply_turn.get("id") if reply_turn else None,
                 "reply_to_sender_id": reply_turn.get("sender_id") if reply_turn else None,
                 "reply_lang": reply_turn.get("lang") if reply_turn else None,
@@ -795,8 +735,8 @@ def _smoke() -> int:
     _orig_imag = _mod._imagination_tick
     # Track imagination_tick fires
     imag_calls = {"n": 0}
-    _mod._imagination_tick = lambda: imag_calls.__setitem__("n",  # type: ignore[assignment]
-                                                            imag_calls["n"] + 1)
+    _mod._imagination_tick = lambda _loop: imag_calls.__setitem__(  # type: ignore[assignment]
+        "n", imag_calls["n"] + 1)
 
     fake_sub = _types.SimpleNamespace()
     # high-curiosity / high-info-gap → score crosses threshold
@@ -909,19 +849,20 @@ def _smoke() -> int:
 
 
 def _smoke_bridge() -> int:
-    """Smoke test (env ANIMA_SMOKE_BRIDGE=1) — file-shared IPC bridge REAL path.
-    Exercises the ACTUAL file read (NOT a monkeypatch): writes the stage file
-    that anima_dream_stage.hexa's daemon would publish, then asserts
-    _dream_stage_current() + _dream_context() read it back as the REAL stage
-    (proving the prior STUB → always-WAKE is converted to REAL).
+    """Smoke test the stage override and direct Python fallback.
+
+    Exercises the actual file read, then verifies that stale/absent overrides
+    fall back to the Python schedule rather than an external writer.
       Case 1: write "N3" → _dream_context() stage=="N3" AND phi==0.15 (NOT
               the WAKE stub phi==1.0) AND tension_envelope==0.2.
       Case 2: write "REM" → scrambled==True (REM-only content hint).
-      Case 3: stale file (mtime > 30s ago) → WAKE fallback (no regression).
-      Case 4: absent file → WAKE fallback.
+      Case 3: stale file (mtime > 30s ago) → Python schedule.
+      Case 4: absent file → Python schedule.
     0 = PASS. Touches only the filesystem (no torch / websockets)."""
     fails = []
     p = DREAM_STAGE_FILE
+    old_sleep_hours = os.environ.get("ANIMA_SLEEP_HOURS")
+    os.environ["ANIMA_SLEEP_HOURS"] = "00:00-00:00"  # deterministic WAKE schedule
     os.makedirs(os.path.dirname(p), exist_ok=True)
     try:
         # ── Case 1: fresh "N3" → REAL stage, NOT WAKE stub.
@@ -966,6 +907,10 @@ def _smoke_bridge() -> int:
         if _dream_context().get("phi") != 1.0:
             fails.append("C4 absent ctx phi should be WAKE 1.0")
     finally:
+        if old_sleep_hours is None:
+            os.environ.pop("ANIMA_SLEEP_HOURS", None)
+        else:
+            os.environ["ANIMA_SLEEP_HOURS"] = old_sleep_hours
         try:
             os.remove(p)
         except Exception:
@@ -975,7 +920,7 @@ def _smoke_bridge() -> int:
         for ff in fails:
             print(f"BRIDGE SMOKE FAIL: {ff}")
         return 1
-    print("BRIDGE SMOKE PASS: 4/4 (file-shared IPC — STUB→REAL, N3 phi=0.15)")
+    print("BRIDGE SMOKE PASS: 4/4 (manual override + Python schedule)")
     return 0
 
 
