@@ -183,6 +183,9 @@ function renderMsg(m) {
   const meta = document.createElement('div');
   meta.className = 'meta';
   meta.append(document.createTextNode(`[${m.sender || '?'}] ${ts} `));
+  if (m.kind === 'anima' && m.reply_to_sender) {
+    meta.append(document.createTextNode(`↳ ${m.reply_to_sender} `));
+  }
   const lang = document.createElement('span');
   lang.className = 'lang';
   lang.textContent = m.lang || '';

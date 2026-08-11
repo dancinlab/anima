@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""substrate_lora.py — vP21M LoRA substrate with per-lang hot-swap router.
+"""Hugging Face causal-LM substrate with optional LoRA hot-swap adapters.
 
-Implements the Substrate ABC (substrate_base.py) for the LoRA path:
-Qwen2.5-1.5B base + vP21M LoRA r32 + optional KOFL/JAFL hot-swap adapters.
+Implements the existing Substrate ABC for an HF chat model with optional
+vP21M and language-specific LoRA adapters.
 
 Extracted from anima_participant.py (L1 substrate-plugin refactor,
 2026-05-22) per HEXAD/CHAT/SUBSTRATE_PLUGIN.md. The P2 hot-swap router
@@ -22,8 +22,6 @@ from substrate_base import Substrate
 
 log = logging.getLogger("substrate_lora")
 
-# lang-bias primes — N7 (2026-05-23): fuller native-script phrases anchor
-# the output language harder (short primes drifted to EN ~40% of emissions).
 LANG_PRIMES = {
     "en": "I notice that ",
     "ko": "문득 이런 생각이 들었다. ",
@@ -33,7 +31,6 @@ LANG_PRIMES = {
 }
 ROUTER_LANG_TO_ADAPTER = {"ko": "ko", "ja": "ja", "zh": "zh", "ru": "ru"}  # rest → "default"
 
-# Unicode script ranges for cross-lang seed detection (N7).
 _SCRIPT_RANGES = {
     "ko": [(0xAC00, 0xD7AF)],
     "ja": [(0x3040, 0x30FF)],
@@ -43,24 +40,23 @@ _SCRIPT_RANGES = {
 
 
 def _seed_matches_lang(seed_text: str, lang_hint: str | None) -> bool:
-    """True if seed_text's dominant script is compatible with lang_hint.
-    EN/None always compatible. For ko/ja/zh/ru, require ≥1 native char and
-    no overwhelming foreign-script majority — else the seed is dropped so
-    the prime alone steers the language (N7 en-drift fix)."""
     if not seed_text or not lang_hint or lang_hint == "en":
         return True
     ranges = _SCRIPT_RANGES.get(lang_hint)
     if not ranges:
         return True
-    native = sum(1 for c in seed_text
-                 if any(lo <= ord(c) <= hi for lo, hi in ranges))
-    # require native script to be present and not a tiny minority
-    letters = sum(1 for c in seed_text if c.isalpha())
+    native = sum(1 for char in seed_text
+                 if any(low <= ord(char) <= high for low, high in ranges))
+    letters = sum(1 for char in seed_text if char.isalpha())
     return letters == 0 or native / max(letters, 1) >= 0.3
 
 
+_SYSTEM_PROMPT = os.environ.get(
+    "ANIMA_SYSTEM_PROMPT", "You are anima. Reply in the user's language.")
+
+
 class LoraSubstrate(Substrate):
-    """Qwen2.5-1.5B + vP21M LoRA, with KOFL/JAFL per-lang hot-swap router."""
+    """Canonical HF chat model, optionally extended by LoRA adapters."""
 
     name = "lora"
 
@@ -72,30 +68,41 @@ class LoraSubstrate(Substrate):
         self.device = device
         self.base_model = base_model
         dtype = dtype or (torch.float16 if device == "mps" else torch.bfloat16)
-        self._repair_adapter_config(adapter_dir, base_model)
-
         from transformers import AutoModelForCausalLM, AutoTokenizer
-        from peft import PeftModel
         self.tok = AutoTokenizer.from_pretrained(base_model)
-        base = AutoModelForCausalLM.from_pretrained(base_model, torch_dtype=dtype).to(device)
-        self.model = PeftModel.from_pretrained(base, adapter_dir,
-                                               adapter_name="default").to(device).eval()
-        self.adapters_loaded = {"default"}
-        for lang_key, adir in (("ko", adapter_ko), ("ja", adapter_ja),
-                               ("zh", adapter_zh), ("ru", adapter_ru)):
-            if adir and os.path.isfile(os.path.join(adir, "adapter_model.safetensors")):
-                try:
-                    self.model.load_adapter(adir, adapter_name=lang_key)
-                    self.adapters_loaded.add(lang_key)
-                    log.info("router adapter[%s] loaded ← %s", lang_key, adir)
-                except Exception as e:
-                    log.warning("router adapter[%s] load fail (%s): %s", lang_key, adir, e)
-            elif adir:
-                log.info("router adapter[%s] absent at %s — fallback to default", lang_key, adir)
-        self.model.set_adapter("default")
-        self._active_adapter = "default"
+        adapter_file = os.path.join(adapter_dir, "adapter_model.safetensors")
+        has_adapter = bool(adapter_dir and os.path.isfile(adapter_file))
+        if not has_adapter and not self.tok.chat_template:
+            raise ValueError(f"base model has no canonical chat template: {base_model}")
+        base = AutoModelForCausalLM.from_pretrained(
+            base_model, dtype=dtype, low_cpu_mem_usage=True).to(device)
+        self.adapters_loaded: set[str] = set()
+        self._active_adapter: str | None = None
+        if has_adapter:
+            self._repair_adapter_config(adapter_dir, base_model)
+            from peft import PeftModel
+            self.model = PeftModel.from_pretrained(
+                base, adapter_dir, adapter_name="default").to(device).eval()
+            self.adapters_loaded.add("default")
+            for lang_key, adir in (("ko", adapter_ko), ("ja", adapter_ja),
+                                   ("zh", adapter_zh), ("ru", adapter_ru)):
+                if adir and os.path.isfile(os.path.join(
+                        adir, "adapter_model.safetensors")):
+                    try:
+                        self.model.load_adapter(adir, adapter_name=lang_key)
+                        self.adapters_loaded.add(lang_key)
+                        log.info("router adapter[%s] loaded ← %s", lang_key, adir)
+                    except Exception as e:
+                        log.warning("router adapter[%s] load fail (%s): %s",
+                                    lang_key, adir, e)
+            self.model.set_adapter("default")
+            self._active_adapter = "default"
+        else:
+            self.model = base.eval()
+            if adapter_dir:
+                log.info("adapter absent at %s — canonical base chat model", adapter_dir)
         self.vocab_size = self.model.config.vocab_size
-        log.info("LoraSubstrate ready: base=%s adapters=%s params≈%d",
+        log.info("HF chat substrate ready: base=%s adapters=%s params≈%d",
                  base_model, sorted(self.adapters_loaded), self.param_count())
 
     @staticmethod
@@ -126,7 +133,9 @@ class LoraSubstrate(Substrate):
         log.info("repaired adapter_config.json target_modules=%s", sorted(found))
 
     def _route(self, lang_hint: str | None) -> None:
-        """P2 router: switch to lang-specialist adapter if loaded."""
+        """Switch to a loaded language adapter; base-only chat is a no-op."""
+        if not self.adapters_loaded:
+            return
         target = ROUTER_LANG_TO_ADAPTER.get(lang_hint or "", "default")
         if target not in self.adapters_loaded:
             target = "default"
@@ -142,32 +151,59 @@ class LoraSubstrate(Substrate):
     def generate(self, seed_text: str, max_new: int = 80,
                  lang_hint: str | None = None, **kw) -> str:
         self._route(lang_hint)
-        prime = LANG_PRIMES.get(lang_hint or "", "")
-        # N7: drop a cross-language seed so the prime alone steers the lang.
-        if not _seed_matches_lang(seed_text, lang_hint):
-            seed_text = ""
-        primed = prime + (seed_text or "")
-        if primed:
-            ids = self.tok(primed, return_tensors="pt").input_ids.to(self.device)
+        if self.adapters_loaded:
+            if not _seed_matches_lang(seed_text, lang_hint):
+                seed_text = ""
+            primed = LANG_PRIMES.get(lang_hint or "", "") + (seed_text or "")
+            if primed:
+                ids = self.tok(primed, return_tensors="pt").input_ids.to(self.device)
+            else:
+                bid = self.tok.bos_token_id or self.tok.eos_token_id
+                ids = torch.tensor([[bid]], device=self.device)
         else:
-            bid = self.tok.bos_token_id or self.tok.eos_token_id
-            ids = torch.tensor([[bid]]).to(self.device)
-        out = self.model.generate(
-            ids, max_new_tokens=max_new,
-            do_sample=kw.get("do_sample", True),
-            temperature=kw.get("temperature", 0.7),
-            top_k=kw.get("top_k", 50), top_p=kw.get("top_p", 0.95),
-            repetition_penalty=kw.get("repetition_penalty", 1.2),
-            pad_token_id=self.tok.eos_token_id)
-        return self.tok.decode(out[0][ids.shape[1]:], skip_special_tokens=True)
+            messages = [
+                {"role": "system", "content": _SYSTEM_PROMPT},
+                {"role": "user", "content": seed_text or "..."},
+            ]
+            encoded = self.tok.apply_chat_template(
+                messages, tokenize=True, add_generation_prompt=True,
+                return_tensors="pt", return_dict=True).to(self.device)
+            ids = encoded.input_ids
+        do_sample = bool(kw.get("do_sample", False))
+        generation = {
+            "max_new_tokens": max_new,
+            "do_sample": do_sample,
+            "repetition_penalty": kw.get("repetition_penalty", 1.05),
+            "pad_token_id": self.tok.pad_token_id,
+            "eos_token_id": self.tok.eos_token_id,
+        }
+        if do_sample:
+            generation.update({
+                "temperature": kw.get("temperature", 0.7),
+                "top_k": kw.get("top_k", 20),
+                "top_p": kw.get("top_p", 0.8),
+            })
+        out = self.model.generate(ids, **generation)
+        return self.tok.decode(
+            out[0][ids.shape[1]:], skip_special_tokens=True).strip()
 
     @torch.no_grad()
     def entropy_of_next(self, seed_text: str) -> tuple[float, torch.Tensor]:
-        if seed_text:
-            ids = self.tok(seed_text, return_tensors="pt").input_ids.to(self.device)
+        if self.adapters_loaded:
+            if seed_text:
+                ids = self.tok(seed_text, return_tensors="pt").input_ids.to(self.device)
+            else:
+                bid = self.tok.bos_token_id or self.tok.eos_token_id
+                ids = torch.tensor([[bid]], device=self.device)
         else:
-            bid = self.tok.bos_token_id or self.tok.eos_token_id
-            ids = torch.tensor([[bid]]).to(self.device)
+            messages = [
+                {"role": "system", "content": _SYSTEM_PROMPT},
+                {"role": "user", "content": seed_text or "..."},
+            ]
+            encoded = self.tok.apply_chat_template(
+                messages, tokenize=True, add_generation_prompt=True,
+                return_tensors="pt", return_dict=True).to(self.device)
+            ids = encoded.input_ids
         logits = self.model(ids).logits[0, -1]
         p = F.softmax(logits.float(), dim=-1)
         ent = -(p * (p + 1e-12).log()).sum().item()

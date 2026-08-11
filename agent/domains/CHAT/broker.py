@@ -68,6 +68,7 @@ class BrokerState:
         self.motivation_subscribers: set[WebSocket] = set()
         self.akida_history: deque[dict[str, Any]] = deque(maxlen=200)
         self.motivation_history: deque[dict[str, Any]] = deque(maxlen=200)
+        self.user_turns: dict[str, dict[str, Any]] = {}
 
     def participants(self) -> list[dict[str, Any]]:
         out = [{"id": cid, "nickname": u["nickname"], "kind": "user"}
@@ -78,6 +79,17 @@ class BrokerState:
 
 
 STATE = BrokerState()
+
+
+def resolve_reply_turn(reply_to: Any) -> dict[str, Any] | None:
+    """Resolve only broker-issued user turn IDs; participant metadata is untrusted."""
+    key = str(reply_to or "")
+    if not key:
+        return None
+    turn = STATE.user_turns.get(key)
+    if not isinstance(turn, dict) or turn.get("kind") != "user":
+        return None
+    return turn
 
 
 # ── lang detect ──────────────────────────────────────────────────────────────
@@ -222,6 +234,9 @@ async def ws_user(ws: WebSocket):
                     "ts": time.time(),
                 }
                 STATE.history.append(payload)
+                STATE.user_turns[payload["id"]] = payload
+                while len(STATE.user_turns) > 256:
+                    STATE.user_turns.pop(next(iter(STATE.user_turns)))
                 await broadcast(payload)
     except WebSocketDisconnect:
         pass
@@ -264,6 +279,8 @@ async def ws_anima(ws: WebSocket):
                 text = (msg.get("text") or "").strip()
                 if not text:
                     continue
+                reply_to = str(msg.get("reply_to") or "")
+                reply_turn = resolve_reply_turn(reply_to)
                 payload = {
                     "type": "msg",
                     "id": uuid.uuid4().hex[:12],
@@ -273,6 +290,10 @@ async def ws_anima(ws: WebSocket):
                     "lang": msg.get("lang") or detect_lang(text),
                     "text": text[:MSG_MAX_CHARS],
                     "ts": time.time(),
+                    "reply_to": reply_turn.get("id") if reply_turn else None,
+                    "reply_to_sender_id": (
+                        reply_turn.get("sender_id") if reply_turn else None),
+                    "reply_to_sender": reply_turn.get("sender") if reply_turn else None,
                     "motivation": msg.get("motivation"),
                     "factors": msg.get("factors"),
                 }

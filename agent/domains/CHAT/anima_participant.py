@@ -98,6 +98,9 @@ TICK_INTERVAL = float(os.environ.get("ANIMA_TICK", "2.0"))
 IM_THRESHOLD_DEFAULT = float(os.environ.get("ANIMA_THRESHOLD", "0.45"))
 MAX_NEW = int(os.environ.get("ANIMA_MAX_NEW", "80"))
 DEVICE = os.environ.get("ANIMA_DEVICE", "mps" if torch.backends.mps.is_available() else "cpu")
+PENDING_TURN_MAX = int(os.environ.get("ANIMA_PENDING_TURN_MAX", "32"))
+if PENDING_TURN_MAX <= 0:
+    raise ValueError("ANIMA_PENDING_TURN_MAX must be positive")
 
 # Law-70 constants (mirror spontaneous_lib.hexa § 3)
 PSI, ALPHA, RATCHET = 0.5, 0.014, 0.20
@@ -304,6 +307,9 @@ class AnimaState:
         self.recent_embeds: deque[torch.Tensor] = deque(maxlen=8)
         # M-buffer: environment input from users (NOT direct trigger)
         self.m_buffer: deque[dict[str, Any]] = deque(maxlen=8)
+        # FIFO reply ledger. Motivation still decides WHEN to emit; this ledger
+        # preserves WHICH user turn owns the next emission in a multi-user room.
+        self.pending_turns: deque[dict[str, Any]] = deque()
         self.last_emit_time = time.time() - 60.0  # bootstrap: not "just emitted"
         self.curiosity_ema = 0.0
         self.last_entropy: float | None = None
@@ -324,35 +330,41 @@ class AnimaState:
             "stage": "WAKE",
         }
 
-    def ingest_user_msg(self, msg: dict[str, Any]) -> None:
+    def ingest_user_msg(self, msg: dict[str, Any], *, pending: bool = True) -> None:
         """Environment input. Updates M-buffer + embed pool. Does NOT fire emit."""
         text = msg.get("text") or ""
         if not text:
             return
-        self.m_buffer.append({"sender": msg.get("sender", "?"),
-                              "text": text, "lang": msg.get("lang", "und"),
-                              "ts": msg.get("ts", time.time())})
-        # also encode into embed pool so info_gap reflects it
-        try:
-            _, emb = self._entropy_of_next(text[-64:])
-            self.recent_embeds.append(emb)
-        except Exception:
-            pass
+        turn = {"id": str(msg.get("id") or ""),
+                "sender": msg.get("sender", "?"),
+                "sender_id": msg.get("sender_id"),
+                "text": text, "lang": msg.get("lang", "und"),
+                "ts": msg.get("ts", time.time())}
+        self.m_buffer.append(turn)
+        if pending and turn["id"]:
+            if len(self.pending_turns) >= PENDING_TURN_MAX:
+                dropped = self.pending_turns.popleft()
+                log.warning("pending reply overflow: dropped oldest turn id=%s",
+                            dropped.get("id"))
+            self.pending_turns.append(turn)
+        # Do not append the pending turn's own embedding here. tick() embeds the
+        # selected seed and compares it with prior emissions; inserting the same
+        # vector before that comparison forced cosine=1 and info_gap=0 for every
+        # new user turn, contradicting the documented environment-input flow.
 
     def _seed_text(self) -> tuple[str, str]:
         # F1 (2026-05-22): context-grounded seeding — prefer recent user msgs
         # over anima's own last_emission to break self-monologue loops.
         strat = SEED_STRATEGIES[self.ticks % len(SEED_STRATEGIES)]
         # m_buffer fresh window: last user msg within 60s
-        now = time.time()
-        fresh_user = None
-        if self.m_buffer:
-            last = self.m_buffer[-1]
-            if (now - last.get("ts", 0)) < 60.0:
-                fresh_user = last
+        fresh_user = self.pending_turns[0] if self.pending_turns else None
+        # Every autonomous emission inside the freshness window must condition on
+        # the actual user turn. The strategy still controls WHEN the substrate
+        # speaks through the unchanged motivation gate; it must not replace WHAT
+        # the pending conversation is about with a blank/random seed.
+        if fresh_user:
+            return fresh_user["text"][-128:], strat
         if strat == "m_retrieve_seed":
-            if fresh_user:
-                return fresh_user["text"][-64:], strat
             if self.last_emission:
                 return self.last_emission[-64:], strat
             if self.m_buffer:
@@ -368,6 +380,13 @@ class AnimaState:
             joined = " ".join(m.get("text", "")[-32:] for m in tail).strip()
             return joined[-128:], strat
         return "", strat  # only when m_buffer empty
+
+    def pending_reply(self) -> dict[str, Any] | None:
+        return self.pending_turns[0] if self.pending_turns else None
+
+    def acknowledge_reply(self, reply_to: str) -> None:
+        if self.pending_turns and self.pending_turns[0].get("id") == reply_to:
+            self.pending_turns.popleft()
 
     def _entropy_of_next(self, seed_text: str) -> tuple[float, torch.Tensor]:
         # delegate to substrate (Thinker 8-factor input)
@@ -391,6 +410,7 @@ class AnimaState:
 
     def tick(self, threshold: float, hw_gate: bool = True) -> dict[str, Any]:
         seed_text, strat = self._seed_text()
+        reply_turn = self.pending_reply()
         ent_norm, emb = self._entropy_of_next(seed_text)
         phi = 1.0 - ent_norm
         rel = factor_relevance(phi)
@@ -486,6 +506,9 @@ class AnimaState:
                 "dream_phi": phi_scale,
                 "dream_tension_envelope": tension_env,
                 "scrambled": self.scrambled_mode,
+                "reply_to": reply_turn.get("id") if reply_turn else None,
+                "reply_to_sender_id": reply_turn.get("sender_id") if reply_turn else None,
+                "reply_lang": reply_turn.get("lang") if reply_turn else None,
                 "ts": time.time()}
 
     def _pick_lang_hint(self) -> str:
@@ -616,7 +639,7 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
                             if mtype == "hello":
                                 for h in msg.get("history", []):
                                     if h.get("kind") == "user":
-                                        state.ingest_user_msg(h)
+                                        state.ingest_user_msg(h, pending=False)
                             elif mtype == "msg" and msg.get("kind") == "user":
                                 state.ingest_user_msg(msg)
                     except Exception as e:
@@ -675,7 +698,10 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
                                 log.info("EMIT tick=%d score=%.3f strategy=%s",
                                          state.ticks, decision["score"],
                                          decision["seed_strategy"])
-                                text = state.emit(decision["seed_text"])
+                                text = state.emit(
+                                    decision["seed_text"],
+                                    lang_hint=decision.get("reply_lang"),
+                                )
                                 if not text:
                                     # p3/p5 silent-drop: register-leak or empty
                                     log.info("EMIT-DROP tick=%d silent (p3/p5 enforce)",
@@ -688,9 +714,13 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
                                     await ws.send(json.dumps({
                                         "type": "msg", "text": text or "...",
                                         "lang": lang,
+                                        "reply_to": decision.get("reply_to"),
                                         "motivation": decision["score"],
                                         "factors": decision["factors"],
                                     }, ensure_ascii=False))
+                                    reply_to = decision.get("reply_to")
+                                    if reply_to:
+                                        state.acknowledge_reply(reply_to)
                                 except Exception as e:
                                     log.warning("emit send fail: %s", e)
                                     stop_event.set()

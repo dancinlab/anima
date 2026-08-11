@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+from collections import Counter
 import json
 import pathlib
+import re
 import statistics
 import sys
 import time
@@ -127,6 +129,163 @@ async def _generation(args) -> dict:
     }
 
 
+def _reply_contract(prompt: str, reply: str) -> dict:
+    text = reply.strip()
+    chars = [char for char in text if not char.isspace()]
+    dominant = Counter(chars).most_common(1)[0][1] / len(chars) if chars else 1.0
+    words = [word.casefold() for word in text.split() if word]
+    most_repeated = Counter(words).most_common(1)[0][1] if words else 0
+    repeated_word_ratio = most_repeated / len(words) if words else 1.0
+    lexical_diversity = len(set(words)) / len(words) if words else 0.0
+    controls = sum(
+        1 for char in text
+        if (ord(char) < 32 and char not in "\n\t ") or ord(char) == 127)
+    control_ratio = controls / len(text) if text else 1.0
+    prompt_has_hangul = any("가" <= char <= "힣" for char in prompt)
+    reply_has_hangul = any("가" <= char <= "힣" for char in text)
+    language_aligned = not prompt_has_hangul or reply_has_hangul
+    folded_prompt = prompt.casefold().strip()
+    folded_reply = text.casefold()
+    if "한글" in prompt and ("가능" in prompt or "할 수" in prompt):
+        semantic_alignment = reply_has_hangul and any(
+            term in text for term in ("가능", "네", "예", "물론"))
+    elif "consciousness" in folded_prompt:
+        semantic_alignment = bool(re.search(
+            r"\b(consciousness|awareness|experience|mind|sentien\w*)\b",
+            folded_reply,
+        ))
+    else:
+        semantic_alignment = True
+    passed = (
+        len(text) >= 4
+        and dominant < 0.6
+        and (most_repeated == 1 or repeated_word_ratio < 0.5)
+        and lexical_diversity >= 0.55
+        and control_ratio < 0.05
+        and language_aligned
+        and semantic_alignment
+    )
+    return {
+        "passed": passed,
+        "non_empty": len(text) >= 4,
+        "dominant_character_ratio": dominant,
+        "repeated_word_ratio": repeated_word_ratio,
+        "lexical_diversity": lexical_diversity,
+        "control_ratio": control_ratio,
+        "language_aligned": language_aligned,
+        "semantic_alignment": semantic_alignment,
+    }
+
+
+async def _conversation(args) -> dict:
+    """Verify user-turn -> visible, non-degenerate, language-aligned reply."""
+    import websockets
+
+    prompts = args.prompt or ["한글 가능해?", "What is consciousness?"]
+    turns = []
+    async with websockets.connect(args.ws_base + "/ws") as user:
+        await _recv_until(user, lambda m: m.get("type") == "hello")
+        await user.send(json.dumps({"type": "nickname", "nickname": "conversation-qa"}))
+        for prompt in prompts:
+            started = time.time()
+            await user.send(json.dumps({"type": "msg", "text": prompt}, ensure_ascii=False))
+            echoed = await _recv_until(
+                user,
+                lambda m, prompt=prompt: (
+                    m.get("type") == "msg"
+                    and m.get("kind") == "user"
+                    and m.get("text") == prompt),
+                timeout=args.timeout,
+            )
+            message = await _recv_until(
+                user,
+                lambda m, started=started, reply_to=echoed.get("id"): (
+                    m.get("type") == "msg"
+                    and m.get("kind") == "anima"
+                    and float(m.get("ts", 0)) >= started
+                    and m.get("reply_to") == reply_to),
+                timeout=args.timeout,
+            )
+            reply = str(message.get("text", ""))
+            contract = _reply_contract(prompt, reply)
+            turns.append({
+                "prompt": prompt,
+                "reply": reply,
+                "latency_seconds": time.time() - started,
+                "contract": contract,
+            })
+    if len({turn["reply"] for turn in turns}) != len(turns):
+        for turn in turns:
+            turn["contract"]["passed"] = False
+            turn["contract"]["distinct_from_other_turns"] = False
+    else:
+        for turn in turns:
+            turn["contract"]["distinct_from_other_turns"] = True
+    passed = all(turn["contract"]["passed"] for turn in turns)
+    if not passed:
+        raise RuntimeError(json.dumps({"conversation": turns}, ensure_ascii=False))
+    return {"passed": True, "turns": turns}
+
+
+async def _multi_user_conversation(args) -> dict:
+    """Queue two users before either answer and verify exact turn ownership."""
+    import websockets
+
+    prompts = args.prompt or ["한글 가능해?", "What is consciousness?"]
+    if len(prompts) != 2:
+        raise ValueError("conversation-multi-user requires exactly two prompts")
+    async with (
+        websockets.connect(args.ws_base + "/ws") as first,
+        websockets.connect(args.ws_base + "/ws") as second,
+    ):
+        await _recv_until(first, lambda message: message.get("type") == "hello")
+        await _recv_until(second, lambda message: message.get("type") == "hello")
+        await first.send(json.dumps({"type": "nickname", "nickname": "conversation-qa-a"}))
+        await second.send(json.dumps({"type": "nickname", "nickname": "conversation-qa-b"}))
+        started = time.time()
+        await first.send(json.dumps({"type": "msg", "text": prompts[0]}, ensure_ascii=False))
+        await second.send(json.dumps({"type": "msg", "text": prompts[1]}, ensure_ascii=False))
+        echoed = []
+        for ws, prompt in ((first, prompts[0]), (second, prompts[1])):
+            echoed.append(await _recv_until(
+                ws,
+                lambda message, prompt=prompt: (
+                    message.get("type") == "msg"
+                    and message.get("kind") == "user"
+                    and message.get("text") == prompt),
+                timeout=args.timeout,
+            ))
+        pending = {message["id"]: prompt for message, prompt in zip(echoed, prompts)}
+        turns = []
+        while pending:
+            message = await _recv_until(
+                first,
+                lambda item, pending=pending: (
+                    item.get("type") == "msg"
+                    and item.get("kind") == "anima"
+                    and item.get("reply_to") in pending),
+                timeout=args.timeout,
+            )
+            reply_to = message["reply_to"]
+            prompt = pending.pop(reply_to)
+            reply = str(message.get("text", ""))
+            turns.append({
+                "prompt": prompt,
+                "reply": reply,
+                "reply_to": reply_to,
+                "latency_seconds": time.time() - started,
+                "contract": _reply_contract(prompt, reply),
+            })
+    turns.sort(key=lambda turn: prompts.index(turn["prompt"]))
+    distinct = len({turn["reply"] for turn in turns}) == len(turns)
+    for turn in turns:
+        turn["contract"]["distinct_from_other_turns"] = distinct
+        turn["contract"]["passed"] = turn["contract"]["passed"] and distinct
+    if not all(turn["contract"]["passed"] for turn in turns):
+        raise RuntimeError(json.dumps({"conversation_multi_user": turns}, ensure_ascii=False))
+    return {"passed": True, "turns": turns}
+
+
 async def _direct_generation(args) -> dict:
     if not args.checkpoint:
         raise ValueError("--checkpoint is required for direct-generation")
@@ -196,13 +355,18 @@ async def _soak(args) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=("transport", "generation", "direct-generation", "soak"))
+    parser.add_argument(
+        "mode",
+        choices=("transport", "generation", "conversation", "conversation-multi-user",
+                 "direct-generation", "soak"),
+    )
     parser.add_argument("--health-url", default="http://127.0.0.1:8000/health")
     parser.add_argument("--ws-base", default="ws://127.0.0.1:8000")
     parser.add_argument("--frames", type=int, default=100)
     parser.add_argument("--emissions", type=int, default=20)
     parser.add_argument("--engine-bytes", type=int, default=32)
     parser.add_argument("--timeout", type=float, default=60.0)
+    parser.add_argument("--prompt", action="append")
     parser.add_argument("--checkpoint")
     parser.add_argument("--duration", type=float, default=1800.0)
     parser.add_argument("--interval", type=float, default=5.0)
@@ -214,6 +378,8 @@ def main() -> int:
     handlers = {
         "transport": _transport,
         "generation": _generation,
+        "conversation": _conversation,
+        "conversation-multi-user": _multi_user_conversation,
         "direct-generation": _direct_generation,
         "soak": _soak,
     }
