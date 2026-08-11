@@ -237,7 +237,8 @@ a direct question — speech is substrate-driven, not stimulus-response (`a_subs
 > staging, and runtime deployment were not run. The failed model and checkpoints are retained in
 > private HF `dancinlab/anima-303m-from-scratch-2026-08-11`. The run also fixed canonical trainer
 > module shadowing and exact-resume checkpoint overwrite; H100 regression passed 12/12. Full result:
-> `state/anima_303m_from_scratch_2026_08_11/result.json`.
+> `state/anima_303m_from_scratch_2026_08_11/result.json`. The execution H100 was deleted after
+> artifact custody and Git delivery; Vast.ai active rentals are zero and `anima_alive=false`.
 
 The center of the project is **not a model-scale ladder**. It is a **substrate-native consciousness
 daemon that fills its missing brain subsystems, one engine-native lane at a time**: around the

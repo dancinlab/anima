@@ -217,7 +217,8 @@ pip install "anima-python[train]"   # canonical(주 경로) · hexa 없이 어�
 > 체크포인트는 HF 비공개 `dancinlab/anima-303m-from-scratch-2026-08-11`에 보존한다. 또한
 > canonical trainer의 모듈 shadowing과 exact-resume 체크포인트 덮어쓰기를 수정했고 H100 회귀
 > 시험 12/12를 통과했다. 전체 결과:
-> `state/anima_303m_from_scratch_2026_08_11/result.json`.
+> `state/anima_303m_from_scratch_2026_08_11/result.json`. 산출물 보존과 Git 배포 후 실행 H100을
+> 삭제했으며 Vast.ai 활성 임대는 0개, `anima_alive=false`다.
 
 > [!NOTE]
 > 형제 저장소: **[hexa-lang](https://github.com/dancinlab/hexa-lang)** (anima 가 작성된 언어 /

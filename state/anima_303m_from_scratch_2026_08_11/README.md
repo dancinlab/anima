@@ -81,3 +81,7 @@ outputs are preserved in the private HF repository
 `dancinlab/anima-303m-from-scratch-2026-08-11` (verified metadata revision
 `52358c4a996fcb47ddfa94b9f53e667790f386fe`). The pre-teardown Vast.ai cost snapshot was
 approximately `$1.371`.
+
+After artifact verification and Git delivery, execution instance `47440997` was destroyed. The
+Vast.ai account reported zero active rentals, and the unchanged live broker reported HTTP health
+`ok=true` with the expected `anima_alive=false`.
