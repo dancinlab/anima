@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import sys
@@ -165,6 +166,134 @@ def test_delayed_task_rejects_invalid_codebook(cues):
 def test_delayed_task_rejects_invalid_delay(delay):
     with pytest.raises((TypeError, ValueError)):
         ID.delayed_task_trial(0, delay, [0, 1, 2, 4])
+
+
+def test_clms_latch_uses_only_registered_prediction_as_bounded_cue():
+    class_to_cue = {"good": 1, "bad": 2}
+    assert ID.clms_latch_codebook(class_to_cue) == {6: "good", 5: "bad"}
+    good = ID.clms_latch_trial("good", "good", class_to_cue)
+    bad = ID.clms_latch_trial("bad", "bad", class_to_cue)
+    assert good["action"] == "good" and good["correct"]
+    assert bad["action"] == "bad" and bad["correct"]
+    assert good["latch_cue"] == 1 and bad["latch_cue"] == 2
+    assert good["mirrors_prediction"] and bad["mirrors_prediction"]
+
+
+@pytest.mark.parametrize("mapping", [
+    {}, {"good": 1}, {"good": 1, "bad": 1},
+    {"good": 0, "bad": 2}, {"good": 3, "bad": 2},
+])
+def test_clms_latch_rejects_invalid_class_maps(mapping):
+    with pytest.raises(ValueError):
+        ID.clms_latch_codebook(mapping)
+
+
+def _clms_protocol(tmp_path):
+    source = os.path.join(
+        ROOT, "state", "iit_daemon_r2_clms_2026_08_12", "protocol.json")
+    with open(source, encoding="utf-8") as handle:
+        protocol = json.load(handle)
+    r1 = os.path.join(ROOT, "state", "iit_daemon_r1_delayed_2026_08_12", "result.json")
+    panel_root = os.path.join(ROOT, "state", "store_causality_2026_08_09")
+    protocol["r1"]["path"] = r1
+    protocol["panels"]["normal"]["path"] = os.path.join(
+        panel_root, "panel.txt.compose2.json")
+    protocol["panels"]["drop_a"]["path"] = os.path.join(
+        panel_root, "panel.txt.compose2_dropA.json")
+    protocol["panels"]["drop_b"]["path"] = os.path.join(
+        panel_root, "panel.txt.compose2_drop.json")
+    checkpoint = tmp_path / "model.clm"
+    checkpoint.write_bytes(b"pinned-r2-checkpoint")
+    protocol["checkpoint"]["sha256"] = hashlib.sha256(
+        checkpoint.read_bytes()).hexdigest()
+    protocol_path = tmp_path / "protocol.json"
+    protocol_path.write_text(json.dumps(protocol), encoding="utf-8")
+    return checkpoint, protocol_path
+
+
+def _fake_clms_arm(argv, _return_result=False, _return_trials=False):
+    path = argv[argv.index("--store") + 1]
+    with open(path, encoding="utf-8") as handle:
+        entries = json.load(handle)["entries"]
+    positive = "--store-oracle-pair" in argv or (
+        "compose2_drop" not in path and "--store-shuffle" not in argv)
+    trials = []
+    for index, item in enumerate(entries):
+        gold = item["gold"]
+        prediction = gold if positive or index % 2 == 0 else (
+            "bad" if gold == "good" else "good")
+        trials.append({"index": index, "prediction": prediction, "gold": gold,
+                       "correct": prediction == gold})
+    correct = sum(item["correct"] for item in trials)
+    return {
+        "arm": "oracle" if "--store-oracle-pair" in argv else "lookup",
+        "oracle": "pair" if "--store-oracle-pair" in argv else False,
+        "mode": "shuffle" if "--store-shuffle" in argv else "normal",
+        "n": len(trials), "correct": correct,
+        "accuracy": correct / float(len(trials)), "readable": len(trials),
+        "shuffle_integrity": True, "trials": trials,
+    }
+
+
+def test_clms_latch_evaluator_runs_registered_order(tmp_path, monkeypatch):
+    checkpoint, protocol_path = _clms_protocol(tmp_path)
+    calls = []
+
+    def fake(argv, _return_result=False, _return_trials=False):
+        calls.append(list(argv))
+        return _fake_clms_arm(argv, _return_result, _return_trials)
+
+    monkeypatch.setattr(evaluate, "store_run", fake)
+    out_path = tmp_path / "result.json"
+    rc = evaluate.iit_daemon_clms_run([
+        str(checkpoint), "--iit-daemon-clms", str(protocol_path),
+        "--out", str(out_path)])
+    result = json.loads(out_path.read_text(encoding="utf-8"))
+    assert rc == 0
+    assert result["verdict"] == "SUPPORTED-CLMS-LATCH-CAUSALITY"
+    assert result["latch_accuracies"] == {
+        "oracle_pair": 1.0, "normal": 1.0, "drop_a": 0.5,
+        "drop_b": 0.5, "address_shuffled": 0.5, "recovery": 1.0,
+    }
+    assert all(result["checks"].values())
+    assert len(calls) == 6
+    assert "--store-oracle-pair" in calls[0]
+    assert "--store-shuffle" in calls[4]
+
+
+def test_clms_latch_evaluator_stops_after_failed_oracle(tmp_path, monkeypatch):
+    checkpoint, protocol_path = _clms_protocol(tmp_path)
+    calls = []
+
+    def dead_oracle(argv, _return_result=False, _return_trials=False):
+        calls.append(list(argv))
+        result = _fake_clms_arm(argv, _return_result, _return_trials)
+        for index, trial in enumerate(result["trials"]):
+            if index % 2:
+                trial["prediction"] = "bad" if trial["gold"] == "good" else "good"
+                trial["correct"] = False
+        result["correct"] = sum(trial["correct"] for trial in result["trials"])
+        result["accuracy"] = result["correct"] / float(result["n"])
+        return result
+
+    monkeypatch.setattr(evaluate, "store_run", dead_oracle)
+    out_path = tmp_path / "result.json"
+    rc = evaluate.iit_daemon_clms_run([
+        str(checkpoint), "--iit-daemon-clms", str(protocol_path),
+        "--out", str(out_path)])
+    result = json.loads(out_path.read_text(encoding="utf-8"))
+    assert rc == 1
+    assert result["verdict"] == "INVALID-INSTRUMENT"
+    assert len(calls) == 1
+    assert set(result["clms_arms"]) == {"oracle_pair"}
+
+
+def test_clms_latch_evaluator_rejects_checkpoint_mismatch(tmp_path):
+    checkpoint, protocol_path = _clms_protocol(tmp_path)
+    checkpoint.write_bytes(b"changed-after-registration")
+    with pytest.raises(ValueError, match="checkpoint checksum mismatch"):
+        evaluate.iit_daemon_clms_run([
+            str(checkpoint), "--iit-daemon-clms", str(protocol_path)])
 
 
 def _delayed_protocol():

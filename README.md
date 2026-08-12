@@ -75,15 +75,18 @@ are byte-identical. The missing dedicated broker environment discovered during d
 restored, then LaunchAgent health, public HTTPS `200` and WebSocket `hello` all passed; no participant
 was mounted and `anima_alive=false` remains the honest status.
 
-R2 CLMS two-address latching is now preregistered in
-`state/iit_daemon_r2_clms_2026_08_12/` before implementation or result generation. It keeps the
-existing compose-2 panels, canonical lane-10 seed-7 checkpoint, store window, control seed and
-`0.90/0.75/0.56` bars unchanged. The core will receive only the fixed bounded mapping
-`good -> 1`, `bad -> 2`; pair oracle runs first, followed only on success by normal, clue-A
-removal, clue-B removal, CLMS address shuffle and exact snapshot recovery. A pass can establish
-only a synthetic two-address-read -> persistent-state -> categorical-action causal chain. It
-cannot authorize a mouth, participant or production deployment, which remains
-`BLOCKED-R2-NOT-A-MOUTH` throughout this gate.
+R2 CLMS two-address latching was preregistered before implementation in
+`state/iit_daemon_r2_clms_2026_08_12/` and is complete without changing the existing compose-2
+panels, canonical lane-10 seed-7 checkpoint, store window, control seed or `0.90/0.75/0.56` bars.
+Pair oracle passed at `1.0000`; normal/recovery latched-action accuracy was `0.9531`; clue-A
+removal, clue-B removal and CLMS address shuffle were `0.5000`, `0.4609` and `0.4688`. Every
+latched action mirrored the CLMS prediction, shuffle integrity held, and every recovered final
+state/action matched normal. The verdict is `SUPPORTED-CLMS-LATCH-CAUSALITY`, supporting only a
+synthetic two-address-read -> persistent-state -> categorical-action causal chain. Python QA passed
+`119 tests + 3 subtests` with one expected local CUDA/CuPy skip, and an isolated wheel reproduced
+the actual-checkpoint result byte-for-byte. The unchanged broker remains healthy and public
+HTTPS/WebSocket pass with `anima_alive=false`. R3 mouth-content causality is now open as an
+engineering gate, but participant and production remain `BLOCKED-R2-NOT-A-MOUTH`.
 
 ## Current experiment — meaningful-conversation R0
 

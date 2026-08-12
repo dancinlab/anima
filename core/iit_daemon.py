@@ -19,6 +19,7 @@ SNAPSHOT_SCHEMA = "anima-iit-daemon-snapshot/1"
 CORE_SCHEMA = "anima-iit-daemon-core/1"
 MAX_SNAPSHOT_BYTES = 1 << 20
 DELAYED_PROTOCOL_SCHEMA = "anima-iit-daemon-delayed-protocol/1"
+CLMS_LATCH_PROTOCOL_SCHEMA = "anima-iit-daemon-clms-protocol/1"
 
 
 def _canonical_json(value):
@@ -283,6 +284,65 @@ def delayed_task_trial(cue, delay, cues, *, permutation=(0, 1, 2),
         "action": action,
         "gold": cue,
         "correct": action == cue,
+        "tick": core.tick,
+        "audit_head": core.audit_head,
+    }
+
+
+def clms_latch_codebook(class_to_cue):
+    """Derive the bounded CLMS-class readout from the frozen core transition.
+
+    R2 supplies only a class prediction to this boundary.  Each class must own a
+    distinct one-node cue; the store, addresses, target slots, prompt and gold do
+    not cross the boundary.  The returned mapping decodes intrinsic state back to
+    the original class after the autonomous transition.
+    """
+    if not isinstance(class_to_cue, dict) or set(class_to_cue) != {"good", "bad"}:
+        raise ValueError("CLMS latch needs exactly the 'good' and 'bad' classes")
+    cues = []
+    cue_to_class = {}
+    for label in ("good", "bad"):
+        cue = _state(class_to_cue[label], "class cue")
+        if cue == 0 or cue & (cue - 1):
+            raise ValueError("each CLMS class cue must intervene on exactly one node")
+        if cue in cue_to_class:
+            raise ValueError("CLMS class cues must be distinct")
+        cues.append(cue)
+        cue_to_class[cue] = label
+    state_to_cue = delayed_codebook(cues)
+    return {state: cue_to_class[cue] for state, cue in state_to_cue.items()}
+
+
+def clms_latch_trial(prediction, gold, class_to_cue, *, delay=1):
+    """Latch one CLMS class into persistent state and read a later action.
+
+    ``gold`` is used only after action production to score the trial.  It never
+    enters the core or the class-to-cue mapping.
+    """
+    codebook = clms_latch_codebook(class_to_cue)
+    if prediction not in class_to_cue:
+        raise ValueError("CLMS latch prediction is not registered")
+    if gold not in class_to_cue:
+        raise ValueError("CLMS latch gold is not registered")
+    if isinstance(delay, bool) or not isinstance(delay, int) or delay < 1:
+        raise ValueError("CLMS latch delay must be a positive integer")
+    cue = class_to_cue[prediction]
+    core = IITDaemonCore(0)
+    encoding = core.step(cue)
+    receipts = [core.step(0) for _ in range(delay)]
+    action = codebook.get(core.state)
+    return {
+        "prediction": prediction,
+        "gold": gold,
+        "latch_cue": cue,
+        "encoding": encoding,
+        "encoded_state": encoding["after"],
+        "delay": delay,
+        "delay_receipts": receipts,
+        "final_state": core.state,
+        "action": action,
+        "correct": action == gold,
+        "mirrors_prediction": action == prediction,
         "tick": core.tick,
         "audit_head": core.audit_head,
     }

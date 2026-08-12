@@ -1689,6 +1689,8 @@ def evaluate_usage():
     print("  --iit-daemon-core [--out <result.json>]: run the checkpoint-free R0 IIT mechanics gate.")
     print("  --iit-daemon-delayed <protocol.json> [--out <result.json>]: run the protocol-pinned")
     print("      R1 normal → reset-every-turn → cue-address-shuffle → snapshot-recovery gate.")
+    print("  <ckpt> --iit-daemon-clms <protocol.json> [--out <result.json>]: run the protocol-pinned")
+    print("      R2 pair-oracle → normal → clue-A/B removal → CLMS address-shuffle → recovery latch gate.")
     print("  --store-component-swap <groups> --store-swap-from <donor.clm>: EVAL-ONLY causal")
     print("      surgery (H_9724) — graft CLMS bridge components from a donor ckpt into the host")
     print("      before scoring, to localize the seed-fragility source (ORACLE 0.99 vs 0.50).")
@@ -4379,6 +4381,327 @@ def iit_daemon_delayed_run(argv):
         _store_causality_write(out_path, result)
         print("  wrote %s" % out_path)
     return 0 if verdict == "SUPPORTED-DELAYED-STATE-CAUSALITY" else 1
+
+
+def iit_daemon_clms_run(argv):
+    """Run the preregistered R2 CLMS two-address -> bounded-state latch battery."""
+    import hashlib as _hashlib
+    import tempfile as _tempfile
+    import recurrent_lane as RL
+    import iit_daemon as ID
+
+    protocol_path = evaluate_strval(argv, "--iit-daemon-clms", "")
+    out_path = evaluate_strval(argv, "--out", "")
+    checkpoint = argv[0] if argv and not argv[0].startswith("--") else ""
+    if not checkpoint or not protocol_path:
+        print("ERROR: R2 needs <checkpoint> --iit-daemon-clms <protocol.json>",
+              file=sys.stderr)
+        return 2
+    if os.path.getsize(protocol_path) <= 0 or os.path.getsize(protocol_path) > 65536:
+        raise ValueError("IIT daemon CLMS protocol size is invalid")
+    with open(protocol_path, "r", encoding="utf-8") as handle:
+        protocol = json.load(handle)
+    if protocol.get("schema") != ID.CLMS_LATCH_PROTOCOL_SCHEMA:
+        raise ValueError("unsupported IIT daemon CLMS protocol schema")
+    expected_fields = {
+        "schema", "date", "engines", "transition", "r0_config_checksum",
+        "r0_mechanics_fingerprint", "r1", "checkpoint", "panels", "task",
+        "bars", "required_verdict", "deployment",
+    }
+    if set(protocol) != expected_fields:
+        raise ValueError("IIT daemon CLMS protocol fields mismatch")
+    if protocol.get("engines") != [
+            "core.clms.store_apply", "core.iit_daemon.IITDaemonCore"]:
+        raise ValueError("IIT daemon CLMS protocol engines mismatch")
+    if protocol.get("transition") != "xor-other-two-ring":
+        raise ValueError("IIT daemon CLMS transition mismatch")
+    if protocol.get("required_verdict") != "SUPPORTED-CLMS-LATCH-CAUSALITY":
+        raise ValueError("IIT daemon CLMS verdict mismatch")
+    if protocol.get("deployment") != "BLOCKED-R2-NOT-A-MOUTH":
+        raise ValueError("IIT daemon CLMS deployment mismatch")
+
+    def _digest(path):
+        sha = _hashlib.sha256()
+        with open(path, "rb") as handle:
+            while True:
+                block = handle.read(1 << 20)
+                if not block:
+                    break
+                sha.update(block)
+        return sha.hexdigest()
+
+    protocol_dir = os.path.dirname(os.path.abspath(protocol_path))
+
+    def _pinned_file(spec, name):
+        if not isinstance(spec, dict) or set(spec) != {"path", "sha256"}:
+            raise ValueError("%s artifact fields mismatch" % name)
+        path = os.path.normpath(os.path.join(protocol_dir, spec["path"]))
+        if not os.path.isfile(path):
+            raise ValueError("%s artifact is missing" % name)
+        if _digest(path) != spec["sha256"]:
+            raise ValueError("%s artifact checksum mismatch" % name)
+        return path
+
+    checkpoint_spec = protocol.get("checkpoint")
+    if not isinstance(checkpoint_spec, dict) or set(checkpoint_spec) != {
+            "sha256", "hf_repo", "hf_revision", "artifact"}:
+        raise ValueError("IIT daemon CLMS checkpoint fields mismatch")
+    for field in ("sha256", "hf_repo", "hf_revision", "artifact"):
+        if not isinstance(checkpoint_spec[field], str) or not checkpoint_spec[field]:
+            raise ValueError("IIT daemon CLMS checkpoint metadata is invalid")
+    if not os.path.isfile(checkpoint) or _digest(checkpoint) != checkpoint_spec["sha256"]:
+        raise ValueError("IIT daemon CLMS checkpoint checksum mismatch")
+
+    r1_spec = protocol.get("r1")
+    if not isinstance(r1_spec, dict) or set(r1_spec) != {
+            "path", "sha256", "required_verdict"}:
+        raise ValueError("IIT daemon CLMS R1 fields mismatch")
+    r1_path = os.path.normpath(os.path.join(protocol_dir, r1_spec["path"]))
+    if not os.path.isfile(r1_path) or _digest(r1_path) != r1_spec["sha256"]:
+        raise ValueError("IIT daemon CLMS R1 artifact mismatch")
+    with open(r1_path, "r", encoding="utf-8") as handle:
+        r1_result = json.load(handle)
+    r1_passed = (
+        r1_spec["required_verdict"] == "SUPPORTED-DELAYED-STATE-CAUSALITY" and
+        r1_result.get("verdict") == r1_spec["required_verdict"]
+    )
+
+    panel_specs = protocol.get("panels")
+    if not isinstance(panel_specs, dict) or set(panel_specs) != {
+            "normal", "drop_a", "drop_b"}:
+        raise ValueError("IIT daemon CLMS panel fields mismatch")
+    panel_paths = {
+        name: _pinned_file(panel_specs[name], "panel-%s" % name)
+        for name in ("normal", "drop_a", "drop_b")
+    }
+    audit = _store_causality_load(
+        panel_paths["normal"], panel_paths["drop_a"], panel_paths["drop_b"])
+
+    task = protocol.get("task")
+    if not isinstance(task, dict) or set(task) != {
+            "class_to_cue", "delay", "panel_size", "chance", "store_window",
+            "store_control_seed"}:
+        raise ValueError("IIT daemon CLMS task fields mismatch")
+    class_to_cue = task["class_to_cue"]
+    latch_codebook = ID.clms_latch_codebook(class_to_cue)
+    delay = task["delay"]
+    if isinstance(delay, bool) or not isinstance(delay, int) or delay < 1:
+        raise ValueError("IIT daemon CLMS delay must be a positive integer")
+    store_window = task["store_window"]
+    control_seed = task["store_control_seed"]
+    if (isinstance(store_window, bool) or not isinstance(store_window, int) or
+            store_window < 3):
+        raise ValueError("IIT daemon CLMS store window is invalid")
+    if (isinstance(control_seed, bool) or not isinstance(control_seed, int) or
+            control_seed < 0):
+        raise ValueError("IIT daemon CLMS control seed is invalid")
+    if task["panel_size"] != audit["n"]:
+        raise ValueError("IIT daemon CLMS panel size mismatch")
+    if abs(float(task["chance"]) - audit["chance"]) > 1.0e-12:
+        raise ValueError("IIT daemon CLMS chance mismatch")
+
+    bars = protocol.get("bars")
+    if not isinstance(bars, dict) or set(bars) != {
+            "pair_oracle", "positive", "control_margin", "control_ceiling"}:
+        raise ValueError("IIT daemon CLMS bar fields mismatch")
+    oracle_bar = float(bars["pair_oracle"])
+    positive_bar = float(bars["positive"])
+    control_margin = float(bars["control_margin"])
+    if any(not math.isfinite(value) or value < 0.0 or value > 1.0
+           for value in (oracle_bar, positive_bar, control_margin)):
+        raise ValueError("IIT daemon CLMS bars must be finite in [0,1]")
+    control_ceiling = audit["chance"] + control_margin
+    if control_ceiling > 1.0 or abs(
+            float(bars["control_ceiling"]) - control_ceiling) > 1.0e-12:
+        raise ValueError("IIT daemon CLMS control ceiling mismatch")
+
+    canonical_tpm = RL.xor_ring_tpm()
+    all_state_phi = RL.all_state_big_phi(canonical_tpm)
+    causal_edges = [list(edge) for edge in RL.causal_edges(canonical_tpm)]
+    mechanics = {
+        "config_checksum": ID.IITDaemonConfig().checksum,
+        "tpm": canonical_tpm,
+        "all_state_phi": all_state_phi,
+        "causal_edges": causal_edges,
+    }
+    mechanics_fingerprint = _hashlib.sha256(ID._canonical_json(mechanics)).hexdigest()
+    mechanics_unchanged = (
+        mechanics["config_checksum"] == protocol.get("r0_config_checksum") and
+        mechanics_fingerprint == protocol.get("r0_mechanics_fingerprint")
+    )
+
+    common = ["--win", str(store_window), "--store-ctrl-seed", str(control_seed)]
+
+    def _store_arm(path, *flags):
+        result = store_run(
+            [checkpoint, "--store", path, *flags, *common],
+            _return_result=True, _return_trials=True)
+        if not isinstance(result, dict):
+            raise RuntimeError("CLMS store arm failed with exit %r" % result)
+        if len(result.get("trials", [])) != audit["n"]:
+            raise RuntimeError("CLMS store arm did not return the complete frozen panel")
+        return result
+
+    def _latch_arm(store_result):
+        trials = []
+        for item in store_result["trials"]:
+            trial = ID.clms_latch_trial(
+                item["prediction"], item["gold"], class_to_cue, delay=delay)
+            trial["index"] = item["index"]
+            trials.append(trial)
+        accuracy = sum(trial["correct"] for trial in trials) / float(len(trials))
+        return {"accuracy": accuracy, "trials": trials}
+
+    print("[iit-daemon R2 · CLMS two-address latch]")
+    oracle = _store_arm(panel_paths["normal"], "--store-oracle-pair")
+    oracle_latch = _latch_arm(oracle)
+    if oracle["accuracy"] < oracle_bar or oracle_latch["accuracy"] < oracle_bar:
+        result = {
+            "schema": "anima-iit-daemon-clms-result/1",
+            "date": protocol.get("date"),
+            "protocol": os.path.basename(protocol_path),
+            "protocol_sha256": _digest(protocol_path),
+            "checkpoint_sha256": checkpoint_spec["sha256"],
+            "audit": audit,
+            "clms_arms": {"oracle_pair": oracle},
+            "latch_arms": {"oracle_pair": oracle_latch},
+            "verdict": "INVALID-INSTRUMENT",
+            "deployment": "BLOCKED-R2-NOT-A-MOUTH",
+            "next_gate": "R2-BLOCKED",
+        }
+        if out_path:
+            _store_causality_write(out_path, result)
+        print("  verdict: INVALID-INSTRUMENT — pair oracle < %.2f; later arms not run"
+              % oracle_bar)
+        return 1
+
+    normal = _store_arm(panel_paths["normal"])
+    drop_a = _store_arm(panel_paths["drop_a"])
+    drop_b = _store_arm(panel_paths["drop_b"])
+    shuffled = _store_arm(panel_paths["normal"], "--store-shuffle")
+    recovery_source = _store_arm(panel_paths["normal"])
+    clms_arms = {
+        "oracle_pair": oracle, "normal": normal, "drop_a": drop_a,
+        "drop_b": drop_b, "address_shuffled": shuffled,
+        "recovery": recovery_source,
+    }
+    latch_arms = {
+        "oracle_pair": oracle_latch,
+        "normal": _latch_arm(normal),
+        "drop_a": _latch_arm(drop_a),
+        "drop_b": _latch_arm(drop_b),
+        "address_shuffled": _latch_arm(shuffled),
+    }
+
+    recovery_trials = []
+    recovery_exact = []
+    disturbance_changed = []
+    normal_by_index = {
+        trial["index"]: trial for trial in latch_arms["normal"]["trials"]}
+    with _tempfile.TemporaryDirectory(prefix="anima-iit-daemon-r2-") as directory:
+        for item in recovery_source["trials"]:
+            cue = class_to_cue[item["prediction"]]
+            source = ID.IITDaemonCore(0)
+            encoding = source.step(cue)
+            snapshot_path = os.path.join(directory, "trial-%04d.json" % item["index"])
+            source.save_snapshot(snapshot_path)
+            pristine = ID.IITDaemonCore.load_snapshot(snapshot_path).snapshot()
+            source.step(7, permutation=(2, 0, 1), lesion_mask=7)
+            disturbance_changed.append(source.snapshot() != pristine)
+            restored = ID.IITDaemonCore.load_snapshot(snapshot_path)
+            receipts = [restored.step(0) for _ in range(delay)]
+            action = latch_codebook.get(restored.state)
+            reference = normal_by_index[item["index"]]
+            exact = (
+                item["prediction"] == reference["prediction"] and
+                restored.state == reference["final_state"] and
+                action == reference["action"]
+            )
+            recovery_exact.append(exact)
+            recovery_trials.append({
+                "index": item["index"],
+                "prediction": item["prediction"],
+                "gold": item["gold"],
+                "latch_cue": cue,
+                "encoding": encoding,
+                "encoded_state": encoding["after"],
+                "delay": delay,
+                "delay_receipts": receipts,
+                "final_state": restored.state,
+                "action": action,
+                "correct": action == item["gold"],
+                "mirrors_prediction": action == item["prediction"],
+                "matches_normal": exact,
+                "tick": restored.tick,
+                "audit_head": restored.audit_head,
+            })
+    latch_arms["recovery"] = {
+        "accuracy": sum(trial["correct"] for trial in recovery_trials) /
+                    float(len(recovery_trials)),
+        "trials": recovery_trials,
+    }
+
+    accuracies = {name: arm["accuracy"] for name, arm in latch_arms.items()}
+    all_latch_trials = [trial for arm in latch_arms.values() for trial in arm["trials"]]
+    clms_checks, clms_verdict = _store_causality_decide(
+        oracle["accuracy"], normal["accuracy"], drop_a["accuracy"],
+        drop_b["accuracy"], shuffled["accuracy"], recovery_source["accuracy"],
+        audit["chance"])
+    checks = {
+        "artifact_integrity": True,
+        "r1_gate_passed": r1_passed,
+        "r0_mechanics_unchanged": mechanics_unchanged,
+        "balanced_panel": audit["gold_counts"] == {"good": 64, "bad": 64},
+        "bounded_bijective_latch": set(latch_codebook.values()) == {"good", "bad"},
+        "pair_oracle_clms_positive": oracle["accuracy"] >= oracle_bar,
+        "pair_oracle_latch_positive": accuracies["oracle_pair"] >= oracle_bar,
+        "latch_mirrors_clms": all(trial["mirrors_prediction"] for trial in all_latch_trials),
+        "normal_positive": accuracies["normal"] >= positive_bar,
+        "drop_a_collapses": accuracies["drop_a"] <= control_ceiling,
+        "drop_b_collapses": accuracies["drop_b"] <= control_ceiling,
+        "address_shuffle_collapses": accuracies["address_shuffled"] <= control_ceiling,
+        "shuffle_integrity": shuffled["shuffle_integrity"],
+        "recovery_positive": accuracies["recovery"] >= positive_bar,
+        "recovery_accuracy_exact": abs(
+            accuracies["recovery"] - accuracies["normal"]) <= 1.0e-12,
+        "recovery_trials_exact": all(recovery_exact),
+        "disturbance_changes_snapshot": all(disturbance_changed),
+        "existing_store_gate_unchanged": clms_verdict == "SUPPORTED-CAUSAL" and
+                                          all(clms_checks.values()),
+    }
+    verdict = "SUPPORTED-CLMS-LATCH-CAUSALITY" if all(checks.values()) else "FALSIFIED"
+    result = {
+        "schema": "anima-iit-daemon-clms-result/1",
+        "date": protocol.get("date"),
+        "protocol": os.path.basename(protocol_path),
+        "protocol_sha256": _digest(protocol_path),
+        "claim_scope": "fixed CLMS two-address read to bounded intrinsic state/action causality",
+        "non_claims": ["phenomenal consciousness", "maximal complex", "meaningful conversation",
+                       "learning", "production readiness"],
+        "checkpoint": dict(checkpoint_spec),
+        "audit": audit,
+        "task": dict(task, state_to_class_codebook={
+            str(state): label for state, label in latch_codebook.items()}),
+        "bars": dict(bars),
+        "r0_mechanics": dict(mechanics, fingerprint=mechanics_fingerprint),
+        "clms_checks": clms_checks,
+        "clms_arms": clms_arms,
+        "latch_accuracies": accuracies,
+        "latch_arms": latch_arms,
+        "checks": checks,
+        "verdict": verdict,
+        "deployment": "BLOCKED-R2-NOT-A-MOUTH",
+        "next_gate": "R3-MOUTH-CONTENT-CAUSALITY" if all(checks.values()) else "R2-BLOCKED",
+    }
+    print("  oracle=%.4f normal=%.4f dropA=%.4f dropB=%.4f shuffle=%.4f recovery=%.4f"
+          % (accuracies["oracle_pair"], accuracies["normal"], accuracies["drop_a"],
+             accuracies["drop_b"], accuracies["address_shuffled"],
+             accuracies["recovery"]))
+    print("  verdict: %s (no consciousness, meaning, or deployment claim)" % verdict)
+    if out_path:
+        _store_causality_write(out_path, result)
+        print("  wrote %s" % out_path)
+    return 0 if verdict == "SUPPORTED-CLMS-LATCH-CAUSALITY" else 1
 
 
 def structure_envelope_read_run(argv):
@@ -8468,7 +8791,7 @@ def store_causality_run(argv):
     return 0
 
 
-def store_run(argv, _return_result=False):
+def store_run(argv, _return_result=False, _return_trials=False):
     """`anima-py evaluate <ckpt> --store <held.json> [--store-oracle] [--store-lambda λ]` — H_9423
     CLMS store-bridge lane eval (the CO-TRAINED bridge, NOT the H_9392 --store-mix bolt-on actuator:
     the boundary is "does the fusion parameter live inside the .clm and enter the forward pass"). Each
@@ -8737,6 +9060,7 @@ def store_run(argv, _return_result=False):
     if W.get("clms") is None:
         print("  ⚠️ this ckpt carries NO CLMS trailer — the lane is ABSENT (base trunk). FLOOR by construction.")
     n = correct = 0
+    returned_trials = []
     by = {}                                          # (op, pol) -> [correct, total]  (polarity-split · card)
     fixed_points_total = dup_entities = 0
     pol_hist = {}                                     # #good-slots per store -> count (balance witness · §E)
@@ -8873,6 +9197,13 @@ def store_run(argv, _return_result=False):
         n += 1
         readable_n += int(pred in ("good", "bad"))    # H_9775 vocab: readability witness ('unreadable'≠gold=0)
         correct += int(pred == gold)
+        if _return_trials:
+            returned_trials.append({
+                "index": idx,
+                "prediction": pred,
+                "gold": gold,
+                "correct": pred == gold,
+            })
         key = (it.get("op"), 0 if gold == "good" else 1)
         rec = by.setdefault(key, [0, 0]); rec[0] += int(pred == gold); rec[1] += 1
     clm.set_clms_store(None)                          # reset the process-global (no leak into later runs)
@@ -9009,6 +9340,8 @@ def store_run(argv, _return_result=False):
             }
             for name, rec in dual_addr.items() if rec["n"]
         }
+    if _return_trials:
+        result["trials"] = returned_trials
     return result if _return_result else 0
 
 
@@ -13050,6 +13383,7 @@ _KNOWN_FLAGS = frozenset((
     "--iit4-recurrent-lane",
     "--iit-daemon-core",
     "--iit-daemon-delayed",
+    "--iit-daemon-clms",
     # H_1520 conversational-salience emit gate re-read with the PLANTED FNV-trigram key
     # geometry swapped for the REAL 303M penultimate. ONE flag, no tuning argument.
     "--salience-toggle-read",
@@ -19950,6 +20284,10 @@ def main(argv):
     # It mounts no mouth and keeps the R0 mechanics fingerprint fail-closed.
     if "--iit-daemon-delayed" in argv:
         return iit_daemon_delayed_run(argv)
+    # IIT-daemon R2: protocol/checksum-pinned existing CLMS two-address read latched
+    # into the same bounded persistent core. Pair oracle gates every later arm.
+    if "--iit-daemon-clms" in argv:
+        return iit_daemon_clms_run(argv)
     # H_9838 --hippo-transitive-selftest: core/hippo_lane.py's CA3 multi-step completion on a
     # planted premise world. Ckpt-FREE by construction (the store + completion are pure numpy
     # arithmetic), so it dispatches on flag PRESENCE like --closure-ladder. ADDITIVE and

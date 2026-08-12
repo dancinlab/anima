@@ -67,14 +67,18 @@ state→action 인과 결과이지 학습·의미·현상적 의식·최대 comp
 뒤 LaunchAgent health, 공개 HTTPS `200`, WebSocket `hello`를 모두 통과했다. participant는
 연결하지 않았고 `anima_alive=false`가 정직한 현재 상태다.
 
-R2 CLMS 두 주소 latch는 구현·결과 생성 전에
-`state/iit_daemon_r2_clms_2026_08_12/`에 사전등록했다. 기존 compose-2 panel, canonical
-lane-10 seed-7 체크포인트, store window, control seed와 `0.90/0.75/0.56` 문턱은 변경하지
-않는다. 코어에는 `good -> 1`, `bad -> 2`의 고정된 제한 개입만 전달한다. pair oracle을
-먼저 실행하고 통과한 경우에만 정상, 단서 A 제거, 단서 B 제거, CLMS 주소 shuffle, 정확한
-snapshot 복구 순서로 진행한다. 통과해도 합성 두 주소 판독→지속 상태→범주 행동의 인과
-사슬만 지지하며 mouth·participant·프로덕션 승격은 승인하지 않는다. 이 관문 내내 배포
-상태는 `BLOCKED-R2-NOT-A-MOUTH`다.
+R2 CLMS 두 주소 latch는 구현 전에 `state/iit_daemon_r2_clms_2026_08_12/`에 사전등록했고,
+기존 compose-2 panel, canonical lane-10 seed-7 체크포인트, store window, control seed와
+`0.90/0.75/0.56` 문턱을 변경하지 않고 완료했다. pair oracle은 `1.0000`, 정상·복구 latch
+행동 정확도는 `0.9531`, 단서 A 제거·단서 B 제거·CLMS 주소 shuffle은 각각 `0.5000`,
+`0.4609`, `0.4688`이다. 모든 latch 행동이 CLMS 예측과 같고 shuffle 무결성을 유지했으며,
+복구된 최종 상태·행동은 모두 정상과 일치했다. 판정은
+`SUPPORTED-CLMS-LATCH-CAUSALITY`로, 합성 두 주소 판독→지속 상태→범주 행동의 인과
+사슬만 지지한다. Python QA는 `119 tests + 3 subtests`를 통과했고 로컬 CUDA/CuPy 1건만
+예상대로 skip됐으며, 격리 wheel이 실제 체크포인트 결과를 byte 단위로 재현했다. 변경하지
+않은 broker는 healthy이고 공개 HTTPS/WebSocket은 `anima_alive=false` 상태로 정상이다. R3
+mouth 내용 인과성 엔지니어링 관문은 열렸지만 participant와 프로덕션은 계속
+`BLOCKED-R2-NOT-A-MOUTH`다.
 
 ## 현재 실험 — 의미 있는 대화 R0
 

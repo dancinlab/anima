@@ -1,6 +1,6 @@
 # IIT daemon R2 — CLMS two-address latch (2026-08-12)
 
-Status: PREREGISTERED — implementation and result generation have not started.
+Status: COMPLETE — `SUPPORTED-CLMS-LATCH-CAUSALITY`.
 
 This Python-only protocol is registered after R1 returned
 `SUPPORTED-DELAYED-STATE-CAUSALITY` and before R2 implementation or result generation. It reuses
@@ -81,3 +81,42 @@ Failure is recorded without changing data, randomness, mapping, delay, threshold
 pair-oracle failure returns `INVALID-INSTRUMENT` and forbids interpretation of later arms. Any other
 gate failure returns `FALSIFIED` and blocks R3. Passing R2 opens only R3 mouth-content causality;
 meaningful conversation and production remain blocked as `BLOCKED-R2-NOT-A-MOUTH`.
+
+## Execution result
+
+Implementation and execution completed after the protocol was committed and pushed as
+`0ad934236`. No registered source, mapping, order, seed or threshold changed.
+
+- `core/iit_daemon.py` now validates the two registered one-node cues, derives the state-to-class
+  codebook from the unchanged XOR-ring transition, and exposes one CLMS-class latch trial. Gold is
+  used only after action production for scoring.
+- The existing `cli.evaluate.store_run` can return its per-row predictions to an internal caller;
+  its public CLI, aggregate result and default behavior remain unchanged.
+- `anima-py evaluate <ckpt> --iit-daemon-clms protocol.json` verifies every artifact digest and R1
+  verdict, runs the existing CLMS evaluator, and then passes only each `good/bad` prediction across
+  the bounded core boundary. It records all 768 CLMS rows and all 768 latch traces.
+- The pair oracle passed first at `1.0000`, so and only so the remaining arms ran. Latched action
+  accuracy was normal `0.953125`, clue-A removal `0.500000`, clue-B removal `0.460938`, address
+  shuffle `0.468750`, and recovery `0.953125`.
+- Both positive arms exceed `0.75`; all three controls are below the frozen `0.56` ceiling. The
+  Sattolo shuffle moved every entity (`fixed_points_total=0`), all latched actions mirror the CLMS
+  prediction, and every recovered final state/action matches its normal counterpart.
+- R0 config/TPM/Phi/edge fingerprint and the pinned R1 result remain unchanged. The raw result is
+  `result.json`, SHA-256 `11b1ec8e...fc8f`.
+- Focused IIT/CLMS/store regression passed `55/55`. Repository Python QA passed
+  `119 passed, 1 skipped, 3 subtests`; the skip is the expected local CUDA/CuPy path. Compile,
+  JSON and diff checks pass.
+- A clean wheel built successfully. Its isolated installed `anima-py` reran the actual 171MB
+  checkpoint and produced a byte-identical result JSON with the same
+  `11b1ec8e...fc8f` digest.
+- The unchanged broker remains `loaded=true healthy=true`; public HTTPS returned `200` and public
+  WebSocket returned `hello` with `anima_alive=false`. R2 changes no broker/participant call path,
+  so no runtime restart or model mount was performed.
+- No training, Vast.ai rental, HF write or model/data mutation occurred. The registered model and
+  data remain managed in the pinned private `dancinlab` HF repositories. The pre-existing local
+  checkpoint cache was read only. `ING.jsonl` and `stream_mi.json` remain untouched.
+
+Verdict: `SUPPORTED-CLMS-LATCH-CAUSALITY`. This supports only the fixed synthetic
+two-address-read -> persistent-state -> categorical-action chain. It opens the engineering gate for
+R3 mouth-content causality but does not open staging or production; deployment remains
+`BLOCKED-R2-NOT-A-MOUTH` because no meaningful mouth is connected.
