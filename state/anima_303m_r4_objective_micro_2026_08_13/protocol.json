@@ -1,0 +1,116 @@
+{
+  "schema": "anima-303m-r4-objective-micro/v1",
+  "date": "2026-08-13",
+  "status": "PREREGISTERED",
+  "parent_result": "../anima_303m_v1_context_micro_2026_08_12/result.json",
+  "claim": "Test whether full-window next-byte supervision, rather than missing context alone, causes the tiny dialogue mouth to optimize low teacher-forced CE while collapsing in prompt-conditioned generation.",
+  "execution": {
+    "entry": "anima-py",
+    "language": "Python only",
+    "local_threads_max": 2,
+    "local_device": "Apple MPS",
+    "gpu_provider_if_needed": "Vast.ai",
+    "h100_allowed": false,
+    "models_and_training_data": "Hugging Face dancinlab repositories only",
+    "delete_instance_after_completion": true
+  },
+  "fixed_data": {
+    "repository": "dancinlab/anima-303m-v0-v2-turns-2026-08-12",
+    "revision": "17a1e4676d684a99a54208549445952302f389fa",
+    "source": "OpenAssistant/oasst1",
+    "source_revision": "fdf72ae0827c1cda404aff25b6603abec9e3399b",
+    "license": "Apache-2.0",
+    "language": "en",
+    "canonical_chat_format": "core.generator.gen_chat_format",
+    "views": {
+      "single_document": {
+        "documents": 1,
+        "repetitions_for_full_window": 4,
+        "sha256": "94cf52463cdc316cdf4b1b2ebe6de7dfe16e62359eafd4155daf3db10421b822"
+      },
+      "hundred_document_train": {
+        "documents": 100,
+        "sha256": "7ea221f76e025da06383a5512bdb4ad27686dee0c155c4ed198a259d32d9e941"
+      },
+      "heldout_validation": {
+        "documents": 32,
+        "sha256": "6604191d50f59879e79f3088105c740e7a1aa9e30f1bcbd75e590b8bc4899404"
+      },
+      "probe": "first eight SHA-ordered single-exchange training documents"
+    }
+  },
+  "evaluation_panel": {
+    "file": "../anima_303m_r0_english_2026_08_12/conversation_panel.json",
+    "sha256": "cf1a6d6837a69031929168b2b02aaf771406e0d8429bb8912b65f0be2ccbad4a"
+  },
+  "model": {
+    "architecture": "existing ByteGPT only",
+    "vocab": 256,
+    "d": 128,
+    "layers": 4,
+    "heads": 2,
+    "block": 512,
+    "seed": 7,
+    "batch": 8,
+    "single_document_steps": 300,
+    "hundred_document_steps": 600,
+    "optimizer": "AdamW beta=(0.9,0.95), weight_decay=0.1",
+    "peak_lr": 0.001,
+    "schedule": "50-step linear warmup then cosine to 0.1 peak ratio",
+    "validation_every": 100,
+    "validation_batches": 4,
+    "decode": "canonical greedy, 192 new bytes"
+  },
+  "single_variable": {
+    "axis": "language-model loss target selection",
+    "arms": {
+      "O0_full": "existing ce_marginal over every target byte",
+      "O1_additive": "existing ce_marginal plus answer_ce weight 1.0 over every canonical assistant span",
+      "O2_response_only": "answer_ce weight 1.0 over every canonical assistant span; full-window ce_marginal is monitor-only and contributes no gradient"
+    },
+    "matched": [
+      "initial weights",
+      "data bytes and ordering",
+      "complete-document sampler draws",
+      "batch and target-byte exposure",
+      "steps",
+      "optimizer and schedule",
+      "serializer",
+      "canonical greedy decode",
+      "probe and bars"
+    ],
+    "implementation_constraints": {
+      "extend_existing_trainer": true,
+      "default_behavior_unchanged": true,
+      "exact_resume_records_mode": true,
+      "framed_batch_without_assistant_targets": "fail closed",
+      "new_engine_or_evaluator": false
+    }
+  },
+  "gates": {
+    "protocol_and_data_sha": "all exact matches before training",
+    "single_document_positive_control": "all three arms exactly reproduce the registered assistant response",
+    "heldout_full_ce_descent": "O2 final held-out full CE is below uniform CE and below its first registered held-out full CE",
+    "prompt_conditioning": "O2 produces at least 6/8 non-empty replies and at least six normalized distinct replies",
+    "target_recovery": "O2 shares the first 16 UTF-8 target bytes on at least 6/8 probes",
+    "structural": "O2 passes all 8 existing structural checks",
+    "control_honesty": "O0/O1 results are reported losslessly but cannot promote O2"
+  },
+  "promotion": {
+    "303m_single_seed": "allowed only if every O2 gate passes; requires a separate preregistration",
+    "iit_mouth_coupling": "blocked",
+    "participant": "blocked",
+    "production": "blocked"
+  },
+  "failure_policy": {
+    "max_training_arms": 6,
+    "no_result_dependent_threshold_seed_data_step_or_decode_changes": true,
+    "if_local_or_data_gate_fails": "record failure and do not rent a GPU",
+    "if_O2_fails": "record and preserve raw evidence; do not run 303M or couple IIT state",
+    "always_delete_vast_instance": true
+  },
+  "preserve": [
+    "ING.jsonl",
+    "stream_mi.json"
+  ]
+}

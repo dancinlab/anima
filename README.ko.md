@@ -236,6 +236,35 @@ prefix `0/8`, 구조 `0/8`이었고 `an/the/ic` 반복으로 붕괴했다. 긴 b
 HF 검증 뒤 RTX 3090 인스턴스를 삭제해 Vast.ai 활성 임대는 0개이며, 추정 비용은
 `$0.058457`이다.
 
+### 사전등록한 R4 목적함수 마이크로 실험
+
+`state/anima_303m_r4_objective_micro_2026_08_13/`에 trainer 변경·실행 전 다음 단일축 진단을
+동결했다. V1은 긴 문맥이 완전 대화를 더 많이 수용하지만 반복 붕괴를 막지는 못함을
+보였다. 남은 목적함수 gap은 기존 response CE가 `full_ce + answer_ce`인 가산 항이며,
+표준 대화 SFT처럼 assistant 응답 위치만 감독하는 목적함수를 실제로 시험한 적이 없다는
+점이다. 새 비교는 불변 100문서 view, tiny ByteGPT, seed, 512-byte block, optimizer, schedule,
+byte 예산, greedy decode와 관문을 고정하고 full CE·기존 가산 response CE·response-only CE만
+비교한다. 공용 Python trainer를 default-off 방식으로 확장하며 새 엔진·평가기 생성은 없다.
+실패하면 303M·IIT-mouth 결합·프로덕션을 계속 차단하고, 통과해도 별도 사전등록한 303M
+단일 seed screen만 허용한다. 등록한 단일문서 관문에서 response-only만 정확한 전체 정답 뒤에
+무의미 suffix를 더 생성해 실패했다. EOS나 다음 role 경계가 gradient를 받지 않았기 때문이다.
+full/additive 대조군은 정확히 멈췄다. 따라서 100문서 arm은 실행하지 않았고 판정은
+`FAIL-R4-OBJECTIVE-MICRO`다.
+
+`state/anima_303m_r4_turn_boundary_micro_2026_08_13/`에는 다음 허용 마이크로 수정을 별도
+사전등록했다. assistant-only span의 오른쪽 경계만 바꿔 payload·내부 newline·다음 canonical
+`user:` delimiter까지 감독하고, 뒤의 user 내용은 계속 mask한다. 데이터·모델·vocab·step·
+sampler·decoder·stop parser·관문은 고정한다. 이는 기존 256-byte vocab에서 쓸 수 있는 native
+EOS 등가물이며, 실패하면 303M과 IIT-mouth 결합을 계속 차단한다.
+등록 실행에서 직접적인 stop 실패는 수정됐다. 단일문서 treatment는 정확히 끝났고 held-out
+full CE는 `5.49208 → 2.66085`, 100문서 probe의 비어 있지 않은 서로 다른 응답은 `8/8`이었다.
+그러나 target recovery `0/8`, 구조 `0/8`이며 `the/an/toure/ion` 반복이 지속됐다. 판정은
+`FAIL-R4-TURN-BOUNDARY-MICRO`이고 303M·IIT 결합·participant·프로덕션은 계속 차단한다.
+두 실패 마이크로의 모델·원시 증거는 HF `dancinlab` 비공개 revision
+`9d7641389b1ddff73bd12f17f155f448500d1edb`에 SHA 검증해 보존했다.
+전체 Python/CHAT QA는 `153 tests + 3 subtests`를 통과했고 로컬 CUDA/CuPy 1건만 정상 skip됐다.
+Vast.ai/H100은 사용하지 않았고 API 기준 활성 임대는 0개다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

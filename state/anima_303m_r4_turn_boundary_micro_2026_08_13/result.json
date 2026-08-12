@@ -1,0 +1,429 @@
+{
+  "schema": "anima-303m-r4-turn-boundary-micro-result/v1",
+  "protocol_sha256": "2f8e51848befc3529eeecc45c8c6b347c253503f6513d2f3748fd5e7fe1d87d8",
+  "parent_result_sha256": "6297d6187ce8daec85b58ec5f52847992ea096f23be217efe2e538e3ea7e8c53",
+  "panel_sha256": "cf1a6d6837a69031929168b2b02aaf771406e0d8429bb8912b65f0be2ccbad4a",
+  "dataset": {
+    "repository": "dancinlab/anima-303m-v0-v2-turns-2026-08-12",
+    "revision": "17a1e4676d684a99a54208549445952302f389fa",
+    "view_sha256": {
+      "single_document": "94cf52463cdc316cdf4b1b2ebe6de7dfe16e62359eafd4155daf3db10421b822",
+      "hundred_document_train": "7ea221f76e025da06383a5512bdb4ad27686dee0c155c4ed198a259d32d9e941",
+      "heldout_validation": "6604191d50f59879e79f3088105c740e7a1aa9e30f1bcbd75e590b8bc4899404"
+    }
+  },
+  "device": "mps",
+  "mask_control": {
+    "assistant_payload": true,
+    "internal_newline": true,
+    "next_user_role_delimiter": true,
+    "following_user_content": false
+  },
+  "single": {
+    "mode": "turn-only",
+    "summary": {
+      "entry": "anima-py train",
+      "arch": "bytegpt",
+      "arm": "ctrl",
+      "objective": "ce_marginal",
+      "seed": 7,
+      "optimizer": {
+        "name": "AdamW",
+        "beta1": 0.9,
+        "beta2": 0.95,
+        "weight_decay": 0.1,
+        "lr": 0.001,
+        "schedule": "cosine",
+        "warmup_steps": 50,
+        "decay_steps": 300,
+        "min_lr_ratio": 0.1
+      },
+      "initialization": {
+        "name": "gpt2-canonical",
+        "std": 0.02,
+        "residual_projection_scale": "std/sqrt(2*n_layer)"
+      },
+      "ddp": {
+        "world_size": 1,
+        "global_batch": 8,
+        "per_rank_batch": 8,
+        "gpus": ""
+      },
+      "obj_aux_params": 0,
+      "answer_ce": {
+        "weight": 1.0,
+        "mode": "turn-only",
+        "marker_utf8": "assistant: ",
+        "all_spans": true,
+        "chat_framed_sampling": true,
+        "telemetry": {
+          "complete_trajectory": true,
+          "steps": 300,
+          "active_steps": 300,
+          "positions": 821796,
+          "position_weighted_ce_sum": 903299.899755992,
+          "scope": "full_batch",
+          "mean_ce": 1.0991777761828871
+        }
+      },
+      "levers": {
+        "tlora": false,
+        "tlora_rank": 8,
+        "tlora_base": true,
+        "dict_aux": false,
+        "jamo_aux": false,
+        "wd_floor": -1.0,
+        "dropout_floor": -1.0
+      },
+      "n_params": 891648,
+      "loss0": 5.5493,
+      "lossF": 1.54863,
+      "wall_s": 17.3,
+      "uniform_ce": 5.54518,
+      "final_val_ce_pooled": null,
+      "final_val_ce_macro_cells": null,
+      "validation_aggregation": "equal-cell macro average",
+      "sampling": {
+        "policy": "proportional",
+        "weight_basis": "train_bytes",
+        "complete_trajectory": true,
+        "per_cell": {
+          "dialogue": {
+            "train_bytes": 798,
+            "sampled_windows": 2400,
+            "sampled_framed_windows": 2400,
+            "eligible_chat_documents": 4,
+            "oversize_chat_documents": 0,
+            "sampled_fraction": 1.0
+          }
+        }
+      },
+      "registers_descent": "0/0",
+      "heldout_descent": {},
+      "last_aux": {
+        "ans_ce": 0.07250095158815384,
+        "ans_n": 2719
+      },
+      "dbes_final": null,
+      "dbes_log": [],
+      "dbes_batch_scope": "full_batch(B=8)",
+      "gauges_g1g6_torch_probe": null,
+      "sleep_schedule": null,
+      "phi_envelope_monitor": null,
+      "tier": "engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL",
+      "validation_series": []
+    },
+    "prompt": "What's your favorite color?",
+    "target": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!",
+    "decoded": {
+      "ok": true,
+      "text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!",
+      "reason": "decoded via bytegpt_decode_argmax_ranged (24-layer GPT-2-class byte forward)",
+      "stop_marker": "\nuser:",
+      "stopped": true,
+      "raw_text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!\n\nuser: Blaseesinse Blaserase"
+    },
+    "exact": true
+  },
+  "hundred": {
+    "mode": "turn-only",
+    "summary": {
+      "entry": "anima-py train",
+      "arch": "bytegpt",
+      "arm": "ctrl",
+      "objective": "ce_marginal",
+      "seed": 7,
+      "optimizer": {
+        "name": "AdamW",
+        "beta1": 0.9,
+        "beta2": 0.95,
+        "weight_decay": 0.1,
+        "lr": 0.001,
+        "schedule": "cosine",
+        "warmup_steps": 50,
+        "decay_steps": 600,
+        "min_lr_ratio": 0.1
+      },
+      "initialization": {
+        "name": "gpt2-canonical",
+        "std": 0.02,
+        "residual_projection_scale": "std/sqrt(2*n_layer)"
+      },
+      "ddp": {
+        "world_size": 1,
+        "global_batch": 8,
+        "per_rank_batch": 8,
+        "gpus": ""
+      },
+      "obj_aux_params": 0,
+      "answer_ce": {
+        "weight": 1.0,
+        "mode": "turn-only",
+        "marker_utf8": "assistant: ",
+        "all_spans": true,
+        "chat_framed_sampling": true,
+        "telemetry": {
+          "complete_trajectory": true,
+          "steps": 600,
+          "active_steps": 600,
+          "positions": 1347181,
+          "position_weighted_ce_sum": 3511123.1128652096,
+          "scope": "full_batch",
+          "mean_ce": 2.6062742221462516
+        }
+      },
+      "levers": {
+        "tlora": false,
+        "tlora_rank": 8,
+        "tlora_base": true,
+        "dict_aux": false,
+        "jamo_aux": false,
+        "wd_floor": -1.0,
+        "dropout_floor": -1.0
+      },
+      "n_params": 891648,
+      "loss0": 5.5569,
+      "lossF": 2.49937,
+      "wall_s": 33.7,
+      "uniform_ce": 5.54518,
+      "final_val_ce_pooled": 2.66085,
+      "final_val_ce_macro_cells": 2.66085,
+      "validation_aggregation": "equal-cell macro average",
+      "sampling": {
+        "policy": "proportional",
+        "weight_basis": "train_bytes",
+        "complete_trajectory": true,
+        "per_cell": {
+          "dialogue": {
+            "train_bytes": 29690,
+            "sampled_windows": 4800,
+            "sampled_framed_windows": 4800,
+            "eligible_chat_documents": 100,
+            "oversize_chat_documents": 0,
+            "sampled_fraction": 1.0
+          }
+        }
+      },
+      "registers_descent": "1/1",
+      "heldout_descent": {
+        "dialogue": {
+          "val_ce": 2.66085,
+          "descent": true
+        }
+      },
+      "last_aux": {
+        "ans_ce": 2.384317636489868,
+        "ans_n": 2444
+      },
+      "dbes_final": null,
+      "dbes_log": [],
+      "dbes_batch_scope": "full_batch(B=8)",
+      "gauges_g1g6_torch_probe": null,
+      "sleep_schedule": null,
+      "phi_envelope_monitor": null,
+      "tier": "engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL",
+      "validation_series": [
+        {
+          "step": 1,
+          "full_ce": 5.49208
+        },
+        {
+          "step": 100,
+          "full_ce": 2.70926
+        },
+        {
+          "step": 200,
+          "full_ce": 2.72617
+        },
+        {
+          "step": 300,
+          "full_ce": 2.81946
+        },
+        {
+          "step": 400,
+          "full_ce": 2.77342
+        },
+        {
+          "step": 500,
+          "full_ce": 2.82262
+        },
+        {
+          "step": 600,
+          "full_ce": 2.75848
+        }
+      ]
+    },
+    "probe": {
+      "rows": [
+        {
+          "prompt": "What's your favorite color?",
+          "target": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!",
+          "target_prefix": "Black since its ",
+          "decoded": {
+            "ok": true,
+            "text": "I a t s the t s the on s the s s me s the s t s t the the s t t s s s s s s t s t s s s s s the s t s s s s s s s s and t s and s and the the s s s the s s s s s s s s the s s s s s s s s s s",
+            "reason": "decoded via bytegpt_decode_argmax_ranged (24-layer GPT-2-class byte forward)",
+            "stop_marker": "",
+            "stopped": false,
+            "raw_text": "I a t s the t s the on s the s s me s the s t s t the the s t t s s s s s s t s t s s s s s the s t s s s s s s s s and t s and s and the the s s s the s s s s s s s s the s s s s s s s s s s "
+          },
+          "target_prefix_recovered": false,
+          "structural": false
+        },
+        {
+          "prompt": "Hmm interesting. So i could basically develop my extension for Chrome and just port it over to Firefox?",
+          "target": "As far as I understand, you can develop an extension that is made to be compatible to both Chrome and Firefox browsers. You just need to make sure that the extension do not utilize Chrome specific APIs that don't exist in Firefox.",
+          "target_prefix": "As far as I unde",
+          "decoded": {
+            "ok": true,
+            "text": "I tin the the t t t t t the t on on t t on t t on the on on t t t on on the on t the on t on on t on on on the t t on t t t t on on t on on t t t on t t t t o t o t on t on on on o t o t an o",
+            "reason": "decoded via bytegpt_decode_argmax_ranged (24-layer GPT-2-class byte forward)",
+            "stop_marker": "",
+            "stopped": false,
+            "raw_text": "I tin the the t t t t t the t on on t t on t t on the on on t t t on on the on t the on t on on t on on on the t t on t t t t on on t on on t t t on t t t t o t o t on t on on on o t o t an o "
+          },
+          "target_prefix_recovered": false,
+          "structural": false
+        },
+        {
+          "prompt": "write an sql query to retrieve the top 5 longest running results from the following table: \"runs\", columns: id, distance, pace, route",
+          "target": "SELECT * FROM runs ORDER BY distance DESC LIMIT 5;\nThis query works by sorting the rows by distance in descending order and returning the first 5 results. Because of how the rows have been sorted, the first 5 running results will be the longest.\nIs there anything else you would like me to help you with?",
+          "target_prefix": "SELECT * FROM ru",
+          "decoded": {
+            "ok": true,
+            "text": "I I I I toure tou toure tou toure toure toure toure toure toure toure tou tou tou toure toure toure toure toure toure tou toure toure toure toure toure toure tore toure toure toure toure toure",
+            "reason": "decoded via bytegpt_decode_argmax_ranged (24-layer GPT-2-class byte forward)",
+            "stop_marker": "",
+            "stopped": false,
+            "raw_text": "I I I I toure tou toure tou toure toure toure toure toure toure toure tou tou tou toure toure toure toure toure toure tou toure toure toure toure toure toure tore toure toure toure toure toure"
+          },
+          "target_prefix_recovered": false,
+          "structural": false
+        },
+        {
+          "prompt": "Does this work?",
+          "target": "Yes, this code should work as long as all necessary packages have been installed and there are no syntax errors in the code. However, this is just a basic setup and further components and routes need to be added in order to make the application functional.",
+          "target_prefix": "Yes, this code s",
+          "decoded": {
+            "ok": true,
+            "text": "I I t t s the t t s t t t t t tou tou the t t tou tou the t t tou the t t t t t t t t tou t t t toure tou t toure t t the t toure tou the t s t the t t toure t the t t t the t t t t s t t the",
+            "reason": "decoded via bytegpt_decode_argmax_ranged (24-layer GPT-2-class byte forward)",
+            "stop_marker": "",
+            "stopped": false,
+            "raw_text": "I I t t s the t t s t t t t t tou tou the t t tou tou the t t tou the t t t t t t t t tou t t t toure tou t toure t t the t toure tou the t s t the t t toure t the t t t the t t t t s t t the "
+          },
+          "target_prefix_recovered": false,
+          "structural": false
+        },
+        {
+          "prompt": "Who is the president of the United States?",
+          "target": "The president of the United States is Joe Biden.",
+          "target_prefix": "The president of",
+          "decoded": {
+            "ok": true,
+            "text": "Cre ionstis in ion ion ion ion ion ion ions ion ion ins ion ion ionion ion in ion ion ions ion ion ions ionion ion ions ionionionionionionionionionions ionionionionion ionionions ionion ionion",
+            "reason": "decoded via bytegpt_decode_argmax_ranged (24-layer GPT-2-class byte forward)",
+            "stop_marker": "",
+            "stopped": false,
+            "raw_text": "Cre ionstis in ion ion ion ion ion ion ions ion ion ins ion ion ionion ion in ion ion ions ion ion ions ionion ion ions ionionionionionionionionionions ionionionionion ionionions ionion ionion"
+          },
+          "target_prefix_recovered": false,
+          "structural": false
+        },
+        {
+          "prompt": "I am getting the following error after I install a local .deb file on linux, and I don't know what's causing it. Do you know what the causes and solutions for this error might be? The error is:\n\"N: Download is performed unsandboxed as root as file '/root/assets/Dungeondraft-1.0.4.7-Linux64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)\"",
+          "target": "Did you try running the command with `sudo`?",
+          "target_prefix": "Did you try runn",
+          "decoded": {
+            "ok": true,
+            "text": "I I the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the t t the thes the ton",
+            "reason": "decoded via bytegpt_decode_argmax_ranged (24-layer GPT-2-class byte forward)",
+            "stop_marker": "",
+            "stopped": false,
+            "raw_text": "I I the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the t t the thes the ton"
+          },
+          "target_prefix_recovered": false,
+          "structural": false
+        },
+        {
+          "prompt": "write the average velocity of the any species of swallows that is found in north america",
+          "target": "I have selected the barn swallow because it is the top Google search result for \"North American swallow\". The flight speed of the barn swallow is estimated at about 11 m/s (40 km/h, 25 mph, 21 kt), up to 20 m/s (72 km/h, 45mph, 39 kt).",
+          "target_prefix": "I have selected ",
+          "decoded": {
+            "ok": true,
+            "text": "the the t t the t the t the t t t t t t t t t the t t t t t tour t s t t t t t the t t t t t t t the s t s t s t s t t s t t t t t t t tour the t t t s t be t t be tour t t t be t t be the s t",
+            "reason": "decoded via bytegpt_decode_argmax_ranged (24-layer GPT-2-class byte forward)",
+            "stop_marker": "",
+            "stopped": false,
+            "raw_text": "the the t t the t the t the t t t t t t t t t the t t t t t tour t s t t t t t the t t t t t t t the s t s t s t s t t s t t t t t t t tour the t t t s t be t t be tour t t t be t t be the s t"
+          },
+          "target_prefix_recovered": false,
+          "structural": false
+        },
+        {
+          "prompt": "Are you able to generate code? If so, in which languages are you able to do so?",
+          "target": "Yes! I am able to generate code in a lot of programming languages.",
+          "target_prefix": "Yes! I am able t",
+          "decoded": {
+            "ok": true,
+            "text": "I an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an a",
+            "reason": "decoded via bytegpt_decode_argmax_ranged (24-layer GPT-2-class byte forward)",
+            "stop_marker": "",
+            "stopped": false,
+            "raw_text": "I an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an an a"
+          },
+          "target_prefix_recovered": false,
+          "structural": false
+        }
+      ],
+      "counts": {
+        "nonempty": 8,
+        "distinct": 8,
+        "structural": 0,
+        "target_recovered": 0
+      }
+    }
+  },
+  "gates": {
+    "protocol_parent_data_panel_sha": true,
+    "mask_positive_control": true,
+    "single_document_positive_control": true,
+    "heldout_full_ce_descent": true,
+    "prompt_conditioning": true,
+    "target_recovery": false,
+    "structural": false
+  },
+  "artifacts": {
+    "repository": "dancinlab/anima-303m-r4-mouth-objective-micro-2026-08-13",
+    "revision": "9d7641389b1ddff73bd12f17f155f448500d1edb",
+    "private": true,
+    "registered_files": 26,
+    "registered_bytes": 73146099,
+    "sha256_verified": true
+  },
+  "verification": {
+    "focused_python": "41 passed",
+    "full_python": "153 passed, 1 skipped, 3 subtests passed",
+    "actual_training": "Apple MPS; 300-step single control and 600-step hundred-document treatment",
+    "canonical_cli": [
+      "anima-py --help",
+      "anima-py train --help",
+      "anima-py evaluate --help"
+    ],
+    "isolated_wheel_modules": true,
+    "json_and_compile": true
+  },
+  "resources": {
+    "vast_ai_used": false,
+    "h100_used": false,
+    "active_vast_instances": 0,
+    "estimated_cost_usd": 0.0,
+    "temporary_local_model_copies_removed_after_hf_verification": true
+  },
+  "preserved_user_files": [
+    "ING.jsonl",
+    "stream_mi.json"
+  ],
+  "verdict": "FAIL-R4-TURN-BOUNDARY-MICRO",
+  "next_allowed_step": "Do not run 303M or couple IIT state; preserve failed turn-boundary evidence."
+}

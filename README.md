@@ -253,6 +253,37 @@ directories; this runtime repair does not alter the failed V1 verdict.
 The RTX 3090 instance was destroyed after HF verification; active Vast.ai rentals are zero and the
 estimated run cost is `$0.058457`.
 
+### Preregistered R4 objective micro experiment
+
+`state/anima_303m_r4_objective_micro_2026_08_13/` froze the next single-axis diagnosis before
+trainer changes or execution. V1 proved that longer context admits more complete dialogue but does
+not prevent repetition. The remaining objective gap is that the existing response CE is additive:
+it trains `full_ce + answer_ce`, not the standard assistant-response-only dialogue objective.
+The new comparison holds the immutable 100-document view, tiny ByteGPT, seed, 512-byte block,
+optimizer, schedule, byte budget, greedy decode and gates fixed across full CE, existing additive
+response CE and response-only CE. It extends the shared Python trainer with a default-off mode and
+does not add an engine or evaluator. Failure blocks 303M, IIT-mouth coupling and production; a pass
+permits only a separately preregistered 303M single-seed screen. The registered single-document
+gate failed specifically in response-only mode: it emitted the exact complete target and then a
+meaningless suffix because no EOS or next-role boundary received gradient. Full and additive
+controls stopped exactly. The 100-document arms were therefore not run and the verdict is
+`FAIL-R4-OBJECTIVE-MICRO`.
+
+`state/anima_303m_r4_turn_boundary_micro_2026_08_13/` separately preregisters the next allowed
+micro fix. It changes only the assistant-only span's right boundary: payload, internal newlines and
+the next canonical `user:` delimiter are supervised, while following user content stays masked.
+Data, model, vocabulary, steps, sampler, decoder, stop parser and gates remain fixed. This is the
+native EOS-equivalent available to the existing 256-byte vocabulary; failure still blocks 303M and
+IIT-mouth coupling. The registered run fixed the direct stop failure: the single-document treatment
+ended exactly, held-out full CE descended `5.49208 → 2.66085`, and all eight 100-document probes
+were non-empty and distinct. It still failed target recovery `0/8` and structural generation `0/8`
+with `the/an/toure/ion` loops. The verdict is `FAIL-R4-TURN-BOUNDARY-MICRO`; no 303M, IIT coupling,
+participant or production work is authorized by it. Both failed micro runs' model and raw evidence
+are SHA-verified in private HF revision
+`dancinlab/anima-303m-r4-mouth-objective-micro-2026-08-13@9d7641389b1ddff73bd12f17f155f448500d1edb`.
+Full Python/CHAT QA passed `153 tests + 3 subtests` with one expected local CUDA/CuPy skip. No
+Vast.ai/H100 instance was used; the API reports zero active rentals.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

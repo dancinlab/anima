@@ -1,0 +1,111 @@
+{
+  "schema": "anima-303m-r4-turn-boundary-micro/v1",
+  "date": "2026-08-13",
+  "status": "PREREGISTERED",
+  "parent_result": "../anima_303m_r4_objective_micro_2026_08_13/result.json",
+  "parent_result_sha256": "6297d6187ce8daec85b58ec5f52847992ea096f23be217efe2e538e3ea7e8c53",
+  "claim": "Test whether supervising the canonical next-role delimiter with assistant content gives a byte-native response-only mouth a learned stop boundary without restoring user-content gradient.",
+  "execution": {
+    "entry": "anima-py",
+    "language": "Python only",
+    "local_threads_max": 2,
+    "local_device": "Apple MPS",
+    "gpu_provider_if_needed": "Vast.ai",
+    "h100_allowed": false,
+    "models_and_training_data": "Hugging Face dancinlab repositories only",
+    "delete_instance_after_completion": true
+  },
+  "fixed_data": {
+    "repository": "dancinlab/anima-303m-v0-v2-turns-2026-08-12",
+    "revision": "17a1e4676d684a99a54208549445952302f389fa",
+    "train_file_sha256": "8513908f9ec4b1803b1b364a84383c0c50f7c61baa69e76de068faad75ad3c55",
+    "validation_file_sha256": "5d564119a620f0de86b937ca4c8bbb292af75326ba71a3a2e0ebbc2bafadd500",
+    "views": {
+      "single_document": {
+        "documents": 1,
+        "repetitions_for_full_window": 4,
+        "sha256": "94cf52463cdc316cdf4b1b2ebe6de7dfe16e62359eafd4155daf3db10421b822"
+      },
+      "hundred_document_train": {
+        "documents": 100,
+        "sha256": "7ea221f76e025da06383a5512bdb4ad27686dee0c155c4ed198a259d32d9e941"
+      },
+      "heldout_validation": {
+        "documents": 32,
+        "sha256": "6604191d50f59879e79f3088105c740e7a1aa9e30f1bcbd75e590b8bc4899404"
+      },
+      "probe": "first eight SHA-ordered single-exchange training documents"
+    },
+    "canonical_chat_format": "core.generator.gen_chat_format"
+  },
+  "evaluation_panel": {
+    "file": "../anima_303m_r0_english_2026_08_12/conversation_panel.json",
+    "sha256": "cf1a6d6837a69031929168b2b02aaf771406e0d8429bb8912b65f0be2ccbad4a"
+  },
+  "model": {
+    "architecture": "existing ByteGPT only",
+    "vocab": 256,
+    "d": 128,
+    "layers": 4,
+    "heads": 2,
+    "block": 512,
+    "seed": 7,
+    "batch": 8,
+    "single_document_steps": 300,
+    "hundred_document_steps": 600,
+    "optimizer": "AdamW beta=(0.9,0.95), weight_decay=0.1",
+    "peak_lr": 0.001,
+    "schedule": "50-step linear warmup then cosine to 0.1 peak ratio",
+    "validation_every": 100,
+    "validation_batches": 4,
+    "decode": "canonical greedy, 192 new bytes"
+  },
+  "single_variable": {
+    "axis": "assistant-only supervised span right boundary",
+    "negative_control": "preserved payload-only O2 result: target exact followed by meaningless suffix",
+    "treatment": "assistant payload plus internal newlines and the next canonical line-start user-role delimiter; following user content remains masked",
+    "unchanged": [
+      "vocabulary and architecture",
+      "data and ordering",
+      "sampler draws",
+      "seed and initialization",
+      "optimizer, schedule and steps",
+      "serializer and greedy decode",
+      "runtime stop parser",
+      "probe and bars"
+    ],
+    "implementation": {
+      "extend_existing_answer_mask": true,
+      "default_additive_and_payload_only_modes_unchanged": true,
+      "exact_resume_records_mode": true,
+      "framed_batch_without_supervised_turn_bytes": "fail closed",
+      "new_engine_or_evaluator": false
+    }
+  },
+  "gates": {
+    "protocol_parent_data_panel_sha": "all exact matches before training",
+    "mask_positive_control": "internal assistant newlines and next user-role delimiter are selected; following user content is not selected",
+    "single_document_positive_control": "treatment exactly reproduces the registered assistant response after canonical turn parsing",
+    "heldout_full_ce_descent": "treatment final held-out full CE is below uniform CE and below its first registered held-out full CE",
+    "prompt_conditioning": "at least 6/8 non-empty and six normalized distinct replies",
+    "target_recovery": "at least 6/8 replies share the first 16 UTF-8 target bytes",
+    "structural": "all eight pass existing structural checks"
+  },
+  "promotion": {
+    "303m_single_seed": "allowed only after every gate passes and a separate preregistration",
+    "iit_mouth_coupling": "blocked",
+    "participant": "blocked",
+    "production": "blocked"
+  },
+  "failure_policy": {
+    "max_new_training_arms": 2,
+    "no_result_dependent_threshold_seed_data_step_or_decode_changes": true,
+    "if_single_control_fails": "record and do not run the 100-document treatment",
+    "if_treatment_fails": "record and do not run 303M or couple IIT state",
+    "always_delete_vast_instance": true
+  },
+  "preserve": [
+    "ING.jsonl",
+    "stream_mi.json"
+  ]
+}

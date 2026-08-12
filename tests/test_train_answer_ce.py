@@ -75,6 +75,23 @@ def test_chat_answer_ce_reports_exact_selected_position_count():
 
 
 @pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch training extra is not installed")
+def test_chat_turn_mask_keeps_internal_newline_and_boundary_not_user_content():
+    import torch
+
+    train = _import_train()
+    raw = (b"user: first question\nassistant: first line\nsecond line\n"
+           b"user: next question\nassistant: final\nuser: last question")
+    targets = torch.tensor([list(raw)], dtype=torch.long)
+
+    mask = train.chat_turn_position_mask(targets, b"assistant: ")
+
+    assert bytes(targets[0][mask[0]].tolist()) == (
+        b"first line\nsecond line\nuser: final\nuser: ")
+    assert not mask[0][raw.index(b"next question")]
+    assert not mask[0][raw.index(b"last question")]
+
+
+@pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch training extra is not installed")
 def test_answer_marker_must_not_be_empty():
     import torch
 
@@ -160,6 +177,7 @@ def test_canonical_cli_records_chat_answer_telemetry(tmp_path):
     telemetry = summary["answer_ce"]["telemetry"]
     assert summary["answer_ce"] == {
         "weight": 1.0,
+        "mode": "additive",
         "marker_utf8": "assistant: ",
         "all_spans": True,
         "chat_framed_sampling": True,
@@ -173,6 +191,113 @@ def test_canonical_cli_records_chat_answer_telemetry(tmp_path):
     sampled = summary["sampling"]["per_cell"]["dialogue"]
     assert sampled["sampled_framed_windows"] == 4
     assert sampled["eligible_chat_documents"] > 0
+
+
+@pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch training extra is not installed")
+def test_response_only_ce_has_zero_prompt_gradient():
+    import torch
+
+    train = _import_train()
+    raw = b"user: question\nassistant: answer\n"
+    targets = torch.tensor([list(raw)], dtype=torch.long)
+
+    class StubMouth(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.rows = torch.nn.Parameter(torch.zeros(1, 256, len(raw)))
+
+        def forward(self, _x, y=None):
+            logits = self.rows
+            ce = torch.nn.functional.cross_entropy(
+                logits.transpose(1, 2).reshape(-1, 256), targets.reshape(-1))
+            return {"logits": logits, "ce_loss": ce,
+                    "aux_loss": logits.new_zeros(())}
+
+    mouth = StubMouth()
+    shell = train.TrainShell(
+        mouth, train.loss_ce_marginal, None, is_bytegpt=True, V=256,
+        obj_needs_pen=False, dict_on=False, jamo_on=False, bf16=False,
+        device="cpu")
+    loss, _, aux = shell(
+        targets, targets, torch.Generator().manual_seed(7), 0.0, 0.0,
+        ans_w=1.0, ans_marker=b"assistant: ", ans_all_spans=True,
+        ans_mode="only")
+    loss.backward()
+
+    mask = train.answer_position_mask(
+        targets, marker=b"assistant: ", all_spans=True)
+    prompt_grad = mouth.rows.grad.transpose(1, 2)[~mask]
+    response_grad = mouth.rows.grad.transpose(1, 2)[mask]
+    assert aux["ans_n"] == len(b"answer")
+    assert int(torch.count_nonzero(prompt_grad)) == 0
+    assert int(torch.count_nonzero(response_grad)) == len(b"answer") * 256
+
+
+@pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch training extra is not installed")
+def test_response_only_ce_fails_without_supervised_bytes():
+    import torch
+
+    train = _import_train()
+    targets = torch.tensor([list(b"user: question only")], dtype=torch.long)
+
+    class StubMouth(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.rows = torch.nn.Parameter(torch.zeros(1, 256, targets.shape[1]))
+
+        def forward(self, _x, y=None):
+            logits = self.rows
+            ce = torch.nn.functional.cross_entropy(
+                logits.transpose(1, 2).reshape(-1, 256), targets.reshape(-1))
+            return {"logits": logits, "ce_loss": ce,
+                    "aux_loss": logits.new_zeros(())}
+
+    shell = train.TrainShell(
+        StubMouth(), train.loss_ce_marginal, None, is_bytegpt=True, V=256,
+        obj_needs_pen=False, dict_on=False, jamo_on=False, bf16=False,
+        device="cpu")
+    with pytest.raises(RuntimeError, match="no supervised assistant bytes"):
+        shell(targets, targets, torch.Generator().manual_seed(7), 0.0, 0.0,
+              ans_w=1.0, ans_marker=b"assistant: ", ans_all_spans=True,
+              ans_mode="only")
+
+
+@pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch training extra is not installed")
+def test_turn_only_ce_has_no_following_user_content_gradient():
+    import torch
+
+    train = _import_train()
+    raw = b"user: q\nassistant: answer\nuser: hidden prompt"
+    targets = torch.tensor([list(raw)], dtype=torch.long)
+
+    class StubMouth(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.rows = torch.nn.Parameter(torch.zeros(1, 256, len(raw)))
+
+        def forward(self, _x, y=None):
+            logits = self.rows
+            ce = torch.nn.functional.cross_entropy(
+                logits.transpose(1, 2).reshape(-1, 256), targets.reshape(-1))
+            return {"logits": logits, "ce_loss": ce,
+                    "aux_loss": logits.new_zeros(())}
+
+    mouth = StubMouth()
+    shell = train.TrainShell(
+        mouth, train.loss_ce_marginal, None, is_bytegpt=True, V=256,
+        obj_needs_pen=False, dict_on=False, jamo_on=False, bf16=False,
+        device="cpu")
+    loss, _, _ = shell(
+        targets, targets, torch.Generator().manual_seed(7), 0.0, 0.0,
+        ans_w=1.0, ans_marker=b"assistant: ", ans_all_spans=True,
+        ans_mode="turn-only")
+    loss.backward()
+
+    mask = train.chat_turn_position_mask(targets, b"assistant: ")
+    grad = mouth.rows.grad.transpose(1, 2)
+    assert bytes(targets[0][mask[0]].tolist()) == b"answer\nuser: "
+    assert int(torch.count_nonzero(grad[~mask])) == 0
+    assert int(torch.count_nonzero(grad[mask])) == int(mask.sum()) * 256
 
 
 @pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch training extra is not installed")

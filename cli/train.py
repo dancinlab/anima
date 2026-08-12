@@ -1258,9 +1258,58 @@ def answer_position_mask(targets, marker=ANSWER_MARKER, all_spans=False):
     return after & (pos < first_nl)
 
 
-def answer_ce(logits, targets, V, marker=ANSWER_MARKER, all_spans=False):
+def chat_turn_position_mask(targets, assistant_marker, user_marker=b"\nuser: "):
+    """Select assistant payloads and their next canonical role delimiter.
+
+    A raw-byte vocabulary has no spare EOS token. Payload-only CE therefore has no supervised
+    stop event and can learn a complete response while continuing forever. The canonical byte
+    equivalent is the next line-start user-role delimiter already consumed by the shared runtime
+    stop parser. Internal response newlines remain payload; following user content stays masked.
+    """
+    if not assistant_marker or not user_marker:
+        raise ValueError("chat turn markers must not be empty")
+    B, T = targets.shape
+    assistant = torch.tensor(
+        list(assistant_marker), dtype=targets.dtype, device=targets.device)
+    user = torch.tensor(list(user_marker), dtype=targets.dtype, device=targets.device)
+    na, nu = assistant.numel(), user.numel()
+    if T < na:
+        return torch.zeros_like(targets, dtype=torch.bool)
+
+    assistant_hit = (targets.unfold(1, na, 1)
+                     == assistant.view(1, 1, na)).all(dim=2)
+    answer_starts = torch.zeros_like(targets, dtype=torch.bool)
+    if T > na:
+        answer_starts[:, na:] = assistant_hit[:, :T - na]
+
+    boundary_starts = torch.zeros_like(targets, dtype=torch.bool)
+    if T >= nu:
+        user_hit = (targets.unfold(1, nu, 1)
+                    == user.view(1, 1, nu)).all(dim=2)
+        boundary_starts[:, :T - nu + 1] = user_hit
+
+    pos = torch.arange(T, device=targets.device).view(1, -1).expand(B, T)
+    neg = torch.full_like(pos, -1)
+    last_answer = torch.cummax(torch.where(answer_starts, pos, neg), dim=1).values
+    last_boundary = torch.cummax(torch.where(boundary_starts, pos, neg), dim=1).values
+    previous_boundary = torch.cat(
+        [torch.full((B, 1), -1, dtype=pos.dtype, device=targets.device),
+         last_boundary[:, :-1]], dim=1)
+    valid_boundary_start = (boundary_starts & (last_answer >= 0)
+                            & (last_answer > previous_boundary))
+
+    mask = (last_answer >= 0) & (last_answer > last_boundary)
+    for offset in range(nu):
+        mask[:, offset:] |= valid_boundary_start[:, :T - offset]
+    return mask
+
+
+def answer_ce(logits, targets, V, marker=ANSWER_MARKER, all_spans=False,
+              include_chat_boundary=False):
     """Mean CE over ANSWER positions only. Returns (loss, n_positions); loss is 0 when none."""
-    mask = answer_position_mask(targets, marker, all_spans=all_spans)
+    mask = (chat_turn_position_mask(targets, marker)
+            if include_chat_boundary else
+            answer_position_mask(targets, marker, all_spans=all_spans))
     n = int(mask.sum())
     if n == 0:
         return logits.sum() * 0.0, 0
@@ -1788,7 +1837,7 @@ class TrainShell(nn.Module):
     def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0, sb_oracle=False, sb_addr_w=0.0, sb_oracle_aux=0.0, sb_tap_grad="detached",
                 idl=None, idl_w=1.0, idl_assign="hungarian", idl_route="l3-disjoint",
                 idl_tap_L=3, idl_gen=None, ans_w=0.0,
-                ans_marker=ANSWER_MARKER, ans_all_spans=False):
+                ans_marker=ANSWER_MARKER, ans_all_spans=False, ans_mode="additive"):
         # ── VERBATIM relocation of the per-step loss-composition block (bf16 + fp32). The
         #    autocast context stays wrapping ONLY the forward/compose (backward is at the
         #    callsite, outside autocast — DDP hooks fire there). Returns (loss, detached CE,
@@ -1806,9 +1855,16 @@ class TrainShell(nn.Module):
                 obj_loss, oaux = objfn(out["logits"].float(), y, V, obj_gen, penultimate=pen)
                 loss = obj_loss + out["aux_loss"]
                 if ans_w > 0.0:                       # H_9811 answer-weighted CE (default 0 = off)
-                    ace, an = answer_ce(out["logits"].float(), y, V,
-                                        marker=ans_marker, all_spans=ans_all_spans)
-                    loss = loss + ans_w * ace
+                    ace, an = answer_ce(
+                        out["logits"].float(), y, V, marker=ans_marker,
+                        all_spans=ans_all_spans,
+                        include_chat_boundary=(ans_mode == "turn-only"))
+                    if ans_mode in ("only", "turn-only"):
+                        if an == 0:
+                            raise RuntimeError("response-only CE found no supervised assistant bytes")
+                        loss = out["aux_loss"] + ans_w * ace
+                    else:
+                        loss = loss + ans_w * ace
                     aux["ans_ce"] = float(ace.detach()); aux["ans_n"] = an
                 if self.comp_lane is not None:        # H_9900 composition lane (default None = off)
                     # DETACH is the whole point: this lane's CE must not reach the trunk, or it
@@ -1838,9 +1894,16 @@ class TrainShell(nn.Module):
             obj_loss, oaux = objfn(out["logits"], y, V, obj_gen, penultimate=pen)
             loss = obj_loss + out["aux_loss"]
             if ans_w > 0.0:                           # H_9811 answer-weighted CE (default 0 = off)
-                ace, an = answer_ce(out["logits"], y, V,
-                                    marker=ans_marker, all_spans=ans_all_spans)
-                loss = loss + ans_w * ace
+                ace, an = answer_ce(
+                    out["logits"], y, V, marker=ans_marker,
+                    all_spans=ans_all_spans,
+                    include_chat_boundary=(ans_mode == "turn-only"))
+                if ans_mode in ("only", "turn-only"):
+                    if an == 0:
+                        raise RuntimeError("response-only CE found no supervised assistant bytes")
+                    loss = out["aux_loss"] + ans_w * ace
+                else:
+                    loss = loss + ans_w * ace
                 aux["ans_ce"] = float(ace.detach()); aux["ans_n"] = an
             if self.dict_on:
                 dloss = dict_lambda * h.abs().mean()
@@ -3708,6 +3771,14 @@ def main():
                          "the binding bit at chance (measured: d_acc 0.5000 on DRILLED lexemes, "
                          "one token emitted 68-86%% of slots, and 5.9x params/6.7x steps made it "
                          "WORSE). v4 H_004's amendment A1 used ce_surf + 5*ce_ans.")
+    ap.add_argument("--answer-ce-mode", choices=["additive", "only", "turn-only"],
+                    default="additive",
+                    help="additive preserves the existing full_ce + w*answer_ce objective. "
+                         "only is the canonical dialogue-SFT contrast: only assistant response "
+                         "bytes contribute LM gradient. turn-only additionally supervises the "
+                         "next canonical user-role delimiter as the raw-byte EOS equivalent. "
+                         "Both are restricted to ByteGPT ce_marginal with complete canonical "
+                         "chat-frame sampling.")
     ap.add_argument("--answer-ce-marker", default=" => ",
                     help="UTF-8 byte marker that begins a supervised answer span. The default "
                          "preserves arrow-line training; chat uses its registered assistant "
@@ -4098,6 +4169,15 @@ def main():
     a = ap.parse_args()
     if a.answer_ce_weight < 0.0:
         ap.error("--answer-ce-weight must be non-negative")
+    if a.answer_ce_mode in ("only", "turn-only"):
+        if a.answer_ce_weight <= 0.0:
+            ap.error("non-additive --answer-ce-mode requires positive --answer-ce-weight")
+        if (a.arch != "bytegpt" or a.objective != "ce_marginal" or a.arm != "ctrl"):
+            ap.error("non-additive --answer-ce-mode requires --arch bytegpt "
+                     "--objective ce_marginal --arm ctrl")
+        if not a.chat_framed_sampling or not a.answer_ce_all_spans:
+            ap.error("non-additive --answer-ce-mode requires --chat-framed-sampling and "
+                     "--answer-ce-all-spans")
     try:
         answer_marker = a.answer_ce_marker.encode("utf-8", "strict")
     except UnicodeEncodeError as exc:
@@ -4820,6 +4900,7 @@ def main():
         # these fields now fails closed instead of silently resuming under a different loss.
         run_recipe["answer_ce"] = {
             "weight": float(a.answer_ce_weight),
+            "mode": a.answer_ce_mode,
             "marker_utf8": a.answer_ce_marker,
             "all_spans": bool(a.answer_ce_all_spans),
             "chat_framed_sampling": bool(a.chat_framed_sampling),
@@ -5373,6 +5454,7 @@ def main():
                                            ans_w=a.answer_ce_weight,   # H_9811 (0.0 ⇒ term never evaluated)
                                            ans_marker=answer_marker,
                                            ans_all_spans=a.answer_ce_all_spans,
+                                           ans_mode=a.answer_ce_mode,
                                            idl_w=a.ideation_weight, idl_assign=a.ideation_assign,
                                            idl_route=a.ideation_route, idl_tap_L=a.ideation_route_l,
                                            idl_gen=idl_gen)
@@ -5632,6 +5714,7 @@ def main():
                                       if obj_is_module else 0),
                    "answer_ce": ({
                        "weight": float(a.answer_ce_weight),
+                       "mode": a.answer_ce_mode,
                        "marker_utf8": a.answer_ce_marker,
                        "all_spans": bool(a.answer_ce_all_spans),
                        "chat_framed_sampling": bool(a.chat_framed_sampling),
