@@ -157,30 +157,41 @@ def ensure_cuda_libs():
                              "MISMATCH)" % other if other else " (no CUDA toolkit found)")
             _RESULT = res
             return res
-        d = dirs[0]
         for pat in _PRELOAD_ORDER:
             name = pat % maj if "%d" in pat else pat
-            for so in sorted(glob.glob(os.path.join(d, name)), reverse=True):
-                try:
-                    ctypes.CDLL(so, mode=ctypes.RTLD_GLOBAL)
-                    res["loaded"].append(os.path.basename(so))
-                    break   # first (highest) match per class is enough
-                except OSError:
-                    continue
+            loaded_class = False
+            for d in dirs:
+                for so in sorted(glob.glob(os.path.join(d, name)), reverse=True):
+                    try:
+                        ctypes.CDLL(so, mode=ctypes.RTLD_GLOBAL)
+                        res["loaded"].append(os.path.basename(so))
+                        loaded_class = True
+                        break   # first (highest) match per class is enough
+                    except OSError:
+                        continue
+                if loaded_class:
+                    break
         # (6) env for CHILD processes (spawned cli/*.py train workers re-exec, so F1 helps
         #     them): prepend the dir to LD_LIBRARY_PATH + set CUDA_PATH for cupy's JIT header
         #     search. No effect on THIS process's already-done dlopens; purely for children.
-        _prepend_env("LD_LIBRARY_PATH", d)
+        # Pip CUDA wheels deliberately split libraries into sibling directories
+        # (`nvidia/cublas/lib`, `nvidia/cuda_nvrtc/lib`, ...).  Preserve candidate
+        # priority while making every discovered class available to child re-execs.
+        for d in reversed(dirs):
+            _prepend_env("LD_LIBRARY_PATH", d)
         if not os.environ.get("CUDA_PATH"):
-            root = d
-            for _ in range(3):                      # …/cuda-12.4/targets/x-linux/lib → root
-                root = os.path.dirname(root)
-                if os.path.basename(root).startswith("cuda"):
-                    os.environ["CUDA_PATH"] = root
+            for d in dirs:
+                root = d
+                for _ in range(3):                  # …/cuda-12.4/targets/x-linux/lib → root
+                    root = os.path.dirname(root)
+                    if os.path.basename(root).startswith("cuda"):
+                        os.environ["CUDA_PATH"] = root
+                        break
+                if os.environ.get("CUDA_PATH"):
                     break
         res["configured"] = bool(res["loaded"])
         if not res["configured"]:
-            res["reason"] = "candidate dir %s had no loadable CUDA libs" % d
+            res["reason"] = "candidate dirs had no loadable CUDA libs: %s" % dirs
     except Exception as e:                            # self-config must never break import
         res["reason"] = "ensure_cuda_libs raised: %r" % e
     _RESULT = res

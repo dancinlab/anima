@@ -225,6 +225,15 @@ bytes로 맞춰 비교하고, 2048 arm에만 들어갈 수 있는 고정 긴 문
 하강·응답 다양성/구조·6/8 target-prefix 관문 중 하나라도 실패하면 303M 재실행, R4 IIT-mouth
 결합, 프로덕션을 금지한다.
 
+등록한 V1 실행은 완료됐고 실패했다. 문맥/data 관문과 모든 held-out CE 하강은 통과했지만,
+block-512 short는 target prefix `3/8`, 구조 `4/8`, block-2048 short와 long은 모두 target
+prefix `0/8`, 구조 `0/8`이었고 `an/the/ic` 반복으로 붕괴했다. 긴 block은 held-out CE를
+`4.55867`에서 `2.91105`와 `2.55302`로 낮췄지만 실제 답변은 악화시켰다. 따라서 문맥 손실은
+실제 병목이지만 무의미 mouth의 단독 원인은 아니다. 판정은 `FAIL-V1-CONTEXT-MICRO`이며
+303M·IIT-mouth 결합·프로덕션은 계속 차단한다. 데이터와 251MB 모델/원시 증거는 HF
+`dancinlab` 비공개 revision에서 검증했다. CUDA QA 중에는 분리된 pip-wheel 디렉터리 중 첫
+경로만 preload하던 공용 CUDA loader도 수정했으며, 이 런타임 수정은 실패 판정을 바꾸지 않는다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

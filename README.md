@@ -241,6 +241,16 @@ arm can admit. It reuses the existing ByteGPT trainer, canonical generator and c
 Any coverage, integrity, held-out descent, distinct/structural generation or 6/8 target-prefix gate
 failure forbids another 303M run, R4 IIT-mouth coupling and production.
 
+The registered V1 run is complete and failed. All context/data gates and all held-out CE descent
+checks passed, but generation did not: block-512 short recovery was target prefix `3/8` and
+structural `4/8`; block-2048 short and long recovery were both target prefix `0/8`, structural
+`0/8`, with `an/the/ic` loops. The longer block improved held-out CE from `4.55867` to `2.91105`
+and `2.55302` while worsening actual replies, so context loss is real but not the sole mouth cause.
+The verdict is `FAIL-V1-CONTEXT-MICRO`; 303M, IIT-mouth coupling and production remain blocked.
+Data and 251MB of model/raw evidence are verified in private HF `dancinlab` revisions. During CUDA
+QA, the shared loader was also corrected to preload CUDA libraries across split pip-wheel
+directories; this runtime repair does not alter the failed V1 verdict.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

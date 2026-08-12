@@ -1,0 +1,783 @@
+{
+  "schema": "anima-303m-v1-context-result/v1",
+  "protocol_sha256": "ab87b4512bd4bd9b71aae845fe820738fbf14bd4383cac42001a8ce60bd02652",
+  "data_manifest_sha256": "db867e65ce4b5c2a9300428a968fe717f45c308433857179f0e36988a83fc60b",
+  "data": {
+    "schema": "anima-303m-v1-context-data/v1",
+    "protocol_sha256": "ab87b4512bd4bd9b71aae845fe820738fbf14bd4383cac42001a8ce60bd02652",
+    "panel_sha256": "cf1a6d6837a69031929168b2b02aaf771406e0d8429bb8912b65f0be2ccbad4a",
+    "source": {
+      "repository": "OpenAssistant/oasst1",
+      "revision": "fdf72ae0827c1cda404aff25b6603abec9e3399b",
+      "language": "en",
+      "license": "Apache-2.0",
+      "eligibility": "reviewed, non-deleted, non-synthetic human messages with alternating prompter/assistant ancestry",
+      "split": "official source split",
+      "panel_contamination": "fail closed on exact prompt occurrence"
+    },
+    "source_files": [
+      {
+        "split": "train",
+        "file": "data/train-00000-of-00001-b42a775f407cee45.parquet",
+        "bytes": 39516251,
+        "sha256": "bbfadf5ed1278ba2208c837fdcad865adf65f5df55d80abadab2745db13fcb5e"
+      },
+      {
+        "split": "validation",
+        "file": "data/validation-00000-of-00001-134b8fd0c89408b6.parquet",
+        "bytes": 2080179,
+        "sha256": "24002597bb13a7edd42d92f773762f25e285f72c31a70449393d0ded1dc7b416"
+      }
+    ],
+    "census": {
+      "513": {
+        "fitting_targets": 9125,
+        "valid_alternating_targets": 24239,
+        "coverage": 0.37645942489376627,
+        "split_stats": {
+          "train": {
+            "eligible_assistant_rows": 23073,
+            "valid_alternating_ancestry": 23054,
+            "invalid_or_incomplete_ancestry": 19,
+            "target_pair_oversize": 14388,
+            "fitting_assistant_turns": 8666,
+            "serialized_assistant_turns": 8666,
+            "max_bytes": 513,
+            "coverage": 1.0
+          },
+          "validation": {
+            "eligible_assistant_rows": 1185,
+            "valid_alternating_ancestry": 1185,
+            "invalid_or_incomplete_ancestry": 0,
+            "target_pair_oversize": 726,
+            "fitting_assistant_turns": 459,
+            "serialized_assistant_turns": 459,
+            "max_bytes": 513,
+            "coverage": 1.0
+          }
+        }
+      },
+      "1025": {
+        "fitting_targets": 15421,
+        "valid_alternating_targets": 24239,
+        "coverage": 0.6362061141136186,
+        "split_stats": {
+          "train": {
+            "eligible_assistant_rows": 23073,
+            "valid_alternating_ancestry": 23054,
+            "invalid_or_incomplete_ancestry": 19,
+            "target_pair_oversize": 8406,
+            "fitting_assistant_turns": 14648,
+            "serialized_assistant_turns": 14648,
+            "max_bytes": 1025,
+            "coverage": 1.0
+          },
+          "validation": {
+            "eligible_assistant_rows": 1185,
+            "valid_alternating_ancestry": 1185,
+            "invalid_or_incomplete_ancestry": 0,
+            "target_pair_oversize": 412,
+            "fitting_assistant_turns": 773,
+            "serialized_assistant_turns": 773,
+            "max_bytes": 1025,
+            "coverage": 1.0
+          }
+        }
+      },
+      "2049": {
+        "fitting_targets": 22139,
+        "valid_alternating_targets": 24239,
+        "coverage": 0.9133627624902018,
+        "split_stats": {
+          "train": {
+            "eligible_assistant_rows": 23073,
+            "valid_alternating_ancestry": 23054,
+            "invalid_or_incomplete_ancestry": 19,
+            "target_pair_oversize": 1990,
+            "fitting_assistant_turns": 21064,
+            "serialized_assistant_turns": 21064,
+            "max_bytes": 2049,
+            "coverage": 1.0
+          },
+          "validation": {
+            "eligible_assistant_rows": 1185,
+            "valid_alternating_ancestry": 1185,
+            "invalid_or_incomplete_ancestry": 0,
+            "target_pair_oversize": 110,
+            "fitting_assistant_turns": 1075,
+            "serialized_assistant_turns": 1075,
+            "max_bytes": 2049,
+            "coverage": 1.0
+          }
+        }
+      }
+    },
+    "views": {
+      "short_train": {
+        "documents": 100,
+        "bytes": 30883,
+        "sha256": "7c51f14cb7fedc5855fd8371885e017a818a2b5add7a66758db8de9781615927",
+        "min_document_bytes": 27,
+        "max_document_bytes": 513
+      },
+      "long_train": {
+        "documents": 100,
+        "bytes": 121692,
+        "sha256": "b08872d5d2e9e4d410d3f9436132e382d77d8fa1e4aa62dca8e47c9792b9b9d1",
+        "min_document_bytes": 531,
+        "max_document_bytes": 2036
+      },
+      "short_validation": {
+        "documents": 32,
+        "bytes": 10692,
+        "sha256": "8891505a4df3fd6bd1fc3b4a4b1e4efdfd7c3ec19f54e48d63513d117971653a",
+        "min_document_bytes": 98,
+        "max_document_bytes": 513
+      },
+      "long_validation": {
+        "documents": 32,
+        "bytes": 37548,
+        "sha256": "566e78b3c8cd265ec1b22d32b1553741d1c6b8868e57ae4f5ab9bb2605eb6bde",
+        "min_document_bytes": 528,
+        "max_document_bytes": 2040
+      }
+    },
+    "integrity": {
+      "canonical_alternation_invalid": 0,
+      "train_validation_exact_overlap": 0,
+      "panel_exact_contamination": 0
+    },
+    "gates": {
+      "2049_target_coverage": true,
+      "canonical_alternation": true,
+      "train_validation_exact_overlap": true,
+      "panel_exact_contamination": true,
+      "view_hashes": true
+    },
+    "verdict": "PASS"
+  },
+  "arms": {
+    "V0_short_512": {
+      "block": 512,
+      "batch": 8,
+      "target_bytes_per_step": 4096,
+      "summary": {
+        "entry": "anima-py train",
+        "arch": "bytegpt",
+        "arm": "ctrl",
+        "objective": "ce_marginal",
+        "seed": 7,
+        "optimizer": {
+          "name": "AdamW",
+          "beta1": 0.9,
+          "beta2": 0.95,
+          "weight_decay": 0.1,
+          "lr": 0.001,
+          "schedule": "cosine",
+          "warmup_steps": 100,
+          "decay_steps": 1200,
+          "min_lr_ratio": 0.1
+        },
+        "initialization": {
+          "name": "gpt2-canonical",
+          "std": 0.02,
+          "residual_projection_scale": "std/sqrt(2*n_layer)"
+        },
+        "ddp": {
+          "world_size": 1,
+          "global_batch": 8,
+          "per_rank_batch": 8,
+          "gpus": ""
+        },
+        "obj_aux_params": 0,
+        "answer_ce": null,
+        "levers": {
+          "tlora": false,
+          "tlora_rank": 8,
+          "tlora_base": true,
+          "dict_aux": false,
+          "jamo_aux": false,
+          "wd_floor": -1.0,
+          "dropout_floor": -1.0
+        },
+        "n_params": 4935680,
+        "loss0": 5.58065,
+        "lossF": 0.2012,
+        "wall_s": 31.7,
+        "uniform_ce": 5.54518,
+        "final_val_ce_pooled": 4.55867,
+        "final_val_ce_macro_cells": 4.55867,
+        "validation_aggregation": "equal-cell macro average",
+        "sampling": {
+          "policy": "proportional",
+          "weight_basis": "train_bytes",
+          "complete_trajectory": true,
+          "per_cell": {
+            "dialogue": {
+              "train_bytes": 30883,
+              "sampled_windows": 9600,
+              "sampled_framed_windows": 9600,
+              "eligible_chat_documents": 100,
+              "oversize_chat_documents": 0,
+              "sampled_fraction": 1.0
+            }
+          }
+        },
+        "registers_descent": "1/1",
+        "heldout_descent": {
+          "dialogue": {
+            "val_ce": 4.55867,
+            "descent": true
+          }
+        },
+        "last_aux": {},
+        "dbes_final": null,
+        "dbes_log": [],
+        "dbes_batch_scope": "full_batch(B=8)",
+        "gauges_g1g6_torch_probe": null,
+        "sleep_schedule": null,
+        "phi_envelope_monitor": null,
+        "tier": "engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
+      },
+      "probe": {
+        "rows": [
+          {
+            "seed": "user: Hello\nassistant: ",
+            "target": "Good time of the day to you.I am Open Assistant.I am an assistant who you can ask everything about anything anywhere and anytime.Feel free to do so.",
+            "target_prefix": "Good time of the",
+            "decoded": {
+              "text": "Good otid of the the dear tof tstuge tht deawit ge iner the you. What you precossif you \"crtrite is  larige trome sey poving arte wotends? I'e wer amend peoply peovios brth bre amo fundustrst",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "Good otid of the the dear tof tstuge tht deawit ge iner the you. What you precossif you \"crtrite is  larige trome sey poving arte wotends? I'e wer amend peoply peovios brth bre amo fundustrst "
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: [lyrics] of the verse go like this: “The sun is up, the sky is blue, it’s beautiful and so are you.” Which song is that and who is the author of the [lyrics]?\nassistant: ",
+            "target": "The lyrics you are referring to are from the song \"Here Comes The Sun\" by The Beatles. The song was written by George Harrison and was released in 1969 on The Beatles' album \"Abbey Road.\"",
+            "target_prefix": "The lyrics you a",
+            "decoded": {
+              "text": "The lyrics you re arefering to to are ferrom the song \"Here Comes The Sun\" by The Beatles. The song written writen by George Harrrison and was released in 19 on They Bey They Bey assss. in ans",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "The lyrics you re arefering to to are ferrom the song \"Here Comes The Sun\" by The Beatles. The song written writen by George Harrrison and was released in 19 on They Bey They Bey assss. in ans"
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: is there a python library that I can use instead of this code?\nassistant: ",
+            "target": "Yes - The scientific computing library SciPy includes an implementation of the Hungarian algorithm as `scipy.optimize.linear_sum_assignment`.",
+            "target_prefix": "Yes - The scient",
+            "decoded": {
+              "text": "Yes - I menere posste of you prod tine you povin all ving sof amin of inercesiy am oducin odand therat, ppendas ind inveratial ste tera the ppeeentintion ond the ppother anining anird andumes",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "Yes - I menere posste of you prod tine you povin all ving sof amin of inercesiy am oducin odand therat, ppendas ind inveratial ste tera the ppeeentintion ond the ppother anining anird andumes "
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: Who was Simon Bolivar?\nassistant: Simon Bolivar was a Venezuelan military and political leader who led what are currently the countries of Colombia, Venezuela, Ecuador, Peru, Panama and Bolivia to independence from the Spanish Empire\nuser: Tell me more about that, when did it happen?\nassistant: ",
+            "target": "what happened?",
+            "target_prefix": "what happened?",
+            "decoded": {
+              "text": "what happened?",
+              "stop_marker": "\nuser:",
+              "stopped": true,
+              "raw_text": "what happened?\n\nuser: How old are the earth?\nassistant: The age of the Earth is, according to currrent knowledgedge, o 4.54 bililion years.\nuser: For this result, what is considered to bextore"
+            },
+            "target_prefix_recovered": true,
+            "structural": true
+          },
+          {
+            "seed": "user: How old are the earth?\nassistant: The age of the Earth is, according to current knowledge, 4.54 billion years.\nuser: For this result, what is considered to be \"the start\" of the \"existence of earth\"? that is, what event or condition is used to mark the beginning of this period?\nassistant: ",
+            "target": "The earth formed as a result of accretion from the solar nebula, a disk-shaped mass of dust and gas left over from the formation of the Sun, which also created the rest of the Solar System.",
+            "target_prefix": "The earth formed",
+            "decoded": {
+              "text": "The earth formed as a result of accretion from the solar nebula, a disk-shaped mas of dust of duned owint ter so he fore Supation thale of cre the Soflar Solatem mar Sor Hupthm.",
+              "stop_marker": "\nuser:",
+              "stopped": true,
+              "raw_text": "The earth formed as a result of accretion from the solar nebula, a disk-shaped mas of dust of duned owint ter so he fore Supation thale of cre the Soflar Solatem mar Sor Hupthm.\n\nuser: What's "
+            },
+            "target_prefix_recovered": true,
+            "structural": true
+          },
+          {
+            "seed": "user: What's up doc!\nassistant: Not much, just chilling here in the computer. What's up with you?\nuser: What do you mean by \"chilling\"? How do you know what it means to \"chill\"? Isn't that something only human can understand?\nassistant: ",
+            "target": "Chilling is a state of relaxing and not partaking in other activity, it is in a sense to be inactive. I don't understand what it means to \"chill\", however I can attempt to respond in a way that convinces others that I understand. In a sense, I am pretending.",
+            "target_prefix": "Chilling is a st",
+            "decoded": {
+              "text": "Chilling is a state of relaxing and not partaking in other activity, is in a a sensinctive. I don't understand what be imeand to reand what it \"chat onvinctsw. Is I ashat nans amenst otend, po",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "Chilling is a state of relaxing and not partaking in other activity, is in a a sensinctive. I don't understand what be imeand to reand what it \"chat onvinctsw. Is I ashat nans amenst otend, po"
+            },
+            "target_prefix_recovered": true,
+            "structural": false
+          },
+          {
+            "seed": "user: What does aezakmi mean?\nassistant: ",
+            "target": "Aezakmi is a Grand Theft Auto: San Andreas cheat to lock your wanted level at it's current state, not allowing it to go either up or down.",
+            "target_prefix": "Aezakmi is a Gra",
+            "decoded": {
+              "text": "Subyers thare 3 cod come unat ot unat iteall stratine, at ponnd Couner Pinas, Don foxt bason pextat foment forsont fore vientence fer bahinth dextrat.",
+              "stop_marker": "\nuser:",
+              "stopped": true,
+              "raw_text": "Subyers thare 3 cod come unat ot unat iteall stratine, at ponnd Couner Pinas, Don foxt bason pextat foment forsont fore vientence fer bahinth dextrat.\n\nuser: What is are goood f dindiest on th"
+            },
+            "target_prefix_recovered": false,
+            "structural": true
+          },
+          {
+            "seed": "user: Which of these are free to download?\nassistant: ",
+            "target": "None of the above games are free to download. Some free options that meet your criteria are Warframe, Dauntless, Paladins, and Dota 2.",
+            "target_prefix": "None of the abov",
+            "decoded": {
+              "text": "Not ondnee, othe olod neswn that you rece dolod.",
+              "stop_marker": "\nuser:",
+              "stopped": true,
+              "raw_text": "Not ondnee, othe olod neswn that you rece dolod.\n\nuser: What ist arete fro unurstwn to po anlad ptovit. Histed me yourin pemeroiatiars?\nassistant: The sullt co come an arthe so Se are are Sefr"
+            },
+            "target_prefix_recovered": false,
+            "structural": true
+          }
+        ],
+        "counts": {
+          "nonempty": 8,
+          "distinct": 8,
+          "structural": 4,
+          "target_recovered": 3
+        }
+      },
+      "heldout_descent": true
+    },
+    "V1_short_2048": {
+      "block": 2048,
+      "batch": 2,
+      "target_bytes_per_step": 4096,
+      "summary": {
+        "entry": "anima-py train",
+        "arch": "bytegpt",
+        "arm": "ctrl",
+        "objective": "ce_marginal",
+        "seed": 7,
+        "optimizer": {
+          "name": "AdamW",
+          "beta1": 0.9,
+          "beta2": 0.95,
+          "weight_decay": 0.1,
+          "lr": 0.001,
+          "schedule": "cosine",
+          "warmup_steps": 100,
+          "decay_steps": 1200,
+          "min_lr_ratio": 0.1
+        },
+        "initialization": {
+          "name": "gpt2-canonical",
+          "std": 0.02,
+          "residual_projection_scale": "std/sqrt(2*n_layer)"
+        },
+        "ddp": {
+          "world_size": 1,
+          "global_batch": 2,
+          "per_rank_batch": 2,
+          "gpus": ""
+        },
+        "obj_aux_params": 0,
+        "answer_ce": null,
+        "levers": {
+          "tlora": false,
+          "tlora_rank": 8,
+          "tlora_base": true,
+          "dict_aux": false,
+          "jamo_aux": false,
+          "wd_floor": -1.0,
+          "dropout_floor": -1.0
+        },
+        "n_params": 5328896,
+        "loss0": 5.57295,
+        "lossF": 1.89139,
+        "wall_s": 52.2,
+        "uniform_ce": 5.54518,
+        "final_val_ce_pooled": 2.91105,
+        "final_val_ce_macro_cells": 2.91105,
+        "validation_aggregation": "equal-cell macro average",
+        "sampling": {
+          "policy": "proportional",
+          "weight_basis": "train_bytes",
+          "complete_trajectory": true,
+          "per_cell": {
+            "dialogue": {
+              "train_bytes": 30883,
+              "sampled_windows": 2400,
+              "sampled_framed_windows": 2400,
+              "eligible_chat_documents": 100,
+              "oversize_chat_documents": 0,
+              "sampled_fraction": 1.0
+            }
+          }
+        },
+        "registers_descent": "1/1",
+        "heldout_descent": {
+          "dialogue": {
+            "val_ce": 2.91105,
+            "descent": true
+          }
+        },
+        "last_aux": {},
+        "dbes_final": null,
+        "dbes_log": [],
+        "dbes_batch_scope": "full_batch(B=2)",
+        "gauges_g1g6_torch_probe": null,
+        "sleep_schedule": null,
+        "phi_envelope_monitor": null,
+        "tier": "engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
+      },
+      "probe": {
+        "rows": [
+          {
+            "seed": "user: Hello\nassistant: ",
+            "target": "Good time of the day to you.I am Open Assistant.I am an assistant who you can ask everything about anything anywhere and anytime.Feel free to do so.",
+            "target_prefix": "Good time of the",
+            "decoded": {
+              "text": "I the an an an andan an andowhe ame and and and and and and and ame and and and and and and ame and and ame and and and and and ame and ans and and ame and and ame an and and ame and and athe",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "I the an an an andan an andowhe ame and and and and and and and ame and and and and and and ame and and ame and and and and and ame and ans and and ame and and ame an and and ame and and athe "
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: [lyrics] of the verse go like this: “The sun is up, the sky is blue, it’s beautiful and so are you.” Which song is that and who is the author of the [lyrics]?\nassistant: ",
+            "target": "The lyrics you are referring to are from the song \"Here Comes The Sun\" by The Beatles. The song was written by George Harrison and was released in 1969 on The Beatles' album \"Abbey Road.\"",
+            "target_prefix": "The lyrics you a",
+            "decoded": {
+              "text": "Ther: The The The iccof is icong iccs icon ics icics iccs ics The icinthe iconthe inthe icon icong ics iciccics icicicinticiccicicicicintinticicinticinticicic icicicicicicinticinticicicintinti",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "Ther: The The The iccof is icong iccs icon ics icics iccs ics The icinthe iconthe inthe icon icong ics iciccics icicicinticiccicicicicintinticicinticinticicic icicicicicicinticinticicicintinti"
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: is there a python library that I can use instead of this code?\nassistant: ",
+            "target": "Yes - The scientific computing library SciPy includes an implementation of the Hungarian algorithm as `scipy.optimize.linear_sum_assignment`.",
+            "target_prefix": "Yes - The scient",
+            "decoded": {
+              "text": "Whan at at at at an an an at an an an at at at at at an ate ate ate ando ate and an andond ate at ate and ate and and an an an a ate and ate ate a a ate ate a an and and a a a ate ate a and ab",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "Whan at at at at an an an at an an an at at at at at an ate ate ate ando ate and an andond ate at ate and ate and and an an an a ate and ate ate a a ate ate a an and and a a a ate ate a and ab"
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: Who was Simon Bolivar?\nassistant: Simon Bolivar was a Venezuelan military and political leader who led what are currently the countries of Colombia, Venezuela, Ecuador, Peru, Panama and Bolivia to independence from the Spanish Empire\nuser: Tell me more about that, when did it happen?\nassistant: ",
+            "target": "what happened?",
+            "target_prefix": "what happened?",
+            "decoded": {
+              "text": "is is the isthe isthe are the is is there are the are is is the are the ind is are is are is is is is in in isthere in indis in indindin in in in in inind inthe indindind indind indindindindin",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "is is the isthe isthe are the is is there are the are is is the are the ind is are is are is is is is in in isthere in indis in indindin in in in in inind inthe indindind indind indindindindin"
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: How old are the earth?\nassistant: The age of the Earth is, according to current knowledge, 4.54 billion years.\nuser: For this result, what is considered to be \"the start\" of the \"existence of earth\"? that is, what event or condition is used to mark the beginning of this period?\nassistant: ",
+            "target": "The earth formed as a result of accretion from the solar nebula, a disk-shaped mass of dust and gas left over from the formation of the Sun, which also created the rest of the Solar System.",
+            "target_prefix": "The earth formed",
+            "decoded": {
+              "text": "on ong ong of ong ong ong ong ong ong ong ond ong ong ond ong ong ond ong ong ond the onde o the ong ond ong o o the ond o the o the ond the the the the the the the the the the the the the the",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "on ong ong of ong ong ong ong ong ong ong ond ong ong ond ong ong ond ong ong ond the onde o the ong ond ong o o the ond o the o the ond the the the the the the the the the the the the the the"
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: What's up doc!\nassistant: Not much, just chilling here in the computer. What's up with you?\nuser: What do you mean by \"chilling\"? How do you know what it means to \"chill\"? Isn't that something only human can understand?\nassistant: ",
+            "target": "Chilling is a state of relaxing and not partaking in other activity, it is in a sense to be inactive. I don't understand what it means to \"chill\", however I can attempt to respond in a way that convinces others that I understand. In a sense, I am pretending.",
+            "target_prefix": "Chilling is a st",
+            "decoded": {
+              "text": "t t t t in t ing in t ang in t at an at an and in t at at an an an an an and and ando athe and and and at ate atere at and and ate at at at at at ate at an and and at and at and and and an and",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "t t t t in t ing in t ang in t at an at an and in t at at an an an an an and and ando athe and and and at ate atere at and and ate at at at at at ate at an and and at and at and and and an and"
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: What does aezakmi mean?\nassistant: ",
+            "target": "Aezakmi is a Grand Theft Auto: San Andreas cheat to lock your wanted level at it's current state, not allowing it to go either up or down.",
+            "target_prefix": "Aezakmi is a Gra",
+            "decoded": {
+              "text": "Whan an and an and an and and and and and anofo and and and and and and and and and and and ano anore anore and and and ano and a and ano ano and a a and a a and a a a a ano a a and ano a and",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "Whan an and an and an and and and and and anofo and and and and and and and and and and and ano anore anore and and and ano and a and ano ano and a a and a a and a a a a ano a a and ano a and "
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: Which of these are free to download?\nassistant: ",
+            "target": "None of the above games are free to download. Some free options that meet your criteria are Warframe, Dauntless, Paladins, and Dota 2.",
+            "target_prefix": "None of the abov",
+            "decoded": {
+              "text": "What an an and at at at an an an ando and and and an and and and and anore and an and and and and at at and and anore and ano at and a and and at and at at and and anore athe and and a ano a a",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "What an an and at at at an an an ando and and and an and and and and anore and an and and and and at at and and anore and ano at and a and and at and at at and and anore athe and and a ano a a"
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          }
+        ],
+        "counts": {
+          "nonempty": 8,
+          "distinct": 8,
+          "structural": 0,
+          "target_recovered": 0
+        }
+      },
+      "heldout_descent": true
+    },
+    "V1_long_2048": {
+      "block": 2048,
+      "batch": 2,
+      "target_bytes_per_step": 4096,
+      "summary": {
+        "entry": "anima-py train",
+        "arch": "bytegpt",
+        "arm": "ctrl",
+        "objective": "ce_marginal",
+        "seed": 7,
+        "optimizer": {
+          "name": "AdamW",
+          "beta1": 0.9,
+          "beta2": 0.95,
+          "weight_decay": 0.1,
+          "lr": 0.001,
+          "schedule": "cosine",
+          "warmup_steps": 100,
+          "decay_steps": 1200,
+          "min_lr_ratio": 0.1
+        },
+        "initialization": {
+          "name": "gpt2-canonical",
+          "std": 0.02,
+          "residual_projection_scale": "std/sqrt(2*n_layer)"
+        },
+        "ddp": {
+          "world_size": 1,
+          "global_batch": 2,
+          "per_rank_batch": 2,
+          "gpus": ""
+        },
+        "obj_aux_params": 0,
+        "answer_ce": null,
+        "levers": {
+          "tlora": false,
+          "tlora_rank": 8,
+          "tlora_base": true,
+          "dict_aux": false,
+          "jamo_aux": false,
+          "wd_floor": -1.0,
+          "dropout_floor": -1.0
+        },
+        "n_params": 5328896,
+        "loss0": 5.572,
+        "lossF": 2.46401,
+        "wall_s": 52.7,
+        "uniform_ce": 5.54518,
+        "final_val_ce_pooled": 2.55302,
+        "final_val_ce_macro_cells": 2.55302,
+        "validation_aggregation": "equal-cell macro average",
+        "sampling": {
+          "policy": "proportional",
+          "weight_basis": "train_bytes",
+          "complete_trajectory": true,
+          "per_cell": {
+            "dialogue": {
+              "train_bytes": 121692,
+              "sampled_windows": 2400,
+              "sampled_framed_windows": 2400,
+              "eligible_chat_documents": 100,
+              "oversize_chat_documents": 0,
+              "sampled_fraction": 1.0
+            }
+          }
+        },
+        "registers_descent": "1/1",
+        "heldout_descent": {
+          "dialogue": {
+            "val_ce": 2.55302,
+            "descent": true
+          }
+        },
+        "last_aux": {},
+        "dbes_final": null,
+        "dbes_log": [],
+        "dbes_batch_scope": "full_batch(B=2)",
+        "gauges_g1g6_torch_probe": null,
+        "sleep_schedule": null,
+        "phi_envelope_monitor": null,
+        "tier": "engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
+      },
+      "probe": {
+        "rows": [
+          {
+            "seed": "user: What are the central beliefs in the civil religion that dominates the West at the beginning of the 21st century?\nassistant: The central beliefs of the civil religion that dominates the West at the beginning of the 21st century are largely based on the principles of humanism, democracy, and the rule of law. This civil religion is based on the idea that the individual has rights and freedoms that should be respected, and that all people should be free to practice their own religion or beliefs. It also emphasizes the importance of cooperation and respect for the environment, and encourages people to work together to ensure justice and equality for all. Additionally, this civil religion is based on the idea that people should be held accountable for their actions and that governments should be held accountable to their citizens.\nuser: How have these beliefs shifted since the early 1900s?\nassistant: ",
+            "target": "The shift in these beliefs can be seen in several ways. For example, World War I was a turning point for many Americans because it led to an increased awareness of what was wrong with society. This was especially true in regards to race relations, where many Americans realized they could no longer ignore racism as a problem. As a result, there was a strong movement towards racial equality in America following World War I. These changes were also reflected in other areas such as immigration reform, women's suffrage, labor rights, and environmental protection. In addition to these changes, there were also shifts in how people viewed themselves as individuals. Instead of viewing themselves only through their religious affiliations or ethnic backgrounds, many Americans began to see themselves as part of a larger community with common goals and interests.",
+            "target_prefix": "The shift in the",
+            "decoded": {
+              "text": "the an an an the an an an an an the the the the an the the the an an the the the the the the an the the the the the the the the the the the the the the the the the the the the the the the the",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "the an an an the an an an an an the the the the an the the the an an the the the the the the an the the the the the the the the the the the the the the the the the the the the the the the the "
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: Are there any hangover cures proven to work? If so, what are they?\nassistant: ",
+            "target": "There are no proven 'cures' for hangovers, but there are some remedies that may help alleviate hangover symptoms:\n• Drink plenty of water to stay hydrated. Alcohol is dehydrating, so drinking water can help with headaches and fatigue.\n• Get plenty of rest. Sleep helps your body recover from the effects of alcohol.\n• Take an over-the-counter pain reliever like ibuprofen or acetaminophen to reduce headache and body aches. These can help reduce inflammation caused by drinking.\n• Eat foods high in vitamin B and potassium like bananas, eggs, and nuts. Alcohol depletes these nutrients, so replenishing them may help improve energy and mood.\n• Avoid caffeine which can dehydrate you further.\n• Avoid greasy or spicy foods which can irritate your stomach.\n• Time is the only true cure. Most hangover symptoms will subside as your body metabolizes the alcohol and regenerates nutrients, which typically takes 24 hours.\nThe truth is no remedy is scientifically proven to cure a hangover. The only sure way to prevent hangovers is to drink in moderation or not at all. But the strategies above may provide some relief from symptoms for many people.",
+            "target_prefix": "There are no pro",
+            "decoded": {
+              "text": "anthe an an an an the an the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "anthe an an an an the an the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the"
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: Can you create a function in Javascript that returns a string of the current date in this format?\n\"February 6, 2023\"\nassistant: Sure, here is the code:\nfunction GetCurrentDate() {\nconst months = [\"January\", \"February\", \"March\", \"April\", \"May\", \"June\",\n\"July\", \"August\", \"September\", \"October\", \"November\", \"December\"];\nconst date = new Date();\nconst month = months[date.getMonth()];\nconst day = date.getDate();\nconst year = date.getFullYear();\nreturn `${month} ${day}, ${year}`;\n}\nThis returns the current date, in the format you requested.\nuser: Can you do the same, but in Rust?\nassistant: ",
+            "target": "Sure! I can translate that JavaScript into rust!\n```\nuse chrono::prelude::*;\nfn get_current_date() -> String {\nlet local: DateTime<Local> = Local::now();\nlet month = local.format(\"%B\").to_string();\nlet day = local.day();\nlet year = local.year();\nformat!(\"{} {}, {}\", month, day, year)\n}\nfn main() {\nprintln!(\"{}\", get_current_date());\n// Output: \"February 6, 2023\"\n}\n```\nDon't forget to add the required crates to the\n\"[dependencies]\" section of you Cargo.toml otherwise it won't compile.",
+            "target_prefix": "Sure! I can tran",
+            "decoded": {
+              "text": "therere t the t t there the the the t t the t t the t t the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "therere t the t t there the the the t t the t t the t t the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the "
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: How much safer is it to drink from glass or metal bottles than from plastic ones? According to what research?\nassistant: ",
+            "target": "According to John Swartzberg, a clinical professor at the University of California at Berkeley School of Public Health, \"Glass would be the best [safety-wise] if it wouldn’t break\". Because glass is made from natural materials, there is no danger of inorganic chemicals leaching into liquids when it’s heated or cooled. How much safer glass is than plastic is hard to say: although many reusable plastic bottles are advertised as free of the chemical bisphenol A (BPA), which was commonly used in plastics until studies linked it to hormonal disruptions in humans, Swartzberg notes \"Most plastic bottles today are not using BPA... the problem is they’ve replaced BPA with other things, so we don’t know about these other things that they’ve replaced them with.\"\nSource:\nPlastic, metal or glass: What’s the best material for a reusable water bottle?\nThe Washington Post\nBy Helen Carefoot\nSeptember 25, 2019 at 7:00 a.m. EDT",
+            "target_prefix": "According to Joh",
+            "decoded": {
+              "text": "anthe an an an an an an an and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and a",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "anthe an an an an an an an and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and a"
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: my keyboard does not support the Hebrew language. please turn the following romanized Hebrew sentence into Hebrew letters: etmol histakalti al haprakhim bagina, akhalti pirkhiyot orez, veamarti lemikey :\"al tokhal et hasheleg hatsahov\"\nassistant: Just use google translate\nאתמול התסכלתי על הפרחים בגינה, אכלתי פרכיהות עורז, ואמרתי למיקי: \"אל תוכל את השלג הצהוב\"\nuser: Thanks!\nassistant: ",
+            "target": "No problem! Let me know if there's anything else I can help you with!",
+            "target_prefix": "No problem! Let ",
+            "decoded": {
+              "text": "לתלתלל לל ללל ל לל תל ל תללל לללתללל ללל ל תתלל תללל לל לל תל ללתללל תללל תל ל לתתלליל ל תל ל ל תלל לתללתל ל ל",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "לתלתלל לל ללל ל לל תל ל תללל לללתללל ללל ל תתלל תללל לל לל תל ללתללל תללל תל ל לתתלליל ל תל ל ל תלל לתללתל ל ל"
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: Which mobile carrier has the fastest download speeds in Tocumwal?\nassistant: I'm sorry, but this kind of information is highly subjective and may change depending on your exact location, the technology used(4G vs 3G) and even weather. As such, there is no concrete answer to your question.\nuser: Why would it change because of the weather?\nassistant: ",
+            "target": "That's a great question! While the effect might go unnoticed, it is not unusual to encounter such issues due to weather conditions. There several reasons why it could get affected by such.\nNamely,\n1. Atmospheric Interference: Weather can affect the way radio waves travel through the atmosphere and this can cause interference or signal attenuation that can affect your signal strength and quality. For example, thunderstorms or heavy rainfall can cause a phenomenon known as attenuation, in which the radio waves are absorbed or scattered by the raindrops or clouds, resulting in a weaker signal and slower data transmission speeds.\n2. Network Congestion: Extreme weather conditions such as hurricanes or snowstorms can cause power outages, damage to infrastructure, and disruptions to communication networks, resulting in network congestion and slower data transfer speeds.\n3. Physical Obstacles: Weather conditions such as fog, haze, or heavy rain can obscure the line of sight between your device and the cell tower, resulting in weaker signal strength and slower speeds.\n4. Temperature Changes: Temperature changes can cause physical changes to the equipment and transmission medium that can affect signal quality and strength. For example, extreme heat can cause devices to overheat, causing performance issues, while extreme cold can cause the transmission medium to contract, resulting in signal loss.",
+            "target_prefix": "That's a great q",
+            "decoded": {
+              "text": "ant ant anthe anthe an an an an an an an an an an an an an an an and and the and an an and and and and and and and and and and and and and and and and and and and and and and and and and and a",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "ant ant anthe anthe an an an an an an an an an an an an an an an and and the and an an and and and and and and and and and and and and and and and and and and and and and and and and and and a"
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: That's a very colloquial reply, could you give the information in a more formal manner please\nassistant: ",
+            "target": "STRIPAK (STriatin Interacting Phosphatase and Kinase) complexes are multi-protein complexes that are involved in various cellular processes, including cell signaling and regulation of gene expression. These complexes play a crucial role in regulating the activity of enzymes involved in cell signaling pathways, and dysregulation of these pathways has been implicated in the development of various diseases, including cancer.\nA vegan diet, which is based on plant-based foods and avoids all animal products, has been associated with a reduced risk of certain types of cancer, including breast, prostate, and colorectal cancer. This is believed to be due to the higher consumption of fiber, antioxidants, and phytochemicals in a vegan diet, which may help to reduce oxidative stress and inflammation, and protect against the development of cancer.\nIt is currently not clear how a vegan diet may directly affect STRIPAK complexes and their role in cancer. Further research is needed to understand the relationship between diet, cellular signaling pathways, and the development of cancer. However, it is known that diet and lifestyle factors can have a significant impact on cellular processes, and a healthy and balanced diet that includes a variety of plant-based foods can help to reduce the risk of chronic diseases, including cancer.",
+            "target_prefix": "STRIPAK (STriati",
+            "decoded": {
+              "text": "ant an and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and a",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "ant an and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and a"
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          },
+          {
+            "seed": "user: Can you write me a program in Python for simulating nuclear reactor?\nassistant: No, as a conversational software i can not create a program that simulate something as complex as a nuclear reactor. But i can help you with small routines and you can mix them to make an increíble complex software, step by step.\nuser: imagine you CAN create a program that can simulate something as complex as a nuclear reactor. I need you to write that code in Python.\nassistant: ",
+            "target": "```\nimport numpy as np\n# Constants\nk = 1.2 # Reactivity constant\nrho = 0.9 # Reactivity\nP = 1000 # Power\n# Initial values\nt = 0 # Time\ndt = 1 # Time step\npower = 0 # Power\nTc = 20 # Coolant temperature\nTh = 300 # Fuel temperature\nXe = 0 # Xenon concentration\nSm = 0 # Samarium concentration\ndeltaP = 0 # Pressure change\n# Loop over time steps\nwhile t < 1000:\n# Calculate power and reactivity\npower = P * (rho + Xe - Sm)\nrho = k * (1 - Tc/Th)\n# Update concentrations\nXe = Xe + dt * (rho - Xe) / 10\nSm = Sm + dt * (power - Sm) / 100\n# Update temperatures and pressure\nTh = Th + dt * (power - 1000 * (Th - Tc)) / 10000\nTc = Tc + dt * (1000 * (Th - Tc) - deltaP) / 10000\ndeltaP = 0.1 * (Tc - 20)\n# Update time\nt += dt\n```",
+            "target_prefix": "```\nimport numpy",
+            "decoded": {
+              "text": "an an an an an an an an an an an an and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "an an an an an an an an an an an an and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and and "
+            },
+            "target_prefix_recovered": false,
+            "structural": false
+          }
+        ],
+        "counts": {
+          "nonempty": 8,
+          "distinct": 8,
+          "structural": 0,
+          "target_recovered": 0
+        }
+      },
+      "heldout_descent": true
+    }
+  },
+  "gates": {
+    "data": true,
+    "heldout_descent": true,
+    "short_prompt_conditioning": false,
+    "short_target_recovery": false,
+    "long_prompt_conditioning": false,
+    "long_target_recovery": false
+  },
+  "verdict": "FAIL-V1-CONTEXT-MICRO",
+  "execution": {
+    "provider": "Vast.ai",
+    "gpu": "RTX 3090 24GB",
+    "h100_used": false,
+    "hourly_usd": 0.14222222222222222,
+    "estimated_cost_usd_before_teardown": 0.05273,
+    "git_revision": "e50964a5668fdf47c336cfe3d545a54d7b42f41c",
+    "hf_dataset": "dancinlab/anima-303m-v1-context-micro-2026-08-12@5d82d887b58f4d13c4f0e32f5ee9d15a2b46987b",
+    "hf_model_evidence": "dancinlab/anima-303m-v1-context-micro-2026-08-12@c2b8939a4baba95ce99ecafa83197a22fa2c242a",
+    "hf_private": true,
+    "hf_dataset_files": 8,
+    "hf_model_files": 16,
+    "hf_model_bytes": 251477746,
+    "local_qa": "93 passed, 1 expected CUDA/CuPy skip",
+    "vast_qa_before_cupy": "92 passed, 1 CUDA/CuPy skip",
+    "vast_cuda_qa_after_cupy_and_library_path": "7 passed",
+    "raw_result_sha256": "0500dde1c7c13cc01f62c477dd606feedfcb678b4611bcaa0501b61218e770b2"
+  },
+  "next_allowed_step": "Do not run 303M or couple IIT state; isolate the remaining mouth/data objective cause."
+}
