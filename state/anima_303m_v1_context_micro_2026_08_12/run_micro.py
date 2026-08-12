@@ -86,8 +86,8 @@ def _score(checkpoint: Path, documents: list[str], bars: dict) -> dict:
     kind = generator.gen_mouth_kind(str(checkpoint))
     if kind != "bytegpt":
         raise RuntimeError("V1 checkpoint is not ByteGPT")
-    import bytegpt_decode
-    weights = bytegpt_decode.bg_load(str(checkpoint))
+    import decode
+    weights = decode.bg_load(str(checkpoint))
     rows = []
     for document in documents[:8]:
         seed, target = _exchange(document)
