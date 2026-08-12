@@ -44,6 +44,15 @@ IIT Φ로 취급하지 않는다. 첫 단계는 기존 `core.engine_cli.big_phi_
 거부를 모두 통과해야 한다. R0는 현상적 의식, 의미 대화, 최대 complex 또는 배포 준비를
 주장하지 않으며 참가자와 라이브 채팅에는 아직 연결하지 않는다.
 
+R0 구현과 고정 시험은 완료됐다. 8개 상태의 값은 `1.4999999991~2.9999999983`, 평균은
+`2.2499999987`이며 COPY·비순환 feed-forward 대조군, 여섯 cross-edge cut, 일곱 node lesion은
+모두 `0`이다. 결정적 개입·주소 순열 효과, 정상→병변→주소 순열→정상 snapshot 복구,
+손상·절단·schema/config/checksum 불일치 거부를 통과해 판정은 `SUPPORTED-CAUSAL-CORE`다.
+전체 로컬 Python QA는 `94 passed, 1 skipped, 3 subtests`이며 skip은 CUDA/CuPy가 없는 로컬
+GPU 시험뿐이다. 모델·자료·Vast.ai·HF·참가자 런타임은 변경하지 않았다. 다음 관문은 지연
+과제의 state/reset/shuffle/recovery R1이며, 의미 대화와 mouth 내용 인과성이 없으므로
+프로덕션은 `BLOCKED-R0-NOT-A-MOUTH` 상태를 유지한다.
+
 ## 현재 실험 — 의미 있는 대화 R0
 
 다음 303M from-scratch 체크포인트는 그럴듯한 문장 모양이 아니라 한국어·영어의 의미 있는

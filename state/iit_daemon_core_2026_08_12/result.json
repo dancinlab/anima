@@ -1,0 +1,184 @@
+{
+  "canonical": {
+    "all_state_phi": [
+      2.9999999982687657,
+      1.4999999991343829,
+      1.4999999991343829,
+      2.9999999982687657,
+      1.4999999991343829,
+      2.9999999982687657,
+      2.9999999982687657,
+      1.4999999991343829
+    ],
+    "causal_edges": [
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ]
+    ],
+    "mean_phi": 2.249999998701574,
+    "tpm": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "transition": "xor-other-two-ring"
+  },
+  "checks": {
+    "all_edge_cuts_nonincrease": true,
+    "all_node_lesions_collapse": true,
+    "canonical_positive_all_states": true,
+    "copy_control_zero": true,
+    "deterministic_replay": true,
+    "each_node_has_causal_parent": true,
+    "feedforward_control_zero": true,
+    "intervention_has_causal_effect": true,
+    "intervention_shuffle_has_effect": true,
+    "snapshot_corruption_rejected": true,
+    "snapshot_recovery_exact": true,
+    "some_edge_cut_strict_drop": true,
+    "tpm_valid": true,
+    "xor_control_2_25": true
+  },
+  "claim_scope": "fixed-candidate three-node bounded IIT4 structure mechanics",
+  "controls": {
+    "copy_mean_phi": 0.0,
+    "deterministic_trace": [
+      {
+        "after": 5,
+        "audit_head": "e60a095566dc506f6c095834ec6ec1b063f8c07805856d6a29903846e4dc005f",
+        "before": 3,
+        "intervention": 1,
+        "lesion_mask": 0,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "perturbed": 2,
+        "shuffled_intervention": 1,
+        "tick": 1
+      },
+      {
+        "after": 6,
+        "audit_head": "99bc401dab57468240be634a3684095d441a29f5fb2098b0a44f7d91869f79da",
+        "before": 5,
+        "intervention": 4,
+        "lesion_mask": 0,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "perturbed": 1,
+        "shuffled_intervention": 4,
+        "tick": 2
+      },
+      {
+        "after": 3,
+        "audit_head": "766d1961cdd1549722318e05d822fc590dd449bef49ae295092ecf81747683d5",
+        "before": 6,
+        "intervention": 2,
+        "lesion_mask": 0,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "perturbed": 4,
+        "shuffled_intervention": 2,
+        "tick": 3
+      },
+      {
+        "after": 3,
+        "audit_head": "c4ab81f8d03343c8cebb20d4cc0f13355963635c35dae9784136f33cf338074b",
+        "before": 3,
+        "intervention": 7,
+        "lesion_mask": 0,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "perturbed": 4,
+        "shuffled_intervention": 7,
+        "tick": 4
+      }
+    ],
+    "edge_cut_mean_phi": {
+      "0->1": 0.0,
+      "0->2": 0.0,
+      "1->0": 0.0,
+      "1->2": 0.0,
+      "2->0": 0.0,
+      "2->1": 0.0
+    },
+    "feedforward_mean_phi": 0.0,
+    "identity_intervention_after": 0,
+    "no_event_after": 3,
+    "node_lesion_mean_phi": {
+      "1": 0.0,
+      "2": 0.0,
+      "3": 0.0,
+      "4": 0.0,
+      "5": 0.0,
+      "6": 0.0,
+      "7": 0.0
+    },
+    "shuffled_intervention_after": 5,
+    "with_event_after": 5,
+    "xor_mean_phi": 2.249999998701574
+  },
+  "date": "2026-08-12",
+  "deployment": "BLOCKED-R0-NOT-A-MOUTH",
+  "instrument": "core.engine_cli.big_phi_bounded",
+  "non_claims": [
+    "phenomenal consciousness",
+    "maximal complex",
+    "meaningful conversation",
+    "production readiness"
+  ],
+  "schema": "anima-iit-daemon-core-result/1",
+  "verdict": "SUPPORTED-CAUSAL-CORE"
+}

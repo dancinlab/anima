@@ -38,6 +38,118 @@ import numpy as np
 N_CELL = 3
 
 
+def validate_tpm(tpm, n=N_CELL):
+    """Validate the canonical state-by-node TPM shape used by the IIT4 engine.
+
+    The representation is flat and row-major: ``tpm[state * n + unit]``.  Keep
+    validation beside the existing extractor so training, offline measurement,
+    and the persistent daemon cannot silently disagree about this boundary.
+    """
+    values = [float(v) for v in tpm]
+    expected = (1 << int(n)) * int(n)
+    if len(values) != expected:
+        raise ValueError("TPM needs %d probabilities, got %d" % (expected, len(values)))
+    for value in values:
+        if not math.isfinite(value) or value < 0.0 or value > 1.0:
+            raise ValueError("TPM probabilities must be finite and in [0,1]")
+    return values
+
+
+def xor_ring_tpm():
+    """Three-node nonlinear recurrent positive substrate fixed by the IIT-daemon R0 protocol."""
+    out = []
+    for state in range(1 << N_CELL):
+        for unit in range(N_CELL):
+            left = (state >> ((unit + 1) % N_CELL)) & 1
+            right = (state >> ((unit + 2) % N_CELL)) & 1
+            out.append(float(left ^ right))
+    return out
+
+
+def independent_copy_tpm():
+    """Independent self-copy negative control: no cross-node causal edge."""
+    return [float((state >> unit) & 1)
+            for state in range(1 << N_CELL) for unit in range(N_CELL)]
+
+
+def feedforward_broadcast_tpm():
+    """Acyclic cross-node negative control: node 0 persists and broadcasts to node 1.
+
+    Ignoring self persistence, its only cross edge is 0->1; node 2 is constant.  It
+    therefore contains no multi-node feedback cycle and reads on the null side of
+    the repository's fixed-candidate IIT4 structure instrument.
+    """
+    out = []
+    for state in range(1 << N_CELL):
+        source = float(state & 1)
+        out.extend([source, source, 0.0])
+    return out
+
+
+def causal_edges(tpm, n=N_CELL, tol=1.0e-12):
+    """Return directed parent->target edges established by a one-bit do contrast."""
+    values = validate_tpm(tpm, n)
+    edges = []
+    for parent in range(n):
+        for target in range(n):
+            changed = False
+            for state in range(1 << n):
+                low = state & ~(1 << parent)
+                high = state | (1 << parent)
+                if abs(values[low * n + target] - values[high * n + target]) > tol:
+                    changed = True
+                    break
+            if changed:
+                edges.append((parent, target))
+    return edges
+
+
+def cut_edge_tpm(tpm, parent, target, n=N_CELL):
+    """Causally sever ``parent -> target`` by marginalising that parent to max entropy."""
+    if parent < 0 or parent >= n or target < 0 or target >= n:
+        raise ValueError("edge endpoints must be in [0,%d)" % n)
+    values = validate_tpm(tpm, n)
+    out = list(values)
+    for state in range(1 << n):
+        low = state & ~(1 << parent)
+        high = state | (1 << parent)
+        out[state * n + target] = 0.5 * (
+            values[low * n + target] + values[high * n + target])
+    return out
+
+
+def lesion_tpm(tpm, lesion_mask, n=N_CELL):
+    """Interventional node lesion: clamp lesioned causes and effects OFF."""
+    if isinstance(lesion_mask, bool) or not isinstance(lesion_mask, int):
+        raise TypeError("lesion_mask must be an integer bit mask")
+    if lesion_mask < 0 or lesion_mask >= (1 << n):
+        raise ValueError("lesion_mask is outside the candidate system")
+    values = validate_tpm(tpm, n)
+    out = []
+    for state in range(1 << n):
+        clamped_state = state & ~lesion_mask
+        for unit in range(n):
+            value = 0.0 if lesion_mask & (1 << unit) else values[clamped_state * n + unit]
+            out.append(value)
+    return out
+
+
+def all_state_big_phi(tpm, n=N_CELL, purview_cap=None):
+    """Measure every state through the existing engine-native IIT4 implementation."""
+    import engine_cli as E
+    values = validate_tpm(tpm, n)
+    cap = n if purview_cap is None else int(purview_cap)
+    if cap < 1 or cap > n:
+        raise ValueError("purview_cap must be in [1,n]")
+    return [float(E.big_phi_bounded(values, n, state, cap)[0])
+            for state in range(1 << n)]
+
+
+def mean_big_phi(tpm, n=N_CELL, purview_cap=None):
+    values = all_state_big_phi(tpm, n, purview_cap)
+    return sum(values) / float(len(values))
+
+
 # ── numpy manual-GRU step (the reference; the torch cell mirrors this op-for-op) ──
 def _sigmoid_np(z):
     return 1.0 / (1.0 + np.exp(-np.clip(z, -60.0, 60.0)))

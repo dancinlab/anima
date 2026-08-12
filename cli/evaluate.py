@@ -4065,6 +4065,124 @@ def iit4_recurrent_lane_run(argv):
     return 0
 
 
+def iit_daemon_core_run(argv):
+    """Run the preregistered checkpoint-free IIT daemon R0 causal battery."""
+    import tempfile as _tempfile
+    import recurrent_lane as RL
+    import iit_daemon as ID
+
+    out_path = evaluate_strval(argv, "--out", "")
+    canonical = RL.xor_ring_tpm()
+    copy_control = RL.independent_copy_tpm()
+    feedforward_control = RL.feedforward_broadcast_tpm()
+    state_phi = RL.all_state_big_phi(canonical)
+    mean_phi = sum(state_phi) / len(state_phi)
+    xor_control = RL.mean_big_phi(canonical)
+    copy_phi = RL.mean_big_phi(copy_control)
+    feedforward_phi = RL.mean_big_phi(feedforward_control)
+    edges = RL.causal_edges(canonical)
+    cross_edges = [edge for edge in edges if edge[0] != edge[1]]
+    cuts = {
+        "%d->%d" % edge: RL.mean_big_phi(RL.cut_edge_tpm(canonical, edge[0], edge[1]))
+        for edge in cross_edges
+    }
+    lesions = {
+        str(mask): RL.mean_big_phi(RL.lesion_tpm(canonical, mask))
+        for mask in range(1, 1 << RL.N_CELL)
+    }
+
+    sequence = [1, 4, 2, 7]
+    left = ID.IITDaemonCore(3)
+    right = ID.IITDaemonCore(3)
+    trace_left = [left.step(value) for value in sequence]
+    trace_right = [right.step(value) for value in sequence]
+    deterministic = trace_left == trace_right
+    no_event = ID.IITDaemonCore(3).step(0)["after"]
+    with_event = ID.IITDaemonCore(3).step(1)["after"]
+    intervention_effect = no_event != with_event
+    identity_after = ID.IITDaemonCore(1).step(1, permutation=(0, 1, 2))["after"]
+    shuffled_after = ID.IITDaemonCore(1).step(1, permutation=(2, 1, 0))["after"]
+    shuffle_effect = identity_after != shuffled_after
+
+    normal = ID.IITDaemonCore(5)
+    normal.step(3)
+    expected = normal.snapshot()
+    with _tempfile.TemporaryDirectory(prefix="anima-iit-daemon-") as directory:
+        snapshot_path = os.path.join(directory, "state.json")
+        normal.save_snapshot(snapshot_path)
+        normal.step(6, lesion_mask=1)
+        normal.step(3, permutation=(2, 1, 0))
+        perturbed = normal.snapshot()
+        recovered = ID.IITDaemonCore.load_snapshot(snapshot_path)
+        recovery_exact = recovered.snapshot() == expected and perturbed != expected
+
+        damaged_path = os.path.join(directory, "damaged.json")
+        damaged = dict(expected)
+        damaged["sha256"] = "0" * 64
+        with open(damaged_path, "w", encoding="utf-8") as handle:
+            json.dump(damaged, handle, sort_keys=True)
+        corruption_rejected = False
+        try:
+            ID.IITDaemonCore.load_snapshot(damaged_path)
+        except ValueError:
+            corruption_rejected = True
+
+    tol = 1.0e-6
+    checks = {
+        "tpm_valid": len(RL.validate_tpm(canonical)) == 24,
+        "each_node_has_causal_parent": all(any(target == node for _, target in edges)
+                                            for node in range(RL.N_CELL)),
+        "xor_control_2_25": abs(xor_control - 2.25) <= tol,
+        "copy_control_zero": copy_phi <= tol,
+        "feedforward_control_zero": feedforward_phi <= tol,
+        "canonical_positive_all_states": all(value > 0.0 for value in state_phi),
+        "all_edge_cuts_nonincrease": all(value <= mean_phi + tol for value in cuts.values()),
+        "some_edge_cut_strict_drop": any(value < mean_phi - tol for value in cuts.values()),
+        "all_node_lesions_collapse": all(value <= tol for value in lesions.values()),
+        "deterministic_replay": deterministic,
+        "intervention_has_causal_effect": intervention_effect,
+        "intervention_shuffle_has_effect": shuffle_effect,
+        "snapshot_recovery_exact": recovery_exact,
+        "snapshot_corruption_rejected": corruption_rejected,
+    }
+    verdict = "SUPPORTED-CAUSAL-CORE" if all(checks.values()) else "FALSIFIED"
+    result = {
+        "schema": "anima-iit-daemon-core-result/1",
+        "date": "2026-08-12",
+        "claim_scope": "fixed-candidate three-node bounded IIT4 structure mechanics",
+        "non_claims": ["phenomenal consciousness", "maximal complex",
+                       "meaningful conversation", "production readiness"],
+        "instrument": "core.engine_cli.big_phi_bounded",
+        "canonical": {
+            "transition": "xor-other-two-ring", "tpm": canonical,
+            "causal_edges": [list(edge) for edge in edges],
+            "all_state_phi": state_phi, "mean_phi": mean_phi,
+        },
+        "controls": {
+            "xor_mean_phi": xor_control, "copy_mean_phi": copy_phi,
+            "feedforward_mean_phi": feedforward_phi,
+            "edge_cut_mean_phi": cuts, "node_lesion_mean_phi": lesions,
+            "deterministic_trace": trace_left,
+            "no_event_after": no_event, "with_event_after": with_event,
+            "identity_intervention_after": identity_after,
+            "shuffled_intervention_after": shuffled_after,
+        },
+        "checks": checks,
+        "verdict": verdict,
+        "deployment": "BLOCKED-R0-NOT-A-MOUTH",
+    }
+    print("[iit-daemon-core R0 · engine-native IIT4 fixed candidate]")
+    print("  controls: XOR=%.6f COPY=%.6f FEEDFORWARD=%.6f" %
+          (xor_control, copy_phi, feedforward_phi))
+    print("  canonical mean=%.6f min=%.6f max=%.6f edges=%d" %
+          (mean_phi, min(state_phi), max(state_phi), len(edges)))
+    print("  verdict: %s (no consciousness or deployment claim)" % verdict)
+    if out_path:
+        _store_causality_write(out_path, result)
+        print("  wrote %s" % out_path)
+    return 0 if verdict == "SUPPORTED-CAUSAL-CORE" else 1
+
+
 def structure_envelope_read_run(argv):
     """`anima-py evaluate <ckpt.clm> --structure-envelope-read [--out j.json]`
 
@@ -12732,6 +12850,7 @@ _KNOWN_FLAGS = frozenset((
     # H_9954 recurrent-lane IIT-4 readout: do()-intervention TPM of the trained 3-cell GRU (RCRL
     # trailer) over held-out EN embeddings -> faithful big_phi_bounded. READ-ONLY, takes a manifest.
     "--iit4-recurrent-lane",
+    "--iit-daemon-core",
     # H_1520 conversational-salience emit gate re-read with the PLANTED FNV-trigram key
     # geometry swapped for the REAL 303M penultimate. ONE flag, no tuning argument.
     "--salience-toggle-read",
@@ -19624,6 +19743,10 @@ def main(argv):
     # flag PRESENCE, not on argv[0]. ADDITIVE — it moves no frozen bar and touches no panel.
     if "--closure-ladder" in argv:
         return closure_ladder_run(argv)
+    # IIT-daemon R0: checkpoint-free persistent causal core. It reuses the
+    # engine-native recurrent TPM and IIT4 instrument and mounts no mouth.
+    if "--iit-daemon-core" in argv:
+        return iit_daemon_core_run(argv)
     # H_9838 --hippo-transitive-selftest: core/hippo_lane.py's CA3 multi-step completion on a
     # planted premise world. Ckpt-FREE by construction (the store + completion are pure numpy
     # arithmetic), so it dispatches on flag PRESENCE like --closure-ladder. ADDITIVE and

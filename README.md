@@ -50,6 +50,16 @@ feed-forward, edge-cut, node-lesion, shuffle, reset/recovery, and corrupted-snap
 mandatory. R0 makes no claim of phenomenal consciousness, meaningful conversation, a maximal
 complex, or deployment readiness and is not yet mounted in the participant or live chat.
 
+R0 implementation and its fixed battery are complete. Across all eight states, the registered
+value ranges from `1.4999999991` to `2.9999999983` with mean `2.2499999987`; COPY, acyclic
+feed-forward, all six cross-edge cuts, and all seven node-lesion controls read `0`. Deterministic
+intervention and address-permutation effects, normal -> lesion -> address shuffle -> exact normal
+snapshot recovery, and malformed/truncated/schema/config/checksum rejection all pass. The verdict
+is `SUPPORTED-CAUSAL-CORE`; local Python QA passed `94 tests + 3 subtests` with only the unavailable
+CUDA/CuPy test skipped. No model, data, Vast.ai rental, HF repository, participant, or live chat was
+changed. R1 delayed-task state causality is next; production remains
+`BLOCKED-R0-NOT-A-MOUTH` until meaningful conversation and mouth-content causality are proven.
+
 ## Current experiment — meaningful-conversation R0
 
 The next 303M from-scratch checkpoint is blocked on meaningful Korean and English conversation,

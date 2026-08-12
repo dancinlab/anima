@@ -1,0 +1,218 @@
+"""Persistent IIT-daemon causal core.
+
+This module is a state boundary around the existing three-node recurrent TPM and
+``engine_cli.big_phi_bounded`` instrument.  It is deliberately not a language
+model, persona, evaluator, or consciousness claim.  Events can perturb the
+candidate state, after which the autonomous TPM owns the next transition.
+"""
+
+from dataclasses import asdict, dataclass
+import hashlib
+import json
+import os
+import tempfile
+
+import recurrent_lane as RL
+
+
+SNAPSHOT_SCHEMA = "anima-iit-daemon-snapshot/1"
+CORE_SCHEMA = "anima-iit-daemon-core/1"
+MAX_SNAPSHOT_BYTES = 1 << 20
+
+
+def _canonical_json(value):
+    return json.dumps(value, ensure_ascii=False, sort_keys=True,
+                      separators=(",", ":")).encode("utf-8")
+
+
+def _sha256(value):
+    return hashlib.sha256(_canonical_json(value)).hexdigest()
+
+
+def _state(value, name="state"):
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise TypeError("%s must be an integer" % name)
+    if value < 0 or value >= (1 << RL.N_CELL):
+        raise ValueError("%s must be in [0,%d]" % (name, (1 << RL.N_CELL) - 1))
+    return value
+
+
+def _permutation(value):
+    if not isinstance(value, (list, tuple)) or len(value) != RL.N_CELL:
+        raise ValueError("permutation must contain exactly three node indexes")
+    p = tuple(value)
+    if any(isinstance(x, bool) or not isinstance(x, int) for x in p):
+        raise TypeError("permutation indexes must be integers")
+    if sorted(p) != list(range(RL.N_CELL)):
+        raise ValueError("permutation must be a bijection over the three nodes")
+    return p
+
+
+def permute_bits(value, permutation):
+    """Return bits where destination i reads source ``permutation[i]``."""
+    source = _state(value, "intervention")
+    p = _permutation(permutation)
+    out = 0
+    for destination, source_index in enumerate(p):
+        out |= ((source >> source_index) & 1) << destination
+    return out
+
+
+@dataclass(frozen=True)
+class IITDaemonConfig:
+    schema: str = CORE_SCHEMA
+    nodes: int = RL.N_CELL
+    transition: str = "xor-other-two-ring"
+    purview_cap: int = RL.N_CELL
+
+    def validate(self):
+        if self.schema != CORE_SCHEMA:
+            raise ValueError("unsupported IIT daemon core schema")
+        if self.nodes != RL.N_CELL:
+            raise ValueError("R0 requires exactly three intrinsic nodes")
+        if self.transition != "xor-other-two-ring":
+            raise ValueError("R0 transition is frozen to xor-other-two-ring")
+        if self.purview_cap != RL.N_CELL:
+            raise ValueError("R0 requires full three-node purviews")
+        return self
+
+    @property
+    def checksum(self):
+        self.validate()
+        return _sha256(asdict(self))
+
+
+class IITDaemonCore:
+    """A deterministic session-persistent intrinsic state with hash-chained steps."""
+
+    def __init__(self, state=0, *, config=None, tick=0, audit_head=None):
+        self.config = (config or IITDaemonConfig()).validate()
+        self.state = _state(state)
+        if isinstance(tick, bool) or not isinstance(tick, int) or tick < 0:
+            raise ValueError("tick must be a non-negative integer")
+        self.tick = tick
+        self.tpm = RL.validate_tpm(RL.xor_ring_tpm(), self.config.nodes)
+        genesis = {
+            "schema": SNAPSHOT_SCHEMA,
+            "config_checksum": self.config.checksum,
+            "initial_state": self.state,
+        }
+        self.audit_head = str(audit_head) if audit_head is not None else _sha256(genesis)
+        if len(self.audit_head) != 64 or any(c not in "0123456789abcdef" for c in self.audit_head):
+            raise ValueError("audit_head must be a lowercase SHA-256 hex digest")
+
+    def _transition(self, state, tpm):
+        next_state = 0
+        for unit in range(self.config.nodes):
+            probability = tpm[state * self.config.nodes + unit]
+            if probability not in (0.0, 1.0):
+                raise ValueError("runtime R0 transition must be deterministic")
+            next_state |= int(probability) << unit
+        return next_state
+
+    def step(self, intervention=0, *, permutation=(0, 1, 2), lesion_mask=0):
+        intervention = _state(intervention, "intervention")
+        p = _permutation(permutation)
+        lesion_mask = _state(lesion_mask, "lesion_mask")
+        shuffled = permute_bits(intervention, p)
+        before = self.state
+        perturbed = (before ^ shuffled) & ~lesion_mask
+        active_tpm = self.tpm if lesion_mask == 0 else RL.lesion_tpm(
+            self.tpm, lesion_mask, self.config.nodes)
+        after = self._transition(perturbed, active_tpm)
+        receipt = {
+            "tick": self.tick + 1,
+            "before": before,
+            "intervention": intervention,
+            "permutation": list(p),
+            "shuffled_intervention": shuffled,
+            "perturbed": perturbed,
+            "lesion_mask": lesion_mask,
+            "after": after,
+        }
+        self.audit_head = hashlib.sha256(
+            bytes.fromhex(self.audit_head) + _canonical_json(receipt)).hexdigest()
+        self.tick += 1
+        self.state = after
+        return dict(receipt, audit_head=self.audit_head)
+
+    def measure(self):
+        states = RL.all_state_big_phi(self.tpm, self.config.nodes, self.config.purview_cap)
+        current = states[self.state]
+        return {
+            "instrument": "core.engine_cli.big_phi_bounded",
+            "scope": "fixed-candidate-bounded-structure-loss",
+            "state": self.state,
+            "state_phi": current,
+            "all_state_phi": states,
+            "mean_phi": sum(states) / len(states),
+            "min_phi": min(states),
+            "max_phi": max(states),
+            "causal_edges": [list(edge) for edge in RL.causal_edges(self.tpm)],
+        }
+
+    def snapshot(self):
+        payload = {
+            "config": asdict(self.config),
+            "config_checksum": self.config.checksum,
+            "state": self.state,
+            "tick": self.tick,
+            "audit_head": self.audit_head,
+        }
+        return {"schema": SNAPSHOT_SCHEMA, "payload": payload, "sha256": _sha256(payload)}
+
+    def save_snapshot(self, path):
+        target = os.path.abspath(os.fspath(path))
+        parent = os.path.dirname(target)
+        if not os.path.isdir(parent):
+            raise FileNotFoundError("snapshot parent directory does not exist")
+        body = _canonical_json(self.snapshot()) + b"\n"
+        fd, temporary = tempfile.mkstemp(prefix=".iit-daemon-", suffix=".json", dir=parent)
+        try:
+            os.fchmod(fd, 0o600)
+            with os.fdopen(fd, "wb") as handle:
+                handle.write(body)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(temporary, target)
+            directory_fd = os.open(parent, os.O_RDONLY)
+            try:
+                os.fsync(directory_fd)
+            finally:
+                os.close(directory_fd)
+        except BaseException:
+            try:
+                os.unlink(temporary)
+            except FileNotFoundError:
+                pass
+            raise
+        return target
+
+    @classmethod
+    def load_snapshot(cls, path):
+        target = os.path.abspath(os.fspath(path))
+        size = os.path.getsize(target)
+        if size <= 0 or size > MAX_SNAPSHOT_BYTES:
+            raise ValueError("snapshot size is invalid")
+        with open(target, "rb") as handle:
+            raw = handle.read(MAX_SNAPSHOT_BYTES + 1)
+        try:
+            document = json.loads(raw.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise ValueError("snapshot is not valid canonical JSON") from exc
+        if not isinstance(document, dict) or document.get("schema") != SNAPSHOT_SCHEMA:
+            raise ValueError("unsupported snapshot schema")
+        payload = document.get("payload")
+        if not isinstance(payload, dict) or document.get("sha256") != _sha256(payload):
+            raise ValueError("snapshot checksum mismatch")
+        expected = {"config", "config_checksum", "state", "tick", "audit_head"}
+        if set(payload) != expected:
+            raise ValueError("snapshot payload fields mismatch")
+        try:
+            config = IITDaemonConfig(**payload["config"]).validate()
+        except (TypeError, ValueError) as exc:
+            raise ValueError("snapshot config is invalid") from exc
+        if payload["config_checksum"] != config.checksum:
+            raise ValueError("snapshot config checksum mismatch")
+        return cls(payload["state"], config=config, tick=payload["tick"],
+                   audit_head=payload["audit_head"])

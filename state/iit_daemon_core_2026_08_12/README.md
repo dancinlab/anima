@@ -158,3 +158,34 @@ meaningful conversation, memory ownership, maximal exclusion, or production read
 6. R6: only after meaningful English conversation, FIFO/reply ownership, HTTP/WebSocket, soak,
    restart and rollback gates may a certified model be mounted in staging.
 
+## R0 result
+
+The preregistered R0 implementation is complete and the fixed mechanical gates pass.
+
+- The shared `core/recurrent_lane.py` now owns TPM validation, nonlinear XOR-ring, COPY and
+  feed-forward controls, one-edge causal cuts, node lesions, causal-edge census and all-state calls
+  into the existing `core.engine_cli.big_phi_bounded` implementation.
+- `core/iit_daemon.py` adds only the persistent boundary: validated three-bit interventions,
+  autonomous deterministic transition, hash-chained receipts, and versioned/checksummed atomic
+  snapshots. It contains no language model, alternate evaluator, training loss or emit threshold.
+- The canonical eight-state Phi values range from `1.4999999991` to `2.9999999983`; their mean is
+  `2.2499999987`. The COPY and acyclic feed-forward controls are `0`. Every one of the six directed
+  cross-edge cuts and all seven non-empty node-lesion masks collapse the mean to `0`.
+- Same-state/same-intervention traces and audit hashes reproduce exactly. A registered intervention
+  changes the trajectory; permuting its node addresses changes it again. After normal -> lesion ->
+  address shuffle, loading the saved normal snapshot exactly restores state, tick and audit head.
+- Invalid state/masks/permutations, malformed/truncated/oversized snapshots, schema/config/checksum
+  mismatch and out-of-range recovered state fail closed. Snapshot replacement is atomic and mode
+  `0600`.
+- Canonical `anima-py evaluate --iit-daemon-core` writes `result.json` atomically and returned
+  `SUPPORTED-CAUSAL-CORE`. A second run produced byte-identical JSON.
+- Local Python QA: `94 passed, 1 skipped, 3 subtests passed`; the only skip is the expected local
+  CUDA/CuPy decode test. Compile, JSON and diff checks pass.
+- No model or training data changed, no Vast.ai instance was rented, no HF upload was needed, and
+  the participant/live chat was not mounted or restarted. User-owned `ING.jsonl` and
+  `stream_mi.json` retain SHA-256 `a49e4fde...8b05c` and `1b2175d6...b5be` respectively.
+
+Verdict scope remains narrow: `SUPPORTED-CAUSAL-CORE` means the fixed three-node candidate has the
+registered integrated causal mechanics. R1 delayed-task state causality, R2 CLMS address latching,
+R3 mouth-content causality, exclusion/maximal-complex search and meaningful conversation all remain
+open. Accordingly production deployment remains `BLOCKED-R0-NOT-A-MOUTH`.
