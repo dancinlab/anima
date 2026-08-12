@@ -104,7 +104,9 @@ step을 늘리거나 panel을 조정하지 않고 builder → trainer → evalua
 로컬 Python/CHAT QA는 `86 tests + 3 subtests`, 실제 tiny ByteGPT 직렬화·participant 집중
 경로는 `52 tests + 3 subtests`와 로컬 CUDA 전용 1건 정상 skip으로 통과했다. 기존 303M
 체크포인트는 계속 `FAIL-MEANINGLESS-REPETITION`이다. 결과·문턱값·seed·자료 revision·
-체크포인트를 바꾸지 않았고 모델도 배포하지 않았다. 남은 비코드 관문은 provenance가 안전한
+체크포인트를 바꾸지 않았고 모델도 배포하지 않았다. 기존 로컬·공개 broker는 HTTP `200`과
+WebSocket `hello`를 통과했고 `anima_alive=false`는 인증 모델이 없음을 정직하게 나타낸다.
+남은 비코드 관문은 provenance가 안전한
 한국어 멀티턴 자료를 새 HF `dancinlab` 불변 revision으로 고정하는 것이다. 합성 persona,
 비상업/불명확 라이선스, 정렬 trajectory가 부족한 후보는 임의 채택하지 않았다. 수정된 R0가
 같은 관문을 통과하기 전까지 R1과 프로덕션은 계속 잠근다.

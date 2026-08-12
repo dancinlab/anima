@@ -51,7 +51,15 @@
       "skip_reason": "CUDA-only parity on local mini",
       "subtests_passed": 3
     },
-    "tiny_real_bytegpt_participant": "PASS"
+    "tiny_real_bytegpt_participant": "PASS",
+    "existing_runtime": {
+      "local_http": 200,
+      "public_http": 200,
+      "local_websocket": "hello",
+      "public_websocket": "hello",
+      "anima_alive": false,
+      "expected_without_certified_model": true
+    }
   },
   "external_changes": {
     "hugging_face_upload": false,

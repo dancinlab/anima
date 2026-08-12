@@ -47,6 +47,9 @@ past verdicts.
 - Full local Python/CHAT set: `86 passed`, including `3 subtests`.
 - Focused decode/training/participant set: `52 passed`, `1 CUDA-only skipped`, `3 subtests`.
 - Real tiny ByteGPT serialization, participant load, entropy read and canonical generation passed.
+- Existing local/public broker remained healthy without deploying the failed model: HTTP `200` and
+  WebSocket `hello` passed at `127.0.0.1:8000` and `https://chat.dancinlab.org`;
+  `anima_alive=false` correctly records that no certified model participant is mounted.
 - Existing user files `ING.jsonl` and `stream_mi.json` remained unchanged.
 
 ## Remaining gate

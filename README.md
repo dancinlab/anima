@@ -111,7 +111,9 @@ rejected, and intermediate ByteGPT metadata carries the actual completed step an
 Local Python/CHAT QA passed `86 tests + 3 subtests`; a focused real ByteGPT serialization and
 participant route passed `52 tests + 3 subtests` with one local CUDA-only skip. The prior 303M
 checkpoint remains `FAIL-MEANINGLESS-REPETITION`: no result, threshold, seed, data revision or
-checkpoint was changed, and no model was deployed. The remaining non-code gate is a separately
+checkpoint was changed, and no model was deployed. The unchanged local/public broker passed HTTP
+`200` and WebSocket `hello`; `anima_alive=false` honestly reflects the missing certified model.
+The remaining non-code gate is a separately
 pinned, provenance-safe Korean multi-turn HF `dancinlab` revision; candidates with synthetic
 persona content, non-commercial/ambiguous licenses, or insufficient aligned trajectories were not
 silently adopted. R1 and production remain locked until a corrected R0 passes the unchanged gate.
