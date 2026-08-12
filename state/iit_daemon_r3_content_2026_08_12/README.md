@@ -98,8 +98,8 @@ Implementation and execution completed after the protocol was committed and push
   the same R3 result byte-for-byte. The participant is intentionally not mounted and the broker was
   not restarted. Its LaunchAgent remains running, public HTTPS returns `200`, and public WebSocket
   returns `hello` with the honest blocked status `anima_alive=false`.
-- No training, Vast.ai rental, HF write or model/data mutation occurred. `ING.jsonl` and
-  `stream_mi.json` remain untouched.
+- No training, Vast.ai rental, HF write or model/data mutation occurred. The final authenticated
+  Vast.ai read reports zero active instances. `ING.jsonl` and `stream_mi.json` remain untouched.
 
 Verdict: `SUPPORTED-BOUNDED-CONTENT-CAUSALITY`. This shows that the bounded final intrinsic state
 causally selects exact task-semantic output bytes under the registered interventions. The two
