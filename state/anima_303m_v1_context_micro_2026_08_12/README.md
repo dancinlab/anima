@@ -65,3 +65,11 @@ revision `dancinlab/anima-303m-v1-context-micro-2026-08-12@c2b8939a4baba95ce99ec
 (16 files, 251,477,746 bytes). No model is deployed. The next allowed work is a separately
 preregistered single-axis mouth/data-objective micro diagnosis; increasing context or training a
 303M model again is not authorized by this result.
+
+The final README/result record is also present at HF revision `f6f6039583befc049fcfaa2091176b86ce97088a`.
+The Vast.ai instance was destroyed after verification; active rentals are zero and the estimated
+run cost is `$0.058457`.
+
+No failed mouth was mounted and the broker was not restarted. The existing LaunchAgent remains
+running; public HTTPS returns `200` and `wss://chat.dancinlab.org/ws` returns `hello` with the
+honest blocked status `anima_alive=false`. `ING.jsonl` and `stream_mi.json` remain untouched.

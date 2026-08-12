@@ -233,6 +233,8 @@ prefix `0/8`, 구조 `0/8`이었고 `an/the/ic` 반복으로 붕괴했다. 긴 b
 303M·IIT-mouth 결합·프로덕션은 계속 차단한다. 데이터와 251MB 모델/원시 증거는 HF
 `dancinlab` 비공개 revision에서 검증했다. CUDA QA 중에는 분리된 pip-wheel 디렉터리 중 첫
 경로만 preload하던 공용 CUDA loader도 수정했으며, 이 런타임 수정은 실패 판정을 바꾸지 않는다.
+HF 검증 뒤 RTX 3090 인스턴스를 삭제해 Vast.ai 활성 임대는 0개이며, 추정 비용은
+`$0.058457`이다.
 
 ## 미해결 gap 감사 — 303M 의미 대화
 

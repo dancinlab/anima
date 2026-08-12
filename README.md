@@ -250,6 +250,8 @@ The verdict is `FAIL-V1-CONTEXT-MICRO`; 303M, IIT-mouth coupling and production 
 Data and 251MB of model/raw evidence are verified in private HF `dancinlab` revisions. During CUDA
 QA, the shared loader was also corrected to preload CUDA libraries across split pip-wheel
 directories; this runtime repair does not alter the failed V1 verdict.
+The RTX 3090 instance was destroyed after HF verification; active Vast.ai rentals are zero and the
+estimated run cost is `$0.058457`.
 
 ## Open gap audit — 303M meaningful conversation
 
