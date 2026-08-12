@@ -81,15 +81,16 @@ relevance `2/7`, Korean `0/7`, structural `0/14`, and manual deployment review `
 loops, incomplete answers, stale correction, and damaged Korean bytes. R1 and deployment remain
 locked; the failed checkpoint and raw replies are preserved privately under HF `dancinlab`.
 
-### Response-supervision recovery in progress
+### Response-supervision recovery result
 
-`state/anima_303m_r0_response_ce_2026_08_12/` preregisters the next fixed seed-7 comparison.
+`state/anima_303m_r0_response_ce_2026_08_12/` records the completed fixed seed-7 comparison.
 The shared trainer now reuses its existing answer CE for every canonical `assistant:` span and
 records whether that loss actually fired. Legacy arrow-corpus behavior remains unchanged by
-default. The parent data revision, sampler, endpoint, seed, optimizer, panel, greedy decode, and
-bars are frozen; only one preregistered normalized response term is added, with no sweep. R1 and
-deployment remain locked until all English, Korean, repetition, relevance, memory, correction,
-and manual-review gates pass.
+default. The treatment was active on `13,475/14,000` steps and final validation descended in all
+four cells, but the unchanged meaningful-conversation gate failed English `0/7`, Korean `0/7`,
+structural `0/14`, and manual review `0/14`. Phrase loops, incomplete output, damaged Korean bytes,
+memory failure, and stale correction remain. No sweep or extra seed was run; R1 and deployment stay
+locked and the failed model plus raw evidence are retained privately on HF `dancinlab`.
 
 ## Canonical entry
 

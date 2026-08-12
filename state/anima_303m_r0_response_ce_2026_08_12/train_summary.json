@@ -1,0 +1,118 @@
+{
+  "entry": "anima-py train",
+  "arch": "bytegpt",
+  "arm": "ctrl",
+  "objective": "ce_marginal",
+  "seed": 7,
+  "optimizer": {
+    "name": "AdamW",
+    "beta1": 0.9,
+    "beta2": 0.95,
+    "weight_decay": 0.1,
+    "lr": 0.0003,
+    "schedule": "cosine",
+    "warmup_steps": 500,
+    "decay_steps": 14000,
+    "min_lr_ratio": 0.1
+  },
+  "initialization": {
+    "name": "gpt2-canonical",
+    "std": 0.02,
+    "residual_projection_scale": "std/sqrt(2*n_layer)"
+  },
+  "ddp": {
+    "world_size": 1,
+    "global_batch": 32,
+    "per_rank_batch": 32,
+    "gpus": ""
+  },
+  "obj_aux_params": 0,
+  "answer_ce": {
+    "weight": 1.0,
+    "marker_utf8": "assistant: ",
+    "all_spans": true,
+    "telemetry": {
+      "complete_trajectory": true,
+      "steps": 14000,
+      "active_steps": 13475,
+      "positions": 11025460,
+      "position_weighted_ce_sum": 13470306.112666022,
+      "scope": "full_batch",
+      "mean_ce": 1.2217454974818305
+    }
+  },
+  "levers": {
+    "tlora": false,
+    "tlora_rank": 8,
+    "tlora_base": true,
+    "dict_aux": false,
+    "jamo_aux": false,
+    "wd_floor": -1.0,
+    "dropout_floor": -1.0
+  },
+  "n_params": 303097856,
+  "loss0": 5.64949,
+  "lossF": 1.23384,
+  "wall_s": 6005.1,
+  "uniform_ce": 5.54518,
+  "final_val_ce_pooled": 1.16413,
+  "final_val_ce_macro_cells": 1.16413,
+  "validation_aggregation": "equal-cell macro average",
+  "sampling": {
+    "policy": "proportional",
+    "weight_basis": "train_bytes",
+    "complete_trajectory": true,
+    "per_cell": {
+      "en_general": {
+        "train_bytes": 57235159,
+        "sampled_windows": 178811,
+        "sampled_fraction": 0.39913169642857144
+      },
+      "ko_general": {
+        "train_bytes": 57396113,
+        "sampled_windows": 179864,
+        "sampled_fraction": 0.40148214285714284
+      },
+      "en_dialogue": {
+        "train_bytes": 4307476,
+        "sampled_windows": 13321,
+        "sampled_fraction": 0.029734375
+      },
+      "ko_dialogue": {
+        "train_bytes": 24243428,
+        "sampled_windows": 76004,
+        "sampled_fraction": 0.1696517857142857
+      }
+    }
+  },
+  "registers_descent": "4/4",
+  "heldout_descent": {
+    "en_general": {
+      "val_ce": 1.35949,
+      "descent": true
+    },
+    "ko_general": {
+      "val_ce": 1.23561,
+      "descent": true
+    },
+    "en_dialogue": {
+      "val_ce": 1.16245,
+      "descent": true
+    },
+    "ko_dialogue": {
+      "val_ce": 0.89897,
+      "descent": true
+    }
+  },
+  "last_aux": {
+    "ans_ce": 0.6990788578987122,
+    "ans_n": 802
+  },
+  "dbes_final": null,
+  "dbes_log": [],
+  "dbes_batch_scope": "full_batch(B=32)",
+  "gauges_g1g6_torch_probe": null,
+  "sleep_schedule": null,
+  "phi_envelope_monitor": null,
+  "tier": "engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
+}

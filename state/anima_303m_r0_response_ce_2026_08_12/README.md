@@ -1,6 +1,6 @@
 # Anima 303M R0 response-supervision recovery — 2026-08-12
 
-Status: **PREREGISTERED — GPU run not started**
+Status: **COMPLETED — FAIL-MEANINGLESS-REPETITION**
 
 The proportional seed-7 run improved held-out macro CE to `0.95471` but still produced phrase
 loops, irrelevant answers, damaged bytes, and stale corrections. The fixed conversation gate
@@ -46,4 +46,34 @@ be removed after artifacts are verified.
 - Focused trainer, validation, exact-resume, conversation scorer, and import regressions passed
   `28 tests + 3 subtests`.
 
-No model has been promoted or deployed by this preregistration.
+## Vast.ai execution and result
+
+The immutable comparison ran on one Vast.ai RTX 4090 24 GB. H100 was not used. Remote Python
+regression passed `31 tests + 3 subtests`, including CUDA decode parity. All eight downloaded HF
+train/validation files matched their registered SHA-256 values.
+
+Training completed all 14,000 fixed steps in `6,005.1s` with peak observed VRAM `19,718MiB`.
+The response objective was active on `13,475/14,000` steps, selected `11,025,460` target positions,
+and recorded mean response CE `1.22175`; this proves the treatment was not a silent no-op. All four
+held-out cells descended. Final macro validation CE was `1.16413`: English general `1.35949`,
+Korean general `1.23561`, English dialogue `1.16245`, and Korean dialogue `0.89897`.
+
+The unchanged conversation gate nevertheless failed decisively:
+
+- English semantic `0/7`, Korean semantic `0/7`.
+- English structural `0/7`, Korean structural `0/7`.
+- All 14 continuations were incomplete; all seven English and four Korean responses failed the
+  repetition check, while three Korean responses also ended with invalid UTF-8.
+- Memory and correction failed in both languages. The corrected Korean drink remained coffee.
+- Manual meaningful/relevant review failed `0/14`.
+
+Representative raw outputs include `The sunlight is a sunlight in sunlight...`, `The process of
+the process...`, `의식이란 의식이란...`, and `실용적인 방법은 실용적인 방법...`.
+Response-only CE strengthened a real conditioning signal but did not solve the shared language
+mouth's undertraining and long-form repetition under the fixed 229.38M-byte budget. Therefore
+this result falsifies the registered treatment, not 303M capacity in general. No added seed,
+loss-weight sweep, R1 workspace work, or production deployment was run.
+
+The failed model, exact-resume state, intermediate checkpoints, training telemetry, and lossless
+raw replies are retained in the private HF `dancinlab` model repository registered by
+`protocol.json`. `result.json` records file hashes and the immutable revision.

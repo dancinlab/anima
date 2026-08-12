@@ -1,18 +1,150 @@
 {
   "schema": "anima-303m-r0-response-ce-result/v1",
   "date": "2026-08-12",
-  "status": "PREREGISTERED",
-  "verdict": "PENDING",
-  "protocol": "protocol.json",
-  "parent_result": "../anima_303m_r0_proportional_conversation_2026_08_12/result.json",
-  "local_qa": {
-    "focused": "28 passed, 3 subtests passed",
-    "compile": "PASS",
-    "diff_check": "PASS"
+  "status": "COMPLETED",
+  "verdict": "FAIL-MEANINGLESS-REPETITION",
+  "protocol": {
+    "file": "protocol.json",
+    "sha256": "b0d63676e4607706acc22cbf2391c8d211f1add30d6bbb4bbe8162aff7eed9e1"
   },
-  "gpu_run": "NOT_STARTED",
-  "r1": "LOCKED",
-  "production_deployment": "BLOCKED",
+  "parent_result": "../anima_303m_r0_proportional_conversation_2026_08_12/result.json",
+  "data": {
+    "repository": "dancinlab/anima-303m-r0-proportional-conversation-data-2026-08-12",
+    "revision": "ee143002d9494cac4ed4a821dadfb5ece60c1e74",
+    "changed_from_parent": false,
+    "remote_sha256_verified_files": 8
+  },
+  "training": {
+    "provider": "Vast.ai",
+    "gpu": "NVIDIA RTX 4090 24 GB",
+    "h100_used": false,
+    "architecture": "ByteGPT 303097856 parameters, d=1024, L=24, heads=16, block=512",
+    "seed": 7,
+    "steps": 14000,
+    "target_bytes": 229376000,
+    "wall_seconds": 6005.1,
+    "observed_peak_vram_mib": 19718,
+    "loss_initial": 5.64949,
+    "loss_final": 1.23384,
+    "final_validation_ce_macro_cells": 1.16413,
+    "final_validation_ce_per_cell": {
+      "en_general": 1.35949,
+      "ko_general": 1.23561,
+      "en_dialogue": 1.16245,
+      "ko_dialogue": 0.89897
+    },
+    "heldout_descent": "4/4",
+    "sampling": {
+      "policy": "proportional",
+      "complete_trajectory": true,
+      "per_cell_windows": {
+        "en_general": 178811,
+        "ko_general": 179864,
+        "en_dialogue": 13321,
+        "ko_dialogue": 76004
+      }
+    },
+    "response_ce": {
+      "weight": 1.0,
+      "marker_utf8": "assistant: ",
+      "all_spans": true,
+      "complete_trajectory": true,
+      "steps": 14000,
+      "active_steps": 13475,
+      "positions": 11025460,
+      "mean_ce": 1.2217454974818305
+    }
+  },
+  "evaluation": {
+    "order_gate": "meaningful conversation first",
+    "status": "FAIL",
+    "scorer_controls": "PASS",
+    "device": "NVIDIA RTX 4090 via CuPy 13.6.0",
+    "automatic": {
+      "english_semantic": "0/7",
+      "korean_semantic": "0/7",
+      "english_structural": "0/7",
+      "korean_structural": "0/7",
+      "all_multiturn_final": false,
+      "cross_question_duplicate_response": true
+    },
+    "structural_details": {
+      "english_utf8": "7/7",
+      "korean_utf8": "4/7",
+      "english_repetition": "0/7",
+      "korean_repetition": "3/7",
+      "complete_turn": "0/14",
+      "language_match": "14/14"
+    },
+    "manual_review": {
+      "deployable_meaningful_and_relevant": "0/14",
+      "verdict": "FAIL",
+      "reason": "Every response was incomplete and repetitive; memory and correction failed in both languages, and three Korean responses ended with invalid UTF-8.",
+      "examples": [
+        "The sunlight is a sunlight in sunlight in sunlight...",
+        "The process of the process of the process...",
+        "의식이란 의식이란 의식이나 의식이나...",
+        "실용적인 방법은 실용적인 방법이 있습니다..."
+      ]
+    },
+    "remaining_diagnostics": "NOT_RUN_BY_GATE",
+    "r1": "LOCKED",
+    "production_deployment": "BLOCKED"
+  },
+  "artifacts": {
+    "train_summary": {
+      "file": "train_summary.json",
+      "sha256": "d70bf3a68de90e5ae7ac8243330eaa738cbb3e508983b164bdcfecedb5fd9687"
+    },
+    "conversation_result": {
+      "file": "conversation_result.json",
+      "sha256": "be9e13ea67b1cfd316810b94d1d8d3da9b463cb03d823f146cb1f6640352c8c1"
+    },
+    "train_log": {
+      "file": "train.log",
+      "sha256": "8a894c7b65312f334c2a4aec293049afc0080b83b712cdc0aba6ae578a22a219"
+    },
+    "vram_trace": {
+      "file": "vram.csv",
+      "sha256": "bf9b97e167ffc1034614740f48aaede172aa3ec49b9013e8b20cd14acfeb1b83"
+    }
+  },
+  "model": {
+    "repository": "dancinlab/anima-303m-r0-response-ce-seed7-2026-08-12",
+    "revision": "PENDING_UPLOAD",
+    "private": true,
+    "engine_checkpoint": {
+      "bytes": 1213440020,
+      "sha256": "68f556e396df31817a83be5551b0d55884b18b3cc988223c02f029bf7ef21c9a"
+    },
+    "exact_resume_checkpoint": {
+      "bytes": 3638589201,
+      "sha256": "99a0260ff3b9fad0de7d6e0b01f2b53d363dd147b48b98c54a3c9010897fe362"
+    }
+  },
+  "root_cause_evidence": {
+    "treatment_fired": true,
+    "result": "A normalized assistant-span objective improved the conditioned response loss but did not prevent the shared mouth from learning repetitive, incomplete local continuations.",
+    "remaining_shared_causes": [
+      "Only 229376000 target bytes were exposed to 303097856 parameters.",
+      "Random windows frequently begin inside assistant payload without a prompt/role boundary.",
+      "The fixed Korean dialogue corpus is single-turn and does not teach correction or delayed recall."
+    ],
+    "scope": "The result falsifies the registered response-CE treatment under this fixed data and compute budget; it does not establish that 303M capacity is insufficient."
+  },
+  "qa": {
+    "local_preregistration": "28 passed, 3 subtests passed",
+    "vast_pretraining": "31 passed, 3 subtests passed including CUDA decode parity",
+    "final": "PENDING",
+    "python_only": true
+  },
+  "vast_ai": {
+    "instance_id": 47514987,
+    "hourly_usd": 0.3377777777777778,
+    "estimated_cost_usd": "PENDING_TEARDOWN",
+    "teardown": "PENDING",
+    "active_instances_after_teardown": "PENDING"
+  },
   "preservation": {
     "ING.jsonl": "PRESERVED",
     "stream_mi.json": "PRESERVED"
