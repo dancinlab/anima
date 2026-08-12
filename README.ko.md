@@ -278,6 +278,22 @@ D3·D6에 재사용한다. 결과를 본 뒤 데이터·seed·step·LR·문턱·
 없다. D0 통과 전에는 downstream을 해석하지 않으며, 이 진단만으로 303M·IIT 결합·participant
 탑재·프로덕션을 허용하지 않는다. 다음 변경은 별도 프로토콜이 필요하다.
 
+실행은 `DIAGNOSED-TEACHER-FORCED-UNDERLEARNING`으로 완료됐다. D0에서 실제 `.pt/.bin`
+tensor는 정확히 같았고 Torch-engine 최대 logit 오차는 `6.15e-6`, KV/full/ranged 생성 byte도
+일치했다. 실패 체크포인트 자체는 teacher-forced CE `2.41848`, top-1 `0.27712`, target-prefix
+`0/8`, 구조 `0/8`이었다. 암기 사다리는 1문서를 정확히 통과했지만 4문서에서 top-1
+`0.6978`, target `2/4`, 구조 `1/4`로 처음 붕괴했고 100문서에서는 `0.2771`까지 낮아졌다.
+100문서 full/additive/turn-only 세 arm도 모두 top-1 `0.29` 미만, target·구조 `0/8`이라 full
+CE를 충분한 해결책으로 지지하지 않는다. turn-only는 정상 prompt CE가 빈 prompt와 shuffle을
+이긴 항목이 `6/8`이라 부분적인 prompt 인과성은 남았지만, 고정 validation 32문서와 모든
+100-step 체크포인트에서 자유 복구에 실패했다. 따라서 decoder 불일치나 늦은 반복 붕괴가
+아니라 rollout 전에 발생한 underlearning이다. 다음은 별도 사전등록한 4문서
+optimization/capacity 단일축 시험이며, 303M·IIT 결합·participant·프로덕션은 계속 차단한다.
+모델/증거 42개(`146,667,478` bytes)는 HF `dancinlab` 비공개 revision
+`anima-303m-r4-mouth-diagnostics-2026-08-13@8d67bb6e5eeea9a917892fba39310b7306c84718`에서
+다시 내려받아 크기·SHA-256 전부 일치함을 검증했다. 전체 Python/CHAT QA는
+`160 tests + 3 subtests`를 통과했고 CUDA/CuPy 부재 1건만 정상 skip됐다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속
