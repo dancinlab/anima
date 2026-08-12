@@ -67,6 +67,15 @@ state→action 인과 결과이지 학습·의미·현상적 의식·최대 comp
 뒤 LaunchAgent health, 공개 HTTPS `200`, WebSocket `hello`를 모두 통과했다. participant는
 연결하지 않았고 `anima_alive=false`가 정직한 현재 상태다.
 
+R2 CLMS 두 주소 latch는 구현·결과 생성 전에
+`state/iit_daemon_r2_clms_2026_08_12/`에 사전등록했다. 기존 compose-2 panel, canonical
+lane-10 seed-7 체크포인트, store window, control seed와 `0.90/0.75/0.56` 문턱은 변경하지
+않는다. 코어에는 `good -> 1`, `bad -> 2`의 고정된 제한 개입만 전달한다. pair oracle을
+먼저 실행하고 통과한 경우에만 정상, 단서 A 제거, 단서 B 제거, CLMS 주소 shuffle, 정확한
+snapshot 복구 순서로 진행한다. 통과해도 합성 두 주소 판독→지속 상태→범주 행동의 인과
+사슬만 지지하며 mouth·participant·프로덕션 승격은 승인하지 않는다. 이 관문 내내 배포
+상태는 `BLOCKED-R2-NOT-A-MOUTH`다.
+
 ## 현재 실험 — 의미 있는 대화 R0
 
 다음 303M from-scratch 체크포인트는 그럴듯한 문장 모양이 아니라 한국어·영어의 의미 있는

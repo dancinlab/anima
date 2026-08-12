@@ -1,0 +1,55 @@
+{
+  "schema": "anima-iit-daemon-clms-protocol/1",
+  "date": "2026-08-12",
+  "engines": [
+    "core.clms.store_apply",
+    "core.iit_daemon.IITDaemonCore"
+  ],
+  "transition": "xor-other-two-ring",
+  "r0_config_checksum": "41af7e6762831179fb719987ac58a2e6b2ca08a4dbd482610ccadfc47ac14ba6",
+  "r0_mechanics_fingerprint": "c2dd0a905fa5cf614740362a90bcb9520216ad22c886b7e0fef61ad7021bdbe0",
+  "r1": {
+    "path": "../iit_daemon_r1_delayed_2026_08_12/result.json",
+    "sha256": "edaee0aaa75fbe5aca49c5f3ce6a7c399e7ff16111b700f9ea96a0d29f3cbba5",
+    "required_verdict": "SUPPORTED-DELAYED-STATE-CAUSALITY"
+  },
+  "checkpoint": {
+    "sha256": "0073bfb60d4686e96d1029b5c581231f51b2a17a122dd454f18365b4c88c5e89",
+    "hf_repo": "dancinlab/anima-store-causality-multiseed-2026-08-10",
+    "hf_revision": "16731bacb8bf449e22563917aefe0d5ebe87c85d",
+    "artifact": "seed7/compose2_dual_parity_s7.clm"
+  },
+  "panels": {
+    "normal": {
+      "path": "../store_causality_2026_08_09/panel.txt.compose2.json",
+      "sha256": "f2e5bd175f264ec22cc90a6e6367f78994334c3a56f889c1294e77d50a411939"
+    },
+    "drop_a": {
+      "path": "../store_causality_2026_08_09/panel.txt.compose2_dropA.json",
+      "sha256": "79e03d33ed2eac5b14307b9002dc56d96b1f20f4955cb447203d94e61daf0aa0"
+    },
+    "drop_b": {
+      "path": "../store_causality_2026_08_09/panel.txt.compose2_drop.json",
+      "sha256": "9536ace91cae54439b1f70668278dd1a1f19b5be930692e8613ce7b8a3ec5bb0"
+    }
+  },
+  "task": {
+    "class_to_cue": {
+      "good": 1,
+      "bad": 2
+    },
+    "delay": 1,
+    "panel_size": 128,
+    "chance": 0.5,
+    "store_window": 24,
+    "store_control_seed": 9423
+  },
+  "bars": {
+    "pair_oracle": 0.9,
+    "positive": 0.75,
+    "control_margin": 0.06,
+    "control_ceiling": 0.56
+  },
+  "required_verdict": "SUPPORTED-CLMS-LATCH-CAUSALITY",
+  "deployment": "BLOCKED-R2-NOT-A-MOUTH"
+}

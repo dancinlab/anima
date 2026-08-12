@@ -75,6 +75,16 @@ are byte-identical. The missing dedicated broker environment discovered during d
 restored, then LaunchAgent health, public HTTPS `200` and WebSocket `hello` all passed; no participant
 was mounted and `anima_alive=false` remains the honest status.
 
+R2 CLMS two-address latching is now preregistered in
+`state/iit_daemon_r2_clms_2026_08_12/` before implementation or result generation. It keeps the
+existing compose-2 panels, canonical lane-10 seed-7 checkpoint, store window, control seed and
+`0.90/0.75/0.56` bars unchanged. The core will receive only the fixed bounded mapping
+`good -> 1`, `bad -> 2`; pair oracle runs first, followed only on success by normal, clue-A
+removal, clue-B removal, CLMS address shuffle and exact snapshot recovery. A pass can establish
+only a synthetic two-address-read -> persistent-state -> categorical-action causal chain. It
+cannot authorize a mouth, participant or production deployment, which remains
+`BLOCKED-R2-NOT-A-MOUTH` throughout this gate.
+
 ## Current experiment — meaningful-conversation R0
 
 The next 303M from-scratch checkpoint is blocked on meaningful Korean and English conversation,
