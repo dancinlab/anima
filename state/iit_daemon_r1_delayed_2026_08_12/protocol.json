@@ -1,0 +1,17 @@
+{
+  "schema": "anima-iit-daemon-delayed-protocol/1",
+  "date": "2026-08-12",
+  "engine": "core.iit_daemon.IITDaemonCore",
+  "transition": "xor-other-two-ring",
+  "initial_state": 0,
+  "cues": [0, 1, 2, 4],
+  "delays": [1, 2, 4],
+  "address_shuffle": [1, 2, 0],
+  "panel_size": 12,
+  "chance": 0.25,
+  "positive_floor": 0.75,
+  "control_margin": 0.06,
+  "control_ceiling": 0.31,
+  "required_verdict": "SUPPORTED-DELAYED-STATE-CAUSALITY",
+  "deployment": "BLOCKED-R1-NOT-A-MOUTH"
+}
