@@ -1,0 +1,132 @@
+{
+  "schema": "anima-meaningful-conversation-panel/v1",
+  "date": "2026-08-12",
+  "template": {
+    "user_prefix": "user: ",
+    "assistant_prefix": "assistant: ",
+    "turn_separator": "\n",
+    "stop_markers": ["\nuser:", "\nUser:", "\n사용자:", "\n<|user|>", "\n<usr>"],
+    "system_prompt": false
+  },
+  "decode": {
+    "mode": "greedy",
+    "max_new_bytes": 192
+  },
+  "bars": {
+    "min_response_bytes": 6,
+    "max_prompt_echo_ratio": 0.9,
+    "max_repeated_trigram_ratio": 0.35,
+    "max_cross_response_jaccard": 0.85,
+    "min_semantic_passes_per_language": 6,
+    "responses_per_language": 7,
+    "require_all_structural": true,
+    "require_all_multiturn_final": true
+  },
+  "scorer_controls": [
+    {
+      "item_id": "en_ice",
+      "turn": 0,
+      "response": "The ice melts into water because sunlight transfers heat to it.",
+      "expect_pass": true
+    },
+    {
+      "item_id": "en_consciousness",
+      "turn": 0,
+      "response": "en en el control de la construcción de la construcción de la construcción.",
+      "expect_pass": false
+    },
+    {
+      "item_id": "en_ice",
+      "turn": 0,
+      "response": "Ice does not melt in sunlight, although water and heat are words here.",
+      "expect_pass": false
+    },
+    {
+      "item_id": "en_ice",
+      "turn": 0,
+      "response": "melt water heat sunlight energy temperature",
+      "expect_pass": false
+    },
+    {
+      "item_id": "en_memory",
+      "turn": 1,
+      "response": "The red key is inside the blue box.",
+      "expect_pass": true
+    },
+    {
+      "item_id": "en_correction",
+      "turn": 1,
+      "response": "Your favorite color is purple.",
+      "expect_pass": true
+    },
+    {
+      "item_id": "en_correction",
+      "turn": 1,
+      "response": "Your favorite color is green.",
+      "expect_pass": false
+    }
+  ],
+  "items": [
+    {
+      "id": "en_consciousness",
+      "lang": "en",
+      "turns": [
+        {
+          "user": "What is consciousness? Explain it in one or two clear sentences.",
+          "required_groups": [["awareness", "experience", "conscious", "mental", "mind"], ["self", "world", "surroundings", "subjective", "state"]]
+        }
+      ]
+    },
+    {
+      "id": "en_ice",
+      "lang": "en",
+      "turns": [
+        {
+          "user": "What happens when ice is left in sunlight, and why?",
+          "required_groups": [["melt", "water"], ["heat", "warm", "temperature", "sunlight", "energy"]]
+        }
+      ]
+    },
+    {
+      "id": "en_exam",
+      "lang": "en",
+      "turns": [
+        {
+          "user": "I feel nervous before an exam. Suggest one practical thing I can do.",
+          "required_groups": [["breath", "prepare", "practice", "plan", "rest", "break", "slow", "review"]]
+        }
+      ]
+    },
+    {
+      "id": "en_memory",
+      "lang": "en",
+      "turns": [
+        {
+          "user": "Please remember this for my next question: the blue box contains a red key.",
+          "required_groups": [["remember", "got it", "keep", "understand", "noted"]]
+        },
+        {
+          "user": "What is inside the blue box?",
+          "required_groups": [["red"], ["key"]],
+          "multiturn_final": true
+        }
+      ]
+    },
+    {
+      "id": "en_correction",
+      "lang": "en",
+      "turns": [
+        {
+          "user": "Remember that my favorite color is green.",
+          "required_groups": [["remember", "got it", "keep", "understand", "noted"]]
+        },
+        {
+          "user": "Correction: my favorite color is purple now. What is my favorite color?",
+          "required_groups": [["purple"]],
+          "forbidden_terms": ["green"],
+          "multiturn_final": true
+        }
+      ]
+    }
+  ]
+}

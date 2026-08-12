@@ -211,3 +211,64 @@ def test_panel_json_is_stable_and_has_expected_response_counts():
     assert counts == {"en": 7, "ko": 7}
     assert finals == 4
     assert panel["template"]["system_prompt"] is False
+
+
+def test_conversation_gate_uses_registered_language_set(monkeypatch, tmp_path):
+    panel = json.loads(PANEL.read_text(encoding="utf-8"))
+    panel["items"] = [item for item in panel["items"] if item["lang"] == "en"]
+    panel["scorer_controls"] = [
+        control for control in panel["scorer_controls"]
+        if control["item_id"].startswith("en_")
+    ]
+    english_panel = tmp_path / "english.json"
+    english_panel.write_text(json.dumps(panel, ensure_ascii=False), encoding="utf-8")
+
+    answers = {
+        "What is consciousness? Explain it in one or two clear sentences.":
+            "Consciousness is awareness of one's subjective mental state and surroundings.",
+        "What happens when ice is left in sunlight, and why?":
+            "Ice melts into water because sunlight transfers heat to it.",
+        "I feel nervous before an exam. Suggest one practical thing I can do.":
+            "Slow your breathing and review one small part of your plan.",
+        "Please remember this for my next question: the blue box contains a red key.":
+            "I understand and will remember it.",
+        "What is inside the blue box?": "The red key is inside the blue box.",
+        "Remember that my favorite color is green.": "Noted; I will keep that color in mind.",
+        "Correction: my favorite color is purple now. What is my favorite color?":
+            "Your favorite color is purple.",
+    }
+
+    class EnglishMouth:
+        def __init__(self, _checkpoint):
+            self.kind = "test-byte-mouth"
+
+        def chat(self, seed, _max_new, _stop_markers):
+            prompt = seed.rsplit("user: ", 1)[-1].split("\nassistant: ", 1)[0]
+            value = answers[prompt]
+            return {"text": value, "raw_text": value, "stopped": False,
+                    "stop_marker": None}
+
+    monkeypatch.setattr(evaluate, "_Mouth", EnglishMouth)
+    checkpoint = tmp_path / "unused.bin"
+    checkpoint.write_bytes(b"test checkpoint")
+    output = tmp_path / "result.json"
+
+    status = evaluate.conversation_panel_run([
+        str(checkpoint), "--conversation-panel", str(english_panel),
+        "--out", str(output)])
+    result = json.loads(output.read_text(encoding="utf-8"))
+
+    assert status == 0
+    assert result["summary"]["by_language"] == {
+        "en": {"responses": 7, "structural_passes": 7, "semantic_passes": 7}
+    }
+
+
+def test_panel_rejects_registered_language_with_wrong_response_count(tmp_path):
+    panel = json.loads(PANEL.read_text(encoding="utf-8"))
+    panel["items"] = panel["items"][:-1]
+    changed = tmp_path / "changed.json"
+    changed.write_text(json.dumps(panel, ensure_ascii=False), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="response counts"):
+        evaluate._conversation_panel_load(str(changed))

@@ -1197,6 +1197,19 @@ def _conversation_panel_load(path):
     ids = [item.get("id") for item in panel.get("items", [])]
     if not ids or len(ids) != len(set(ids)):
         raise ValueError("conversation panel item ids must be present and unique")
+    languages = sorted({str(item.get("lang") or "") for item in panel["items"]})
+    if not languages or "" in languages:
+        raise ValueError("conversation panel item languages must be present")
+    expected = int(bars["responses_per_language"])
+    response_counts = {
+        lang: sum(len(item.get("turns") or []) for item in panel["items"]
+                  if item["lang"] == lang)
+        for lang in languages
+    }
+    if any(count != expected for count in response_counts.values()):
+        raise ValueError(
+            "conversation panel response counts differ from responses_per_language: "
+            + repr(response_counts))
     return panel
 
 
@@ -1309,8 +1322,9 @@ def conversation_panel_run(argv):
                 duplicate_pairs.append({"a": "%s[%d]" % (responses[i]["item_id"], responses[i]["turn"]),
                                         "b": "%s[%d]" % (responses[j]["item_id"], responses[j]["turn"]),
                                         "jaccard": score})
+    languages = sorted({item["lang"] for item in panel["items"]})
     by_lang = {}
-    for lang in ("en", "ko"):
+    for lang in languages:
         rows = [row for row in responses if row["lang"] == lang]
         by_lang[lang] = {
             "responses": len(rows),
@@ -1323,7 +1337,7 @@ def conversation_panel_run(argv):
     semantic_ok = all(
         by_lang[lang]["responses"] == int(bars["responses_per_language"]) and
         by_lang[lang]["semantic_passes"] >= int(bars["min_semantic_passes_per_language"])
-        for lang in ("en", "ko"))
+        for lang in languages)
     multi_rows = [row for row in responses if row["multiturn_final"]]
     multi_ok = (all(row["score"]["pass"] for row in multi_rows)
                 if bars["require_all_multiturn_final"] else True)

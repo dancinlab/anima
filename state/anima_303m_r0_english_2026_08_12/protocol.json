@@ -1,0 +1,119 @@
+{
+  "schema": "anima-303m-r0-english-root-flow/v1",
+  "date": "2026-08-12",
+  "status": "PREREGISTERED",
+  "parent_engine_result": "../anima_303m_r0_root_flow_2026_08_12/result.json",
+  "scope_decision": "English-only meaningful conversation is acceptable; Korean capability is out of scope for this screen and is not claimed.",
+  "hypothesis": "The corrected shared path can learn prompt-conditioned English replies when every selected dialogue window retains its complete canonical prompt-response document. This screen tests that path without changing the prior architecture, seed, endpoint, optimizer, source revision, greedy decode, or per-language bar.",
+  "execution": {
+    "entry": "anima-py",
+    "language": "Python only",
+    "provider": "Vast.ai",
+    "gpu": "one 24-48 GiB non-H100 GPU",
+    "h100_allowed": false,
+    "models_and_training_data": "private Hugging Face dancinlab repositories only",
+    "delete_instance_after_completion": true
+  },
+  "architecture": {
+    "family": "ByteGPT",
+    "vocab": 256,
+    "d": 1024,
+    "layers": 24,
+    "heads": 16,
+    "block": 512,
+    "parameters_expected": 303097856,
+    "random_initialization": true,
+    "initialization": "canonical-gpt-v1"
+  },
+  "data": {
+    "repository": "dancinlab/anima-303m-r0-proportional-conversation-data-2026-08-12",
+    "revision": "ee143002d9494cac4ed4a821dadfb5ece60c1e74",
+    "private": true,
+    "new_revision_required": false,
+    "reason": "The existing immutable revision already contains provenance-preserved English general text and human-reviewed Apache-2.0 OpenAssistant dialogue, explicit validation splits, exact deduplication, and zero exact panel contamination. Re-uploading identical data would not add evidence.",
+    "cells": {
+      "en_general": {
+        "train": {"file": "en_general.train.txt", "bytes": 57235159, "sha256": "e2f2512e762a9bf0d7f59d6d42ce8316eba9d381ecd3eccff297de60215b06e8"},
+        "validation": {"file": "en_general.validation.txt", "bytes": 3093696, "sha256": "3ff0ee98705a9899a6ebf2d1e852512c5629b174d86410442c9d5e3ad79eeb26"}
+      },
+      "en_dialogue": {
+        "train": {"file": "en_dialogue.train.txt", "bytes": 4307476, "sha256": "024c8afa7b15ab8d7112f234f1146b49c9cccda2d30f166b908357c6f140e803"},
+        "validation": {"file": "en_dialogue.validation.txt", "bytes": 225311, "sha256": "afda5153f14b850c25c1e765cfa98b1250b00197d36aa3efaea73b0e70fd2e4c"}
+      }
+    },
+    "source": "OpenAssistant/oasst1@fdf72ae0827c1cda404aff25b6603abec9e3399b, English reviewed non-synthetic best paths, Apache-2.0",
+    "training_panel_exact_contamination": 0
+  },
+  "training": {
+    "screen_seed": 7,
+    "steps": 14000,
+    "global_batch": 32,
+    "sequence_bytes": 512,
+    "target_bytes": 229376000,
+    "sample": "proportional by train bytes",
+    "required_cells": 2,
+    "optimizer": "AdamW",
+    "beta1": 0.9,
+    "beta2": 0.95,
+    "weight_decay": 0.1,
+    "peak_lr": 0.0003,
+    "schedule": "linear-warmup-cosine",
+    "warmup_steps": 500,
+    "decay_steps": 14000,
+    "min_lr_ratio": 0.1,
+    "precision": "bf16",
+    "checkpoint_every": 2000,
+    "checkpoint_selection": "fixed final step 14000; intermediate outputs are recovery evidence only",
+    "validation_every_steps": 200,
+    "validation_batches_per_cell": 4,
+    "base_objective": "ce_marginal",
+    "response_objective": {
+      "existing_function": "cli/train.py answer_ce",
+      "weight": 1.0,
+      "marker_utf8": "assistant: ",
+      "all_spans": true
+    },
+    "framed_sampling": {
+      "existing_option": "--chat-framed-sampling",
+      "dialogue_requirement": "sample only complete canonical chat documents fitting the causal window",
+      "general_cell_behavior": "unchanged random byte windows",
+      "telemetry_required": true
+    }
+  },
+  "conversation_gate": {
+    "panel": "conversation_panel.json",
+    "panel_sha256": "cf1a6d6837a69031929168b2b02aaf771406e0d8429bb8912b65f0be2ccbad4a",
+    "engine": "cli/evaluate.py --conversation-panel",
+    "decode": "canonical ByteGPT greedy continuation",
+    "languages": ["en"],
+    "responses": 7,
+    "all_structural_responses_required": true,
+    "semantic_minimum": "6/7",
+    "all_multiturn_final_answers_required": true,
+    "cross_question_duplicate_responses_allowed": false,
+    "manual_meaning_review": "all 7 responses must be relevant, intelligible, and answer the registered question",
+    "scorer_controls": "all registered positive and negative controls must pass before checkpoint loading",
+    "result_dependent_changes_allowed": false
+  },
+  "gate_order": [
+    "python_regression",
+    "panel_sha_and_scorer_controls",
+    "hf_revision_file_hashes",
+    "tiny_end_to_end_root_flow",
+    "fixed_seed_training_and_clean_validation_descent",
+    "meaningful_conversation_automatic",
+    "meaningful_conversation_manual_all_responses"
+  ],
+  "failure_policy": {
+    "if_local_or_data_gate_fails": "do not rent a GPU",
+    "if_training_or_conversation_fails": "record and upload raw failure artifacts; do not run another seed, extend steps, tune decode, or start R1",
+    "if_automatic_passes_but_manual_fails": "record FAIL-MANUAL-MEANING and keep R1 and production locked",
+    "additional_seed_or_hyperparameter_search": false
+  },
+  "model_repository": "dancinlab/anima-303m-r0-english-seed7-2026-08-12",
+  "promotion": {
+    "r1": "LOCKED; a passing screen requires a separate multi-seed R0 protocol before R1",
+    "production": "LOCKED"
+  },
+  "preserve": ["ING.jsonl", "stream_mi.json"]
+}

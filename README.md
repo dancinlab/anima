@@ -118,6 +118,18 @@ pinned, provenance-safe Korean multi-turn HF `dancinlab` revision; candidates wi
 persona content, non-commercial/ambiguous licenses, or insufficient aligned trajectories were not
 silently adopted. R1 and production remain locked until a corrected R0 passes the unchanged gate.
 
+### Preregistered English-only root-flow screen
+
+The user accepted English-only capability for the next screen, so
+`state/anima_303m_r0_english_2026_08_12/` freezes a new claim before GPU execution instead of
+fabricating a Korean data source. It reuses only the English cells of the existing private,
+immutable HF revision and keeps the prior seed, 14,000-step endpoint, optimizer, proportional
+sampling, response CE, greedy decode, seven English prompts, and `6/7` semantic bar. The corrected
+complete-document dialogue sampler is now the tested treatment. Contradiction, keyword-salad,
+memory, and correction scorer controls must pass before checkpoint loading; all seven generated
+responses still require manual meaning review. Local/data failure prevents a Vast.ai rental, and
+model failure forbids added seeds, tuning, R1, or deployment.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current
