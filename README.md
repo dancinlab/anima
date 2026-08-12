@@ -130,6 +130,17 @@ memory, and correction scorer controls must pass before checkpoint loading; all 
 responses still require manual meaning review. Local/data failure prevents a Vast.ai rental, and
 model failure forbids added seeds, tuning, R1, or deployment.
 
+The fixed run completed but failed decisively. Train CE descended `5.66173 → 1.20952`, while
+terminal held-out CE was `1.26341` for English general text and `2.00281` for English dialogue.
+The canonical GPU conversation gate passed all seven scorer controls, then the real checkpoint
+scored semantic `0/7`, structural `3/7`, and failed both memory/correction finals. Manual meaning
+review was also `0/7`. The complete-document sampler and response loss were both measurably active,
+so this falsifies the registered corrected-flow recipe rather than a silent wiring treatment.
+Failure evidence is in `state/anima_303m_r0_english_2026_08_12/`; no extra seed, R1, or deployment
+was run. The failed model and recovery evidence are verified in private HF revision
+`dancinlab/anima-303m-r0-english-seed7-2026-08-12@efdaf53c92e9e16cff6b0eb00cc94d0b88a97d33`;
+the Vast.ai instance was deleted with zero active rentals.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

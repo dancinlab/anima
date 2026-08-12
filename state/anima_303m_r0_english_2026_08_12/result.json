@@ -1,14 +1,14 @@
 {
   "schema": "anima-303m-r0-english-root-flow-result/v1",
   "date": "2026-08-12",
-  "status": "PREFLIGHT-PASS-GPU-PENDING",
-  "protocol_status": "PREREGISTERED",
+  "status": "COMPLETED-FAIL-MEANINGLESS-IRRELEVANT",
+  "protocol_status": "EXECUTED-AS-PREREGISTERED",
   "protocol_changed_after_result": false,
+  "source_commit": "73caa5b06df36c9f210d46ba9ba46e2afa6bfcfd",
   "preflight": {
-    "python_tests": {
-      "passed": 54,
-      "subtests_passed": 3
-    },
+    "local_python_tests": {"passed": 54, "subtests_passed": 3},
+    "vast_python_tests": {"passed": 56, "skipped": 1, "subtests_passed": 3},
+    "vast_cuda_decode_tests_after_nvrtc_path": {"passed": 3},
     "python_compile": "PASS",
     "panel": {
       "sha256": "cf1a6d6837a69031929168b2b02aaf771406e0d8429bb8912b65f0be2ccbad4a",
@@ -16,7 +16,7 @@
       "responses": 7,
       "scorer_controls_passed": 7
     },
-    "hugging_face": {
+    "hugging_face_data": {
       "repository": "dancinlab/anima-303m-r0-proportional-conversation-data-2026-08-12",
       "revision": "ee143002d9494cac4ed4a821dadfb5ece60c1e74",
       "private": true,
@@ -26,10 +26,93 @@
     "tiny_root_flow": "PASS"
   },
   "training": {
-    "started": false,
-    "vast_ai_instance": null
+    "provider": "Vast.ai",
+    "instance_id": 47529789,
+    "gpu": "NVIDIA GeForce RTX 4090 24 GB",
+    "h100_used": false,
+    "seed": 7,
+    "steps": 14000,
+    "parameters": 303097856,
+    "wall_seconds": 5699.2,
+    "loss_initial": 5.66173,
+    "loss_final": 1.20952,
+    "terminal_validation_ce_macro_cells": 1.63311,
+    "terminal_validation_ce_per_cell": {
+      "en_general": 1.26341,
+      "en_dialogue": 2.00281
+    },
+    "heldout_descent": "2/2",
+    "answer_ce": {
+      "active_steps": 12560,
+      "total_steps": 14000,
+      "positions": 7691001,
+      "mean_ce": 0.5413574231199427
+    },
+    "sampling": {
+      "complete_trajectory": true,
+      "en_general_windows": 416741,
+      "en_dialogue_windows": 31259,
+      "en_dialogue_framed_windows": 31259,
+      "eligible_dialogue_documents": 226,
+      "oversize_dialogue_documents": 2082
+    },
+    "telemetry": {
+      "samples": 569,
+      "peak_vram_mib": 19723,
+      "mean_power_w": 415.01395430579976,
+      "estimated_energy_kwh": 0.6559526111111113,
+      "max_temperature_c": 65
+    }
   },
-  "verdict": "PENDING",
+  "conversation": {
+    "engine": "canonical GPU ByteGPT decoder",
+    "scorer_controls": "7/7 PASS",
+    "automatic": {
+      "semantic": "0/7",
+      "structural": "3/7",
+      "multiturn_final": "FAIL",
+      "duplicates": "PASS",
+      "verdict": "FAIL"
+    },
+    "manual": {
+      "meaningful_relevant": "0/7",
+      "verdict": "FAIL-MEANINGLESS-IRRELEVANT"
+    },
+    "representative_failures": [
+      "The consciousness prompt received a damaged generic offer and no explanation of consciousness.",
+      "The exam-anxiety prompt received an unrelated real-time-information AI disclaimer.",
+      "The blue-box memory final did not answer red key.",
+      "The color-correction final did not answer purple."
+    ],
+    "raw_artifact": "conversation_result.json",
+    "manual_artifact": "manual_review.json"
+  },
+  "checkpoint": {
+    "final_sha256": "2742275cd93e0091fd32d6711febda52252f5ed62ba0bef891ad3dde584f4ac9",
+    "exact_resume_sha256": "521eb756c0165e612ef442d4f8309d2643cf3eccc3270703ca3c4fb6d081fda0"
+  },
+  "hugging_face_model": {
+    "repository": "dancinlab/anima-303m-r0-english-seed7-2026-08-12",
+    "private": true,
+    "revision": "efdaf53c92e9e16cff6b0eb00cc94d0b88a97d33",
+    "files": 27,
+    "bytes": 15778608955,
+    "lfs_sha256_metadata_records": 9,
+    "critical_source_sha256_verified": 3,
+    "custody_status": "VERIFIED"
+  },
+  "vast_ai": {
+    "active_instances_after_completion": 0,
+    "estimated_cost_usd": 0.7113710178463547
+  },
+  "failure_policy_applied": {
+    "additional_seed": false,
+    "step_extension": false,
+    "decode_or_threshold_tuning": false,
+    "r1_started": false,
+    "runtime_deployed": false
+  },
+  "verdict": "FAIL-MEANINGLESS-IRRELEVANT",
   "r1": "LOCKED",
   "production": "LOCKED",
   "preserved": ["ING.jsonl", "stream_mi.json"]

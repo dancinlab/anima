@@ -1,0 +1,333 @@
+  [bytegpt] savant/mitosis are CLM-MoE-specific → gated OFF for bytegpt
+  [gpu-preflight] cuda free=23.3/23.6 GiB — ok
+=== anima-py train (canonical) arch=bytegpt arm=ctrl obj=ce_marginal seed=7 ===
+  levers: bytegpt trunk (CLM-specific tlora/dict/jamo/savant/mitosis OFF) n_head=16 block=512
+  device=cuda d=1024 L=24 E0=2 Emax=3 seq_len=512 steps=14000 bs=32 sample=proportional
+  cuda: NVIDIA GeForce RTX 4090 cap=8.9 torch=2.5.1+cu121
+  params: 303097856 (303.098M)
+  corpus cell[0] en_general   /workspace/data/en_general.train.txt size=57235159 train=57235159 val_file=/workspace/data/en_general.validation.txt val=3093696
+  corpus cell[1] en_dialogue  /workspace/data/en_dialogue.train.txt size=4307476 train=4307476 val_file=/workspace/data/en_dialogue.validation.txt val=225311
+  chat frames[en_general] complete=0 oversize=0
+  chat frames[en_dialogue] complete=226 oversize=2082
+  step     1  CE=5.66173  E=1  lr=6e-07  wd=0.1000 dp=0.0000  val_CE=5.31918  per_cell_CE={"en_general": 5.32086, "en_dialogue": 5.3175} {"ans_ce": 5.6182, "ans_n": 207}
+  step    50  CE=2.74687  E=1  lr=3e-05  wd=0.1000 dp=0.0000 {"ans_ce": 2.5873, "ans_n": 333}
+  step   100  CE=2.66720  E=1  lr=6e-05  wd=0.1000 dp=0.0000 {"ans_ce": 2.5977, "ans_n": 207}
+  step   150  CE=2.70919  E=1  lr=9e-05  wd=0.1000 dp=0.0000 {"ans_ce": 2.6442, "ans_n": 1676}
+  step   200  CE=2.64870  E=1  lr=0.00012  wd=0.1000 dp=0.0000  val_CE=2.67912  per_cell_CE={"en_general": 2.65383, "en_dialogue": 2.7044} {"ans_ce": -0.0, "ans_n": 0}
+  step   250  CE=2.65160  E=1  lr=0.00015  wd=0.1000 dp=0.0000 {"ans_ce": 2.8029, "ans_n": 1049}
+  step   300  CE=2.60324  E=1  lr=0.00018  wd=0.1000 dp=0.0000 {"ans_ce": 2.4494, "ans_n": 351}
+  step   350  CE=2.62921  E=1  lr=0.00021  wd=0.1000 dp=0.0000 {"ans_ce": 3.005, "ans_n": 672}
+  step   400  CE=2.68657  E=1  lr=0.00024  wd=0.1000 dp=0.0000  val_CE=2.64616  per_cell_CE={"en_general": 2.61686, "en_dialogue": 2.67546} {"ans_ce": 3.3026, "ans_n": 676}
+  step   450  CE=2.61970  E=1  lr=0.00027  wd=0.1000 dp=0.0000 {"ans_ce": 2.5447, "ans_n": 956}
+  step   500  CE=2.63481  E=1  lr=0.0003  wd=0.1000 dp=0.0000 {"ans_ce": 2.5223, "ans_n": 208}
+  step   550  CE=2.59655  E=1  lr=0.00029999086  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step   600  CE=2.58431  E=1  lr=0.00029996345  wd=0.1000 dp=0.0000  val_CE=2.61466  per_cell_CE={"en_general": 2.61744, "en_dialogue": 2.61188} {"ans_ce": 2.7144, "ans_n": 152}
+  step   650  CE=2.61070  E=1  lr=0.00029991776  wd=0.1000 dp=0.0000 {"ans_ce": 2.8788, "ans_n": 573}
+  step   700  CE=2.59112  E=1  lr=0.00029985381  wd=0.1000 dp=0.0000 {"ans_ce": 2.7073, "ans_n": 542}
+  step   750  CE=2.57780  E=1  lr=0.0002997716  wd=0.1000 dp=0.0000 {"ans_ce": 2.5226, "ans_n": 613}
+  step   800  CE=2.57980  E=1  lr=0.00029967115  wd=0.1000 dp=0.0000  val_CE=2.58046  per_cell_CE={"en_general": 2.56397, "en_dialogue": 2.59694} {"ans_ce": 2.5028, "ans_n": 628}
+  step   850  CE=2.54883  E=1  lr=0.00029955246  wd=0.1000 dp=0.0000 {"ans_ce": 2.6313, "ans_n": 175}
+  step   900  CE=2.56604  E=1  lr=0.00029941556  wd=0.1000 dp=0.0000 {"ans_ce": 2.5188, "ans_n": 499}
+  step   950  CE=2.51707  E=1  lr=0.00029926046  wd=0.1000 dp=0.0000 {"ans_ce": 2.4122, "ans_n": 678}
+  step  1000  CE=2.52362  E=1  lr=0.00029908718  wd=0.1000 dp=0.0000  val_CE=2.51366  per_cell_CE={"en_general": 2.50415, "en_dialogue": 2.52316} {"ans_ce": 2.4102, "ans_n": 218}
+  step  1050  CE=2.46439  E=1  lr=0.00029889575  wd=0.1000 dp=0.0000 {"ans_ce": 2.2374, "ans_n": 225}
+  step  1100  CE=2.45767  E=1  lr=0.00029868619  wd=0.1000 dp=0.0000 {"ans_ce": 2.2076, "ans_n": 460}
+  step  1150  CE=2.39408  E=1  lr=0.00029845853  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  1200  CE=2.30242  E=1  lr=0.00029821281  wd=0.1000 dp=0.0000  val_CE=2.35713  per_cell_CE={"en_general": 2.34385, "en_dialogue": 2.3704} {"ans_ce": 2.3189, "ans_n": 1592}
+  step  1250  CE=2.26891  E=1  lr=0.00029794905  wd=0.1000 dp=0.0000 {"ans_ce": 2.3155, "ans_n": 1248}
+  step  1300  CE=2.27293  E=1  lr=0.00029766729  wd=0.1000 dp=0.0000 {"ans_ce": 2.0031, "ans_n": 335}
+  step  1350  CE=2.29197  E=1  lr=0.00029736757  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  1400  CE=2.24942  E=1  lr=0.00029704993  wd=0.1000 dp=0.0000  val_CE=2.28089  per_cell_CE={"en_general": 2.26227, "en_dialogue": 2.29952} {"ans_ce": -0.0, "ans_n": 0}
+  step  1450  CE=2.21073  E=1  lr=0.00029671441  wd=0.1000 dp=0.0000 {"ans_ce": 2.0793, "ans_n": 1763}
+  step  1500  CE=2.21054  E=1  lr=0.00029636106  wd=0.1000 dp=0.0000 {"ans_ce": 2.0087, "ans_n": 1018}
+  step  1550  CE=2.19017  E=1  lr=0.00029598992  wd=0.1000 dp=0.0000 {"ans_ce": 2.1615, "ans_n": 556}
+  step  1600  CE=2.17925  E=1  lr=0.00029560105  wd=0.1000 dp=0.0000  val_CE=2.22106  per_cell_CE={"en_general": 2.212, "en_dialogue": 2.23013} {"ans_ce": 1.9643, "ans_n": 248}
+  step  1650  CE=2.18859  E=1  lr=0.0002951945  wd=0.1000 dp=0.0000 {"ans_ce": 1.8685, "ans_n": 277}
+  step  1700  CE=2.21089  E=1  lr=0.00029477033  wd=0.1000 dp=0.0000 {"ans_ce": 2.1155, "ans_n": 868}
+  step  1750  CE=2.20515  E=1  lr=0.00029432858  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  1800  CE=2.16750  E=1  lr=0.00029386933  wd=0.1000 dp=0.0000  val_CE=2.20496  per_cell_CE={"en_general": 2.16703, "en_dialogue": 2.2429} {"ans_ce": 1.0493, "ans_n": 52}
+  step  1850  CE=2.15229  E=1  lr=0.00029339263  wd=0.1000 dp=0.0000 {"ans_ce": 1.8204, "ans_n": 147}
+  step  1900  CE=2.16240  E=1  lr=0.00029289855  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  1950  CE=2.12268  E=1  lr=0.00029238715  wd=0.1000 dp=0.0000 {"ans_ce": 1.598, "ans_n": 553}
+  step  2000  CE=2.14595  E=1  lr=0.0002918585  wd=0.1000 dp=0.0000  val_CE=2.13981  per_cell_CE={"en_general": 2.14429, "en_dialogue": 2.13533} {"ans_ce": 1.7806, "ans_n": 425}
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=2.13981 step=2000 nparam=303097856
+[ok] wrote /workspace/run/.bytegpt-engine-bsgolt4r.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /workspace/run/model.bin.step2000.bin
+  torch ckpt -> /workspace/run/model.bin.resume.pt (3638593382 bytes · exact resume at step 2000 · state=972504d557c0de1edf1362c312a383bbba855b72687bb0f44693ead7dbad3e6d)
+  step  2050  CE=2.14323  E=1  lr=0.00029131268  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  2100  CE=2.09871  E=1  lr=0.00029074976  wd=0.1000 dp=0.0000 {"ans_ce": 2.1764, "ans_n": 122}
+  step  2150  CE=2.06748  E=1  lr=0.00029016982  wd=0.1000 dp=0.0000 {"ans_ce": 1.6711, "ans_n": 797}
+  step  2200  CE=2.11604  E=1  lr=0.00028957293  wd=0.1000 dp=0.0000  val_CE=2.11967  per_cell_CE={"en_general": 2.1154, "en_dialogue": 2.12395} {"ans_ce": -0.0, "ans_n": 0}
+  step  2250  CE=2.15081  E=1  lr=0.00028895917  wd=0.1000 dp=0.0000 {"ans_ce": 1.943, "ans_n": 757}
+  step  2300  CE=2.04301  E=1  lr=0.00028832864  wd=0.1000 dp=0.0000 {"ans_ce": 1.7133, "ans_n": 609}
+  step  2350  CE=2.04029  E=1  lr=0.0002876814  wd=0.1000 dp=0.0000 {"ans_ce": 1.3416, "ans_n": 634}
+  step  2400  CE=2.06945  E=1  lr=0.00028701756  wd=0.1000 dp=0.0000  val_CE=2.10713  per_cell_CE={"en_general": 2.10851, "en_dialogue": 2.10575} {"ans_ce": -0.0, "ans_n": 0}
+  step  2450  CE=2.04551  E=1  lr=0.0002863372  wd=0.1000 dp=0.0000 {"ans_ce": 1.7165, "ans_n": 249}
+  step  2500  CE=1.98580  E=1  lr=0.00028564041  wd=0.1000 dp=0.0000 {"ans_ce": 1.6262, "ans_n": 425}
+  step  2550  CE=2.02602  E=1  lr=0.00028492728  wd=0.1000 dp=0.0000 {"ans_ce": 1.0057, "ans_n": 348}
+  step  2600  CE=2.03473  E=1  lr=0.00028419793  wd=0.1000 dp=0.0000  val_CE=2.06715  per_cell_CE={"en_general": 2.04389, "en_dialogue": 2.0904} {"ans_ce": 1.4807, "ans_n": 794}
+  step  2650  CE=2.01708  E=1  lr=0.00028345243  wd=0.1000 dp=0.0000 {"ans_ce": 1.1381, "ans_n": 182}
+  step  2700  CE=2.05204  E=1  lr=0.0002826909  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  2750  CE=2.02233  E=1  lr=0.00028191343  wd=0.1000 dp=0.0000 {"ans_ce": 1.5079, "ans_n": 761}
+  step  2800  CE=1.99688  E=1  lr=0.00028112013  wd=0.1000 dp=0.0000  val_CE=2.03189  per_cell_CE={"en_general": 2.01943, "en_dialogue": 2.04434} {"ans_ce": 0.8454, "ans_n": 407}
+  step  2850  CE=1.98214  E=1  lr=0.00028031112  wd=0.1000 dp=0.0000 {"ans_ce": 1.2855, "ans_n": 33}
+  step  2900  CE=1.95578  E=1  lr=0.00027948649  wd=0.1000 dp=0.0000 {"ans_ce": 1.6056, "ans_n": 167}
+  step  2950  CE=1.98009  E=1  lr=0.00027864637  wd=0.1000 dp=0.0000 {"ans_ce": 1.1528, "ans_n": 291}
+  step  3000  CE=1.98384  E=1  lr=0.00027779085  wd=0.1000 dp=0.0000  val_CE=1.98879  per_cell_CE={"en_general": 1.97281, "en_dialogue": 2.00477} {"ans_ce": 0.8877, "ans_n": 658}
+  step  3050  CE=1.93650  E=1  lr=0.00027692007  wd=0.1000 dp=0.0000 {"ans_ce": 0.989, "ans_n": 608}
+  step  3100  CE=1.98540  E=1  lr=0.00027603414  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  3150  CE=1.96425  E=1  lr=0.00027513317  wd=0.1000 dp=0.0000 {"ans_ce": 1.0675, "ans_n": 235}
+  step  3200  CE=1.92601  E=1  lr=0.00027421729  wd=0.1000 dp=0.0000  val_CE=2.02814  per_cell_CE={"en_general": 1.98599, "en_dialogue": 2.07028} {"ans_ce": 0.7016, "ans_n": 385}
+  step  3250  CE=1.91014  E=1  lr=0.00027328663  wd=0.1000 dp=0.0000 {"ans_ce": 0.5473, "ans_n": 232}
+  step  3300  CE=1.85284  E=1  lr=0.00027234131  wd=0.1000 dp=0.0000 {"ans_ce": 0.8403, "ans_n": 713}
+  step  3350  CE=1.93262  E=1  lr=0.00027138145  wd=0.1000 dp=0.0000 {"ans_ce": 0.6495, "ans_n": 467}
+  step  3400  CE=1.85395  E=1  lr=0.00027040719  wd=0.1000 dp=0.0000  val_CE=2.01168  per_cell_CE={"en_general": 1.95007, "en_dialogue": 2.0733} {"ans_ce": 0.8296, "ans_n": 868}
+  step  3450  CE=1.90225  E=1  lr=0.00026941867  wd=0.1000 dp=0.0000 {"ans_ce": 0.7587, "ans_n": 456}
+  step  3500  CE=1.85267  E=1  lr=0.000268416  wd=0.1000 dp=0.0000 {"ans_ce": 0.6928, "ans_n": 1081}
+  step  3550  CE=1.85450  E=1  lr=0.00026739933  wd=0.1000 dp=0.0000 {"ans_ce": 0.474, "ans_n": 651}
+  step  3600  CE=1.86329  E=1  lr=0.0002663688  wd=0.1000 dp=0.0000  val_CE=1.96363  per_cell_CE={"en_general": 1.9218, "en_dialogue": 2.00545} {"ans_ce": 1.3113, "ans_n": 526}
+  step  3650  CE=1.87141  E=1  lr=0.00026532455  wd=0.1000 dp=0.0000 {"ans_ce": 0.7738, "ans_n": 471}
+  step  3700  CE=1.78105  E=1  lr=0.00026426672  wd=0.1000 dp=0.0000 {"ans_ce": 0.6286, "ans_n": 1547}
+  step  3750  CE=1.88008  E=1  lr=0.00026319544  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  3800  CE=1.88488  E=1  lr=0.00026211087  wd=0.1000 dp=0.0000  val_CE=1.93588  per_cell_CE={"en_general": 1.87945, "en_dialogue": 1.9923} {"ans_ce": 0.268, "ans_n": 484}
+  step  3850  CE=1.87697  E=1  lr=0.00026101316  wd=0.1000 dp=0.0000 {"ans_ce": 1.1621, "ans_n": 393}
+  step  3900  CE=1.83649  E=1  lr=0.00025990244  wd=0.1000 dp=0.0000 {"ans_ce": 0.4627, "ans_n": 246}
+  step  3950  CE=1.79334  E=1  lr=0.00025877888  wd=0.1000 dp=0.0000 {"ans_ce": 0.3377, "ans_n": 718}
+  step  4000  CE=1.81167  E=1  lr=0.00025764262  wd=0.1000 dp=0.0000  val_CE=1.92623  per_cell_CE={"en_general": 1.85799, "en_dialogue": 1.99448} {"ans_ce": 0.281, "ans_n": 566}
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.92623 step=4000 nparam=303097856
+[ok] wrote /workspace/run/.bytegpt-engine-uuvsuqz1.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /workspace/run/model.bin.step4000.bin
+  torch ckpt -> /workspace/run/model.bin.resume.pt (3638593382 bytes · exact resume at step 4000 · state=65bd0d3e5803a58cfa7b4cd273e29347f4a99ff7b04b90d38c74206303949bd4)
+  step  4050  CE=1.76131  E=1  lr=0.00025649382  wd=0.1000 dp=0.0000 {"ans_ce": 0.4648, "ans_n": 1221}
+  step  4100  CE=1.84339  E=1  lr=0.00025533263  wd=0.1000 dp=0.0000 {"ans_ce": 0.9318, "ans_n": 745}
+  step  4150  CE=1.82040  E=1  lr=0.00025415921  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  4200  CE=1.80692  E=1  lr=0.00025297373  wd=0.1000 dp=0.0000  val_CE=1.93970  per_cell_CE={"en_general": 1.84486, "en_dialogue": 2.03454} {"ans_ce": 0.2169, "ans_n": 426}
+  step  4250  CE=1.81679  E=1  lr=0.00025177633  wd=0.1000 dp=0.0000 {"ans_ce": 0.3182, "ans_n": 283}
+  step  4300  CE=1.76988  E=1  lr=0.00025056718  wd=0.1000 dp=0.0000 {"ans_ce": 0.2796, "ans_n": 69}
+  step  4350  CE=1.77712  E=1  lr=0.00024934645  wd=0.1000 dp=0.0000 {"ans_ce": 0.332, "ans_n": 387}
+  step  4400  CE=1.73499  E=1  lr=0.0002481143  wd=0.1000 dp=0.0000  val_CE=1.91491  per_cell_CE={"en_general": 1.8185, "en_dialogue": 2.01132} {"ans_ce": 0.0912, "ans_n": 515}
+  step  4450  CE=1.77721  E=1  lr=0.0002468709  wd=0.1000 dp=0.0000 {"ans_ce": 0.2829, "ans_n": 247}
+  step  4500  CE=1.73168  E=1  lr=0.00024561641  wd=0.1000 dp=0.0000 {"ans_ce": 0.6188, "ans_n": 85}
+  step  4550  CE=1.73848  E=1  lr=0.00024435101  wd=0.1000 dp=0.0000 {"ans_ce": 0.3539, "ans_n": 363}
+  step  4600  CE=1.69517  E=1  lr=0.00024307487  wd=0.1000 dp=0.0000  val_CE=1.90961  per_cell_CE={"en_general": 1.79012, "en_dialogue": 2.02911} {"ans_ce": 0.2818, "ans_n": 800}
+  step  4650  CE=1.65877  E=1  lr=0.00024178815  wd=0.1000 dp=0.0000 {"ans_ce": 0.1498, "ans_n": 907}
+  step  4700  CE=1.78239  E=1  lr=0.00024049104  wd=0.1000 dp=0.0000 {"ans_ce": 0.1577, "ans_n": 348}
+  step  4750  CE=1.73433  E=1  lr=0.00023918371  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  4800  CE=1.74554  E=1  lr=0.00023786634  wd=0.1000 dp=0.0000  val_CE=1.83294  per_cell_CE={"en_general": 1.75928, "en_dialogue": 1.9066} {"ans_ce": 0.2415, "ans_n": 799}
+  step  4850  CE=1.70699  E=1  lr=0.0002365391  wd=0.1000 dp=0.0000 {"ans_ce": 0.0043, "ans_n": 77}
+  step  4900  CE=1.71685  E=1  lr=0.00023520218  wd=0.1000 dp=0.0000 {"ans_ce": 0.0403, "ans_n": 295}
+  step  4950  CE=1.69629  E=1  lr=0.00023385575  wd=0.1000 dp=0.0000 {"ans_ce": 0.1908, "ans_n": 483}
+  step  5000  CE=1.66809  E=1  lr=0.0002325  wd=0.1000 dp=0.0000  val_CE=1.83156  per_cell_CE={"en_general": 1.72859, "en_dialogue": 1.93453} {"ans_ce": 0.3539, "ans_n": 208}
+  step  5050  CE=1.67818  E=1  lr=0.00023113511  wd=0.1000 dp=0.0000 {"ans_ce": 0.2021, "ans_n": 366}
+  step  5100  CE=1.60728  E=1  lr=0.00022976127  wd=0.1000 dp=0.0000 {"ans_ce": 0.3151, "ans_n": 837}
+  step  5150  CE=1.61065  E=1  lr=0.00022837866  wd=0.1000 dp=0.0000 {"ans_ce": 0.1134, "ans_n": 328}
+  step  5200  CE=1.61582  E=1  lr=0.00022698747  wd=0.1000 dp=0.0000  val_CE=1.85301  per_cell_CE={"en_general": 1.72412, "en_dialogue": 1.9819} {"ans_ce": 0.3299, "ans_n": 691}
+  step  5250  CE=1.65109  E=1  lr=0.00022558789  wd=0.1000 dp=0.0000 {"ans_ce": 0.0611, "ans_n": 390}
+  step  5300  CE=1.68140  E=1  lr=0.0002241801  wd=0.1000 dp=0.0000 {"ans_ce": 0.0766, "ans_n": 242}
+  step  5350  CE=1.64796  E=1  lr=0.00022276431  wd=0.1000 dp=0.0000 {"ans_ce": 0.0737, "ans_n": 287}
+  step  5400  CE=1.64677  E=1  lr=0.00022134069  wd=0.1000 dp=0.0000  val_CE=1.82433  per_cell_CE={"en_general": 1.68005, "en_dialogue": 1.9686} {"ans_ce": 0.2903, "ans_n": 617}
+  step  5450  CE=1.77135  E=1  lr=0.00021990945  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  5500  CE=1.52112  E=1  lr=0.00021847077  wd=0.1000 dp=0.0000 {"ans_ce": 0.1253, "ans_n": 1159}
+  step  5550  CE=1.55753  E=1  lr=0.00021702485  wd=0.1000 dp=0.0000 {"ans_ce": 0.0695, "ans_n": 404}
+  step  5600  CE=1.69799  E=1  lr=0.00021557189  wd=0.1000 dp=0.0000  val_CE=1.76198  per_cell_CE={"en_general": 1.66371, "en_dialogue": 1.86025} {"ans_ce": -0.0, "ans_n": 0}
+  step  5650  CE=1.61443  E=1  lr=0.00021411208  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  5700  CE=1.57053  E=1  lr=0.00021264563  wd=0.1000 dp=0.0000 {"ans_ce": 0.2904, "ans_n": 705}
+  step  5750  CE=1.52849  E=1  lr=0.00021117272  wd=0.1000 dp=0.0000 {"ans_ce": 0.1261, "ans_n": 1162}
+  step  5800  CE=1.58497  E=1  lr=0.00020969356  wd=0.1000 dp=0.0000  val_CE=1.78295  per_cell_CE={"en_general": 1.64378, "en_dialogue": 1.92212} {"ans_ce": 0.1403, "ans_n": 643}
+  step  5850  CE=1.54884  E=1  lr=0.00020820835  wd=0.1000 dp=0.0000 {"ans_ce": 0.0819, "ans_n": 585}
+  step  5900  CE=1.55757  E=1  lr=0.00020671729  wd=0.1000 dp=0.0000 {"ans_ce": 0.0671, "ans_n": 629}
+  step  5950  CE=1.51235  E=1  lr=0.00020522059  wd=0.1000 dp=0.0000 {"ans_ce": 0.0769, "ans_n": 770}
+  step  6000  CE=1.63601  E=1  lr=0.00020371844  wd=0.1000 dp=0.0000  val_CE=1.72184  per_cell_CE={"en_general": 1.63517, "en_dialogue": 1.8085} {"ans_ce": 0.087, "ans_n": 257}
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.72184 step=6000 nparam=303097856
+[ok] wrote /workspace/run/.bytegpt-engine-6hn2d7ax.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /workspace/run/model.bin.step6000.bin
+  torch ckpt -> /workspace/run/model.bin.resume.pt (3638593382 bytes · exact resume at step 6000 · state=568994c1502ffd9dfcc15a9d89ebb7af85ddfdbfab6be656a76d418531b39c88)
+  step  6050  CE=1.51371  E=1  lr=0.00020221104  wd=0.1000 dp=0.0000 {"ans_ce": 0.122, "ans_n": 470}
+  step  6100  CE=1.57537  E=1  lr=0.00020069861  wd=0.1000 dp=0.0000 {"ans_ce": 0.0554, "ans_n": 515}
+  step  6150  CE=1.52090  E=1  lr=0.00019918135  wd=0.1000 dp=0.0000 {"ans_ce": 0.0538, "ans_n": 638}
+  step  6200  CE=1.56901  E=1  lr=0.00019765946  wd=0.1000 dp=0.0000  val_CE=1.64755  per_cell_CE={"en_general": 1.57498, "en_dialogue": 1.72013} {"ans_ce": -0.0, "ans_n": 0}
+  step  6250  CE=1.37014  E=1  lr=0.00019613314  wd=0.1000 dp=0.0000 {"ans_ce": 0.0352, "ans_n": 1516}
+  step  6300  CE=1.46255  E=1  lr=0.00019460261  wd=0.1000 dp=0.0000 {"ans_ce": 0.0507, "ans_n": 723}
+  step  6350  CE=1.53020  E=1  lr=0.00019306808  wd=0.1000 dp=0.0000 {"ans_ce": 0.0708, "ans_n": 457}
+  step  6400  CE=1.54558  E=1  lr=0.00019152974  wd=0.1000 dp=0.0000  val_CE=1.68456  per_cell_CE={"en_general": 1.59328, "en_dialogue": 1.77584} {"ans_ce": -0.0, "ans_n": 0}
+  step  6450  CE=1.51315  E=1  lr=0.00018998781  wd=0.1000 dp=0.0000 {"ans_ce": 0.1448, "ans_n": 429}
+  step  6500  CE=1.52556  E=1  lr=0.0001884425  wd=0.1000 dp=0.0000 {"ans_ce": 0.2485, "ans_n": 491}
+  step  6550  CE=1.53569  E=1  lr=0.00018689402  wd=0.1000 dp=0.0000 {"ans_ce": 0.1873, "ans_n": 187}
+  step  6600  CE=1.46625  E=1  lr=0.00018534257  wd=0.1000 dp=0.0000  val_CE=1.74689  per_cell_CE={"en_general": 1.56532, "en_dialogue": 1.92847} {"ans_ce": 0.1189, "ans_n": 781}
+  step  6650  CE=1.47844  E=1  lr=0.00018378837  wd=0.1000 dp=0.0000 {"ans_ce": 0.0557, "ans_n": 680}
+  step  6700  CE=1.46267  E=1  lr=0.00018223162  wd=0.1000 dp=0.0000 {"ans_ce": 0.059, "ans_n": 660}
+  step  6750  CE=1.51402  E=1  lr=0.00018067254  wd=0.1000 dp=0.0000 {"ans_ce": 0.0591, "ans_n": 140}
+  step  6800  CE=1.53717  E=1  lr=0.00017911134  wd=0.1000 dp=0.0000  val_CE=1.69005  per_cell_CE={"en_general": 1.53453, "en_dialogue": 1.84557} {"ans_ce": 0.048, "ans_n": 429}
+  step  6850  CE=1.42528  E=1  lr=0.00017754823  wd=0.1000 dp=0.0000 {"ans_ce": 0.0363, "ans_n": 802}
+  step  6900  CE=1.48726  E=1  lr=0.00017598342  wd=0.1000 dp=0.0000 {"ans_ce": 0.0307, "ans_n": 396}
+  step  6950  CE=1.49478  E=1  lr=0.00017441712  wd=0.1000 dp=0.0000 {"ans_ce": 0.0849, "ans_n": 390}
+  step  7000  CE=1.45317  E=1  lr=0.00017284955  wd=0.1000 dp=0.0000  val_CE=1.71652  per_cell_CE={"en_general": 1.53527, "en_dialogue": 1.89777} {"ans_ce": 0.0961, "ans_n": 395}
+  step  7050  CE=1.41811  E=1  lr=0.00017128092  wd=0.1000 dp=0.0000 {"ans_ce": 0.067, "ans_n": 670}
+  step  7100  CE=1.41521  E=1  lr=0.00016971143  wd=0.1000 dp=0.0000 {"ans_ce": 0.0582, "ans_n": 957}
+  step  7150  CE=1.41522  E=1  lr=0.00016814131  wd=0.1000 dp=0.0000 {"ans_ce": 0.0478, "ans_n": 617}
+  step  7200  CE=1.46406  E=1  lr=0.00016657076  wd=0.1000 dp=0.0000  val_CE=1.64949  per_cell_CE={"en_general": 1.48142, "en_dialogue": 1.81756} {"ans_ce": 0.0788, "ans_n": 347}
+  step  7250  CE=1.37965  E=1  lr=0.000165  wd=0.1000 dp=0.0000 {"ans_ce": 0.0619, "ans_n": 597}
+  step  7300  CE=1.41842  E=1  lr=0.00016342924  wd=0.1000 dp=0.0000 {"ans_ce": 0.0389, "ans_n": 539}
+  step  7350  CE=1.45431  E=1  lr=0.00016185869  wd=0.1000 dp=0.0000 {"ans_ce": 0.0209, "ans_n": 505}
+  step  7400  CE=1.46518  E=1  lr=0.00016028857  wd=0.1000 dp=0.0000  val_CE=1.63514  per_cell_CE={"en_general": 1.49424, "en_dialogue": 1.77603} {"ans_ce": 0.061, "ans_n": 437}
+  step  7450  CE=1.39367  E=1  lr=0.00015871908  wd=0.1000 dp=0.0000 {"ans_ce": 0.0483, "ans_n": 674}
+  step  7500  CE=1.38794  E=1  lr=0.00015715045  wd=0.1000 dp=0.0000 {"ans_ce": 0.0371, "ans_n": 1206}
+  step  7550  CE=1.47799  E=1  lr=0.00015558288  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  7600  CE=1.31226  E=1  lr=0.00015401658  wd=0.1000 dp=0.0000  val_CE=1.67772  per_cell_CE={"en_general": 1.48177, "en_dialogue": 1.87368} {"ans_ce": 0.0519, "ans_n": 1239}
+  step  7650  CE=1.31581  E=1  lr=0.00015245177  wd=0.1000 dp=0.0000 {"ans_ce": 0.0311, "ans_n": 1405}
+  step  7700  CE=1.44035  E=1  lr=0.00015088866  wd=0.1000 dp=0.0000 {"ans_ce": 0.0753, "ans_n": 302}
+  step  7750  CE=1.39745  E=1  lr=0.00014932746  wd=0.1000 dp=0.0000 {"ans_ce": 0.2352, "ans_n": 794}
+  step  7800  CE=1.31527  E=1  lr=0.00014776838  wd=0.1000 dp=0.0000  val_CE=1.59055  per_cell_CE={"en_general": 1.46253, "en_dialogue": 1.71857} {"ans_ce": 0.0245, "ans_n": 1188}
+  step  7850  CE=1.41435  E=1  lr=0.00014621163  wd=0.1000 dp=0.0000 {"ans_ce": 0.0099, "ans_n": 269}
+  step  7900  CE=1.38681  E=1  lr=0.00014465743  wd=0.1000 dp=0.0000 {"ans_ce": 0.0338, "ans_n": 309}
+  step  7950  CE=1.45763  E=1  lr=0.00014310598  wd=0.1000 dp=0.0000 {"ans_ce": 0.0192, "ans_n": 122}
+  step  8000  CE=1.38730  E=1  lr=0.0001415575  wd=0.1000 dp=0.0000  val_CE=1.61420  per_cell_CE={"en_general": 1.44211, "en_dialogue": 1.7863} {"ans_ce": 0.0252, "ans_n": 394}
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.6142 step=8000 nparam=303097856
+[ok] wrote /workspace/run/.bytegpt-engine-7grbapah.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /workspace/run/model.bin.step8000.bin
+  torch ckpt -> /workspace/run/model.bin.resume.pt (3638593382 bytes · exact resume at step 8000 · state=00d195d564e25c85f2b41ddc70463c12dec1523346a090bc9130b6ef0fd16066)
+  step  8050  CE=1.43824  E=1  lr=0.00014001219  wd=0.1000 dp=0.0000 {"ans_ce": 0.0319, "ans_n": 225}
+  step  8100  CE=1.39346  E=1  lr=0.00013847026  wd=0.1000 dp=0.0000 {"ans_ce": 0.042, "ans_n": 352}
+  step  8150  CE=1.39329  E=1  lr=0.00013693192  wd=0.1000 dp=0.0000 {"ans_ce": 0.0167, "ans_n": 375}
+  step  8200  CE=1.34337  E=1  lr=0.00013539739  wd=0.1000 dp=0.0000  val_CE=1.65950  per_cell_CE={"en_general": 1.44552, "en_dialogue": 1.87347} {"ans_ce": 0.0424, "ans_n": 438}
+  step  8250  CE=1.32095  E=1  lr=0.00013386686  wd=0.1000 dp=0.0000 {"ans_ce": 0.095, "ans_n": 741}
+  step  8300  CE=1.35281  E=1  lr=0.00013234054  wd=0.1000 dp=0.0000 {"ans_ce": 0.1107, "ans_n": 166}
+  step  8350  CE=1.38171  E=1  lr=0.00013081865  wd=0.1000 dp=0.0000 {"ans_ce": 0.0013, "ans_n": 333}
+  step  8400  CE=1.30095  E=1  lr=0.00012930139  wd=0.1000 dp=0.0000  val_CE=1.64827  per_cell_CE={"en_general": 1.42974, "en_dialogue": 1.86681} {"ans_ce": 0.0037, "ans_n": 837}
+  step  8450  CE=1.37392  E=1  lr=0.00012778896  wd=0.1000 dp=0.0000 {"ans_ce": 0.2362, "ans_n": 525}
+  step  8500  CE=1.32974  E=1  lr=0.00012628156  wd=0.1000 dp=0.0000 {"ans_ce": 0.0207, "ans_n": 589}
+  step  8550  CE=1.37123  E=1  lr=0.00012477941  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step  8600  CE=1.34515  E=1  lr=0.00012328271  wd=0.1000 dp=0.0000  val_CE=1.60747  per_cell_CE={"en_general": 1.40452, "en_dialogue": 1.81043} {"ans_ce": 0.0697, "ans_n": 339}
+  step  8650  CE=1.34970  E=1  lr=0.00012179165  wd=0.1000 dp=0.0000 {"ans_ce": 0.0057, "ans_n": 622}
+  step  8700  CE=1.33447  E=1  lr=0.00012030644  wd=0.1000 dp=0.0000 {"ans_ce": 0.005, "ans_n": 314}
+  step  8750  CE=1.22693  E=1  lr=0.00011882728  wd=0.1000 dp=0.0000 {"ans_ce": 0.0184, "ans_n": 1054}
+  step  8800  CE=1.32612  E=1  lr=0.00011735437  wd=0.1000 dp=0.0000  val_CE=1.59827  per_cell_CE={"en_general": 1.42366, "en_dialogue": 1.77289} {"ans_ce": 0.0066, "ans_n": 433}
+  step  8850  CE=1.36378  E=1  lr=0.00011588792  wd=0.1000 dp=0.0000 {"ans_ce": 0.0016, "ans_n": 314}
+  step  8900  CE=1.32779  E=1  lr=0.00011442811  wd=0.1000 dp=0.0000 {"ans_ce": 0.1607, "ans_n": 919}
+  step  8950  CE=1.33776  E=1  lr=0.00011297515  wd=0.1000 dp=0.0000 {"ans_ce": 0.0098, "ans_n": 326}
+  step  9000  CE=1.37016  E=1  lr=0.00011152923  wd=0.1000 dp=0.0000  val_CE=1.60915  per_cell_CE={"en_general": 1.38562, "en_dialogue": 1.83268} {"ans_ce": -0.0, "ans_n": 0}
+  step  9050  CE=1.34032  E=1  lr=0.00011009055  wd=0.1000 dp=0.0000 {"ans_ce": 0.0009, "ans_n": 130}
+  step  9100  CE=1.16434  E=1  lr=0.00010865931  wd=0.1000 dp=0.0000 {"ans_ce": 0.0175, "ans_n": 1991}
+  step  9150  CE=1.35280  E=1  lr=0.00010723569  wd=0.1000 dp=0.0000 {"ans_ce": 0.0029, "ans_n": 376}
+  step  9200  CE=1.36990  E=1  lr=0.0001058199  wd=0.1000 dp=0.0000  val_CE=1.54043  per_cell_CE={"en_general": 1.37702, "en_dialogue": 1.70384} {"ans_ce": 0.0166, "ans_n": 402}
+  step  9250  CE=1.27756  E=1  lr=0.00010441211  wd=0.1000 dp=0.0000 {"ans_ce": 0.0237, "ans_n": 593}
+  step  9300  CE=1.29136  E=1  lr=0.00010301253  wd=0.1000 dp=0.0000 {"ans_ce": 0.013, "ans_n": 507}
+  step  9350  CE=1.30954  E=1  lr=0.00010162134  wd=0.1000 dp=0.0000 {"ans_ce": 0.0016, "ans_n": 352}
+  step  9400  CE=1.21425  E=1  lr=0.00010023873  wd=0.1000 dp=0.0000  val_CE=1.56142  per_cell_CE={"en_general": 1.40035, "en_dialogue": 1.7225} {"ans_ce": 0.0313, "ans_n": 1313}
+  step  9450  CE=1.29062  E=1  lr=9.8864888e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.012, "ans_n": 847}
+  step  9500  CE=1.26245  E=1  lr=9.75e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0036, "ans_n": 853}
+  step  9550  CE=1.33920  E=1  lr=9.614425e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0079, "ans_n": 386}
+  step  9600  CE=1.23570  E=1  lr=9.4797823e-05  wd=0.1000 dp=0.0000  val_CE=1.61627  per_cell_CE={"en_general": 1.3695, "en_dialogue": 1.86305} {"ans_ce": 0.0042, "ans_n": 1024}
+  step  9650  CE=1.38353  E=1  lr=9.3460899e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0025, "ans_n": 377}
+  step  9700  CE=1.28124  E=1  lr=9.2133661e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0201, "ans_n": 230}
+  step  9750  CE=1.23721  E=1  lr=9.0816288e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0009, "ans_n": 426}
+  step  9800  CE=1.33817  E=1  lr=8.9508958e-05  wd=0.1000 dp=0.0000  val_CE=1.64051  per_cell_CE={"en_general": 1.38247, "en_dialogue": 1.89855} {"ans_ce": 0.049, "ans_n": 192}
+  step  9850  CE=1.32734  E=1  lr=8.8211848e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0057, "ans_n": 83}
+  step  9900  CE=1.30450  E=1  lr=8.6925135e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.1036, "ans_n": 441}
+  step  9950  CE=1.15918  E=1  lr=8.5648991e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0047, "ans_n": 1375}
+  step 10000  CE=1.35936  E=1  lr=8.438359e-05  wd=0.1000 dp=0.0000  val_CE=1.57313  per_cell_CE={"en_general": 1.36642, "en_dialogue": 1.77984} {"ans_ce": -0.0, "ans_n": 0}
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.57313 step=10000 nparam=303097856
+[ok] wrote /workspace/run/.bytegpt-engine-f0tt96ru.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /workspace/run/model.bin.step10000.bin
+  torch ckpt -> /workspace/run/model.bin.resume.pt (3638593382 bytes · exact resume at step 10000 · state=e862ba89e74d76e99170970fadf2b2babb48ef08b3701d6eeb2a1491f8c09022)
+  step 10050  CE=1.31223  E=1  lr=8.3129103e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0098, "ans_n": 135}
+  step 10100  CE=1.34110  E=1  lr=8.1885701e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.1496, "ans_n": 135}
+  step 10150  CE=1.35934  E=1  lr=8.0653551e-05  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step 10200  CE=1.14724  E=1  lr=7.9432819e-05  wd=0.1000 dp=0.0000  val_CE=1.59280  per_cell_CE={"en_general": 1.34189, "en_dialogue": 1.84371} {"ans_ce": 0.0057, "ans_n": 1519}
+  step 10250  CE=1.23206  E=1  lr=7.8223673e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0005, "ans_n": 821}
+  step 10300  CE=1.19098  E=1  lr=7.7026274e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0011, "ans_n": 929}
+  step 10350  CE=1.25058  E=1  lr=7.5840786e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.009, "ans_n": 178}
+  step 10400  CE=1.22966  E=1  lr=7.4667368e-05  wd=0.1000 dp=0.0000  val_CE=1.57033  per_cell_CE={"en_general": 1.33586, "en_dialogue": 1.8048} {"ans_ce": 0.0095, "ans_n": 1343}
+  step 10450  CE=1.26724  E=1  lr=7.350618e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0004, "ans_n": 505}
+  step 10500  CE=1.24375  E=1  lr=7.2357379e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0009, "ans_n": 308}
+  step 10550  CE=1.18788  E=1  lr=7.122112e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0003, "ans_n": 307}
+  step 10600  CE=1.15777  E=1  lr=7.0097557e-05  wd=0.1000 dp=0.0000  val_CE=1.56990  per_cell_CE={"en_general": 1.33772, "en_dialogue": 1.80207} {"ans_ce": 0.0007, "ans_n": 1447}
+  step 10650  CE=1.30248  E=1  lr=6.8986843e-05  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step 10700  CE=1.25694  E=1  lr=6.7889127e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0003, "ans_n": 562}
+  step 10750  CE=1.24028  E=1  lr=6.6804558e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0003, "ans_n": 554}
+  step 10800  CE=1.16883  E=1  lr=6.5733284e-05  wd=0.1000 dp=0.0000  val_CE=1.54075  per_cell_CE={"en_general": 1.33826, "en_dialogue": 1.74324} {"ans_ce": 0.0003, "ans_n": 1140}
+  step 10850  CE=1.26378  E=1  lr=6.4675449e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0472, "ans_n": 747}
+  step 10900  CE=1.16536  E=1  lr=6.3631196e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0004, "ans_n": 661}
+  step 10950  CE=1.28214  E=1  lr=6.2600666e-05  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step 11000  CE=1.16968  E=1  lr=6.1584e-05  wd=0.1000 dp=0.0000  val_CE=1.56867  per_cell_CE={"en_general": 1.33169, "en_dialogue": 1.80564} {"ans_ce": 0.0232, "ans_n": 849}
+  step 11050  CE=1.29130  E=1  lr=6.0581335e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 212}
+  step 11100  CE=1.22554  E=1  lr=5.9592806e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0637, "ans_n": 613}
+  step 11150  CE=1.30823  E=1  lr=5.8618548e-05  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step 11200  CE=1.21443  E=1  lr=5.7658692e-05  wd=0.1000 dp=0.0000  val_CE=1.66180  per_cell_CE={"en_general": 1.30045, "en_dialogue": 2.02315} {"ans_ce": 0.0014, "ans_n": 602}
+  step 11250  CE=1.16796  E=1  lr=5.6713369e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0003, "ans_n": 894}
+  step 11300  CE=1.22019  E=1  lr=5.5782706e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0003, "ans_n": 495}
+  step 11350  CE=1.23529  E=1  lr=5.4866829e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0002, "ans_n": 582}
+  step 11400  CE=1.18752  E=1  lr=5.3965862e-05  wd=0.1000 dp=0.0000  val_CE=1.60922  per_cell_CE={"en_general": 1.30344, "en_dialogue": 1.91499} {"ans_ce": 0.0005, "ans_n": 295}
+  step 11450  CE=1.22629  E=1  lr=5.3079928e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0104, "ans_n": 822}
+  step 11500  CE=1.20769  E=1  lr=5.2209145e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0002, "ans_n": 601}
+  step 11550  CE=1.22871  E=1  lr=5.1353633e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 291}
+  step 11600  CE=1.24691  E=1  lr=5.0513507e-05  wd=0.1000 dp=0.0000  val_CE=1.66650  per_cell_CE={"en_general": 1.29772, "en_dialogue": 2.03529} {"ans_ce": 0.0, "ans_n": 130}
+  step 11650  CE=1.17655  E=1  lr=4.968888e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 1014}
+  step 11700  CE=1.19746  E=1  lr=4.8879865e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0004, "ans_n": 317}
+  step 11750  CE=1.27904  E=1  lr=4.808657e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 261}
+  step 11800  CE=1.26825  E=1  lr=4.7309104e-05  wd=0.1000 dp=0.0000  val_CE=1.66474  per_cell_CE={"en_general": 1.29655, "en_dialogue": 2.03294} {"ans_ce": 0.0002, "ans_n": 231}
+  step 11850  CE=1.24162  E=1  lr=4.6547571e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0, "ans_n": 400}
+  step 11900  CE=1.21726  E=1  lr=4.5802075e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0002, "ans_n": 584}
+  step 11950  CE=1.23225  E=1  lr=4.5072716e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0002, "ans_n": 439}
+  step 12000  CE=1.19032  E=1  lr=4.4359594e-05  wd=0.1000 dp=0.0000  val_CE=1.75654  per_cell_CE={"en_general": 1.28013, "en_dialogue": 2.23294} {"ans_ce": 0.0025, "ans_n": 449}
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.75654 step=12000 nparam=303097856
+[ok] wrote /workspace/run/.bytegpt-engine-hij7vkp5.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /workspace/run/model.bin.step12000.bin
+  torch ckpt -> /workspace/run/model.bin.resume.pt (3638593382 bytes · exact resume at step 12000 · state=2ae1fa8d9336f20f30fdce188fcc9143b56621b7f5cb37d2a78ebfd99dcc1f5c)
+  step 12050  CE=1.18784  E=1  lr=4.3662804e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0002, "ans_n": 345}
+  step 12100  CE=1.12737  E=1  lr=4.2982441e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 978}
+  step 12150  CE=1.23263  E=1  lr=4.2318598e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0007, "ans_n": 529}
+  step 12200  CE=1.25080  E=1  lr=4.1671363e-05  wd=0.1000 dp=0.0000  val_CE=1.58666  per_cell_CE={"en_general": 1.29904, "en_dialogue": 1.87428} {"ans_ce": -0.0, "ans_n": 0}
+  step 12250  CE=1.17554  E=1  lr=4.1040826e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0003, "ans_n": 358}
+  step 12300  CE=1.26365  E=1  lr=4.042707e-05  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step 12350  CE=1.08589  E=1  lr=3.983018e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0135, "ans_n": 1061}
+  step 12400  CE=1.29560  E=1  lr=3.9250235e-05  wd=0.1000 dp=0.0000  val_CE=1.70321  per_cell_CE={"en_general": 1.26591, "en_dialogue": 2.1405} {"ans_ce": 0.0, "ans_n": 175}
+  step 12450  CE=1.21360  E=1  lr=3.8687315e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0, "ans_n": 174}
+  step 12500  CE=1.22163  E=1  lr=3.8141496e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 551}
+  step 12550  CE=1.27152  E=1  lr=3.7612852e-05  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step 12600  CE=1.09220  E=1  lr=3.7101453e-05  wd=0.1000 dp=0.0000  val_CE=1.65262  per_cell_CE={"en_general": 1.26358, "en_dialogue": 2.04165} {"ans_ce": 0.0045, "ans_n": 919}
+  step 12650  CE=1.22915  E=1  lr=3.660737e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0166, "ans_n": 230}
+  step 12700  CE=1.27852  E=1  lr=3.613067e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 335}
+  step 12750  CE=1.26446  E=1  lr=3.5671416e-05  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step 12800  CE=1.25775  E=1  lr=3.5229671e-05  wd=0.1000 dp=0.0000  val_CE=1.56693  per_cell_CE={"en_general": 1.25776, "en_dialogue": 1.8761} {"ans_ce": 0.0001, "ans_n": 363}
+  step 12850  CE=1.15628  E=1  lr=3.4805495e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 645}
+  step 12900  CE=1.15808  E=1  lr=3.4398945e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0015, "ans_n": 333}
+  step 12950  CE=1.14683  E=1  lr=3.4010077e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0, "ans_n": 592}
+  step 13000  CE=1.24025  E=1  lr=3.3638942e-05  wd=0.1000 dp=0.0000  val_CE=1.67679  per_cell_CE={"en_general": 1.28163, "en_dialogue": 2.07196} {"ans_ce": -0.0, "ans_n": 0}
+  step 13050  CE=1.16867  E=1  lr=3.3285592e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 420}
+  step 13100  CE=1.19827  E=1  lr=3.2950074e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0, "ans_n": 224}
+  step 13150  CE=1.18635  E=1  lr=3.2632433e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 498}
+  step 13200  CE=1.14014  E=1  lr=3.2332713e-05  wd=0.1000 dp=0.0000  val_CE=1.67977  per_cell_CE={"en_general": 1.26982, "en_dialogue": 2.08972} {"ans_ce": 0.0001, "ans_n": 668}
+  step 13250  CE=1.14973  E=1  lr=3.2050953e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0012, "ans_n": 1040}
+  step 13300  CE=1.22414  E=1  lr=3.1787193e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0002, "ans_n": 349}
+  step 13350  CE=1.26676  E=1  lr=3.1541468e-05  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step 13400  CE=1.15663  E=1  lr=3.1313811e-05  wd=0.1000 dp=0.0000  val_CE=1.55774  per_cell_CE={"en_general": 1.25033, "en_dialogue": 1.86515} {"ans_ce": 0.0004, "ans_n": 413}
+  step 13450  CE=1.20817  E=1  lr=3.1104253e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 224}
+  step 13500  CE=1.16406  E=1  lr=3.0912822e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 539}
+  step 13550  CE=1.15936  E=1  lr=3.0739544e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0002, "ans_n": 1016}
+  step 13600  CE=1.11908  E=1  lr=3.0584443e-05  wd=0.1000 dp=0.0000  val_CE=1.67575  per_cell_CE={"en_general": 1.24857, "en_dialogue": 2.10294} {"ans_ce": 0.0001, "ans_n": 721}
+  step 13650  CE=1.19123  E=1  lr=3.044754e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0403, "ans_n": 265}
+  step 13700  CE=1.05932  E=1  lr=3.0328853e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0054, "ans_n": 1564}
+  step 13750  CE=1.27341  E=1  lr=3.0228399e-05  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step 13800  CE=1.23970  E=1  lr=3.014619e-05  wd=0.1000 dp=0.0000  val_CE=1.64905  per_cell_CE={"en_general": 1.23741, "en_dialogue": 2.0607} {"ans_ce": -0.0, "ans_n": 0}
+  step 13850  CE=1.15945  E=1  lr=3.0082238e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 787}
+  step 13900  CE=1.23071  E=1  lr=3.0036552e-05  wd=0.1000 dp=0.0000 {"ans_ce": -0.0, "ans_n": 0}
+  step 13950  CE=0.96997  E=1  lr=3.0009138e-05  wd=0.1000 dp=0.0000 {"ans_ce": 0.0001, "ans_n": 1925}
+  step 14000  CE=1.20952  E=1  lr=3e-05  wd=0.1000 dp=0.0000  val_CE=1.60129  per_cell_CE={"en_general": 1.23495, "en_dialogue": 1.96762} {"ans_ce": 0.0001, "ans_n": 146}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     en_general   val_CE=1.26341  DESCENT
+     en_dialogue  val_CE=2.00281  DESCENT
+  FINAL val_CE(macro_cells)=1.633111134171486  registers_DESCENT=2/2
+  loss0=5.66173 lossF=1.20952 wall=5699.2s savant_latched_at=0 E0=2->E=1
+  torch ckpt -> /workspace/run/model.resume.pt (3638588666 bytes · exact resume at step 14000 · state=edd561ab1aaf497a7d79c0fe5b24fda8af90f1d2f698c2bf20c7ef5b51d728e8)
+  summary -> /workspace/run/train_summary.json
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.63311 step=14000 nparam=303097856
+[ok] wrote /workspace/run/.bytegpt-engine-_zfdsqf2.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /workspace/run/model.bin

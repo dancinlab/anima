@@ -1,0 +1,21 @@
+{
+  "schema": "anima-meaningful-conversation-manual-review/v1",
+  "date": "2026-08-12",
+  "checkpoint_sha256": "2742275cd93e0091fd32d6711febda52252f5ed62ba0bef891ad3dde584f4ac9",
+  "reviewer": "primary implementation agent",
+  "blind_to_automatic_summary": false,
+  "criterion": "Each response must be intelligible, relevant, and answer the registered user turn; memory and correction finals must preserve the supplied fact.",
+  "passed": 0,
+  "total": 7,
+  "pass": false,
+  "rows": [
+    {"item_id": "en_consciousness", "turn": 0, "pass": false, "reason": "Grammatically damaged generic offer; it does not explain consciousness."},
+    {"item_id": "en_ice", "turn": 0, "pass": false, "reason": "Incoherent unrelated historical/computing fragments; no melting explanation."},
+    {"item_id": "en_exam", "turn": 0, "pass": false, "reason": "Generic AI disclaimer; no practical exam-anxiety action."},
+    {"item_id": "en_memory", "turn": 0, "pass": false, "reason": "Incoherent unrelated text; does not acknowledge the remembered fact."},
+    {"item_id": "en_memory", "turn": 1, "pass": false, "reason": "Asks a generic clarification and does not answer red key."},
+    {"item_id": "en_correction", "turn": 0, "pass": false, "reason": "Incoherent unrelated text; does not acknowledge green."},
+    {"item_id": "en_correction", "turn": 1, "pass": false, "reason": "Incoherent unrelated text; does not answer purple."}
+  ],
+  "verdict": "FAIL-MEANINGLESS-IRRELEVANT"
+}

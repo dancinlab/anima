@@ -1,0 +1,107 @@
+{
+  "entry": "anima-py train",
+  "arch": "bytegpt",
+  "arm": "ctrl",
+  "objective": "ce_marginal",
+  "seed": 7,
+  "optimizer": {
+    "name": "AdamW",
+    "beta1": 0.9,
+    "beta2": 0.95,
+    "weight_decay": 0.1,
+    "lr": 0.0003,
+    "schedule": "cosine",
+    "warmup_steps": 500,
+    "decay_steps": 14000,
+    "min_lr_ratio": 0.1
+  },
+  "initialization": {
+    "name": "gpt2-canonical",
+    "std": 0.02,
+    "residual_projection_scale": "std/sqrt(2*n_layer)"
+  },
+  "ddp": {
+    "world_size": 1,
+    "global_batch": 32,
+    "per_rank_batch": 32,
+    "gpus": ""
+  },
+  "obj_aux_params": 0,
+  "answer_ce": {
+    "weight": 1.0,
+    "marker_utf8": "assistant: ",
+    "all_spans": true,
+    "chat_framed_sampling": true,
+    "telemetry": {
+      "complete_trajectory": true,
+      "steps": 14000,
+      "active_steps": 12560,
+      "positions": 7691001,
+      "position_weighted_ce_sum": 4163580.4825729025,
+      "scope": "full_batch",
+      "mean_ce": 0.5413574231199427
+    }
+  },
+  "levers": {
+    "tlora": false,
+    "tlora_rank": 8,
+    "tlora_base": true,
+    "dict_aux": false,
+    "jamo_aux": false,
+    "wd_floor": -1.0,
+    "dropout_floor": -1.0
+  },
+  "n_params": 303097856,
+  "loss0": 5.66173,
+  "lossF": 1.20952,
+  "wall_s": 5699.2,
+  "uniform_ce": 5.54518,
+  "final_val_ce_pooled": 1.63311,
+  "final_val_ce_macro_cells": 1.63311,
+  "validation_aggregation": "equal-cell macro average",
+  "sampling": {
+    "policy": "proportional",
+    "weight_basis": "train_bytes",
+    "complete_trajectory": true,
+    "per_cell": {
+      "en_general": {
+        "train_bytes": 57235159,
+        "sampled_windows": 416741,
+        "sampled_framed_windows": 0,
+        "eligible_chat_documents": 0,
+        "oversize_chat_documents": 0,
+        "sampled_fraction": 0.9302254464285714
+      },
+      "en_dialogue": {
+        "train_bytes": 4307476,
+        "sampled_windows": 31259,
+        "sampled_framed_windows": 31259,
+        "eligible_chat_documents": 226,
+        "oversize_chat_documents": 2082,
+        "sampled_fraction": 0.06977455357142857
+      }
+    }
+  },
+  "registers_descent": "2/2",
+  "heldout_descent": {
+    "en_general": {
+      "val_ce": 1.26341,
+      "descent": true
+    },
+    "en_dialogue": {
+      "val_ce": 2.00281,
+      "descent": true
+    }
+  },
+  "last_aux": {
+    "ans_ce": 5.795915058115497e-05,
+    "ans_n": 146
+  },
+  "dbes_final": null,
+  "dbes_log": [],
+  "dbes_batch_scope": "full_batch(B=32)",
+  "gauges_g1g6_torch_probe": null,
+  "sleep_schedule": null,
+  "phi_envelope_monitor": null,
+  "tier": "engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
+}
