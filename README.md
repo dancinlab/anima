@@ -56,8 +56,11 @@ feed-forward, all six cross-edge cuts, and all seven node-lesion controls read `
 intervention and address-permutation effects, normal -> lesion -> address shuffle -> exact normal
 snapshot recovery, and malformed/truncated/schema/config/checksum rejection all pass. The verdict
 is `SUPPORTED-CAUSAL-CORE`; local Python QA passed `94 tests + 3 subtests` with only the unavailable
-CUDA/CuPy test skipped. No model, data, Vast.ai rental, HF repository, participant, or live chat was
-changed. R1 delayed-task state causality is next; production remains
+CUDA/CuPy test skipped. An isolated wheel and the locally deployed canonical `anima-py` package
+reproduced the same result JSON. The unchanged broker remained LaunchAgent-healthy and passed public
+HTTPS `200` plus WebSocket `hello`; it correctly remains `anima_alive=false`. No model, data,
+Vast.ai rental, HF repository, participant, or live chat was changed. R1 delayed-task state
+causality is next; production remains
 `BLOCKED-R0-NOT-A-MOUTH` until meaningful conversation and mouth-content causality are proven.
 
 ## Current experiment — meaningful-conversation R0

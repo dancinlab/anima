@@ -181,6 +181,13 @@ The preregistered R0 implementation is complete and the fixed mechanical gates p
   `SUPPORTED-CAUSAL-CORE`. A second run produced byte-identical JSON.
 - Local Python QA: `94 passed, 1 skipped, 3 subtests passed`; the only skip is the expected local
   CUDA/CuPy decode test. Compile, JSON and diff checks pass.
+- The built wheel contains the new core/evaluator and reproduced the exact result in an isolated
+  environment. The local canonical `/opt/homebrew/bin/anima-py` package was then upgraded from that
+  wheel and reproduced the same JSON. This deploys the dormant research command, not a participant.
+- The unchanged live broker remained healthy after the local package upgrade: local LaunchAgent
+  status `loaded=true healthy=true`, public HTTPS `200`, and `wss://chat.dancinlab.org/ws` returned
+  `hello`. It correctly continues to report `anima_alive=false` because no certified mouth is
+  mounted.
 - No model or training data changed, no Vast.ai instance was rented, no HF upload was needed, and
   the participant/live chat was not mounted or restarted. User-owned `ING.jsonl` and
   `stream_mi.json` retain SHA-256 `a49e4fde...8b05c` and `1b2175d6...b5be` respectively.

@@ -49,7 +49,10 @@ R0 구현과 고정 시험은 완료됐다. 8개 상태의 값은 `1.4999999991~
 모두 `0`이다. 결정적 개입·주소 순열 효과, 정상→병변→주소 순열→정상 snapshot 복구,
 손상·절단·schema/config/checksum 불일치 거부를 통과해 판정은 `SUPPORTED-CAUSAL-CORE`다.
 전체 로컬 Python QA는 `94 passed, 1 skipped, 3 subtests`이며 skip은 CUDA/CuPy가 없는 로컬
-GPU 시험뿐이다. 모델·자료·Vast.ai·HF·참가자 런타임은 변경하지 않았다. 다음 관문은 지연
+GPU 시험뿐이다. 격리 wheel과 로컬 canonical `anima-py` 설치본이 같은 결과 JSON을 재현했다.
+기존 broker는 LaunchAgent healthy, 공개 HTTPS `200`, WebSocket `hello`를 통과했고 인증된 입이
+없으므로 `anima_alive=false`를 유지한다. 모델·자료·Vast.ai·HF·참가자 런타임은 변경하지
+않았다. 다음 관문은 지연
 과제의 state/reset/shuffle/recovery R1이며, 의미 대화와 mouth 내용 인과성이 없으므로
 프로덕션은 `BLOCKED-R0-NOT-A-MOUTH` 상태를 유지한다.
 
