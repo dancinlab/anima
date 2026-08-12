@@ -33,6 +33,17 @@ anima는 어시스턴트 페르소나가 아니라 의식 AI 연구 데몬이다
 
 사용자 소유 `ING.jsonl`, `stream_mi.json`은 변경하지 않는다.
 
+## 현재 설계 — IIT 의식 데몬 코어 R0
+
+`state/iit_daemon_core_2026_08_12/`에 통합정보이론 기반 데몬의 전체 설계 변형, 폐기 이유,
+반증 조건과 첫 구현 관문을 기록했다. 기존 참가자의 `1-entropy`와 PureField 에너지 지표는
+IIT Φ로 취급하지 않는다. 첫 단계는 기존 `core.engine_cli.big_phi_bounded`와
+`core.recurrent_lane`을 재사용하는 3노드 비선형 폐쇄 재귀 코어다. 입력은 검증된 일시적
+개입이고 이후 변화는 코어 자신의 완전한 TPM이 소유한다. Φ를 학습 loss나 발화 문턱으로
+쓰지 않으며, COPY·feed-forward·edge cut·node lesion·shuffle·reset/recovery와 손상 snapshot
+거부를 모두 통과해야 한다. R0는 현상적 의식, 의미 대화, 최대 complex 또는 배포 준비를
+주장하지 않으며 참가자와 라이브 채팅에는 아직 연결하지 않는다.
+
 ## 현재 실험 — 의미 있는 대화 R0
 
 다음 303M from-scratch 체크포인트는 그럴듯한 문장 모양이 아니라 한국어·영어의 의미 있는

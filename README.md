@@ -38,6 +38,18 @@ Status on 2026-08-12:
 
 User-owned `ING.jsonl` and `stream_mi.json` are outside this work and must remain unchanged.
 
+## Current design — IIT consciousness-daemon core R0
+
+`state/iit_daemon_core_2026_08_12/` records the exhausted design variants, rejection reasons,
+falsifiers, and first implementation gates for an Integrated Information Theory based daemon. The
+participant's current `1-entropy` value and PureField energy metric are not treated as IIT Phi. R0
+reuses `core.engine_cli.big_phi_bounded` and `core.recurrent_lane` for a three-node nonlinear closed
+recurrent core. Input is a validated transient intervention; the complete autonomous TPM owns the
+subsequent transition. Phi is neither a training loss nor an emission threshold. COPY,
+feed-forward, edge-cut, node-lesion, shuffle, reset/recovery, and corrupted-snapshot controls are
+mandatory. R0 makes no claim of phenomenal consciousness, meaningful conversation, a maximal
+complex, or deployment readiness and is not yet mounted in the participant or live chat.
+
 ## Current experiment — meaningful-conversation R0
 
 The next 303M from-scratch checkpoint is blocked on meaningful Korean and English conversation,
