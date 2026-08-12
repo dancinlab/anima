@@ -75,5 +75,10 @@ this result falsifies the registered treatment, not 303M capacity in general. No
 loss-weight sweep, R1 workspace work, or production deployment was run.
 
 The failed model, exact-resume state, intermediate checkpoints, training telemetry, and lossless
-raw replies are retained in the private HF `dancinlab` model repository registered by
-`protocol.json`. `result.json` records file hashes and the immutable revision.
+raw replies are retained in the private HF revision
+`dancinlab/anima-303m-r0-response-ce-seed7-2026-08-12@955bbadb0ae4cfdb48f6ce94eaf42817b0d6144b`.
+All 17 uploaded artifacts matched their source sizes and SHA-256 values. Final local Python QA
+passed `77 tests + 3 subtests`; the one CUDA-only test skipped on the mini, while Vast CUDA parity
+had already passed. Vast.ai instance `47514987` was removed, leaving zero active rentals at an
+estimated total cost of `$1.176811`. The chat runtime was unchanged and the failed model was not
+deployed.

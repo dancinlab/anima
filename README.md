@@ -91,6 +91,11 @@ four cells, but the unchanged meaningful-conversation gate failed English `0/7`,
 structural `0/14`, and manual review `0/14`. Phrase loops, incomplete output, damaged Korean bytes,
 memory failure, and stale correction remain. No sweep or extra seed was run; R1 and deployment stay
 locked and the failed model plus raw evidence are retained privately on HF `dancinlab`.
+The immutable failed-run artifacts are at
+`dancinlab/anima-303m-r0-response-ce-seed7-2026-08-12@955bbadb0ae4cfdb48f6ce94eaf42817b0d6144b`;
+all 17 uploaded files passed source size and SHA-256 verification. Final local Python QA passed
+`77 tests + 3 subtests`, the Vast.ai RTX 4090 was removed with zero active rentals, and no chat
+runtime deployment was performed.
 
 ## Canonical entry
 

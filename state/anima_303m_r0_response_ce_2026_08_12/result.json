@@ -66,7 +66,8 @@
       "english_structural": "0/7",
       "korean_structural": "0/7",
       "all_multiturn_final": false,
-      "cross_question_duplicate_response": true
+      "cross_question_duplicate_responses": 0,
+      "duplicate_response_pass": true
     },
     "structural_details": {
       "english_utf8": "7/7",
@@ -111,8 +112,9 @@
   },
   "model": {
     "repository": "dancinlab/anima-303m-r0-response-ce-seed7-2026-08-12",
-    "revision": "PENDING_UPLOAD",
+    "revision": "955bbadb0ae4cfdb48f6ce94eaf42817b0d6144b",
     "private": true,
+    "remote_sha256_verified_artifacts": 17,
     "engine_checkpoint": {
       "bytes": 1213440020,
       "sha256": "68f556e396df31817a83be5551b0d55884b18b3cc988223c02f029bf7ef21c9a"
@@ -135,15 +137,16 @@
   "qa": {
     "local_preregistration": "28 passed, 3 subtests passed",
     "vast_pretraining": "31 passed, 3 subtests passed including CUDA decode parity",
-    "final": "PENDING",
+    "final": "77 passed, 1 skipped, 3 subtests passed; compileall, canonical CLI help, JSON parse, and actionlint passed",
     "python_only": true
   },
   "vast_ai": {
     "instance_id": 47514987,
     "hourly_usd": 0.3377777777777778,
-    "estimated_cost_usd": "PENDING_TEARDOWN",
-    "teardown": "PENDING",
-    "active_instances_after_teardown": "PENDING"
+    "duration_seconds_before_teardown": 12542.328551,
+    "estimated_cost_usd": 1.176811,
+    "teardown": "VERIFIED",
+    "active_instances_after_teardown": 0
   },
   "preservation": {
     "ING.jsonl": "PRESERVED",
