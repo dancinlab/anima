@@ -230,6 +230,17 @@ remain locked. A further structural fact is now measured: 15,114 of 24,239 valid
 cannot fit even their final complete prompt/response pair in 513 bytes. The next allowed axis is a
 separately preregistered V1 context-length micro comparison, not more 303M training.
 
+### Preregistered V1 context-length micro experiment
+
+`state/anima_303m_v1_context_micro_2026_08_12/` freezes the required V1 comparison before GPU
+execution. The pinned OASST1 census finds that complete target-pair coverage rises from
+`9,125/24,239` at 513 serialized bytes to `15,421/24,239` at 1025 and `22,139/24,239` at 2049.
+The experiment compares the same SHA-ordered 100 short documents at block 512 versus 2048 with the
+same 4,096 target bytes per step, then tests 100 preregistered long documents that only the 2048
+arm can admit. It reuses the existing ByteGPT trainer, canonical generator and conversation scorer.
+Any coverage, integrity, held-out descent, distinct/structural generation or 6/8 target-prefix gate
+failure forbids another 303M run, R4 IIT-mouth coupling and production.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current
