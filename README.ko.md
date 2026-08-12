@@ -267,6 +267,17 @@ Vast.ai/H100은 사용하지 않았고 API 기준 활성 임대는 0개다.
 변경하지 않은 broker는 LaunchAgent 실행 중이며 공개 HTTPS `200`, WebSocket `hello`를
 통과했다. 실패 mouth는 탑재하지 않았고 `anima_alive=false` 차단 상태를 유지한다.
 
+### 사전등록한 R4 D0–D6 mouth 진단
+
+`state/anima_303m_r4_mouth_diagnostics_2026_08_13/`에 산출물 다운로드·학습 전에 다음 제한된
+Python 전용 진단을 동결했다. 불변 100문서 view와 실제 실패 `.pt/.bin` 쌍으로 decoder/직렬화
+패리티(D0), gold-prefix teacher forcing(D1), 1/4/16/32/64/100문서 암기 사다리(D2),
+full/additive/assistant-turn-only 목적함수(D3), 빈 prompt·shuffle 개입(D4), 전체 고정 validation
+재생(D5), 100-step 체크포인트 시간축(D6)을 분리한다. 최대 8개 arm만 허용하며 D2-100을
+D3·D6에 재사용한다. 결과를 본 뒤 데이터·seed·step·LR·문턱·decode·체크포인트 선택을 바꿀 수
+없다. D0 통과 전에는 downstream을 해석하지 않으며, 이 진단만으로 303M·IIT 결합·participant
+탑재·프로덕션을 허용하지 않는다. 다음 변경은 별도 프로토콜이 필요하다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

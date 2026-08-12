@@ -286,6 +286,18 @@ Vast.ai/H100 instance was used; the API reports zero active rentals.
 The unchanged broker remains LaunchAgent-running and passed public HTTPS `200` plus WebSocket
 `hello`; no failed mouth was mounted and `anima_alive=false` remains the required blocked state.
 
+### Preregistered R4 D0–D6 mouth diagnostics
+
+`state/anima_303m_r4_mouth_diagnostics_2026_08_13/` freezes the next bounded Python-only diagnosis
+before artifact download or training. It uses the immutable 100-document view and actual failed
+`.pt/.bin` pair to separate: decoder/serialization parity (D0), gold-prefix teacher forcing (D1),
+the 1/4/16/32/64/100-document memorization ladder (D2), full/additive/assistant-turn-only objectives
+(D3), blank/shuffled prompt interventions (D4), deterministic all-document validation replay (D5),
+and 100-step checkpoint chronology (D6). The eight-arm maximum reuses D2-100 for D3 and D6. No
+result-dependent data, seed, step, LR, threshold, decode or checkpoint selection is allowed. D0 must
+pass before downstream interpretation, and these diagnostics cannot authorize 303M, IIT coupling,
+participant mounting or production without a separate protocol.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current
