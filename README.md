@@ -156,6 +156,17 @@ run; tiny success permits only a separately recorded single-seed screen. R1 and 
 locked. The frozen conditions and stop rules are in
 `state/anima_303m_v0_v2_micro_2026_08_12/protocol.json`.
 
+The registered run is complete and failed before 303M. The turn-complete data treatment passed:
+8,635 train and 458 validation documents were retained with zero broken roles, partial responses,
+split overlap or panel contamination. Both tiny arms exactly learned one dialogue, so the shared
+trainer/serializer/decode path is live. On 100 documents, however, V0 and V2 both scored target
+recovery `0/8` and structural generation `0/8`; outputs collapsed into byte/phrase loops. V2
+held-out CE was `2.54702` versus V0 `2.48189`, also failing the registered non-inferiority bar.
+Therefore the result is `FAIL-V0-V2-MICRO`: no Vast rental or 303M run occurred, and R1/production
+remain locked. A further structural fact is now measured: 15,114 of 24,239 valid assistant targets
+cannot fit even their final complete prompt/response pair in 513 bytes. The next allowed axis is a
+separately preregistered V1 context-length micro comparison, not more 303M training.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

@@ -1,0 +1,123 @@
+{
+  "schema": "anima-303m-v0-v2-micro-result/v1",
+  "date": "2026-08-12",
+  "status": "COMPLETED-FAIL-V0-V2-MICRO",
+  "protocol_status": "EXECUTED-AS-PREREGISTERED",
+  "protocol_changed_after_result": false,
+  "protocol_sha256": "c39469c9f230008771951f5760ced8c7dbd5f1670769650ac81799a5837f4572",
+  "source_commit": "2649347c1",
+  "data": {
+    "verdict": "PASS",
+    "source": "OpenAssistant/oasst1@fdf72ae0827c1cda404aff25b6603abec9e3399b",
+    "eligible_assistant_rows": 24258,
+    "valid_alternating_ancestry": 24239,
+    "invalid_or_incomplete_ancestry": 19,
+    "target_pair_oversize": 15114,
+    "fitting_assistant_turns": 9125,
+    "serialized_assistant_turns": 9125,
+    "fitting_turn_coverage": 1.0,
+    "all_valid_turn_fit_fraction": 0.37646,
+    "audit": {
+      "serialized_documents": 9125,
+      "canonical_alternation_invalid": 0,
+      "partial_role_or_response": 0,
+      "largest_document_bytes": 513,
+      "train_validation_exact_overlap": 0,
+      "panel_exact_contamination": 0
+    },
+    "cells": {
+      "train": {
+        "documents": 8635,
+        "bytes": 2642861,
+        "sha256": "8513908f9ec4b1803b1b364a84383c0c50f7c61baa69e76de068faad75ad3c55"
+      },
+      "validation": {
+        "documents": 458,
+        "bytes": 144828,
+        "sha256": "5d564119a620f0de86b937ca4c8bbb292af75326ba71a3a2e0ebbc2bafadd500"
+      }
+    },
+    "hugging_face": {
+      "repository": "dancinlab/anima-303m-v0-v2-turns-2026-08-12",
+      "revision": "17a1e4676d684a99a54208549445952302f389fa",
+      "private": true,
+      "files": 6,
+      "critical_data_sha256_verified": 2
+    }
+  },
+  "tiny": {
+    "provider": "local Apple MPS",
+    "parameters": 891648,
+    "seed": 7,
+    "single_document": {
+      "V0": {"loss_initial": 5.5493, "loss_final": 0.06524, "exact_response": true},
+      "V2": {"loss_initial": 5.5493, "loss_final": 0.07932, "exact_response": true},
+      "verdict": "PASS"
+    },
+    "hundred_document": {
+      "V0": {
+        "loss_initial": 5.5569,
+        "loss_final": 2.30801,
+        "heldout_validation_ce": 2.48189,
+        "heldout_descent": true,
+        "nonempty": "8/8",
+        "distinct": "8/8",
+        "target_prefix_recovery": "0/8",
+        "structural": "0/8",
+        "verdict": "FAIL"
+      },
+      "V2": {
+        "loss_initial": 5.5569,
+        "loss_final": 2.38471,
+        "heldout_validation_ce": 2.54702,
+        "heldout_descent": true,
+        "answer_ce_active_steps": 600,
+        "answer_ce_positions": 1031998,
+        "nonempty": "8/8",
+        "distinct": "8/8",
+        "target_prefix_recovery": "0/8",
+        "structural": "0/8",
+        "verdict": "FAIL"
+      },
+      "v2_minus_v0_heldout_ce": 0.06513,
+      "v2_not_worse_bar": 0.02,
+      "representative_failures": [
+        "favorite-color prompt -> Whe s s a are are are are...",
+        "US-president prompt -> As an and an ande ande...",
+        "code-generation prompt -> I an an an an an..."
+      ],
+      "verdict": "FAIL-V0-V2-MICRO"
+    }
+  },
+  "qa": {
+    "focused_python_tests": 35,
+    "python_compile": "PASS",
+    "git_diff_check": "PASS",
+    "canonical_bin_decode": "PASS",
+    "hf_model_artifacts_verified": 20,
+    "hf_model_bytes_verified": 58545350
+  },
+  "hugging_face_model_evidence": {
+    "repository": "dancinlab/anima-303m-v0-v2-micro-2026-08-12",
+    "revision": "8df2d10118b8eb2b750db91b226f16defe3d2141",
+    "private": true,
+    "files": 26,
+    "artifacts_verified": 20,
+    "bytes_verified": 58545350
+  },
+  "failure_policy_applied": {
+    "vast_ai_rented": false,
+    "active_vast_instances": 0,
+    "303m_started": false,
+    "additional_seed_or_step_extension": false,
+    "threshold_or_decode_tuning": false,
+    "r1_started": false,
+    "runtime_deployed": false
+  },
+  "verdict": "FAIL-V0-V2-MICRO",
+  "remaining_root_issue": "The canonical engine can memorize one complete exchange, but 100 heterogeneous human dialogues produce low-level byte/phrase attractors instead of meaningful prompt-conditioned responses. Response CE does not repair this and slightly worsens held-out CE. In addition, the fixed 512-byte window still excludes 62.35% of valid assistant targets because the final prompt-response pair itself is too long.",
+  "next_allowed_step": "Preregister one single-variable V1 context-length micro comparison against this frozen V0/V2 failure; do not run 303M, R1, or production yet.",
+  "r1": "LOCKED",
+  "production": "LOCKED",
+  "preserved": ["ING.jsonl", "stream_mi.json"]
+}

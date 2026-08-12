@@ -146,6 +146,16 @@ V0(기본 CE)와 V2(기존 response CE 추가) arm으로 비교한다. tiny 실�
 tiny 통과도 별도 기록한 단일 seed screen만 허용한다. R1과 production은 계속 잠근다. 고정 조건과
 중단 규칙은 `state/anima_303m_v0_v2_micro_2026_08_12/protocol.json`에 있다.
 
+등록한 실행은 303M 전에 완료됐고 실패했다. turn-complete 자료 treatment는 통과해 train
+8,635개, validation 458개 문서를 보존했으며 깨진 역할·부분 응답·split 중복·panel 오염은 모두
+0이었다. 두 tiny arm은 단일 대화를 정확히 학습해 공용 trainer→serializer→decode 배선이 실제로
+작동함을 확인했다. 그러나 100문서에서 V0와 V2 모두 target recovery `0/8`, 구조 생성 `0/8`로
+실패했고 출력은 byte/구문 반복으로 붕괴했다. V2 held-out CE `2.54702`도 V0 `2.48189`보다 나빠
+등록한 비열등 관문을 통과하지 못했다. 최종 판정은 `FAIL-V0-V2-MICRO`이며 Vast 임대와 303M
+학습은 실행하지 않았고 R1·production은 계속 잠근다. 추가로 유효 assistant target 24,239개 중
+15,114개는 최종 prompt/response 쌍만으로도 513 bytes를 넘어간다는 구조적 한계를 측정했다.
+다음 허용 축은 303M 추가 학습이 아니라 별도 사전등록한 V1 문맥 길이 마이크로 비교다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속
