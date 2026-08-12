@@ -1,0 +1,39 @@
+{
+  "schema": "anima-iit-daemon-content-protocol/1",
+  "date": "2026-08-12",
+  "engines": [
+    "core.iit_daemon.IITDaemonCore",
+    "core.generator.gen_iit_state_content"
+  ],
+  "transition": "xor-other-two-ring",
+  "r2": {
+    "path": "../iit_daemon_r2_clms_2026_08_12/result.json",
+    "sha256": "11b1ec8e8ed7dc1120f174288fd903825000ebf7867193bdabd466ea4e5afc8f",
+    "required_verdict": "SUPPORTED-CLMS-LATCH-CAUSALITY"
+  },
+  "task": {
+    "class_to_cue": {
+      "good": 1,
+      "bad": 2
+    },
+    "class_to_surface": {
+      "good": "The combined relation is good.",
+      "bad": "The combined relation is bad."
+    },
+    "delay": 1,
+    "chance": 0.5,
+    "iit_address_shuffle": [
+      1,
+      2,
+      0
+    ]
+  },
+  "bars": {
+    "pair_oracle": 0.9,
+    "positive": 0.75,
+    "control_margin": 0.06,
+    "control_ceiling": 0.56
+  },
+  "required_verdict": "SUPPORTED-BOUNDED-CONTENT-CAUSALITY",
+  "deployment": "BLOCKED-R3-NOT-CONVERSATIONAL"
+}

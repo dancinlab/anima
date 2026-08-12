@@ -88,6 +88,15 @@ the actual-checkpoint result byte-for-byte. The unchanged broker remains healthy
 HTTPS/WebSocket pass with `anima_alive=false`. R3 mouth-content causality is now open as an
 engineering gate, but participant and production remain `BLOCKED-R2-NOT-A-MOUTH`.
 
+R3 bounded utterance-content causality is preregistered in
+`state/iit_daemon_r3_content_2026_08_12/`. The final IIT state alone may select one of two exact
+semantic surfaces through the existing canonical generator boundary; prompt, store, addresses,
+prediction and gold cannot cross that boundary. Pair oracle runs first, followed by normal, state
+reset, IIT address shuffle, the three unchanged R2 controls, and exact snapshot recovery. A pass
+would establish only bounded state-to-output-byte causality and will keep participant and
+production `BLOCKED-R3-NOT-CONVERSATIONAL` until an independently trained meaningful mouth passes
+its conversation gate.
+
 ## Current experiment — meaningful-conversation R0
 
 The next 303M from-scratch checkpoint is blocked on meaningful Korean and English conversation,

@@ -80,6 +80,14 @@ R2 CLMS 두 주소 latch는 구현 전에 `state/iit_daemon_r2_clms_2026_08_12/`
 mouth 내용 인과성 엔지니어링 관문은 열렸지만 participant와 프로덕션은 계속
 `BLOCKED-R2-NOT-A-MOUTH`다.
 
+R3 제한 발화 내용 인과성은 `state/iit_daemon_r3_content_2026_08_12/`에 사전등록했다. 최종
+IIT 상태만 기존 canonical generator 경계로 넘어가 두 개의 정확한 의미 표면문 중 하나를
+선택하며, prompt·store·주소·예측·gold는 이 경계를 넘을 수 없다. pair oracle을 먼저 실행한
+뒤 정상, state reset, IIT 주소 shuffle, 변경하지 않은 R2 세 대조군, 정확한 snapshot 복구
+순서로 시험한다. 통과해도 제한된 state→출력 byte 인과성만 지지하며, 별도로 학습한 의미
+있는 mouth가 대화 관문을 통과하기 전까지 participant와 프로덕션은
+`BLOCKED-R3-NOT-CONVERSATIONAL`을 유지한다.
+
 ## 현재 실험 — 의미 있는 대화 R0
 
 다음 303M from-scratch 체크포인트는 그럴듯한 문장 모양이 아니라 한국어·영어의 의미 있는
