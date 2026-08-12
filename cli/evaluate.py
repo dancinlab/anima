@@ -1691,6 +1691,8 @@ def evaluate_usage():
     print("      R1 normal → reset-every-turn → cue-address-shuffle → snapshot-recovery gate.")
     print("  <ckpt> --iit-daemon-clms <protocol.json> [--out <result.json>]: run the protocol-pinned")
     print("      R2 pair-oracle → normal → clue-A/B removal → CLMS address-shuffle → recovery latch gate.")
+    print("  --iit-daemon-content <protocol.json> [--out <result.json>]: run the protocol-pinned")
+    print("      R3 pair-oracle → bounded content → reset/IIT+CLMS shuffle → recovery gate.")
     print("  --store-component-swap <groups> --store-swap-from <donor.clm>: EVAL-ONLY causal")
     print("      surgery (H_9724) — graft CLMS bridge components from a donor ckpt into the host")
     print("      before scoring, to localize the seed-fragility source (ORACLE 0.99 vs 0.50).")
@@ -4702,6 +4704,262 @@ def iit_daemon_clms_run(argv):
         _store_causality_write(out_path, result)
         print("  wrote %s" % out_path)
     return 0 if verdict == "SUPPORTED-CLMS-LATCH-CAUSALITY" else 1
+
+
+def iit_daemon_content_run(argv):
+    """Run preregistered R3 final-state -> bounded utterance-content battery."""
+    import hashlib as _hashlib
+    import tempfile as _tempfile
+    import iit_daemon as ID
+
+    protocol_path = evaluate_strval(argv, "--iit-daemon-content", "")
+    out_path = evaluate_strval(argv, "--out", "")
+    if not protocol_path:
+        print("ERROR: R3 needs --iit-daemon-content <protocol.json>", file=sys.stderr)
+        return 2
+    if os.path.getsize(protocol_path) <= 0 or os.path.getsize(protocol_path) > 65536:
+        raise ValueError("IIT daemon content protocol size is invalid")
+    with open(protocol_path, "r", encoding="utf-8") as handle:
+        protocol = json.load(handle)
+    if protocol.get("schema") != ID.CONTENT_PROTOCOL_SCHEMA:
+        raise ValueError("unsupported IIT daemon content protocol schema")
+    if set(protocol) != {"schema", "date", "engines", "transition", "r2", "task",
+                         "bars", "required_verdict", "deployment"}:
+        raise ValueError("IIT daemon content protocol fields mismatch")
+    if protocol["engines"] != ["core.iit_daemon.IITDaemonCore",
+                                "core.generator.gen_iit_state_content"]:
+        raise ValueError("IIT daemon content engines mismatch")
+    if protocol["transition"] != "xor-other-two-ring":
+        raise ValueError("IIT daemon content transition mismatch")
+    if protocol["required_verdict"] != "SUPPORTED-BOUNDED-CONTENT-CAUSALITY":
+        raise ValueError("IIT daemon content verdict mismatch")
+    if protocol["deployment"] != "BLOCKED-R3-NOT-CONVERSATIONAL":
+        raise ValueError("IIT daemon content deployment mismatch")
+
+    def _digest(path):
+        sha = _hashlib.sha256()
+        with open(path, "rb") as handle:
+            for block in iter(lambda: handle.read(1 << 20), b""):
+                sha.update(block)
+        return sha.hexdigest()
+
+    r2_spec = protocol["r2"]
+    if not isinstance(r2_spec, dict) or set(r2_spec) != {
+            "path", "sha256", "required_verdict"}:
+        raise ValueError("IIT daemon content R2 fields mismatch")
+    protocol_dir = os.path.dirname(os.path.abspath(protocol_path))
+    r2_path = os.path.normpath(os.path.join(protocol_dir, r2_spec["path"]))
+    if not os.path.isfile(r2_path) or _digest(r2_path) != r2_spec["sha256"]:
+        raise ValueError("IIT daemon content R2 artifact mismatch")
+    with open(r2_path, "r", encoding="utf-8") as handle:
+        r2 = json.load(handle)
+    if (r2.get("schema") != "anima-iit-daemon-clms-result/1" or
+            r2_spec["required_verdict"] != "SUPPORTED-CLMS-LATCH-CAUSALITY" or
+            r2.get("verdict") != r2_spec["required_verdict"]):
+        raise ValueError("IIT daemon content R2 verdict mismatch")
+
+    task = protocol["task"]
+    if not isinstance(task, dict) or set(task) != {
+            "class_to_cue", "class_to_surface", "delay", "chance",
+            "iit_address_shuffle"}:
+        raise ValueError("IIT daemon content task fields mismatch")
+    class_to_cue = task["class_to_cue"]
+    surfaces = task["class_to_surface"]
+    state_to_class = ID.clms_latch_codebook(class_to_cue)
+    # Exercise generator validation before any trial and keep wording in protocol data.
+    for state in state_to_class:
+        gen_runtime.gen_iit_state_content(state, state_to_class, surfaces)
+    delay = task["delay"]
+    if isinstance(delay, bool) or not isinstance(delay, int) or delay < 1:
+        raise ValueError("IIT daemon content delay must be a positive integer")
+    chance = float(task["chance"])
+    if not math.isfinite(chance) or abs(chance - 0.5) > 1.0e-12:
+        raise ValueError("IIT daemon content chance mismatch")
+    iit_shuffle = tuple(task["iit_address_shuffle"])
+    # The core validates bijection and range without exposing a second permutation helper.
+    ID.clms_latch_trial("good", "good", class_to_cue, delay=delay,
+                        permutation=iit_shuffle)
+    if class_to_cue != r2.get("task", {}).get("class_to_cue") or \
+            delay != r2.get("task", {}).get("delay"):
+        raise ValueError("IIT daemon content task differs from pinned R2")
+
+    bars = protocol["bars"]
+    if not isinstance(bars, dict) or set(bars) != {
+            "pair_oracle", "positive", "control_margin", "control_ceiling"}:
+        raise ValueError("IIT daemon content bar fields mismatch")
+    oracle_bar = float(bars["pair_oracle"])
+    positive_bar = float(bars["positive"])
+    margin = float(bars["control_margin"])
+    if any(not math.isfinite(value) or value < 0.0 or value > 1.0
+           for value in (oracle_bar, positive_bar, margin)):
+        raise ValueError("IIT daemon content bars must be finite in [0,1]")
+    ceiling = chance + margin
+    if ceiling > 1.0 or abs(float(bars["control_ceiling"]) - ceiling) > 1.0e-12:
+        raise ValueError("IIT daemon content control ceiling mismatch")
+
+    r2_arms = r2.get("latch_arms")
+    required_r2_arms = {"oracle_pair", "normal", "drop_a", "drop_b",
+                        "address_shuffled", "recovery"}
+    if not isinstance(r2_arms, dict) or set(r2_arms) != required_r2_arms:
+        raise ValueError("IIT daemon content R2 arms mismatch")
+    panel_n = int(r2.get("audit", {}).get("n", 0))
+    if panel_n <= 0:
+        raise ValueError("IIT daemon content R2 panel is empty")
+    for name, arm in r2_arms.items():
+        trials = arm.get("trials") if isinstance(arm, dict) else None
+        if not isinstance(trials, list) or len(trials) != panel_n:
+            raise ValueError("IIT daemon content R2 arm is incomplete: " + name)
+        if sorted(item.get("index") for item in trials) != list(range(panel_n)):
+            raise ValueError("IIT daemon content R2 trial indexes mismatch: " + name)
+        if any(item.get("prediction") not in class_to_cue or
+               item.get("gold") not in class_to_cue for item in trials):
+            raise ValueError("IIT daemon content R2 trial class mismatch: " + name)
+
+    def _content_arm(source_trials, *, permutation=(0, 1, 2), reset=False):
+        trials = []
+        for item in source_trials:
+            latch = ID.clms_latch_trial(
+                item["prediction"], item["gold"], class_to_cue, delay=delay,
+                permutation=permutation, reset_every_turn=reset)
+            utterance = gen_runtime.gen_iit_state_content(
+                latch["final_state"], state_to_class, surfaces)
+            expected = surfaces[item["gold"]]
+            trials.append({
+                "index": item["index"], "gold": item["gold"],
+                "final_state": latch["final_state"], "state_class": utterance["class"],
+                "emitted": utterance["emitted"], "utterance": utterance["text"],
+                "expected_utterance": expected, "correct": utterance["text"] == expected,
+                "tick": latch["tick"], "audit_head": latch["audit_head"],
+            })
+        return {"accuracy": sum(row["correct"] for row in trials) / float(len(trials)),
+                "trials": trials}
+
+    print("[iit-daemon R3 · bounded utterance-content causality]")
+    oracle = _content_arm(r2_arms["oracle_pair"]["trials"])
+    if oracle["accuracy"] < oracle_bar:
+        result = {
+            "schema": "anima-iit-daemon-content-result/1", "date": protocol["date"],
+            "protocol": os.path.basename(protocol_path),
+            "protocol_sha256": _digest(protocol_path), "r2_sha256": r2_spec["sha256"],
+            "content_arms": {"oracle_pair": oracle}, "verdict": "INVALID-INSTRUMENT",
+            "deployment": protocol["deployment"], "next_gate": "R3-BLOCKED",
+        }
+        if out_path:
+            _store_causality_write(out_path, result)
+        print("  verdict: INVALID-INSTRUMENT — pair oracle < %.2f" % oracle_bar)
+        return 1
+
+    normal = _content_arm(r2_arms["normal"]["trials"])
+    reset = _content_arm(r2_arms["normal"]["trials"], reset=True)
+    shuffled = _content_arm(
+        r2_arms["normal"]["trials"], permutation=iit_shuffle)
+    drop_a = _content_arm(r2_arms["drop_a"]["trials"])
+    drop_b = _content_arm(r2_arms["drop_b"]["trials"])
+    clms_shuffled = _content_arm(r2_arms["address_shuffled"]["trials"])
+
+    normal_by_index = {row["index"]: row for row in normal["trials"]}
+    recovery_trials = []
+    recovery_exact = []
+    disturbance_changed = []
+    with _tempfile.TemporaryDirectory(prefix="anima-iit-daemon-r3-") as directory:
+        for item in r2_arms["recovery"]["trials"]:
+            source = ID.IITDaemonCore(0)
+            source.step(class_to_cue[item["prediction"]])
+            snapshot_path = os.path.join(directory, "trial-%04d.json" % item["index"])
+            source.save_snapshot(snapshot_path)
+            pristine = ID.IITDaemonCore.load_snapshot(snapshot_path).snapshot()
+            source.step(7, permutation=(2, 0, 1), lesion_mask=7)
+            disturbance_changed.append(source.snapshot() != pristine)
+            restored = ID.IITDaemonCore.load_snapshot(snapshot_path)
+            for _ in range(delay):
+                restored.step(0)
+            utterance = gen_runtime.gen_iit_state_content(
+                restored.state, state_to_class, surfaces)
+            expected = surfaces[item["gold"]]
+            reference = normal_by_index[item["index"]]
+            exact = (restored.state == reference["final_state"] and
+                     utterance["class"] == reference["state_class"] and
+                     utterance["text"] == reference["utterance"])
+            recovery_exact.append(exact)
+            recovery_trials.append({
+                "index": item["index"], "gold": item["gold"],
+                "final_state": restored.state, "state_class": utterance["class"],
+                "emitted": utterance["emitted"], "utterance": utterance["text"],
+                "expected_utterance": expected, "correct": utterance["text"] == expected,
+                "matches_normal": exact, "tick": restored.tick,
+                "audit_head": restored.audit_head,
+            })
+    recovery = {
+        "accuracy": sum(row["correct"] for row in recovery_trials) /
+                    float(len(recovery_trials)),
+        "trials": recovery_trials,
+    }
+    arms = {
+        "oracle_pair": oracle, "normal": normal, "state_reset": reset,
+        "iit_address_shuffled": shuffled, "drop_a": drop_a, "drop_b": drop_b,
+        "clms_address_shuffled": clms_shuffled, "recovery": recovery,
+    }
+    accuracies = {name: arm["accuracy"] for name, arm in arms.items()}
+    source_accuracies = {
+        name: sum(bool(row["correct"]) for row in r2_arms[name]["trials"]) / float(panel_n)
+        for name in required_r2_arms
+    }
+    surfaces_bounded = (
+        len(set(surfaces.values())) == len(surfaces) and
+        all("\n" not in text and len(text.encode("utf-8")) <=
+            gen_runtime.CHAT_MAX_NEW_BYTES for text in surfaces.values())
+    )
+    checks = {
+        "artifact_integrity": True,
+        "r2_gate_passed": r2["verdict"] == r2_spec["required_verdict"],
+        "r2_accuracies_unchanged": all(
+            abs(source_accuracies[name] - float(r2["latch_accuracies"][name])) <= 1.0e-12
+            for name in required_r2_arms),
+        "balanced_panel": r2.get("audit", {}).get("gold_counts") == {"good": 64, "bad": 64},
+        "bounded_distinct_surfaces": surfaces_bounded,
+        "pair_oracle_positive": accuracies["oracle_pair"] >= oracle_bar,
+        "oracle_all_emitted": all(row["emitted"] for row in oracle["trials"]),
+        "normal_positive": accuracies["normal"] >= positive_bar,
+        "state_reset_collapses": accuracies["state_reset"] <= ceiling,
+        "state_reset_silent": all(not row["emitted"] for row in reset["trials"]),
+        "iit_address_shuffle_collapses": accuracies["iit_address_shuffled"] <= ceiling,
+        "drop_a_collapses": accuracies["drop_a"] <= ceiling,
+        "drop_b_collapses": accuracies["drop_b"] <= ceiling,
+        "clms_address_shuffle_collapses": accuracies["clms_address_shuffled"] <= ceiling,
+        "recovery_positive": accuracies["recovery"] >= positive_bar,
+        "recovery_accuracy_exact": abs(accuracies["recovery"] -
+                                       accuracies["normal"]) <= 1.0e-12,
+        "recovery_trials_exact": all(recovery_exact),
+        "disturbance_changes_snapshot": all(disturbance_changed),
+        "normal_state_only_exact": all(
+            row["utterance"] == gen_runtime.gen_iit_state_content(
+                row["final_state"], state_to_class, surfaces)["text"]
+            for row in normal["trials"]),
+    }
+    verdict = "SUPPORTED-BOUNDED-CONTENT-CAUSALITY" if all(checks.values()) else "FALSIFIED"
+    result = {
+        "schema": "anima-iit-daemon-content-result/1", "date": protocol["date"],
+        "protocol": os.path.basename(protocol_path),
+        "protocol_sha256": _digest(protocol_path), "r2_sha256": r2_spec["sha256"],
+        "claim_scope": "bounded final-IIT-state to exact semantic utterance bytes causality",
+        "non_claims": ["meaningful open conversation", "learned language mouth",
+                       "phenomenal consciousness", "maximal complex", "production readiness"],
+        "task": dict(task, state_to_class={str(k): v for k, v in state_to_class.items()}),
+        "bars": dict(bars), "source_r2_accuracies": source_accuracies,
+        "accuracies": accuracies, "content_arms": arms, "checks": checks,
+        "verdict": verdict, "deployment": protocol["deployment"],
+        "next_gate": "R4-MEANINGFUL-MOUTH" if all(checks.values()) else "R3-BLOCKED",
+    }
+    print("  oracle=%.4f normal=%.4f reset=%.4f iit-shuffle=%.4f dropA=%.4f "
+          "dropB=%.4f clms-shuffle=%.4f recovery=%.4f" %
+          (accuracies["oracle_pair"], accuracies["normal"], accuracies["state_reset"],
+           accuracies["iit_address_shuffled"], accuracies["drop_a"], accuracies["drop_b"],
+           accuracies["clms_address_shuffled"], accuracies["recovery"]))
+    print("  verdict: %s (bounded content only; not conversational)" % verdict)
+    if out_path:
+        _store_causality_write(out_path, result)
+        print("  wrote %s" % out_path)
+    return 0 if verdict == protocol["required_verdict"] else 1
 
 
 def structure_envelope_read_run(argv):
@@ -13384,6 +13642,7 @@ _KNOWN_FLAGS = frozenset((
     "--iit-daemon-core",
     "--iit-daemon-delayed",
     "--iit-daemon-clms",
+    "--iit-daemon-content",
     # H_1520 conversational-salience emit gate re-read with the PLANTED FNV-trigram key
     # geometry swapped for the REAL 303M penultimate. ONE flag, no tuning argument.
     "--salience-toggle-read",
@@ -20288,6 +20547,10 @@ def main(argv):
     # into the same bounded persistent core. Pair oracle gates every later arm.
     if "--iit-daemon-clms" in argv:
         return iit_daemon_clms_run(argv)
+    # IIT-daemon R3: exact protocol surfaces are selected from final intrinsic state.
+    # This is bounded content causality, not a learned or conversational mouth.
+    if "--iit-daemon-content" in argv:
+        return iit_daemon_content_run(argv)
     # H_9838 --hippo-transitive-selftest: core/hippo_lane.py's CA3 multi-step completion on a
     # planted premise world. Ckpt-FREE by construction (the store + completion are pure numpy
     # arithmetic), so it dispatches on flag PRESENCE like --closure-ladder. ADDITIVE and

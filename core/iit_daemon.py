@@ -20,6 +20,7 @@ CORE_SCHEMA = "anima-iit-daemon-core/1"
 MAX_SNAPSHOT_BYTES = 1 << 20
 DELAYED_PROTOCOL_SCHEMA = "anima-iit-daemon-delayed-protocol/1"
 CLMS_LATCH_PROTOCOL_SCHEMA = "anima-iit-daemon-clms-protocol/1"
+CONTENT_PROTOCOL_SCHEMA = "anima-iit-daemon-content-protocol/1"
 
 
 def _canonical_json(value):
@@ -313,7 +314,8 @@ def clms_latch_codebook(class_to_cue):
     return {state: cue_to_class[cue] for state, cue in state_to_cue.items()}
 
 
-def clms_latch_trial(prediction, gold, class_to_cue, *, delay=1):
+def clms_latch_trial(prediction, gold, class_to_cue, *, delay=1,
+                     permutation=(0, 1, 2), reset_every_turn=False):
     """Latch one CLMS class into persistent state and read a later action.
 
     ``gold`` is used only after action production to score the trial.  It never
@@ -326,12 +328,21 @@ def clms_latch_trial(prediction, gold, class_to_cue, *, delay=1):
         raise ValueError("CLMS latch gold is not registered")
     if isinstance(delay, bool) or not isinstance(delay, int) or delay < 1:
         raise ValueError("CLMS latch delay must be a positive integer")
+    p = _permutation(permutation)
+    if not isinstance(reset_every_turn, bool):
+        raise TypeError("reset_every_turn must be bool")
     cue = class_to_cue[prediction]
     core = IITDaemonCore(0)
-    encoding = core.step(cue)
-    receipts = [core.step(0) for _ in range(delay)]
+    encoding = core.step(cue, permutation=p)
+    receipts = []
+    resets = 0
+    for _ in range(delay):
+        if reset_every_turn:
+            core = IITDaemonCore(0)
+            resets += 1
+        receipts.append(core.step(0))
     action = codebook.get(core.state)
-    return {
+    result = {
         "prediction": prediction,
         "gold": gold,
         "latch_cue": cue,
@@ -346,3 +357,10 @@ def clms_latch_trial(prediction, gold, class_to_cue, *, delay=1):
         "tick": core.tick,
         "audit_head": core.audit_head,
     }
+    if p != (0, 1, 2) or reset_every_turn:
+        result.update({
+            "permutation": list(p),
+            "reset_every_turn": reset_every_turn,
+            "reset_count": resets,
+        })
+    return result

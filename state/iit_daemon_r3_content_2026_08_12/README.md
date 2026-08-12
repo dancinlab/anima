@@ -1,6 +1,6 @@
 # IIT daemon R3 — bounded utterance-content causality (2026-08-12)
 
-Status: PREREGISTERED — implementation and result generation have not started.
+Status: COMPLETE — `SUPPORTED-BOUNDED-CONTENT-CAUSALITY`.
 
 This Python-only protocol is registered after R2 returned
 `SUPPORTED-CLMS-LATCH-CAUSALITY` and before any R3 implementation or result generation. It reuses
@@ -67,3 +67,42 @@ failure returns `FALSIFIED`. Even a pass keeps participant and production blocke
 `BLOCKED-R3-NOT-CONVERSATIONAL`; the next gate is an independently trained meaningful mouth whose
 conversation panel passes before state coupling is interpreted.
 
+## Execution result
+
+Implementation and execution completed after the protocol was committed and pushed as
+`4672a2ce7`. No registered source, surface, mapping, intervention, order or threshold changed.
+
+- `core.generator.gen_iit_state_content` is the single bounded content boundary. Its arguments are
+  final state, the registered state codebook and registered surfaces; it has no prompt,
+  prediction, gold or store argument. Unregistered states fail silent rather than inventing a
+  class. The runtime rejects incomplete, non-bijective or duplicate surface contracts.
+- The existing `IITDaemonCore` CLMS latch accepts optional reset and node-address permutation
+  interventions while its default R2 call and result schema remain byte-identical.
+- `anima-py evaluate --iit-daemon-content` checksum-verifies the complete R2 artifact, validates
+  its 128-row arms, runs pair oracle first, and only after it passes executes the registered
+  positive, intervention, data-control and recovery arms.
+- Exact utterance accuracy is pair oracle `1.000000`, normal `0.953125`, state reset `0.000000`,
+  IIT intervention-address shuffle `0.0390625`, clue-A removal `0.500000`, clue-B removal
+  `0.4609375`, CLMS entity-address shuffle `0.468750`, and recovery `0.953125`.
+- Both positive arms exceed `0.75`; all five controls are below the frozen `0.56` ceiling. Every
+  reset trial is silent, every recovered state/class/utterance matches normal byte-for-byte, and
+  all disturbances change the live snapshot. The pinned R2 trial accuracies remain unchanged.
+- Focused IIT/content/conversation/store regression passed `75/75`. Repository Python QA passed
+  `127 passed, 1 skipped, 3 subtests`; the skip is the expected unavailable local CUDA/CuPy path.
+  Compile, JSON and diff checks pass.
+- A clean wheel installed into an isolated environment produced `result.json` twice byte-for-byte
+  with SHA-256 `549cb14d6fd3f0a4dd8d886dfe6cdf5d16c0a1b1e69429667a4f648f18608ae7`.
+  The same wheel reran the actual 171MB canonical R2 checkpoint and reproduced the pinned R2
+  result byte-for-byte.
+- The verified wheel was installed as the local canonical `anima-py`; its installed CLI reproduced
+  the same R3 result byte-for-byte. The participant is intentionally not mounted and the broker was
+  not restarted. Its LaunchAgent remains running, public HTTPS returns `200`, and public WebSocket
+  returns `hello` with the honest blocked status `anima_alive=false`.
+- No training, Vast.ai rental, HF write or model/data mutation occurred. `ING.jsonl` and
+  `stream_mi.json` remain untouched.
+
+Verdict: `SUPPORTED-BOUNDED-CONTENT-CAUSALITY`. This shows that the bounded final intrinsic state
+causally selects exact task-semantic output bytes under the registered interventions. The two
+surfaces are not a learned mouth and do not establish meaningful open conversation. Participant
+mounting and production remain `BLOCKED-R3-NOT-CONVERSATIONAL`; R4 must train and independently
+validate a meaningful mouth before coupling it to this state boundary.

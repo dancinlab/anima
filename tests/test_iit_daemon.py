@@ -12,6 +12,7 @@ if CORE not in sys.path:
     sys.path.insert(0, CORE)
 
 import iit_daemon as ID
+import generator as GEN
 import recurrent_lane as RL
 from cli import evaluate
 
@@ -179,6 +180,27 @@ def test_clms_latch_uses_only_registered_prediction_as_bounded_cue():
     assert good["mirrors_prediction"] and bad["mirrors_prediction"]
 
 
+def test_iit_content_generator_reads_only_registered_final_state():
+    codebook = {6: "good", 5: "bad"}
+    surfaces = {"good": "The combined relation is good.",
+                "bad": "The combined relation is bad."}
+    assert GEN.gen_iit_state_content(6, codebook, surfaces) == {
+        "state": 6, "class": "good", "text": surfaces["good"], "emitted": True}
+    assert GEN.gen_iit_state_content(0, codebook, surfaces) == {
+        "state": 0, "class": None, "text": "", "emitted": False}
+
+
+@pytest.mark.parametrize("codebook,surfaces", [
+    ({6: "good", 5: "good"}, {"good": "one"}),
+    ({6: "good"}, {"good": "same", "bad": "same"}),
+    ({6: "good", 5: "bad"}, {"good": "same", "bad": "same"}),
+    ({6: "good"}, {"bad": "other"}),
+])
+def test_iit_content_generator_rejects_non_bijective_contract(codebook, surfaces):
+    with pytest.raises(ValueError):
+        GEN.gen_iit_state_content(6, codebook, surfaces)
+
+
 @pytest.mark.parametrize("mapping", [
     {}, {"good": 1}, {"good": 1, "bad": 1},
     {"good": 0, "bad": 2}, {"good": 3, "bad": 2},
@@ -209,6 +231,77 @@ def _clms_protocol(tmp_path):
     protocol_path = tmp_path / "protocol.json"
     protocol_path.write_text(json.dumps(protocol), encoding="utf-8")
     return checkpoint, protocol_path
+
+
+def _content_protocol(tmp_path, r2_document=None):
+    source = os.path.join(
+        ROOT, "state", "iit_daemon_r3_content_2026_08_12", "protocol.json")
+    with open(source, encoding="utf-8") as handle:
+        protocol = json.load(handle)
+    if r2_document is None:
+        r2_source = os.path.join(
+            ROOT, "state", "iit_daemon_r2_clms_2026_08_12", "result.json")
+        protocol["r2"]["path"] = r2_source
+    else:
+        r2_source = tmp_path / "r2.json"
+        r2_source.write_text(json.dumps(r2_document), encoding="utf-8")
+        protocol["r2"]["path"] = str(r2_source)
+        protocol["r2"]["sha256"] = hashlib.sha256(r2_source.read_bytes()).hexdigest()
+    protocol_path = tmp_path / "protocol-r3.json"
+    protocol_path.write_text(json.dumps(protocol), encoding="utf-8")
+    return protocol_path
+
+
+def test_content_evaluator_runs_registered_order_and_controls(tmp_path):
+    protocol_path = _content_protocol(tmp_path)
+    out_path = tmp_path / "result-r3.json"
+    rc = evaluate.iit_daemon_content_run([
+        "--iit-daemon-content", str(protocol_path), "--out", str(out_path)])
+    result = json.loads(out_path.read_text(encoding="utf-8"))
+    assert rc == 0
+    assert result["verdict"] == "SUPPORTED-BOUNDED-CONTENT-CAUSALITY"
+    assert result["accuracies"] == {
+        "oracle_pair": 1.0, "normal": 0.953125, "state_reset": 0.0,
+        "iit_address_shuffled": 0.0390625, "drop_a": 0.5,
+        "drop_b": 0.4609375, "clms_address_shuffled": 0.46875,
+        "recovery": 0.953125,
+    }
+    assert all(result["checks"].values())
+    assert all(not row["emitted"]
+               for row in result["content_arms"]["state_reset"]["trials"])
+    assert all(row["matches_normal"]
+               for row in result["content_arms"]["recovery"]["trials"])
+
+
+def test_content_evaluator_pair_oracle_failure_stops_later_arms(tmp_path):
+    r2_path = os.path.join(
+        ROOT, "state", "iit_daemon_r2_clms_2026_08_12", "result.json")
+    with open(r2_path, encoding="utf-8") as handle:
+        r2 = json.load(handle)
+    oracle = r2["latch_arms"]["oracle_pair"]
+    for index, row in enumerate(oracle["trials"]):
+        if index % 2:
+            row["prediction"] = "bad" if row["gold"] == "good" else "good"
+    oracle["accuracy"] = 0.5
+    r2["latch_accuracies"]["oracle_pair"] = 0.5
+    protocol_path = _content_protocol(tmp_path, r2)
+    out_path = tmp_path / "invalid-r3.json"
+    rc = evaluate.iit_daemon_content_run([
+        "--iit-daemon-content", str(protocol_path), "--out", str(out_path)])
+    result = json.loads(out_path.read_text(encoding="utf-8"))
+    assert rc == 1
+    assert result["verdict"] == "INVALID-INSTRUMENT"
+    assert set(result["content_arms"]) == {"oracle_pair"}
+
+
+def test_content_evaluator_rejects_r2_digest_mismatch(tmp_path):
+    protocol_path = _content_protocol(tmp_path)
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    protocol["r2"]["sha256"] = "0" * 64
+    protocol_path.write_text(json.dumps(protocol), encoding="utf-8")
+    with pytest.raises(ValueError, match="R2 artifact mismatch"):
+        evaluate.iit_daemon_content_run([
+            "--iit-daemon-content", str(protocol_path)])
 
 
 def _fake_clms_arm(argv, _return_result=False, _return_trials=False):

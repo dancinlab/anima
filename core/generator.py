@@ -228,6 +228,44 @@ def gen_chat_format():
     }
 
 
+def gen_iit_state_content(state, state_to_class, class_to_surface):
+    """Render one bounded semantic surface from final IIT state only.
+
+    This is the canonical R3 state/content boundary, not a language model.  The
+    caller cannot provide a prompt, prediction or gold label.  An unregistered
+    state stays silent instead of fabricating a class.  Surface choices remain
+    protocol data so this runtime contains no experiment-specific wording.
+    """
+    if isinstance(state, bool) or not isinstance(state, int) or state < 0:
+        raise ValueError("IIT content state must be a non-negative integer")
+    if not isinstance(state_to_class, dict) or not state_to_class:
+        raise ValueError("IIT content state codebook must be a non-empty object")
+    if not isinstance(class_to_surface, dict) or not class_to_surface:
+        raise ValueError("IIT content surfaces must be a non-empty object")
+    if any(isinstance(key, bool) or not isinstance(key, int) or key < 0
+           for key in state_to_class):
+        raise ValueError("IIT content state codebook keys must be non-negative integers")
+    labels = list(state_to_class.values())
+    if any(not isinstance(label, str) or not label for label in labels):
+        raise ValueError("IIT content class labels must be non-empty strings")
+    if len(set(labels)) != len(labels):
+        raise ValueError("IIT content state codebook must be bijective")
+    if set(labels) != set(class_to_surface):
+        raise ValueError("IIT content surfaces must exactly cover the state classes")
+    surfaces = list(class_to_surface.values())
+    if any(not isinstance(surface, str) or not surface.strip() for surface in surfaces):
+        raise ValueError("IIT content surfaces must be non-empty strings")
+    if len(set(surfaces)) != len(surfaces):
+        raise ValueError("IIT content surfaces must be distinct")
+    for surface in surfaces:
+        surface.encode("utf-8", "strict")
+    label = state_to_class.get(state)
+    if label is None:
+        return {"state": state, "class": None, "text": "", "emitted": False}
+    return {"state": state, "class": label,
+            "text": class_to_surface[label], "emitted": True}
+
+
 def gen_chat_validate_template(template, max_new=None):
     """Fail closed when a consumer's chat contract differs from the SSOT."""
     expected = gen_chat_format()

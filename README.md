@@ -88,14 +88,18 @@ the actual-checkpoint result byte-for-byte. The unchanged broker remains healthy
 HTTPS/WebSocket pass with `anima_alive=false`. R3 mouth-content causality is now open as an
 engineering gate, but participant and production remain `BLOCKED-R2-NOT-A-MOUTH`.
 
-R3 bounded utterance-content causality is preregistered in
-`state/iit_daemon_r3_content_2026_08_12/`. The final IIT state alone may select one of two exact
-semantic surfaces through the existing canonical generator boundary; prompt, store, addresses,
-prediction and gold cannot cross that boundary. Pair oracle runs first, followed by normal, state
-reset, IIT address shuffle, the three unchanged R2 controls, and exact snapshot recovery. A pass
-would establish only bounded state-to-output-byte causality and will keep participant and
-production `BLOCKED-R3-NOT-CONVERSATIONAL` until an independently trained meaningful mouth passes
-its conversation gate.
+R3 bounded utterance-content causality was separately preregistered and is complete in
+`state/iit_daemon_r3_content_2026_08_12/`. The final IIT state alone selects one of two exact
+protocol surfaces through `core.generator`; prompt, store, addresses, prediction and gold do not
+cross that boundary. Pair oracle was `1.0000`; normal/recovery were `0.9531`; state reset was
+`0.0000`; IIT address shuffle was `0.0391`; clue-A removal, clue-B removal and CLMS address shuffle
+were `0.5000`, `0.4609` and `0.4688`. The verdict is
+`SUPPORTED-BOUNDED-CONTENT-CAUSALITY`. Python QA passed `127 tests + 3 subtests` with one expected
+local CUDA/CuPy skip; an isolated wheel reproduced R3 twice and the actual-checkpoint R2 regression
+byte-for-byte. This establishes only bounded state-to-output-byte causality: the two surfaces are
+not a learned conversational mouth, so participant and production remain
+`BLOCKED-R3-NOT-CONVERSATIONAL` pending R4 meaningful-mouth training and independent conversation
+validation.
 
 ## Current experiment — meaningful-conversation R0
 
