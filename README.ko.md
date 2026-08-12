@@ -90,6 +90,25 @@ HF `dancinlab` 비공개 저장소에 보존한다.
 `77 tests + 3 subtests`를 통과했으며 Vast.ai RTX 4090을 삭제해 활성 임대는 0개다.
 실패 모델의 채팅 런타임 배포는 실행하지 않았다.
 
+### R0 실패 후 공용 근본 흐름 복구
+
+`state/anima_303m_r0_root_flow_2026_08_12/`에 공용 엔진 복구를 기록했다. 실패를 이유로
+step을 늘리거나 panel을 조정하지 않고 builder → trainer → evaluator → CLI → participant의
+실제 흐름을 일치시켰다. `core/generator.py`가 하나의 `user: …\nassistant:` 형식,
+역할 경계 parser, 192-byte 예산을 소유하며 평가·서빙은 `.clm`과 ByteGPT `.bin` 모두에서
+상주 가중치용 동일 decode 진입을 재사용한다. trainer는 응답 감독 dialogue window마다
+완전한 prompt→response 문서를 요구할 수 있다. Panel SHA가 다르면 체크포인트를 읽기 전에
+실패하고, 의미 scorer의 부정문·한글 부분문자열 위양성을 거부하며, 중간 ByteGPT metadata는
+실제 완료 step과 validation CE를 기록한다.
+
+로컬 Python/CHAT QA는 `86 tests + 3 subtests`, 실제 tiny ByteGPT 직렬화·participant 집중
+경로는 `52 tests + 3 subtests`와 로컬 CUDA 전용 1건 정상 skip으로 통과했다. 기존 303M
+체크포인트는 계속 `FAIL-MEANINGLESS-REPETITION`이다. 결과·문턱값·seed·자료 revision·
+체크포인트를 바꾸지 않았고 모델도 배포하지 않았다. 남은 비코드 관문은 provenance가 안전한
+한국어 멀티턴 자료를 새 HF `dancinlab` 불변 revision으로 고정하는 것이다. 합성 persona,
+비상업/불명확 라이선스, 정렬 trajectory가 부족한 후보는 임의 채택하지 않았다. 수정된 R0가
+같은 관문을 통과하기 전까지 R1과 프로덕션은 계속 잠근다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속
@@ -101,6 +120,12 @@ HF `dancinlab` 비공개 저장소에 보존한다.
 우선순위는 **P0**가 유효한 다음 R0 또는 프로덕션 폐루프를 차단하고, **P1**이 강한
 증거·재현성을 차단하며, **P2**가 현재 의미 실패를 설명하지는 않지만 필요한 운영 증거라는
 뜻이다.
+
+2026-08-12 복구 상태: M1, A1, A2, A3, A6, R3, 폐루프 `.bin` 수용, canonical SSOT,
+평가기 중복 decode, 실행 가능한 도구 간 계약은 공용 Python 엔진에서 수정했고 실제 tiny
+체크포인트 회귀로 덮었다. M4는 배포 전 보존된 전체 303M 체크포인트 비교가 아직 필요하다.
+M2/R2는 허용 가능한 한국어 멀티턴 원천과 새 HF 불변 revision이 없어 계속 차단 상태다.
+아래 번호 목록은 최초 감사 증거로 보존하며 이 문단이 현재 처리 상태다.
 
 ### 수학·구조 gap
 

@@ -174,14 +174,8 @@ class _Mouth:
 
     def chat(self, seed, gen, stop_markers):
         """Greedy chat continuation through the already-loaded canonical mouth."""
-        if self.kind == "bytegpt":
-            raw = bg._decode_argmax_W(
-                self.W, seed.encode("utf-8", "surrogateescape"), gen)["text"]
-        else:
-            # top-k=1 is exactly the canonical argmax with the loaded CLM weights.
-            raw = clm.clm_decode_topk_sampled_W(
-                self.W, seed, gen, 1, 1.0, 0)["text"]
-        return gen_runtime.gen_chat_turn_text(raw, stop_markers)
+        return gen_runtime.gen_loaded_chat(
+            self.kind, self.W, seed, gen, stop_markers=stop_markers)
 
 
 def _isolated_ideate_worker(conn, ckpt, seed, gen, top_k, temp, seed_rng):
@@ -1044,13 +1038,48 @@ def _conversation_terms(text):
     return re.findall(r"[a-z][a-z'-]*|[가-힣]+", _conversation_normalize(text))
 
 
+def _conversation_term_negated(text, term):
+    normalized = _conversation_normalize(text)
+    needle = _conversation_normalize(term)
+    if re.fullmatch(r"[a-z][a-z'-]*", needle):
+        for hit in re.finditer(r"(?<![a-z])" + re.escape(needle) + r"(?![a-z])", normalized):
+            before = normalized[max(0, hit.start() - 40):hit.start()]
+            if re.search(
+                    r"(?:\bno\b|\bnot\b|\bnever\b|n['’]t\b|\bwithout\b)"
+                    r"(?:\W+[a-z][a-z'-]*){0,3}\W*$", before):
+                return True
+    elif re.fullmatch(r"[가-힣]+", needle):
+        if re.search(re.escape(needle) + r"[가-힣]{0,4}\s*(?:않|못|아니)", normalized):
+            return True
+    return False
+
+
 def _conversation_term_present(text, term):
     normalized = _conversation_normalize(text)
     needle = _conversation_normalize(term)
     if not needle:
         return False
     if re.fullmatch(r"[a-z][a-z'-]*", needle):
-        return bool(re.search(r"(?<![a-z])" + re.escape(needle) + r"(?![a-z])", normalized))
+        hit = re.search(r"(?<![a-z])" + re.escape(needle) + r"(?![a-z])", normalized)
+        if hit is None:
+            return False
+        # A required keyword inside an explicit local negation is evidence against
+        # the concept, not for it (e.g. "ice does not melt").
+        return not _conversation_term_negated(normalized, needle)
+    if re.fullmatch(r"[가-힣]+", needle):
+        # Hangul has no whitespace between a stem and particles/endings. Match a
+        # whole eojeol stem, never an arbitrary substring ("차" must not match
+        # "자동차"). The suffix list is fixed grammar surface, not panel vocabulary.
+        suffixes = (
+            "", "은", "는", "이", "가", "을", "를", "와", "과", "의", "에", "에서",
+            "에게", "께", "도", "만", "로", "으로", "부터", "까지", "처럼", "보다", "랑",
+            "하고", "다", "고", "며", "면", "서", "아서", "어서", "해", "하다", "합니다",
+            "됩니다", "된다", "돼요", "되어", "됩니다", "습니다", "어요", "아요", "죠", "지",
+        )
+        for token in re.findall(r"[가-힣]+", normalized):
+            if token.startswith(needle) and token[len(needle):] in suffixes:
+                return True
+        return False
     return needle in normalized
 
 
@@ -1116,9 +1145,13 @@ def score_conversation_response(prompt, response, turn, lang, bars, stopped=Fals
     required = []
     for group in turn.get("required_groups", []):
         required.append(any(_conversation_term_present(response, term) for term in group))
+    negated_required_hits = sorted({
+        term for group in turn.get("required_groups", []) for term in group
+        if _conversation_term_negated(response, term)
+    })
     forbidden_hits = [term for term in turn.get("forbidden_terms", [])
                       if _conversation_term_present(response, term)]
-    semantic_ok = all(required) and not forbidden_hits
+    semantic_ok = all(required) and not forbidden_hits and not negated_required_hits
     structural = {
         "utf8": utf8_ok,
         "min_bytes": nbytes >= int(bars["min_response_bytes"]),
@@ -1136,6 +1169,7 @@ def score_conversation_response(prompt, response, turn, lang, bars, stopped=Fals
         "structural": structural,
         "required_groups_pass": required,
         "forbidden_hits": forbidden_hits,
+        "negated_required_hits": negated_required_hits,
         "response_bytes": nbytes,
         "prompt_echo_ratio": echo_ratio,
         "repeated_trigram_ratio": repetition_ratio,
@@ -1148,8 +1182,9 @@ def _conversation_panel_load(path):
     if panel.get("schema") != "anima-meaningful-conversation-panel/v1":
         raise ValueError("unsupported conversation panel schema")
     template = panel.get("template") or {}
-    if template.get("system_prompt") is not False:
-        raise ValueError("conversation panel must not add a system prompt")
+    decode = panel.get("decode") or {}
+    gen_runtime.gen_chat_validate_template(
+        template, max_new=decode.get("max_new_bytes"))
     bars = panel.get("bars") or {}
     required_bars = {
         "min_response_bytes", "max_prompt_echo_ratio", "max_repeated_trigram_ratio",
@@ -1208,10 +1243,15 @@ def _conversation_jaccard(a, b):
 
 def conversation_panel_run(argv):
     panel_path = evaluate_strval(argv, "--conversation-panel", "")
+    expected_panel_sha = evaluate_strval(argv, "--conversation-panel-sha256", "")
     out_path = evaluate_strval(argv, "--out", "")
     if not argv or argv[0].startswith("--") or not panel_path or not out_path:
         print("usage: anima-py evaluate <ckpt> --conversation-panel PANEL.json --out RESULT.json")
         return 2
+    actual_panel_sha = _conversation_file_sha256(panel_path)
+    if expected_panel_sha and actual_panel_sha.lower() != expected_panel_sha.lower():
+        print("conversation panel SHA-256 differs from preregistered protocol", flush=True)
+        return 4
     panel = _conversation_panel_load(panel_path)
     controls = conversation_scorer_controls(panel)
     print("=== anima evaluate --conversation-panel — meaningful chat R0 ===", flush=True)
@@ -1219,7 +1259,7 @@ def conversation_panel_run(argv):
     if not controls["pass"]:
         result = {"schema": "anima-meaningful-conversation-result/v1",
                   "status": "INVALID_SCORER", "pass": False,
-                  "panel_sha256": _conversation_file_sha256(panel_path),
+                  "panel_sha256": actual_panel_sha,
                   "scorer_controls": controls, "responses": []}
         write_rho_panel(out_path, result)
         return 3
@@ -1234,8 +1274,7 @@ def conversation_panel_run(argv):
         transcript = ""
         for ti, turn in enumerate(item["turns"]):
             prompt = str(turn["user"])
-            seed = (transcript + template["user_prefix"] + prompt +
-                    template["turn_separator"] + template["assistant_prefix"])
+            seed = gen_runtime.gen_chat_seed(transcript, prompt)
             decoded = mouth.chat(seed, max_new, stop_markers)
             response = decoded["text"]
             scored = score_conversation_response(
@@ -1257,7 +1296,7 @@ def conversation_panel_run(argv):
             print("  %s[%d] %s structural=%s semantic=%s" %
                   (item["id"], ti, item["lang"], scored["structural_pass"],
                    scored["semantic_pass"]), flush=True)
-            transcript = (seed + response.strip() + template["turn_separator"])
+            transcript = gen_runtime.gen_chat_append(seed, response)
 
     duplicate_pairs = []
     max_jaccard = float(panel["bars"]["max_cross_response_jaccard"])
@@ -1297,7 +1336,7 @@ def conversation_panel_run(argv):
         "checkpoint": ckpt,
         "checkpoint_sha256": _conversation_file_sha256(ckpt),
         "panel": panel_path,
-        "panel_sha256": _conversation_file_sha256(panel_path),
+        "panel_sha256": actual_panel_sha,
         "mouth": mouth.kind,
         "scorer_controls": controls,
         "summary": {"by_language": by_lang, "structural_pass": structural_ok,
@@ -1361,7 +1400,8 @@ def evaluate_usage():
     print("  anima evaluate --pc2-direction <traces_dir> --subspace-stability [--dims 2] [--block 16,32] [--boot 1000]  — H_9752 라이브 평면 안정성(주각·eigengap·rank-swap)")
     print("  anima evaluate --pc2-direction <traces_dir> --state-census [--kmax K] [--boot N]   — H_9753 이산 상태(k=2~4) 혼합 검정(dip·GMM-BIC·dwell 3중·plant 양성통제)")
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
-    print("  anima evaluate <ckpt> --conversation-panel PANEL.json --out RESULT.json")
+    print("  anima evaluate <ckpt> --conversation-panel PANEL.json "
+          "[--conversation-panel-sha256 SHA256] --out RESULT.json")
     print("      Production-shaped Korean/English conversation gate. Scorer controls run before")
     print("      checkpoint decode; raw text, relevance, repetition, echo, UTF-8, language, and")
     print("      multi-turn correction/memory evidence are retained. Automatic PASS still requires")
@@ -12645,6 +12685,7 @@ _KNOWN_FLAGS = frozenset((
     "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--eval-historicity", "--schedule", "--dv", "--jitter", "--af-forward", "--impulse", "--side", "--kmax", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--pos-control", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--stem-prefix", "--stem-fragment-k", "--stem-fragment-seed", "--calib-hetero", "--calib-a0", "--calib-hetero-align", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed", "--conversation-panel",
+    "--conversation-panel-sha256",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--rho-axon-isolated", "--rho-cache", "--rho-axes", "--rho-no-cells", "--rho-out", "--route-audit", "--ra-stems-from", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
     "--fan-branch", "--branches",              # H_9803 branch-latent ideation fan arms

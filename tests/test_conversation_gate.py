@@ -4,6 +4,8 @@ import json
 import pathlib
 import sys
 
+import pytest
+
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 for path in (ROOT / "cli", ROOT / "core"):
@@ -47,6 +49,24 @@ def test_meaningful_answer_passes_relevance_and_surface_checks():
     assert result["pass"]
     assert result["structural_pass"]
     assert result["semantic_pass"]
+
+
+def test_semantic_keywords_inside_contradiction_do_not_pass():
+    panel = evaluate._conversation_panel_load(str(PANEL))
+    item, turn = _turn(panel, "en_ice")
+
+    result = evaluate.score_conversation_response(
+        turn["user"],
+        "Ice does not melt in sunlight, although water and heat are words here.",
+        turn, item["lang"], panel["bars"])
+
+    assert not result["semantic_pass"]
+    assert not result["pass"]
+
+
+def test_korean_required_term_is_not_an_arbitrary_substring():
+    assert not evaluate._conversation_term_present("자동차입니다.", "차")
+    assert evaluate._conversation_term_present("차가 있습니다.", "차")
 
 
 def test_repetitive_wrong_language_output_is_rejected():
@@ -147,6 +167,37 @@ def test_runtime_turn_framing_stops_before_synthetic_next_user():
     assert result["stopped"]
     assert result["stop_marker"] == "\nuser:"
     assert result["raw_text"] == raw
+
+
+@pytest.mark.parametrize("marker", ["\n USER :", "\n사용자 :", "\n<|USER|> :"])
+def test_runtime_turn_parser_rejects_role_spacing_and_case_variants(marker):
+    raw = "A clear answer." + marker + " fabricated next turn"
+
+    result = generator.gen_chat_turn_text(raw)
+
+    assert result["text"] == "A clear answer."
+    assert result["stopped"]
+
+
+def test_panel_template_must_match_runtime_ssot(tmp_path):
+    panel = json.loads(PANEL.read_text(encoding="utf-8"))
+    panel["template"]["assistant_prefix"] = "도우미: "
+    changed = tmp_path / "changed.json"
+    changed.write_text(json.dumps(panel, ensure_ascii=False), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="canonical SSOT"):
+        evaluate._conversation_panel_load(str(changed))
+
+
+def test_panel_sha_mismatch_fails_before_checkpoint_load(tmp_path):
+    output = tmp_path / "result.json"
+
+    status = evaluate.conversation_panel_run([
+        str(tmp_path / "missing.bin"), "--conversation-panel", str(PANEL),
+        "--conversation-panel-sha256", "0" * 64, "--out", str(output)])
+
+    assert status == 4
+    assert not output.exists()
 
 
 def test_panel_json_is_stable_and_has_expected_response_counts():

@@ -35,6 +35,7 @@ The installed ``anima-py`` command is the sole verdict entry.
 """
 
 import os
+import re
 import sys
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -199,9 +200,61 @@ def gen_auto_backend(ckpt_path):
 # CHAT entries — greedy byte-continuation of a composed dialogue seed
 # ════════════════════════════════════════════════════════════════════════
 
+CHAT_USER_PREFIX = "user: "
+CHAT_ASSISTANT_PREFIX = "assistant: "
+CHAT_TURN_SEPARATOR = "\n"
+CHAT_MAX_NEW_BYTES = 192
 _CHAT_TURN_STOP_MARKERS = (
     "\nuser:", "\nUser:", "\n사용자:", "\n<|user|>", "\n<usr>",
 )
+_CHAT_NEXT_USER_RE = re.compile(
+    r"(?:^|\n)[ \t]*(?:user|사용자|<\|user\|>|<usr>)[ \t]*:", re.IGNORECASE)
+
+
+def gen_chat_format():
+    """Return the canonical byte-mouth dialogue contract.
+
+    Dataset builders, training, evaluation, CLI chat and participant serving must
+    consume this record instead of carrying local role strings or byte budgets.
+    A fresh record is returned so callers cannot mutate the runtime SSOT.
+    """
+    return {
+        "user_prefix": CHAT_USER_PREFIX,
+        "assistant_prefix": CHAT_ASSISTANT_PREFIX,
+        "turn_separator": CHAT_TURN_SEPARATOR,
+        "stop_markers": list(_CHAT_TURN_STOP_MARKERS),
+        "system_prompt": False,
+        "max_new_bytes": CHAT_MAX_NEW_BYTES,
+    }
+
+
+def gen_chat_validate_template(template, max_new=None):
+    """Fail closed when a consumer's chat contract differs from the SSOT."""
+    expected = gen_chat_format()
+    if not isinstance(template, dict):
+        raise ValueError("chat template must be an object")
+    for key in ("user_prefix", "assistant_prefix", "turn_separator",
+                "stop_markers", "system_prompt"):
+        if template.get(key) != expected[key]:
+            raise ValueError("chat template differs from canonical SSOT at " + key)
+    if max_new is not None and int(max_new) != expected["max_new_bytes"]:
+        raise ValueError("chat max_new_bytes differs from canonical SSOT")
+    return True
+
+
+def gen_chat_seed(transcript, user_text):
+    """Append one user prompt and the assistant boundary to a transcript."""
+    if not isinstance(transcript, str) or not isinstance(user_text, str):
+        raise TypeError("chat transcript and user text must be str")
+    return (transcript + CHAT_USER_PREFIX + user_text + CHAT_TURN_SEPARATOR
+            + CHAT_ASSISTANT_PREFIX)
+
+
+def gen_chat_append(seed, assistant_text):
+    """Close the current assistant turn without inventing another role."""
+    if not isinstance(seed, str) or not isinstance(assistant_text, str):
+        raise TypeError("chat seed and assistant text must be str")
+    return seed + assistant_text.strip() + CHAT_TURN_SEPARATOR
 
 
 def gen_chat_turn_text(text, stop_markers=None):
@@ -224,6 +277,13 @@ def gen_chat_turn_text(text, stop_markers=None):
         if 0 <= pos < stop:
             stop = pos
             matched = marker
+    # A byte mouth has no role token, so spacing/case variants must be parsed as
+    # line-start roles. Exact substring matching leaked ``\n USER :`` and Korean
+    # variants into the assistant response in production-shaped tests.
+    role = _CHAT_NEXT_USER_RE.search(text)
+    if role is not None and role.start() < stop:
+        stop = role.start()
+        matched = role.group(0)
     return {"text": text[:stop].strip(), "stop_marker": matched,
             "stopped": bool(matched), "raw_text": text}
 
@@ -235,6 +295,27 @@ def _chat_turn_result(result):
     out = dict(result)
     out.update(turn)
     return out
+
+
+def gen_loaded_chat(kind, weights, seed, max_new, stop_markers=None):
+    """Canonical greedy chat from an already-loaded mouth.
+
+    Evaluation and serving keep weights resident for memory/latency, but no longer
+    reimplement decode selection or turn parsing outside this dispatcher.
+    """
+    if kind not in ("bytegpt", "clm"):
+        raise ValueError("unknown loaded mouth kind: " + str(kind))
+    if not isinstance(seed, str):
+        raise TypeError("chat seed must be str")
+    if isinstance(max_new, bool) or not isinstance(max_new, int) or max_new < 0:
+        raise ValueError("max_new must be a non-negative integer")
+    if kind == "bytegpt":
+        raw = _bg._decode_argmax_W(
+            weights, seed.encode("utf-8", "surrogateescape"), max_new)["text"]
+    else:
+        raw = _clm.clm_decode_topk_sampled_W(
+            weights, seed, max_new, 1, 1.0, 0)["text"]
+    return gen_chat_turn_text(raw, stop_markers)
 
 def gen_clm_chat(ckpt_path, seed, max_new):
     """generator.hexa:599 gen_clm_chat — thin caller of the ONE .clm decode mouth

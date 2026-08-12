@@ -94,3 +94,18 @@ def test_pending_turn_is_not_blocked_by_self_monologue_refractory(monkeypatch):
 
     assert not decision["in_refractory"]
     assert decision["threshold"] == pytest.approx(0.30)
+
+
+def test_substrate_owned_chat_budget_overrides_generic_token_budget():
+    class Mouth(_Substrate):
+        chat_max_new = 192
+
+        def generate(self, seed_text, max_new, lang_hint=None):
+            self.call = (seed_text, max_new, lang_hint)
+            return "answer"
+
+    mouth = Mouth()
+    state = AnimaState(mouth)
+
+    assert state.emit("question", "en") == "answer"
+    assert mouth.call == ("question", 192, "en")

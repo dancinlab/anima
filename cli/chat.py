@@ -46,6 +46,8 @@ from pure_field import (pure_field_warmup, pure_field_phi, pure_field_phase,
 from brain import (brain_emit, brain_emit_refractory, vbasal_new, vbasal_update,
                    vbasal_go_value, vbasal_select)
 from generator import (gen_auto_backend, gen_mouth_kind, gen_auto_chat,
+                       gen_chat_seed, gen_chat_append, gen_chat_turn_text,
+                       CHAT_MAX_NEW_BYTES,
                        generator_read_anchors, gen_penult_pooled_W,
                        _gen_anchor_field, _gen_g_string)  # H_1058 Part A1: SSOT anchor+phase→seed-byte extractors (side-channel only)
 from kosmos_io import create_anchor, emit_anchor_from_v3, load_anchors
@@ -336,15 +338,7 @@ def anima_find(hay, needle):
 
 
 def anima_trim_at_stop(s):
-    stops = ["사용자:", "User:", "사용자 :"]
-    cut = byte_len(s)
-    i = 0
-    while i < len(stops):
-        idx = anima_find(s, stops[i])
-        if idx >= 0 and idx < cut:
-            cut = idx
-        i = i + 1
-    return substring(s, 0, cut).strip()
+    return gen_chat_turn_text(s)["text"]
 
 
 def anima_byte_mode(ckpt, argv):
@@ -366,8 +360,8 @@ def anima_byte_mode(ckpt, argv):
     t = 0
     while t < len(use_turns):
         u = use_turns[t]
-        seed = transcript + "사용자: " + u + " | 도우미: "
-        res = gen_auto_chat(ckpt, seed, 96)
+        seed = gen_chat_seed(transcript, u)
+        res = gen_auto_chat(ckpt, seed, CHAT_MAX_NEW_BYTES)
         if str(res["ok"]).lower() != "true":
             _pln("[ERROR] " + str(res["reason"]))
             return
@@ -375,7 +369,7 @@ def anima_byte_mode(ckpt, argv):
         _pln("사용자: " + u)
         _pln("도우미: " + reply)
         _pln("")
-        transcript = transcript + "사용자: " + u + " | 도우미: " + reply + "\n"
+        transcript = gen_chat_append(seed, reply)
         t = t + 1
     _pln("=== end transcript (" + _ts(len(use_turns)) + " turns) ===")
 

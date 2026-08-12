@@ -97,6 +97,25 @@ all 17 uploaded files passed source size and SHA-256 verification. Final local P
 `77 tests + 3 subtests`, the Vast.ai RTX 4090 was removed with zero active rentals, and no chat
 runtime deployment was performed.
 
+### Root-flow recovery after the failed R0
+
+`state/anima_303m_r0_root_flow_2026_08_12/` records the completed shared-engine repair. The
+failure was not treated as a reason to add steps or tune the panel. Instead, the actual builder →
+trainer → evaluator → CLI → participant path was made commutative: `core/generator.py` now owns
+one `user: …\nassistant:` format, role-boundary parser and 192-byte budget; evaluation and serving
+reuse its loaded-mouth decode for both `.clm` and ByteGPT `.bin`; and the trainer can require a
+complete prompt→response document in every response-supervised dialogue window. Panel SHA
+mismatches fail before checkpoint load, semantic negation/Hangul-substring false positives are
+rejected, and intermediate ByteGPT metadata carries the actual completed step and validation CE.
+
+Local Python/CHAT QA passed `86 tests + 3 subtests`; a focused real ByteGPT serialization and
+participant route passed `52 tests + 3 subtests` with one local CUDA-only skip. The prior 303M
+checkpoint remains `FAIL-MEANINGLESS-REPETITION`: no result, threshold, seed, data revision or
+checkpoint was changed, and no model was deployed. The remaining non-code gate is a separately
+pinned, provenance-safe Korean multi-turn HF `dancinlab` revision; candidates with synthetic
+persona content, non-commercial/ambiguous licenses, or insufficient aligned trajectories were not
+silently adopted. R1 and production remain locked until a corrected R0 passes the unchanged gate.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current
@@ -109,6 +128,13 @@ single-variable test has established them.
 Priority means: **P0** blocks a valid next R0 or a production-closed path, **P1** blocks strong
 evidence or reproducibility, and **P2** is required operational evidence but does not explain the
 current semantic failure.
+
+Recovery overlay (2026-08-12): M1, A1, A2, A3, A6, R3, closed-loop `.bin` admission,
+canonical-SSOT, duplicated evaluator decode and the executable cross-tool contract are fixed in
+the shared Python engine and covered by tiny real-checkpoint regressions. M4 still needs the
+preserved full 303M checkpoint comparison before release. M2/R2 remain blocked on a new acceptable
+Korean multi-turn source and immutable HF revision. The numbered register below is retained as the
+original audit evidence; this overlay is its current disposition.
 
 ### Math-structural gaps
 

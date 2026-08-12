@@ -92,6 +92,40 @@ class ConversationDatasetBuilderTest(unittest.TestCase):
             ["user: 요약해 줘\n비가 와요.\nassistant: 비가 옵니다."],
         )
 
+    def test_instruction_documents_preserve_real_korean_multiturn_trajectory(self):
+        builder = _builder()
+        rows = [{"messages": [
+            {"role": "user", "content": "고양이 이름은 나비야. 기억해 줘."},
+            {"role": "assistant", "content": "나비라고 기억할게요."},
+            {"role": "user", "content": "고양이 이름이 뭐였지?"},
+            {"role": "assistant", "content": "나비예요."},
+        ]}]
+
+        self.assertEqual(builder.instruction_documents(rows), [
+            "user: 고양이 이름은 나비야. 기억해 줘.\n"
+            "assistant: 나비라고 기억할게요.\n"
+            "user: 고양이 이름이 뭐였지?\n"
+            "assistant: 나비예요."
+        ])
+
+    def test_dialogue_coverage_distinguishes_single_and_multiturn(self):
+        builder = _builder()
+        with tempfile.TemporaryDirectory() as directory:
+            registry = builder.DocumentRegistry(
+                os.path.join(directory, "docs.sqlite3"), preserve_role_lines=True)
+            registry.add("ko_dialogue", "train", "user: 하나\nassistant: 답")
+            registry.add("ko_dialogue", "train",
+                         "user: 기억해\nassistant: 네\nuser: 뭐였지\nassistant: 기억")
+            registry.commit()
+
+            coverage = registry.dialogue_coverage(["ko_dialogue"])["ko_dialogue"]
+
+            self.assertEqual(coverage["documents"], 2)
+            self.assertEqual(coverage["single_turn_documents"], 1)
+            self.assertEqual(coverage["multiturn_documents"], 1)
+            self.assertEqual(coverage["assistant_turns"], 3)
+            registry.close()
+
 
 if __name__ == "__main__":
     unittest.main()

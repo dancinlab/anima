@@ -14,10 +14,16 @@ import os
 from pathlib import Path
 import re
 import sqlite3
+import sys
 import unicodedata
 
 
 HERE = Path(__file__).resolve().parent
+CORE = HERE.parents[1] / "core"
+if str(CORE) not in sys.path:
+    sys.path.insert(0, str(CORE))
+
+import generator as chat_runtime
 
 
 def normalized_document(text: str) -> str:
@@ -33,6 +39,16 @@ def role_preserving_document(text: str) -> str:
 
 def document_hash(text: str) -> str:
     return hashlib.sha256(normalized_document(text).encode("utf-8")).hexdigest()
+
+
+def chat_document(turns: list[tuple[str, str]]) -> str:
+    """Render source turns with the runtime chat-format SSOT."""
+    lines = []
+    fmt = chat_runtime.gen_chat_format()
+    for role, text in turns:
+        prefix = fmt["user_prefix"] if role == "user" else fmt["assistant_prefix"]
+        lines.append(prefix + role_preserving_document(text))
+    return fmt["turn_separator"].join(lines)
 
 
 def file_sha256(path: str | Path) -> str:
@@ -107,6 +123,29 @@ class DocumentRegistry:
         return int(self.db.execute(
             "SELECT COUNT(*) FROM (SELECT hash FROM docs GROUP BY hash "
             "HAVING COUNT(DISTINCT split)>1)").fetchone()[0])
+
+    def dialogue_coverage(self, labels: list[str]) -> dict:
+        """Count retained canonical turn trajectories per dialogue cell."""
+        user = chat_runtime.CHAT_USER_PREFIX
+        assistant = chat_runtime.CHAT_ASSISTANT_PREFIX
+        report = {}
+        for label in labels:
+            counts = {"documents": 0, "single_turn_documents": 0,
+                      "multiturn_documents": 0, "user_turns": 0,
+                      "assistant_turns": 0}
+            for (text,) in self.db.execute(
+                    "SELECT text FROM docs WHERE label=?", (label,)):
+                n_user = sum(line.startswith(user) for line in text.splitlines())
+                n_assistant = sum(line.startswith(assistant) for line in text.splitlines())
+                if not n_user or n_user != n_assistant:
+                    continue
+                counts["documents"] += 1
+                counts["user_turns"] += n_user
+                counts["assistant_turns"] += n_assistant
+                key = "multiturn_documents" if n_user > 1 else "single_turn_documents"
+                counts[key] += 1
+            report[label] = counts
+        return report
 
     def contamination(self, prompts: list[str]) -> list[dict]:
         found = []
@@ -233,8 +272,8 @@ def oasst_best_documents(rows: list[dict], language: str = "en") -> list[str]:
             turns = []
             for row in path:
                 role = "user" if row["role"] == "prompter" else "assistant"
-                turns.append(f"{role}: {normalized_document(row['text'])}")
-            documents.append("\n".join(turns))
+                turns.append((role, row["text"]))
+            documents.append(chat_document(turns))
     return documents
 
 
@@ -247,7 +286,7 @@ def klue_documents(rows: list[dict]) -> list[str]:
         question = normalized_document(row.get("question") or "")
         answer = normalized_document(answers[0])
         if question and answer:
-            documents.append(f"user: {question}\nassistant: {answer}")
+            documents.append(chat_document([("user", question), ("assistant", answer)]))
     return documents
 
 
@@ -259,6 +298,30 @@ def instruction_documents(rows) -> list[str]:
     """
     documents = []
     for row in rows:
+        messages = row.get("messages") or row.get("conversations") or []
+        if isinstance(messages, list) and messages:
+            turns = []
+            for message in messages:
+                if not isinstance(message, dict):
+                    turns = []
+                    break
+                raw_role = str(message.get("role") or message.get("from") or "").lower()
+                role = ({"user": "user", "human": "user", "prompter": "user",
+                         "assistant": "assistant", "gpt": "assistant"}.get(raw_role))
+                text = message.get("content")
+                if text is None:
+                    text = message.get("value")
+                if role is None or not normalized_document(text or ""):
+                    turns = []
+                    break
+                if turns and turns[-1][0] == role:
+                    turns = []
+                    break
+                turns.append((role, str(text)))
+            if (len(turns) >= 2 and turns[0][0] == "user"
+                    and turns[-1][0] == "assistant"):
+                documents.append(chat_document(turns))
+            continue
         question = normalized_document(row.get("instruction") or row.get("question") or "")
         context = normalized_document(row.get("input") or "")
         answer = normalized_document(row.get("output") or row.get("answer") or "")
@@ -266,7 +329,7 @@ def instruction_documents(rows) -> list[str]:
             continue
         if context:
             question = f"{question}\n{context}"
-        documents.append(f"user: {question}\nassistant: {answer}")
+        documents.append(chat_document([("user", question), ("assistant", answer)]))
     return documents
 
 
@@ -297,6 +360,8 @@ def build(protocol_path: str | Path, panel_path: str | Path, output: str | Path,
 
     protocol = json.loads(Path(protocol_path).read_text(encoding="utf-8"))
     panel = json.loads(Path(panel_path).read_text(encoding="utf-8"))
+    chat_runtime.gen_chat_validate_template(
+        panel.get("template"), max_new=(panel.get("decode") or {}).get("max_new_bytes"))
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     db_path = output / ".documents.sqlite3"
@@ -358,6 +423,15 @@ def build(protocol_path: str | Path, panel_path: str | Path, output: str | Path,
         near_duplicates = registry.near_duplicate_audit()
         cells = registry.write_cells(
             output, ["en_general", "ko_general", "en_dialogue", "ko_dialogue"])
+        dialogue_coverage = registry.dialogue_coverage(["en_dialogue", "ko_dialogue"])
+        required_multiturn = protocol.get("data_rules", {}).get(
+            "required_multiturn_documents", {})
+        for label, minimum in required_multiturn.items():
+            observed = dialogue_coverage.get(label, {}).get("multiturn_documents", 0)
+            if observed < int(minimum):
+                raise RuntimeError(
+                    f"{label} has {observed} retained multi-turn documents; "
+                    f"protocol requires at least {int(minimum)}")
         manifest = {
             "schema": protocol.get("data_rules", {}).get(
                 "output_schema", "anima-303m-r0-conversation-data/v1"),
@@ -378,6 +452,7 @@ def build(protocol_path: str | Path, panel_path: str | Path, output: str | Path,
                 "remaining_matches": contamination,
             },
             "near_duplicate_audit": near_duplicates,
+            "dialogue_coverage": dialogue_coverage,
             "source_files": source_files,
             "cells": cells,
         }

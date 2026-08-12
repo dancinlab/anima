@@ -484,7 +484,8 @@ class AnimaState:
         if lang_hint is None:
             lang_hint = self._pick_lang_hint()
             self.lang_rot_idx += 1
-        text = self.substrate.generate(seed_text, max_new=MAX_NEW, lang_hint=lang_hint)
+        max_new = int(getattr(self.substrate, "chat_max_new", MAX_NEW))
+        text = self.substrate.generate(seed_text, max_new=max_new, lang_hint=lang_hint)
         # p3 NO PERSONA INJECTION: register-pattern memorization = de facto injection.
         # Silent-drop emission if it carries baked-in register prose (tension flows,
         # Tier N, vacuum point, frozen cell, etc.) — broadcaster suppresses on "".
@@ -698,7 +699,7 @@ def main():
     ap.add_argument("--substrate", choices=["lora", "v3", "akida", "clm"], default="lora",
                     help="pluggable substrate (SUBSTRATE_PLUGIN.md). "
                          "akida = BrainChip AKD1000 (HW) w/ numpy-LIF SW fallback; "
-                         "clm = ANIMA_CLM_CKPT via canonical core/decode.")
+                         "clm = ANIMA_CLM_CKPT (.clm or ByteGPT .bin) via canonical generator.")
     args = ap.parse_args()
     # AKIDA_BACKEND env override (akida-backend-wiring): selects the akida
     # substrate without --substrate. Explicit --substrate akida also works.

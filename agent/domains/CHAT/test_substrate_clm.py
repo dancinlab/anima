@@ -7,7 +7,7 @@ import sys
 
 import pytest
 
-pytest.importorskip("torch")
+torch = pytest.importorskip("torch")
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
@@ -43,6 +43,28 @@ def test_clm_substrate_rejects_missing_or_unknown_checkpoint(tmp_path):
     bad.write_bytes(b"not-a-clm")
     with pytest.raises(ValueError, match="not a decodable"):
         CLMSubstrate(str(bad))
+
+
+def test_participant_substrate_accepts_bytegpt_through_same_dispatcher(tmp_path):
+    import serialize
+    from model import ByteGPT, ByteGPTConfig
+
+    cfg = ByteGPTConfig(vocab=256, d=16, n_layer=1, n_head=4, block=64)
+    model = ByteGPT(cfg).eval()
+    source = tmp_path / "tiny.pt"
+    checkpoint = tmp_path / "tiny.bin"
+    torch.save({"model": model.state_dict(), "config": cfg.as_dict(),
+                "step": 0, "val_ce": None, "nparam": model.num_params()}, source)
+    serialize.serialize(str(source), str(checkpoint))
+
+    substrate = CLMSubstrate(str(checkpoint))
+    entropy, embedding = substrate.entropy_of_next("hello")
+    text = substrate.generate("hello", max_new=2)
+
+    assert substrate.name == "bytegpt"
+    assert 0.0 <= entropy <= 1.0
+    assert embedding.shape == (16,)
+    assert isinstance(text, str)
 
 
 def test_websocket_text_replaces_only_invalid_utf8_bytes():

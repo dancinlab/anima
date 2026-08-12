@@ -156,6 +156,7 @@ import verify_clm_v2 as VC                            # core/verify_clm_v2.py �
 # ByteGPT .pt -> .bin serializer is folded into the SAME unified core/serialize.py.
 import serialize as BGS                               # core/serialize.py — serialize(pt_path, bin_path)
 import dream_lib as DR                                # core/dream_lib.py — H_9840 5-stage session + Process-S/C
+import generator as GEN                              # core/generator.py — chat-format/decode SSOT
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -167,6 +168,21 @@ GZ_UPPER = 0.5                    # sa_gz_upper
 LN2 = 0.6931471805599453
 
 RESUME_SCHEMA = "anima-train-resume/v1"
+
+
+def bytegpt_bridge_payload(model, completed_step, validation_ce, n_params):
+    """Build truthful model-only serializer input for a completed trajectory point."""
+    if isinstance(completed_step, bool) or int(completed_step) < 0:
+        raise ValueError("completed_step must be a non-negative integer")
+    state = {key: value.detach().cpu() for key, value in model.state_dict().items()}
+    return {
+        "model": state,
+        "config": model.cfg.as_dict(),
+        "val_ce": (round(float(validation_ce), 5)
+                   if validation_ce is not None else None),
+        "step": int(completed_step),
+        "nparam": int(n_params),
+    }
 
 
 class WarmStartReport(str):
@@ -484,6 +500,48 @@ class ByteCell:
             self.val_size = self.size - self.train_end
             self._val_f = None
             self._val_mm = None
+        self.chat_frame_spans = []
+        self.chat_frame_oversize = 0
+
+    def configure_chat_frames(self, seq_len: int, marker: bytes) -> None:
+        """Index complete dialogue documents that fit one causal window.
+
+        Corpora are document-separated by a blank line. A response-supervised
+        batch is only prompt-conditioned when the complete document containing
+        both canonical roles remains visible; random byte windows did not ensure
+        that and could train assistant payloads after their user prompt rolled out.
+        """
+        self.chat_frame_spans = []
+        self.chat_frame_oversize = 0
+        user = GEN.CHAT_USER_PREFIX.encode("utf-8")
+        cursor = 0
+        while cursor < self.train_end:
+            boundary = self._mm.find(b"\n\n", cursor, self.train_end)
+            end = self.train_end if boundary < 0 else boundary
+            if end > cursor:
+                document = self._mm[cursor:end]
+                if marker in document and user in document:
+                    if end - cursor <= seq_len + 1:
+                        self.chat_frame_spans.append((cursor, end))
+                    else:
+                        self.chat_frame_oversize += 1
+            if boundary < 0:
+                break
+            cursor = boundary + 2
+
+    def framed_window_spec(self, seq_len: int, gen: torch.Generator):
+        """Sample a fixed-size window that contains one complete chat document."""
+        if not self.chat_frame_spans:
+            return self.window_spec(seq_len, gen), False
+        index = int(torch.randint(0, len(self.chat_frame_spans), (1,), generator=gen).item())
+        doc_start, doc_end = self.chat_frame_spans[index]
+        low = max(0, doc_end - (seq_len + 1))
+        high = min(doc_start, self.train_end - (seq_len + 1))
+        if high < low:
+            raise RuntimeError("indexed chat frame cannot fit its registered window")
+        start = (low if high == low else
+                 int(torch.randint(low, high + 1, (1,), generator=gen).item()))
+        return start, True
 
     @staticmethod
     def _window_in_buffer(buffer, lo: int, hi_excl: int, seq_len: int,
@@ -3657,6 +3715,10 @@ def main():
     ap.add_argument("--answer-ce-all-spans", action="store_true",
                     help="supervise every marker-delimited answer in a window (needed for "
                          "multi-turn chat); default keeps the legacy last-span behavior")
+    ap.add_argument("--chat-framed-sampling", action="store_true",
+                    help="sample dialogue cells only through complete canonical chat documents "
+                         "that fit the causal window. Requires response CE on every assistant "
+                         "span; general-language cells keep their existing sampler.")
     ap.add_argument("--bind-rank", type=int, default=64, help="H_9698: MBND binder rank (q/k/v/u width)")
     ap.add_argument("--bind-lam0", type=float, default=1.0, help="H_9698: MBND lam init (additive scale)")
     ap.add_argument("--freeze-trunk", action="store_true",
@@ -4044,6 +4106,13 @@ def main():
         ap.error("--answer-ce-marker must not be empty")
     if b"\n" in answer_marker or b"\r" in answer_marker:
         ap.error("--answer-ce-marker cannot contain a line break; newline closes the span")
+    if a.chat_framed_sampling:
+        if a.answer_ce_weight <= 0.0 or not a.answer_ce_all_spans:
+            ap.error("--chat-framed-sampling requires --answer-ce-weight > 0 and "
+                     "--answer-ce-all-spans")
+        if answer_marker != GEN.CHAT_ASSISTANT_PREFIX.encode("utf-8"):
+            ap.error("--chat-framed-sampling requires the canonical assistant prefix: "
+                     + repr(GEN.CHAT_ASSISTANT_PREFIX))
 
     if not (0.0 <= a.adam_beta2 < 1.0):
         ap.error("--adam-beta2 must be in [0, 1)")
@@ -4589,6 +4658,14 @@ def main():
            f"train={c.train_end} {val_desc}", flush=True)
     if not cells:
         p0("  corpus: NONE -> synthetic smoke", flush=True)
+    if a.chat_framed_sampling:
+        for label, cell in zip(labels, cells):
+            cell.configure_chat_frames(seq_len, answer_marker)
+            p0(f"  chat frames[{label}] complete={len(cell.chat_frame_spans)} "
+               f"oversize={cell.chat_frame_oversize}", flush=True)
+        if not any(cell.chat_frame_spans for cell in cells):
+            sys.exit("[chat-framed-sampling] no complete canonical chat document fits "
+                     f"seq_len={seq_len}; refusing unconditioned response training")
 
     # ── H_9840 sleep-schedule lane ────────────────────────────────────────────────────────────
     #   Constructed only when the arm is on ⇒ `off` never allocates a schedule, a replay buffer or
@@ -4636,6 +4713,7 @@ def main():
     # dialogue files until validation had already diverged.  Counting selected windows does
     # not draw RNG or alter batches; it makes the shared corpus flow auditable.
     sampled_windows = [0 for _ in cells]
+    sampled_framed_windows = [0 for _ in cells]
     sampling_ledger_complete = True
 
     # --require-cells N: fail LOUD if the usable register-cell count != N (a_chat_registers
@@ -4744,6 +4822,7 @@ def main():
             "weight": float(a.answer_ce_weight),
             "marker_utf8": a.answer_ce_marker,
             "all_spans": bool(a.answer_ce_all_spans),
+            "chat_framed_sampling": bool(a.chat_framed_sampling),
         }
     resume_generators = {
         "corpus": gen, "validation": val_gen, "objective": obj_gen,
@@ -4773,6 +4852,13 @@ def main():
                 raise ValueError("resume sampler ledger cell count differs from runtime corpus")
             sampled_windows[:] = [int(value) for value in saved_windows]
         elif resume_step:
+            sampling_ledger_complete = False
+        saved_framed = resume_payload.get("sampled_framed_windows")
+        if saved_framed is not None:
+            if len(saved_framed) != len(sampled_framed_windows):
+                raise ValueError("resume framed sampler ledger cell count differs from runtime corpus")
+            sampled_framed_windows[:] = [int(value) for value in saved_framed]
+        elif resume_step and a.chat_framed_sampling:
             sampling_ledger_complete = False
         if answer_ce_telemetry is not None:
             saved_answer_telemetry = resume_payload.get("answer_ce_telemetry")
@@ -4823,7 +4909,12 @@ def main():
                 else:
                     cell = cells[(step - 1 + b) % len(cells)]
                 sampled_windows[_samp_index[id(cell)]] += 1
-                start = cell.window_spec(seq_len, gen)   # None ⇒ synthetic fallback (no randint)
+                if a.chat_framed_sampling and cell.chat_frame_spans:
+                    start, framed = cell.framed_window_spec(seq_len, gen)
+                    if framed:
+                        sampled_framed_windows[_samp_index[id(cell)]] += 1
+                else:
+                    start = cell.window_spec(seq_len, gen)   # None ⇒ synthetic fallback
                 specs.append((cell, start))
             if slp is not None:                          # remember what was seen while awake
                 slp_replay.extend([s for s in specs if s[1] is not None])
@@ -4876,12 +4967,14 @@ def main():
         return {lab: v for lab, c in zip(labels, cells)
                 if (v := cell_val_ce(c)) is not None}
 
+    latest_validation_ce = None
+
     # ── serialize helper (end-of-run AND intermediate --ckpt-every checkpoints) ──
     #   CLM → .clm v0.3 (CLMConvMoE additive readout, materialized TLoRA experts).
     #   ByteGPT → .pt (cfg+state_dict) → core/serialize.py::serialize → .bin (5×u32
     #   header). The engine (generator L3 mouth-sniff) auto-dispatches .bin to the bytegpt
     #   decode; `anima-py evaluate` auto-detects .bin vs .clm by header, so no eval change.
-    def _write_bin(out_path):
+    def _write_bin(out_path, completed_step, validation_ce):
         # Write the model-only bridge input to a temporary file.  It must never share
         # <out>.pt with _write_pt(): that path is the exact-resume checkpoint carrying
         # optimizer/RNG/sampler state.  The old collision silently replaced the resumable
@@ -4895,10 +4988,8 @@ def main():
         bin_fd, bin_tmp = tempfile.mkstemp(prefix=".bytegpt-engine-", suffix=".bin",
                                             dir=out_dir)
         os.close(bin_fd)
-        sd = {k: v.detach().cpu() for k, v in model.state_dict().items()}
-        ck = {"model": sd, "config": model.cfg.as_dict(),
-              "val_ce": (round(lossF, 5) if lossF is not None else None),
-              "step": steps, "nparam": n_params}
+        ck = bytegpt_bridge_payload(
+            model, completed_step, validation_ce, n_params)
         try:
             torch.save(ck, pt_path)
             BGS.serialize(pt_path, bin_tmp)
@@ -4910,9 +5001,9 @@ def main():
                 os.unlink(bin_tmp)
         print(f"  .bin WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
 
-    def _write_clm(out_path):
+    def _write_clm(out_path, completed_step, validation_ce):
         if is_bytegpt:
-            _write_bin(out_path)
+            _write_bin(out_path, completed_step, validation_ce)
             return
         e_ser = mito.e_active
         mat = materialize_experts_into_state(model)
@@ -5009,6 +5100,7 @@ def main():
             "recipe": run_recipe,
             "rng": rng_state,
             "sampled_windows": list(sampled_windows),
+            "sampled_framed_windows": list(sampled_framed_windows),
             "answer_ce_telemetry": (dict(answer_ce_telemetry)
                                     if answer_ce_telemetry is not None else None),
             "state_digest": state_digest,
@@ -5157,7 +5249,7 @@ def main():
             # drops experts -> nblk mismatch on reload). No mitosis split happened, so this is lossless.
             if mito is not None:
                 mito.e_active = mito.emax
-            _write_clm(a.out)
+            _write_clm(a.out, steps, None)
             fl.save(a.out + ".fl.pt")                     # the trained bridge+gamma the eval needs
             p0(f"[field-loop] wrote {a.out} (+{a.out}.fl.pt) · arm={a.field_arm} "
                f"gamma={float(fl.gamma.detach()):+.5f} final_CE={hist[-1]:.4f}", flush=True)
@@ -5182,7 +5274,8 @@ def main():
         if (a.ckpt_every > 0 and a.out and step > 1 and
                 (step - 1) % a.ckpt_every == 0 and (step - 1) > resume_step):
             if rank == 0:
-                _write_clm(f"{a.out}.step{step - 1}{_ck_ext}")
+                _write_clm(f"{a.out}.step{step - 1}{_ck_ext}",
+                           step - 1, latest_validation_ce)
                 # …and the exact-resume twin. Overwrite one rolling file: model, optimizer,
                 # completed step and every RNG/sampler stream are one atomic trajectory state.
                 _write_pt(f"{a.out}.resume.pt", step - 1)
@@ -5370,6 +5463,7 @@ def main():
             if do_val and rank == 0:
                 per = val_per_cell()
                 vc = (sum(per.values()) / len(per)) if per else float("nan")
+                latest_validation_ce = vc
                 vtxt = f"  val_CE={vc:.5f}"
                 # ⑤ per-cell CE dict (ko/en × general/sns) — MONITOR-ONLY, additive log of
                 # the already-tracked per-register held-out CE. NEVER enters the loss
@@ -5419,6 +5513,7 @@ def main():
             descent[lab] = {"val_ce": round(vc, 5), "descent": ok}
             print(f"     {lab:<12s} val_CE={vc:.5f}  {'DESCENT' if ok else 'NO-DESCENT'}", flush=True)
         final_val = (sum(per.values()) / len(per)) if per else None
+        latest_validation_ce = final_val
         print(f"  FINAL val_CE(macro_cells)={final_val}  registers_DESCENT={n_desc}/{len(per)}", flush=True)
         if getattr(shell, "comp_lane", None) is not None and a.comp_probe_panel:
             # H_9904 — DIRECTIONAL lane readout (see comp_lane_heldout). Printed, never cemented.
@@ -5539,6 +5634,7 @@ def main():
                        "weight": float(a.answer_ce_weight),
                        "marker_utf8": a.answer_ce_marker,
                        "all_spans": bool(a.answer_ce_all_spans),
+                       "chat_framed_sampling": bool(a.chat_framed_sampling),
                        "telemetry": ({
                            **answer_ce_telemetry,
                            "mean_ce": (
@@ -5568,6 +5664,9 @@ def main():
                            label: {
                                "train_bytes": int(cell.train_end),
                                "sampled_windows": int(sampled_windows[index]),
+                               "sampled_framed_windows": int(sampled_framed_windows[index]),
+                               "eligible_chat_documents": len(cell.chat_frame_spans),
+                               "oversize_chat_documents": int(cell.chat_frame_oversize),
                                "sampled_fraction": (
                                    sampled_windows[index] / sum(sampled_windows)
                                    if sum(sampled_windows) else 0.0),
@@ -5604,7 +5703,7 @@ def main():
         # ── serialize the trained ckpt: CLM → .clm v0.3 (additive readout + MATERIALIZED
         #    experts) | ByteGPT → .bin (5×u32 header via core/serialize.py). ──
         if a.out:
-            _write_clm(a.out)  # final full-run checkpoint (same helper as --ckpt-every)
+            _write_clm(a.out, steps, final_val)  # final full-run checkpoint
 
     # §6 barrier so no rank tears down while rank 0 serializes the 303M .clm, then release NCCL.
     if ddp_on:

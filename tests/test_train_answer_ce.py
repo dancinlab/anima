@@ -86,12 +86,47 @@ def test_answer_marker_must_not_be_empty():
 
 
 @pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch training extra is not installed")
+def test_chat_framed_sampler_keeps_prompt_and_response_in_one_window(tmp_path):
+    import torch
+
+    train = _import_train()
+    document = b"user: remember blue\nassistant: noted\nuser: what color?\nassistant: blue"
+    corpus = tmp_path / "dialogue.txt"
+    corpus.write_bytes(b"general text\n\n" + document + b"\n\nmore text\n\n")
+    cell = train.ByteCell(str(corpus))
+    try:
+        cell.configure_chat_frames(96, b"assistant: ")
+        start, framed = cell.framed_window_spec(
+            96, torch.Generator().manual_seed(7))
+        x, y = cell.materialize(start, 96)
+        visible = bytes(x.tolist()) + bytes([int(y[-1])])
+        assert framed
+        assert len(cell.chat_frame_spans) == 1
+        assert document in visible
+    finally:
+        cell.close()
+
+
+@pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch training extra is not installed")
+def test_bytegpt_bridge_metadata_uses_actual_step_and_validation_ce():
+    train = _import_train()
+    model = train.ByteGPT(train.ByteGPTConfig(
+        vocab=256, d=16, n_layer=1, n_head=4, block=32))
+
+    payload = train.bytegpt_bridge_payload(model, 2000, 1.234567, 123)
+
+    assert payload["step"] == 2000
+    assert payload["val_ce"] == 1.23457
+    assert payload["nparam"] == 123
+
+
+@pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch training extra is not installed")
 def test_canonical_cli_records_chat_answer_telemetry(tmp_path):
     root = Path(__file__).resolve().parents[1]
     corpus = tmp_path / "dialogue.train.txt"
     validation = tmp_path / "dialogue.validation.txt"
-    dialogue = ("user: one\nassistant: first\n"
-                "user: two\nassistant: second\n") * 100
+    dialogue = ("user: one\nassistant: first\n\n"
+                "user: two\nassistant: second\n\n") * 100
     corpus.write_text(dialogue, encoding="utf-8")
     validation.write_text(dialogue, encoding="utf-8")
     summary_path = tmp_path / "summary.json"
@@ -106,7 +141,8 @@ def test_canonical_cli_records_chat_answer_telemetry(tmp_path):
             "--cell-label", "dialogue", "--require-cells", "1",
             "--validation-corpus", str(validation), "--val-every", "0",
             "--answer-ce-weight", "1.0", "--answer-ce-marker", "assistant: ",
-            "--answer-ce-all-spans", "--ckpt-out", str(checkpoint_path),
+            "--answer-ce-all-spans", "--chat-framed-sampling",
+            "--ckpt-out", str(checkpoint_path),
             "--gauges-out", str(summary_path), "--skip-inline-rho",
             "--log-every", "2",
         ],
@@ -126,6 +162,7 @@ def test_canonical_cli_records_chat_answer_telemetry(tmp_path):
         "weight": 1.0,
         "marker_utf8": "assistant: ",
         "all_spans": True,
+        "chat_framed_sampling": True,
         "telemetry": telemetry,
     }
     assert telemetry["complete_trajectory"] is True
@@ -133,3 +170,6 @@ def test_canonical_cli_records_chat_answer_telemetry(tmp_path):
     assert telemetry["active_steps"] == 2
     assert telemetry["positions"] > 0
     assert telemetry["mean_ce"] is not None
+    sampled = summary["sampling"]["per_cell"]["dialogue"]
+    assert sampled["sampled_framed_windows"] == 4
+    assert sampled["eligible_chat_documents"] > 0

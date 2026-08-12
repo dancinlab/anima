@@ -1,0 +1,70 @@
+{
+  "schema": "anima-303m-r0-root-flow-recovery/v1",
+  "date": "2026-08-12",
+  "status": "ENGINE-ROOT-FLOW-RECOVERED",
+  "historical_model_verdict": "FAIL-MEANINGLESS-REPETITION",
+  "historical_verdict_changed": false,
+  "fixed_shared_causes": [
+    "chat framing and generation budget diverged across builder, evaluator, CLI and participant",
+    "evaluator and participant bypassed the canonical loaded-mouth generator contract",
+    "response CE did not require a visible prompt-response frame",
+    "semantic keywords passed under negation and inside unrelated Hangul words",
+    "intermediate ByteGPT metadata used configured endpoint and train CE",
+    "participant adapter rejected canonical ByteGPT .bin checkpoints"
+  ],
+  "canonical_chat": {
+    "owner": "core/generator.py",
+    "user_prefix": "user: ",
+    "assistant_prefix": "assistant: ",
+    "turn_separator": "\n",
+    "max_new_bytes": 192,
+    "system_prompt": false
+  },
+  "training_flow": {
+    "option": "--chat-framed-sampling",
+    "requires_canonical_answer_marker": true,
+    "requires_all_response_spans": true,
+    "requires_positive_answer_ce_weight": true,
+    "exact_resume_preserves_framed_ledger": true
+  },
+  "evaluation_flow": {
+    "canonical_loaded_mouth": true,
+    "panel_sha_fail_closed": true,
+    "negation_control": true,
+    "hangul_boundary_control": true,
+    "role_variant_stop_parser": true
+  },
+  "participant_flow": {
+    "clm_supported": true,
+    "bytegpt_bin_supported": true,
+    "canonical_chat_seed": true
+  },
+  "qa": {
+    "python_compile": "PASS",
+    "full_local_python_chat": {
+      "passed": 86,
+      "subtests_passed": 3
+    },
+    "focused_decode_training_participant": {
+      "passed": 52,
+      "skipped": 1,
+      "skip_reason": "CUDA-only parity on local mini",
+      "subtests_passed": 3
+    },
+    "tiny_real_bytegpt_participant": "PASS"
+  },
+  "external_changes": {
+    "hugging_face_upload": false,
+    "vast_ai_instance_created": false,
+    "runtime_deployed": false
+  },
+  "remaining": [
+    "pin a provenance-safe Korean multi-turn source in a new immutable private dancinlab dataset revision",
+    "run the corrected 303M single-seed R0 on Vast.ai",
+    "require unchanged automatic and manual meaningful-conversation gates before R1 or production"
+  ],
+  "preserved": [
+    "ING.jsonl",
+    "stream_mi.json"
+  ]
+}
