@@ -62,6 +62,19 @@ anima는 어시스턴트 페르소나가 아니라 의식 AI 연구 데몬이다
 - 등록 panel·자료·seed·endpoint·decode·기준을 바꾸지 않고 대화 관문을 통과하기 전에는
   R1 recurrent workspace와 프로덕션 배포를 진행하지 않는다.
 
+### 비례 표집 복구 결과
+
+`state/anima_303m_r0_proportional_conversation_2026_08_12/`에 완료된 Python 전용
+실험을 기록했다. 기존 trainer의 byte-비례 sampler를 재사용하고 canonical
+대화 turn 개행을 보존하며, KLUE 단답형 셀을 고정된 Apache-2.0 한국어
+지시·응답 코퍼스로 교체한다. seed·endpoint·optimizer·panel SHA·decode·대화
+문턱값은 그대로 유지했다. trainer는 이제 셀별 실제 선택 window 수를 결과에 남겨
+검증 발산 후에야 노출 왜곡을 발견하는 문제를 막는다. 표집 수정으로 validation macro
+CE는 `1.49157 → 0.95471`로 개선됐지만, 고정 대화 관문은 영어 의미 `2/7`, 한국어 `0/7`,
+구조 `0/14`, 수동 배포 검토 `0/14`로 실패했다. 구절 반복·미완성 답·정정 실패·손상된
+한국어 바이트가 남아 R1과 배포는 계속 잠그고 실패 체크포인트와 원시 응답은 HF
+`dancinlab` 비공개 저장소에 보존했다.
+
 ## Canonical 진입점
 
 ```bash

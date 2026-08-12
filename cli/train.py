@@ -4592,6 +4592,13 @@ def main():
     _samp_cells = [c for c in cells if c.train_end >= seq_len + 2]
     _samp_w = torch.tensor([float(c.train_end) for c in _samp_cells]) \
         if _samp_cells else torch.tensor([1.0])
+    _samp_index = {id(c): i for i, c in enumerate(cells)}
+    # Measurement-only sampler ledger.  The old run summary named the policy but did not
+    # preserve what the policy actually exposed, which hid equal-cell overexposure of small
+    # dialogue files until validation had already diverged.  Counting selected windows does
+    # not draw RNG or alter batches; it makes the shared corpus flow auditable.
+    sampled_windows = [0 for _ in cells]
+    sampling_ledger_complete = True
 
     # --require-cells N: fail LOUD if the usable register-cell count != N (a_chat_registers
     # 4-cell completeness guard, parity with cli/train.hexa). Prevents silently training on
@@ -4705,6 +4712,13 @@ def main():
                 f"seed, batch, architecture, or CLMS settings\nsaved={saved_recipe}\nrun={run_recipe}")
         resume_step, resume_digest = _restore_resume_state(
             resume_payload, core_model, opt, resume_generators, device)
+        saved_windows = resume_payload.get("sampled_windows")
+        if saved_windows is not None:
+            if len(saved_windows) != len(sampled_windows):
+                raise ValueError("resume sampler ledger cell count differs from runtime corpus")
+            sampled_windows[:] = [int(value) for value in saved_windows]
+        elif resume_step:
+            sampling_ledger_complete = False
         if resume_step >= steps:
             raise ValueError(f"resume completed_step={resume_step} must be below --steps={steps}")
         p0(f"  [exact-resume] state digest {resume_digest} verified · completed={resume_step} "
@@ -4747,6 +4761,7 @@ def main():
                     cell = _samp_cells[ci]
                 else:
                     cell = cells[(step - 1 + b) % len(cells)]
+                sampled_windows[_samp_index[id(cell)]] += 1
                 start = cell.window_spec(seq_len, gen)   # None ⇒ synthetic fallback (no randint)
                 specs.append((cell, start))
             if slp is not None:                          # remember what was seen while awake
@@ -4932,6 +4947,7 @@ def main():
             "endpoint_steps": int(steps),
             "recipe": run_recipe,
             "rng": rng_state,
+            "sampled_windows": list(sampled_windows),
             "state_digest": state_digest,
         }
         torch.save(checkpoint, out_path)
@@ -5458,6 +5474,22 @@ def main():
                    "final_val_ce_macro_cells": (round(final_val, 5)
                                                 if final_val is not None else None),
                    "validation_aggregation": "equal-cell macro average",
+                   "sampling": {
+                       "policy": a.sample,
+                       "weight_basis": ("train_bytes" if a.sample == "proportional"
+                                        else "equal_cells"),
+                       "complete_trajectory": sampling_ledger_complete,
+                       "per_cell": {
+                           label: {
+                               "train_bytes": int(cell.train_end),
+                               "sampled_windows": int(sampled_windows[index]),
+                               "sampled_fraction": (
+                                   sampled_windows[index] / sum(sampled_windows)
+                                   if sum(sampled_windows) else 0.0),
+                           }
+                           for index, (label, cell) in enumerate(zip(labels, cells))
+                       },
+                   },
                    "registers_descent": f"{n_desc}/{len(per)}", "heldout_descent": descent,
                    "last_aux": last_aux, "dbes_final": dbes_final, "dbes_log": dbes_log,
                    # §4 diagnostic honesty: under DDP the rank-0 DBES probe runs on a rank-LOCAL

@@ -96,6 +96,34 @@ def test_invalid_byte_output_is_retained_but_fails_utf8():
     assert not result["pass"]
 
 
+def test_panel_retains_invalid_bytes_across_multiturn_seed(monkeypatch, tmp_path):
+    raw = b"broken byte: \xeb".decode("utf-8", "surrogateescape")
+
+    class InvalidByteMouth:
+        def __init__(self, _checkpoint):
+            self.kind = "test-byte-mouth"
+
+        def chat(self, _seed, _max_new, _stop_markers):
+            return {"text": raw, "raw_text": raw, "stopped": False,
+                    "stop_marker": None}
+
+    monkeypatch.setattr(evaluate, "_Mouth", InvalidByteMouth)
+    output = tmp_path / "conversation.json"
+    checkpoint = tmp_path / "unused.bin"
+    checkpoint.write_bytes(b"test checkpoint")
+
+    status = evaluate.conversation_panel_run([
+        str(checkpoint), "--conversation-panel", str(PANEL), "--out", str(output)])
+    result = json.loads(output.read_text(encoding="utf-8"))
+
+    assert status == 1
+    assert len(result["responses"]) == 14
+    memory_rows = [row for row in result["responses"] if row["item_id"] == "en_memory"]
+    assert len(memory_rows) == 2
+    assert memory_rows[1]["seed_bytes"] > memory_rows[0]["seed_bytes"]
+    assert all(not row["score"]["structural"]["utf8"] for row in memory_rows)
+
+
 def test_correction_rejects_stale_fact():
     panel = evaluate._conversation_panel_load(str(PANEL))
     item, turn = _turn(panel, "en_correction", 1)

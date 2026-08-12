@@ -1243,7 +1243,12 @@ def conversation_panel_run(argv):
                 stopped=decoded["stopped"],
                 raw_text=(response if decoded["stopped"] else decoded["raw_text"]))
             row = {"item_id": item["id"], "turn": ti, "lang": item["lang"],
-                   "prompt": prompt, "seed_bytes": len(seed.encode("utf-8")),
+                   # A byte mouth may emit invalid UTF-8.  The decoder and scorer retain
+                   # those bytes with surrogateescape, so multi-turn framing and its
+                   # measurement must use the same lossless convention instead of
+                   # crashing before the registered failure can be recorded.
+                   "prompt": prompt,
+                   "seed_bytes": len(seed.encode("utf-8", "surrogateescape")),
                    "raw_text": decoded["raw_text"], "response": response,
                    "stop_marker": decoded["stop_marker"],
                    "multiturn_final": bool(turn.get("multiturn_final")),

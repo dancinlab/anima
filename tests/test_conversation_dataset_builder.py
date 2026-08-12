@@ -40,6 +40,18 @@ class ConversationDatasetBuilderTest(unittest.TestCase):
             self.assertEqual(registry.contamination(["unique train"]), [])
             registry.close()
 
+    def test_role_preserving_registry_keeps_chat_turn_boundaries(self):
+        builder = _builder()
+        with tempfile.TemporaryDirectory() as directory:
+            registry = builder.DocumentRegistry(
+                os.path.join(directory, "docs.sqlite3"), preserve_role_lines=True)
+            registry.add("dialogue", "train", "user:  안녕\nassistant:  반가워")
+            registry.commit()
+            registry.write_cells(directory, ["dialogue"])
+            text = Path(directory, "dialogue.train.txt").read_text(encoding="utf-8")
+            self.assertEqual(text, "user: 안녕\nassistant: 반가워\n\n")
+            registry.close()
+
     def test_oasst_selects_reviewed_human_lowest_rank_path(self):
         builder = _builder()
         base = {"lang": "en", "review_result": True, "deleted": False,
@@ -67,6 +79,18 @@ class ConversationDatasetBuilderTest(unittest.TestCase):
         ]
         self.assertEqual(builder.klue_documents(rows),
                          ["user: 정답은?\nassistant: 보라색"])
+
+    def test_instruction_documents_require_both_roles_and_keep_context(self):
+        builder = _builder()
+        rows = [
+            {"instruction": "요약해 줘", "input": "비가 와요.", "output": "비가 옵니다."},
+            {"instruction": "빈 답", "input": "", "output": ""},
+            {"instruction": "", "input": "", "output": "무시"},
+        ]
+        self.assertEqual(
+            builder.instruction_documents(rows),
+            ["user: 요약해 줘\n비가 와요.\nassistant: 비가 옵니다."],
+        )
 
 
 if __name__ == "__main__":

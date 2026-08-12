@@ -68,6 +68,19 @@ live in `state/anima_303m_r0_conversation_2026_08_12/`.
 - R1 recurrent-workspace work and production deployment remain locked unless this conversation
   gate passes without changing the registered panel, data, seed, endpoint, decode, or bars.
 
+### Proportional recovery result
+
+`state/anima_303m_r0_proportional_conversation_2026_08_12/` records the completed Python-only run.
+It reuses the trainer's existing byte-proportional sampler, preserves canonical chat-turn
+newlines, and replaces the KLUE single-answer cell with a pinned Apache-2.0 Korean
+instruction/response corpus. Seed, endpoint, optimizer, panel SHA, decode, and all conversation
+bars remained fixed. The trainer now records realized per-cell window counts so exposure can no
+longer be inferred only after validation divergence. The sampler corrected held-out divergence
+(macro CE `1.49157 → 0.95471`) but the unchanged conversation gate still failed: English semantic
+relevance `2/7`, Korean `0/7`, structural `0/14`, and manual deployment review `0/14` due to phrase
+loops, incomplete answers, stale correction, and damaged Korean bytes. R1 and deployment remain
+locked; the failed checkpoint and raw replies are preserved privately under HF `dancinlab`.
+
 ## Canonical entry
 
 ```bash

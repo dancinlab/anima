@@ -24,6 +24,13 @@ def normalized_document(text: str) -> str:
     return re.sub(r"\s+", " ", unicodedata.normalize("NFC", str(text))).strip()
 
 
+def role_preserving_document(text: str) -> str:
+    """Normalize content while keeping explicit chat-turn boundaries canonical."""
+    lines = [normalized_document(line) for line in
+             unicodedata.normalize("NFC", str(text)).splitlines()]
+    return "\n".join(line for line in lines if line).strip()
+
+
 def document_hash(text: str) -> str:
     return hashlib.sha256(normalized_document(text).encode("utf-8")).hexdigest()
 
@@ -39,7 +46,7 @@ def file_sha256(path: str | Path) -> str:
 class DocumentRegistry:
     """Disk-backed exact dedup with held-out validation winning ownership."""
 
-    def __init__(self, path: str | Path):
+    def __init__(self, path: str | Path, preserve_role_lines: bool = False):
         self.db = sqlite3.connect(path)
         self.db.execute("PRAGMA journal_mode=WAL")
         self.db.execute(
@@ -47,11 +54,13 @@ class DocumentRegistry:
             "split TEXT NOT NULL, text TEXT NOT NULL)")
         self.seen = 0
         self.empty = 0
+        self.preserve_role_lines = bool(preserve_role_lines)
 
     def add(self, label: str, split: str, text: str) -> None:
         if split not in {"train", "validation"}:
             raise ValueError(f"invalid split: {split}")
-        value = normalized_document(text)
+        value = (role_preserving_document(text) if self.preserve_role_lines
+                 else normalized_document(text))
         if not value:
             self.empty += 1
             return
@@ -183,10 +192,10 @@ def _quality(row: dict) -> float:
         return -1.0
 
 
-def oasst_best_documents(rows: list[dict]) -> list[str]:
+def oasst_best_documents(rows: list[dict], language: str = "en") -> list[str]:
     eligible = {
         row["message_id"]: row for row in rows
-        if row.get("lang") == "en"
+        if row.get("lang") == language
         and row.get("review_result") is True
         and not row.get("deleted")
         and not row.get("synthetic")
@@ -242,6 +251,36 @@ def klue_documents(rows: list[dict]) -> list[str]:
     return documents
 
 
+def instruction_documents(rows) -> list[str]:
+    """Render meaningful instruction/response records through the existing chat format.
+
+    The source may be a materialized list or a JSONL iterator.  Empty inputs and outputs are
+    rejected so an instruction-only row cannot teach the mouth to fabricate the next role.
+    """
+    documents = []
+    for row in rows:
+        question = normalized_document(row.get("instruction") or row.get("question") or "")
+        context = normalized_document(row.get("input") or "")
+        answer = normalized_document(row.get("output") or row.get("answer") or "")
+        if not question or not answer:
+            continue
+        if context:
+            question = f"{question}\n{context}"
+        documents.append(f"user: {question}\nassistant: {answer}")
+    return documents
+
+
+def jsonl_rows(path: str | Path):
+    with open(path, "r", encoding="utf-8", errors="strict") as handle:
+        for line_number, line in enumerate(handle, 1):
+            if not line.strip():
+                continue
+            value = json.loads(line)
+            if not isinstance(value, dict):
+                raise ValueError(f"JSONL row {line_number} is not an object")
+            yield value
+
+
 def _source(protocol: dict, label: str) -> dict:
     return next(source for source in protocol["source_data"] if source["label"] == label)
 
@@ -263,7 +302,9 @@ def build(protocol_path: str | Path, panel_path: str | Path, output: str | Path,
     db_path = output / ".documents.sqlite3"
     if db_path.exists():
         db_path.unlink()
-    registry = DocumentRegistry(db_path)
+    preserve_role_lines = bool(protocol.get("data_rules", {}).get(
+        "preserve_chat_turn_newlines", False))
+    registry = DocumentRegistry(db_path, preserve_role_lines=preserve_role_lines)
     source_files = []
     try:
         for label in ("en_general", "ko_general"):
@@ -290,13 +331,24 @@ def build(protocol_path: str | Path, panel_path: str | Path, output: str | Path,
             registry.commit()
 
         source = _source(protocol, "ko_dialogue")
-        for filename, split in zip(source["files"], ("train", "validation")):
+        if source.get("kind") == "instruction_jsonl":
+            filename = source["file"]
             path = _download(source, filename, token)
             source_files.append({"label": "ko_dialogue", "file": filename,
                                  "sha256": file_sha256(path)})
-            for text in klue_documents(pq.read_table(path).to_pylist()):
+            for text in instruction_documents(jsonl_rows(path)):
+                split = ("validation" if int(document_hash(text), 16) % 20 == 0
+                         else "train")
                 registry.add("ko_dialogue", split, text)
             registry.commit()
+        else:
+            for filename, split in zip(source["files"], ("train", "validation")):
+                path = _download(source, filename, token)
+                source_files.append({"label": "ko_dialogue", "file": filename,
+                                     "sha256": file_sha256(path)})
+                for text in klue_documents(pq.read_table(path).to_pylist()):
+                    registry.add("ko_dialogue", split, text)
+                registry.commit()
 
         prompts = []
         for item in panel["items"]:
@@ -307,7 +359,8 @@ def build(protocol_path: str | Path, panel_path: str | Path, output: str | Path,
         cells = registry.write_cells(
             output, ["en_general", "ko_general", "en_dialogue", "ko_dialogue"])
         manifest = {
-            "schema": "anima-303m-r0-conversation-data/v1",
+            "schema": protocol.get("data_rules", {}).get(
+                "output_schema", "anima-303m-r0-conversation-data/v1"),
             "protocol_sha256": file_sha256(protocol_path),
             "panel_sha256": file_sha256(panel_path),
             "dedup": {
@@ -315,6 +368,7 @@ def build(protocol_path: str | Path, panel_path: str | Path, output: str | Path,
                 "empty_dropped": registry.empty,
                 "validation_wins_duplicate_ownership": True,
                 "cross_train_validation_hash_overlap": registry.overlap(),
+                "preserve_chat_turn_newlines": preserve_role_lines,
             },
             "panel_decontamination": {
                 "policy": "remove_before_training",
@@ -333,13 +387,15 @@ def build(protocol_path: str | Path, panel_path: str | Path, output: str | Path,
             raise RuntimeError(f"registered conversation panel contamination: {contamination}")
         (output / "manifest.json").write_text(
             json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        license_lines = ["# Source licenses", ""]
+        for source in protocol["source_data"]:
+            if source.get("license"):
+                license_lines.append(f"- {source['repo']}: {source['license']}.")
+            elif source["repo"].startswith("dancinlab/"):
+                license_lines.append(
+                    f"- {source['repo']}: provenance retained from the pinned private revision.")
         (output / "LICENSES.md").write_text(
-            "# Source licenses\n\n"
-            "- OpenAssistant/oasst1: Apache-2.0.\n"
-            "- klue/klue MRC: CC-BY-SA-4.0.\n"
-            "- dancinlab general cells: provenance retained from their pinned private revisions.\n",
-            encoding="utf-8",
-        )
+            "\n".join(license_lines) + "\n", encoding="utf-8")
         return manifest
     finally:
         registry.close()
