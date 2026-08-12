@@ -1145,8 +1145,8 @@ def serialize_parity(model, out_path, panel_path, device, max_items=32):
     return r
 
 
-def answer_position_mask(targets, marker=ANSWER_MARKER):
-    """(B, T) bool — True on target positions that lie in the ANSWER span of an arrow line.
+def answer_position_mask(targets, marker=ANSWER_MARKER, all_spans=False):
+    """Return target positions inside newline-bounded responses after ``marker``.
 
     The arrow-line corpora (`corpus flat|bindpanel|derivtrace|…`) put the answer after a literal
     ` => ` and end the line at a newline, so the span is 'after the LAST marker, UP TO the next
@@ -1159,8 +1159,11 @@ def answer_position_mask(targets, marker=ANSWER_MARKER):
     at seq_len 96 x batch 8 (= 768 target positions) the mask marked ans_n = 365 of them for a
     4-BYTE answer — ~99% of the weighted mass was next-line surface. That is why
     `--answer-ce-weight 5.0` and even 20.0 moved nothing (H_9811): the term was real, fired every
-    step, and weighted almost everything except the answer.
+    step, and weighted almost everything except the answer.  Dialogue training can instead pass
+    its canonical assistant prefix and request every response span in a multi-turn window.
     """
+    if not marker:
+        raise ValueError("answer marker must not be empty")
     B, T = targets.shape
     mk = torch.tensor(list(marker), dtype=targets.dtype, device=targets.device)
     n = mk.numel()
@@ -1169,6 +1172,21 @@ def answer_position_mask(targets, marker=ANSWER_MARKER):
     # windows[b, t] == True iff targets[b, t:t+n] == marker
     win = targets.unfold(1, n, 1) == mk.view(1, 1, n)
     hit = win.all(dim=2)                                   # (B, T-n+1)
+    if all_spans:
+        # Dialogue windows can contain more than one user/assistant exchange.  Mark every
+        # response span without a Python/GPU synchronization loop: a response is active when
+        # the most recent boundary is a completed marker rather than a newline.  The newline
+        # right edge is mandatory because corpus windows are cut from concatenated documents.
+        starts = torch.zeros_like(targets, dtype=torch.bool)
+        if T > n:
+            starts[:, n:] = hit[:, :T - n]
+        pos_full = torch.arange(T, device=targets.device).view(1, -1).expand(B, T)
+        neg = torch.full_like(pos_full, -1)
+        last_start = torch.cummax(torch.where(starts, pos_full, neg), dim=1).values
+        last_newline = torch.cummax(
+            torch.where(targets == 10, pos_full, neg), dim=1).values
+        return (last_start >= 0) & (last_start > last_newline)
+
     idx = torch.arange(hit.shape[1], device=targets.device).view(1, -1)
     last = torch.where(hit, idx, torch.full_like(idx, -1)).max(dim=1).values   # -1 ⇒ no marker
     pos = torch.arange(T, device=targets.device).view(1, -1)
@@ -1182,9 +1200,9 @@ def answer_position_mask(targets, marker=ANSWER_MARKER):
     return after & (pos < first_nl)
 
 
-def answer_ce(logits, targets, V, marker=ANSWER_MARKER):
+def answer_ce(logits, targets, V, marker=ANSWER_MARKER, all_spans=False):
     """Mean CE over ANSWER positions only. Returns (loss, n_positions); loss is 0 when none."""
-    mask = answer_position_mask(targets, marker)
+    mask = answer_position_mask(targets, marker, all_spans=all_spans)
     n = int(mask.sum())
     if n == 0:
         return logits.sum() * 0.0, 0
@@ -1711,7 +1729,8 @@ class TrainShell(nn.Module):
 
     def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0, sb_oracle=False, sb_addr_w=0.0, sb_oracle_aux=0.0, sb_tap_grad="detached",
                 idl=None, idl_w=1.0, idl_assign="hungarian", idl_route="l3-disjoint",
-                idl_tap_L=3, idl_gen=None, ans_w=0.0):
+                idl_tap_L=3, idl_gen=None, ans_w=0.0,
+                ans_marker=ANSWER_MARKER, ans_all_spans=False):
         # ── VERBATIM relocation of the per-step loss-composition block (bf16 + fp32). The
         #    autocast context stays wrapping ONLY the forward/compose (backward is at the
         #    callsite, outside autocast — DDP hooks fire there). Returns (loss, detached CE,
@@ -1729,8 +1748,10 @@ class TrainShell(nn.Module):
                 obj_loss, oaux = objfn(out["logits"].float(), y, V, obj_gen, penultimate=pen)
                 loss = obj_loss + out["aux_loss"]
                 if ans_w > 0.0:                       # H_9811 answer-weighted CE (default 0 = off)
-                    ace, an = answer_ce(out["logits"].float(), y, V)
+                    ace, an = answer_ce(out["logits"].float(), y, V,
+                                        marker=ans_marker, all_spans=ans_all_spans)
                     loss = loss + ans_w * ace
+                    aux["ans_ce"] = float(ace.detach()); aux["ans_n"] = an
                 if self.comp_lane is not None:        # H_9900 composition lane (default None = off)
                     # DETACH is the whole point: this lane's CE must not reach the trunk, or it
                     # competes with the language stratum exactly as replay does (H_9898).
@@ -1742,7 +1763,6 @@ class TrainShell(nn.Module):
                     loss = loss + self.comp_w * closs
                     aux["comp_ce"] = float(closs.detach())
                     aux["comp_span"] = float(cmask.float().mean())
-                    aux["ans_ce"] = float(ace.detach()); aux["ans_n"] = an
                 if self.dict_on:
                     dloss = dict_lambda * h.abs().mean()
                     loss = loss + dloss; aux["dict_l1"] = float(dloss.detach())
@@ -1760,7 +1780,8 @@ class TrainShell(nn.Module):
             obj_loss, oaux = objfn(out["logits"], y, V, obj_gen, penultimate=pen)
             loss = obj_loss + out["aux_loss"]
             if ans_w > 0.0:                           # H_9811 answer-weighted CE (default 0 = off)
-                ace, an = answer_ce(out["logits"], y, V)
+                ace, an = answer_ce(out["logits"], y, V,
+                                    marker=ans_marker, all_spans=ans_all_spans)
                 loss = loss + ans_w * ace
                 aux["ans_ce"] = float(ace.detach()); aux["ans_n"] = an
             if self.dict_on:
@@ -3629,6 +3650,13 @@ def main():
                          "the binding bit at chance (measured: d_acc 0.5000 on DRILLED lexemes, "
                          "one token emitted 68-86%% of slots, and 5.9x params/6.7x steps made it "
                          "WORSE). v4 H_004's amendment A1 used ce_surf + 5*ce_ans.")
+    ap.add_argument("--answer-ce-marker", default=" => ",
+                    help="UTF-8 byte marker that begins a supervised answer span. The default "
+                         "preserves arrow-line training; chat uses its registered assistant "
+                         "prefix. The first newline closes each span.")
+    ap.add_argument("--answer-ce-all-spans", action="store_true",
+                    help="supervise every marker-delimited answer in a window (needed for "
+                         "multi-turn chat); default keeps the legacy last-span behavior")
     ap.add_argument("--bind-rank", type=int, default=64, help="H_9698: MBND binder rank (q/k/v/u width)")
     ap.add_argument("--bind-lam0", type=float, default=1.0, help="H_9698: MBND lam init (additive scale)")
     ap.add_argument("--freeze-trunk", action="store_true",
@@ -4006,6 +4034,16 @@ def main():
                          "(§4). Flip ON only if a FUTURE per-step-gated head makes DDP error on "
                          "an unused param.")
     a = ap.parse_args()
+    if a.answer_ce_weight < 0.0:
+        ap.error("--answer-ce-weight must be non-negative")
+    try:
+        answer_marker = a.answer_ce_marker.encode("utf-8", "strict")
+    except UnicodeEncodeError as exc:
+        ap.error("--answer-ce-marker must be valid UTF-8: " + str(exc))
+    if not answer_marker:
+        ap.error("--answer-ce-marker must not be empty")
+    if b"\n" in answer_marker or b"\r" in answer_marker:
+        ap.error("--answer-ce-marker cannot contain a line break; newline closes the span")
 
     if not (0.0 <= a.adam_beta2 < 1.0):
         ap.error("--adam-beta2 must be in [0, 1)")
@@ -4698,12 +4736,29 @@ def main():
     # into the recipe when it is used.
     if a.validation_corpus:
         run_recipe["validation_corpus"] = list(a.validation_corpus)
+    if a.answer_ce_weight > 0.0:
+        # Loss terms are part of the exact trajectory.  Older default-off checkpoints keep
+        # their historical recipe shape; an older answer-weighted checkpoint that omitted
+        # these fields now fails closed instead of silently resuming under a different loss.
+        run_recipe["answer_ce"] = {
+            "weight": float(a.answer_ce_weight),
+            "marker_utf8": a.answer_ce_marker,
+            "all_spans": bool(a.answer_ce_all_spans),
+        }
     resume_generators = {
         "corpus": gen, "validation": val_gen, "objective": obj_gen,
         "store": sb_gen, "ideation": idl_gen, "sleep": slp_gen,
     }
     resume_step = 0
     resume_digest = ""
+    answer_ce_telemetry = ({
+        "complete_trajectory": True,
+        "steps": 0,
+        "active_steps": 0,
+        "positions": 0,
+        "position_weighted_ce_sum": 0.0,
+        "scope": (f"rank_{rank}_local" if ddp_on else "full_batch"),
+    } if a.answer_ce_weight > 0.0 else None)
     if resume_payload is not None:
         saved_recipe = resume_payload.get("recipe")
         if saved_recipe != run_recipe:
@@ -4719,6 +4774,12 @@ def main():
             sampled_windows[:] = [int(value) for value in saved_windows]
         elif resume_step:
             sampling_ledger_complete = False
+        if answer_ce_telemetry is not None:
+            saved_answer_telemetry = resume_payload.get("answer_ce_telemetry")
+            if saved_answer_telemetry is None:
+                answer_ce_telemetry["complete_trajectory"] = False
+            else:
+                answer_ce_telemetry.update(saved_answer_telemetry)
         if resume_step >= steps:
             raise ValueError(f"resume completed_step={resume_step} must be below --steps={steps}")
         p0(f"  [exact-resume] state digest {resume_digest} verified · completed={resume_step} "
@@ -4948,6 +5009,8 @@ def main():
             "recipe": run_recipe,
             "rng": rng_state,
             "sampled_windows": list(sampled_windows),
+            "answer_ce_telemetry": (dict(answer_ce_telemetry)
+                                    if answer_ce_telemetry is not None else None),
             "state_digest": state_digest,
         }
         torch.save(checkpoint, out_path)
@@ -5215,6 +5278,8 @@ def main():
                                            # H_9803 branch-latent ideation fan (None ⇒ byte-identical)
                                            idl=(get_ideation_batch() if idl_cell is not None else None),
                                            ans_w=a.answer_ce_weight,   # H_9811 (0.0 ⇒ term never evaluated)
+                                           ans_marker=answer_marker,
+                                           ans_all_spans=a.answer_ce_all_spans,
                                            idl_w=a.ideation_weight, idl_assign=a.ideation_assign,
                                            idl_route=a.ideation_route, idl_tap_L=a.ideation_route_l,
                                            idl_gen=idl_gen)
@@ -5231,6 +5296,14 @@ def main():
         else:
             ce = float(ce_local)
         last_aux = aux
+        if answer_ce_telemetry is not None:
+            answer_ce_telemetry["steps"] += 1
+            ans_n = int(aux.get("ans_n", 0))
+            if ans_n > 0:
+                answer_ce_telemetry["active_steps"] += 1
+                answer_ce_telemetry["positions"] += ans_n
+                answer_ce_telemetry["position_weighted_ce_sum"] += (
+                    float(aux["ans_ce"]) * ans_n)
         if loss0 is None: loss0 = ce
         lossF = ce
         do_val = a.val_every > 0 and (step == 1 or step % a.val_every == 0 or step == steps)
@@ -5462,6 +5535,18 @@ def main():
                            "per_rank_batch": B_local, "gpus": a.gpus},
                    "obj_aux_params": (sum(p.numel() for p in objfn.parameters())
                                       if obj_is_module else 0),
+                   "answer_ce": ({
+                       "weight": float(a.answer_ce_weight),
+                       "marker_utf8": a.answer_ce_marker,
+                       "all_spans": bool(a.answer_ce_all_spans),
+                       "telemetry": ({
+                           **answer_ce_telemetry,
+                           "mean_ce": (
+                               answer_ce_telemetry["position_weighted_ce_sum"] /
+                               answer_ce_telemetry["positions"]
+                               if answer_ce_telemetry["positions"] else None),
+                       } if answer_ce_telemetry is not None else None),
+                   } if a.answer_ce_weight > 0.0 else None),
                    "levers": {"tlora": tlora_on, "tlora_rank": a.tlora_rank,
                               "tlora_base": not a.tlora_no_base, "dict_aux": dict_on,
                               "jamo_aux": jamo_on, "wd_floor": a.wd_floor,

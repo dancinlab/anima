@@ -1,0 +1,102 @@
+{
+  "schema": "anima-303m-r0-response-ce/v1",
+  "date": "2026-08-12",
+  "status": "PREREGISTERED",
+  "parent_result": "../anima_303m_r0_proportional_conversation_2026_08_12/result.json",
+  "hypothesis": "The proportional run optimized next-byte likelihood over whole random windows but did not give a stable normalized objective to prompt-conditioned assistant spans. Reusing the existing answer CE in the shared trainer for every canonical assistant span will improve meaningful conversation without changing data, sampling, seed, endpoint, decode, panel, or bars.",
+  "execution": {
+    "entry": "anima-py",
+    "language": "Python only",
+    "provider": "Vast.ai",
+    "gpu_memory_gib": [24, 48],
+    "h100_allowed": false,
+    "models_and_training_data": "private Hugging Face dancinlab repositories only",
+    "delete_instance_after_completion": true
+  },
+  "architecture": {
+    "family": "ByteGPT",
+    "vocab": 256,
+    "d": 1024,
+    "layers": 24,
+    "heads": 16,
+    "block": 512,
+    "parameters_expected": 303097856,
+    "random_initialization": true,
+    "initialization": "canonical-gpt-v1"
+  },
+  "data": {
+    "repository": "dancinlab/anima-303m-r0-proportional-conversation-data-2026-08-12",
+    "revision": "ee143002d9494cac4ed4a821dadfb5ece60c1e74",
+    "changed_from_parent": false,
+    "train_bytes": {
+      "en_general": 57235159,
+      "ko_general": 57396113,
+      "en_dialogue": 4307476,
+      "ko_dialogue": 24243428
+    }
+  },
+  "training": {
+    "screen_seed": 7,
+    "steps": 14000,
+    "global_batch": 32,
+    "sequence_bytes": 512,
+    "target_bytes": 229376000,
+    "sample": "proportional",
+    "required_cells": 4,
+    "optimizer": "AdamW",
+    "beta1": 0.9,
+    "beta2": 0.95,
+    "weight_decay": 0.1,
+    "peak_lr": 0.0003,
+    "schedule": "linear-warmup-cosine",
+    "warmup_steps": 500,
+    "decay_steps": 14000,
+    "min_lr_ratio": 0.1,
+    "precision": "bf16",
+    "checkpoint_every": 2000,
+    "checkpoint_selection": "fixed final step 14000",
+    "validation_every_steps": 200,
+    "validation_batches_per_cell": 4,
+    "base_objective": "ce_marginal",
+    "response_objective": {
+      "existing_function": "cli/train.py answer_ce",
+      "weight": 1.0,
+      "weight_rule": "one unscaled normalized auxiliary term; fixed before the GPU run and not tuned from results",
+      "marker_utf8": "assistant: ",
+      "all_spans": true,
+      "span_end": "first newline",
+      "telemetry_required": [
+        "complete_trajectory",
+        "steps",
+        "active_steps",
+        "positions",
+        "mean_ce"
+      ]
+    }
+  },
+  "fixed_conversation_gate": {
+    "panel": "../anima_303m_r0_conversation_2026_08_12/conversation_panel.json",
+    "panel_sha256": "10b18a4c6fb6c4df1beb042529f1e485c5de7dfbbe480ed25771d6a1316e41ee",
+    "engine": "cli/evaluate.py --conversation-panel",
+    "decode": "canonical ByteGPT greedy continuation",
+    "all_structural_responses_required": true,
+    "semantic_min_per_language": "6/7",
+    "all_multiturn_final_answers_required": true,
+    "cross_question_duplicate_responses_allowed": false,
+    "manual_meaning_review": "all 14 responses must be relevant and intelligible",
+    "threshold_or_panel_changes_allowed": false
+  },
+  "gate_order": [
+    "python_regression_and_response_objective_telemetry",
+    "fixed_seed_training_and_clean_validation_descent",
+    "meaningful_conversation_automatic",
+    "meaningful_conversation_manual_all_responses",
+    "remaining_language_and_reach_diagnostics"
+  ],
+  "failure_policy": {
+    "if_conversation_fails": "record raw failure, do not interpret later diagnostics, keep R1 and production locked",
+    "additional_seed_or_weight_search": false
+  },
+  "model_repository": "dancinlab/anima-303m-r0-response-ce-seed7-2026-08-12",
+  "preserve": ["ING.jsonl", "stream_mi.json"]
+}

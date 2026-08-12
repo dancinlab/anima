@@ -75,6 +75,15 @@ CE는 `1.49157 → 0.95471`로 개선됐지만, 고정 대화 관문은 영어 �
 한국어 바이트가 남아 R1과 배포는 계속 잠그고 실패 체크포인트와 원시 응답은 HF
 `dancinlab` 비공개 저장소에 보존했다.
 
+### 응답 구간 감독 복구 진행 중
+
+`state/anima_303m_r0_response_ce_2026_08_12/`에 다음 고정 seed-7 비교를 사전등록했다.
+공용 trainer의 기존 answer CE를 모든 canonical `assistant:` 구간에 재사용하고 해당 손실이
+실제로 작동한 step·위치·CE를 기록한다. 기존 화살표 코퍼스의 기본 동작은 유지한다. 부모
+자료 revision·sampler·endpoint·seed·optimizer·panel·greedy decode·문턱값은 고정하고,
+사전등록한 정규화 응답 손실 하나만 추가하며 sweep은 하지 않는다. 영어·한국어 관련성,
+반복, 기억, 정정, 전체 수동 검토를 모두 통과하기 전에는 R1과 배포를 계속 잠근다.
+
 ## Canonical 진입점
 
 ```bash
