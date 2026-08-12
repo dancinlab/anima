@@ -68,6 +68,45 @@ class ConversationDatasetBuilderTest(unittest.TestCase):
         self.assertEqual(builder.oasst_best_documents(rows),
                          ["user: Question\nassistant: Best answer"])
 
+    def test_oasst_turn_documents_retains_all_branches_and_complete_suffixes(self):
+        builder = _builder()
+        base = {"lang": "en", "review_result": True, "deleted": False,
+                "synthetic": False, "labels": None}
+        rows = [
+            dict(base, message_id="root", parent_id=None, role="prompter", text="Question"),
+            dict(base, message_id="a", parent_id="root", role="assistant", text="First answer"),
+            dict(base, message_id="u", parent_id="a", role="prompter", text="Follow up"),
+            dict(base, message_id="b", parent_id="u", role="assistant", text="Second answer"),
+            dict(base, message_id="alt", parent_id="root", role="assistant", text="Alternative"),
+        ]
+
+        documents, stats = builder.oasst_turn_documents(rows, max_bytes=70)
+
+        self.assertEqual(documents, [
+            "user: Question\nassistant: First answer",
+            "user: Question\nassistant: Alternative",
+            "user: Follow up\nassistant: Second answer",
+        ])
+        self.assertEqual(stats["eligible_assistant_rows"], 3)
+        self.assertEqual(stats["fitting_assistant_turns"], 3)
+        self.assertEqual(stats["serialized_assistant_turns"], 3)
+        self.assertEqual(stats["coverage"], 1.0)
+
+    def test_oasst_turn_documents_reports_target_pair_that_cannot_fit(self):
+        builder = _builder()
+        base = {"lang": "en", "review_result": True, "deleted": False,
+                "synthetic": False, "labels": None}
+        rows = [
+            dict(base, message_id="root", parent_id=None, role="prompter", text="Question"),
+            dict(base, message_id="a", parent_id="root", role="assistant", text="x" * 100),
+        ]
+
+        documents, stats = builder.oasst_turn_documents(rows, max_bytes=40)
+
+        self.assertEqual(documents, [])
+        self.assertEqual(stats["target_pair_oversize"], 1)
+        self.assertEqual(stats["fitting_assistant_turns"], 0)
+
     def test_klue_excludes_impossible_and_empty_answers(self):
         builder = _builder()
         rows = [

@@ -132,6 +132,20 @@ loss가 실제로 작동했으므로, 이는 조용한 배선 실패가 아니�
 `dancinlab/anima-303m-r0-english-seed7-2026-08-12@efdaf53c92e9e16cff6b0eb00cc94d0b88a97d33`에서
 검증했고 Vast.ai 인스턴스를 삭제해 활성 임대는 0개다.
 
+### 사전등록한 V0/V2 마이크로 실험
+
+`state/anima_303m_v0_v2_micro_2026_08_12/`에 자료 변경이나 GPU 임대 전에 다음 Python 전용
+단계를 고정했다. 이전 자료는 OpenAssistant root마다 최선 경로 하나만 선택했고, 그 뒤 완전한
+trajectory가 512-byte 창을 넘는다는 이유로 2,308개 문서 중 2,082개를 버렸다. 새 단일변수 자료
+treatment는 고정 source와 eligibility를 그대로 두고, 검토된 모든 실제 assistant turn을 기존 창에
+들어가는 가장 긴 완전한 교대 ancestry suffix로 노출한다. byte, prompt, role, response 일부를
+잘라서는 안 된다.
+
+자료 무결성과 coverage 관문을 로컬에서 먼저 실행한다. 통과한 자료만 동일한 tiny ByteGPT의
+V0(기본 CE)와 V2(기존 response CE 추가) arm으로 비교한다. tiny 실패 시 303M 재실행을 금지하고,
+tiny 통과도 별도 기록한 단일 seed screen만 허용한다. R1과 production은 계속 잠근다. 고정 조건과
+중단 규칙은 `state/anima_303m_v0_v2_micro_2026_08_12/protocol.json`에 있다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

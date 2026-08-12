@@ -4107,8 +4107,8 @@ def main():
     if b"\n" in answer_marker or b"\r" in answer_marker:
         ap.error("--answer-ce-marker cannot contain a line break; newline closes the span")
     if a.chat_framed_sampling:
-        if a.answer_ce_weight <= 0.0 or not a.answer_ce_all_spans:
-            ap.error("--chat-framed-sampling requires --answer-ce-weight > 0 and "
+        if a.answer_ce_weight > 0.0 and not a.answer_ce_all_spans:
+            ap.error("--chat-framed-sampling with response CE requires "
                      "--answer-ce-all-spans")
         if answer_marker != GEN.CHAT_ASSISTANT_PREFIX.encode("utf-8"):
             ap.error("--chat-framed-sampling requires the canonical assistant prefix: "

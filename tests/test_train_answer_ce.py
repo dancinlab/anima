@@ -173,3 +173,40 @@ def test_canonical_cli_records_chat_answer_telemetry(tmp_path):
     sampled = summary["sampling"]["per_cell"]["dialogue"]
     assert sampled["sampled_framed_windows"] == 4
     assert sampled["eligible_chat_documents"] > 0
+
+
+@pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch training extra is not installed")
+def test_chat_framed_sampling_is_available_to_base_ce_control(tmp_path):
+    root = Path(__file__).resolve().parents[1]
+    corpus = tmp_path / "dialogue.train.txt"
+    dialogue = ("user: one\nassistant: first\n\n"
+                "user: two\nassistant: second\n\n") * 20
+    corpus.write_text(dialogue, encoding="utf-8")
+    summary_path = tmp_path / "summary.json"
+
+    completed = subprocess.run(
+        [
+            sys.executable, str(root / "cli" / "train.py"),
+            "--arch", "bytegpt", "--d", "32", "--L", "1",
+            "--seq-len", "64", "--steps", "1", "--batch-size", "2",
+            "--device", "cpu", "--corpus", str(corpus),
+            "--cell-label", "dialogue", "--require-cells", "1",
+            "--chat-framed-sampling", "--answer-ce-marker", "assistant: ",
+            "--val-every", "0",
+            "--gauges-out", str(summary_path), "--skip-inline-rho",
+        ],
+        cwd=root,
+        env={**os.environ, "OMP_NUM_THREADS": "2", "MKL_NUM_THREADS": "2"},
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        timeout=60,
+        check=False,
+    )
+
+    assert completed.returncode == 0, completed.stdout
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    assert summary["answer_ce"] is None
+    sampled = summary["sampling"]["per_cell"]["dialogue"]
+    assert sampled["sampled_framed_windows"] == 2
+    assert sampled["eligible_chat_documents"] > 0

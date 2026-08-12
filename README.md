@@ -141,6 +141,21 @@ was run. The failed model and recovery evidence are verified in private HF revis
 `dancinlab/anima-303m-r0-english-seed7-2026-08-12@efdaf53c92e9e16cff6b0eb00cc94d0b88a97d33`;
 the Vast.ai instance was deleted with zero active rentals.
 
+### Preregistered V0/V2 micro experiment
+
+`state/anima_303m_v0_v2_micro_2026_08_12/` freezes the next Python-only step before changing data
+or renting a GPU. The prior source selected one best OpenAssistant path per root and then discarded
+2,082 of 2,308 documents because the complete trajectory exceeded the 512-byte window. The new
+single-variable data treatment keeps the exact pinned source and eligibility but exposes every
+eligible reviewed human assistant turn as the longest complete alternating ancestry suffix that
+fits the existing window. It may not truncate bytes, prompts, roles or responses.
+
+Data integrity and coverage gates run locally first. Only a passing dataset reaches matched tiny
+ByteGPT V0 (base CE) and V2 (the existing response-CE term) arms. Tiny failure forbids another 303M
+run; tiny success permits only a separately recorded single-seed screen. R1 and production remain
+locked. The frozen conditions and stop rules are in
+`state/anima_303m_v0_v2_micro_2026_08_12/protocol.json`.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

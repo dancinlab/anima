@@ -43,12 +43,8 @@ def document_hash(text: str) -> str:
 
 def chat_document(turns: list[tuple[str, str]]) -> str:
     """Render source turns with the runtime chat-format SSOT."""
-    lines = []
-    fmt = chat_runtime.gen_chat_format()
-    for role, text in turns:
-        prefix = fmt["user_prefix"] if role == "user" else fmt["assistant_prefix"]
-        lines.append(prefix + role_preserving_document(text))
-    return fmt["turn_separator"].join(lines)
+    normalized = [(role, role_preserving_document(text)) for role, text in turns]
+    return chat_runtime.gen_chat_render_turns(normalized)
 
 
 def file_sha256(path: str | Path) -> str:
@@ -275,6 +271,84 @@ def oasst_best_documents(rows: list[dict], language: str = "en") -> list[str]:
                 turns.append((role, row["text"]))
             documents.append(chat_document(turns))
     return documents
+
+
+def oasst_turn_documents(rows: list[dict], language: str = "en",
+                         max_bytes: int = 513) -> tuple[list[str], dict]:
+    """Expose every eligible assistant target as one complete causal document.
+
+    The former one-best-path builder discarded alternative reviewed branches and
+    the trainer then discarded any selected path longer than its window. Here each
+    eligible assistant node is a target. We trace its real reviewed ancestry and
+    retain the longest whole-exchange suffix that fits the existing window.
+    """
+    eligible = {
+        row["message_id"]: row for row in rows
+        if row.get("lang") == language
+        and row.get("review_result") is True
+        and not row.get("deleted")
+        and not row.get("synthetic")
+        and row.get("role") in {"prompter", "assistant"}
+        and normalized_document(row.get("text") or "")
+    }
+    stats = {
+        "eligible_assistant_rows": 0,
+        "valid_alternating_ancestry": 0,
+        "invalid_or_incomplete_ancestry": 0,
+        "target_pair_oversize": 0,
+        "fitting_assistant_turns": 0,
+        "serialized_assistant_turns": 0,
+        "max_bytes": int(max_bytes),
+    }
+    documents = []
+    for row in sorted(eligible.values(), key=lambda item: item["message_id"]):
+        if row["role"] != "assistant":
+            continue
+        stats["eligible_assistant_rows"] += 1
+        path = []
+        cursor = row
+        seen = set()
+        complete = True
+        while cursor is not None:
+            message_id = cursor["message_id"]
+            if message_id in seen:
+                complete = False
+                break
+            seen.add(message_id)
+            path.append(cursor)
+            parent_id = cursor.get("parent_id")
+            if parent_id is None:
+                cursor = None
+            else:
+                cursor = eligible.get(parent_id)
+                if cursor is None:
+                    complete = False
+                    break
+        path.reverse()
+        roles = [item["role"] for item in path]
+        expected = ["prompter" if index % 2 == 0 else "assistant"
+                    for index in range(len(path))]
+        if (not complete or len(path) < 2 or roles != expected
+                or roles[-1] != "assistant"):
+            stats["invalid_or_incomplete_ancestry"] += 1
+            continue
+        stats["valid_alternating_ancestry"] += 1
+        turns = [("user" if item["role"] == "prompter" else "assistant",
+                  role_preserving_document(item["text"])) for item in path]
+        final_pair = chat_runtime.gen_chat_render_turns(turns[-2:])
+        if len(final_pair.encode("utf-8", "strict")) > max_bytes:
+            stats["target_pair_oversize"] += 1
+            continue
+        stats["fitting_assistant_turns"] += 1
+        document = chat_runtime.gen_chat_longest_complete_suffix(turns, max_bytes)
+        if document is None:
+            raise RuntimeError("fitting final exchange unexpectedly failed serialization")
+        documents.append(document)
+        stats["serialized_assistant_turns"] += 1
+    stats["coverage"] = (
+        stats["serialized_assistant_turns"] / stats["fitting_assistant_turns"]
+        if stats["fitting_assistant_turns"] else 0.0)
+    return documents, stats
 
 
 def klue_documents(rows: list[dict]) -> list[str]:

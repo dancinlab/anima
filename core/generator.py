@@ -257,6 +257,53 @@ def gen_chat_append(seed, assistant_text):
     return seed + assistant_text.strip() + CHAT_TURN_SEPARATOR
 
 
+def gen_chat_render_turns(turns):
+    """Render an alternating user/assistant trajectory through the chat SSOT.
+
+    Corpus builders previously repeated the role prefixes locally, which made a
+    data-only framing change capable of diverging from evaluation and serving.
+    This renderer validates the causal unit before emitting bytes and is shared
+    by builders that need complete, non-truncated training trajectories.
+    """
+    if not isinstance(turns, (list, tuple)) or not turns:
+        raise ValueError("chat turns must be a non-empty sequence")
+    lines = []
+    expected = "user"
+    for item in turns:
+        if not isinstance(item, (list, tuple)) or len(item) != 2:
+            raise ValueError("each chat turn must be a (role, text) pair")
+        role, value = item
+        if role != expected:
+            raise ValueError("chat turns must alternate user/assistant and start with user")
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("chat turn text must be a non-empty string")
+        prefix = CHAT_USER_PREFIX if role == "user" else CHAT_ASSISTANT_PREFIX
+        lines.append(prefix + value.strip())
+        expected = "assistant" if expected == "user" else "user"
+    if turns[-1][0] != "assistant":
+        raise ValueError("a complete chat training trajectory must end with assistant")
+    return CHAT_TURN_SEPARATOR.join(lines)
+
+
+def gen_chat_longest_complete_suffix(turns, max_bytes):
+    """Return the longest complete exchange suffix fitting ``max_bytes``.
+
+    The function removes whole leading user/assistant exchanges only. It never
+    slices encoded bytes, a role boundary, the target prompt, or its response.
+    ``None`` means even the final prompt/response pair cannot fit the fixed
+    causal window and must be reported rather than silently truncated.
+    """
+    if isinstance(max_bytes, bool) or not isinstance(max_bytes, int) or max_bytes <= 0:
+        raise ValueError("max_bytes must be a positive integer")
+    # Validate the full ancestry once, including its terminal assistant turn.
+    gen_chat_render_turns(turns)
+    for start in range(0, len(turns), 2):
+        rendered = gen_chat_render_turns(turns[start:])
+        if len(rendered.encode("utf-8", "strict")) <= max_bytes:
+            return rendered
+    return None
+
+
 def gen_chat_turn_text(text, stop_markers=None):
     """Return only the assistant turn from a raw byte-mouth continuation.
 
