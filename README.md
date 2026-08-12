@@ -59,9 +59,21 @@ is `SUPPORTED-CAUSAL-CORE`; local Python QA passed `94 tests + 3 subtests` with 
 CUDA/CuPy test skipped. An isolated wheel and the locally deployed canonical `anima-py` package
 reproduced the same result JSON. The unchanged broker remained LaunchAgent-healthy and passed public
 HTTPS `200` plus WebSocket `hello`; it correctly remains `anima_alive=false`. No model, data,
-Vast.ai rental, HF repository, participant, or live chat was changed. R1 delayed-task state
-causality is next; production remains
-`BLOCKED-R0-NOT-A-MOUTH` until meaningful conversation and mouth-content causality are proven.
+Vast.ai rental, HF repository, participant, or live chat was changed.
+
+R1 delayed-state causality is also complete under the separately committed protocol in
+`state/iit_daemon_r1_delayed_2026_08_12/`. Across the fixed 12-trial cue×delay panel, normal and
+atomic-snapshot recovery are both `1.0000`; reset-every-turn and cyclic cue-address shuffle are
+both `0.2500`, exactly the measured four-class chance and below the frozen `0.31` ceiling. Every
+recovered final state/action matches normal and the R0 config/TPM/Phi/edge fingerprint is unchanged.
+The verdict is `SUPPORTED-DELAYED-STATE-CAUSALITY`, a bounded state-to-action result rather than a
+learning, meaning, phenomenal-consciousness or maximal-complex claim. R2 may now test an existing
+CLMS two-address latch, but production remains `BLOCKED-R1-NOT-A-MOUTH` until meaningful
+conversation and mouth-content causality are independently proven. Python QA passed
+`129 tests + 3 subtests` with one expected local CUDA/CuPy skip; isolated-wheel and installed `anima-py` results
+are byte-identical. The missing dedicated broker environment discovered during deployment was
+restored, then LaunchAgent health, public HTTPS `200` and WebSocket `hello` all passed; no participant
+was mounted and `anima_alive=false` remains the honest status.
 
 ## Current experiment — meaningful-conversation R0
 

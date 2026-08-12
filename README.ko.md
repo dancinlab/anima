@@ -52,9 +52,20 @@ R0 구현과 고정 시험은 완료됐다. 8개 상태의 값은 `1.4999999991~
 GPU 시험뿐이다. 격리 wheel과 로컬 canonical `anima-py` 설치본이 같은 결과 JSON을 재현했다.
 기존 broker는 LaunchAgent healthy, 공개 HTTPS `200`, WebSocket `hello`를 통과했고 인증된 입이
 없으므로 `anima_alive=false`를 유지한다. 모델·자료·Vast.ai·HF·참가자 런타임은 변경하지
-않았다. 다음 관문은 지연
-과제의 state/reset/shuffle/recovery R1이며, 의미 대화와 mouth 내용 인과성이 없으므로
-프로덕션은 `BLOCKED-R0-NOT-A-MOUTH` 상태를 유지한다.
+않았다.
+
+별도 커밋으로 사전등록한 `state/iit_daemon_r1_delayed_2026_08_12/`의 R1 지연 상태 인과성도
+완료했다. 고정된 cue×delay 12개 panel에서 정상과 atomic snapshot 복구는 모두 `1.0000`, 매
+turn reset과 cyclic cue 주소 shuffle은 모두 `0.2500`으로 측정된 4-class 우연 수준과 같고
+고정 상한 `0.31` 이하다. 복구된 최종 상태·행동은 전부 정상과 같으며 R0의 config/TPM/Phi/edge
+fingerprint도 유지됐다. 판정은 `SUPPORTED-DELAYED-STATE-CAUSALITY`지만 이는 제한된
+state→action 인과 결과이지 학습·의미·현상적 의식·최대 complex 증거가 아니다. 다음 R2에서
+기존 CLMS 두 주소 판독 latch를 시험할 수 있지만, 의미 대화와 mouth 내용 인과성을 별도로
+통과하기 전까지 프로덕션은 `BLOCKED-R1-NOT-A-MOUTH`를 유지한다. Python QA는
+`129 tests + 3 subtests`를 통과했고 로컬 CUDA/CuPy 1건만 예상대로 skip됐다. 격리 wheel과 설치된
+`anima-py`의 결과도 byte 단위로 같다. 배포 점검 중 발견한 누락 전용 broker 환경을 복구한
+뒤 LaunchAgent health, 공개 HTTPS `200`, WebSocket `hello`를 모두 통과했다. participant는
+연결하지 않았고 `anima_alive=false`가 정직한 현재 상태다.
 
 ## 현재 실험 — 의미 있는 대화 R0
 

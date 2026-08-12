@@ -18,6 +18,7 @@ import recurrent_lane as RL
 SNAPSHOT_SCHEMA = "anima-iit-daemon-snapshot/1"
 CORE_SCHEMA = "anima-iit-daemon-core/1"
 MAX_SNAPSHOT_BYTES = 1 << 20
+DELAYED_PROTOCOL_SCHEMA = "anima-iit-daemon-delayed-protocol/1"
 
 
 def _canonical_json(value):
@@ -216,3 +217,72 @@ class IITDaemonCore:
             raise ValueError("snapshot config checksum mismatch")
         return cls(payload["state"], config=config, tick=payload["tick"],
                    audit_head=payload["audit_head"])
+
+
+def delayed_codebook(cues):
+    """Derive the delayed-task state->cue readout from the frozen core transition.
+
+    The readout is intentionally prescribed rather than learned.  Every cue must
+    encode to a distinct fixed point so the later action is wholly determined by
+    persistent intrinsic state, not by an evaluator-side copy of the cue.
+    """
+    if not isinstance(cues, (list, tuple)) or not cues:
+        raise ValueError("delayed cues must be a non-empty sequence")
+    if len(set(cues)) != len(cues):
+        raise ValueError("delayed cues must be unique")
+    codebook = {}
+    for cue in cues:
+        cue = _state(cue, "cue")
+        core = IITDaemonCore(0)
+        encoded = core.step(cue)["after"]
+        settled = core.step(0)["after"]
+        if settled != encoded:
+            raise ValueError("each delayed cue must encode to a stable intrinsic state")
+        if encoded in codebook:
+            raise ValueError("delayed cues must encode bijectively")
+        codebook[encoded] = cue
+    return codebook
+
+
+def delayed_task_trial(cue, delay, cues, *, permutation=(0, 1, 2),
+                       reset_every_turn=False):
+    """Encode one cue, advance autonomous turns, and read the persistent action.
+
+    Reset is an explicit negative-control intervention: a fresh state-zero core
+    replaces the prior core before every delayed turn.  The returned action is
+    decoded only from final intrinsic state through ``delayed_codebook``.
+    """
+    cue = _state(cue, "cue")
+    codebook = delayed_codebook(cues)
+    if cue not in codebook.values():
+        raise ValueError("cue is not registered in the delayed task")
+    if isinstance(delay, bool) or not isinstance(delay, int) or delay < 1:
+        raise ValueError("delay must be a positive integer")
+    p = _permutation(permutation)
+    core = IITDaemonCore(0)
+    encoding = core.step(cue, permutation=p)
+    encoded_state = core.state
+    receipts = []
+    resets = 0
+    for _ in range(delay):
+        if reset_every_turn:
+            core = IITDaemonCore(0)
+            resets += 1
+        receipts.append(core.step(0))
+    action = codebook.get(core.state)
+    return {
+        "cue": cue,
+        "delay": delay,
+        "permutation": list(p),
+        "reset_every_turn": bool(reset_every_turn),
+        "reset_count": resets,
+        "encoding": encoding,
+        "encoded_state": encoded_state,
+        "delay_receipts": receipts,
+        "final_state": core.state,
+        "action": action,
+        "gold": cue,
+        "correct": action == cue,
+        "tick": core.tick,
+        "audit_head": core.audit_head,
+    }

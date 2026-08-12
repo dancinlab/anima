@@ -12,6 +12,7 @@ if CORE not in sys.path:
 
 import iit_daemon as ID
 import recurrent_lane as RL
+from cli import evaluate
 
 
 def test_canonical_iit_controls_and_causal_cuts():
@@ -129,3 +130,100 @@ def test_tpm_validation_fails_closed():
         RL.validate_tpm([0.0])
     with pytest.raises(ValueError, match="finite"):
         RL.validate_tpm([float("nan")] * 24)
+
+
+def test_delayed_codebook_is_bijective_and_stable():
+    cues = [0, 1, 2, 4]
+    codebook = ID.delayed_codebook(cues)
+    assert codebook == {0: 0, 6: 1, 5: 2, 3: 4}
+    for state in codebook:
+        assert ID.IITDaemonCore(state).step(0)["after"] == state
+
+
+def test_delayed_task_normal_reset_and_address_shuffle():
+    cues = [0, 1, 2, 4]
+    delays = [1, 2, 4]
+    normal = [ID.delayed_task_trial(cue, delay, cues)
+              for cue in cues for delay in delays]
+    reset = [ID.delayed_task_trial(cue, delay, cues, reset_every_turn=True)
+             for cue in cues for delay in delays]
+    shuffled = [ID.delayed_task_trial(cue, delay, cues, permutation=(1, 2, 0))
+                for cue in cues for delay in delays]
+    assert sum(trial["correct"] for trial in normal) == 12
+    assert sum(trial["correct"] for trial in reset) == 3
+    assert sum(trial["correct"] for trial in shuffled) == 3
+    assert all(trial["reset_count"] == trial["delay"] for trial in reset)
+
+
+@pytest.mark.parametrize("cues", [[], [0, 0], [0, 7], [0, 8]])
+def test_delayed_task_rejects_invalid_codebook(cues):
+    with pytest.raises((TypeError, ValueError)):
+        ID.delayed_codebook(cues)
+
+
+@pytest.mark.parametrize("delay", [0, -1, 1.0, True])
+def test_delayed_task_rejects_invalid_delay(delay):
+    with pytest.raises((TypeError, ValueError)):
+        ID.delayed_task_trial(0, delay, [0, 1, 2, 4])
+
+
+def _delayed_protocol():
+    path = os.path.join(
+        ROOT, "state", "iit_daemon_r1_delayed_2026_08_12", "protocol.json")
+    with open(path, encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def test_delayed_evaluator_runs_registered_full_battery(tmp_path):
+    protocol_path = tmp_path / "protocol.json"
+    protocol_path.write_text(json.dumps(_delayed_protocol()), encoding="utf-8")
+    out_path = tmp_path / "result.json"
+    rc = evaluate.iit_daemon_delayed_run([
+        "--iit-daemon-delayed", str(protocol_path), "--out", str(out_path)])
+    result = json.loads(out_path.read_text(encoding="utf-8"))
+    assert rc == 0
+    assert result["verdict"] == "SUPPORTED-DELAYED-STATE-CAUSALITY"
+    assert result["accuracies"] == {
+        "normal": 1.0, "reset_every_turn": 0.25,
+        "address_shuffled": 0.25, "recovery": 1.0,
+    }
+    assert all(result["checks"].values())
+
+
+def test_delayed_evaluator_fails_closed_on_r0_fingerprint_change(tmp_path):
+    protocol = _delayed_protocol()
+    protocol["r0_mechanics_fingerprint"] = "0" * 64
+    protocol_path = tmp_path / "protocol.json"
+    protocol_path.write_text(json.dumps(protocol), encoding="utf-8")
+    out_path = tmp_path / "result.json"
+    rc = evaluate.iit_daemon_delayed_run([
+        "--iit-daemon-delayed", str(protocol_path), "--out", str(out_path)])
+    result = json.loads(out_path.read_text(encoding="utf-8"))
+    assert rc == 1
+    assert result["verdict"] == "FALSIFIED"
+    assert not result["checks"]["r0_mechanics_unchanged"]
+
+
+def test_delayed_evaluator_rejects_miscalculated_chance(tmp_path):
+    protocol = _delayed_protocol()
+    protocol["chance"] = 0.5
+    protocol_path = tmp_path / "protocol.json"
+    protocol_path.write_text(json.dumps(protocol), encoding="utf-8")
+    with pytest.raises(ValueError, match="chance mismatch"):
+        evaluate.iit_daemon_delayed_run([
+            "--iit-daemon-delayed", str(protocol_path)])
+
+
+@pytest.mark.parametrize("field,value", [
+    ("positive_floor", float("nan")),
+    ("control_margin", -0.01),
+    ("engine", "other.engine"),
+])
+def test_delayed_evaluator_rejects_invalid_protocol_values(tmp_path, field, value):
+    protocol = _delayed_protocol()
+    protocol[field] = value
+    protocol_path = tmp_path / "protocol.json"
+    protocol_path.write_text(json.dumps(protocol), encoding="utf-8")
+    with pytest.raises(ValueError):
+        evaluate.iit_daemon_delayed_run([
+            "--iit-daemon-delayed", str(protocol_path)])

@@ -1686,6 +1686,9 @@ def evaluate_usage():
     print("      pair-oracle → normal → clue-A blocked → clue-B blocked → address shuffled → recovery.")
     print("      A negative is read only after pair-oracle ≥.90. Positive/recovery require ≥.75;")
     print("      every control must be at measured chance +.06 or below.")
+    print("  --iit-daemon-core [--out <result.json>]: run the checkpoint-free R0 IIT mechanics gate.")
+    print("  --iit-daemon-delayed <protocol.json> [--out <result.json>]: run the protocol-pinned")
+    print("      R1 normal → reset-every-turn → cue-address-shuffle → snapshot-recovery gate.")
     print("  --store-component-swap <groups> --store-swap-from <donor.clm>: EVAL-ONLY causal")
     print("      surgery (H_9724) — graft CLMS bridge components from a donor ckpt into the host")
     print("      before scoring, to localize the seed-fragility source (ORACLE 0.99 vs 0.50).")
@@ -4181,6 +4184,201 @@ def iit_daemon_core_run(argv):
         _store_causality_write(out_path, result)
         print("  wrote %s" % out_path)
     return 0 if verdict == "SUPPORTED-CAUSAL-CORE" else 1
+
+
+def iit_daemon_delayed_run(argv):
+    """Run the preregistered R1 delayed state/reset/shuffle/recovery battery."""
+    import hashlib as _hashlib
+    import tempfile as _tempfile
+    import recurrent_lane as RL
+    import iit_daemon as ID
+
+    protocol_path = evaluate_strval(argv, "--iit-daemon-delayed", "")
+    out_path = evaluate_strval(argv, "--out", "")
+    if not protocol_path:
+        print("ERROR: --iit-daemon-delayed needs a protocol JSON", file=sys.stderr)
+        return 2
+    if os.path.getsize(protocol_path) <= 0 or os.path.getsize(protocol_path) > 65536:
+        raise ValueError("IIT daemon delayed protocol size is invalid")
+    with open(protocol_path, "r", encoding="utf-8") as handle:
+        protocol = json.load(handle)
+    if protocol.get("schema") != ID.DELAYED_PROTOCOL_SCHEMA:
+        raise ValueError("unsupported IIT daemon delayed protocol schema")
+    expected_fields = {
+        "schema", "date", "engine", "transition", "r0_config_checksum",
+        "r0_mechanics_fingerprint", "initial_state", "cues", "delays",
+        "address_shuffle", "panel_size", "chance", "positive_floor",
+        "control_margin", "control_ceiling", "required_verdict", "deployment",
+    }
+    if set(protocol) != expected_fields:
+        raise ValueError("IIT daemon delayed protocol fields mismatch")
+    if protocol.get("engine") != "core.iit_daemon.IITDaemonCore":
+        raise ValueError("IIT daemon delayed protocol engine mismatch")
+    if protocol.get("transition") != "xor-other-two-ring":
+        raise ValueError("IIT daemon delayed protocol transition mismatch")
+    if protocol.get("required_verdict") != "SUPPORTED-DELAYED-STATE-CAUSALITY":
+        raise ValueError("IIT daemon delayed protocol verdict mismatch")
+    if protocol.get("deployment") != "BLOCKED-R1-NOT-A-MOUTH":
+        raise ValueError("IIT daemon delayed protocol deployment mismatch")
+    if protocol.get("initial_state") != 0:
+        raise ValueError("R1 delayed protocol initial state must be zero")
+
+    cues = protocol.get("cues")
+    delays = protocol.get("delays")
+    permutation = protocol.get("address_shuffle")
+    if not isinstance(delays, list) or not delays or any(
+            isinstance(value, bool) or not isinstance(value, int) or value < 1
+            for value in delays):
+        raise ValueError("delayed protocol delays must be positive integers")
+    if len(set(delays)) != len(delays):
+        raise ValueError("delayed protocol delays must be unique")
+    codebook = ID.delayed_codebook(cues)
+    ID._permutation(permutation)
+    panel_size = len(cues) * len(delays)
+    if protocol.get("panel_size") != panel_size:
+        raise ValueError("delayed protocol panel size mismatch")
+    counts = {cue: len(delays) for cue in cues}
+    chance = max(counts.values()) / float(panel_size)
+    if abs(float(protocol.get("chance")) - chance) > 1.0e-12:
+        raise ValueError("delayed protocol chance mismatch")
+    positive_floor = float(protocol.get("positive_floor"))
+    control_margin = float(protocol.get("control_margin"))
+    if (not math.isfinite(positive_floor) or positive_floor < 0.0 or
+            positive_floor > 1.0):
+        raise ValueError("delayed protocol positive floor must be finite in [0,1]")
+    if (not math.isfinite(control_margin) or control_margin < 0.0 or
+            control_margin > 1.0):
+        raise ValueError("delayed protocol control margin must be finite in [0,1]")
+    control_ceiling = chance + control_margin
+    if control_ceiling > 1.0:
+        raise ValueError("delayed protocol control ceiling must not exceed one")
+    if abs(float(protocol.get("control_ceiling")) - control_ceiling) > 1.0e-12:
+        raise ValueError("delayed protocol control ceiling mismatch")
+
+    canonical_tpm = RL.xor_ring_tpm()
+    all_state_phi = RL.all_state_big_phi(canonical_tpm)
+    causal_edges = [list(edge) for edge in RL.causal_edges(canonical_tpm)]
+    mechanics = {
+        "config_checksum": ID.IITDaemonConfig().checksum,
+        "tpm": canonical_tpm,
+        "all_state_phi": all_state_phi,
+        "causal_edges": causal_edges,
+    }
+    mechanics_fingerprint = _hashlib.sha256(ID._canonical_json(mechanics)).hexdigest()
+    mechanics_unchanged = (
+        mechanics["config_checksum"] == protocol.get("r0_config_checksum") and
+        mechanics_fingerprint == protocol.get("r0_mechanics_fingerprint")
+    )
+
+    normal = []
+    reset = []
+    shuffled = []
+    recovery = []
+    recovery_exact_flags = []
+    disturbance_flags = []
+    with _tempfile.TemporaryDirectory(prefix="anima-iit-daemon-r1-") as directory:
+        for cue in cues:
+            for delay in delays:
+                normal_trial = ID.delayed_task_trial(cue, delay, cues)
+                reset_trial = ID.delayed_task_trial(
+                    cue, delay, cues, reset_every_turn=True)
+                shuffled_trial = ID.delayed_task_trial(
+                    cue, delay, cues, permutation=permutation)
+
+                source = ID.IITDaemonCore(0)
+                source.step(cue)
+                snapshot_path = os.path.join(directory, "cue-%d-delay-%d.json" % (cue, delay))
+                source.save_snapshot(snapshot_path)
+                source.step(cue, permutation=permutation, lesion_mask=1)
+                disturbance_flags.append(source.snapshot() != ID.IITDaemonCore.load_snapshot(
+                    snapshot_path).snapshot())
+                restored = ID.IITDaemonCore.load_snapshot(snapshot_path)
+                receipts = [restored.step(0) for _ in range(delay)]
+                action = codebook.get(restored.state)
+                recovered_trial = {
+                    "cue": cue,
+                    "delay": delay,
+                    "encoded_state": ID.IITDaemonCore.load_snapshot(snapshot_path).state,
+                    "delay_receipts": receipts,
+                    "final_state": restored.state,
+                    "action": action,
+                    "gold": cue,
+                    "correct": action == cue,
+                    "tick": restored.tick,
+                    "audit_head": restored.audit_head,
+                }
+                exact = (recovered_trial["final_state"] == normal_trial["final_state"] and
+                         recovered_trial["action"] == normal_trial["action"])
+                recovered_trial["matches_normal"] = exact
+                recovery_exact_flags.append(exact)
+                normal.append(normal_trial)
+                reset.append(reset_trial)
+                shuffled.append(shuffled_trial)
+                recovery.append(recovered_trial)
+
+    def _accuracy(trials):
+        return sum(1 for trial in trials if trial["correct"]) / float(len(trials))
+
+    accuracies = {
+        "normal": _accuracy(normal),
+        "reset_every_turn": _accuracy(reset),
+        "address_shuffled": _accuracy(shuffled),
+        "recovery": _accuracy(recovery),
+    }
+    stable_bijection = len(codebook) == len(cues) and all(
+        ID.IITDaemonCore(state).step(0)["after"] == state for state in codebook)
+    checks = {
+        "balanced_panel": len(set(counts.values())) == 1 and panel_size == len(normal),
+        "stable_bijective_codebook": stable_bijection,
+        "normal_positive": accuracies["normal"] >= positive_floor,
+        "reset_collapses": accuracies["reset_every_turn"] <= control_ceiling,
+        "address_shuffle_collapses": accuracies["address_shuffled"] <= control_ceiling,
+        "recovery_positive": accuracies["recovery"] >= positive_floor,
+        "recovery_accuracy_exact": abs(
+            accuracies["recovery"] - accuracies["normal"]) <= 1.0e-12,
+        "recovery_trials_exact": all(recovery_exact_flags),
+        "disturbance_changes_snapshot": all(disturbance_flags),
+        "r0_mechanics_unchanged": mechanics_unchanged,
+    }
+    verdict = ("SUPPORTED-DELAYED-STATE-CAUSALITY"
+               if all(checks.values()) else "FALSIFIED")
+    with open(protocol_path, "rb") as handle:
+        protocol_sha256 = _hashlib.sha256(handle.read()).hexdigest()
+    result = {
+        "schema": "anima-iit-daemon-delayed-result/1",
+        "date": protocol.get("date"),
+        "protocol": os.path.basename(protocol_path),
+        "protocol_sha256": protocol_sha256,
+        "claim_scope": "fixed-core delayed categorical state-to-action causality",
+        "non_claims": ["phenomenal consciousness", "maximal complex", "learning",
+                       "meaningful conversation", "production readiness"],
+        "task": {
+            "initial_state": protocol.get("initial_state"),
+            "cues": cues, "delays": delays, "panel_size": panel_size,
+            "chance": chance, "positive_floor": positive_floor,
+            "control_ceiling": control_ceiling, "address_shuffle": permutation,
+            "state_to_cue_codebook": {str(key): value for key, value in codebook.items()},
+        },
+        "r0_mechanics": dict(mechanics, fingerprint=mechanics_fingerprint),
+        "accuracies": accuracies,
+        "trials": {
+            "normal": normal, "reset_every_turn": reset,
+            "address_shuffled": shuffled, "recovery": recovery,
+        },
+        "checks": checks,
+        "verdict": verdict,
+        "deployment": "BLOCKED-R1-NOT-A-MOUTH",
+        "next_gate": "R2-CLMS-TWO-ADDRESS-LATCH" if all(checks.values()) else "R1-BLOCKED",
+    }
+    print("[iit-daemon R1 · delayed state causality]")
+    print("  normal=%.4f reset=%.4f shuffled=%.4f recovery=%.4f chance=%.4f" % (
+        accuracies["normal"], accuracies["reset_every_turn"],
+        accuracies["address_shuffled"], accuracies["recovery"], chance))
+    print("  verdict: %s (no consciousness, meaning, or deployment claim)" % verdict)
+    if out_path:
+        _store_causality_write(out_path, result)
+        print("  wrote %s" % out_path)
+    return 0 if verdict == "SUPPORTED-DELAYED-STATE-CAUSALITY" else 1
 
 
 def structure_envelope_read_run(argv):
@@ -12851,6 +13049,7 @@ _KNOWN_FLAGS = frozenset((
     # trailer) over held-out EN embeddings -> faithful big_phi_bounded. READ-ONLY, takes a manifest.
     "--iit4-recurrent-lane",
     "--iit-daemon-core",
+    "--iit-daemon-delayed",
     # H_1520 conversational-salience emit gate re-read with the PLANTED FNV-trigram key
     # geometry swapped for the REAL 303M penultimate. ONE flag, no tuning argument.
     "--salience-toggle-read",
@@ -19747,6 +19946,10 @@ def main(argv):
     # engine-native recurrent TPM and IIT4 instrument and mounts no mouth.
     if "--iit-daemon-core" in argv:
         return iit_daemon_core_run(argv)
+    # IIT-daemon R1: protocol-pinned delayed state/reset/shuffle/recovery task.
+    # It mounts no mouth and keeps the R0 mechanics fingerprint fail-closed.
+    if "--iit-daemon-delayed" in argv:
+        return iit_daemon_delayed_run(argv)
     # H_9838 --hippo-transitive-selftest: core/hippo_lane.py's CA3 multi-step completion on a
     # planted premise world. Ckpt-FREE by construction (the store + completion are pure numpy
     # arithmetic), so it dispatches on flag PRESENCE like --closure-ladder. ADDITIVE and

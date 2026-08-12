@@ -1,0 +1,3248 @@
+{
+  "accuracies": {
+    "address_shuffled": 0.25,
+    "normal": 1.0,
+    "recovery": 1.0,
+    "reset_every_turn": 0.25
+  },
+  "checks": {
+    "address_shuffle_collapses": true,
+    "balanced_panel": true,
+    "disturbance_changes_snapshot": true,
+    "normal_positive": true,
+    "r0_mechanics_unchanged": true,
+    "recovery_accuracy_exact": true,
+    "recovery_positive": true,
+    "recovery_trials_exact": true,
+    "reset_collapses": true,
+    "stable_bijective_codebook": true
+  },
+  "claim_scope": "fixed-core delayed categorical state-to-action causality",
+  "date": "2026-08-12",
+  "deployment": "BLOCKED-R1-NOT-A-MOUTH",
+  "next_gate": "R2-CLMS-TWO-ADDRESS-LATCH",
+  "non_claims": [
+    "phenomenal consciousness",
+    "maximal complex",
+    "learning",
+    "meaningful conversation",
+    "production readiness"
+  ],
+  "protocol": "protocol.json",
+  "protocol_sha256": "4373d323e6e47a2f1fc1eda65d9129c68c01025ab57e3f3f53e94f665e86ed3c",
+  "r0_mechanics": {
+    "all_state_phi": [
+      2.9999999982687657,
+      1.4999999991343829,
+      1.4999999991343829,
+      2.9999999982687657,
+      1.4999999991343829,
+      2.9999999982687657,
+      2.9999999982687657,
+      1.4999999991343829
+    ],
+    "causal_edges": [
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ]
+    ],
+    "config_checksum": "41af7e6762831179fb719987ac58a2e6b2ca08a4dbd482610ccadfc47ac14ba6",
+    "fingerprint": "c2dd0a905fa5cf614740362a90bcb9520216ad22c886b7e0fef61ad7021bdbe0",
+    "tpm": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "schema": "anima-iit-daemon-delayed-result/1",
+  "task": {
+    "address_shuffle": [
+      1,
+      2,
+      0
+    ],
+    "chance": 0.25,
+    "control_ceiling": 0.31,
+    "cues": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "delays": [
+      1,
+      2,
+      4
+    ],
+    "initial_state": 0,
+    "panel_size": 12,
+    "positive_floor": 0.75,
+    "state_to_cue_codebook": {
+      "0": 0,
+      "3": 4,
+      "5": 2,
+      "6": 1
+    }
+  },
+  "trials": {
+    "address_shuffled": [
+      {
+        "action": 0,
+        "audit_head": "438802a1b28833ede3056f68a8d37881c155067fb0ee40fa20dafec625cdecfd",
+        "correct": true,
+        "cue": 0,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "438802a1b28833ede3056f68a8d37881c155067fb0ee40fa20dafec625cdecfd",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 2
+          }
+        ],
+        "encoded_state": 0,
+        "encoding": {
+          "after": 0,
+          "audit_head": "f79cd02e39c1f8d1d29110863fe9acd290bb0bfcd87b3955972318c4d9d2ab87",
+          "before": 0,
+          "intervention": 0,
+          "lesion_mask": 0,
+          "permutation": [
+            1,
+            2,
+            0
+          ],
+          "perturbed": 0,
+          "shuffled_intervention": 0,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 0,
+        "permutation": [
+          1,
+          2,
+          0
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 2
+      },
+      {
+        "action": 0,
+        "audit_head": "c535043063adc37cf71d7b01dfa01a82ef9574d08ae00dd50e8db2d961e8ec9f",
+        "correct": true,
+        "cue": 0,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "438802a1b28833ede3056f68a8d37881c155067fb0ee40fa20dafec625cdecfd",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 0,
+            "audit_head": "c535043063adc37cf71d7b01dfa01a82ef9574d08ae00dd50e8db2d961e8ec9f",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 3
+          }
+        ],
+        "encoded_state": 0,
+        "encoding": {
+          "after": 0,
+          "audit_head": "f79cd02e39c1f8d1d29110863fe9acd290bb0bfcd87b3955972318c4d9d2ab87",
+          "before": 0,
+          "intervention": 0,
+          "lesion_mask": 0,
+          "permutation": [
+            1,
+            2,
+            0
+          ],
+          "perturbed": 0,
+          "shuffled_intervention": 0,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 0,
+        "permutation": [
+          1,
+          2,
+          0
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 3
+      },
+      {
+        "action": 0,
+        "audit_head": "8cdf552aab9ae3f5c98fcc17ad7b047a01495087646e9a804ba040d586116327",
+        "correct": true,
+        "cue": 0,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "438802a1b28833ede3056f68a8d37881c155067fb0ee40fa20dafec625cdecfd",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 0,
+            "audit_head": "c535043063adc37cf71d7b01dfa01a82ef9574d08ae00dd50e8db2d961e8ec9f",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 3
+          },
+          {
+            "after": 0,
+            "audit_head": "6c30e8dc7405143b5406102ac1b76216046269974e2230ab9cea230e199b0074",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 4
+          },
+          {
+            "after": 0,
+            "audit_head": "8cdf552aab9ae3f5c98fcc17ad7b047a01495087646e9a804ba040d586116327",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 5
+          }
+        ],
+        "encoded_state": 0,
+        "encoding": {
+          "after": 0,
+          "audit_head": "f79cd02e39c1f8d1d29110863fe9acd290bb0bfcd87b3955972318c4d9d2ab87",
+          "before": 0,
+          "intervention": 0,
+          "lesion_mask": 0,
+          "permutation": [
+            1,
+            2,
+            0
+          ],
+          "perturbed": 0,
+          "shuffled_intervention": 0,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 0,
+        "permutation": [
+          1,
+          2,
+          0
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 5
+      },
+      {
+        "action": 4,
+        "audit_head": "7333920207ea7d4780987a72e36d0860b7570b539c0caddae3e5bf05122ea5e4",
+        "correct": false,
+        "cue": 1,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 3,
+            "audit_head": "7333920207ea7d4780987a72e36d0860b7570b539c0caddae3e5bf05122ea5e4",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 2
+          }
+        ],
+        "encoded_state": 3,
+        "encoding": {
+          "after": 3,
+          "audit_head": "7c12b914b42f1863a924c351b75f0ce38add6e46dcba1b4621cc6ff8f13ca348",
+          "before": 0,
+          "intervention": 1,
+          "lesion_mask": 0,
+          "permutation": [
+            1,
+            2,
+            0
+          ],
+          "perturbed": 4,
+          "shuffled_intervention": 4,
+          "tick": 1
+        },
+        "final_state": 3,
+        "gold": 1,
+        "permutation": [
+          1,
+          2,
+          0
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 2
+      },
+      {
+        "action": 4,
+        "audit_head": "e0c7dd9fd5388d257625d7e262b6262ef65106ec1624277d264452c7cbfb06b5",
+        "correct": false,
+        "cue": 1,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 3,
+            "audit_head": "7333920207ea7d4780987a72e36d0860b7570b539c0caddae3e5bf05122ea5e4",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 3,
+            "audit_head": "e0c7dd9fd5388d257625d7e262b6262ef65106ec1624277d264452c7cbfb06b5",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 3
+          }
+        ],
+        "encoded_state": 3,
+        "encoding": {
+          "after": 3,
+          "audit_head": "7c12b914b42f1863a924c351b75f0ce38add6e46dcba1b4621cc6ff8f13ca348",
+          "before": 0,
+          "intervention": 1,
+          "lesion_mask": 0,
+          "permutation": [
+            1,
+            2,
+            0
+          ],
+          "perturbed": 4,
+          "shuffled_intervention": 4,
+          "tick": 1
+        },
+        "final_state": 3,
+        "gold": 1,
+        "permutation": [
+          1,
+          2,
+          0
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 3
+      },
+      {
+        "action": 4,
+        "audit_head": "4dc1173dde18b3755171e231d51d0db8caf82f158c72f44845e40f6e86388d8d",
+        "correct": false,
+        "cue": 1,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 3,
+            "audit_head": "7333920207ea7d4780987a72e36d0860b7570b539c0caddae3e5bf05122ea5e4",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 3,
+            "audit_head": "e0c7dd9fd5388d257625d7e262b6262ef65106ec1624277d264452c7cbfb06b5",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 3
+          },
+          {
+            "after": 3,
+            "audit_head": "e8a6c71507335281e5b4e4c7d938a968aab77cc629e699d1ed935e39c4269d60",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 4
+          },
+          {
+            "after": 3,
+            "audit_head": "4dc1173dde18b3755171e231d51d0db8caf82f158c72f44845e40f6e86388d8d",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 5
+          }
+        ],
+        "encoded_state": 3,
+        "encoding": {
+          "after": 3,
+          "audit_head": "7c12b914b42f1863a924c351b75f0ce38add6e46dcba1b4621cc6ff8f13ca348",
+          "before": 0,
+          "intervention": 1,
+          "lesion_mask": 0,
+          "permutation": [
+            1,
+            2,
+            0
+          ],
+          "perturbed": 4,
+          "shuffled_intervention": 4,
+          "tick": 1
+        },
+        "final_state": 3,
+        "gold": 1,
+        "permutation": [
+          1,
+          2,
+          0
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 5
+      },
+      {
+        "action": 1,
+        "audit_head": "089160992df50c9832ce44e608f0920e492f5d938165fe7c4c2b9f5118a11cfc",
+        "correct": false,
+        "cue": 2,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 6,
+            "audit_head": "089160992df50c9832ce44e608f0920e492f5d938165fe7c4c2b9f5118a11cfc",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 2
+          }
+        ],
+        "encoded_state": 6,
+        "encoding": {
+          "after": 6,
+          "audit_head": "cf695f4d64709b68472026060f665b6498e82446beb2e5e2b1f579487af8e674",
+          "before": 0,
+          "intervention": 2,
+          "lesion_mask": 0,
+          "permutation": [
+            1,
+            2,
+            0
+          ],
+          "perturbed": 1,
+          "shuffled_intervention": 1,
+          "tick": 1
+        },
+        "final_state": 6,
+        "gold": 2,
+        "permutation": [
+          1,
+          2,
+          0
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 2
+      },
+      {
+        "action": 1,
+        "audit_head": "9bd2e935e1bb31be1ecadf703d7cb9f613e15f1f888ba2ca7af514af8240e24b",
+        "correct": false,
+        "cue": 2,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 6,
+            "audit_head": "089160992df50c9832ce44e608f0920e492f5d938165fe7c4c2b9f5118a11cfc",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 6,
+            "audit_head": "9bd2e935e1bb31be1ecadf703d7cb9f613e15f1f888ba2ca7af514af8240e24b",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 3
+          }
+        ],
+        "encoded_state": 6,
+        "encoding": {
+          "after": 6,
+          "audit_head": "cf695f4d64709b68472026060f665b6498e82446beb2e5e2b1f579487af8e674",
+          "before": 0,
+          "intervention": 2,
+          "lesion_mask": 0,
+          "permutation": [
+            1,
+            2,
+            0
+          ],
+          "perturbed": 1,
+          "shuffled_intervention": 1,
+          "tick": 1
+        },
+        "final_state": 6,
+        "gold": 2,
+        "permutation": [
+          1,
+          2,
+          0
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 3
+      },
+      {
+        "action": 1,
+        "audit_head": "0dde1cc53839e2cb518b2b904c7fca6ffbaddf25549ad8e011672c4da545cb13",
+        "correct": false,
+        "cue": 2,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 6,
+            "audit_head": "089160992df50c9832ce44e608f0920e492f5d938165fe7c4c2b9f5118a11cfc",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 6,
+            "audit_head": "9bd2e935e1bb31be1ecadf703d7cb9f613e15f1f888ba2ca7af514af8240e24b",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 3
+          },
+          {
+            "after": 6,
+            "audit_head": "a16cb25165f965289c64a1228ce5749c734bd822eee8ba4b7c76273e974d2844",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 4
+          },
+          {
+            "after": 6,
+            "audit_head": "0dde1cc53839e2cb518b2b904c7fca6ffbaddf25549ad8e011672c4da545cb13",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 5
+          }
+        ],
+        "encoded_state": 6,
+        "encoding": {
+          "after": 6,
+          "audit_head": "cf695f4d64709b68472026060f665b6498e82446beb2e5e2b1f579487af8e674",
+          "before": 0,
+          "intervention": 2,
+          "lesion_mask": 0,
+          "permutation": [
+            1,
+            2,
+            0
+          ],
+          "perturbed": 1,
+          "shuffled_intervention": 1,
+          "tick": 1
+        },
+        "final_state": 6,
+        "gold": 2,
+        "permutation": [
+          1,
+          2,
+          0
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 5
+      },
+      {
+        "action": 2,
+        "audit_head": "0e780c90917999565b404a0991c35e21930c9163f1e765a41b83fc7404814626",
+        "correct": false,
+        "cue": 4,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 5,
+            "audit_head": "0e780c90917999565b404a0991c35e21930c9163f1e765a41b83fc7404814626",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 2
+          }
+        ],
+        "encoded_state": 5,
+        "encoding": {
+          "after": 5,
+          "audit_head": "6ce46da943db367ed3cf7410b7ebef3744c4d1981a573a3dad928f319d84fc74",
+          "before": 0,
+          "intervention": 4,
+          "lesion_mask": 0,
+          "permutation": [
+            1,
+            2,
+            0
+          ],
+          "perturbed": 2,
+          "shuffled_intervention": 2,
+          "tick": 1
+        },
+        "final_state": 5,
+        "gold": 4,
+        "permutation": [
+          1,
+          2,
+          0
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 2
+      },
+      {
+        "action": 2,
+        "audit_head": "28c784780d763b03ab04b542f2c992c9def089b6f76cc21efedd9bb1cf4c8c64",
+        "correct": false,
+        "cue": 4,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 5,
+            "audit_head": "0e780c90917999565b404a0991c35e21930c9163f1e765a41b83fc7404814626",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 5,
+            "audit_head": "28c784780d763b03ab04b542f2c992c9def089b6f76cc21efedd9bb1cf4c8c64",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 3
+          }
+        ],
+        "encoded_state": 5,
+        "encoding": {
+          "after": 5,
+          "audit_head": "6ce46da943db367ed3cf7410b7ebef3744c4d1981a573a3dad928f319d84fc74",
+          "before": 0,
+          "intervention": 4,
+          "lesion_mask": 0,
+          "permutation": [
+            1,
+            2,
+            0
+          ],
+          "perturbed": 2,
+          "shuffled_intervention": 2,
+          "tick": 1
+        },
+        "final_state": 5,
+        "gold": 4,
+        "permutation": [
+          1,
+          2,
+          0
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 3
+      },
+      {
+        "action": 2,
+        "audit_head": "00a7579f103f076acb8701cd2760fe1752bbaa29898fab9882284ee9038ef5eb",
+        "correct": false,
+        "cue": 4,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 5,
+            "audit_head": "0e780c90917999565b404a0991c35e21930c9163f1e765a41b83fc7404814626",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 5,
+            "audit_head": "28c784780d763b03ab04b542f2c992c9def089b6f76cc21efedd9bb1cf4c8c64",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 3
+          },
+          {
+            "after": 5,
+            "audit_head": "e018d07b00da10fb16e9b6688709b42bc0f6ebb4595feaa41e89f0ae9563b96d",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 4
+          },
+          {
+            "after": 5,
+            "audit_head": "00a7579f103f076acb8701cd2760fe1752bbaa29898fab9882284ee9038ef5eb",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 5
+          }
+        ],
+        "encoded_state": 5,
+        "encoding": {
+          "after": 5,
+          "audit_head": "6ce46da943db367ed3cf7410b7ebef3744c4d1981a573a3dad928f319d84fc74",
+          "before": 0,
+          "intervention": 4,
+          "lesion_mask": 0,
+          "permutation": [
+            1,
+            2,
+            0
+          ],
+          "perturbed": 2,
+          "shuffled_intervention": 2,
+          "tick": 1
+        },
+        "final_state": 5,
+        "gold": 4,
+        "permutation": [
+          1,
+          2,
+          0
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 5
+      }
+    ],
+    "normal": [
+      {
+        "action": 0,
+        "audit_head": "b3025b71b216a10f909346205d0b8083f4aa9d3b3398322363195607d28666a8",
+        "correct": true,
+        "cue": 0,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "b3025b71b216a10f909346205d0b8083f4aa9d3b3398322363195607d28666a8",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 2
+          }
+        ],
+        "encoded_state": 0,
+        "encoding": {
+          "after": 0,
+          "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+          "before": 0,
+          "intervention": 0,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 0,
+          "shuffled_intervention": 0,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 0,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 2
+      },
+      {
+        "action": 0,
+        "audit_head": "db99d1c67a82fc99ad3e5910b68031079948f7f73e1caa9b65e2090d0a1d24fd",
+        "correct": true,
+        "cue": 0,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "b3025b71b216a10f909346205d0b8083f4aa9d3b3398322363195607d28666a8",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 0,
+            "audit_head": "db99d1c67a82fc99ad3e5910b68031079948f7f73e1caa9b65e2090d0a1d24fd",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 3
+          }
+        ],
+        "encoded_state": 0,
+        "encoding": {
+          "after": 0,
+          "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+          "before": 0,
+          "intervention": 0,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 0,
+          "shuffled_intervention": 0,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 0,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 3
+      },
+      {
+        "action": 0,
+        "audit_head": "cfb4cd31302e3c37eef7d85900e75291d1c41dae3e1ed0702d434cd5d493d7c9",
+        "correct": true,
+        "cue": 0,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "b3025b71b216a10f909346205d0b8083f4aa9d3b3398322363195607d28666a8",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 0,
+            "audit_head": "db99d1c67a82fc99ad3e5910b68031079948f7f73e1caa9b65e2090d0a1d24fd",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 3
+          },
+          {
+            "after": 0,
+            "audit_head": "75b3660aac4a9e67daedabbf449707eb8c0ff84584ad2eeb8db262ab01fab2f0",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 4
+          },
+          {
+            "after": 0,
+            "audit_head": "cfb4cd31302e3c37eef7d85900e75291d1c41dae3e1ed0702d434cd5d493d7c9",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 5
+          }
+        ],
+        "encoded_state": 0,
+        "encoding": {
+          "after": 0,
+          "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+          "before": 0,
+          "intervention": 0,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 0,
+          "shuffled_intervention": 0,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 0,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 5
+      },
+      {
+        "action": 1,
+        "audit_head": "b62ad2059662fd9c5725ecfb0c595ef2404d57524ec5376f9615fa16542ce470",
+        "correct": true,
+        "cue": 1,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 6,
+            "audit_head": "b62ad2059662fd9c5725ecfb0c595ef2404d57524ec5376f9615fa16542ce470",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 2
+          }
+        ],
+        "encoded_state": 6,
+        "encoding": {
+          "after": 6,
+          "audit_head": "0fa3325025dde1a97bdcb66589348d1c470dfd5057e3780e1418ebd1ef1b88e5",
+          "before": 0,
+          "intervention": 1,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 1,
+          "shuffled_intervention": 1,
+          "tick": 1
+        },
+        "final_state": 6,
+        "gold": 1,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 2
+      },
+      {
+        "action": 1,
+        "audit_head": "5292bcedfe1332abc7206be474d9874d84a4143b701e11d4ffb7cc978ebd7b28",
+        "correct": true,
+        "cue": 1,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 6,
+            "audit_head": "b62ad2059662fd9c5725ecfb0c595ef2404d57524ec5376f9615fa16542ce470",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 6,
+            "audit_head": "5292bcedfe1332abc7206be474d9874d84a4143b701e11d4ffb7cc978ebd7b28",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 3
+          }
+        ],
+        "encoded_state": 6,
+        "encoding": {
+          "after": 6,
+          "audit_head": "0fa3325025dde1a97bdcb66589348d1c470dfd5057e3780e1418ebd1ef1b88e5",
+          "before": 0,
+          "intervention": 1,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 1,
+          "shuffled_intervention": 1,
+          "tick": 1
+        },
+        "final_state": 6,
+        "gold": 1,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 3
+      },
+      {
+        "action": 1,
+        "audit_head": "01fa5bf2f825cce6dc26ac9fa3ba18c0ab6eaafca74748ef6d4222a6175a64de",
+        "correct": true,
+        "cue": 1,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 6,
+            "audit_head": "b62ad2059662fd9c5725ecfb0c595ef2404d57524ec5376f9615fa16542ce470",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 6,
+            "audit_head": "5292bcedfe1332abc7206be474d9874d84a4143b701e11d4ffb7cc978ebd7b28",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 3
+          },
+          {
+            "after": 6,
+            "audit_head": "71837f5d1bef3bb39622d64027b64d77ea119892b064e02881ba959d551ac843",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 4
+          },
+          {
+            "after": 6,
+            "audit_head": "01fa5bf2f825cce6dc26ac9fa3ba18c0ab6eaafca74748ef6d4222a6175a64de",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 5
+          }
+        ],
+        "encoded_state": 6,
+        "encoding": {
+          "after": 6,
+          "audit_head": "0fa3325025dde1a97bdcb66589348d1c470dfd5057e3780e1418ebd1ef1b88e5",
+          "before": 0,
+          "intervention": 1,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 1,
+          "shuffled_intervention": 1,
+          "tick": 1
+        },
+        "final_state": 6,
+        "gold": 1,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 5
+      },
+      {
+        "action": 2,
+        "audit_head": "1f40f5d40a58f03ac058f510c3101e362bd01dfa18fb915bea5967acbad317fe",
+        "correct": true,
+        "cue": 2,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 5,
+            "audit_head": "1f40f5d40a58f03ac058f510c3101e362bd01dfa18fb915bea5967acbad317fe",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 2
+          }
+        ],
+        "encoded_state": 5,
+        "encoding": {
+          "after": 5,
+          "audit_head": "411f8a26b6d00568d7758d77e9aae42bbd4f09ad5b4328d7269224fad25cac40",
+          "before": 0,
+          "intervention": 2,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 2,
+          "shuffled_intervention": 2,
+          "tick": 1
+        },
+        "final_state": 5,
+        "gold": 2,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 2
+      },
+      {
+        "action": 2,
+        "audit_head": "7de8fcc84c69ac274254e1a16a2aa0efa9b833b20ec5a813f8620ae1fc9eb671",
+        "correct": true,
+        "cue": 2,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 5,
+            "audit_head": "1f40f5d40a58f03ac058f510c3101e362bd01dfa18fb915bea5967acbad317fe",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 5,
+            "audit_head": "7de8fcc84c69ac274254e1a16a2aa0efa9b833b20ec5a813f8620ae1fc9eb671",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 3
+          }
+        ],
+        "encoded_state": 5,
+        "encoding": {
+          "after": 5,
+          "audit_head": "411f8a26b6d00568d7758d77e9aae42bbd4f09ad5b4328d7269224fad25cac40",
+          "before": 0,
+          "intervention": 2,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 2,
+          "shuffled_intervention": 2,
+          "tick": 1
+        },
+        "final_state": 5,
+        "gold": 2,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 3
+      },
+      {
+        "action": 2,
+        "audit_head": "c04ebdf73e904d171191443d07a4f9c1ba771fd3f6b71742135e3aed62203861",
+        "correct": true,
+        "cue": 2,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 5,
+            "audit_head": "1f40f5d40a58f03ac058f510c3101e362bd01dfa18fb915bea5967acbad317fe",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 5,
+            "audit_head": "7de8fcc84c69ac274254e1a16a2aa0efa9b833b20ec5a813f8620ae1fc9eb671",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 3
+          },
+          {
+            "after": 5,
+            "audit_head": "2f40b724f75e253c845ae6043ff6b2cd801f674db0ed4bdad5d6c8eaff3edeb5",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 4
+          },
+          {
+            "after": 5,
+            "audit_head": "c04ebdf73e904d171191443d07a4f9c1ba771fd3f6b71742135e3aed62203861",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 5
+          }
+        ],
+        "encoded_state": 5,
+        "encoding": {
+          "after": 5,
+          "audit_head": "411f8a26b6d00568d7758d77e9aae42bbd4f09ad5b4328d7269224fad25cac40",
+          "before": 0,
+          "intervention": 2,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 2,
+          "shuffled_intervention": 2,
+          "tick": 1
+        },
+        "final_state": 5,
+        "gold": 2,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 5
+      },
+      {
+        "action": 4,
+        "audit_head": "e624af2296b897506eb28ef70faee92a5c884457a84431d3950a4f0f6e630c7d",
+        "correct": true,
+        "cue": 4,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 3,
+            "audit_head": "e624af2296b897506eb28ef70faee92a5c884457a84431d3950a4f0f6e630c7d",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 2
+          }
+        ],
+        "encoded_state": 3,
+        "encoding": {
+          "after": 3,
+          "audit_head": "8db6dc549da173d51025bf5af79712d246d631ce11622583126246ae84a27179",
+          "before": 0,
+          "intervention": 4,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 4,
+          "shuffled_intervention": 4,
+          "tick": 1
+        },
+        "final_state": 3,
+        "gold": 4,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 2
+      },
+      {
+        "action": 4,
+        "audit_head": "b7626b641f8b8b412c739c7bbaed00bca99d8c43f90c781f066e7c911573897e",
+        "correct": true,
+        "cue": 4,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 3,
+            "audit_head": "e624af2296b897506eb28ef70faee92a5c884457a84431d3950a4f0f6e630c7d",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 3,
+            "audit_head": "b7626b641f8b8b412c739c7bbaed00bca99d8c43f90c781f066e7c911573897e",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 3
+          }
+        ],
+        "encoded_state": 3,
+        "encoding": {
+          "after": 3,
+          "audit_head": "8db6dc549da173d51025bf5af79712d246d631ce11622583126246ae84a27179",
+          "before": 0,
+          "intervention": 4,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 4,
+          "shuffled_intervention": 4,
+          "tick": 1
+        },
+        "final_state": 3,
+        "gold": 4,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 3
+      },
+      {
+        "action": 4,
+        "audit_head": "6e9bc0a2038f7092f52cf64ace7d5e833d48091eabe62ad555a5b2c47804c8c1",
+        "correct": true,
+        "cue": 4,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 3,
+            "audit_head": "e624af2296b897506eb28ef70faee92a5c884457a84431d3950a4f0f6e630c7d",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 3,
+            "audit_head": "b7626b641f8b8b412c739c7bbaed00bca99d8c43f90c781f066e7c911573897e",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 3
+          },
+          {
+            "after": 3,
+            "audit_head": "4cced7b56001e2ed7533fabb29cfa75dd8a980a4ea85ed527206bdc8a51cac52",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 4
+          },
+          {
+            "after": 3,
+            "audit_head": "6e9bc0a2038f7092f52cf64ace7d5e833d48091eabe62ad555a5b2c47804c8c1",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 5
+          }
+        ],
+        "encoded_state": 3,
+        "encoding": {
+          "after": 3,
+          "audit_head": "8db6dc549da173d51025bf5af79712d246d631ce11622583126246ae84a27179",
+          "before": 0,
+          "intervention": 4,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 4,
+          "shuffled_intervention": 4,
+          "tick": 1
+        },
+        "final_state": 3,
+        "gold": 4,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 0,
+        "reset_every_turn": false,
+        "tick": 5
+      }
+    ],
+    "recovery": [
+      {
+        "action": 0,
+        "audit_head": "b3025b71b216a10f909346205d0b8083f4aa9d3b3398322363195607d28666a8",
+        "correct": true,
+        "cue": 0,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "b3025b71b216a10f909346205d0b8083f4aa9d3b3398322363195607d28666a8",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 2
+          }
+        ],
+        "encoded_state": 0,
+        "final_state": 0,
+        "gold": 0,
+        "matches_normal": true,
+        "tick": 2
+      },
+      {
+        "action": 0,
+        "audit_head": "db99d1c67a82fc99ad3e5910b68031079948f7f73e1caa9b65e2090d0a1d24fd",
+        "correct": true,
+        "cue": 0,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "b3025b71b216a10f909346205d0b8083f4aa9d3b3398322363195607d28666a8",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 0,
+            "audit_head": "db99d1c67a82fc99ad3e5910b68031079948f7f73e1caa9b65e2090d0a1d24fd",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 3
+          }
+        ],
+        "encoded_state": 0,
+        "final_state": 0,
+        "gold": 0,
+        "matches_normal": true,
+        "tick": 3
+      },
+      {
+        "action": 0,
+        "audit_head": "cfb4cd31302e3c37eef7d85900e75291d1c41dae3e1ed0702d434cd5d493d7c9",
+        "correct": true,
+        "cue": 0,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "b3025b71b216a10f909346205d0b8083f4aa9d3b3398322363195607d28666a8",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 0,
+            "audit_head": "db99d1c67a82fc99ad3e5910b68031079948f7f73e1caa9b65e2090d0a1d24fd",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 3
+          },
+          {
+            "after": 0,
+            "audit_head": "75b3660aac4a9e67daedabbf449707eb8c0ff84584ad2eeb8db262ab01fab2f0",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 4
+          },
+          {
+            "after": 0,
+            "audit_head": "cfb4cd31302e3c37eef7d85900e75291d1c41dae3e1ed0702d434cd5d493d7c9",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 5
+          }
+        ],
+        "encoded_state": 0,
+        "final_state": 0,
+        "gold": 0,
+        "matches_normal": true,
+        "tick": 5
+      },
+      {
+        "action": 1,
+        "audit_head": "b62ad2059662fd9c5725ecfb0c595ef2404d57524ec5376f9615fa16542ce470",
+        "correct": true,
+        "cue": 1,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 6,
+            "audit_head": "b62ad2059662fd9c5725ecfb0c595ef2404d57524ec5376f9615fa16542ce470",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 2
+          }
+        ],
+        "encoded_state": 6,
+        "final_state": 6,
+        "gold": 1,
+        "matches_normal": true,
+        "tick": 2
+      },
+      {
+        "action": 1,
+        "audit_head": "5292bcedfe1332abc7206be474d9874d84a4143b701e11d4ffb7cc978ebd7b28",
+        "correct": true,
+        "cue": 1,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 6,
+            "audit_head": "b62ad2059662fd9c5725ecfb0c595ef2404d57524ec5376f9615fa16542ce470",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 6,
+            "audit_head": "5292bcedfe1332abc7206be474d9874d84a4143b701e11d4ffb7cc978ebd7b28",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 3
+          }
+        ],
+        "encoded_state": 6,
+        "final_state": 6,
+        "gold": 1,
+        "matches_normal": true,
+        "tick": 3
+      },
+      {
+        "action": 1,
+        "audit_head": "01fa5bf2f825cce6dc26ac9fa3ba18c0ab6eaafca74748ef6d4222a6175a64de",
+        "correct": true,
+        "cue": 1,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 6,
+            "audit_head": "b62ad2059662fd9c5725ecfb0c595ef2404d57524ec5376f9615fa16542ce470",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 6,
+            "audit_head": "5292bcedfe1332abc7206be474d9874d84a4143b701e11d4ffb7cc978ebd7b28",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 3
+          },
+          {
+            "after": 6,
+            "audit_head": "71837f5d1bef3bb39622d64027b64d77ea119892b064e02881ba959d551ac843",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 4
+          },
+          {
+            "after": 6,
+            "audit_head": "01fa5bf2f825cce6dc26ac9fa3ba18c0ab6eaafca74748ef6d4222a6175a64de",
+            "before": 6,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 6,
+            "shuffled_intervention": 0,
+            "tick": 5
+          }
+        ],
+        "encoded_state": 6,
+        "final_state": 6,
+        "gold": 1,
+        "matches_normal": true,
+        "tick": 5
+      },
+      {
+        "action": 2,
+        "audit_head": "1f40f5d40a58f03ac058f510c3101e362bd01dfa18fb915bea5967acbad317fe",
+        "correct": true,
+        "cue": 2,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 5,
+            "audit_head": "1f40f5d40a58f03ac058f510c3101e362bd01dfa18fb915bea5967acbad317fe",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 2
+          }
+        ],
+        "encoded_state": 5,
+        "final_state": 5,
+        "gold": 2,
+        "matches_normal": true,
+        "tick": 2
+      },
+      {
+        "action": 2,
+        "audit_head": "7de8fcc84c69ac274254e1a16a2aa0efa9b833b20ec5a813f8620ae1fc9eb671",
+        "correct": true,
+        "cue": 2,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 5,
+            "audit_head": "1f40f5d40a58f03ac058f510c3101e362bd01dfa18fb915bea5967acbad317fe",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 5,
+            "audit_head": "7de8fcc84c69ac274254e1a16a2aa0efa9b833b20ec5a813f8620ae1fc9eb671",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 3
+          }
+        ],
+        "encoded_state": 5,
+        "final_state": 5,
+        "gold": 2,
+        "matches_normal": true,
+        "tick": 3
+      },
+      {
+        "action": 2,
+        "audit_head": "c04ebdf73e904d171191443d07a4f9c1ba771fd3f6b71742135e3aed62203861",
+        "correct": true,
+        "cue": 2,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 5,
+            "audit_head": "1f40f5d40a58f03ac058f510c3101e362bd01dfa18fb915bea5967acbad317fe",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 5,
+            "audit_head": "7de8fcc84c69ac274254e1a16a2aa0efa9b833b20ec5a813f8620ae1fc9eb671",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 3
+          },
+          {
+            "after": 5,
+            "audit_head": "2f40b724f75e253c845ae6043ff6b2cd801f674db0ed4bdad5d6c8eaff3edeb5",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 4
+          },
+          {
+            "after": 5,
+            "audit_head": "c04ebdf73e904d171191443d07a4f9c1ba771fd3f6b71742135e3aed62203861",
+            "before": 5,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 5,
+            "shuffled_intervention": 0,
+            "tick": 5
+          }
+        ],
+        "encoded_state": 5,
+        "final_state": 5,
+        "gold": 2,
+        "matches_normal": true,
+        "tick": 5
+      },
+      {
+        "action": 4,
+        "audit_head": "e624af2296b897506eb28ef70faee92a5c884457a84431d3950a4f0f6e630c7d",
+        "correct": true,
+        "cue": 4,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 3,
+            "audit_head": "e624af2296b897506eb28ef70faee92a5c884457a84431d3950a4f0f6e630c7d",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 2
+          }
+        ],
+        "encoded_state": 3,
+        "final_state": 3,
+        "gold": 4,
+        "matches_normal": true,
+        "tick": 2
+      },
+      {
+        "action": 4,
+        "audit_head": "b7626b641f8b8b412c739c7bbaed00bca99d8c43f90c781f066e7c911573897e",
+        "correct": true,
+        "cue": 4,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 3,
+            "audit_head": "e624af2296b897506eb28ef70faee92a5c884457a84431d3950a4f0f6e630c7d",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 3,
+            "audit_head": "b7626b641f8b8b412c739c7bbaed00bca99d8c43f90c781f066e7c911573897e",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 3
+          }
+        ],
+        "encoded_state": 3,
+        "final_state": 3,
+        "gold": 4,
+        "matches_normal": true,
+        "tick": 3
+      },
+      {
+        "action": 4,
+        "audit_head": "6e9bc0a2038f7092f52cf64ace7d5e833d48091eabe62ad555a5b2c47804c8c1",
+        "correct": true,
+        "cue": 4,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 3,
+            "audit_head": "e624af2296b897506eb28ef70faee92a5c884457a84431d3950a4f0f6e630c7d",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 2
+          },
+          {
+            "after": 3,
+            "audit_head": "b7626b641f8b8b412c739c7bbaed00bca99d8c43f90c781f066e7c911573897e",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 3
+          },
+          {
+            "after": 3,
+            "audit_head": "4cced7b56001e2ed7533fabb29cfa75dd8a980a4ea85ed527206bdc8a51cac52",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 4
+          },
+          {
+            "after": 3,
+            "audit_head": "6e9bc0a2038f7092f52cf64ace7d5e833d48091eabe62ad555a5b2c47804c8c1",
+            "before": 3,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 3,
+            "shuffled_intervention": 0,
+            "tick": 5
+          }
+        ],
+        "encoded_state": 3,
+        "final_state": 3,
+        "gold": 4,
+        "matches_normal": true,
+        "tick": 5
+      }
+    ],
+    "reset_every_turn": [
+      {
+        "action": 0,
+        "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+        "correct": true,
+        "cue": 0,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          }
+        ],
+        "encoded_state": 0,
+        "encoding": {
+          "after": 0,
+          "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+          "before": 0,
+          "intervention": 0,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 0,
+          "shuffled_intervention": 0,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 0,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 1,
+        "reset_every_turn": true,
+        "tick": 1
+      },
+      {
+        "action": 0,
+        "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+        "correct": true,
+        "cue": 0,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          }
+        ],
+        "encoded_state": 0,
+        "encoding": {
+          "after": 0,
+          "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+          "before": 0,
+          "intervention": 0,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 0,
+          "shuffled_intervention": 0,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 0,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 2,
+        "reset_every_turn": true,
+        "tick": 1
+      },
+      {
+        "action": 0,
+        "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+        "correct": true,
+        "cue": 0,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          }
+        ],
+        "encoded_state": 0,
+        "encoding": {
+          "after": 0,
+          "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+          "before": 0,
+          "intervention": 0,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 0,
+          "shuffled_intervention": 0,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 0,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 4,
+        "reset_every_turn": true,
+        "tick": 1
+      },
+      {
+        "action": 0,
+        "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+        "correct": false,
+        "cue": 1,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          }
+        ],
+        "encoded_state": 6,
+        "encoding": {
+          "after": 6,
+          "audit_head": "0fa3325025dde1a97bdcb66589348d1c470dfd5057e3780e1418ebd1ef1b88e5",
+          "before": 0,
+          "intervention": 1,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 1,
+          "shuffled_intervention": 1,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 1,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 1,
+        "reset_every_turn": true,
+        "tick": 1
+      },
+      {
+        "action": 0,
+        "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+        "correct": false,
+        "cue": 1,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          }
+        ],
+        "encoded_state": 6,
+        "encoding": {
+          "after": 6,
+          "audit_head": "0fa3325025dde1a97bdcb66589348d1c470dfd5057e3780e1418ebd1ef1b88e5",
+          "before": 0,
+          "intervention": 1,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 1,
+          "shuffled_intervention": 1,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 1,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 2,
+        "reset_every_turn": true,
+        "tick": 1
+      },
+      {
+        "action": 0,
+        "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+        "correct": false,
+        "cue": 1,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          }
+        ],
+        "encoded_state": 6,
+        "encoding": {
+          "after": 6,
+          "audit_head": "0fa3325025dde1a97bdcb66589348d1c470dfd5057e3780e1418ebd1ef1b88e5",
+          "before": 0,
+          "intervention": 1,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 1,
+          "shuffled_intervention": 1,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 1,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 4,
+        "reset_every_turn": true,
+        "tick": 1
+      },
+      {
+        "action": 0,
+        "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+        "correct": false,
+        "cue": 2,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          }
+        ],
+        "encoded_state": 5,
+        "encoding": {
+          "after": 5,
+          "audit_head": "411f8a26b6d00568d7758d77e9aae42bbd4f09ad5b4328d7269224fad25cac40",
+          "before": 0,
+          "intervention": 2,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 2,
+          "shuffled_intervention": 2,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 2,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 1,
+        "reset_every_turn": true,
+        "tick": 1
+      },
+      {
+        "action": 0,
+        "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+        "correct": false,
+        "cue": 2,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          }
+        ],
+        "encoded_state": 5,
+        "encoding": {
+          "after": 5,
+          "audit_head": "411f8a26b6d00568d7758d77e9aae42bbd4f09ad5b4328d7269224fad25cac40",
+          "before": 0,
+          "intervention": 2,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 2,
+          "shuffled_intervention": 2,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 2,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 2,
+        "reset_every_turn": true,
+        "tick": 1
+      },
+      {
+        "action": 0,
+        "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+        "correct": false,
+        "cue": 2,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          }
+        ],
+        "encoded_state": 5,
+        "encoding": {
+          "after": 5,
+          "audit_head": "411f8a26b6d00568d7758d77e9aae42bbd4f09ad5b4328d7269224fad25cac40",
+          "before": 0,
+          "intervention": 2,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 2,
+          "shuffled_intervention": 2,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 2,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 4,
+        "reset_every_turn": true,
+        "tick": 1
+      },
+      {
+        "action": 0,
+        "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+        "correct": false,
+        "cue": 4,
+        "delay": 1,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          }
+        ],
+        "encoded_state": 3,
+        "encoding": {
+          "after": 3,
+          "audit_head": "8db6dc549da173d51025bf5af79712d246d631ce11622583126246ae84a27179",
+          "before": 0,
+          "intervention": 4,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 4,
+          "shuffled_intervention": 4,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 4,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 1,
+        "reset_every_turn": true,
+        "tick": 1
+      },
+      {
+        "action": 0,
+        "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+        "correct": false,
+        "cue": 4,
+        "delay": 2,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          }
+        ],
+        "encoded_state": 3,
+        "encoding": {
+          "after": 3,
+          "audit_head": "8db6dc549da173d51025bf5af79712d246d631ce11622583126246ae84a27179",
+          "before": 0,
+          "intervention": 4,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 4,
+          "shuffled_intervention": 4,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 4,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 2,
+        "reset_every_turn": true,
+        "tick": 1
+      },
+      {
+        "action": 0,
+        "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+        "correct": false,
+        "cue": 4,
+        "delay": 4,
+        "delay_receipts": [
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          },
+          {
+            "after": 0,
+            "audit_head": "04a1693e04254f3d49cebb8b7afc6f84f2ad27f3ca89d2d1476b6f8fafa89543",
+            "before": 0,
+            "intervention": 0,
+            "lesion_mask": 0,
+            "permutation": [
+              0,
+              1,
+              2
+            ],
+            "perturbed": 0,
+            "shuffled_intervention": 0,
+            "tick": 1
+          }
+        ],
+        "encoded_state": 3,
+        "encoding": {
+          "after": 3,
+          "audit_head": "8db6dc549da173d51025bf5af79712d246d631ce11622583126246ae84a27179",
+          "before": 0,
+          "intervention": 4,
+          "lesion_mask": 0,
+          "permutation": [
+            0,
+            1,
+            2
+          ],
+          "perturbed": 4,
+          "shuffled_intervention": 4,
+          "tick": 1
+        },
+        "final_state": 0,
+        "gold": 4,
+        "permutation": [
+          0,
+          1,
+          2
+        ],
+        "reset_count": 4,
+        "reset_every_turn": true,
+        "tick": 1
+      }
+    ]
+  },
+  "verdict": "SUPPORTED-DELAYED-STATE-CAUSALITY"
+}
