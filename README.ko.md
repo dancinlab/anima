@@ -264,6 +264,8 @@ full CE는 `5.49208 → 2.66085`, 100문서 probe의 비어 있지 않은 서로
 `9d7641389b1ddff73bd12f17f155f448500d1edb`에 SHA 검증해 보존했다.
 전체 Python/CHAT QA는 `153 tests + 3 subtests`를 통과했고 로컬 CUDA/CuPy 1건만 정상 skip됐다.
 Vast.ai/H100은 사용하지 않았고 API 기준 활성 임대는 0개다.
+변경하지 않은 broker는 LaunchAgent 실행 중이며 공개 HTTPS `200`, WebSocket `hello`를
+통과했다. 실패 mouth는 탑재하지 않았고 `anima_alive=false` 차단 상태를 유지한다.
 
 ## 미해결 gap 감사 — 303M 의미 대화
 

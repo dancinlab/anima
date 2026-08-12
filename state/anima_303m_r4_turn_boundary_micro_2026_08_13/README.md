@@ -49,3 +49,7 @@ The built wheel's training and evaluation modules also passed from an isolated i
 Vast.ai/H100 use and cost were zero, the API reported zero active instances, and temporary local
 model/data copies were removed after HF verification. `ING.jsonl` and `stream_mi.json` were not
 modified.
+
+The chat serving path was not changed and no failed mouth was mounted. The unchanged LaunchAgent
+remains running; public HTTPS returned `200` and WebSocket returned `hello` with the honest blocked
+status `anima_alive=false`. No broker restart or production deployment was performed.

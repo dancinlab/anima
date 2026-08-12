@@ -283,6 +283,8 @@ are SHA-verified in private HF revision
 `dancinlab/anima-303m-r4-mouth-objective-micro-2026-08-13@9d7641389b1ddff73bd12f17f155f448500d1edb`.
 Full Python/CHAT QA passed `153 tests + 3 subtests` with one expected local CUDA/CuPy skip. No
 Vast.ai/H100 instance was used; the API reports zero active rentals.
+The unchanged broker remains LaunchAgent-running and passed public HTTPS `200` plus WebSocket
+`hello`; no failed mouth was mounted and `anima_alive=false` remains the required blocked state.
 
 ## Open gap audit — 303M meaningful conversation
 
