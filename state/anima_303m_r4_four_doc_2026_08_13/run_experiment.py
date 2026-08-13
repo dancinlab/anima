@@ -140,7 +140,10 @@ def _score_arm(checkpoint: Path, exchanges: list[tuple[str, str]], bars: dict,
         and prompt["counts"]["output_controlled"] == 4)
     score["prompt_causality"] = prompt
     counts = score["counts"]
+    score["gate_reachability"] = _exact_gate_reachability(exchanges)
     score["memorization_gate"] = (
+        score["gate_reachability"]["exact_completion_reachable"]
+        and
         score["teacher"]["top1_accuracy"] >= 0.95
         and counts["exact"] == 4
         and counts["target_recovered"] == 4
@@ -163,6 +166,17 @@ def _classify(baseline_ok: bool, passes: dict[str, bool]) -> str:
     if passes.get("B0_baseline", False):
         return "BASELINE-PASS-NO-TREATMENT-NEEDED"
     return "FALSIFIED-BOUNDED-HORIZON-AND-CAPACITY-TREATMENTS"
+
+
+def _exact_gate_reachability(exchanges: list[tuple[str, str]]) -> dict:
+    target_bytes = [len(target.encode("utf-8", "surrogateescape"))
+                    for _, target in exchanges]
+    return {
+        "canonical_max_new_bytes": generator.CHAT_MAX_NEW_BYTES,
+        "target_bytes": target_bytes,
+        "exact_completion_reachable": all(
+            size <= generator.CHAT_MAX_NEW_BYTES for size in target_bytes),
+    }
 
 
 def main() -> int:

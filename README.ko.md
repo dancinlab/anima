@@ -336,6 +336,17 @@ deterministic treatment는 모두 고정 관문에 실패했다. O1과 C1은 1~3
 `state/anima_303m_r4_document_alignment_2026_08_13/`에 사전등록했고 legacy stream은 동결
 control로 유지하며 모든 상위 관문은 계속 차단한다.
 
+alignment arm은 teacher top-1 `1.0`, target-prefix `4/4`, prompt 통제 `4/4`였지만 발생한
+exact/structural 판정은 무효다. 정답 3개가 canonical 생성 예산 192 bytes를 넘어 exact 완료가
+구조적으로 불가능했다. raw 실패는 `original_verdict`로 보존하고 통과로 승격하지 않았다. 같은
+불변 원천에서 runtime byte 예산에 맞는 문서를 결정론적으로 파생한 다음 view를 별도
+사전등록하며, harness는 도달 불가능한 exact gate를 fail-closed 거부한다.
+
+`state/anima_303m_r4_runtime_compatible_2026_08_13/`에 수정된 단일 arm을 사전등록했다. 불변
+source 순서에서 canonical 192-byte 예산에 맞는 완전한 단일 turn 문서 첫 4개를 결정론적으로
+파생하고 view SHA를 고정했으며 aligned deterministic recipe와 모든 행동 관문을 유지한다. 이
+결과도 아직 memorization/conditioning 관문일 뿐이다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

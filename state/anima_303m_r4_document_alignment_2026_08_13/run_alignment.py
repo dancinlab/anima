@@ -34,14 +34,16 @@ def main() -> int:
     parser.add_argument("--data", required=True)
     parser.add_argument("--work", required=True)
     parser.add_argument("--result", required=True)
+    parser.add_argument("--protocol", default=str(HERE / "protocol.json"))
     parser.add_argument("--device", choices=["cpu"], default="cpu")
     args = parser.parse_args()
 
-    protocol_path = HERE / "protocol.json"
+    protocol_path = Path(args.protocol).resolve()
+    protocol_dir = protocol_path.parent
     protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
-    parent_result = (HERE / protocol["parent_result"]).resolve()
+    parent_result = (protocol_dir / protocol["parent_result"]).resolve()
     fixed_data = protocol["fixed_data"]
-    panel_path = (HERE / fixed_data["panel"]).resolve()
+    panel_path = (protocol_dir / fixed_data["panel"]).resolve()
     if _sha256(parent_result) != protocol["parent_result_sha256"]:
         raise RuntimeError("parent result SHA differs from preregistration")
     if _sha256(panel_path) != fixed_data["panel_sha256"]:
@@ -55,7 +57,22 @@ def main() -> int:
         raise RuntimeError("validation source SHA differs from preregistration")
     documents = parent._documents(train_source)
     validation = parent._documents(validation_source)
-    four_docs, val32 = documents[:4], validation[:32]
+    selector = fixed_data.get("view_selector", "first_four")
+    if selector == "first_four":
+        four_docs = documents[:4]
+    elif selector == "first_four_runtime_compatible":
+        four_docs = []
+        for document in documents:
+            exchange = parent._final_exchange(document)
+            if (exchange is not None
+                    and len(exchange[1].encode("utf-8", "surrogateescape"))
+                    <= four.generator.CHAT_MAX_NEW_BYTES):
+                four_docs.append(document)
+                if len(four_docs) == 4:
+                    break
+    else:
+        raise RuntimeError(f"unknown registered view selector: {selector}")
+    val32 = validation[:32]
     if parent._sha256_bytes(parent._view_bytes(four_docs)) != fixed_data["four_document_view_sha256"]:
         raise RuntimeError("four-document view differs from preregistration")
     if parent._sha256_bytes(parent._view_bytes(val32)) != fixed_data["heldout_32_view_sha256"]:
@@ -63,6 +80,18 @@ def main() -> int:
     exchanges = [parent._final_exchange(document) for document in four_docs]
     if any(exchange is None for exchange in exchanges):
         raise RuntimeError("registered view is not four complete exchanges")
+    target_bytes = [len(exchange[1].encode("utf-8", "surrogateescape"))
+                    for exchange in exchanges if exchange is not None]
+    if any(size > four.generator.CHAT_MAX_NEW_BYTES for size in target_bytes):
+        result = {
+            "schema": "anima-303m-r4-document-alignment-result/v1",
+            "protocol_sha256": _sha256(protocol_path),
+            "verdict": "INVALID-GATE-UNREACHABLE",
+            "canonical_max_new_bytes": four.generator.CHAT_MAX_NEW_BYTES,
+            "target_bytes": target_bytes,
+        }
+        Path(args.result).write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+        return 4
 
     work = Path(args.work)
     work.mkdir(parents=True, exist_ok=True)

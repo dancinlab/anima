@@ -1,0 +1,358 @@
+{
+  "schema": "anima-303m-r4-document-alignment-result/v1",
+  "protocol_sha256": "176feec8fd80db79d29b5bd76eaa2871f9eee564070328d58d38fc417203c761",
+  "parent_result_sha256": "eaaf672ff4d84759f3b8fd3c8fc2675205f76916962594780f078180a7c7ab91",
+  "device": "cpu",
+  "control": {
+    "source": "parent B0 stream-aligned arm",
+    "teacher_top1": 0.7240293809024134,
+    "target_prefix": 2,
+    "structural": 1,
+    "exact": 1,
+    "prompt_ce_control": 3
+  },
+  "treatment": {
+    "engine_sha256": "7393688a6cdbf84bcc2cbca4be733d6719416fa03faa8a3f3ae6f5c18b0c2184",
+    "parameters": 924416,
+    "summary": {
+      "entry": "anima-py train",
+      "arch": "bytegpt",
+      "arm": "ctrl",
+      "objective": "ce_marginal",
+      "seed": 7,
+      "deterministic": true,
+      "optimizer": {
+        "name": "AdamW",
+        "beta1": 0.9,
+        "beta2": 0.95,
+        "weight_decay": 0.1,
+        "lr": 0.001,
+        "schedule": "cosine",
+        "warmup_steps": 50,
+        "decay_steps": 600,
+        "min_lr_ratio": 0.1
+      },
+      "initialization": {
+        "name": "gpt2-canonical",
+        "std": 0.02,
+        "residual_projection_scale": "std/sqrt(2*n_layer)"
+      },
+      "ddp": {
+        "world_size": 1,
+        "global_batch": 8,
+        "per_rank_batch": 8,
+        "gpus": ""
+      },
+      "obj_aux_params": 0,
+      "answer_ce": {
+        "weight": 1.0,
+        "mode": "turn-only",
+        "marker_utf8": "assistant: ",
+        "all_spans": true,
+        "chat_framed_sampling": true,
+        "telemetry": {
+          "complete_trajectory": true,
+          "steps": 600,
+          "active_steps": 600,
+          "positions": 1640760,
+          "position_weighted_ce_sum": 634231.8299626287,
+          "scope": "full_batch",
+          "mean_ce": 0.3865475937752192
+        }
+      },
+      "chat_frame_alignment": "document",
+      "levers": {
+        "tlora": false,
+        "tlora_rank": 8,
+        "tlora_base": true,
+        "dict_aux": false,
+        "jamo_aux": false,
+        "wd_floor": -1.0,
+        "dropout_floor": -1.0
+      },
+      "n_params": 891648,
+      "loss0": 5.54942,
+      "lossF": 2.96734,
+      "wall_s": 51.0,
+      "uniform_ce": 5.54518,
+      "final_val_ce_pooled": 9.191,
+      "final_val_ce_macro_cells": 9.191,
+      "validation_aggregation": "equal-cell macro average",
+      "sampling": {
+        "policy": "proportional",
+        "weight_basis": "train_bytes",
+        "complete_trajectory": true,
+        "per_cell": {
+          "dialogue": {
+            "train_bytes": 1311,
+            "sampled_windows": 4800,
+            "sampled_framed_windows": 4800,
+            "eligible_chat_documents": 4,
+            "oversize_chat_documents": 0,
+            "chat_frame_alignment": "document",
+            "sampled_fraction": 1.0
+          }
+        }
+      },
+      "registers_descent": "0/1",
+      "heldout_descent": {
+        "dialogue": {
+          "val_ce": 9.191,
+          "descent": false
+        }
+      },
+      "last_aux": {
+        "ans_ce": 9.726730058901012e-05,
+        "ans_n": 2722
+      },
+      "dbes_final": null,
+      "dbes_log": [],
+      "dbes_batch_scope": "full_batch(B=8)",
+      "gauges_g1g6_torch_probe": null,
+      "sleep_schedule": null,
+      "phi_envelope_monitor": null,
+      "tier": "engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
+    },
+    "score": {
+      "teacher": {
+        "documents": 4,
+        "bytes": 953,
+        "ce": 9.608405276974129e-05,
+        "top1_accuracy": 1.0,
+        "mean_gold_probability": 0.9999039241299424,
+        "mean_gold_rank": 1.0
+      },
+      "counts": {
+        "nonempty": 4,
+        "distinct": 4,
+        "target_recovered": 4,
+        "structural": 1,
+        "exact": 1
+      },
+      "rows": [
+        {
+          "teacher": {
+            "bytes": 163,
+            "ce": 8.478019317660814e-05,
+            "top1_accuracy": 1.0,
+            "mean_gold_probability": 0.999915223911496,
+            "mean_gold_rank": 1.0,
+            "first_error_position": null,
+            "first_error_margin": null
+          },
+          "free": {
+            "prompt": "What's your favorite color?",
+            "target": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!",
+            "decoded": {
+              "text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!",
+              "stop_marker": "\nuser:",
+              "stopped": true,
+              "raw_text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!\n\nuser: me and utoustould row"
+            },
+            "target_prefix_recovered": true,
+            "first_divergence_position": null,
+            "structural": true,
+            "longest_byte_run": 2,
+            "longest_word_run": 1
+          }
+        },
+        {
+          "teacher": {
+            "bytes": 230,
+            "ce": 9.613163566406569e-05,
+            "top1_accuracy": 1.0,
+            "mean_gold_probability": 0.9999038748119189,
+            "mean_gold_rank": 1.0,
+            "first_error_position": null,
+            "first_error_margin": null
+          },
+          "free": {
+            "prompt": "Hmm interesting. So i could basically develop my extension for Chrome and just port it over to Firefox?",
+            "target": "As far as I understand, you can develop an extension that is made to be compatible to both Chrome and Firefox browsers. You just need to make sure that the extension do not utilize Chrome specific APIs that don't exist in Firefox.",
+            "decoded": {
+              "text": "As far as I understand, you can develop an extension that is made to be compatible to both Chrome and Firefox browsers. You just need to make sure that the extension do not utilize Chrome spec",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "As far as I understand, you can develop an extension that is made to be compatible to both Chrome and Firefox browsers. You just need to make sure that the extension do not utilize Chrome spec"
+            },
+            "target_prefix_recovered": true,
+            "first_divergence_position": 192,
+            "structural": false,
+            "longest_byte_run": 2,
+            "longest_word_run": 1
+          }
+        },
+        {
+          "teacher": {
+            "bytes": 304,
+            "ce": 0.00010885419349295342,
+            "top1_accuracy": 1.0,
+            "mean_gold_probability": 0.9998911605461648,
+            "mean_gold_rank": 1.0,
+            "first_error_position": null,
+            "first_error_margin": null
+          },
+          "free": {
+            "prompt": "write an sql query to retrieve the top 5 longest running results from the following table: \"runs\", columns: id, distance, pace, route",
+            "target": "SELECT * FROM runs ORDER BY distance DESC LIMIT 5;\nThis query works by sorting the rows by distance in descending order and returning the first 5 results. Because of how the rows have been sorted, the first 5 running results will be the longest.\nIs there anything else you would like me to help you with?",
+            "decoded": {
+              "text": "SELECT * FROM runs ORDER BY distance DESC LIMIT 5;\nThis query works by sorting the rows by distance in descending order and returning the first 5 results. Because of how the rows have been sor",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "SELECT * FROM runs ORDER BY distance DESC LIMIT 5;\nThis query works by sorting the rows by distance in descending order and returning the first 5 results. Because of how the rows have been sor"
+            },
+            "target_prefix_recovered": true,
+            "first_divergence_position": 192,
+            "structural": false,
+            "longest_byte_run": 2,
+            "longest_word_run": 1
+          }
+        },
+        {
+          "teacher": {
+            "bytes": 256,
+            "ce": 8.807413975462256e-05,
+            "top1_accuracy": 1.0,
+            "mean_gold_probability": 0.9999119304120541,
+            "mean_gold_rank": 1.0,
+            "first_error_position": null,
+            "first_error_margin": null
+          },
+          "free": {
+            "prompt": "Does this work?",
+            "target": "Yes, this code should work as long as all necessary packages have been installed and there are no syntax errors in the code. However, this is just a basic setup and further components and routes need to be added in order to make the application functional.",
+            "decoded": {
+              "text": "Yes, this code should work as long as all necessary packages have been installed and there are no syntax errors in the code. However, this is just a basic setup and further components and rout",
+              "stop_marker": "",
+              "stopped": false,
+              "raw_text": "Yes, this code should work as long as all necessary packages have been installed and there are no syntax errors in the code. However, this is just a basic setup and further components and rout"
+            },
+            "target_prefix_recovered": true,
+            "first_divergence_position": 192,
+            "structural": false,
+            "longest_byte_run": 2,
+            "longest_word_run": 1
+          }
+        }
+      ],
+      "prompt_causality": {
+        "rows": [
+          {
+            "prompt": "What's your favorite color?",
+            "shuffled_prompt": "Hmm interesting. So i could basically develop my extension for Chrome and just port it over to Firefox?",
+            "conditions": {
+              "normal": {
+                "ce": 8.478019317660814e-05,
+                "top1_accuracy": 1.0,
+                "text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!"
+              },
+              "blank": {
+                "ce": 8.45120481229364,
+                "top1_accuracy": 0.22085889570552147,
+                "text": "be Chanthex and as, this code should work as long as all necessary packages have been installed and there are no syntomputrors in the code. However, this is just a basic setup and further comp"
+              },
+              "shuffled": {
+                "ce": 8.658764550050085,
+                "top1_accuracy": 0.20245398773006135,
+                "text": "As far as I understand, you can develop an extension that is made to be compatible to both Chrome and Firefox browsers. You just need to make sure that the extension do not utilize Chrome spec"
+              }
+            },
+            "ce_controlled": true,
+            "output_controlled": true
+          },
+          {
+            "prompt": "Hmm interesting. So i could basically develop my extension for Chrome and just port it over to Firefox?",
+            "shuffled_prompt": "write an sql query to retrieve the top 5 longest running results from the following table: \"runs\", columns: id, distance, pace, route",
+            "conditions": {
+              "normal": {
+                "ce": 9.613163566406569e-05,
+                "top1_accuracy": 1.0,
+                "text": "As far as I understand, you can develop an extension that is made to be compatible to both Chrome and Firefox browsers. You just need to make sure that the extension do not utilize Chrome spec"
+              },
+              "blank": {
+                "ce": 8.441031476747394,
+                "top1_accuracy": 0.17391304347826086,
+                "text": "be Chanthex and as, this code should work as long as all necessary packages have been installed and there are no syntomputrors in the code. However, this is just a basic setup and further comp"
+              },
+              "shuffled": {
+                "ce": 8.638278292213485,
+                "top1_accuracy": 0.19130434782608696,
+                "text": "SELECT * FROM runs ORDER BY distance DESC LIMIT 5;\nThis query works by sorting the rows by distance in descending order and returning the first 5 results. Because of how the rows have been sor"
+              }
+            },
+            "ce_controlled": true,
+            "output_controlled": true
+          },
+          {
+            "prompt": "write an sql query to retrieve the top 5 longest running results from the following table: \"runs\", columns: id, distance, pace, route",
+            "shuffled_prompt": "Does this work?",
+            "conditions": {
+              "normal": {
+                "ce": 0.00010885419349295342,
+                "top1_accuracy": 1.0,
+                "text": "SELECT * FROM runs ORDER BY distance DESC LIMIT 5;\nThis query works by sorting the rows by distance in descending order and returning the first 5 results. Because of how the rows have been sor"
+              },
+              "blank": {
+                "ce": 7.967274452525608,
+                "top1_accuracy": 0.2236842105263158,
+                "text": "be Chanthex and as, this code should work as long as all necessary packages have been installed and there are no syntomputrors in the code. However, this is just a basic setup and further comp"
+              },
+              "shuffled": {
+                "ce": 7.734456112936672,
+                "top1_accuracy": 0.2565789473684211,
+                "text": "Yes, this code should work as long as all necessary packages have been installed and there are no syntax errors in the code. However, this is just a basic setup and further components and rout"
+              }
+            },
+            "ce_controlled": true,
+            "output_controlled": true
+          },
+          {
+            "prompt": "Does this work?",
+            "shuffled_prompt": "What's your favorite color?",
+            "conditions": {
+              "normal": {
+                "ce": 8.807413975462256e-05,
+                "top1_accuracy": 1.0,
+                "text": "Yes, this code should work as long as all necessary packages have been installed and there are no syntax errors in the code. However, this is just a basic setup and further components and rout"
+              },
+              "blank": {
+                "ce": 8.605641613306457,
+                "top1_accuracy": 0.1953125,
+                "text": "be Chanthex and as, this code should work as long as all necessary packages have been installed and there are no syntomputrors in the code. However, this is just a basic setup and further comp"
+              },
+              "shuffled": {
+                "ce": 9.398803762132296,
+                "top1_accuracy": 0.15234375,
+                "text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!"
+              }
+            },
+            "ce_controlled": true,
+            "output_controlled": true
+          }
+        ],
+        "counts": {
+          "ce_controlled": 4,
+          "output_controlled": 4
+        },
+        "gate": true,
+        "gate_four": true
+      },
+      "memorization_gate": false,
+      "gate": false
+    }
+  },
+  "gate": false,
+  "original_verdict": "FALSIFIED-DOCUMENT-ALIGNMENT-TREATMENT",
+  "audit": {
+    "canonical_max_new_bytes": 192,
+    "target_bytes": [163, 230, 304, 256],
+    "targets_exceeding_budget": 3,
+    "exact_and_structural_gate_reachable": false,
+    "teacher_top1": 1.0,
+    "target_prefix": 4,
+    "prompt_ce_control": 4,
+    "classification": "GATE-UNREACHABLE-BY-CONSTRUCTION"
+  },
+  "verdict": "INVALID-GATE-UNREACHABLE",
+  "next_allowed_step": "Preregister a runtime-budget-compatible derived view and fail closed on any exact gate whose target exceeds canonical max_new_bytes; 303M, IIT coupling and production remain blocked."
+}

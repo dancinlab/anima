@@ -37,3 +37,10 @@ def test_four_document_cli_imports_from_repo_root():
         text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
     assert completed.returncode == 0, completed.stderr
     assert "--data" in completed.stdout
+
+
+def test_exact_gate_is_unreachable_beyond_canonical_generation_budget():
+    at_budget = [("short", "x" * MODULE.generator.CHAT_MAX_NEW_BYTES)]
+    over_budget = [("short", "x" * (MODULE.generator.CHAT_MAX_NEW_BYTES + 1))]
+    assert MODULE._exact_gate_reachability(at_budget)["exact_completion_reachable"]
+    assert not MODULE._exact_gate_reachability(over_budget)["exact_completion_reachable"]

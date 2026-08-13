@@ -356,6 +356,18 @@ the isolated user role at position zero. `state/anima_303m_r4_document_alignment
 preregisters one alignment-only arm using the existing sampler; legacy stream mode remains the
 frozen control and all larger gates remain blocked.
 
+The alignment arm reached teacher top-1 `1.0`, target-prefix `4/4` and prompt control `4/4`, but
+the emitted exact/structural verdict is invalid: three targets exceed the canonical 192-byte
+generation budget, making exact completion unreachable by construction. The raw failure is kept
+as `original_verdict`; it is not promoted. The next view is separately preregistered from the same
+immutable source by the deterministic runtime-budget filter, and the harness now fails closed on
+unreachable exact gates.
+
+`state/anima_303m_r4_runtime_compatible_2026_08_13/` preregisters the corrected single arm. It
+derives the first four complete source-order exchanges whose responses fit the canonical 192-byte
+budget, freezes the resulting view SHA, and retains the aligned deterministic recipe and all
+behavioral bars. This is still only a memorization/conditioning gate.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current
