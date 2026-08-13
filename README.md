@@ -480,6 +480,18 @@ only in private HF revision
 `dancinlab/anima-303m-r4-dialogue-scale-2026-08-13@1146240912244c7127b442196e2047a6f7641eac`.
 The next permitted axis is a separately preregistered fixed-3,500-document exposure test.
 
+### Preregistered R4 fixed-3,500 optimization-exposure ladder
+
+[`state/anima_303m_r4_exposure_ladder_2026_08_13`](state/anima_303m_r4_exposure_ladder_2026_08_13/README.md)
+freezes the next single axis before execution. The 3,500 documents, 0.89M ByteGPT, initial language
+checkpoint, broad replay, optimizer, sampler, objective, seed, canonical generator and conversation
+panel remain unchanged. One deterministic CPU trajectory runs to 30,000 steps with the original
+cosine schedule reaching its registered floor at step 3,750; checkpoints at 3,750/7,500/15,000/
+30,000 represent 15k/30k/60k/120k dialogue-row exposures. The first point must reproduce the prior
+control, all points are evaluated, and 120k is the fixed primary endpoint. A continued semantic
+`0/7` endpoint despite teacher-forced improvement permits only a separately preregistered capacity
+ladder; it does not authorize 303M, IIT-mouth coupling, participant mounting or production.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

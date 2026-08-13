@@ -1,0 +1,96 @@
+{
+  "schema": "anima-303m-r4-fixed-dialogue-exposure/v1",
+  "date": "2026-08-13",
+  "status": "PREREGISTERED",
+  "parent_result": "../anima_303m_r4_dialogue_scale_2026_08_13/result.json",
+  "parent_result_sha256": "bde15d1e78bad48521c4e31b3c62619fe7fdab20fd3084d2ac0edf63dacf418f",
+  "source_protocol": "../anima_303m_r4_dialogue_scale_2026_08_13/protocol.json",
+  "source_protocol_sha256": "f6ee389292a25dba54af81b9d691831ad7734ab298067c465b6aaca181ff3887",
+  "claim": "Distinguish insufficient optimization exposure from a bounded fixed-capacity failure while holding the registered 3500-document mouth recipe fixed.",
+  "research_reference": {
+    "repository": "https://github.com/dancinlab/anima-research",
+    "revision": "03d55ef9848df304a435a88a2b90a74722bc5b73",
+    "effect": "interpretation constraint only",
+    "consciousness_claim": false
+  },
+  "fixed_data": {
+    "repository": "dancinlab/anima-303m-v0-v2-turns-2026-08-12",
+    "revision": "17a1e4676d684a99a54208549445952302f389fa",
+    "train_file": "en_dialogue.train.txt",
+    "train_file_sha256": "8513908f9ec4b1803b1b364a84383c0c50f7c61baa69e76de068faad75ad3c55",
+    "validation_file": "en_dialogue.validation.txt",
+    "validation_file_sha256": "5d564119a620f0de86b937ca4c8bbb292af75326ba71a3a2e0ebbc2bafadd500",
+    "eligible_documents": 3615,
+    "documents": 3500,
+    "view_bytes": 677948,
+    "view_sha256": "106a042bb7defd4b30ea160b9cbcf4f664868652db6b5f335aa7c1d0a159a999",
+    "heldout_documents": 32,
+    "heldout_view_sha256": "6604191d50f59879e79f3088105c740e7a1aa9e30f1bcbd75e590b8bc4899404",
+    "panel": "../anima_303m_r0_english_2026_08_12/conversation_panel.json",
+    "panel_sha256": "cf1a6d6837a69031929168b2b02aaf771406e0d8429bb8912b65f0be2ccbad4a"
+  },
+  "fixed_recipe": {
+    "architecture": "existing ByteGPT only",
+    "vocab": 256,
+    "block": 512,
+    "d": 128,
+    "layers": 4,
+    "heads": 2,
+    "parameters": 891648,
+    "language_checkpoint_sha256": "dfa561a9ae0f8ded96135ca18f62310e3d998bd352f5ce1cd5534ea108551348",
+    "broad_train_sha256": "05761ea8b029360c41f756a8da7dc95ac0f146af195586cbfc00affd6946cd3f",
+    "broad_validation_sha256": "2f1567263a771d17db802252cbdd142f7286d530e2cf0c727edd1b7f61c7ce85",
+    "seed": 7,
+    "batch": 8,
+    "sample": "roundrobin",
+    "rows_per_step_per_cell": 4,
+    "objective": "full CE on every row plus additive canonical assistant-response CE",
+    "answer_weight": 1.0,
+    "peak_lr": 0.001,
+    "optimizer": "fresh AdamW beta=(0.9,0.95), weight_decay=0.1",
+    "schedule": "50-step warmup then cosine to 0.1 peak ratio at step 3750; remain at the registered floor through step 30000",
+    "checkpoint_selection": "fixed final only; intermediate checkpoints are diagnostic time points",
+    "deterministic": true,
+    "device": "CPU",
+    "threads": 2
+  },
+  "trajectory": {
+    "steps": 30000,
+    "checkpoint_every": 3750,
+    "evaluated_steps": [3750, 7500, 15000, 30000],
+    "dialogue_row_exposure": [15000, 30000, 60000, 120000],
+    "primary_step": 30000,
+    "primary_dialogue_row_exposure": 120000,
+    "run_all_points": true,
+    "post_result_checkpoint_selection": false
+  },
+  "control_reproduction": {
+    "step": 3750,
+    "prior_broad_ce": 1.8254346530264838,
+    "prior_heldout_assistant_ce": 1.755528053476449,
+    "absolute_ce_tolerance": 0.03,
+    "prior_semantic": "0/7",
+    "prior_structural": "0/7"
+  },
+  "gates": {
+    "broad_retention": "fixed broad validation CE below uniform ln(256)",
+    "automatic_conversation": "unchanged fail-closed canonical panel pass",
+    "manual_review": "required after automatic pass; fluent form alone is insufficient"
+  },
+  "decision": {
+    "control_mismatch": "INVALID-CONTROL-REPRODUCTION",
+    "endpoint_failure": "FAIL-FIXED-CAPACITY-AFTER-EXPOSURE",
+    "automatic_pass": "AUTOMATIC-EXPOSURE-PASS-MANUAL-REVIEW-REQUIRED"
+  },
+  "bounded_work": {
+    "maximum_new_training_trajectories": 1,
+    "vast_ai_allowed": false,
+    "303m_training": "blocked",
+    "iit_mouth_coupling": "blocked",
+    "participant_mount": "blocked",
+    "production": "blocked",
+    "hf_repository": "dancinlab/anima-303m-r4-exposure-ladder-2026-08-13",
+    "hf_private": true,
+    "user_files_to_preserve": ["ING.jsonl", "stream_mi.json"]
+  }
+}

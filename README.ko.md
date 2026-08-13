@@ -456,6 +456,19 @@ teacher-forced 예측을 개선하지만 의미 있는 자유 대화를 만들�
 `dancinlab/anima-303m-r4-dialogue-scale-2026-08-13@1146240912244c7127b442196e2047a6f7641eac`에만
 보존하고 SHA 검증했다. 다음 허용 축은 별도 사전등록한 고정 3,500문서 exposure 시험이다.
 
+### 사전등록한 R4 고정 3,500문서 optimization-exposure 사다리
+
+다음 단일 축은 실행 전에
+[`state/anima_303m_r4_exposure_ladder_2026_08_13`](state/anima_303m_r4_exposure_ladder_2026_08_13/README.md)에
+고정했다. 3,500문서·0.89M ByteGPT·초기 언어 체크포인트·broad replay·optimizer·sampler·
+목적함수·seed·canonical generator·대화 패널은 바꾸지 않는다. 단일 결정론적 CPU trajectory를
+30,000 step까지 실행하고, 기존 cosine schedule은 원래 endpoint인 3,750 step에서 등록된 최저
+LR에 도달한 뒤 그대로 유지한다. 3,750/7,500/15,000/30,000 step 체크포인트는 각각
+15k/30k/60k/120k dialogue-row 노출이다. 첫 지점은 기존 대조군을 재현해야 하며 모든 지점을
+평가하고 120k를 고정 1차 endpoint로 사용한다. teacher-forced 개선에도 최종 의미가 `0/7`이면
+별도 사전등록한 capacity 사다리만 허용하며 303M·IIT-mouth 결합·participant 탑재·프로덕션은
+허용하지 않는다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속
