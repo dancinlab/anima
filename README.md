@@ -402,6 +402,16 @@ The 64-document 1,200-step arm passed fully, supporting exposure as the post-ali
 `state/anima_303m_r4_aligned_100_exposure_2026_08_13/` freezes the derived 100-document endpoint
 `600/32×100 = 1,875` and reruns the unchanged heldout and meaningful-conversation gates.
 
+The derived 1,875-step run learned the registered training support completely: teacher top-1 was
+`1.0000`, CE `0.001315`, and exact/target/structural/prompt controls were all `8/8`. It nevertheless
+failed every independent semantic item (`0/7`), failed memory and correction, and produced only
+fragmentary answers; heldout assistant top-1 was `0.1370` with CE `8.0896`. The verdict is
+`FAIL-ALIGNED-100-MEANINGFUL-CONVERSATION`. This closes alignment and bounded exposure as causes of
+in-view failure while showing that response-only training on 100 dialogues memorizes without
+forming a general language mouth. The next result-bearing axis is a separately preregistered broad
+full-CE language phase followed by the unchanged aligned turn-SFT phase. No 303M run, IIT-mouth
+coupling, participant mount, or production promotion is authorized.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

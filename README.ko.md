@@ -380,6 +380,15 @@ aligned 32/64문서 arm을 사전등록했다.
 `state/anima_303m_r4_aligned_100_exposure_2026_08_13/`에 파생 endpoint
 `600/32×100 = 1,875`를 고정하고 기존 heldout·의미 대화 관문을 다시 실행한다.
 
+파생 1,875-step 실행은 등록된 학습 지지집합을 완전히 학습했다. teacher top-1 `1.0000`, CE
+`0.001315`, exact/target/구조/prompt 통제가 모두 `8/8`이었다. 하지만 독립 의미 항목은 전부
+실패(`0/7`)했고 기억·정정도 실패했으며 파편적인 답만 생성했다. heldout assistant top-1은
+`0.1370`, CE는 `8.0896`이었다. 판정은 `FAIL-ALIGNED-100-MEANINGFUL-CONVERSATION`이다.
+따라서 alignment와 제한된 노출량은 in-view 실패 원인에서 제외되지만, 100개 대화의
+response-only 학습은 일반 언어 mouth를 만들지 못하고 암기만 한다. 다음 결과성 단일 축은
+별도 사전등록한 broad full-CE 언어 단계 뒤 기존 aligned turn-SFT 단계를 그대로 잇는 것이다.
+303M 학습·IIT-mouth 결합·participant 탑재·프로덕션 승격은 계속 차단한다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속
