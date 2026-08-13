@@ -1,0 +1,91 @@
+{
+  "schema": "anima-303m-r4-dialogue-support-scale/v1",
+  "date": "2026-08-13",
+  "status": "PREREGISTERED",
+  "parent_result": "../anima_303m_r4_joint_replay_2026_08_13/result.json",
+  "parent_result_sha256": "e90680c930a3c17d51fee91cb935fc7d6568386b12993fe5367f5b706d5d5a71",
+  "source_protocol": "../anima_303m_r4_full_ce_curriculum_2026_08_13/protocol.json",
+  "source_protocol_sha256": "40890af5272dc8384d1e5aba839b14a754800bb3c181b9c465cad3b0fce38c4b",
+  "claim": "Test whether increasing unique, complete dialogue support alone enables held-out meaningful conversation in the fixed native joint-replay mouth.",
+  "research_reference": {
+    "repository": "https://github.com/dancinlab/anima-research",
+    "revision": "03d55ef9848df304a435a88a2b90a74722bc5b73",
+    "applied_principles": [
+      "language branches after shared internal state and is not evidence of consciousness",
+      "intervention passes are asymmetric non-disproof rather than proof",
+      "mouth competence must not activate later developmental gates"
+    ],
+    "effect_on_this_protocol": "The reference constrains interpretation only; it does not change the trainer, evaluator, model, data, thresholds, or runtime."
+  },
+  "data": {
+    "repository": "dancinlab/anima-303m-v0-v2-turns-2026-08-12",
+    "revision": "17a1e4676d684a99a54208549445952302f389fa",
+    "train_file": "en_dialogue.train.txt",
+    "train_file_bytes": 2642861,
+    "train_file_sha256": "8513908f9ec4b1803b1b364a84383c0c50f7c61baa69e76de068faad75ad3c55",
+    "validation_file": "en_dialogue.validation.txt",
+    "validation_file_bytes": 144828,
+    "validation_file_sha256": "5d564119a620f0de86b937ca4c8bbb292af75326ba71a3a2e0ebbc2bafadd500",
+    "selector": "first N source-order documents whose final assistant response is at most canonical CHAT_MAX_NEW_BYTES; nested views",
+    "eligible_documents": 3615,
+    "views": {
+      "100": {"bytes": 18300, "sha256": "c13cc5b8668a9d2142e0023e27e3ff87eefbf3df9ff81caac708fc4e3928ffe4", "role": "completed parent control; do not retrain"},
+      "500": {"bytes": 93637, "sha256": "6b4eea411b7bd690f7ab40da780d23ea93440cf3793d7928fdcefbf35a2dd16e"},
+      "1500": {"bytes": 288081, "sha256": "a624fea0ededac9688b3eb1b407b3ec6a7b939022fd412d68309a077125c4638"},
+      "3500": {"bytes": 677948, "sha256": "106a042bb7defd4b30ea160b9cbcf4f664868652db6b5f335aa7c1d0a159a999"}
+    },
+    "heldout_32_bytes": 10013,
+    "heldout_32_sha256": "6604191d50f59879e79f3088105c740e7a1aa9e30f1bcbd75e590b8bc4899404",
+    "panel": "../anima_303m_r0_english_2026_08_12/conversation_panel.json",
+    "panel_sha256": "cf1a6d6837a69031929168b2b02aaf771406e0d8429bb8912b65f0be2ccbad4a"
+  },
+  "fixed_recipe": {
+    "architecture": "existing ByteGPT only",
+    "vocab": 256,
+    "block": 512,
+    "d": 128,
+    "layers": 4,
+    "heads": 2,
+    "parameters": 891648,
+    "seed": 7,
+    "batch": 8,
+    "cells": ["broad", "dialogue"],
+    "sample": "roundrobin",
+    "rows_per_step_per_cell": 4,
+    "steps": 3750,
+    "dialogue_row_exposure": 15000,
+    "objective": "full CE on every row plus additive canonical assistant-response CE",
+    "answer_weight": 1.0,
+    "peak_lr": 0.001,
+    "optimizer": "fresh AdamW beta=(0.9,0.95), weight_decay=0.1",
+    "schedule": "50-step warmup then cosine to 0.1 peak ratio",
+    "checkpoint_selection": "fixed final",
+    "deterministic": true,
+    "device": "CPU",
+    "threads": 2,
+    "language_checkpoint_sha256": "dfa561a9ae0f8ded96135ca18f62310e3d998bd352f5ce1cd5534ea108551348",
+    "broad_train_sha256": "05761ea8b029360c41f756a8da7dc95ac0f146af195586cbfc00affd6946cd3f",
+    "broad_validation_sha256": "2f1567263a771d17db802252cbdd142f7286d530e2cf0c727edd1b7f61c7ce85"
+  },
+  "arms": [500, 1500, 3500],
+  "primary_endpoint": 3500,
+  "gates": {
+    "broad_retention": "fixed broad validation CE below uniform ln(256)",
+    "heldout_improvement": "assistant-turn CE below completed 100-document parent value 5.00458",
+    "independent_conversation": "unchanged automatic panel passes",
+    "manual_review": "required only after automatic pass; fluent form alone is insufficient"
+  },
+  "decision": {
+    "endpoint_failure": "FAIL-DIALOGUE-SUPPORT-SCALE",
+    "automatic_pass": "AUTOMATIC-SCALE-PASS-MANUAL-REVIEW-REQUIRED"
+  },
+  "bounded_work": {
+    "maximum_new_training_arms": 3,
+    "vast_ai_allowed": false,
+    "303m_training": "blocked",
+    "iit_mouth_coupling": "blocked",
+    "participant_mount": "blocked",
+    "production": "blocked",
+    "user_files_to_preserve": ["ING.jsonl", "stream_mi.json"]
+  }
+}

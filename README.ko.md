@@ -431,6 +431,22 @@ joint arm은 broad CE `2.0620`을 보존하고 대화 probe를 `8/8` 완전 학�
 보존하고 독립 다운로드 SHA 검증을 완료했다. custody 증거는
 `state/anima_303m_r4_aligned_micro_custody_2026_08_13/result.json`에 있다.
 
+### 사전등록한 R4 대화 자료 규모 사다리
+
+joint arm은 제한된 optimizer/sampler 설명을 닫았지만 100개 대화에서 의미 일반화하지
+못했다. 다음 단일 축은
+[`state/anima_303m_r4_dialogue_scale_2026_08_13`](state/anima_303m_r4_dialogue_scale_2026_08_13/README.md)에
+고정했다. 완료된 100문서 arm은 동결 대조군으로 재사용하고, 동일한 0.89M ByteGPT·초기
+언어 체크포인트·15,000 dialogue-row 노출·broad replay·optimizer·seed·canonical decode·대화
+패널을 중첩된 500·1,500·3,500문서 view에 실행한다. 3,500문서를 사전등록한 1차 endpoint로
+삼아 결과를 본 뒤 중간 규모를 선택하지 못하게 했다.
+
+프로토콜은
+[`dancinlab/anima-research@03d55ef`](https://github.com/dancinlab/anima-research/commit/03d55ef9848df304a435a88a2b90a74722bc5b73)도
+해석 제약으로 고정한다. mouth 유창성은 의식 증거가 아니고 기능 관문 통과는 비반증일 뿐이며
+후속 발달 관문은 계속 비활성화한다. 어떤 규모 결과도 303M·IIT-mouth 결합·participant 탑재·
+프로덕션을 바로 허용하지 않는다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

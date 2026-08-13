@@ -454,6 +454,22 @@ SHA-verified at private HF revision
 `dancinlab/anima-303m-r4-aligned-micro-2026-08-13@6d2d4752cb222ba09fd74cb08eb8d3b7d4b140dc`.
 Custody evidence is in `state/anima_303m_r4_aligned_micro_custody_2026_08_13/result.json`.
 
+### Preregistered R4 dialogue-support scale ladder
+
+The joint arm closed the bounded optimizer/sampler explanation but did not generalize from 100
+dialogues. The next single axis is pinned in
+[`state/anima_303m_r4_dialogue_scale_2026_08_13`](state/anima_303m_r4_dialogue_scale_2026_08_13/README.md).
+The completed 100-document arm is reused as the frozen control; the same 0.89M ByteGPT, initial
+language checkpoint, 15,000 dialogue-row exposure, broad replay, optimizer, seed, canonical decode
+and conversation panel are run on nested 500, 1,500 and 3,500-document views. The 3,500-document
+arm is the registered primary endpoint, preventing post-result selection of an intermediate scale.
+
+The protocol also pins
+[`dancinlab/anima-research@03d55ef`](https://github.com/dancinlab/anima-research/commit/03d55ef9848df304a435a88a2b90a74722bc5b73)
+as an interpretation constraint: mouth fluency is not consciousness evidence, a functional pass is
+non-disproof rather than proof, and later developmental gates remain disabled. No scale result
+directly authorizes 303M, IIT-mouth coupling, participant mounting or production.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current
