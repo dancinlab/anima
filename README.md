@@ -470,6 +470,16 @@ as an interpretation constraint: mouth fluency is not consciousness evidence, a 
 non-disproof rather than proof, and later developmental gates remain disabled. No scale result
 directly authorizes 303M, IIT-mouth coupling, participant mounting or production.
 
+The ladder is complete and failed. Held-out assistant CE improved monotonically from the frozen
+100-document control `5.00458` to `2.36451`, `1.82383` and `1.75553`, while all three new arms
+remained at semantic `0/7` and failed memory/correction. The primary 3,500-document endpoint was
+structural `0/7` and emitted `store/start` repetition. Thus unique support at fixed 15,000-row
+compute improves teacher-forced prediction but does not create meaningful free conversation; it
+does not distinguish optimization exposure from capacity. Raw models and evidence are SHA-verified
+only in private HF revision
+`dancinlab/anima-303m-r4-dialogue-scale-2026-08-13@1146240912244c7127b442196e2047a6f7641eac`.
+The next permitted axis is a separately preregistered fixed-3,500-document exposure test.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

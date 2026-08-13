@@ -1,0 +1,104 @@
+{
+  "schema": "anima-303m-r4-dialogue-support-scale-summary/v1",
+  "date": "2026-08-13",
+  "protocol_commit": "43ee9c7d4",
+  "protocol_sha256": "f6ee389292a25dba54af81b9d691831ad7734ab298067c465b6aaca181ff3887",
+  "raw_result_sha256": "1cb2a1789e36d3a0599819f7a9245d85080ba47f16a58400b24b887f62aed60a",
+  "fixed": {
+    "architecture": "existing ByteGPT only",
+    "parameters": 891648,
+    "block": 512,
+    "seed": 7,
+    "steps": 3750,
+    "dialogue_row_exposure": 15000,
+    "broad_row_exposure": 15000,
+    "device": "CPU",
+    "threads": 2,
+    "vast_ai": false
+  },
+  "control_100": {
+    "source": "state/anima_303m_r4_joint_replay_2026_08_13/result.json",
+    "heldout_assistant_ce": 5.00458,
+    "training_target_prefix": "8/8",
+    "semantic": "0/7",
+    "structural": "7/7",
+    "conversation_pass": false
+  },
+  "arms": [
+    {
+      "documents": 500,
+      "dialogue_view_bytes": 93637,
+      "wall_s": 323.9,
+      "engine_sha256": "e91ff6482ff29d0363dd9ba0f8c0b9dc68169d4785d5d0aaede9deb1003c3033",
+      "broad_ce": 1.9980315373601745,
+      "heldout_full_ce": 2.072560760322641,
+      "heldout_assistant_ce": 2.3645141786132893,
+      "heldout_assistant_top1": 0.44072594072594073,
+      "training_teacher_top1": 0.7569974554707379,
+      "training_target_prefix": "0/8",
+      "semantic": "0/7",
+      "structural": "1/7",
+      "multiturn_final_pass": false,
+      "conversation_pass": false
+    },
+    {
+      "documents": 1500,
+      "dialogue_view_bytes": 288081,
+      "wall_s": 329.1,
+      "engine_sha256": "e266e3a15ba2f41299571225861c7a1eea6939b430bb670970439356a11da255",
+      "broad_ce": 1.8684869377113835,
+      "heldout_full_ce": 1.6638872993440774,
+      "heldout_assistant_ce": 1.823826212965906,
+      "heldout_assistant_top1": 0.5004995004995005,
+      "training_teacher_top1": 0.5750636132315522,
+      "training_target_prefix": "0/8",
+      "semantic": "0/7",
+      "structural": "0/7",
+      "multiturn_final_pass": false,
+      "conversation_pass": false
+    },
+    {
+      "documents": 3500,
+      "primary_endpoint": true,
+      "dialogue_view_bytes": 677948,
+      "wall_s": 334.2,
+      "engine_sha256": "27924f586193603a385cfd9369e598a8c2492e206bcb9067a3e47c5f51dfe2d8",
+      "broad_ce": 1.8254346530264838,
+      "heldout_full_ce": 1.6102960418642702,
+      "heldout_assistant_ce": 1.755528053476449,
+      "heldout_assistant_top1": 0.505994005994006,
+      "training_teacher_top1": 0.5521628498727735,
+      "training_target_prefix": "0/8",
+      "semantic": "0/7",
+      "structural": "0/7",
+      "multiturn_final_pass": false,
+      "conversation_pass": false
+    }
+  ],
+  "observations": {
+    "heldout_teacher_forced_improvement": true,
+    "free_semantic_improvement": false,
+    "repetition_attractor": "present in all arms; strongest visible store/start phrase loops at 1500 and 3500 documents",
+    "bounded_conclusion": "More unique dialogue support at fixed capacity and fixed 15000-row compute improves teacher-forced heldout prediction but does not yield meaningful free conversation.",
+    "not_resolved": "This arm does not distinguish insufficient optimization exposure from insufficient model capacity."
+  },
+  "hf_custody": {
+    "repository": "dancinlab/anima-303m-r4-dialogue-scale-2026-08-13",
+    "private": true,
+    "revision": "1146240912244c7127b442196e2047a6f7641eac",
+    "files": 29,
+    "artifact_bytes": 45959357,
+    "manifest_entries": 27,
+    "manifest_sha256": "26accafc712f53d6f9ab05e4bffde96b745bd49da44752bc04b1ac0d6f5eedde",
+    "sha256_mismatches": 0
+  },
+  "research_reference": {
+    "repository": "https://github.com/dancinlab/anima-research",
+    "revision": "03d55ef9848df304a435a88a2b90a74722bc5b73",
+    "effect": "interpretation constraint only",
+    "consciousness_claim": false
+  },
+  "gate": false,
+  "verdict": "FAIL-DIALOGUE-SUPPORT-SCALE",
+  "next_allowed_step": "A separately preregistered fixed-3500-document optimization-exposure test may distinguish undertraining from fixed-capacity failure. 303M, IIT-mouth coupling, participant mounting, and production remain blocked."
+}

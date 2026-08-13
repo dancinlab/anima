@@ -1,6 +1,6 @@
 # R4 dialogue-support scale ladder — 2026-08-13
 
-Status: **PREREGISTERED — NOT YET RUN**.
+Status: **COMPLETE — FAIL-DIALOGUE-SUPPORT-SCALE**.
 
 The completed 100-dialogue native joint-replay arm retained broad language and memorized its
 training probe but scored `0/7` on independent semantic conversation. This experiment changes only
@@ -23,3 +23,28 @@ proof. The research reference does not alter this experiment's model, data, thre
 
 No result from this scale ladder directly authorizes 303M training, IIT-mouth coupling,
 participant mounting or production.
+
+All three registered arms completed locally on deterministic CPU with two threads. Increasing
+support improved held-out assistant CE monotonically from the 100-document control `5.00458` to
+`2.36451`, `1.82383` and `1.75553` at 500, 1,500 and 3,500 documents. Broad validation CE stayed
+below uniform at `1.99803`, `1.86849` and `1.82543`.
+
+That teacher-forced improvement did not become meaningful free generation. The three arms scored
+semantic `0/7`; structural scores were `1/7`, `0/7`, `0/7`; memory and correction both failed.
+The primary 3,500-document endpoint produced repeated `store/start` phrases, while its fixed
+training probe reached only teacher top-1 `0.55216` and target-prefix `0/8`. The bounded conclusion
+is therefore that more unique dialogue at the same 15,000-row compute improves held-out prediction
+but is insufficient for this mouth's free conversation. It does not yet distinguish insufficient
+optimization exposure from insufficient capacity.
+
+Raw responses, logs, summaries, `.bin` engines and exact-resume `.pt` files are preserved only in
+private HF revision
+`dancinlab/anima-303m-r4-dialogue-scale-2026-08-13@1146240912244c7127b442196e2047a6f7641eac`.
+An independent download verified all 27 registered artifacts (`45,959,357` bytes) with zero SHA-256
+mismatches. The first upload's custody manifest failed closed because it used absolute paths and
+hashed itself before writing; revision `114624...` contains the corrected relative, self-excluding
+manifest. The models themselves were unchanged.
+
+The next allowed result-bearing axis is a separately preregistered 3,500-document
+optimization-exposure test. Another 303M run, IIT-mouth coupling, participant mounting and
+production remain blocked.

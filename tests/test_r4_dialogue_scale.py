@@ -21,6 +21,18 @@ def test_protocol_changes_only_nested_dialogue_support():
     assert protocol["bounded_work"]["vast_ai_allowed"] is False
 
 
+def test_recorded_primary_endpoint_cannot_promote_failed_conversation():
+    result = json.loads((HERE / "result.json").read_text(encoding="utf-8"))
+    endpoint = next(arm for arm in result["arms"] if arm.get("primary_endpoint"))
+    assert endpoint["documents"] == 3500
+    assert endpoint["semantic"] == "0/7"
+    assert endpoint["conversation_pass"] is False
+    assert result["gate"] is False
+    assert result["verdict"] == "FAIL-DIALOGUE-SUPPORT-SCALE"
+    assert result["research_reference"]["effect"] == "interpretation constraint only"
+    assert result["research_reference"]["consciousness_claim"] is False
+
+
 def test_scale_reuses_canonical_joint_command(tmp_path):
     command = module.joint.joint_command(
         tmp_path / "out", tmp_path / "broad", tmp_path / "broad-val",
