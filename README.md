@@ -38,6 +38,14 @@ Status on 2026-08-12:
 
 User-owned `ING.jsonl` and `stream_mi.json` are outside this work and must remain unchanged.
 
+## Current work — mobile chat input stability
+
+Status on 2026-08-14:
+
+- [x] Trace `chat.dancinlab.org` through Cloudflare Tunnel to the canonical CHAT broker static page.
+- [x] Keep browser/assistive pinch zoom available while preventing mobile input-focus and double-tap zoom.
+- [x] Pass focused regression, public HTTPS/WebSocket QA, Git push, and live page verification.
+
 ## Current design — IIT consciousness-daemon core R0
 
 `state/iit_daemon_core_2026_08_12/` records the exhausted design variants, rejection reasons,

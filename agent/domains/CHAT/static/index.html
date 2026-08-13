@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
 <title>anima chat · chat.dancinlab.org</title>
 <style>
   :root { color-scheme: light dark; }
   * { box-sizing: border-box; }
+  button, input { touch-action: manipulation; }
   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
   body { margin: 0; font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f0f12; color: #d8d8dc; }
   .grid { display: grid; grid-template-columns: 1fr 360px; grid-template-rows: 1fr; height: 100vh; }
@@ -20,7 +21,7 @@
   .msg.system { background: #2a1f1f; color: #ffb080; font-size: 12px; }
   .controls { padding: 10px; border-top: 1px solid #2a2a30; background: #15151a; }
   .controls .row { display: flex; gap: 8px; margin-bottom: 6px; align-items: center; }
-  .controls input[type=text], .controls input[type=number] { background: #0a0a0e; color: #d8d8dc; border: 1px solid #333; padding: 6px 8px; border-radius: 4px; }
+  .controls input[type=text], .controls input[type=number] { background: #0a0a0e; color: #d8d8dc; border: 1px solid #333; padding: 6px 8px; border-radius: 4px; font-size: 16px; }
   .controls #msg-input { flex: 1; }
   .controls button { background: #2a4080; color: #fff; border: 0; padding: 6px 14px; border-radius: 4px; cursor: pointer; }
   .controls button:hover { background: #3a55a0; }
