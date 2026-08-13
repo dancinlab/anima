@@ -347,6 +347,17 @@ source 순서에서 canonical 192-byte 예산에 맞는 완전한 단일 turn �
 파생하고 view SHA를 고정했으며 aligned deterministic recipe와 모든 행동 관문을 유지한다. 이
 결과도 아직 memorization/conditioning 관문일 뿐이다.
 
+runtime-compatible aligned arm은 teacher top-1 `1.0`, teacher CE `1.32e-6`, exact/target/구조
+`4/4`, prompt CE/output 통제 `4/4`, canonical stop `4/4`로 모두 통과했다. 따라서 4문서 실패의
+근본 원인은 공용 train→runtime position mapping으로 지지되며 균일한 tiny capacity 부족
+가설은 반증됐다. 아직 in-view 암기 결과이므로 다음 관문은 별도 사전등록한 100문서와 독립
+panel 시험이다.
+
+`state/anima_303m_r4_aligned_100_2026_08_13/`에 이 단일 arm을 고정했다. source 순서에서
+canonical byte 예산에 맞는 완전 exchange 첫 100개를 결정론적으로 선택하고 aligned
+deterministic recipe를 유지하며 heldout 32개 전체와 기존 의미 대화 panel을 실행한다. 자동
+통과해도 수동 검토가 필요하며 303M·IIT 결합·프로덕션을 바로 허용하지 않는다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

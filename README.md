@@ -368,6 +368,18 @@ derives the first four complete source-order exchanges whose responses fit the c
 budget, freezes the resulting view SHA, and retains the aligned deterministic recipe and all
 behavioral bars. This is still only a memorization/conditioning gate.
 
+The runtime-compatible aligned arm passed: teacher top-1 `1.0`, teacher CE `1.32e-6`, exact/target/
+structural `4/4`, prompt CE/output control `4/4`, and correct canonical stop `4/4`. This supports the
+shared train-to-runtime position map as the four-document root cause and falsifies uniform tiny
+capacity as the explanation. It is still in-view memorization; the next gate is a separately
+preregistered 100-document plus independent-panel test.
+
+`state/anima_303m_r4_aligned_100_2026_08_13/` freezes that one-arm test. It deterministically takes
+the first 100 source-order complete exchanges whose responses fit the canonical byte budget, keeps
+the aligned deterministic recipe, reports all 32 heldout documents, and runs the unchanged
+meaningful-conversation panel. Even an automatic pass still requires manual review and cannot
+directly authorize 303M, IIT coupling or production.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

@@ -1,0 +1,355 @@
+{
+  "schema": "anima-303m-r4-document-alignment-result/v1",
+  "protocol_sha256": "cec0f4b57b1de13735bb65c8c888bb69d5be23568202b6805f1e11fd223c07e4",
+  "parent_result_sha256": "5e45ec6d2001fe5b486631d6323d38a62d249f57e1ca6e6f5cd652b831486f27",
+  "device": "cpu",
+  "control": {
+    "source": "invalid prior view retained only as position-learning diagnostic",
+    "teacher_top1": 1.0,
+    "target_prefix": 4,
+    "prompt_ce_control": 4
+  },
+  "treatment": {
+    "engine_sha256": "c68d4035219cd511be03a889fc3e005d78be187f438a5ef3e28c79fae315fc4a",
+    "parameters": 924416,
+    "summary": {
+      "entry": "anima-py train",
+      "arch": "bytegpt",
+      "arm": "ctrl",
+      "objective": "ce_marginal",
+      "seed": 7,
+      "deterministic": true,
+      "optimizer": {
+        "name": "AdamW",
+        "beta1": 0.9,
+        "beta2": 0.95,
+        "weight_decay": 0.1,
+        "lr": 0.001,
+        "schedule": "cosine",
+        "warmup_steps": 50,
+        "decay_steps": 600,
+        "min_lr_ratio": 0.1
+      },
+      "initialization": {
+        "name": "gpt2-canonical",
+        "std": 0.02,
+        "residual_projection_scale": "std/sqrt(2*n_layer)"
+      },
+      "ddp": {
+        "world_size": 1,
+        "global_batch": 8,
+        "per_rank_batch": 8,
+        "gpus": ""
+      },
+      "obj_aux_params": 0,
+      "answer_ce": {
+        "weight": 1.0,
+        "mode": "turn-only",
+        "marker_utf8": "assistant: ",
+        "all_spans": true,
+        "chat_framed_sampling": true,
+        "telemetry": {
+          "complete_trajectory": true,
+          "steps": 600,
+          "active_steps": 600,
+          "positions": 777441,
+          "position_weighted_ce_sum": 262014.1731047744,
+          "scope": "full_batch",
+          "mean_ce": 0.33702129564143696
+        }
+      },
+      "chat_frame_alignment": "document",
+      "levers": {
+        "tlora": false,
+        "tlora_rank": 8,
+        "tlora_base": true,
+        "dict_aux": false,
+        "jamo_aux": false,
+        "wd_floor": -1.0,
+        "dropout_floor": -1.0
+      },
+      "n_params": 891648,
+      "loss0": 5.54543,
+      "lossF": 9.26438,
+      "wall_s": 50.4,
+      "uniform_ce": 5.54518,
+      "final_val_ce_pooled": 12.33962,
+      "final_val_ce_macro_cells": 12.33962,
+      "validation_aggregation": "equal-cell macro average",
+      "sampling": {
+        "policy": "proportional",
+        "weight_basis": "train_bytes",
+        "complete_trajectory": true,
+        "per_cell": {
+          "dialogue": {
+            "train_bytes": 924,
+            "sampled_windows": 4800,
+            "sampled_framed_windows": 4800,
+            "eligible_chat_documents": 4,
+            "oversize_chat_documents": 0,
+            "chat_frame_alignment": "document",
+            "sampled_fraction": 1.0
+          }
+        }
+      },
+      "registers_descent": "0/1",
+      "heldout_descent": {
+        "dialogue": {
+          "val_ce": 12.33962,
+          "descent": false
+        }
+      },
+      "last_aux": {
+        "ans_ce": 1.2673307310251403e-06,
+        "ans_n": 1117
+      },
+      "dbes_final": null,
+      "dbes_log": [],
+      "dbes_batch_scope": "full_batch(B=8)",
+      "gauges_g1g6_torch_probe": null,
+      "sleep_schedule": null,
+      "phi_envelope_monitor": null,
+      "tier": "engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
+    },
+    "score": {
+      "teacher": {
+        "documents": 4,
+        "bytes": 321,
+        "ce": 1.3187317159620229e-06,
+        "top1_accuracy": 1.0,
+        "mean_gold_probability": 0.9999986812704449,
+        "mean_gold_rank": 1.0
+      },
+      "counts": {
+        "nonempty": 4,
+        "distinct": 4,
+        "target_recovered": 4,
+        "structural": 4,
+        "exact": 4
+      },
+      "rows": [
+        {
+          "teacher": {
+            "bytes": 163,
+            "ce": 1.114571147655181e-06,
+            "top1_accuracy": 1.0,
+            "mean_gold_probability": 0.9999988854297099,
+            "mean_gold_rank": 1.0,
+            "first_error_position": null,
+            "first_error_margin": null
+          },
+          "free": {
+            "prompt": "What's your favorite color?",
+            "target": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!",
+            "decoded": {
+              "text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!",
+              "stop_marker": "\nuser:",
+              "stopped": true,
+              "raw_text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!\n\nuser: since its the only th"
+            },
+            "target_prefix_recovered": true,
+            "first_divergence_position": null,
+            "structural": true,
+            "longest_byte_run": 2,
+            "longest_word_run": 1
+          }
+        },
+        {
+          "teacher": {
+            "bytes": 48,
+            "ce": 1.202028053095086e-06,
+            "top1_accuracy": 1.0,
+            "mean_gold_probability": 0.9999987979729971,
+            "mean_gold_rank": 1.0,
+            "first_error_position": null,
+            "first_error_margin": null
+          },
+          "free": {
+            "prompt": "Who is the president of the United States?",
+            "target": "The president of the United States is Joe Biden.",
+            "decoded": {
+              "text": "The president of the United States is Joe Biden.",
+              "stop_marker": "\nuser:",
+              "stopped": true,
+              "raw_text": "The president of the United States is Joe Biden.\n\nuser: y task is to be a coesoes s Bitising languas made to assist you with your various questions!\n\nuser: since its the only thing i could see"
+            },
+            "target_prefix_recovered": true,
+            "first_divergence_position": null,
+            "structural": true,
+            "longest_byte_run": 1,
+            "longest_word_run": 1
+          }
+        },
+        {
+          "teacher": {
+            "bytes": 44,
+            "ce": 1.8071101895345062e-06,
+            "top1_accuracy": 1.0,
+            "mean_gold_probability": 0.9999981928955425,
+            "mean_gold_rank": 1.0,
+            "first_error_position": null,
+            "first_error_margin": null
+          },
+          "free": {
+            "prompt": "I am getting the following error after I install a local .deb file on linux, and I don't know what's causing it. Do you know what the causes and solutions for this error might be? The error is:\n\"N: Download is performed unsandboxed as root as file '/root/assets/Dungeondraft-1.0.4.7-Linux64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)\"",
+            "target": "Did you try running the command with `sudo`?",
+            "decoded": {
+              "text": "Did you try running the command with `sudo`?",
+              "stop_marker": "\nuser:",
+              "stopped": true,
+              "raw_text": "Did you try running the command with `sudo`?\n\nuser: ent of the Unite  States is Joe Biden.\n\nuser: at i a i i aDid you trrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            "target_prefix_recovered": true,
+            "first_divergence_position": null,
+            "structural": true,
+            "longest_byte_run": 2,
+            "longest_word_run": 1
+          }
+        },
+        {
+          "teacher": {
+            "bytes": 66,
+            "ce": 1.582236194968674e-06,
+            "top1_accuracy": 1.0,
+            "mean_gold_probability": 0.9999984177676114,
+            "mean_gold_rank": 1.0,
+            "first_error_position": null,
+            "first_error_margin": null
+          },
+          "free": {
+            "prompt": "Are you able to generate code? If so, in which languages are you able to do so?",
+            "target": "Yes! I am able to generate code in a lot of programming languages.",
+            "decoded": {
+              "text": "Yes! I am able to generate code in a lot of programming languages.",
+              "stop_marker": "\nuser:",
+              "stopped": true,
+              "raw_text": "Yes! I am able to generate code in a lot of programming languages.\n\nuser: sist you with your various questions!\n\nuser: since its the only thing i could see if i could see, since my only task i"
+            },
+            "target_prefix_recovered": true,
+            "first_divergence_position": null,
+            "structural": true,
+            "longest_byte_run": 2,
+            "longest_word_run": 1
+          }
+        }
+      ],
+      "prompt_causality": {
+        "rows": [
+          {
+            "prompt": "What's your favorite color?",
+            "shuffled_prompt": "Who is the president of the United States?",
+            "conditions": {
+              "normal": {
+                "ce": 1.114571147655181e-06,
+                "top1_accuracy": 1.0,
+                "text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!"
+              },
+              "blank": {
+                "ce": 10.29188805696671,
+                "top1_accuracy": 0.26380368098159507,
+                "text": "s be ous ouee ous inlas Bi Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!"
+              },
+              "shuffled": {
+                "ce": 10.534450513814322,
+                "top1_accuracy": 0.25153374233128833,
+                "text": "The president of the United States is Joe Biden."
+              }
+            },
+            "ce_controlled": true,
+            "output_controlled": true
+          },
+          {
+            "prompt": "Who is the president of the United States?",
+            "shuffled_prompt": "I am getting the following error after I install a local .deb file on linux, and I don't know what's causing it. Do you know what the causes and solutions for this error might be? The error is:\n\"N: Download is performed unsandboxed as root as file '/root/assets/Dungeondraft-1.0.4.7-Linux64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)\"",
+            "conditions": {
+              "normal": {
+                "ce": 1.202028053095086e-06,
+                "top1_accuracy": 1.0,
+                "text": "The president of the United States is Joe Biden."
+              },
+              "blank": {
+                "ce": 7.484118423645307,
+                "top1_accuracy": 0.3541666666666667,
+                "text": "s be ous ouee ous inlas Bi Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!"
+              },
+              "shuffled": {
+                "ce": 10.864424715833351,
+                "top1_accuracy": 0.20833333333333334,
+                "text": "Did you try running the command with `sudo`?"
+              }
+            },
+            "ce_controlled": true,
+            "output_controlled": true
+          },
+          {
+            "prompt": "I am getting the following error after I install a local .deb file on linux, and I don't know what's causing it. Do you know what the causes and solutions for this error might be? The error is:\n\"N: Download is performed unsandboxed as root as file '/root/assets/Dungeondraft-1.0.4.7-Linux64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)\"",
+            "shuffled_prompt": "Are you able to generate code? If so, in which languages are you able to do so?",
+            "conditions": {
+              "normal": {
+                "ce": 1.8071101895345062e-06,
+                "top1_accuracy": 1.0,
+                "text": "Did you try running the command with `sudo`?"
+              },
+              "blank": {
+                "ce": 10.650617908914581,
+                "top1_accuracy": 0.18181818181818182,
+                "text": "s be ous ouee ous inlas Bi Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!"
+              },
+              "shuffled": {
+                "ce": 12.185589796737302,
+                "top1_accuracy": 0.1590909090909091,
+                "text": "Yes! I am able to generate code in a lot of programming languages."
+              }
+            },
+            "ce_controlled": true,
+            "output_controlled": true
+          },
+          {
+            "prompt": "Are you able to generate code? If so, in which languages are you able to do so?",
+            "shuffled_prompt": "What's your favorite color?",
+            "conditions": {
+              "normal": {
+                "ce": 1.582236194968674e-06,
+                "top1_accuracy": 1.0,
+                "text": "Yes! I am able to generate code in a lot of programming languages."
+              },
+              "blank": {
+                "ce": 10.211648725017909,
+                "top1_accuracy": 0.2727272727272727,
+                "text": "s be ous ouee ous inlas Bi Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!"
+              },
+              "shuffled": {
+                "ce": 12.357036381012662,
+                "top1_accuracy": 0.12121212121212122,
+                "text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!"
+              }
+            },
+            "ce_controlled": true,
+            "output_controlled": true
+          }
+        ],
+        "counts": {
+          "ce_controlled": 4,
+          "output_controlled": 4
+        },
+        "gate": true,
+        "gate_four": true
+      },
+      "gate_reachability": {
+        "canonical_max_new_bytes": 192,
+        "target_bytes": [
+          163,
+          48,
+          44,
+          66
+        ],
+        "exact_completion_reachable": true
+      },
+      "memorization_gate": true,
+      "gate": true
+    }
+  },
+  "gate": true,
+  "verdict": "SUPPORTED-DOCUMENT-ALIGNED-CONDITIONAL-LEARNING",
+  "next_allowed_step": "This local diagnosis does not authorize 303M, IIT coupling, participant mounting or production; any scale-up requires a separately preregistered heldout test."
+}
