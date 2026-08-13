@@ -91,9 +91,9 @@ R3를 두 번, 실제 체크포인트 R2 회귀를 byte 단위로 재현했다. 
 인과성만 지지한다. 두 표면문은 학습된 대화 mouth가 아니므로 R4 의미 mouth 학습과 독립
 대화 검증 전까지 participant와 프로덕션은 `BLOCKED-R3-NOT-CONVERSATIONAL`을 유지한다.
 
-### 사전등록한 R3.5 조합형 workspace
+### 완료한 R3.5 조합형 workspace
 
-돌파 브레인스토밍 전체와 다음 제한 관문을
+돌파 브레인스토밍 전체와 제한 관문을 구현 전에
 `state/iit_daemon_r35_workspace_2026_08_14/`에 사전등록했다. 빠진 공용 부품은 또 다른 Phi
 스칼라, 더 큰 ByteGPT 실행 또는 답안 스캐폴드가 아니다. 명시적 의미 record는 3비트 intrinsic
 candidate 밖에 유지하고, 최종 IIT 상태가 주소를 선택하며, canonical generator에는 선택된
@@ -105,7 +105,17 @@ R3.5는 9개 novel-composition panel을 고정하고 oracle, 정상, reset, IIT 
 workspace 주소 shuffle, node lesion, 선택 기억 반사실 변경, 무관 기억 변경, atomic recovery
 순서로 실행한다. 정상·복구는 `0.90` 이상, 인과 대조군은 3-way 우연 수준 + `0.06` 이하,
 반사실 변화와 무관 기억 안정성은 각각 `0.90` 이상이어야 한다. record formatter는 제한된
-배선 도구이지 학습된 mouth가 아니다. 통과해도 독립 학습한 영어 mouth가 의미·기억·정정
+배선 도구이지 학습된 mouth가 아니다.
+
+사전등록 battery 결과 oracle/정상/선택 기억 반사실/무관 기억 변경/복구는 모두 `1.0000`,
+reset/IIT 주소 shuffle/workspace 주소 shuffle/node lesion은 모두 `0.0000`이다. 평가 triple
+9개는 atom support set의 어떤 완전한 triple과도 겹치지 않고, 반사실 기억은 출력 bytes를
+정확히 바꾸며 무관 기억은 출력을 바꾸지 않는다. Atomic recovery는 core state·주소·모든
+record·출력을 정확히 복구했다. 전체 Python QA는 `190 passed, 1 skipped, 3 subtests`이며 격리
+wheel도 결과 JSON을 byte 단위로 재현했다.
+
+판정은 `SUPPORTED-COMPOSITIONAL-WORKSPACE-CAUSALITY`지만 학습된 의미가 아니다. 독립 학습한
+영어 mouth가 의미·기억·정정
 관문을 통과하고 동일한 reset/shuffle/lesion/recovery 대조에서 state coupling을 얻기 전까지
 participant는 `BLOCKED-R35-NOT-A-LEARNED-MOUTH`로 유지한다.
 

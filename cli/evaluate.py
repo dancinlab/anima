@@ -1693,6 +1693,8 @@ def evaluate_usage():
     print("      R2 pair-oracle → normal → clue-A/B removal → CLMS address-shuffle → recovery latch gate.")
     print("  --iit-daemon-content <protocol.json> [--out <result.json>]: run the protocol-pinned")
     print("      R3 pair-oracle → bounded content → reset/IIT+CLMS shuffle → recovery gate.")
+    print("  --iit-daemon-composition <protocol.json> [--out <result.json>]: run the protocol-pinned")
+    print("      R3.5 IIT-selected entity/relation/value reset/shuffle/lesion/recovery gate.")
     print("  --store-component-swap <groups> --store-swap-from <donor.clm>: EVAL-ONLY causal")
     print("      surgery (H_9724) — graft CLMS bridge components from a donor ckpt into the host")
     print("      before scoring, to localize the seed-fragility source (ORACLE 0.99 vs 0.50).")
@@ -4956,6 +4958,386 @@ def iit_daemon_content_run(argv):
            accuracies["iit_address_shuffled"], accuracies["drop_a"], accuracies["drop_b"],
            accuracies["clms_address_shuffled"], accuracies["recovery"]))
     print("  verdict: %s (bounded content only; not conversational)" % verdict)
+    if out_path:
+        _store_causality_write(out_path, result)
+        print("  wrote %s" % out_path)
+    return 0 if verdict == protocol["required_verdict"] else 1
+
+
+def iit_daemon_composition_run(argv):
+    """Run the preregistered R3.5 IIT-selected compositional workspace battery."""
+    import hashlib as _hashlib
+    import tempfile as _tempfile
+    import iit_daemon as ID
+
+    protocol_path = evaluate_strval(argv, "--iit-daemon-composition", "")
+    out_path = evaluate_strval(argv, "--out", "")
+    if not protocol_path:
+        print("ERROR: R3.5 needs --iit-daemon-composition <protocol.json>", file=sys.stderr)
+        return 2
+    if os.path.getsize(protocol_path) <= 0 or os.path.getsize(protocol_path) > 65536:
+        raise ValueError("IIT daemon composition protocol size is invalid")
+    with open(protocol_path, "r", encoding="utf-8") as handle:
+        protocol = json.load(handle)
+    if protocol.get("schema") != ID.COMPOSITION_PROTOCOL_SCHEMA:
+        raise ValueError("unsupported IIT daemon composition protocol schema")
+    expected_protocol_fields = {
+        "schema", "date", "engines", "transition", "r3", "panel", "task",
+        "bars", "required_verdict", "deployment", "non_claims",
+    }
+    if set(protocol) != expected_protocol_fields:
+        raise ValueError("IIT daemon composition protocol fields mismatch")
+    if protocol["engines"] != ["core.iit_daemon.IITDaemonCore",
+                                "core.generator.gen_iit_workspace_content"]:
+        raise ValueError("IIT daemon composition engines mismatch")
+    if protocol["transition"] != "xor-other-two-ring":
+        raise ValueError("IIT daemon composition transition mismatch")
+    if protocol["required_verdict"] != "SUPPORTED-COMPOSITIONAL-WORKSPACE-CAUSALITY":
+        raise ValueError("IIT daemon composition verdict mismatch")
+    if protocol["deployment"] != "BLOCKED-R35-NOT-A-LEARNED-MOUTH":
+        raise ValueError("IIT daemon composition deployment mismatch")
+    if not isinstance(protocol["non_claims"], list) or not protocol["non_claims"]:
+        raise ValueError("IIT daemon composition non-claims are missing")
+
+    def _digest(path):
+        sha = _hashlib.sha256()
+        with open(path, "rb") as handle:
+            for block in iter(lambda: handle.read(1 << 20), b""):
+                sha.update(block)
+        return sha.hexdigest()
+
+    protocol_dir = os.path.dirname(os.path.abspath(protocol_path))
+
+    def _pinned(spec, name):
+        if not isinstance(spec, dict) or set(spec) != {"path", "sha256"}:
+            raise ValueError("%s artifact fields mismatch" % name)
+        path = os.path.normpath(os.path.join(protocol_dir, spec["path"]))
+        if not os.path.isfile(path) or _digest(path) != spec["sha256"]:
+            raise ValueError("%s artifact mismatch" % name)
+        return path
+
+    r3_spec = protocol["r3"]
+    if not isinstance(r3_spec, dict) or set(r3_spec) != {
+            "path", "sha256", "required_verdict"}:
+        raise ValueError("IIT daemon composition R3 fields mismatch")
+    r3_path = os.path.normpath(os.path.join(protocol_dir, r3_spec["path"]))
+    if not os.path.isfile(r3_path) or _digest(r3_path) != r3_spec["sha256"]:
+        raise ValueError("IIT daemon composition R3 artifact mismatch")
+    with open(r3_path, "r", encoding="utf-8") as handle:
+        r3 = json.load(handle)
+    if (r3.get("schema") != "anima-iit-daemon-content-result/1" or
+            r3_spec["required_verdict"] != "SUPPORTED-BOUNDED-CONTENT-CAUSALITY" or
+            r3.get("verdict") != r3_spec["required_verdict"]):
+        raise ValueError("IIT daemon composition R3 verdict mismatch")
+
+    panel_path = _pinned(protocol["panel"], "composition panel")
+    if os.path.getsize(panel_path) > 65536:
+        raise ValueError("IIT daemon composition panel size is invalid")
+    with open(panel_path, "r", encoding="utf-8") as handle:
+        panel = json.load(handle)
+    if not isinstance(panel, dict) or set(panel) != {"schema", "support_records", "trials"} or \
+            panel.get("schema") != ID.COMPOSITION_PANEL_SCHEMA:
+        raise ValueError("IIT daemon composition panel schema mismatch")
+
+    task = protocol["task"]
+    if not isinstance(task, dict) or set(task) != {
+            "address_to_cue", "delay", "chance", "iit_address_shuffle",
+            "workspace_address_shuffle", "lesion_mask"}:
+        raise ValueError("IIT daemon composition task fields mismatch")
+    address_to_cue = task["address_to_cue"]
+    state_to_address = ID.content_workspace_codebook(address_to_cue)
+    addresses = sorted(address_to_cue)
+    delay = task["delay"]
+    if isinstance(delay, bool) or not isinstance(delay, int) or delay < 1:
+        raise ValueError("IIT daemon composition delay must be positive")
+    chance = float(task["chance"])
+    expected_chance = 1.0 / len(addresses)
+    if not math.isfinite(chance) or abs(chance - expected_chance) > 1.0e-12:
+        raise ValueError("IIT daemon composition chance mismatch")
+    iit_shuffle = tuple(task["iit_address_shuffle"])
+    ID.content_workspace_trial(addresses[0], {
+        address: {"entity": "probe", "relation": "selects", "value": address}
+        for address in addresses
+    }, address_to_cue, delay=delay, permutation=iit_shuffle)
+    lesion_mask = task["lesion_mask"]
+    if lesion_mask != (1 << ID.RL.N_CELL) - 1:
+        raise ValueError("IIT daemon composition lesion must cover every intrinsic node")
+    workspace_shuffle = task["workspace_address_shuffle"]
+
+    bars = protocol["bars"]
+    if not isinstance(bars, dict) or set(bars) != {
+            "oracle", "positive", "control_margin", "control_ceiling",
+            "counterfactual_change", "irrelevant_stability",
+            "novel_composition_coverage"}:
+        raise ValueError("IIT daemon composition bar fields mismatch")
+    numeric_bars = {key: float(value) for key, value in bars.items()}
+    if any(not math.isfinite(value) or value < 0.0 or value > 1.0
+           for value in numeric_bars.values()):
+        raise ValueError("IIT daemon composition bars must be finite in [0,1]")
+    ceiling = chance + numeric_bars["control_margin"]
+    if abs(numeric_bars["control_ceiling"] - ceiling) > 1.0e-12:
+        raise ValueError("IIT daemon composition control ceiling mismatch")
+
+    support = panel["support_records"]
+    trials = panel["trials"]
+    if not isinstance(support, list) or not support or not isinstance(trials, list) or not trials:
+        raise ValueError("IIT daemon composition panel is empty")
+    support_records = [ID.validate_content_records({"support": record})["support"]
+                       for record in support]
+    support_tuples = {tuple(record[field] for field in ID.CONTENT_RECORD_FIELDS)
+                      for record in support_records}
+    support_atoms = {
+        field: {record[field] for record in support_records}
+        for field in ID.CONTENT_RECORD_FIELDS
+    }
+    seen_selected = set()
+    address_counts = {address: 0 for address in addresses}
+    normalized_trials = []
+    required_trial_fields = {
+        "index", "active_address", "records", "expected", "counterfactual_value",
+        "counterfactual_expected", "irrelevant_address", "irrelevant_record",
+    }
+    for index, row in enumerate(trials):
+        if not isinstance(row, dict) or set(row) != required_trial_fields or row["index"] != index:
+            raise ValueError("IIT daemon composition trial fields/index mismatch")
+        active = row["active_address"]
+        if active not in address_to_cue:
+            raise ValueError("IIT daemon composition active address mismatch")
+        records = ID.validate_content_records(row["records"], addresses)
+        selected = records[active]
+        selected_tuple = tuple(selected[field] for field in ID.CONTENT_RECORD_FIELDS)
+        if selected_tuple in support_tuples or selected_tuple in seen_selected:
+            raise ValueError("IIT daemon composition selected triples must be novel and unique")
+        seen_selected.add(selected_tuple)
+        for record in list(records.values()) + [row["irrelevant_record"]]:
+            checked = ID.validate_content_records({"support": record})["support"]
+            if any(checked[field] not in support_atoms[field]
+                   for field in ID.CONTENT_RECORD_FIELDS):
+                raise ValueError("IIT daemon composition evaluation atom lacks support")
+        if row["irrelevant_address"] not in address_to_cue or \
+                row["irrelevant_address"] == active:
+            raise ValueError("IIT daemon composition irrelevant address mismatch")
+        counterfactual = dict(selected, value=row["counterfactual_value"])
+        counterfactual = ID.validate_content_records({active: counterfactual})[active]
+        if counterfactual["value"] == selected["value"] or \
+                counterfactual["value"] not in support_atoms["value"]:
+            raise ValueError("IIT daemon composition counterfactual is invalid")
+        expected = "%s %s %s." % selected_tuple
+        cf_tuple = tuple(counterfactual[field] for field in ID.CONTENT_RECORD_FIELDS)
+        cf_expected = "%s %s %s." % cf_tuple
+        if row["expected"] != expected or row["counterfactual_expected"] != cf_expected:
+            raise ValueError("IIT daemon composition registered expected bytes mismatch")
+        if len({tuple(record[field] for field in ID.CONTENT_RECORD_FIELDS)
+                for record in records.values()}) != len(addresses):
+            raise ValueError("IIT daemon composition trial records must be distinct")
+        address_counts[active] += 1
+        normalized_trials.append(dict(row, records=records,
+                                      irrelevant_record=ID.validate_content_records(
+                                          {"support": row["irrelevant_record"]})["support"]))
+    if len(set(address_counts.values())) != 1:
+        raise ValueError("IIT daemon composition active addresses must be balanced")
+    ID.permute_content_records(normalized_trials[0]["records"], workspace_shuffle)
+    composition_coverage = len(seen_selected) / float(len(trials))
+
+    def _utterance(trial_result, records):
+        return gen_runtime.gen_iit_workspace_content(
+            trial_result["final_state"], state_to_address, records)
+
+    def _score_row(row, records, expected, **kwargs):
+        trial = ID.content_workspace_trial(
+            row["active_address"], records, address_to_cue, delay=delay, **kwargs)
+        core = trial.pop("core")
+        utterance = _utterance(trial, records)
+        return {
+            "index": row["index"], "active_address": row["active_address"],
+            "final_state": trial["final_state"],
+            "selected_address": utterance["address"],
+            "selected_record": utterance["record"],
+            "emitted": utterance["emitted"], "utterance": utterance["text"],
+            "expected": expected, "correct": utterance["text"] == expected,
+            "tick": trial["tick"], "audit_head": trial["audit_head"],
+            "core_snapshot": core.snapshot(),
+        }
+
+    def _arm(rows):
+        return {"accuracy": sum(row["correct"] for row in rows) / float(len(rows)),
+                "trials": rows}
+
+    print("[iit-daemon R3.5 · compositional content workspace]")
+    state_by_address = {address: state for state, address in state_to_address.items()}
+    oracle_rows = []
+    for row in normalized_trials:
+        utterance = gen_runtime.gen_iit_workspace_content(
+            state_by_address[row["active_address"]], state_to_address, row["records"])
+        oracle_rows.append({
+            "index": row["index"], "active_address": row["active_address"],
+            "final_state": state_by_address[row["active_address"]],
+            "selected_address": utterance["address"], "selected_record": utterance["record"],
+            "emitted": utterance["emitted"], "utterance": utterance["text"],
+            "expected": row["expected"], "correct": utterance["text"] == row["expected"],
+        })
+    oracle = _arm(oracle_rows)
+    if oracle["accuracy"] < numeric_bars["oracle"]:
+        result = {
+            "schema": "anima-iit-daemon-composition-result/1", "date": protocol["date"],
+            "protocol": os.path.basename(protocol_path),
+            "protocol_sha256": _digest(protocol_path), "panel_sha256": protocol["panel"]["sha256"],
+            "r3_sha256": r3_spec["sha256"], "arms": {"oracle": oracle},
+            "verdict": "INVALID-INSTRUMENT", "deployment": protocol["deployment"],
+            "next_gate": "R35-BLOCKED",
+        }
+        if out_path:
+            _store_causality_write(out_path, result)
+        print("  verdict: INVALID-INSTRUMENT — oracle < %.2f" % numeric_bars["oracle"])
+        return 1
+
+    normal_rows = [_score_row(row, row["records"], row["expected"])
+                   for row in normalized_trials]
+    normal = _arm(normal_rows)
+    reset = _arm([_score_row(row, row["records"], row["expected"],
+                             reset_before_delay=True) for row in normalized_trials])
+    iit_shuffled = _arm([_score_row(row, row["records"], row["expected"],
+                                    permutation=iit_shuffle) for row in normalized_trials])
+    workspace_shuffled = _arm([
+        _score_row(row, ID.permute_content_records(row["records"], workspace_shuffle),
+                   row["expected"]) for row in normalized_trials
+    ])
+    lesion = _arm([_score_row(row, row["records"], row["expected"],
+                              lesion_mask=lesion_mask) for row in normalized_trials])
+
+    counterfactual_rows = []
+    irrelevant_rows = []
+    for row, reference in zip(normalized_trials, normal_rows):
+        active = row["active_address"]
+        replacement = dict(row["records"][active], value=row["counterfactual_value"])
+        changed_records = ID.replace_content_record(row["records"], active, replacement)
+        changed = _score_row(row, changed_records, row["counterfactual_expected"])
+        changed["differs_from_normal"] = changed["utterance"] != reference["utterance"]
+        counterfactual_rows.append(changed)
+        irrelevant_records = ID.replace_content_record(
+            row["records"], row["irrelevant_address"], row["irrelevant_record"])
+        stable = _score_row(row, irrelevant_records, row["expected"])
+        stable["matches_normal"] = stable["utterance"] == reference["utterance"]
+        irrelevant_rows.append(stable)
+    counterfactual = _arm(counterfactual_rows)
+    counterfactual["change_rate"] = sum(
+        row["differs_from_normal"] for row in counterfactual_rows) / float(len(counterfactual_rows))
+    irrelevant = _arm(irrelevant_rows)
+    irrelevant["stability"] = sum(
+        row["matches_normal"] for row in irrelevant_rows) / float(len(irrelevant_rows))
+
+    normal_by_index = {row["index"]: row for row in normal_rows}
+    recovery_rows = []
+    recovery_exact = []
+    disturbance_changed = []
+    snapshot_modes = []
+    with _tempfile.TemporaryDirectory(prefix="anima-iit-workspace-r35-") as directory:
+        for row in normalized_trials:
+            core = ID.IITDaemonCore(0)
+            core.step(address_to_cue[row["active_address"]])
+            path = os.path.join(directory, "trial-%04d.json" % row["index"])
+            ID.save_content_workspace_snapshot(path, core, row["records"], address_to_cue)
+            snapshot_modes.append(os.stat(path).st_mode & 0o777)
+            pristine = ID.content_workspace_snapshot(core, row["records"], address_to_cue)
+            core.step(7, permutation=(2, 0, 1), lesion_mask=7)
+            disturbed_records = ID.replace_content_record(
+                row["records"], row["active_address"],
+                dict(row["records"][row["active_address"]],
+                     value=row["counterfactual_value"]))
+            disturbance_changed.append(
+                ID.content_workspace_snapshot(core, disturbed_records, address_to_cue) != pristine)
+            restored, restored_records, restored_cues = ID.load_content_workspace_snapshot(path)
+            for _ in range(delay):
+                restored.step(0)
+            utterance = gen_runtime.gen_iit_workspace_content(
+                restored.state, ID.content_workspace_codebook(restored_cues), restored_records)
+            reference = normal_by_index[row["index"]]
+            exact = (
+                restored.state == reference["final_state"] and
+                utterance["address"] == reference["selected_address"] and
+                utterance["record"] == reference["selected_record"] and
+                utterance["text"] == reference["utterance"] and
+                restored_records == row["records"] and restored_cues == address_to_cue
+            )
+            recovery_exact.append(exact)
+            recovery_rows.append({
+                "index": row["index"], "active_address": row["active_address"],
+                "final_state": restored.state, "selected_address": utterance["address"],
+                "selected_record": utterance["record"], "emitted": utterance["emitted"],
+                "utterance": utterance["text"], "expected": row["expected"],
+                "correct": utterance["text"] == row["expected"],
+                "matches_normal": exact, "tick": restored.tick,
+                "audit_head": restored.audit_head,
+            })
+    recovery = _arm(recovery_rows)
+
+    arms = {
+        "oracle": oracle, "normal": normal, "state_reset": reset,
+        "iit_address_shuffled": iit_shuffled,
+        "workspace_address_shuffled": workspace_shuffled,
+        "node_lesion": lesion, "selected_memory_counterfactual": counterfactual,
+        "irrelevant_memory_mutation": irrelevant, "recovery": recovery,
+    }
+    accuracies = {name: arm["accuracy"] for name, arm in arms.items()}
+    checks = {
+        "artifact_integrity": True,
+        "r3_gate_passed": r3["verdict"] == r3_spec["required_verdict"],
+        "panel_atoms_supported": True,
+        "selected_compositions_novel_unique": composition_coverage >=
+                                                numeric_bars["novel_composition_coverage"],
+        "balanced_addresses": len(set(address_counts.values())) == 1,
+        "oracle_positive": accuracies["oracle"] >= numeric_bars["oracle"],
+        "normal_positive": accuracies["normal"] >= numeric_bars["positive"],
+        "state_reset_collapses": accuracies["state_reset"] <= ceiling,
+        "iit_address_shuffle_collapses": accuracies["iit_address_shuffled"] <= ceiling,
+        "workspace_address_shuffle_collapses": accuracies[
+            "workspace_address_shuffled"] <= ceiling,
+        "node_lesion_collapses": accuracies["node_lesion"] <= ceiling,
+        "counterfactual_correct": accuracies["selected_memory_counterfactual"] >=
+                                  numeric_bars["positive"],
+        "counterfactual_changes_output": counterfactual["change_rate"] >=
+                                         numeric_bars["counterfactual_change"],
+        "irrelevant_memory_correct": accuracies["irrelevant_memory_mutation"] >=
+                                     numeric_bars["positive"],
+        "irrelevant_memory_stable": irrelevant["stability"] >=
+                                    numeric_bars["irrelevant_stability"],
+        "recovery_positive": accuracies["recovery"] >= numeric_bars["positive"],
+        "recovery_exact": all(recovery_exact),
+        "disturbance_changes_snapshot": all(disturbance_changed),
+        "snapshot_mode_0600": all(mode == 0o600 for mode in snapshot_modes),
+        "generator_state_only": all(
+            row["utterance"] == gen_runtime.gen_iit_workspace_content(
+                row["final_state"], state_to_address,
+                normalized_trials[row["index"]]["records"])["text"]
+            for row in normal_rows),
+    }
+    verdict = protocol["required_verdict"] if all(checks.values()) else "FALSIFIED"
+    result = {
+        "schema": "anima-iit-daemon-composition-result/1", "date": protocol["date"],
+        "protocol": os.path.basename(protocol_path),
+        "protocol_sha256": _digest(protocol_path), "panel_sha256": protocol["panel"]["sha256"],
+        "r3_sha256": r3_spec["sha256"],
+        "claim_scope": "bounded IIT-state-selected compositional record routing causality",
+        "non_claims": list(protocol["non_claims"]),
+        "task": dict(task, state_to_address={str(state): address
+                                             for state, address in state_to_address.items()}),
+        "panel_audit": {
+            "support_records": len(support_records), "trials": len(normalized_trials),
+            "active_address_counts": address_counts,
+            "novel_unique_selected_compositions": len(seen_selected),
+            "novel_composition_coverage": composition_coverage,
+        },
+        "bars": dict(bars), "accuracies": accuracies, "arms": arms,
+        "checks": checks, "verdict": verdict, "deployment": protocol["deployment"],
+        "next_gate": "R4-INDEPENDENT-LEARNED-MOUTH" if all(checks.values()) else "R35-BLOCKED",
+    }
+    print("  oracle=%.4f normal=%.4f reset=%.4f iit-shuffle=%.4f workspace-shuffle=%.4f "
+          "lesion=%.4f counterfactual=%.4f irrelevant=%.4f recovery=%.4f" %
+          (accuracies["oracle"], accuracies["normal"], accuracies["state_reset"],
+           accuracies["iit_address_shuffled"], accuracies["workspace_address_shuffled"],
+           accuracies["node_lesion"], accuracies["selected_memory_counterfactual"],
+           accuracies["irrelevant_memory_mutation"], accuracies["recovery"]))
+    print("  verdict: %s (bounded plumbing only; not a learned mouth)" % verdict)
     if out_path:
         _store_causality_write(out_path, result)
         print("  wrote %s" % out_path)
@@ -13643,6 +14025,7 @@ _KNOWN_FLAGS = frozenset((
     "--iit-daemon-delayed",
     "--iit-daemon-clms",
     "--iit-daemon-content",
+    "--iit-daemon-composition",
     # H_1520 conversational-salience emit gate re-read with the PLANTED FNV-trigram key
     # geometry swapped for the REAL 303M penultimate. ONE flag, no tuning argument.
     "--salience-toggle-read",
@@ -20551,6 +20934,10 @@ def main(argv):
     # This is bounded content causality, not a learned or conversational mouth.
     if "--iit-daemon-content" in argv:
         return iit_daemon_content_run(argv)
+    # IIT-daemon R3.5: final intrinsic state selects a validated external
+    # entity/relation/value record under reset/shuffle/lesion/recovery controls.
+    if "--iit-daemon-composition" in argv:
+        return iit_daemon_composition_run(argv)
     # H_9838 --hippo-transitive-selftest: core/hippo_lane.py's CA3 multi-step completion on a
     # planted premise world. Ckpt-FREE by construction (the store + completion are pure numpy
     # arithmetic), so it dispatches on flag PRESENCE like --closure-ladder. ADDITIVE and

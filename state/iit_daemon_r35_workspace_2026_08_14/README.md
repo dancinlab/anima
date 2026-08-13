@@ -1,6 +1,6 @@
 # IIT daemon R3.5 — compositional content workspace (2026-08-14)
 
-Status: PREREGISTERED — implementation and result pending.
+Status: COMPLETE — `SUPPORTED-COMPOSITIONAL-WORKSPACE-CAUSALITY`.
 
 This Python-only gate follows the bounded two-surface R3 result and precedes another 303M mouth
 run. It records the complete breakthrough review before implementation. The narrow question is
@@ -144,4 +144,38 @@ an R3.5 pass alone.
 
 ## Result
 
-Pending implementation and execution. Failure will be recorded without changing this protocol.
+Implementation and execution completed after the protocol was committed and pushed as
+`3130f8e74`. No registered panel row, source artifact, address mapping, intervention, order or bar
+changed after results were observed.
+
+- The existing `core.iit_daemon.IITDaemonCore` remains the only intrinsic transition engine.
+  `core.iit_daemon` now validates bounded content records, derives the final-state/address codebook,
+  applies reset/shuffle/lesion interventions, and atomically snapshots the core plus external
+  records. The original R0 snapshot schema and bytes remain compatible.
+- `core.generator.gen_iit_workspace_content` is the only new output boundary. It accepts final
+  state, state/address codebook and the three records; it has no argument for prompt, active
+  address, expected text or gold. It renders a selected record as canonical
+  `entity relation value.` bytes and stays silent for an unregistered state.
+- Pair/oracle, normal, selected-memory counterfactual, irrelevant-memory mutation and snapshot
+  recovery accuracy are all `1.0000`. Reset, cyclic IIT address shuffle, cyclic workspace address
+  shuffle and all-node lesion accuracy are all `0.0000`, below the frozen `0.393333...` ceiling.
+- All nine selected evaluation triples are unique and absent from the six-record support set while
+  every entity, relation and value atom is supported. Every selected-memory mutation changes to the
+  registered counterfactual bytes; every irrelevant-memory mutation preserves normal bytes.
+- Every disturbed core+record snapshot differs from pristine, every reload restores core state,
+  address, all records and output exactly, and every snapshot is mode `0600`.
+- Focused IIT/store/conversation/native-boundary regression passed `103/103`. Full repository
+  Python QA passed `190 passed, 1 skipped, 3 subtests`; the skip is the expected unavailable local
+  CUDA/CuPy path. Compile, JSON and diff checks pass.
+- Canonical source execution produced byte-identical result JSON twice with SHA-256
+  `74f917de8718a2de43c4db3d57f900922315a6cd019b71381eb0c7917313f56e`. A clean isolated wheel
+  (`anima_python-0.20.245`, SHA-256
+  `e7df13c0f85287703caffbe71e434549992d70cfe9cf03a35bb14a61b05dd7b6`) reproduced the same bytes.
+- No model training, model/data mutation, HF write, Vast.ai rental, participant mount or live mouth
+  deployment occurred. `ING.jsonl` and `stream_mi.json` remain user-owned and untouched.
+
+Verdict: `SUPPORTED-COMPOSITIONAL-WORKSPACE-CAUSALITY`. The missing bounded state/address/content
+seam now exists and passes the registered interventions. It is deliberately not a learned event
+encoder or conversational mouth. Production remains `BLOCKED-R35-NOT-A-LEARNED-MOUTH`; the next
+gate is an independently trained meaningful English mouth before candidate-selection or latent
+workspace coupling is interpreted.

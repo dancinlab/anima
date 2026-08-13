@@ -267,6 +267,40 @@ def gen_iit_state_content(state, state_to_class, class_to_surface):
             "text": class_to_surface[label], "emitted": True}
 
 
+def gen_iit_workspace_content(state, state_to_address, records):
+    """Render the record selected by final IIT state through one canonical boundary.
+
+    The caller cannot provide prompt, gold, expected text or active address.  Records
+    contain atoms rather than canned answer strings; this function performs only the
+    registered entity/relation/value serialization.  An unregistered state is silent.
+    """
+    import iit_daemon as _iit
+
+    if isinstance(state, bool) or not isinstance(state, int) or state < 0:
+        raise ValueError("IIT workspace state must be a non-negative integer")
+    if not isinstance(state_to_address, dict) or not state_to_address:
+        raise ValueError("IIT workspace state codebook must be a non-empty object")
+    if any(isinstance(key, bool) or not isinstance(key, int) or key < 0
+           for key in state_to_address):
+        raise ValueError("IIT workspace state keys must be non-negative integers")
+    addresses = list(state_to_address.values())
+    if any(not isinstance(address, str) or not address for address in addresses):
+        raise ValueError("IIT workspace addresses must be non-empty strings")
+    if len(set(addresses)) != len(addresses):
+        raise ValueError("IIT workspace state codebook must be bijective")
+    normalized = _iit.validate_content_records(records, addresses)
+    address = state_to_address.get(state)
+    if address is None:
+        return {"state": state, "address": None, "record": None,
+                "text": "", "emitted": False}
+    record = dict(normalized[address])
+    text = "%s %s %s." % (record["entity"], record["relation"], record["value"])
+    if len(text.encode("utf-8")) > CHAT_MAX_NEW_BYTES:
+        raise ValueError("IIT workspace content exceeds canonical byte budget")
+    return {"state": state, "address": address, "record": record,
+            "text": text, "emitted": True}
+
+
 def gen_chat_validate_template(template, max_new=None):
     """Fail closed when a consumer's chat contract differs from the SSOT."""
     expected = gen_chat_format()

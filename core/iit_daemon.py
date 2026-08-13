@@ -21,6 +21,10 @@ MAX_SNAPSHOT_BYTES = 1 << 20
 DELAYED_PROTOCOL_SCHEMA = "anima-iit-daemon-delayed-protocol/1"
 CLMS_LATCH_PROTOCOL_SCHEMA = "anima-iit-daemon-clms-protocol/1"
 CONTENT_PROTOCOL_SCHEMA = "anima-iit-daemon-content-protocol/1"
+COMPOSITION_PROTOCOL_SCHEMA = "anima-iit-daemon-composition-protocol/1"
+COMPOSITION_PANEL_SCHEMA = "anima-iit-daemon-composition-panel/1"
+WORKSPACE_SNAPSHOT_SCHEMA = "anima-iit-content-workspace-snapshot/1"
+CONTENT_RECORD_FIELDS = ("entity", "relation", "value")
 
 
 def _canonical_json(value):
@@ -203,22 +207,27 @@ class IITDaemonCore:
             document = json.loads(raw.decode("utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:
             raise ValueError("snapshot is not valid canonical JSON") from exc
-        if not isinstance(document, dict) or document.get("schema") != SNAPSHOT_SCHEMA:
-            raise ValueError("unsupported snapshot schema")
-        payload = document.get("payload")
-        if not isinstance(payload, dict) or document.get("sha256") != _sha256(payload):
-            raise ValueError("snapshot checksum mismatch")
-        expected = {"config", "config_checksum", "state", "tick", "audit_head"}
-        if set(payload) != expected:
-            raise ValueError("snapshot payload fields mismatch")
-        try:
-            config = IITDaemonConfig(**payload["config"]).validate()
-        except (TypeError, ValueError) as exc:
-            raise ValueError("snapshot config is invalid") from exc
-        if payload["config_checksum"] != config.checksum:
-            raise ValueError("snapshot config checksum mismatch")
-        return cls(payload["state"], config=config, tick=payload["tick"],
-                   audit_head=payload["audit_head"])
+        return _core_from_snapshot_document(document)
+
+
+def _core_from_snapshot_document(document):
+    """Validate an in-memory core snapshot through the canonical snapshot contract."""
+    if not isinstance(document, dict) or document.get("schema") != SNAPSHOT_SCHEMA:
+        raise ValueError("unsupported snapshot schema")
+    payload = document.get("payload")
+    if not isinstance(payload, dict) or document.get("sha256") != _sha256(payload):
+        raise ValueError("snapshot checksum mismatch")
+    expected = {"config", "config_checksum", "state", "tick", "audit_head"}
+    if set(payload) != expected:
+        raise ValueError("snapshot payload fields mismatch")
+    try:
+        config = IITDaemonConfig(**payload["config"]).validate()
+    except (TypeError, ValueError) as exc:
+        raise ValueError("snapshot config is invalid") from exc
+    if payload["config_checksum"] != config.checksum:
+        raise ValueError("snapshot config checksum mismatch")
+    return IITDaemonCore(payload["state"], config=config, tick=payload["tick"],
+                         audit_head=payload["audit_head"])
 
 
 def delayed_codebook(cues):
@@ -364,3 +373,206 @@ def clms_latch_trial(prediction, gold, class_to_cue, *, delay=1,
             "reset_count": resets,
         })
     return result
+
+
+def _content_atom(value, name):
+    """Validate one bounded symbolic atom without accepting prompt-like payloads."""
+    if not isinstance(value, str) or not value or len(value.encode("utf-8")) > 32:
+        raise ValueError("%s must be a non-empty atom of at most 32 bytes" % name)
+    if not value.isascii() or not value[0].islower() or any(
+            not (char.islower() or char.isdigit() or char == "-") for char in value):
+        raise ValueError("%s must use canonical lowercase ASCII atom syntax" % name)
+    return value
+
+
+def validate_content_records(records, addresses=None):
+    """Return a detached, canonical copy of bounded entity/relation/value slots."""
+    if not isinstance(records, dict) or not records:
+        raise ValueError("content records must be a non-empty address object")
+    expected_addresses = None
+    if addresses is not None:
+        if not isinstance(addresses, (list, tuple)) or not addresses:
+            raise ValueError("content addresses must be a non-empty sequence")
+        expected_addresses = {_content_atom(value, "content address") for value in addresses}
+        if len(expected_addresses) != len(addresses):
+            raise ValueError("content addresses must be unique")
+        if set(records) != expected_addresses:
+            raise ValueError("content records must exactly cover registered addresses")
+    normalized = {}
+    for address, record in records.items():
+        address = _content_atom(address, "content address")
+        if not isinstance(record, dict) or set(record) != set(CONTENT_RECORD_FIELDS):
+            raise ValueError("content record fields must be entity, relation and value")
+        normalized[address] = {
+            field: _content_atom(record[field], "content record %s" % field)
+            for field in CONTENT_RECORD_FIELDS
+        }
+    if len(normalized) != len(records):
+        raise ValueError("content record addresses must be unique")
+    return normalized
+
+
+def content_workspace_codebook(address_to_cue):
+    """Derive the final-state -> content-address map from the frozen intrinsic core."""
+    if not isinstance(address_to_cue, dict) or len(address_to_cue) != RL.N_CELL:
+        raise ValueError("content workspace requires one address per intrinsic node")
+    cue_to_address = {}
+    for address, raw_cue in address_to_cue.items():
+        address = _content_atom(address, "content address")
+        cue = _state(raw_cue, "content address cue")
+        if cue == 0 or cue & (cue - 1):
+            raise ValueError("each content address cue must intervene on exactly one node")
+        if cue in cue_to_address:
+            raise ValueError("content address cues must be distinct")
+        cue_to_address[cue] = address
+    state_to_cue = delayed_codebook(list(cue_to_address))
+    return {state: cue_to_address[cue] for state, cue in state_to_cue.items()}
+
+
+def permute_content_records(records, destination_sources):
+    """Permute slot addresses while preserving every registered record exactly once."""
+    normalized = validate_content_records(records)
+    addresses = sorted(normalized)
+    if not isinstance(destination_sources, (list, tuple)) or \
+            len(destination_sources) != len(addresses):
+        raise ValueError("workspace permutation must contain one source per address")
+    sources = [_content_atom(value, "workspace permutation source")
+               for value in destination_sources]
+    if sorted(sources) != addresses:
+        raise ValueError("workspace permutation must be a bijection over addresses")
+    return {destination: dict(normalized[source])
+            for destination, source in zip(addresses, sources)}
+
+
+def replace_content_record(records, address, record):
+    """Return a detached store with one validated slot replaced."""
+    normalized = validate_content_records(records)
+    address = _content_atom(address, "content address")
+    if address not in normalized:
+        raise ValueError("content replacement address is not registered")
+    replacement = validate_content_records({address: record})[address]
+    normalized[address] = replacement
+    return normalized
+
+
+def content_workspace_trial(active_address, records, address_to_cue, *, delay=1,
+                            permutation=(0, 1, 2), reset_before_delay=False,
+                            lesion_mask=0):
+    """Latch one address and select a later record from final intrinsic state only."""
+    state_to_address = content_workspace_codebook(address_to_cue)
+    addresses = sorted(address_to_cue)
+    normalized = validate_content_records(records, addresses)
+    active_address = _content_atom(active_address, "active content address")
+    if active_address not in address_to_cue:
+        raise ValueError("active content address is not registered")
+    if isinstance(delay, bool) or not isinstance(delay, int) or delay < 1:
+        raise ValueError("content workspace delay must be a positive integer")
+    if not isinstance(reset_before_delay, bool):
+        raise TypeError("reset_before_delay must be bool")
+    p = _permutation(permutation)
+    lesion_mask = _state(lesion_mask, "lesion_mask")
+    core = IITDaemonCore(0)
+    encoding = core.step(address_to_cue[active_address], permutation=p,
+                         lesion_mask=lesion_mask)
+    reset_count = 0
+    if reset_before_delay:
+        core = IITDaemonCore(0)
+        reset_count = 1
+    delay_receipts = [core.step(0, lesion_mask=lesion_mask) for _ in range(delay)]
+    selected_address = state_to_address.get(core.state)
+    selected_record = (dict(normalized[selected_address])
+                       if selected_address is not None else None)
+    return {
+        "active_address": active_address,
+        "encoding": encoding,
+        "encoded_state": encoding["after"],
+        "delay": delay,
+        "delay_receipts": delay_receipts,
+        "permutation": list(p),
+        "reset_before_delay": reset_before_delay,
+        "reset_count": reset_count,
+        "lesion_mask": lesion_mask,
+        "final_state": core.state,
+        "state_to_address": dict(state_to_address),
+        "selected_address": selected_address,
+        "selected_record": selected_record,
+        "tick": core.tick,
+        "audit_head": core.audit_head,
+        "core": core,
+    }
+
+
+def content_workspace_snapshot(core, records, address_to_cue):
+    """Build a checksummed snapshot of intrinsic state plus addressed external content."""
+    if not isinstance(core, IITDaemonCore):
+        raise TypeError("content workspace snapshot needs IITDaemonCore")
+    codebook = content_workspace_codebook(address_to_cue)
+    normalized = validate_content_records(records, sorted(address_to_cue))
+    payload = {
+        "core": core.snapshot(),
+        "records": normalized,
+        "address_to_cue": dict(address_to_cue),
+        "state_to_address": {str(state): address for state, address in codebook.items()},
+    }
+    return {"schema": WORKSPACE_SNAPSHOT_SCHEMA, "payload": payload,
+            "sha256": _sha256(payload)}
+
+
+def save_content_workspace_snapshot(path, core, records, address_to_cue):
+    """Atomically persist the complete bounded workspace with mode 0600."""
+    target = os.path.abspath(os.fspath(path))
+    parent = os.path.dirname(target)
+    if not os.path.isdir(parent):
+        raise FileNotFoundError("workspace snapshot parent directory does not exist")
+    body = _canonical_json(content_workspace_snapshot(
+        core, records, address_to_cue)) + b"\n"
+    fd, temporary = tempfile.mkstemp(prefix=".iit-workspace-", suffix=".json", dir=parent)
+    try:
+        os.fchmod(fd, 0o600)
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(body)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, target)
+        directory_fd = os.open(parent, os.O_RDONLY)
+        try:
+            os.fsync(directory_fd)
+        finally:
+            os.close(directory_fd)
+    except BaseException:
+        try:
+            os.unlink(temporary)
+        except FileNotFoundError:
+            pass
+        raise
+    return target
+
+
+def load_content_workspace_snapshot(path):
+    """Load and fail-closed validate a complete core+content workspace snapshot."""
+    target = os.path.abspath(os.fspath(path))
+    size = os.path.getsize(target)
+    if size <= 0 or size > MAX_SNAPSHOT_BYTES:
+        raise ValueError("workspace snapshot size is invalid")
+    with open(target, "rb") as handle:
+        raw = handle.read(MAX_SNAPSHOT_BYTES + 1)
+    try:
+        document = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("workspace snapshot is not valid canonical JSON") from exc
+    if not isinstance(document, dict) or document.get("schema") != WORKSPACE_SNAPSHOT_SCHEMA:
+        raise ValueError("unsupported workspace snapshot schema")
+    payload = document.get("payload")
+    if not isinstance(payload, dict) or document.get("sha256") != _sha256(payload):
+        raise ValueError("workspace snapshot checksum mismatch")
+    if set(payload) != {"core", "records", "address_to_cue", "state_to_address"}:
+        raise ValueError("workspace snapshot payload fields mismatch")
+    core = _core_from_snapshot_document(payload["core"])
+    address_to_cue = payload["address_to_cue"]
+    expected_codebook = content_workspace_codebook(address_to_cue)
+    actual_codebook = payload["state_to_address"]
+    if actual_codebook != {str(state): address
+                           for state, address in expected_codebook.items()}:
+        raise ValueError("workspace snapshot state/address codebook mismatch")
+    records = validate_content_records(payload["records"], sorted(address_to_cue))
+    return core, records, dict(address_to_cue)
