@@ -344,6 +344,11 @@ The MPS duplicate gate failed closed before step 1 because
 was used. `state/anima_303m_r4_deterministic_cpu_2026_08_13/` preregisters the same exact two-run
 gate on the native two-thread CPU backend; treatments remain uninterpreted until it passes.
 
+The CPU duplicate gate passed exactly: engine SHA, state digest, all 53 tensors, teacher trace and
+canonical behavior matched, with maximum tensor error `0.0`. The fixed failing baseline is top-1
+`0.724029`, target `2/4`, structural `1/4`. The O1/C1/C2 comparison is now separately preregistered
+under this execution contract in `state/anima_303m_r4_deterministic_treatments_2026_08_13/`.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

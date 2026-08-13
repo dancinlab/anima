@@ -324,6 +324,11 @@ MPS 중복 관문은 `index_put_with_accumulate_mps`에 deterministic backward �
 `state/anima_303m_r4_deterministic_cpu_2026_08_13/`에 같은 정확 일치 2회 관문을 native
 2-thread CPU backend로 별도 사전등록했으며 통과 전까지 treatment는 해석하지 않는다.
 
+CPU 중복 관문은 engine SHA, state digest, tensor 53개, teacher trace와 canonical 행동이 모두
+정확히 일치했고 최대 tensor 오차는 `0.0`이었다. 고정 실패 baseline은 top-1 `0.724029`,
+target `2/4`, 구조 `1/4`다. 이 실행 계약에서 O1/C1/C2를 비교하는 새 시험을
+`state/anima_303m_r4_deterministic_treatments_2026_08_13/`에 별도 사전등록했다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

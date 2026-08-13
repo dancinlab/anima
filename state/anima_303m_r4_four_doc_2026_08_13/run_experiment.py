@@ -166,14 +166,16 @@ def main() -> int:
     parser.add_argument("--data", required=True)
     parser.add_argument("--work", required=True)
     parser.add_argument("--result", required=True)
+    parser.add_argument("--protocol", default=str(HERE / "protocol.json"))
     parser.add_argument("--device", choices=["mps", "cpu"], default="mps")
     args = parser.parse_args()
 
-    protocol_path = HERE / "protocol.json"
+    protocol_path = Path(args.protocol).resolve()
+    protocol_dir = protocol_path.parent
     protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
-    parent_result = (HERE / protocol["parent_result"]).resolve()
+    parent_result = (protocol_dir / protocol["parent_result"]).resolve()
     fixed_data = protocol["fixed_data"]
-    panel_path = (HERE / fixed_data["panel"]).resolve()
+    panel_path = (protocol_dir / fixed_data["panel"]).resolve()
     if _sha256(parent_result) != protocol["parent_result_sha256"]:
         raise RuntimeError("parent result SHA differs from preregistration")
     if _sha256(panel_path) != fixed_data["panel_sha256"]:
@@ -239,10 +241,14 @@ def main() -> int:
         }
 
     baseline = result["arms"]["B0_baseline"]["score"]
+    expected = protocol["gates"].get("baseline_expected", {
+        "teacher_top1": 0.6977964323, "tolerance": 0.002,
+        "target_prefix": 2, "structural": 1})
     baseline_ok = (
-        abs(baseline["teacher"]["top1_accuracy"] - 0.6977964323) <= 0.002
-        and baseline["counts"]["target_recovered"] == 2
-        and baseline["counts"]["structural"] == 1)
+        abs(baseline["teacher"]["top1_accuracy"] - expected["teacher_top1"])
+        <= expected["tolerance"]
+        and baseline["counts"]["target_recovered"] == expected["target_prefix"]
+        and baseline["counts"]["structural"] == expected["structural"])
     passes = {name: value["score"]["gate"] for name, value in result["arms"].items()}
     result["baseline_reproduction_gate"] = baseline_ok
     result["arm_gates"] = passes

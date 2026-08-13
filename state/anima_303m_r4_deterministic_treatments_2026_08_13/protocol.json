@@ -1,0 +1,67 @@
+{
+  "schema": "anima-303m-r4-four-document/v1",
+  "date": "2026-08-13",
+  "status": "PREREGISTERED",
+  "parent_result": "../anima_303m_r4_deterministic_cpu_2026_08_13/result.json",
+  "parent_result_sha256": "5e3189dd2e029f2acd2eac2d31bb34e1023e4ff9ff0dfe76ff11de8c3c424f43",
+  "claim": "On the now-proven deterministic CPU trajectory, separate insufficient optimization horizon from tiny-model capacity at the fixed four-document break point.",
+  "fixed_data": {
+    "repository": "dancinlab/anima-303m-v0-v2-turns-2026-08-12",
+    "revision": "17a1e4676d684a99a54208549445952302f389fa",
+    "train_file": "en_dialogue.train.txt",
+    "train_file_sha256": "8513908f9ec4b1803b1b364a84383c0c50f7c61baa69e76de068faad75ad3c55",
+    "validation_file": "en_dialogue.validation.txt",
+    "validation_file_sha256": "5d564119a620f0de86b937ca4c8bbb292af75326ba71a3a2e0ebbc2bafadd500",
+    "four_document_view_sha256": "1c14821f03a27f5833171229e18f25b551c220e2abc113f2555125fa82d05e09",
+    "heldout_32_view_sha256": "6604191d50f59879e79f3088105c740e7a1aa9e30f1bcbd75e590b8bc4899404",
+    "panel": "../anima_303m_r0_english_2026_08_12/conversation_panel.json",
+    "panel_sha256": "cf1a6d6837a69031929168b2b02aaf771406e0d8429bb8912b65f0be2ccbad4a"
+  },
+  "fixed_recipe": {
+    "architecture": "existing ByteGPT only",
+    "vocab": 256,
+    "block": 512,
+    "seed": 7,
+    "batch": 8,
+    "objective": "assistant-turn-only including the next canonical user-role delimiter",
+    "optimizer": "AdamW beta=(0.9,0.95), weight_decay=0.1",
+    "peak_lr": 0.001,
+    "schedule": "50-step linear warmup then cosine to 0.1 peak ratio at each registered endpoint",
+    "sampler": "proportional complete chat-framed documents",
+    "decode": "canonical greedy, 192 new bytes",
+    "deterministic": true,
+    "device": "CPU",
+    "threads": 2
+  },
+  "arms": {
+    "B0_baseline": {"axis": "deterministic CPU reproduction", "d": 128, "layers": 4, "steps": 600, "checkpoint_every": 0},
+    "O1_horizon": {"axis": "optimization horizon only", "d": 128, "layers": 4, "steps": 2400, "checkpoint_every": 600},
+    "C1_width": {"axis": "canonical width/head capacity only", "d": 256, "layers": 4, "steps": 600, "checkpoint_every": 0},
+    "C2_depth": {"axis": "depth capacity only", "d": 128, "layers": 8, "steps": 600, "checkpoint_every": 0}
+  },
+  "gates": {
+    "baseline_expected": {"teacher_top1": 0.7240293809024134, "tolerance": 0.0, "target_prefix": 2, "structural": 1},
+    "baseline_reproduction": "exact deterministic CPU reference teacher top-1, target-prefix 2/4 and structural 1/4",
+    "arm_memorization": "teacher top-1 >= 0.95, exact response 4/4, target-prefix 4/4 and structural 4/4",
+    "prompt_causality": "normal gold-response CE below blank and cyclic-shuffle controls on 4/4, with normal output changed by at least one intervention on 4/4",
+    "interpretation": "an arm passes only when both memorization and prompt-causality gates pass"
+  },
+  "decision_table": {
+    "BASELINE_MISMATCH": "invalid experiment; do not interpret treatments",
+    "ONLY_O1_PASS": "support insufficient registered optimization horizon",
+    "ONLY_CAPACITY_PASS": "support tiny capacity or geometry at the fixed horizon",
+    "O1_AND_CAPACITY_PASS": "both levers can fit four documents; require later compute-matched selection",
+    "NO_TREATMENT_PASS": "bounded horizon and capacity variants do not repair conditional learning"
+  },
+  "bounded_work": {
+    "maximum_training_arms": 4,
+    "no_result_dependent_changes": ["data", "seed", "objective", "optimizer", "learning rate", "thresholds", "decode", "document order", "checkpoint selection"],
+    "vast_ai_allowed": false,
+    "new_engine_or_evaluator": false,
+    "303m_training": "blocked",
+    "iit_mouth_coupling": "blocked",
+    "participant_mount": "blocked",
+    "production": "blocked",
+    "user_files_to_preserve": ["ING.jsonl", "stream_mi.json"]
+  }
+}
