@@ -528,6 +528,26 @@ The non-H100 Vast.ai run cost an estimated `$0.4538`; its two protocol-owned ins
 destroyed. The next axis needs a new data/compute-scaling preregistration, while 303M, IIT-mouth,
 participant and production remain blocked.
 
+### Preregistered R4 complete-trajectory support admission
+
+[`state/anima_303m_r4_support_admission_2026_08_13`](state/anima_303m_r4_support_admission_2026_08_13/README.md)
+records the exhausted follow-up design space and freezes the next single-axis experiment. A live
+audit of the immutable dialogue source found 8,635 complete documents and 1,194 multi-turn
+trajectories, but the shared scale/exposure/capacity admission helper required exactly one
+`user → assistant` pair. The actual 3,500-document capacity view therefore contained zero
+multi-turn examples even though the canonical trainer supports every assistant span. Memory and
+correction failures from that view cannot be interpreted as capacity evidence; its single-turn
+semantic `0/7` result remains unchanged.
+
+The new fixed 2.817M ladder changes only admission coverage: the exact prior 3,500-document control,
+all 4,625 complete trajectories with a short final response, then all 8,635 complete trajectories.
+The exact language checkpoint, 120k dialogue and replay rows, optimizer, objective, seed, context,
+generator, panel and bars stay fixed, and all arms must run with the full-support arm as the primary
+endpoint. `core.generator` now owns canonical complete-trajectory parsing beside its existing
+renderer so experiment admission cannot silently redefine a valid chat document. H100 and 303M
+training are forbidden; failure permits only a separately preregistered broad-language
+data/compute axis, while any automatic pass still requires manual review and replication.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

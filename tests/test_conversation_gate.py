@@ -169,6 +169,29 @@ def test_runtime_turn_framing_stops_before_synthetic_next_user():
     assert result["raw_text"] == raw
 
 
+def test_runtime_chat_parser_preserves_complete_multiturn_trajectory():
+    turns = [
+        ("user", "Remember that the box is blue."),
+        ("assistant", "I will remember that."),
+        ("user", "What color is the box?"),
+        ("assistant", "The box is blue."),
+    ]
+    document = generator.gen_chat_render_turns(turns)
+
+    assert generator.gen_chat_parse_turns(document) == turns
+
+
+@pytest.mark.parametrize("document", [
+    "assistant: missing user",
+    "user: missing assistant",
+    "user: first\nuser: duplicate role\nassistant: answer",
+    "user: prompt\nassistant: ",
+])
+def test_runtime_chat_parser_rejects_incomplete_or_noncanonical_trajectory(document):
+    with pytest.raises(ValueError):
+        generator.gen_chat_parse_turns(document)
+
+
 @pytest.mark.parametrize("marker", ["\n USER :", "\n사용자 :", "\n<|USER|> :"])
 def test_runtime_turn_parser_rejects_role_spacing_and_case_variants(marker):
     raw = "A clear answer." + marker + " fabricated next turn"

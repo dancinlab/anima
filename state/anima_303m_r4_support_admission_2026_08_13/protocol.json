@@ -1,0 +1,136 @@
+{
+  "schema": "anima-303m-r4-complete-support-admission/v1",
+  "date": "2026-08-13",
+  "status": "PREREGISTERED",
+  "parent_result": "../anima_303m_r4_capacity_ladder_2026_08_13/result.json",
+  "parent_result_sha256": "607045ecc9fdf3d07c8074e3a237c2ec84e5a36cea29adb8038b12cee44f743e",
+  "claim": "Test whether the existing immutable complete dialogue support, previously removed by a single-turn admission helper, permits meaningful English conversation at fixed 2.817M capacity and fixed row exposure.",
+  "research_reference": {
+    "repository": "https://github.com/dancinlab/anima-research",
+    "revision": "03d55ef9848df304a435a88a2b90a74722bc5b73",
+    "effect": "interpretation constraint only",
+    "consciousness_claim": false
+  },
+  "fixed_model": {
+    "architecture": "existing ByteGPT only",
+    "label": "3M",
+    "d": 192,
+    "layers": 6,
+    "heads": 3,
+    "parameters": 2817024,
+    "language_repository": "dancinlab/anima-303m-r4-capacity-ladder-2026-08-13",
+    "language_revision": "3c9bc8cad1ac50c7610f1f6ab57bf09c82aa51ac",
+    "language_file": "work/3m/language.bin",
+    "language_sha256": "1915fc7fb02b0419ac6af269bf6b00c165d5cd6ab0058c6c50e756426cdd966d"
+  },
+  "fixed_broad_data": {
+    "repository": "dancinlab/anima-corpus-en-general",
+    "revision": "e1c4ef4f595d72b959d0aa73a5cc5c8ba2a065a0",
+    "file": "anima-corpus-en-general.txt",
+    "file_bytes": 60049637,
+    "file_sha256": "6614094432707127c82d6ee1ffd3a65f27c5aa118498be1623f1394f182f8ef9",
+    "train_range": [0, 1048576],
+    "train_sha256": "05761ea8b029360c41f756a8da7dc95ac0f146af195586cbfc00affd6946cd3f",
+    "validation_range": [1048576, 1179648],
+    "validation_sha256": "2f1567263a771d17db802252cbdd142f7286d530e2cf0c727edd1b7f61c7ce85"
+  },
+  "fixed_dialogue_source": {
+    "repository": "dancinlab/anima-303m-v0-v2-turns-2026-08-12",
+    "revision": "17a1e4676d684a99a54208549445952302f389fa",
+    "train_file": "en_dialogue.train.txt",
+    "train_file_bytes": 2642861,
+    "train_file_sha256": "8513908f9ec4b1803b1b364a84383c0c50f7c61baa69e76de068faad75ad3c55",
+    "validation_file": "en_dialogue.validation.txt",
+    "validation_file_bytes": 144828,
+    "validation_file_sha256": "5d564119a620f0de86b937ca4c8bbb292af75326ba71a3a2e0ebbc2bafadd500",
+    "source_documents": 8635,
+    "source_single_turn": 7441,
+    "source_multiturn": 1194,
+    "source_assistant_turns": 9835,
+    "heldout_documents": 32,
+    "heldout_view_bytes": 10013,
+    "heldout_view_sha256": "6604191d50f59879e79f3088105c740e7a1aa9e30f1bcbd75e590b8bc4899404"
+  },
+  "admission_arms": [
+    {
+      "label": "CONTROL-3500",
+      "policy": "single_turn_final_response_le_192",
+      "limit": 3500,
+      "documents": 3500,
+      "bytes": 677948,
+      "sha256": "106a042bb7defd4b30ea160b9cbcf4f664868652db6b5f335aa7c1d0a159a999",
+      "single_turn": 3500,
+      "multiturn": 0,
+      "assistant_turns": 3500
+    },
+    {
+      "label": "SHORT-COMPLETE",
+      "policy": "complete_final_response_le_192",
+      "documents": 4625,
+      "bytes": 1055613,
+      "sha256": "da789c2d90f3b4d61a5a1dcf5a2fe696828028b6b8e2a243e7e9cf68f375c767",
+      "single_turn": 3615,
+      "multiturn": 1010,
+      "assistant_turns": 5640
+    },
+    {
+      "label": "ALL-COMPLETE",
+      "policy": "all_complete",
+      "documents": 8635,
+      "bytes": 2642861,
+      "sha256": "8513908f9ec4b1803b1b364a84383c0c50f7c61baa69e76de068faad75ad3c55",
+      "single_turn": 7441,
+      "multiturn": 1194,
+      "assistant_turns": 9835,
+      "primary": true
+    }
+  ],
+  "fixed_recipe": {
+    "block": 512,
+    "seed": 7,
+    "batch": 8,
+    "steps": 30000,
+    "broad_rows": 120000,
+    "dialogue_rows": 120000,
+    "sample": "roundrobin",
+    "objective": "full CE plus additive assistant-response CE on every canonical assistant span",
+    "answer_weight": 1.0,
+    "peak_lr": 0.001,
+    "optimizer": "fresh AdamW beta=(0.9,0.95), weight_decay=0.1",
+    "schedule": "50-step warmup, cosine to 0.1 peak ratio at step 3750, then fixed floor",
+    "checkpoint_selection": "fixed final checkpoint",
+    "canonical_generator": true
+  },
+  "evaluation": {
+    "panel": "../anima_303m_r0_english_2026_08_12/conversation_panel.json",
+    "panel_sha256": "cf1a6d6837a69031929168b2b02aaf771406e0d8429bb8912b65f0be2ccbad4a",
+    "unchanged_thresholds": true,
+    "manual_review_after_automatic_pass": true,
+    "primary_endpoint": "ALL-COMPLETE"
+  },
+  "control_reproduction": {
+    "prior_broad_ce": 1.6095318938887981,
+    "prior_heldout_assistant_ce": 2.256760657469558,
+    "prior_semantic": "0/7",
+    "prior_structural": "7/7",
+    "absolute_ce_tolerance": 0.00001
+  },
+  "decision": {
+    "control_mismatch": "INVALID-CONTROL-MISMATCH",
+    "primary_failure": "FAIL-COMPLETE-SUPPORT-ADMISSION",
+    "primary_automatic_pass": "AUTOMATIC-COMPLETE-SUPPORT-PASS-MANUAL-REVIEW-REQUIRED"
+  },
+  "bounded_work": {
+    "maximum_new_joint_trajectories": 3,
+    "vast_ai_allowed": true,
+    "vast_ai_max_active_instances_created_by_this_protocol": 1,
+    "h100_allowed": false,
+    "303m_training": "blocked",
+    "iit_mouth_coupling": "blocked",
+    "participant_mount": "blocked",
+    "production": "blocked",
+    "hf_repository": "dancinlab/anima-303m-r4-support-admission-2026-08-13",
+    "hf_private": true,
+    "user_files_to_preserve": ["ING.jsonl", "stream_mi.json"]
+  }
+}

@@ -209,6 +209,7 @@ _CHAT_TURN_STOP_MARKERS = (
 )
 _CHAT_NEXT_USER_RE = re.compile(
     r"(?:^|\n)[ \t]*(?:user|사용자|<\|user\|>|<usr>)[ \t]*:", re.IGNORECASE)
+_CHAT_CANONICAL_ROLE_RE = re.compile(r"(?m)^(user|assistant): ")
 
 
 def gen_chat_format():
@@ -321,6 +322,41 @@ def gen_chat_render_turns(turns):
     if turns[-1][0] != "assistant":
         raise ValueError("a complete chat training trajectory must end with assistant")
     return CHAT_TURN_SEPARATOR.join(lines)
+
+
+def gen_chat_parse_turns(document):
+    """Parse one complete canonical training trajectory.
+
+    Admission and probe code previously treated a trajectory as valid only when
+    it contained exactly one user/assistant pair.  That silently removed every
+    multi-turn document even though the shared trainer supports all canonical
+    assistant spans.  Parsing now lives beside the renderer so corpus audits and
+    experiment harnesses use the same role contract as training and serving.
+    """
+    if not isinstance(document, str):
+        raise TypeError("chat document must be str")
+    value = document.strip()
+    if not value:
+        raise ValueError("chat document must not be empty")
+    value.encode("utf-8", "strict")
+    markers = list(_CHAT_CANONICAL_ROLE_RE.finditer(value))
+    if not markers or markers[0].start() != 0:
+        raise ValueError("chat document must start with the canonical user role")
+    roles = [match.group(1) for match in markers]
+    expected = ["user" if index % 2 == 0 else "assistant"
+                for index in range(len(roles))]
+    if roles != expected or roles[-1] != "assistant":
+        raise ValueError("chat document must be a complete alternating trajectory")
+    turns = []
+    for index, marker in enumerate(markers):
+        end = markers[index + 1].start() if index + 1 < len(markers) else len(value)
+        text = value[marker.end():end].strip()
+        if not text:
+            raise ValueError("chat document turns must contain non-empty text")
+        turns.append((roles[index], text))
+    if gen_chat_render_turns(turns) != value:
+        raise ValueError("chat document is not canonical under the runtime SSOT")
+    return turns
 
 
 def gen_chat_longest_complete_suffix(turns, max_bytes):

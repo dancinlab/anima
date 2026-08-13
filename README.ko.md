@@ -504,6 +504,25 @@ top-1은 `0.82570 → 0.90712 → 0.96692`로 좋아졌지만 held-out assistant
 두 개를 모두 삭제했다. 다음 축은 새 자료/compute scaling 사전등록이어야 하며 303M·
 IIT-mouth·participant·프로덕션은 계속 차단한다.
 
+### 사전등록한 R4 완전 trajectory support admission
+
+[`state/anima_303m_r4_support_admission_2026_08_13`](state/anima_303m_r4_support_admission_2026_08_13/README.md)에
+후속 설계 후보와 폐기 이유를 모두 기록하고 다음 단일축 실험을 동결했다. 불변 대화 원천을
+실제로 감사한 결과 완전 문서 8,635개 중 멀티턴 trajectory가 1,194개였지만, scale/exposure/
+capacity의 공용 admission helper는 역할이 정확히 `user → assistant` 한 쌍인 문서만 허용했다.
+따라서 실제 capacity 학습 view 3,500개에는 멀티턴이 0개였고, canonical trainer가 모든
+assistant span을 학습할 수 있음에도 그 전에 자료가 탈락했다. 이 view의 기억·정정 실패는
+capacity 증거로 해석할 수 없으며 단일턴 의미 `0/7` 결과는 그대로 유지한다.
+
+새 고정 2.817M 사다리는 admission coverage만 바꾼다. 정확한 이전 3,500문서 대조군,
+최종 응답이 짧은 완전 trajectory 4,625개, 전체 완전 trajectory 8,635개를 모두 실행하고
+전체-support arm을 고정 1차 endpoint로 둔다. language checkpoint, dialogue/replay 각 120k행,
+optimizer, 목적함수, seed, context, generator, panel과 기준은 바꾸지 않는다. 기존 renderer
+옆의 `core.generator`가 canonical 완전 trajectory 판독도 소유하게 해 실험 admission이 유효한
+대화 문서를 다시 정의하지 못하게 했다. H100·303M 학습은 금지하며, 실패하면 별도 사전등록한
+broad-language 자료/compute 축만 허용한다. 자동 통과도 수동 검토와 재현 전에는 확장 근거가
+아니다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속
