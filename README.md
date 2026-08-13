@@ -449,6 +449,11 @@ the bounded optimizer/sampler tradeoff but not generalization from 100 dialogues
 repeated `--cell-label` argv bug mislabeled raw telemetry; file identity, sampling and loss were
 unaffected, and the harness now uses one canonical `--cell-label broad dialogue` argument.
 
+All 121 local R4 micro model/evidence artifacts (`521,291,120` bytes) are preserved and independently
+SHA-verified at private HF revision
+`dancinlab/anima-303m-r4-aligned-micro-2026-08-13@6d2d4752cb222ba09fd74cb08eb8d3b7d4b140dc`.
+Custody evidence is in `state/anima_303m_r4_aligned_micro_custody_2026_08_13/result.json`.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

@@ -426,6 +426,11 @@ joint arm은 broad CE `2.0620`을 보존하고 대화 probe를 `8/8` 완전 학�
 `--cell-label` argv 버그로 raw telemetry 이름이 잘못 표시됐으나 파일 identity·표집·loss에는
 영향이 없고, harness는 canonical 단일 `--cell-label broad dialogue` 인자로 수정했다.
 
+로컬 R4 micro 모델·증거 121개(`521,291,120` bytes)는 HF 비공개 revision
+`dancinlab/anima-303m-r4-aligned-micro-2026-08-13@6d2d4752cb222ba09fd74cb08eb8d3b7d4b140dc`에
+보존하고 독립 다운로드 SHA 검증을 완료했다. custody 증거는
+`state/anima_303m_r4_aligned_micro_custody_2026_08_13/result.json`에 있다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속
