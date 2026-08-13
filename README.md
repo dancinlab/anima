@@ -442,6 +442,13 @@ round-robin provides four broad and four dialogue rows per step; additive CE app
 loss everywhere and response supervision only where a canonical assistant span exists. The 3,750
 step endpoint preserves the prior 15,000 dialogue-row exposure while adding 15,000 broad rows.
 
+The joint arm retained broad CE `2.0620` and fully learned the dialogue probe (`8/8`), while
+independent output became structurally complete (`7/7`) but stayed semantically wrong (`0/7`),
+with heldout dialogue CE `5.0046`. Its verdict is `FAIL-JOINT-MEANINGFUL-CONVERSATION`. This closes
+the bounded optimizer/sampler tradeoff but not generalization from 100 dialogues. A provenance-only
+repeated `--cell-label` argv bug mislabeled raw telemetry; file identity, sampling and loss were
+unaffected, and the harness now uses one canonical `--cell-label broad dialogue` argument.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

@@ -28,5 +28,7 @@ def test_joint_command_uses_native_two_cell_additive_path(tmp_path):
     assert command[command.index("--sample") + 1] == "roundrobin"
     assert command[command.index("--answer-ce-mode") + 1] == "additive"
     assert command[command.index("--chat-frame-alignment") + 1] == "document"
-    assert command.count("--cell-label") == 2
+    label_index = command.index("--cell-label")
+    assert command[label_index + 1:label_index + 3] == ["broad", "dialogue"]
+    assert command.count("--cell-label") == 1
     assert command[command.index("--steps") + 1] == "3750"

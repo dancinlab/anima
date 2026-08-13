@@ -419,6 +419,13 @@ round-robin은 step마다 broad 4행·dialogue 4행을 공급하고 additive CE�
 canonical assistant span의 응답 감독을 함께 적용한다. 3,750-step endpoint는 기존 대화 노출
 15,000행을 유지하면서 broad 15,000행을 추가한다.
 
+joint arm은 broad CE `2.0620`을 보존하고 대화 probe를 `8/8` 완전 학습했으며 독립 출력 구조도
+`7/7`이 됐지만 의미는 `0/7`, heldout 대화 CE는 `5.0046`이었다. 판정은
+`FAIL-JOINT-MEANINGFUL-CONVERSATION`이다. 따라서 제한된 optimizer/sampler 절충 문제는
+닫혔지만 100개 대화의 일반화는 형성되지 않았다. provenance에만 영향을 주는 반복
+`--cell-label` argv 버그로 raw telemetry 이름이 잘못 표시됐으나 파일 identity·표집·loss에는
+영향이 없고, harness는 canonical 단일 `--cell-label broad dialogue` 인자로 수정했다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속
