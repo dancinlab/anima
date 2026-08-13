@@ -1,6 +1,6 @@
 # R4 complete-trajectory support admission — 2026-08-13
 
-Status: **PREREGISTERED**.
+Status: **COMPLETE — INVALID-CONTROL-MISMATCH**.
 
 ## Why this axis comes next
 
@@ -75,3 +75,46 @@ loss, evaluator and participant are not replaced.
   non-H100 Vast.ai GPU and the protocol-owned instance must be destroyed.
 - `ING.jsonl` and `stream_mi.json` remain untouched.
 
+## Result
+
+The registered three-arm run completed on a Vast.ai RTX 4090. The root flow finding was real:
+the immutable source had 8,635 canonical documents and 1,194 multi-turn trajectories, while the
+old exact-two-turn helper admitted 3,500 documents and zero multi-turn trajectories. The new
+canonical parser now preserves complete alternating trajectories and round-trips the existing
+renderer. This changes no past verdict; it only makes the support loss explicit.
+
+The frozen control did not reproduce. Its broad CE was `1.60649` versus registered `1.60953`, its
+held-out assistant CE was `2.27695` versus `2.25676`, and its structural result was `4/7` versus
+the required prior `7/7`; semantic remained `0/7`. The absolute CE tolerance was `0.00001`, so the
+registered fail-closed verdict is `INVALID-CONTROL-MISMATCH` and neither treatment arm is interpreted
+as causal evidence.
+
+For raw evidence only, `SHORT-COMPLETE` reached held-out assistant CE `1.96128`, semantic `0/7`,
+structural `4/7`, and failed memory/correction. Primary `ALL-COMPLETE` reached held-out assistant CE
+`1.34827` and top-1 `0.62771`, but semantic `0/7`, structural `0/7`, and failed memory/correction.
+Its outputs retained meaningless loops around consciousness/construction, ice crystals, the blue
+box, and favorite colors. Diagnostic review was therefore meaningful `0/7`. Restoring the existing
+support was insufficient to form a conversational mouth, even though the teacher-forced metric
+improved; the control mismatch prevents attributing that improvement to admission alone.
+
+The first evaluation attempt found the remote CuPy dependency absent after control training had
+completed. It was stopped before producing a result. A fail-closed resume path now reuses a
+completed arm only when checkpoint/state/log/summary are all present and parameter count, completed
+step, dialogue rows, document count, training bytes, and both validation descents match the active
+protocol. CUDA decode was then enabled for every recorded arm; no extra training trajectory was
+created.
+
+Local preregistration QA passed `95 tests + 3 subtests`; the resume change passed `27/27` locally
+and remotely. Vast.ai passed `97 tests, 1 expected skip, 3 subtests` before the run and `74/74`
+focused tests afterward; final local regression passed `73` tests with one expected CUDA skip.
+Raw models, exact-resume states, responses, logs, protocol, QA and power
+telemetry are held only in private HF revision
+`dancinlab/anima-303m-r4-support-admission-2026-08-13@7e750e4e1b0d2e08a501df8857bbbf576d5d9188`.
+An independent snapshot verified all 36 manifest entries (`142,697,226` bytes) with zero size or
+SHA-256 mismatches.
+
+The final run used approximately `410,580 J`, peaked at `1,919 MiB` and `121.23 W`; the interrupted
+evaluation run used approximately `164,671 J`. Estimated total rental cost is about `$0.83`.
+Both protocol-owned instances were destroyed and an unrelated H100 was preserved. No model was
+mounted; 303M, IIT-mouth coupling, participant and production remain blocked. The next result-bearing
+work must first explain the frozen control trajectory mismatch byte-for-byte.

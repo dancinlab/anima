@@ -103,6 +103,23 @@ validation.
 
 ## Current experiment — meaningful-conversation R0
 
+The next single-axis R4 study is complete in
+`state/anima_303m_r4_support_admission_2026_08_13/`. Exhaustive design review found that the shared
+dialogue admission helper silently removed all 1,194 multi-turn trajectories from the immutable
+8,635-document source because it accepted only exact `[user, assistant]` documents. A canonical
+complete-trajectory parser and fail-closed completed-arm resume were added without replacing the
+trainer, model, evaluator, or generator.
+
+The fixed 2.817M three-arm Vast.ai run completed, but the frozen control did not reproduce
+(`structural 4/7` versus registered `7/7`), so the verdict is `INVALID-CONTROL-MISMATCH` and treatment
+differences are not interpreted. Raw `ALL-COMPLETE` evidence improved held-out assistant CE from
+control `2.27695` to `1.34827`, yet remained semantic `0/7`, structural `0/7`, and failed memory and
+correction with meaningless phrase loops. Private HF revision
+`dancinlab/anima-303m-r4-support-admission-2026-08-13@7e750e4e1b0d2e08a501df8857bbbf576d5d9188`
+passed independent SHA verification for all 36 manifest entries. Python QA passed locally and on
+Vast.ai; both protocol instances were destroyed, no model was mounted, and 303M, IIT-mouth coupling,
+participant, and production remain blocked pending byte-level diagnosis of the control mismatch.
+
 The next 303M from-scratch checkpoint is blocked on meaningful Korean and English conversation,
 not merely valid-looking text. The preregistered Python-only protocol and lossless result record
 live in `state/anima_303m_r0_conversation_2026_08_12/`.

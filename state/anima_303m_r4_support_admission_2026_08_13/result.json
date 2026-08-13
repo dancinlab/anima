@@ -1,0 +1,120 @@
+{
+  "schema": "anima-303m-r4-complete-support-admission-summary/v1",
+  "date": "2026-08-13",
+  "protocol_commit": "0170277b5",
+  "implementation_commit": "522da118d",
+  "protocol_sha256": "12b3b288f26c5471ca62f10fbb28276f10118b0d3dd9237edcdf7a01f0b5701a",
+  "raw_result_sha256": "ba20597cf31c0317e32b1b581925917b8e25b70e7de371298ba57b1f668d9ed8",
+  "root_cause": {
+    "finding": "The shared dialogue admission helper accepted only exact [user, assistant] documents and silently removed every multi-turn trajectory before the trainer.",
+    "source_documents": 8635,
+    "previous_admitted_documents": 3500,
+    "source_multiturn": 1194,
+    "previous_admitted_multiturn": 0,
+    "scope": "This invalidates the earlier memory/correction capacity interpretation, but not its recorded single-turn semantic 0/7 failure."
+  },
+  "fixed": {
+    "architecture": "existing ByteGPT only",
+    "parameters": 2817024,
+    "dialogue_rows": 120000,
+    "broad_rows": 120000,
+    "seed": 7,
+    "batch": 8,
+    "block": 512,
+    "gpu": "RTX 4090",
+    "h100": false,
+    "evaluation_device": "CUDA via CuPy 13.6.0"
+  },
+  "control_reproduced": false,
+  "arms": [
+    {
+      "label": "CONTROL-3500",
+      "documents": 3500,
+      "multiturn": 0,
+      "assistant_turns": 3500,
+      "broad_ce": 1.6064872158483516,
+      "heldout_assistant_ce": 2.276949692998547,
+      "heldout_assistant_top1": 0.5364635364635365,
+      "semantic": "0/7",
+      "structural": "4/7",
+      "multiturn_final_pass": false,
+      "engine_sha256": "8a67b4c5d79b0228a46846bf1e05a28e23799ff328e3c1d66caf6e5580783bea"
+    },
+    {
+      "label": "SHORT-COMPLETE",
+      "documents": 4625,
+      "multiturn": 1010,
+      "assistant_turns": 5640,
+      "broad_ce": 1.5966842351827604,
+      "heldout_assistant_ce": 1.9612777056512374,
+      "heldout_assistant_top1": 0.5574425574425574,
+      "semantic": "0/7",
+      "structural": "4/7",
+      "multiturn_final_pass": false,
+      "engine_sha256": "a3858074b3b96f997392c27d31dfc999187f9c9fc16e93f85ca6ce46848ca345"
+    },
+    {
+      "label": "ALL-COMPLETE",
+      "primary": true,
+      "documents": 8635,
+      "multiturn": 1194,
+      "assistant_turns": 9835,
+      "broad_ce": 1.505439605264981,
+      "heldout_assistant_ce": 1.3482729115402938,
+      "heldout_assistant_top1": 0.6277056277056277,
+      "semantic": "0/7",
+      "structural": "0/7",
+      "multiturn_final_pass": false,
+      "engine_sha256": "d94ec874b48df4b414e4a4578688c9c4caf5a90a3ac1bf5a8acf77a676ee9a47"
+    }
+  ],
+  "diagnostic_review": {
+    "meaningful": "0/7",
+    "finding": "All primary responses were irrelevant or repetitive; consciousness/construction, ice-crystal, blue-box and favorite-color phrase loops remained, and memory/correction failed."
+  },
+  "interpretation": {
+    "allowed": "Complete-trajectory admission substantially improved teacher-forced held-out assistant CE in the raw run.",
+    "forbidden": "The treatment difference is not causal evidence because the frozen control did not reproduce its prior structural 7/7 endpoint.",
+    "bounded_conclusion": "Restoring all existing dialogue support was insufficient to form meaningful conversation in this run."
+  },
+  "execution_recovery": {
+    "initial_issue": "CuPy was absent, so the first evaluation entered the CPU NumPy decode path after completing control training.",
+    "action": "Stopped before any result was produced, installed the canonical CUDA dependency, and reused the completed control only after parameter, step, row, document, byte and descent provenance checks.",
+    "extra_training_trajectories": 0
+  },
+  "qa": {
+    "local_before_run": "95 passed, 3 subtests passed",
+    "resume_focused": "27 passed locally and remotely",
+    "vast_prerun": "97 passed, 1 skipped, 3 subtests passed",
+    "vast_final": "74 passed",
+    "local_final": "73 passed, 1 expected CUDA skip",
+    "hf_sha256_mismatches": 0
+  },
+  "hf_custody": {
+    "repository": "dancinlab/anima-303m-r4-support-admission-2026-08-13",
+    "private": true,
+    "revision": "7e750e4e1b0d2e08a501df8857bbbf576d5d9188",
+    "repository_files": 38,
+    "manifest_entries": 36,
+    "artifact_bytes": 142697226,
+    "manifest_sha256": "c376a57b22c784b66a29a70913dab56f531a75e7e5307846c091ab0c0363e88d",
+    "sha256_mismatches": 0
+  },
+  "resource": {
+    "result_instance": 47618411,
+    "failed_loading_instance": 47618155,
+    "instances_destroyed": [47618155, 47618411],
+    "protocol_instances_active": 0,
+    "result_instance_estimated_cost_usd": 0.8044,
+    "estimated_total_cost_usd": 0.83,
+    "final_run_approx_joules": 410579.75,
+    "interrupted_run_approx_joules": 164671.4,
+    "peak_vram_mib": 1919,
+    "peak_power_w": 121.23,
+    "other_work_instance_preserved": 47619430
+  },
+  "gate": false,
+  "verdict": "INVALID-CONTROL-MISMATCH",
+  "consciousness_claim": false,
+  "next_allowed_step": "Diagnose the control trajectory mismatch byte-for-byte before any treatment interpretation; 303M, IIT-mouth coupling, participant mounting and production remain blocked."
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "anima-303m-r4-support-admission-run-evidence/v1",
+  "git_commit": "522da118d415514995d421237a6a8bd9de3de35b",
+  "vast": {
+    "result_instance": 47618411,
+    "failed_loading_instance": 47618155,
+    "gpu": "RTX 4090",
+    "h100": false
+  },
+  "evaluation_device": "CUDA via CuPy 13.6.0",
+  "interrupted_cpu_decode": {
+    "exit_code": 143,
+    "reason": "CuPy dependency missing; no result produced; completed control training reused only after fail-closed provenance validation",
+    "telemetry": {
+      "samples": 396,
+      "interval_seconds": 5,
+      "approx_joules": 164671.4,
+      "peak_vram_mib": 1040.0,
+      "peak_power_w": 119.53,
+      "mean_gpu_utilization_percent": 33.6313
+    }
+  },
+  "final_run_telemetry": {
+    "samples": 998,
+    "interval_seconds": 5,
+    "approx_joules": 410579.75,
+    "peak_vram_mib": 1919.0,
+    "peak_power_w": 121.23,
+    "mean_gpu_utilization_percent": 29.2565
+  },
+  "qa": {
+    "prerun": "97 passed, 1 skipped, 3 subtests",
+    "final": "74 passed"
+  }
+}

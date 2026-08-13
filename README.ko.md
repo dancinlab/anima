@@ -93,6 +93,22 @@ R3를 두 번, 실제 체크포인트 R2 회귀를 byte 단위로 재현했다. 
 
 ## 현재 실험 — 의미 있는 대화 R0
 
+다음 단일축 R4 실험을 `state/anima_303m_r4_support_admission_2026_08_13/`에서 완료했다.
+설계 변형을 고갈시켜 검토한 결과, 공용 대화 admission helper가 정확한
+`[user, assistant]` 문서만 받아 불변 8,635문서 원본의 멀티턴 1,194개를 전부 조용히
+제거하고 있었다. trainer·모델·평가기·generator를 교체하지 않고 canonical 완전 궤적
+parser와 fail-closed 완료 arm resume를 추가했다.
+
+고정 2.817M 3-arm Vast.ai 실행은 완주했지만 동결 대조군이 등록된 `구조 7/7` 대신 `4/7`로
+재현되지 않아 판정은 `INVALID-CONTROL-MISMATCH`이며 treatment 차이를 해석하지 않는다.
+원시 `ALL-COMPLETE` 증거의 held-out assistant CE는 대조군 `2.27695`에서 `1.34827`로
+개선됐지만 의미 `0/7`, 구조 `0/7`, 기억·정정 실패였고 무의미한 문구 반복이 남았다.
+HF 비공개 revision
+`dancinlab/anima-303m-r4-support-admission-2026-08-13@7e750e4e1b0d2e08a501df8857bbbf576d5d9188`의
+manifest 36개를 독립 SHA 검증했다. 로컬·Vast.ai Python QA를 통과했고 프로토콜 인스턴스
+두 개를 모두 종료했으며 모델은 탑재하지 않았다. 대조군 trajectory의 byte-level 불일치를
+규명하기 전까지 303M·IIT-mouth 결합·participant·프로덕션은 계속 차단한다.
+
 다음 303M from-scratch 체크포인트는 그럴듯한 문장 모양이 아니라 한국어·영어의 의미 있는
 대화를 먼저 통과해야 한다. 사전등록된 Python 전용 프로토콜과 무손실 결과 기록은
 `state/anima_303m_r0_conversation_2026_08_12/`에서 관리한다.
