@@ -117,7 +117,10 @@ wheel도 결과 JSON을 byte 단위로 재현했다.
 판정은 `SUPPORTED-COMPOSITIONAL-WORKSPACE-CAUSALITY`지만 학습된 의미가 아니다. 독립 학습한
 영어 mouth가 의미·기억·정정
 관문을 통과하고 동일한 reset/shuffle/lesion/recovery 대조에서 state coupling을 얻기 전까지
-participant는 `BLOCKED-R35-NOT-A-LEARNED-MOUTH`로 유지한다.
+participant 승격 정책은 `BLOCKED-R35-NOT-A-LEARNED-MOUTH`로 유지한다. 배포 후 읽기 전용
+점검에서는 별도로 탑재된 `anima-native-303m` step-45000 참가자와 `anima_alive=true`를
+확인했다. R3.5가 이를 탑재·재시작·인증한 것은 아니며, 공개 history에는 여전히 질문과
+무관한 일반론 답변이 남아 있다. 다른 실행을 보호하기 위해 기존 참가자는 중단하지 않았다.
 
 ## 현재 실험 — 의미 있는 대화 R0
 

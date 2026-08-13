@@ -172,7 +172,16 @@ changed after results were observed.
   (`anima_python-0.20.245`, SHA-256
   `e7df13c0f85287703caffbe71e434549992d70cfe9cf03a35bb14a61b05dd7b6`) reproduced the same bytes.
 - No model training, model/data mutation, HF write, Vast.ai rental, participant mount or live mouth
-  deployment occurred. `ING.jsonl` and `stream_mi.json` remain user-owned and untouched.
+  deployment occurred as part of R3.5. `ING.jsonl` and `stream_mi.json` remain user-owned and
+  untouched.
+- After installing the verified wheel into the local canonical `anima-py`, the installed CLI
+  reproduced result SHA-256 `74f917...f56e`. The unchanged broker LaunchAgent reported
+  `loaded=true healthy=true`; public HTTPS returned `200` and WebSocket returned `hello`.
+- That read-only runtime check found a separately mounted `anima-native-303m` checkpoint-step
+  `45000` participant and therefore `anima_alive=true`. R3.5 did not mount, restart or certify it.
+  Its public history still contains question-irrelevant generic replies, so it is not evidence of
+  the independently meaningful mouth required by the next gate. The pre-existing participant was
+  preserved rather than interrupted.
 
 Verdict: `SUPPORTED-COMPOSITIONAL-WORKSPACE-CAUSALITY`. The missing bounded state/address/content
 seam now exists and passes the registered interventions. It is deliberately not a learned event

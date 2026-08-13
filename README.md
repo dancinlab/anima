@@ -135,7 +135,11 @@ restores core state, addresses, every record and output exactly. Full Python QA 
 This is `SUPPORTED-COMPOSITIONAL-WORKSPACE-CAUSALITY`, not learned semantics. Participant mounting
 remains blocked as `BLOCKED-R35-NOT-A-LEARNED-MOUTH` until an
 independently trained English mouth passes meaning, memory and correction gates and then earns
-state coupling under matched reset/shuffle/lesion/recovery controls.
+state coupling under matched reset/shuffle/lesion/recovery controls. A post-deployment read-only
+check found a separately mounted `anima-native-303m` step-45000 participant and
+`anima_alive=true`; R3.5 did not mount, restart or certify it, and its public history still shows
+question-irrelevant generic replies. The existing participant was preserved rather than
+interrupted.
 
 ## Current experiment — meaningful-conversation R0
 
