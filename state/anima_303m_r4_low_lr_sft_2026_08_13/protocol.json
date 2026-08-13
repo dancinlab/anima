@@ -1,0 +1,16 @@
+{
+  "schema": "anima-303m-r4-low-lr-sft/v1",
+  "date": "2026-08-13",
+  "status": "PREREGISTERED",
+  "parent_result": "../anima_303m_r4_full_ce_curriculum_2026_08_13/result.json",
+  "parent_result_sha256": "23585f4114c9c1f2f1ddd23e70da5f08fc9858fbadb5e2eaaaf205bf48f44e7c",
+  "language_checkpoint_sha256": "dfa561a9ae0f8ded96135ca18f62310e3d998bd352f5ce1cd5534ea108551348",
+  "claim": "Test whether reducing only turn-SFT peak LR to one tenth preserves the passed broad language phase while retaining dialogue conditioning and improving independent conversation.",
+  "source_protocol": "../anima_303m_r4_full_ce_curriculum_2026_08_13/protocol.json",
+  "source_protocol_sha256": "40890af5272dc8384d1e5aba839b14a754800bb3c181b9c465cad3b0fce38c4b",
+  "fixed_turn_change": {"control_peak_lr": 0.001, "treatment_peak_lr": 0.0001, "ratio": 0.1},
+  "unchanged": ["language checkpoint", "ByteGPT architecture", "seed", "100-document view", "32-document heldout view", "turn-only objective", "document alignment", "optimizer family and betas", "1875-step endpoint", "canonical decoder", "conversation panel"],
+  "gates": {"broad_retention": "post-SFT fixed broad validation CE below uniform ln(256)", "training_probe": "first eight teacher top-1 >=0.80, exact/target/structural 8/8 and prompt control >=6/8", "independent_conversation": "unchanged automatic panel; manual review remains required"},
+  "decision": {"retention_failure": "FAIL-LOW-LR-BROAD-RETENTION", "turn_failure": "FAIL-LOW-LR-TURN-SFT", "conversation_failure": "FAIL-LOW-LR-MEANINGFUL-CONVERSATION", "automatic_pass": "AUTOMATIC-PASS-MANUAL-REVIEW-REQUIRED"},
+  "bounded_work": {"maximum_new_training_arms": 1, "vast_ai_allowed": false, "303m_training": "blocked", "iit_mouth_coupling": "blocked", "participant_mount": "blocked", "production": "blocked", "user_files_to_preserve": ["ING.jsonl", "stream_mi.json"]}
+}

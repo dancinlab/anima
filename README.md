@@ -426,6 +426,11 @@ structural/prompt `8/8`. After SFT the same broad CE collapsed to `7.1194`, held
 turn phase, not a failure to form the bounded broad language distribution. The next single axis is
 turn-phase LR only; all larger gates remain blocked.
 
+`state/anima_303m_r4_low_lr_sft_2026_08_13/` preregisters that one arm. It reuses the exact language
+engine and changes only turn peak LR from `1e-3` to `1e-4`; endpoint, fresh optimizer, data,
+objective, alignment, seed, decoder and all independent gates remain fixed. Broad retention uses
+the natural uniform-CE ceiling rather than a result-tuned tolerance.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

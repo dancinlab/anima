@@ -403,6 +403,11 @@ validation은 CE `2.2596`, top-1 `0.3442`였고 turn-SFT는 teacher/exact/target
 고학습률 turn 단계의 catastrophic forgetting을 지지한다. 다음 단일 축은 turn 단계 LR만
 변경하며 모든 상위 관문은 계속 차단한다.
 
+`state/anima_303m_r4_low_lr_sft_2026_08_13/`에 이 단일 arm을 사전등록했다. 정확한 language
+engine을 재사용하고 turn peak LR만 `1e-3`에서 `1e-4`로 바꾸며 endpoint·새 optimizer·자료·
+목적함수·alignment·seed·decoder·독립 관문은 고정한다. broad 보존은 결과 맞춤 허용치가
+아니라 자연적인 uniform-CE 상한으로 판정한다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

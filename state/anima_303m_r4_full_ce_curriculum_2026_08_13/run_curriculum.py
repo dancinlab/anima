@@ -57,13 +57,14 @@ def fixed_byte_ce(checkpoint: Path, raw: bytes, device: str) -> dict:
 
 
 def train_command(output: Path, train: Path, validation: Path, *, steps: int,
-                  device: str, init: Path | None = None, dialogue: bool = False) -> list[str]:
+                  device: str, init: Path | None = None, dialogue: bool = False,
+                  peak_lr: float = 0.001) -> list[str]:
     command = [
         sys.executable, str(ROOT / "cli/train.py"), "--arch", "bytegpt", "--d", "128",
         "--L", "4", "--seq-len", "512", "--steps", str(steps), "--batch-size", "8",
         "--device", device, "--seed", "7", "--corpus", str(train),
         "--validation-corpus", str(validation), "--cell-label", "dialogue" if dialogue else "broad",
-        "--require-cells", "1", "--sample", "proportional", "--lr", "0.001",
+        "--require-cells", "1", "--sample", "proportional", "--lr", str(peak_lr),
         "--adam-beta2", "0.95", "--weight-decay", "0.1", "--lr-schedule", "cosine",
         "--warmup-steps", "50", "--lr-decay-steps", str(steps), "--min-lr-ratio", "0.1",
         "--val-every", "100", "--val-batches", "4", "--log-every", "100",
