@@ -1,0 +1,38 @@
+{
+  "schema": "anima-303m-r4-full-ce-curriculum/v1",
+  "date": "2026-08-13",
+  "status": "PREREGISTERED",
+  "parent_result": "../anima_303m_r4_aligned_100_exposure_2026_08_13/result.json",
+  "parent_result_sha256": "136bb805fb1f7aa37ee95713c4b8c3e77a691fa9ad741fc390d0eb85f4c377a8",
+  "claim": "Test whether a bounded full-CE English language phase before the unchanged aligned turn-SFT phase improves heldout and independent meaningful conversation beyond response-only memorization.",
+  "broad_data": {
+    "repository": "dancinlab/anima-corpus-en-general",
+    "revision": "e1c4ef4f595d72b959d0aa73a5cc5c8ba2a065a0",
+    "file": "anima-corpus-en-general.txt",
+    "file_bytes": 60049637,
+    "file_sha256": "6614094432707127c82d6ee1ffd3a65f27c5aa118498be1623f1394f182f8ef9",
+    "train_range": [0, 1048576],
+    "train_sha256": "05761ea8b029360c41f756a8da7dc95ac0f146af195586cbfc00affd6946cd3f",
+    "validation_range": [1048576, 1179648],
+    "validation_sha256": "2f1567263a771d17db802252cbdd142f7286d530e2cf0c727edd1b7f61c7ce85"
+  },
+  "dialogue_data": {
+    "repository": "dancinlab/anima-303m-v0-v2-turns-2026-08-12",
+    "revision": "17a1e4676d684a99a54208549445952302f389fa",
+    "train_file": "en_dialogue.train.txt",
+    "train_file_sha256": "8513908f9ec4b1803b1b364a84383c0c50f7c61baa69e76de068faad75ad3c55",
+    "validation_file": "en_dialogue.validation.txt",
+    "validation_file_sha256": "5d564119a620f0de86b937ca4c8bbb292af75326ba71a3a2e0ebbc2bafadd500",
+    "view_selector": "first_100_runtime_compatible",
+    "hundred_document_view_sha256": "c13cc5b8668a9d2142e0023e27e3ff87eefbf3df9ff81caac708fc4e3928ffe4",
+    "heldout_32_view_sha256": "6604191d50f59879e79f3088105c740e7a1aa9e30f1bcbd75e590b8bc4899404",
+    "panel": "../anima_303m_r0_english_2026_08_12/conversation_panel.json",
+    "panel_sha256": "cf1a6d6837a69031929168b2b02aaf771406e0d8429bb8912b65f0be2ccbad4a"
+  },
+  "model": {"architecture": "existing ByteGPT only", "vocab": 256, "block": 512, "d": 128, "layers": 4, "heads": 2, "seed": 7, "batch": 8, "deterministic": true, "device": "CPU", "threads": 2},
+  "language_phase": {"objective": "full next-byte CE", "steps": 2000, "peak_lr": 0.001, "warmup_steps": 50, "schedule": "cosine to 0.1 peak ratio", "optimizer": "AdamW beta=(0.9,0.95), weight_decay=0.1", "checkpoint_selection": "fixed final"},
+  "turn_phase": {"init": "fixed final language-phase engine", "objective": "assistant-turn-only including the next canonical user-role delimiter", "steps": 1875, "peak_lr": 0.001, "warmup_steps": 50, "schedule": "cosine to 0.1 peak ratio", "optimizer": "fresh AdamW beta=(0.9,0.95), weight_decay=0.1", "sampler": "proportional complete chat-framed documents", "chat_frame_alignment": "document", "checkpoint_selection": "fixed final"},
+  "gates": {"language_phase": "fixed broad validation CE below uniform ln(256)", "training_probe": "first eight teacher top-1 >=0.80, exact/target/structural 8/8 and prompt control >=6/8", "independent_conversation": "unchanged automatic panel; manual review remains required"},
+  "decision": {"language_failure": "FAIL-BROAD-LANGUAGE-PHASE", "turn_failure": "FAIL-CURRICULUM-TURN-SFT", "conversation_failure": "FAIL-CURRICULUM-MEANINGFUL-CONVERSATION", "automatic_pass": "AUTOMATIC-PASS-MANUAL-REVIEW-REQUIRED"},
+  "bounded_work": {"maximum_new_training_arms": 1, "vast_ai_allowed": false, "303m_training": "blocked", "iit_mouth_coupling": "blocked", "participant_mount": "blocked", "production": "blocked", "user_files_to_preserve": ["ING.jsonl", "stream_mi.json"]}
+}

@@ -412,6 +412,12 @@ forming a general language mouth. The next result-bearing axis is a separately p
 full-CE language phase followed by the unchanged aligned turn-SFT phase. No 303M run, IIT-mouth
 coupling, participant mount, or production promotion is authorized.
 
+`state/anima_303m_r4_full_ce_curriculum_2026_08_13/` preregisters that next one-arm local test. It
+adds a fixed 1 MiB full-CE English-general phase before the unchanged aligned 100-dialogue
+turn-only phase. The immutable HF revisions, byte ranges and hashes, both endpoints, fresh SFT
+optimizer, fixed heldout/panel gates, and stop rules are frozen before execution. The preserved
+response-only result is the control; no result-dependent checkpoint selection is allowed.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

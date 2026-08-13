@@ -389,6 +389,12 @@ response-only 학습은 일반 언어 mouth를 만들지 못하고 암기만 한
 별도 사전등록한 broad full-CE 언어 단계 뒤 기존 aligned turn-SFT 단계를 그대로 잇는 것이다.
 303M 학습·IIT-mouth 결합·participant 탑재·프로덕션 승격은 계속 차단한다.
 
+`state/anima_303m_r4_full_ce_curriculum_2026_08_13/`에 이 다음 로컬 단일 arm을 사전등록했다.
+기존 aligned 100대화 turn-only 단계 앞에 고정 1 MiB 영어 일반문 full-CE 단계를 하나만
+추가한다. 불변 HF revision·byte 범위·hash, 두 endpoint, 새 SFT optimizer, 고정 heldout/panel
+관문과 중단 규칙을 실행 전에 동결했다. 보존된 response-only 결과가 control이며 결과를 본 뒤
+checkpoint를 고르는 것은 금지한다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속
