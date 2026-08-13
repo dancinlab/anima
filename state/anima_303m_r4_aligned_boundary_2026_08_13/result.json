@@ -1,0 +1,1093 @@
+{
+  "schema": "anima-303m-r4-aligned-boundary-result/v1",
+  "protocol_sha256": "130ea85bba15b4cadcc64c0d8101b6ef19611cbf684b9300c834beb69cc73202",
+  "parent_result_sha256": "68c00fe3013a07eaaa7befa4d16a05bbd42c1495fa0c4bd65934bdbb0ec2fb44",
+  "arms": {
+    "A32": {
+      "summary": {
+        "entry": "anima-py train",
+        "arch": "bytegpt",
+        "arm": "ctrl",
+        "objective": "ce_marginal",
+        "seed": 7,
+        "deterministic": true,
+        "optimizer": {
+          "name": "AdamW",
+          "beta1": 0.9,
+          "beta2": 0.95,
+          "weight_decay": 0.1,
+          "lr": 0.001,
+          "schedule": "cosine",
+          "warmup_steps": 50,
+          "decay_steps": 600,
+          "min_lr_ratio": 0.1
+        },
+        "initialization": {
+          "name": "gpt2-canonical",
+          "std": 0.02,
+          "residual_projection_scale": "std/sqrt(2*n_layer)"
+        },
+        "ddp": {
+          "world_size": 1,
+          "global_batch": 8,
+          "per_rank_batch": 8,
+          "gpus": ""
+        },
+        "obj_aux_params": 0,
+        "answer_ce": {
+          "weight": 1.0,
+          "mode": "turn-only",
+          "marker_utf8": "assistant: ",
+          "all_spans": true,
+          "chat_framed_sampling": true,
+          "telemetry": {
+            "complete_trajectory": true,
+            "steps": 600,
+            "active_steps": 600,
+            "positions": 1194432,
+            "position_weighted_ce_sum": 1055158.014859045,
+            "scope": "full_batch",
+            "mean_ce": 0.8833973092307013
+          }
+        },
+        "chat_frame_alignment": "document",
+        "levers": {
+          "tlora": false,
+          "tlora_rank": 8,
+          "tlora_base": true,
+          "dict_aux": false,
+          "jamo_aux": false,
+          "wd_floor": -1.0,
+          "dropout_floor": -1.0
+        },
+        "n_params": 891648,
+        "loss0": 5.54874,
+        "lossF": 3.32771,
+        "wall_s": 51.6,
+        "uniform_ce": 5.54518,
+        "final_val_ce_pooled": 6.38157,
+        "final_val_ce_macro_cells": 6.38157,
+        "validation_aggregation": "equal-cell macro average",
+        "sampling": {
+          "policy": "proportional",
+          "weight_basis": "train_bytes",
+          "complete_trajectory": true,
+          "per_cell": {
+            "dialogue": {
+              "train_bytes": 6125,
+              "sampled_windows": 4800,
+              "sampled_framed_windows": 4800,
+              "eligible_chat_documents": 32,
+              "oversize_chat_documents": 0,
+              "chat_frame_alignment": "document",
+              "sampled_fraction": 1.0
+            }
+          }
+        },
+        "registers_descent": "0/1",
+        "heldout_descent": {
+          "dialogue": {
+            "val_ce": 6.38157,
+            "descent": false
+          }
+        },
+        "last_aux": {
+          "ans_ce": 0.005678457673639059,
+          "ans_n": 1989
+        },
+        "dbes_final": null,
+        "dbes_log": [],
+        "dbes_batch_scope": "full_batch(B=8)",
+        "gauges_g1g6_torch_probe": null,
+        "sleep_schedule": null,
+        "phi_envelope_monitor": null,
+        "tier": "engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
+      },
+      "engine_sha256": "32f039bde5346e482ba74c300a0957a62e4968d02d31a3fae2863d983ef2f354",
+      "score": {
+        "teacher": {
+          "documents": 8,
+          "bytes": 786,
+          "ce": 0.005766222148152958,
+          "top1_accuracy": 1.0,
+          "mean_gold_probability": 0.9943779003984146,
+          "mean_gold_rank": 1.0
+        },
+        "counts": {
+          "nonempty": 8,
+          "distinct": 8,
+          "target_recovered": 8,
+          "structural": 8,
+          "exact": 8
+        },
+        "rows": [
+          {
+            "teacher": {
+              "bytes": 163,
+              "ce": 0.004827977026711077,
+              "top1_accuracy": 1.0,
+              "mean_gold_probability": 0.9953143965978564,
+              "mean_gold_rank": 1.0,
+              "first_error_position": null,
+              "first_error_margin": null
+            },
+            "free": {
+              "prompt": "What's your favorite color?",
+              "target": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!",
+              "decoded": {
+                "text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!",
+                "stop_marker": "\nuser:",
+                "stopped": true,
+                "raw_text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!\n\nuser: ghorstraryoalspr: gio"
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": null,
+              "structural": true,
+              "longest_byte_run": 2,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 48,
+              "ce": 0.010943832327405846,
+              "top1_accuracy": 1.0,
+              "mean_gold_probability": 0.9895455638567606,
+              "mean_gold_rank": 1.0,
+              "first_error_position": null,
+              "first_error_margin": null
+            },
+            "free": {
+              "prompt": "Who is the president of the United States?",
+              "target": "The president of the United States is Joe Biden.",
+              "decoded": {
+                "text": "The president of the United States is Joe Biden.",
+                "stop_marker": "\nuser:",
+                "stopped": true,
+                "raw_text": "The president of the United States is Joe Biden.\n\nuser: ier: hesuser: ythe Bos beert mestoesters.\nus\" be.\nuster Ninding ongites.\nuser: ker: orstheser: ag ong. tetther: Ther: sther: shondenoth."
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": null,
+              "structural": true,
+              "longest_byte_run": 1,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 44,
+              "ce": 0.0058976684367217916,
+              "top1_accuracy": 1.0,
+              "mean_gold_probability": 0.9941823049025102,
+              "mean_gold_rank": 1.0,
+              "first_error_position": null,
+              "first_error_margin": null
+            },
+            "free": {
+              "prompt": "I am getting the following error after I install a local .deb file on linux, and I don't know what's causing it. Do you know what the causes and solutions for this error might be? The error is:\n\"N: Download is performed unsandboxed as root as file '/root/assets/Dungeondraft-1.0.4.7-Linux64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)\"",
+              "target": "Did you try running the command with `sudo`?",
+              "decoded": {
+                "text": "Did you try running the command with `sudo`?",
+                "stop_marker": "\nuser:",
+                "stopped": true,
+                "raw_text": "Did you try running the command with `sudo`?\n\nuser: t t t tyousts yoroundder: me youw ans tou ase leded ery, yourule then putrr: putrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrputrrrrplen llllllllllllllllll"
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": null,
+              "structural": true,
+              "longest_byte_run": 2,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 66,
+              "ce": 0.0056419979587771655,
+              "top1_accuracy": 1.0,
+              "mean_gold_probability": 0.9944569938110582,
+              "mean_gold_rank": 1.0,
+              "first_error_position": null,
+              "first_error_margin": null
+            },
+            "free": {
+              "prompt": "Are you able to generate code? If so, in which languages are you able to do so?",
+              "target": "Yes! I am able to generate code in a lot of programming languages.",
+              "decoded": {
+                "text": "Yes! I am able to generate code in a lot of programming languages.",
+                "stop_marker": "\nuser:",
+                "stopped": true,
+                "raw_text": "Yes! I am able to generate code in a lot of programming languages.\n\nuser: anger: nothing I amoumakerottesathavecat, \"*you're welcome  re gere. alease nothit.\n\nuser: an Therererererererer: lind"
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": null,
+              "structural": true,
+              "longest_byte_run": 2,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 42,
+              "ce": 0.013875154715095048,
+              "top1_accuracy": 1.0,
+              "mean_gold_probability": 0.9865882992744446,
+              "mean_gold_rank": 1.0,
+              "first_error_position": null,
+              "first_error_margin": null
+            },
+            "free": {
+              "prompt": "Thanks!",
+              "target": "What can I say except, \"*you're welcome!*\"",
+              "decoded": {
+                "text": "What can I say except, \"*you're welcome!*\"",
+                "stop_marker": "\nuser:",
+                "stopped": true,
+                "raw_text": "What can I say except, \"*you're welcome!*\"\n\nuser: tryer: aldershalikeyointhe Ahe  ainook addanthe ikn pothe, anig be an the d art ontsthay are fos are, t ang lomaca hure can I e anthe y acaco "
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": null,
+              "structural": true,
+              "longest_byte_run": 1,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 166,
+              "ce": 0.005700101752805825,
+              "top1_accuracy": 1.0,
+              "mean_gold_probability": 0.9944496377404913,
+              "mean_gold_rank": 1.0,
+              "first_error_position": null,
+              "first_error_margin": null
+            },
+            "free": {
+              "prompt": "Can you simplify your explanation more, I seem to get lost in the text",
+              "target": "The key points are:\n- Ask like a human.\n- Include the exact constraints, nothing less and nothing more.\n- If the response is not good, try to vary the question a bit.",
+              "decoded": {
+                "text": "The key points are:\n- Ask like a human.\n- Include the exact constraints, nothing less and nothing more.\n- If the response is not good, try to vary the question a bit.",
+                "stop_marker": "\nuser:",
+                "stopped": true,
+                "raw_text": "The key points are:\n- Ask like a human.\n- Include the exact constraints, nothing less and nothing more.\n- If the response is not good, try to vary the question a bit.\n\nuser: t goon: busenotre "
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": null,
+              "structural": true,
+              "longest_byte_run": 2,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 165,
+              "ce": 0.004187352765612853,
+              "top1_accuracy": 1.0,
+              "mean_gold_probability": 0.9958748987226775,
+              "mean_gold_rank": 1.0,
+              "first_error_position": null,
+              "first_error_margin": null
+            },
+            "free": {
+              "prompt": "Great! Can you add another verse about cows dancing under moonlight?",
+              "target": "As the strange sun went down and the night fell\nthe moon came up all bright and well\na group of cows came by dancing and having fun\nbut they also exploded one by one",
+              "decoded": {
+                "text": "As the strange sun went down and the night fell\nthe moon came up all bright and well\na group of cows came by dancing and having fun\nbut they also exploded one by one",
+                "stop_marker": "\nuser:",
+                "stopped": true,
+                "raw_text": "As the strange sun went down and the night fell\nthe moon came up all bright and well\na group of cows came by dancing and having fun\nbut they also exploded one by one\n\nuser: very goongrthe y th"
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": null,
+              "structural": true,
+              "longest_byte_run": 2,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 92,
+              "ce": 0.004002505756064222,
+              "top1_accuracy": 1.0,
+              "mean_gold_probability": 0.996018546430961,
+              "mean_gold_rank": 1.0,
+              "first_error_position": null,
+              "first_error_margin": null
+            },
+            "free": {
+              "prompt": "For azure keyvault, using the az cli, how do I list the 10 last created secrets?",
+              "target": "you can use the ``az keyvault secret list`` command to list secrets in a specified key vault",
+              "decoded": {
+                "text": "you can use the ``az keyvault secret list`` command to list secrets in a specified key vault",
+                "stop_marker": "\nuser:",
+                "stopped": true,
+                "raw_text": "you can use the ``az keyvault secret list`` command to list secrets in a specified key vault\n\nuser: y secand sed keed tr, st so I o I'm glad to know the  I can help you. I can also come up wit"
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": null,
+              "structural": true,
+              "longest_byte_run": 2,
+              "longest_word_run": 1
+            }
+          }
+        ],
+        "prompt_causality": {
+          "rows": [
+            {
+              "prompt": "What's your favorite color?",
+              "shuffled_prompt": "Who is the president of the United States?",
+              "conditions": {
+                "normal": {
+                  "ce": 0.004827977026711077,
+                  "top1_accuracy": 1.0,
+                  "text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!"
+                },
+                "blank": {
+                  "ce": 6.076191174541447,
+                  "top1_accuracy": 0.19631901840490798,
+                  "text": "I cous by caclit ca c. wolat, cesere world"
+                },
+                "shuffled": {
+                  "ce": 6.2457574750827165,
+                  "top1_accuracy": 0.1656441717791411,
+                  "text": "The president of the United States is Joe Biden."
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "Who is the president of the United States?",
+              "shuffled_prompt": "I am getting the following error after I install a local .deb file on linux, and I don't know what's causing it. Do you know what the causes and solutions for this error might be? The error is:\n\"N: Download is performed unsandboxed as root as file '/root/assets/Dungeondraft-1.0.4.7-Linux64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)\"",
+              "conditions": {
+                "normal": {
+                  "ce": 0.010943832327405846,
+                  "top1_accuracy": 1.0,
+                  "text": "The president of the United States is Joe Biden."
+                },
+                "blank": {
+                  "ce": 6.079891063081341,
+                  "top1_accuracy": 0.16666666666666666,
+                  "text": "I cous by caclit ca c. wolat, cesere world"
+                },
+                "shuffled": {
+                  "ce": 6.1734237180085865,
+                  "top1_accuracy": 0.1875,
+                  "text": "Did you try running the command with `sudo`?"
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "I am getting the following error after I install a local .deb file on linux, and I don't know what's causing it. Do you know what the causes and solutions for this error might be? The error is:\n\"N: Download is performed unsandboxed as root as file '/root/assets/Dungeondraft-1.0.4.7-Linux64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)\"",
+              "shuffled_prompt": "Are you able to generate code? If so, in which languages are you able to do so?",
+              "conditions": {
+                "normal": {
+                  "ce": 0.0058976684367217916,
+                  "top1_accuracy": 1.0,
+                  "text": "Did you try running the command with `sudo`?"
+                },
+                "blank": {
+                  "ce": 5.76525403175086,
+                  "top1_accuracy": 0.22727272727272727,
+                  "text": "I cous by caclit ca c. wolat, cesere world"
+                },
+                "shuffled": {
+                  "ce": 6.180989925251868,
+                  "top1_accuracy": 0.20454545454545456,
+                  "text": "Yes! I am able to generate code in a lot of programming languages."
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "Are you able to generate code? If so, in which languages are you able to do so?",
+              "shuffled_prompt": "Thanks!",
+              "conditions": {
+                "normal": {
+                  "ce": 0.0056419979587771655,
+                  "top1_accuracy": 1.0,
+                  "text": "Yes! I am able to generate code in a lot of programming languages."
+                },
+                "blank": {
+                  "ce": 6.3446726009121495,
+                  "top1_accuracy": 0.09090909090909091,
+                  "text": "I cous by caclit ca c. wolat, cesere world"
+                },
+                "shuffled": {
+                  "ce": 6.0712493355399895,
+                  "top1_accuracy": 0.15151515151515152,
+                  "text": "What can I say except, \"*you're welcome!*\""
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "Thanks!",
+              "shuffled_prompt": "Can you simplify your explanation more, I seem to get lost in the text",
+              "conditions": {
+                "normal": {
+                  "ce": 0.013875154715095048,
+                  "top1_accuracy": 1.0,
+                  "text": "What can I say except, \"*you're welcome!*\""
+                },
+                "blank": {
+                  "ce": 5.756249569260445,
+                  "top1_accuracy": 0.19047619047619047,
+                  "text": "I cous by caclit ca c. wolat, cesere world"
+                },
+                "shuffled": {
+                  "ce": 6.417918384239514,
+                  "top1_accuracy": 0.16666666666666666,
+                  "text": "The key points are:\n- Ask like a human.\n- Include the exact constraints, nothing less and nothing more.\n- If the response is not good, try to vary the question a bit."
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "Can you simplify your explanation more, I seem to get lost in the text",
+              "shuffled_prompt": "Great! Can you add another verse about cows dancing under moonlight?",
+              "conditions": {
+                "normal": {
+                  "ce": 0.005700101752805825,
+                  "top1_accuracy": 1.0,
+                  "text": "The key points are:\n- Ask like a human.\n- Include the exact constraints, nothing less and nothing more.\n- If the response is not good, try to vary the question a bit."
+                },
+                "blank": {
+                  "ce": 5.729003332795929,
+                  "top1_accuracy": 0.22289156626506024,
+                  "text": "I cous by caclit ca c. wolat, cesere world"
+                },
+                "shuffled": {
+                  "ce": 5.781505917830555,
+                  "top1_accuracy": 0.25301204819277107,
+                  "text": "As the strange sun went down and the night fell\nthe moon came up all bright and well\na group of cows came by dancing and having fun\nbut they also exploded one by one"
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "Great! Can you add another verse about cows dancing under moonlight?",
+              "shuffled_prompt": "For azure keyvault, using the az cli, how do I list the 10 last created secrets?",
+              "conditions": {
+                "normal": {
+                  "ce": 0.004187352765612853,
+                  "top1_accuracy": 1.0,
+                  "text": "As the strange sun went down and the night fell\nthe moon came up all bright and well\na group of cows came by dancing and having fun\nbut they also exploded one by one"
+                },
+                "blank": {
+                  "ce": 6.6013273060651265,
+                  "top1_accuracy": 0.1393939393939394,
+                  "text": "I cous by caclit ca c. wolat, cesere world"
+                },
+                "shuffled": {
+                  "ce": 5.951403001777753,
+                  "top1_accuracy": 0.21212121212121213,
+                  "text": "you can use the ``az keyvault secret list`` command to list secrets in a specified key vault"
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "For azure keyvault, using the az cli, how do I list the 10 last created secrets?",
+              "shuffled_prompt": "What's your favorite color?",
+              "conditions": {
+                "normal": {
+                  "ce": 0.004002505756064222,
+                  "top1_accuracy": 1.0,
+                  "text": "you can use the ``az keyvault secret list`` command to list secrets in a specified key vault"
+                },
+                "blank": {
+                  "ce": 5.402131555125449,
+                  "top1_accuracy": 0.18478260869565216,
+                  "text": "I cous by caclit ca c. wolat, cesere world"
+                },
+                "shuffled": {
+                  "ce": 5.3189601066676575,
+                  "top1_accuracy": 0.21739130434782608,
+                  "text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!"
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            }
+          ],
+          "counts": {
+            "ce_controlled": 8,
+            "output_controlled": 8
+          },
+          "gate": true,
+          "gate_all": true,
+          "gate_four": null
+        },
+        "gate_reachability": {
+          "canonical_max_new_bytes": 192,
+          "target_bytes": [
+            163,
+            48,
+            44,
+            66,
+            42,
+            166,
+            165,
+            92
+          ],
+          "exact_completion_reachable": true
+        },
+        "memorization_gate": true,
+        "gate": true
+      }
+    },
+    "A64": {
+      "summary": {
+        "entry": "anima-py train",
+        "arch": "bytegpt",
+        "arm": "ctrl",
+        "objective": "ce_marginal",
+        "seed": 7,
+        "deterministic": true,
+        "optimizer": {
+          "name": "AdamW",
+          "beta1": 0.9,
+          "beta2": 0.95,
+          "weight_decay": 0.1,
+          "lr": 0.001,
+          "schedule": "cosine",
+          "warmup_steps": 50,
+          "decay_steps": 600,
+          "min_lr_ratio": 0.1
+        },
+        "initialization": {
+          "name": "gpt2-canonical",
+          "std": 0.02,
+          "residual_projection_scale": "std/sqrt(2*n_layer)"
+        },
+        "ddp": {
+          "world_size": 1,
+          "global_batch": 8,
+          "per_rank_batch": 8,
+          "gpus": ""
+        },
+        "obj_aux_params": 0,
+        "answer_ce": {
+          "weight": 1.0,
+          "mode": "turn-only",
+          "marker_utf8": "assistant: ",
+          "all_spans": true,
+          "chat_framed_sampling": true,
+          "telemetry": {
+            "complete_trajectory": true,
+            "steps": 600,
+            "active_steps": 600,
+            "positions": 1154419,
+            "position_weighted_ce_sum": 1684074.902034372,
+            "scope": "full_batch",
+            "mean_ce": 1.4588073325494229
+          }
+        },
+        "chat_frame_alignment": "document",
+        "levers": {
+          "tlora": false,
+          "tlora_rank": 8,
+          "tlora_base": true,
+          "dict_aux": false,
+          "jamo_aux": false,
+          "wd_floor": -1.0,
+          "dropout_floor": -1.0
+        },
+        "n_params": 891648,
+        "loss0": 5.55638,
+        "lossF": 3.10668,
+        "wall_s": 50.6,
+        "uniform_ce": 5.54518,
+        "final_val_ce_pooled": 5.1037,
+        "final_val_ce_macro_cells": 5.1037,
+        "validation_aggregation": "equal-cell macro average",
+        "sampling": {
+          "policy": "proportional",
+          "weight_basis": "train_bytes",
+          "complete_trajectory": true,
+          "per_cell": {
+            "dialogue": {
+              "train_bytes": 12243,
+              "sampled_windows": 4800,
+              "sampled_framed_windows": 4800,
+              "eligible_chat_documents": 64,
+              "oversize_chat_documents": 0,
+              "chat_frame_alignment": "document",
+              "sampled_fraction": 1.0
+            }
+          }
+        },
+        "registers_descent": "1/1",
+        "heldout_descent": {
+          "dialogue": {
+            "val_ce": 5.1037,
+            "descent": true
+          }
+        },
+        "last_aux": {
+          "ans_ce": 0.19968129694461823,
+          "ans_n": 1819
+        },
+        "dbes_final": null,
+        "dbes_log": [],
+        "dbes_batch_scope": "full_batch(B=8)",
+        "gauges_g1g6_torch_probe": null,
+        "sleep_schedule": null,
+        "phi_envelope_monitor": null,
+        "tier": "engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
+      },
+      "engine_sha256": "1871095aadecf22656336ae8d7de089f51ee8debacd98466468c8adfb185ce17",
+      "score": {
+        "teacher": {
+          "documents": 8,
+          "bytes": 786,
+          "ce": 0.2123740988728475,
+          "top1_accuracy": 0.9669211195928753,
+          "mean_gold_probability": 0.8748944682649274,
+          "mean_gold_rank": 1.0966921119592876
+        },
+        "counts": {
+          "nonempty": 8,
+          "distinct": 8,
+          "target_recovered": 6,
+          "structural": 5,
+          "exact": 0
+        },
+        "rows": [
+          {
+            "teacher": {
+              "bytes": 163,
+              "ce": 0.10818413319714495,
+              "top1_accuracy": 0.9938650306748467,
+              "mean_gold_probability": 0.9232157373835156,
+              "mean_gold_rank": 1.0368098159509203,
+              "first_error_position": 153,
+              "first_error_margin": 0.1162714958190918
+            },
+            "free": {
+              "prompt": "What's your favorite color?",
+              "target": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!",
+              "decoded": {
+                "text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various by?\n\n\nusser: Ther: Touserter: The To po",
+                "stop_marker": "",
+                "stopped": false,
+                "raw_text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various by?\n\n\nusser: Ther: Touserter: The To po"
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": 153,
+              "structural": false,
+              "longest_byte_run": 3,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 48,
+              "ce": 0.23258981554692662,
+              "top1_accuracy": 0.9583333333333334,
+              "mean_gold_probability": 0.8799688424915075,
+              "mean_gold_rank": 1.0625,
+              "first_error_position": 21,
+              "first_error_margin": 0.7314581871032715
+            },
+            "free": {
+              "prompt": "Who is the president of the United States?",
+              "target": "The president of the United States is Joe Biden.",
+              "decoded": {
+                "text": "The president of the Suting States is Thes aten plesites k wes ped p tidate: ita on the tallde of playotatanites.",
+                "stop_marker": "\nuser:",
+                "stopped": true,
+                "raw_text": "The president of the Suting States is Thes aten plesites k wes ped p tidate: ita on the tallde of playotatanites.\n\n\nuser: Ther: orer: I housesteme, ourecedkidalellowtesonglyofrertider Thite de"
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": 21,
+              "structural": true,
+              "longest_byte_run": 2,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 44,
+              "ce": 0.25657367153014604,
+              "top1_accuracy": 0.9772727272727273,
+              "mean_gold_probability": 0.8556677123785696,
+              "mean_gold_rank": 1.2272727272727273,
+              "first_error_position": 43,
+              "first_error_margin": 1.0189619064331055
+            },
+            "free": {
+              "prompt": "I am getting the following error after I install a local .deb file on linux, and I don't know what's causing it. Do you know what the causes and solutions for this error might be? The error is:\n\"N: Download is performed unsandboxed as root as file '/root/assets/Dungeondraft-1.0.4.7-Linux64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)\"",
+              "target": "Did you try running the command with `sudo`?",
+              "decoded": {
+                "text": "Did you try running the command with `sudo`'strad h g commm?\n\n\n\n\n\n\nu ther: g thig I'modinger: user: hing adr: yod couser: tt.",
+                "stop_marker": "\nuser:",
+                "stopped": true,
+                "raw_text": "Did you try running the command with `sudo`'strad h g commm?\n\n\n\n\n\n\nu ther: g thig I'modinger: user: hing adr: yod couser: tt.\n\n\nuser: g t.\nuser: g.\nuler: user: Aserer: brer: pplser: ther: the "
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": 43,
+              "structural": true,
+              "longest_byte_run": 7,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 66,
+              "ce": 0.2008626603549348,
+              "top1_accuracy": 0.9696969696969697,
+              "mean_gold_probability": 0.8797770512826515,
+              "mean_gold_rank": 1.1666666666666667,
+              "first_error_position": 0,
+              "first_error_margin": 0.5020551681518555
+            },
+            "free": {
+              "prompt": "Are you able to generate code? If so, in which languages are you able to do so?",
+              "target": "Yes! I am able to generate code in a lot of programming languages.",
+              "decoded": {
+                "text": "I she ang ablerelapmere hm b anoreant lere that b",
+                "stop_marker": "\nuser:",
+                "stopped": true,
+                "raw_text": "I she ang ablerelapmere hm b anoreant lere that b\n\nuser: These mer: There at t ang wow stoulthumoulithowerer, be, sthnt sple welctcore te ther: an st be ang worldelp typon: manit tre pllle?\n\nu"
+              },
+              "target_prefix_recovered": false,
+              "first_divergence_position": 0,
+              "structural": true,
+              "longest_byte_run": 1,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 42,
+              "ce": 0.5019355330366527,
+              "top1_accuracy": 0.8809523809523809,
+              "mean_gold_probability": 0.7906566607832376,
+              "mean_gold_rank": 1.380952380952381,
+              "first_error_position": 12,
+              "first_error_margin": 1.1895866394042969
+            },
+            "free": {
+              "prompt": "Thanks!",
+              "target": "What can I say except, \"*you're welcome!*\"",
+              "decoded": {
+                "text": "What can I scoworou, de hedle theestome, teyotoforereme griI couekn corit elac.",
+                "stop_marker": "\nuser:",
+                "stopped": true,
+                "raw_text": "What can I scoworou, de hedle theestome, teyotoforereme griI couekn corit elac.\n\nuser: I wous.\n\nuser: I : Ing Ifer: ter: goup. IfoupliodseItopled Iistoupt knou?\n\nuder: wow. couseryor:\nur: I ng"
+              },
+              "target_prefix_recovered": false,
+              "first_divergence_position": 12,
+              "structural": true,
+              "longest_byte_run": 2,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 166,
+              "ce": 0.17590306824290977,
+              "top1_accuracy": 0.963855421686747,
+              "mean_gold_probability": 0.8864213209711465,
+              "mean_gold_rank": 1.0421686746987953,
+              "first_error_position": 19,
+              "first_error_margin": 3.5200414657592773
+            },
+            "free": {
+              "prompt": "Can you simplify your explanation more, I seem to get lost in the text",
+              "target": "The key points are:\n- Ask like a human.\n- Include the exact constraints, nothing less and nothing more.\n- If the response is not good, try to vary the question a bit.",
+              "decoded": {
+                "text": "The key points are: pan The I'm thuted t theacalit d plothit, toll d bu dime be llinthond don. litithe bu thithowhithpe onot cte cly bis actons acl a ct ve plinf dicthons ctic culd lican.\n\n\nre",
+                "stop_marker": "",
+                "stopped": false,
+                "raw_text": "The key points are: pan The I'm thuted t theacalit d plothit, toll d bu dime be llinthond don. litithe bu thithowhithpe onot cte cly bis actons acl a ct ve plinf dicthons ctic culd lican.\n\n\nre"
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": 19,
+              "structural": false,
+              "longest_byte_run": 3,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 165,
+              "ce": 0.2943216325483586,
+              "top1_accuracy": 0.9575757575757575,
+              "mean_gold_probability": 0.8249972857369082,
+              "mean_gold_rank": 1.1151515151515152,
+              "first_error_position": 45,
+              "first_error_margin": 0.14147138595581055
+            },
+            "free": {
+              "prompt": "Great! Can you add another verse about cows dancing under moonlight?",
+              "target": "As the strange sun went down and the night fell\nthe moon came up all bright and well\na group of cows came by dancing and having fun\nbut they also exploded one by one",
+              "decoded": {
+                "text": "As the strange sun went down and the night fed t lignd ind me up all bright and well\n\nad Ifouselouserousereredand owlud sererexalt cly grode\ntheroererery Thpor: Ith m yould ve inge wing ome se",
+                "stop_marker": "",
+                "stopped": false,
+                "raw_text": "As the strange sun went down and the night fed t lignd ind me up all bright and well\n\nad Ifouselouserousereredand owlud sererexalt cly grode\ntheroererery Thpor: Ith m yould ve inge wing ome se"
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": 45,
+              "structural": false,
+              "longest_byte_run": 2,
+              "longest_word_run": 1
+            }
+          },
+          {
+            "teacher": {
+              "bytes": 92,
+              "ce": 0.16018770260410103,
+              "top1_accuracy": 0.9782608695652174,
+              "mean_gold_probability": 0.8994744186208624,
+              "mean_gold_rank": 1.0434782608695652,
+              "first_error_position": 19,
+              "first_error_margin": 0.5255587100982666
+            },
+            "free": {
+              "prompt": "For azure keyvault, using the az cli, how do I list the 10 last created secrets?",
+              "target": "you can use the ``az keyvault secret list`` command to list secrets in a specified key vault",
+              "decoded": {
+                "text": "you can use the ``an keyvault secret list`` command to list secrets in a stoobueyociey vault",
+                "stop_marker": "\nuser:",
+                "stopped": true,
+                "raw_text": "you can use the ``an keyvault secret list`` command to list secrets in a stoobueyociey vault\n\nuser: Toesserr: cist ecarifey selat sth key eriio know becimaecan ciecin bu I lespo so cag causorr"
+              },
+              "target_prefix_recovered": true,
+              "first_divergence_position": 19,
+              "structural": true,
+              "longest_byte_run": 2,
+              "longest_word_run": 1
+            }
+          }
+        ],
+        "prompt_causality": {
+          "rows": [
+            {
+              "prompt": "What's your favorite color?",
+              "shuffled_prompt": "Who is the president of the United States?",
+              "conditions": {
+                "normal": {
+                  "ce": 0.10818413319714495,
+                  "top1_accuracy": 0.9938650306748467,
+                  "text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various by?\n\n\nusser: Ther: Touserter: The To po"
+                },
+                "blank": {
+                  "ce": 4.783118417540538,
+                  "top1_accuracy": 0.17791411042944785,
+                  "text": "I helact byllaheras. I I ept aoup!"
+                },
+                "shuffled": {
+                  "ce": 4.97665102819273,
+                  "top1_accuracy": 0.1656441717791411,
+                  "text": "The president of the Suting States is Thes aten plesites k wes ped p tidate: ita on the tallde of playotatanites."
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "Who is the president of the United States?",
+              "shuffled_prompt": "I am getting the following error after I install a local .deb file on linux, and I don't know what's causing it. Do you know what the causes and solutions for this error might be? The error is:\n\"N: Download is performed unsandboxed as root as file '/root/assets/Dungeondraft-1.0.4.7-Linux64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)\"",
+              "conditions": {
+                "normal": {
+                  "ce": 0.23258981554692662,
+                  "top1_accuracy": 0.9583333333333334,
+                  "text": "The president of the Suting States is Thes aten plesites k wes ped p tidate: ita on the tallde of playotatanites."
+                },
+                "blank": {
+                  "ce": 4.330827261792982,
+                  "top1_accuracy": 0.1875,
+                  "text": "I helact byllaheras. I I ept aoup!"
+                },
+                "shuffled": {
+                  "ce": 5.05172687561265,
+                  "top1_accuracy": 0.16666666666666666,
+                  "text": "Did you try running the command with `sudo`'strad h g commm?\n\n\n\n\n\n\nu ther: g thig I'modinger: user: hing adr: yod couser: tt."
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "I am getting the following error after I install a local .deb file on linux, and I don't know what's causing it. Do you know what the causes and solutions for this error might be? The error is:\n\"N: Download is performed unsandboxed as root as file '/root/assets/Dungeondraft-1.0.4.7-Linux64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)\"",
+              "shuffled_prompt": "Are you able to generate code? If so, in which languages are you able to do so?",
+              "conditions": {
+                "normal": {
+                  "ce": 0.25657367153014604,
+                  "top1_accuracy": 0.9772727272727273,
+                  "text": "Did you try running the command with `sudo`'strad h g commm?\n\n\n\n\n\n\nu ther: g thig I'modinger: user: hing adr: yod couser: tt."
+                },
+                "blank": {
+                  "ce": 4.986674838432082,
+                  "top1_accuracy": 0.11363636363636363,
+                  "text": "I helact byllaheras. I I ept aoup!"
+                },
+                "shuffled": {
+                  "ce": 5.359495836091728,
+                  "top1_accuracy": 0.1590909090909091,
+                  "text": "I she ang ablerelapmere hm b anoreant lere that b"
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "Are you able to generate code? If so, in which languages are you able to do so?",
+              "shuffled_prompt": "Thanks!",
+              "conditions": {
+                "normal": {
+                  "ce": 0.2008626603549348,
+                  "top1_accuracy": 0.9696969696969697,
+                  "text": "I she ang ablerelapmere hm b anoreant lere that b"
+                },
+                "blank": {
+                  "ce": 5.4062854662842685,
+                  "top1_accuracy": 0.07575757575757576,
+                  "text": "I helact byllaheras. I I ept aoup!"
+                },
+                "shuffled": {
+                  "ce": 5.446899673066534,
+                  "top1_accuracy": 0.13636363636363635,
+                  "text": "What can I scoworou, de hedle theestome, teyotoforereme griI couekn corit elac."
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "Thanks!",
+              "shuffled_prompt": "Can you simplify your explanation more, I seem to get lost in the text",
+              "conditions": {
+                "normal": {
+                  "ce": 0.5019355330366527,
+                  "top1_accuracy": 0.8809523809523809,
+                  "text": "What can I scoworou, de hedle theestome, teyotoforereme griI couekn corit elac."
+                },
+                "blank": {
+                  "ce": 4.277119682326262,
+                  "top1_accuracy": 0.21428571428571427,
+                  "text": "I helact byllaheras. I I ept aoup!"
+                },
+                "shuffled": {
+                  "ce": 4.602409402905766,
+                  "top1_accuracy": 0.23809523809523808,
+                  "text": "The key points are: pan The I'm thuted t theacalit d plothit, toll d bu dime be llinthond don. litithe bu thithowhithpe onot cte cly bis actons acl a ct ve plinf dicthons ctic culd lican.\n\n\nre"
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "Can you simplify your explanation more, I seem to get lost in the text",
+              "shuffled_prompt": "Great! Can you add another verse about cows dancing under moonlight?",
+              "conditions": {
+                "normal": {
+                  "ce": 0.17590306824290977,
+                  "top1_accuracy": 0.963855421686747,
+                  "text": "The key points are: pan The I'm thuted t theacalit d plothit, toll d bu dime be llinthond don. litithe bu thithowhithpe onot cte cly bis actons acl a ct ve plinf dicthons ctic culd lican.\n\n\nre"
+                },
+                "blank": {
+                  "ce": 4.72133021526759,
+                  "top1_accuracy": 0.22289156626506024,
+                  "text": "I helact byllaheras. I I ept aoup!"
+                },
+                "shuffled": {
+                  "ce": 4.9246202324478405,
+                  "top1_accuracy": 0.18072289156626506,
+                  "text": "As the strange sun went down and the night fed t lignd ind me up all bright and well\n\nad Ifouselouserousereredand owlud sererexalt cly grode\ntheroererery Thpor: Ith m yould ve inge wing ome se"
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "Great! Can you add another verse about cows dancing under moonlight?",
+              "shuffled_prompt": "For azure keyvault, using the az cli, how do I list the 10 last created secrets?",
+              "conditions": {
+                "normal": {
+                  "ce": 0.2943216325483586,
+                  "top1_accuracy": 0.9575757575757575,
+                  "text": "As the strange sun went down and the night fed t lignd ind me up all bright and well\n\nad Ifouselouserousereredand owlud sererexalt cly grode\ntheroererery Thpor: Ith m yould ve inge wing ome se"
+                },
+                "blank": {
+                  "ce": 5.579593449735932,
+                  "top1_accuracy": 0.11515151515151516,
+                  "text": "I helact byllaheras. I I ept aoup!"
+                },
+                "shuffled": {
+                  "ce": 5.294582914462481,
+                  "top1_accuracy": 0.17575757575757575,
+                  "text": "you can use the ``an keyvault secret list`` command to list secrets in a stoobueyociey vault"
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            },
+            {
+              "prompt": "For azure keyvault, using the az cli, how do I list the 10 last created secrets?",
+              "shuffled_prompt": "What's your favorite color?",
+              "conditions": {
+                "normal": {
+                  "ce": 0.16018770260410103,
+                  "top1_accuracy": 0.9782608695652174,
+                  "text": "you can use the ``an keyvault secret list`` command to list secrets in a stoobueyociey vault"
+                },
+                "blank": {
+                  "ce": 4.069242026311985,
+                  "top1_accuracy": 0.2391304347826087,
+                  "text": "I helact byllaheras. I I ept aoup!"
+                },
+                "shuffled": {
+                  "ce": 4.6508304930994635,
+                  "top1_accuracy": 0.15217391304347827,
+                  "text": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various by?\n\n\nusser: Ther: Touserter: The To po"
+                }
+              },
+              "ce_controlled": true,
+              "output_controlled": true
+            }
+          ],
+          "counts": {
+            "ce_controlled": 8,
+            "output_controlled": 8
+          },
+          "gate": true,
+          "gate_all": true,
+          "gate_four": null
+        },
+        "gate_reachability": {
+          "canonical_max_new_bytes": 192,
+          "target_bytes": [
+            163,
+            48,
+            44,
+            66,
+            42,
+            166,
+            165,
+            92
+          ],
+          "exact_completion_reachable": true
+        },
+        "memorization_gate": false,
+        "gate": false
+      }
+    }
+  },
+  "gates": {
+    "A32": true,
+    "A64": false
+  },
+  "verdict": "BOUNDARY-BETWEEN-32-AND-64",
+  "next_allowed_step": "No larger model or production authorization follows."
+}

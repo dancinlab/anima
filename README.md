@@ -394,6 +394,10 @@ Both 16-document arms passed, so the longer exposure was unnecessary at that sca
 fixed-budget boundary is between 16 and 100; `state/anima_303m_r4_aligned_boundary_2026_08_13/`
 preregisters aligned 32/64-document arms at the unchanged 600 steps.
 
+The fixed-step boundary is between 32 and 64: A32 passed fully, while A64 had teacher top-1
+`0.9669` and prompt control `8/8` but exact `0/8`. A separately preregistered 64-document 1,200-step
+arm now matches A32's expected presentations per document without changing capacity.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current
