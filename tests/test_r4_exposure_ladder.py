@@ -48,3 +48,15 @@ def test_control_reproduction_is_fail_closed():
     bad = json.loads(json.dumps(good))
     bad["dialogue_validation"]["assistant_turn"]["ce"] += 0.031
     assert not module.control_reproduced(bad, protocol["control_reproduction"])
+
+
+def test_recorded_endpoint_cannot_promote_failed_conversation():
+    result = json.loads((HERE / "result.json").read_text(encoding="utf-8"))
+    endpoint = next(point for point in result["points"] if point.get("primary_endpoint"))
+    assert result["control_reproduced"] is True
+    assert endpoint["dialogue_rows"] == 120000
+    assert endpoint["semantic"] == "0/7"
+    assert endpoint["conversation_pass"] is False
+    assert result["gate"] is False
+    assert result["verdict"] == "FAIL-FIXED-CAPACITY-AFTER-EXPOSURE"
+    assert result["hf_custody"]["sha256_mismatches"] == 0

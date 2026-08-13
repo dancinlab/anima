@@ -456,7 +456,7 @@ teacher-forced 예측을 개선하지만 의미 있는 자유 대화를 만들�
 `dancinlab/anima-303m-r4-dialogue-scale-2026-08-13@1146240912244c7127b442196e2047a6f7641eac`에만
 보존하고 SHA 검증했다. 다음 허용 축은 별도 사전등록한 고정 3,500문서 exposure 시험이다.
 
-### 사전등록한 R4 고정 3,500문서 optimization-exposure 사다리
+### R4 고정 3,500문서 optimization-exposure 사다리
 
 다음 단일 축은 실행 전에
 [`state/anima_303m_r4_exposure_ladder_2026_08_13`](state/anima_303m_r4_exposure_ladder_2026_08_13/README.md)에
@@ -468,6 +468,14 @@ LR에 도달한 뒤 그대로 유지한다. 3,750/7,500/15,000/30,000 step 체�
 평가하고 120k를 고정 1차 endpoint로 사용한다. teacher-forced 개선에도 최종 의미가 `0/7`이면
 별도 사전등록한 capacity 사다리만 허용하며 303M·IIT-mouth 결합·participant 탑재·프로덕션은
 허용하지 않는다.
+
+사다리는 완료됐고 대조군을 정확히 재현했다. 15k/30k/60k/120k dialogue row에서 held-out
+assistant CE는 `1.75553/1.71562/1.69534/1.69976`이었지만 의미 대화는 모든 지점에서
+`0/7`이었다. 최종 구조 점수는 `1/7`이고 기억·정정도 계속 실패했다. 판정은
+`FAIL-FIXED-CAPACITY-AFTER-EXPOSURE`로, 등록 노출량을 8배 늘려도 고정 0.89M mouth는 의미
+대화를 형성하지 못했다. 원시 체크포인트와 증거는 HF 비공개 revision
+`dancinlab/anima-303m-r4-exposure-ladder-2026-08-13@c30189456da40a80b23092651367a3eeacd0edf0`에만
+보존하고 SHA 검증했다. 다음 허용 축은 별도 사전등록한 고정 자료·고정 노출 capacity 사다리다.
 
 ## 미해결 gap 감사 — 303M 의미 대화
 

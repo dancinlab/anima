@@ -1,6 +1,6 @@
 # R4 fixed-3,500 optimization-exposure ladder — 2026-08-13
 
-Status: **PREREGISTERED — NOT YET RUN**.
+Status: **COMPLETE — FAIL-FIXED-CAPACITY-AFTER-EXPOSURE**.
 
 The completed dialogue-support scale ladder held the native ByteGPT mouth, language checkpoint,
 optimizer, sampler, objective and `15,000` dialogue-row exposure fixed while increasing unique
@@ -33,3 +33,26 @@ The experiment is Python-only, local deterministic CPU with two threads, and may
 Models and raw evidence will be uploaded only to a private Hugging Face repository under
 `dancinlab`; local model copies will be removed after independent SHA-256 verification. User files
 `ING.jsonl` and `stream_mi.json` must remain untouched.
+
+The registered local trajectory completed in `2,652.8s`. The first point reproduced the prior
+3,500-document endpoint exactly: broad CE `1.82543`, held-out assistant CE `1.75553`, semantic
+`0/7`, structural `0/7`. This validates the comparison despite the longer registered endpoint.
+
+Additional exposure improved teacher-forced prediction only modestly. At `15k/30k/60k/120k`
+dialogue rows, held-out assistant CE was `1.75553/1.71562/1.69534/1.69976`, and top-1 was
+`0.50599/0.51865/0.52481/0.53263`. Broad CE remained retained and improved from `1.82543` to
+`1.71606`. Free generation nevertheless remained semantic `0/7` at every point, structural scores
+were `0/7`, `0/7`, `1/7`, `1/7`, and memory/correction failed throughout. Repetitive `store`,
+`state` and `story` attractors gradually became generic service/programming loops, not meaningful
+answers. The final training probe also recovered no target prefix (`0/8`).
+
+The bounded conclusion is that eight times more optimization exposure does not produce meaningful
+conversation in this fixed 0.89M recipe. This closes insufficient exposure only within the
+registered 3,500-document, 120k-row endpoint; it is not a universal capacity theorem. The next
+allowed result-bearing axis is a separately preregistered capacity ladder with the data and
+exposure fixed. 303M, IIT-mouth coupling, participant mounting and production remain blocked.
+
+All raw checkpoints, exact-resume state, responses and logs are preserved only in private HF
+revision `dancinlab/anima-303m-r4-exposure-ladder-2026-08-13@c30189456da40a80b23092651367a3eeacd0edf0`.
+An independent download verified all 27 registered artifacts (`53,334,761` bytes) with zero path,
+size or SHA-256 mismatches.

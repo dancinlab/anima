@@ -480,7 +480,7 @@ only in private HF revision
 `dancinlab/anima-303m-r4-dialogue-scale-2026-08-13@1146240912244c7127b442196e2047a6f7641eac`.
 The next permitted axis is a separately preregistered fixed-3,500-document exposure test.
 
-### Preregistered R4 fixed-3,500 optimization-exposure ladder
+### R4 fixed-3,500 optimization-exposure ladder
 
 [`state/anima_303m_r4_exposure_ladder_2026_08_13`](state/anima_303m_r4_exposure_ladder_2026_08_13/README.md)
 freezes the next single axis before execution. The 3,500 documents, 0.89M ByteGPT, initial language
@@ -491,6 +491,15 @@ cosine schedule reaching its registered floor at step 3,750; checkpoints at 3,75
 control, all points are evaluated, and 120k is the fixed primary endpoint. A continued semantic
 `0/7` endpoint despite teacher-forced improvement permits only a separately preregistered capacity
 ladder; it does not authorize 303M, IIT-mouth coupling, participant mounting or production.
+
+The ladder is complete and its control reproduced exactly. At 15k/30k/60k/120k dialogue rows,
+held-out assistant CE was `1.75553/1.71562/1.69534/1.69976`, but semantic conversation stayed
+`0/7` at every point; the final structural score was `1/7`, and memory/correction continued to
+fail. The verdict is `FAIL-FIXED-CAPACITY-AFTER-EXPOSURE`: eight times the registered exposure did
+not make the fixed 0.89M mouth meaningful. Raw checkpoints and evidence are SHA-verified only in
+private HF revision
+`dancinlab/anima-303m-r4-exposure-ladder-2026-08-13@c30189456da40a80b23092651367a3eeacd0edf0`.
+The next permitted axis is a separately preregistered fixed-data, fixed-exposure capacity ladder.
 
 ## Open gap audit — 303M meaningful conversation
 

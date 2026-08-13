@@ -1,0 +1,113 @@
+{
+  "schema": "anima-303m-r4-fixed-dialogue-exposure-summary/v1",
+  "date": "2026-08-13",
+  "protocol_commit": "3b8f8e5a5",
+  "protocol_sha256": "49bb1b91ad4f0d4f32f4f686bed5d4158969aec531c056b6ca6165de544db768",
+  "raw_result_sha256": "2ee1b26228b7155deaec346b98ba32b5366f066f97b6a63a174d91a3d85f8815",
+  "fixed": {
+    "architecture": "existing ByteGPT only",
+    "parameters": 891648,
+    "documents": 3500,
+    "block": 512,
+    "seed": 7,
+    "device": "CPU",
+    "threads": 2,
+    "vast_ai": false
+  },
+  "trajectory": {
+    "steps": 30000,
+    "wall_s": 2652.8,
+    "loss0": 2.34757,
+    "lossF": 1.37157,
+    "broad_rows": 120000,
+    "dialogue_rows": 120000,
+    "complete": true
+  },
+  "points": [
+    {
+      "step": 3750,
+      "dialogue_rows": 15000,
+      "engine_sha256": "27924f586193603a385cfd9369e598a8c2492e206bcb9067a3e47c5f51dfe2d8",
+      "broad_ce": 1.8254346530264838,
+      "heldout_assistant_ce": 1.755528053476449,
+      "heldout_assistant_top1": 0.505994005994006,
+      "training_teacher_top1": 0.5521628498727735,
+      "training_target_prefix": "0/8",
+      "semantic": "0/7",
+      "structural": "0/7",
+      "multiturn_final_pass": false,
+      "conversation_pass": false
+    },
+    {
+      "step": 7500,
+      "dialogue_rows": 30000,
+      "engine_sha256": "5beabf69bda365f8ae747a241d849bba7b8a694a5815e1f0da50723b77a5acca",
+      "broad_ce": 1.784614617577271,
+      "heldout_assistant_ce": 1.7156245158436996,
+      "heldout_assistant_top1": 0.5186480186480187,
+      "training_teacher_top1": 0.5597964376590331,
+      "training_target_prefix": "0/8",
+      "semantic": "0/7",
+      "structural": "0/7",
+      "multiturn_final_pass": false,
+      "conversation_pass": false
+    },
+    {
+      "step": 15000,
+      "dialogue_rows": 60000,
+      "engine_sha256": "0dd0162242aa682727198464297b734c66b192f9acd30c8b2aa5a0bd0f829e85",
+      "broad_ce": 1.7438988620287752,
+      "heldout_assistant_ce": 1.6953420425973393,
+      "heldout_assistant_top1": 0.5248085248085248,
+      "training_teacher_top1": 0.5814249363867684,
+      "training_target_prefix": "0/8",
+      "semantic": "0/7",
+      "structural": "1/7",
+      "multiturn_final_pass": false,
+      "conversation_pass": false
+    },
+    {
+      "step": 30000,
+      "dialogue_rows": 120000,
+      "primary_endpoint": true,
+      "engine_sha256": "c448370535b55748ca85a56d8c5d077456ecd8190871bb6d28f2e8f02b7d7e9e",
+      "broad_ce": 1.7160582715051282,
+      "heldout_assistant_ce": 1.699757627706421,
+      "heldout_assistant_top1": 0.5326340326340326,
+      "training_teacher_top1": 0.6272264631043257,
+      "training_target_prefix": "0/8",
+      "semantic": "0/7",
+      "structural": "1/7",
+      "multiturn_final_pass": false,
+      "conversation_pass": false
+    }
+  ],
+  "control_reproduced": true,
+  "observations": {
+    "teacher_forced_improvement": "heldout assistant CE improved from 1.75553 to 1.69976 and top-1 from 0.50599 to 0.53263",
+    "free_semantic_improvement": false,
+    "memory_and_correction": "failed at every registered point",
+    "repetition_attractor": "present at every registered point; store/state/story loops gradually changed to generic service/programming loops",
+    "bounded_conclusion": "Eight times the registered dialogue-row exposure did not yield meaningful free conversation in the fixed 0.89M mouth.",
+    "scope_limit": "This falsifies insufficient exposure only within this fixed recipe and endpoint; it does not prove a universal model-capacity limit."
+  },
+  "hf_custody": {
+    "repository": "dancinlab/anima-303m-r4-exposure-ladder-2026-08-13",
+    "private": true,
+    "revision": "c30189456da40a80b23092651367a3eeacd0edf0",
+    "files": 29,
+    "manifest_entries": 27,
+    "artifact_bytes": 53334761,
+    "manifest_sha256": "e99a6f2ee2eb7342bafa78e96ff200adde346ecc500ddf4cc51a2734d4cde310",
+    "sha256_mismatches": 0
+  },
+  "research_reference": {
+    "repository": "https://github.com/dancinlab/anima-research",
+    "revision": "03d55ef9848df304a435a88a2b90a74722bc5b73",
+    "effect": "interpretation constraint only",
+    "consciousness_claim": false
+  },
+  "gate": false,
+  "verdict": "FAIL-FIXED-CAPACITY-AFTER-EXPOSURE",
+  "next_allowed_step": "Preregister a fixed-3500-document, fixed-120000-dialogue-row capacity ladder. 303M, IIT-mouth coupling, participant mounting and production remain blocked."
+}
