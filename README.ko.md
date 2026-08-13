@@ -329,6 +329,13 @@ CPU 중복 관문은 engine SHA, state digest, tensor 53개, teacher trace와 ca
 target `2/4`, 구조 `1/4`다. 이 실행 계약에서 O1/C1/C2를 비교하는 새 시험을
 `state/anima_303m_r4_deterministic_treatments_2026_08_13/`에 별도 사전등록했다.
 
+deterministic treatment는 모두 고정 관문에 실패했다. O1과 C1은 1~3번 문서를 teacher top-1
+`1.0`으로 학습했지만 EOF의 4번 문서는 첫 byte부터 실패했다. 공용 원인은 position mapping
+불일치다. legacy stream framing에서 이 문서는 약 byte 222에만 놓이지만 runtime/evaluator의
+고립 user role은 position 0에서 시작한다. 기존 sampler만 확장한 alignment 단일 arm을
+`state/anima_303m_r4_document_alignment_2026_08_13/`에 사전등록했고 legacy stream은 동결
+control로 유지하며 모든 상위 관문은 계속 차단한다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

@@ -529,11 +529,16 @@ class ByteCell:
                 break
             cursor = boundary + 2
 
-    def framed_window_spec(self, seq_len: int, gen: torch.Generator):
+    def framed_window_spec(self, seq_len: int, gen: torch.Generator,
+                           alignment: str = "stream"):
         """Sample a fixed-size window that contains one complete chat document."""
         if not self.chat_frame_spans:
             return self.window_spec(seq_len, gen), False
         index = int(torch.randint(0, len(self.chat_frame_spans), (1,), generator=gen).item())
+        if alignment == "document":
+            return ("document", index), True
+        if alignment != "stream":
+            raise ValueError(f"unknown chat frame alignment: {alignment}")
         doc_start, doc_end = self.chat_frame_spans[index]
         low = max(0, doc_end - (seq_len + 1))
         high = min(doc_start, self.train_end - (seq_len + 1))
@@ -571,10 +576,27 @@ class ByteCell:
         hi = hi_excl - seq_len - 1            # last valid start (exclusive upper bound)
         return int(torch.randint(lo, hi, (1,), generator=gen).item())
 
-    def materialize(self, start: int, seq_len: int):
+    def materialize(self, start, seq_len: int):
         """§3 MATERIALIZE phase — the mmap-read half: given a `start` from window_spec,
         return the (x, y) window. Kept separate so a rank only touches disk for its own
         shard. Byte-for-byte identical to `_window_in`'s post-randint tail."""
+        if isinstance(start, tuple):
+            kind, index = start
+            if kind != "document":
+                raise ValueError(f"unknown materialization spec: {kind}")
+            doc_start, doc_end = self.chat_frame_spans[int(index)]
+            chunk = bytearray(self._mm[doc_start:doc_end])
+            cursor = doc_end
+            while len(chunk) < seq_len + 1:
+                if cursor >= self.train_end:
+                    cursor = 0
+                take = min(seq_len + 1 - len(chunk), self.train_end - cursor)
+                if take <= 0:
+                    raise RuntimeError("chat frame corpus cannot fill a training window")
+                chunk.extend(self._mm[cursor:cursor + take])
+                cursor += take
+            buf = torch.frombuffer(chunk, dtype=torch.uint8).long()
+            return buf[:seq_len], buf[1:seq_len + 1]
         chunk = self._mm[start:start + seq_len + 1]
         buf = torch.frombuffer(bytearray(chunk), dtype=torch.uint8).long()
         return buf[:seq_len], buf[1:seq_len + 1]
@@ -4023,6 +4045,10 @@ def main():
                     help="training device (default: auto selects CUDA, then Apple MPS, then CPU; "
                          "multi-GPU --gpus always uses CUDA and cannot be combined with an "
                          "explicit non-CUDA device)")
+    ap.add_argument("--chat-frame-alignment", choices=["stream", "document"],
+                    default="stream",
+                    help="stream preserves legacy source offsets; document places the selected "
+                         "canonical user role at position zero to match chat runtime/evaluation")
     ap.add_argument("--ddp-verify-sync", action="store_true",
                     help="DDP debug: every --val-every steps all-reduce a param-checksum and "
                          "assert cross-rank agreement (catches a mitosis/optimizer desync at "
@@ -4213,6 +4239,8 @@ def main():
         if answer_marker != GEN.CHAT_ASSISTANT_PREFIX.encode("utf-8"):
             ap.error("--chat-framed-sampling requires the canonical assistant prefix: "
                      + repr(GEN.CHAT_ASSISTANT_PREFIX))
+    elif a.chat_frame_alignment != "stream":
+        ap.error("--chat-frame-alignment document requires --chat-framed-sampling")
 
     if not (0.0 <= a.adam_beta2 < 1.0):
         ap.error("--adam-beta2 must be in [0, 1)")
@@ -4913,6 +4941,8 @@ def main():
     }
     if a.deterministic:
         run_recipe["deterministic"] = True
+    if a.chat_frame_alignment != "stream":
+        run_recipe["chat_frame_alignment"] = a.chat_frame_alignment
     # Preserve byte-identical legacy exact-resume recipes when the new explicit
     # validation path is unused, while binding every external validation file
     # into the recipe when it is used.
@@ -5015,7 +5045,8 @@ def main():
                     cell = cells[(step - 1 + b) % len(cells)]
                 sampled_windows[_samp_index[id(cell)]] += 1
                 if a.chat_framed_sampling and cell.chat_frame_spans:
-                    start, framed = cell.framed_window_spec(seq_len, gen)
+                    start, framed = cell.framed_window_spec(
+                        seq_len, gen, alignment=a.chat_frame_alignment)
                     if framed:
                         sampled_framed_windows[_samp_index[id(cell)]] += 1
                 else:
@@ -5751,6 +5782,7 @@ def main():
                                if answer_ce_telemetry["positions"] else None),
                        } if answer_ce_telemetry is not None else None),
                    } if a.answer_ce_weight > 0.0 else None),
+                   "chat_frame_alignment": a.chat_frame_alignment,
                    "levers": {"tlora": tlora_on, "tlora_rank": a.tlora_rank,
                               "tlora_base": not a.tlora_no_base, "dict_aux": dict_on,
                               "jamo_aux": jamo_on, "wd_floor": a.wd_floor,
@@ -5775,6 +5807,7 @@ def main():
                                "sampled_framed_windows": int(sampled_framed_windows[index]),
                                "eligible_chat_documents": len(cell.chat_frame_spans),
                                "oversize_chat_documents": int(cell.chat_frame_oversize),
+                               "chat_frame_alignment": a.chat_frame_alignment,
                                "sampled_fraction": (
                                    sampled_windows[index] / sum(sampled_windows)
                                    if sum(sampled_windows) else 0.0),

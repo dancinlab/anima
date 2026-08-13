@@ -125,6 +125,32 @@ def test_chat_framed_sampler_keeps_prompt_and_response_in_one_window(tmp_path):
 
 
 @pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch training extra is not installed")
+def test_document_aligned_chat_frame_matches_runtime_position_zero(tmp_path):
+    import torch
+
+    train = _import_train()
+    first = b"user: first\nassistant: alpha"
+    final = b"user: final\nassistant: omega"
+    corpus = tmp_path / "dialogue.txt"
+    corpus.write_bytes(first + b"\n\n" + final + b"\n\n")
+    cell = train.ByteCell(str(corpus))
+    try:
+        cell.configure_chat_frames(64, b"assistant: ")
+        spec, framed = cell.framed_window_spec(
+            64, torch.Generator().manual_seed(1), alignment="document")
+        x, y = cell.materialize(spec, 64)
+        visible = bytes(x.tolist()) + bytes([int(y[-1])])
+        selected_start, selected_end = cell.chat_frame_spans[spec[1]]
+        selected = bytes(cell._mm[selected_start:selected_end])
+        assert framed
+        assert visible.startswith(selected)
+        assert visible.startswith(b"user: ")
+        assert len(visible) == 65
+    finally:
+        cell.close()
+
+
+@pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch training extra is not installed")
 def test_bytegpt_bridge_metadata_uses_actual_step_and_validation_ce():
     train = _import_train()
     model = train.ByteGPT(train.ByteGPTConfig(

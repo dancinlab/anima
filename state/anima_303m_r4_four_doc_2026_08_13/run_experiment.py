@@ -75,7 +75,9 @@ def _train_arm(protocol: dict, arm_name: str, arm: dict, train_path: Path,
             and recipe.get("batch_size") == fixed["batch"]
             and recipe.get("corpus") == [str(train_path)]
             and recipe.get("validation_corpus") == [str(validation_path)]
-            and answer.get("mode") == "turn-only")
+            and answer.get("mode") == "turn-only"
+            and recipe.get("chat_frame_alignment", "stream")
+                == fixed.get("chat_frame_alignment", "stream"))
         if not valid:
             raise RuntimeError(f"completed {arm_name} artifacts differ from protocol")
         summary = json.loads(output.with_suffix(".summary.json").read_text(encoding="utf-8"))
@@ -104,6 +106,8 @@ def _train_arm(protocol: dict, arm_name: str, arm: dict, train_path: Path,
     ]
     if fixed.get("deterministic", False):
         command.append("--deterministic")
+    if fixed.get("chat_frame_alignment", "stream") != "stream":
+        command.extend(["--chat-frame-alignment", fixed["chat_frame_alignment"]])
     if arm["checkpoint_every"]:
         command.extend(["--ckpt-every", str(arm["checkpoint_every"])])
     completed = subprocess.run(

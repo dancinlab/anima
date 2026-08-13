@@ -349,6 +349,13 @@ canonical behavior matched, with maximum tensor error `0.0`. The fixed failing b
 `0.724029`, target `2/4`, structural `1/4`. The O1/C1/C2 comparison is now separately preregistered
 under this execution contract in `state/anima_303m_r4_deterministic_treatments_2026_08_13/`.
 
+The deterministic treatments all failed their fixed gate. O1 and C1 learned documents 1–3 at
+teacher top-1 `1.0` but failed the EOF document from byte zero. The shared cause is a position-map
+gap: legacy stream framing only places that document near byte 222, while runtime/evaluation begins
+the isolated user role at position zero. `state/anima_303m_r4_document_alignment_2026_08_13/`
+preregisters one alignment-only arm using the existing sampler; legacy stream mode remains the
+frozen control and all larger gates remain blocked.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current
