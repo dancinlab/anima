@@ -414,6 +414,11 @@ engine을 재사용하고 turn peak LR만 `1e-3`에서 `1e-4`로 바꾸며 endpo
 trainer에서 native broad replay와 대화 감독을 공동 학습하는 것이며 새 엔진·평가기는 만들지
 않는다.
 
+`state/anima_303m_r4_joint_replay_2026_08_13/`에 이 단일 arm을 사전등록했다. native 2-cell
+round-robin은 step마다 broad 4행·dialogue 4행을 공급하고 additive CE는 전체 언어 loss와
+canonical assistant span의 응답 감독을 함께 적용한다. 3,750-step endpoint는 기존 대화 노출
+15,000행을 유지하면서 broad 15,000행을 추가한다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

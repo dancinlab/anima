@@ -437,6 +437,11 @@ Therefore LR reduction alone only trades forgetting for insufficient dialogue le
 single conceptual axis is native joint broad replay plus dialogue supervision in the existing
 multi-cell trainer; no new engine or evaluator is introduced.
 
+`state/anima_303m_r4_joint_replay_2026_08_13/` preregisters this one arm. Native two-cell
+round-robin provides four broad and four dialogue rows per step; additive CE applies full language
+loss everywhere and response supervision only where a canonical assistant span exists. The 3,750
+step endpoint preserves the prior 15,000 dialogue-row exposure while adding 15,000 broad rows.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current
