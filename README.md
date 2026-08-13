@@ -431,6 +431,12 @@ engine and changes only turn peak LR from `1e-3` to `1e-4`; endpoint, fresh opti
 objective, alignment, seed, decoder and all independent gates remain fixed. Broad retention uses
 the natural uniform-CE ceiling rather than a result-tuned tolerance.
 
+The low-LR arm retained broad CE at `3.0926` but under-adapted: training teacher top-1 was `0.6031`,
+exact/target `0/8`, and independent semantics `0/7`. Its verdict is `FAIL-LOW-LR-TURN-SFT`.
+Therefore LR reduction alone only trades forgetting for insufficient dialogue learning. The next
+single conceptual axis is native joint broad replay plus dialogue supervision in the existing
+multi-cell trainer; no new engine or evaluator is introduced.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

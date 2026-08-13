@@ -408,6 +408,12 @@ engine을 재사용하고 turn peak LR만 `1e-3`에서 `1e-4`로 바꾸며 endpo
 목적함수·alignment·seed·decoder·독립 관문은 고정한다. broad 보존은 결과 맞춤 허용치가
 아니라 자연적인 uniform-CE 상한으로 판정한다.
 
+저LR arm은 broad CE를 `3.0926`으로 보존했지만 적응이 부족했다. 학습 teacher top-1
+`0.6031`, exact/target `0/8`, 독립 의미 `0/7`이며 판정은 `FAIL-LOW-LR-TURN-SFT`다. 따라서 LR
+감소만으로는 망각과 대화 학습 부족을 맞바꿀 뿐이다. 다음 단일 개념 축은 기존 multi-cell
+trainer에서 native broad replay와 대화 감독을 공동 학습하는 것이며 새 엔진·평가기는 만들지
+않는다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속
