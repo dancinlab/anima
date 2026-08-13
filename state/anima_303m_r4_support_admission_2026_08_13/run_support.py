@@ -66,8 +66,10 @@ def _view(documents: list[str]) -> bytes:
 
 def _final_exchange(document: str) -> tuple[str, str]:
     turns = generator.gen_chat_parse_turns(document)
-    seed = generator.gen_chat_render_turns(turns[:-1]) + generator.CHAT_TURN_SEPARATOR
-    seed += generator.CHAT_ASSISTANT_PREFIX
+    history = turns[:-2]
+    transcript = (generator.gen_chat_render_turns(history)
+                  + generator.CHAT_TURN_SEPARATOR) if history else ""
+    seed = generator.gen_chat_seed(transcript, turns[-2][1])
     return seed, turns[-1][1]
 
 
