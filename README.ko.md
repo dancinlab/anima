@@ -319,6 +319,11 @@ trajectory는 step 200부터 갈라져 최종 tensor 53개가 모두 달랐다. 
 없고 지원되지 않는 deterministic 연산은 fail-closed 중단한다. 이 관문 자체는 treatment·303M·
 IIT 결합·프로덕션을 허용하지 않는다.
 
+MPS 중복 관문은 `index_put_with_accumulate_mps`에 deterministic backward 구현이 없어 step 1
+전에 fail-closed 중단됐다. warn-only 우회는 사용하지 않았다.
+`state/anima_303m_r4_deterministic_cpu_2026_08_13/`에 같은 정확 일치 2회 관문을 native
+2-thread CPU backend로 별도 사전등록했으며 통과 전까지 treatment는 해석하지 않는다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

@@ -339,6 +339,11 @@ tensor, teacher trace and canonical behavior under the same four-document recipe
 tolerance is forbidden and unsupported deterministic operators fail closed. The gate itself does
 not authorize a treatment, 303M run, IIT coupling or production.
 
+The MPS duplicate gate failed closed before step 1 because
+`index_put_with_accumulate_mps` has no deterministic backward implementation. No warn-only bypass
+was used. `state/anima_303m_r4_deterministic_cpu_2026_08_13/` preregisters the same exact two-run
+gate on the native two-thread CPU backend; treatments remain uninterpreted until it passes.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current
