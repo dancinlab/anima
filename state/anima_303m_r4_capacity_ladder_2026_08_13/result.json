@@ -1,0 +1,114 @@
+{
+  "schema": "anima-303m-r4-fixed-data-capacity-summary/v1",
+  "date": "2026-08-13",
+  "protocol_commit": "66cdf6dd6",
+  "protocol_sha256": "12a9e0011935ceaa55e8f80c5d28128125963e1396a6c45ea984ec1589b98f76",
+  "raw_result_sha256": "cd09b40f29050a712b85074894a663ef869fab32ad6a1cdce93e2d7051be6138",
+  "fixed": {
+    "architecture": "existing ByteGPT only",
+    "documents": 3500,
+    "broad_language_rows": 16000,
+    "joint_broad_rows": 120000,
+    "joint_dialogue_rows": 120000,
+    "block": 512,
+    "seed": 7,
+    "batch": 8,
+    "device": "NVIDIA GeForce RTX 4090",
+    "h100": false
+  },
+  "frozen_control": {
+    "label": "0.89M",
+    "parameters": 891648,
+    "broad_ce": 1.7160582715051282,
+    "heldout_assistant_ce": 1.699757627706421,
+    "heldout_assistant_top1": 0.5326340326340326,
+    "semantic": "0/7",
+    "structural": "1/7",
+    "multiturn_final_pass": false,
+    "conversation_pass": false
+  },
+  "arms": [
+    {
+      "label": "3M",
+      "shape": {"d": 192, "layers": 6, "heads": 3, "parameters": 2817024},
+      "language": {"validation_ce": 1.9715924318989195, "top1": 0.4215539383561644, "loss0": 5.57604, "lossF": 1.99192, "wall_s": 28.3, "engine_sha256": "1915fc7fb02b0419ac6af269bf6b00c165d5cd6ab0058c6c50e756426cdd966d"},
+      "joint": {"broad_ce": 1.6095318938887981, "heldout_assistant_ce": 2.256760657469558, "heldout_assistant_top1": 0.5457875457875457, "training_teacher_top1": 0.8256997455470738, "training_target_prefix": "3/8", "training_exact": "1/8", "loss0": 2.04722, "lossF": 1.02117, "wall_s": 446.1, "engine_sha256": "a06614cff5ffa49e2f5ddd7c4e80c56116de2eca4c68adc439c12ae4a930ce38"},
+      "semantic": "0/7",
+      "structural": "7/7",
+      "multiturn_final_pass": false,
+      "conversation_pass": false
+    },
+    {
+      "label": "10M",
+      "shape": {"d": 320, "layers": 8, "heads": 5, "parameters": 10110080},
+      "language": {"validation_ce": 1.7125334786342314, "top1": 0.4951611423679061, "loss0": 5.59809, "lossF": 1.69839, "wall_s": 49.8, "engine_sha256": "2102606b609967396cf70bac486f56b0e744cce3dc27b2e5f7cfdea7871e2e36"},
+      "joint": {"broad_ce": 1.580256008588638, "heldout_assistant_ce": 3.025742615692961, "heldout_assistant_top1": 0.5234765234765235, "training_teacher_top1": 0.9071246819338422, "training_target_prefix": "5/8", "training_exact": "1/8", "loss0": 1.74281, "lossF": 0.74016, "wall_s": 776.1, "engine_sha256": "f7d2c3f2bfd13da133363f3021ede582a59d0648c28f3a379187c1662745dbc2"},
+      "semantic": "0/7",
+      "structural": "7/7",
+      "multiturn_final_pass": false,
+      "conversation_pass": false
+    },
+    {
+      "label": "30M",
+      "primary": true,
+      "shape": {"d": 448, "layers": 12, "heads": 7, "parameters": 29316224},
+      "language": {"validation_ce": 1.7855413869868986, "top1": 0.47203705968688847, "loss0": 5.70061, "lossF": 1.77916, "wall_s": 97.6, "engine_sha256": "5a3d8e21749c9dce591ab72cb507c655ab3633be25403d3905a6eba16c76b570"},
+      "joint": {"broad_ce": 1.7261124795663614, "heldout_assistant_ce": 3.558960989326432, "heldout_assistant_top1": 0.5221445221445221, "training_teacher_top1": 0.9669211195928753, "training_target_prefix": "4/8", "training_exact": "2/8", "loss0": 1.84288, "lossF": 0.54792, "wall_s": 1503.4, "engine_sha256": "c477952ec5c5c612f871cbbfc2388d57db80050ef71ea356e459864e3d127c46"},
+      "semantic": "0/7",
+      "structural": "7/7",
+      "multiturn_final_pass": false,
+      "conversation_pass": false
+    }
+  ],
+  "manual_blind_review": {
+    "required_after_automatic_pass": true,
+    "automatic_pass_reached": false,
+    "diagnostic_reviewed": 7,
+    "meaningful": 0,
+    "finding": "All seven primary responses were grammatical-looking but irrelevant or nonsensical; blue-box memory and favorite-color correction both failed."
+  },
+  "observations": {
+    "training_memorization": "Training teacher-forced top-1 rose from 0.82570 to 0.90712 to 0.96692 as capacity increased.",
+    "heldout_generalization": "Held-out assistant CE worsened from 2.25676 to 3.02574 to 3.55896 while independent semantics stayed 0/7.",
+    "surface_form": "All capacity arms reached structural 7/7 without producing a semantically correct response.",
+    "memory_and_correction": "failed in every capacity arm",
+    "bounded_conclusion": "At fixed 3500-document support and 120000 dialogue-row exposure, increasing this native ByteGPT recipe to 29.316M strengthened training memorization but did not yield meaningful independent conversation.",
+    "scope_limit": "This does not prove a universal capacity limit; the larger arms may be increasingly undertrained at the fixed exposure."
+  },
+  "qa": {
+    "local_preregistration": "10 passed",
+    "local_gpu_shape_smoke": "3M one-step serializer passed",
+    "vast_regression": "58 passed, 3 subtests passed",
+    "vast_cuda_decode": "3 passed",
+    "input_sha256_mismatches": 0
+  },
+  "hf_custody": {
+    "repository": "dancinlab/anima-303m-r4-capacity-ladder-2026-08-13",
+    "private": true,
+    "revision": "3c9bc8cad1ac50c7610f1f6ab57bf09c82aa51ac",
+    "repository_files": 42,
+    "manifest_entries": 40,
+    "artifact_bytes": 1358809614,
+    "manifest_sha256": "65b874603deb1b76fcdb25416f07be792bdec79a1fc364116876e27b4d06358c",
+    "sha256_mismatches": 0
+  },
+  "vast_ai": {
+    "gpu": "RTX 4090",
+    "result_instance": 47612542,
+    "failed_loading_instance": 47612236,
+    "instances_destroyed": [47612236, 47612542],
+    "created_instances_active": 0,
+    "other_work_instance_preserved": 47600716,
+    "elapsed_s_including_loading_retry": 4774.2,
+    "estimated_cost_usd": 0.4538
+  },
+  "research_reference": {
+    "repository": "https://github.com/dancinlab/anima-research",
+    "revision": "03d55ef9848df304a435a88a2b90a74722bc5b73",
+    "effect": "interpretation constraint only",
+    "consciousness_claim": false
+  },
+  "gate": false,
+  "verdict": "FAIL-CAPACITY-LADDER",
+  "next_allowed_step": "Preregister one data/compute-scaling axis that addresses worsening held-out generalization; 303M, IIT-mouth coupling, participant mounting and production remain blocked."
+}

@@ -517,6 +517,17 @@ non-H100 Vast.ai GPU to protect the mini, and that instance must be destroyed af
 only a meaningful-mouth gate requiring manual review, never a consciousness claim or direct
 authorization for 303M, IIT-mouth coupling, participant mounting or production.
 
+The ladder completed with verdict `FAIL-CAPACITY-LADDER`. At exact `2.817M/10.110M/29.316M`
+capacity, independent semantics stayed `0/7`, structure was `7/7`, and memory/correction failed.
+Training teacher top-1 improved `0.82570 → 0.90712 → 0.96692`, but held-out assistant CE worsened
+`2.25676 → 3.02574 → 3.55896`: larger fixed-exposure arms memorized the training support more
+strongly without meaningful generalization. Raw evidence is independently SHA-verified only in
+private HF revision
+`dancinlab/anima-303m-r4-capacity-ladder-2026-08-13@3c9bc8cad1ac50c7610f1f6ab57bf09c82aa51ac`.
+The non-H100 Vast.ai run cost an estimated `$0.4538`; its two protocol-owned instances were
+destroyed. The next axis needs a new data/compute-scaling preregistration, while 303M, IIT-mouth,
+participant and production remain blocked.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

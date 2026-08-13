@@ -494,6 +494,16 @@ endpoint로 고정한다.
 검토가 필요한 의미 mouth 관문일 뿐 의식 주장이나 303M·IIT-mouth 결합·participant 탑재·
 프로덕션의 직접 허가는 아니다.
 
+capacity 사다리는 `FAIL-CAPACITY-LADDER`로 완료됐다. 정확한 `2.817M/10.110M/29.316M`
+용량에서 독립 의미는 모두 `0/7`, 구조는 `7/7`이며 기억·정정은 실패했다. 학습 teacher
+top-1은 `0.82570 → 0.90712 → 0.96692`로 좋아졌지만 held-out assistant CE는
+`2.25676 → 3.02574 → 3.55896`으로 악화됐다. 즉 고정 노출에서 큰 arm일수록 학습 지지집합을
+더 강하게 암기했지만 의미 일반화는 형성하지 못했다. 원시 증거는 HF 비공개 revision
+`dancinlab/anima-303m-r4-capacity-ladder-2026-08-13@3c9bc8cad1ac50c7610f1f6ab57bf09c82aa51ac`에서
+독립 SHA 검증했다. 비-H100 Vast.ai 실행 추정 비용은 `$0.4538`이고 프로토콜 소유 인스턴스
+두 개를 모두 삭제했다. 다음 축은 새 자료/compute scaling 사전등록이어야 하며 303M·
+IIT-mouth·participant·프로덕션은 계속 차단한다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

@@ -1,6 +1,6 @@
 # R4 fixed-data capacity ladder — 2026-08-13
 
-Status: **PREREGISTERED — NOT YET RUN**.
+Status: **COMPLETE — FAIL-CAPACITY-LADDER**.
 
 The fixed 3,500-document exposure experiment reproduced its control and remained semantic `0/7`
 after `120,000` dialogue rows. This protocol changes only the existing ByteGPT shape. It freezes
@@ -31,3 +31,29 @@ may use one non-H100 Vast.ai GPU because the registered `30M` trajectory would i
 load on the mini. All model/data artifacts must be kept only in the private HF `dancinlab`
 repository, independently SHA-verified, and local copies removed afterward. The rented instance
 must be destroyed after completion. `ING.jsonl` and `stream_mi.json` remain untouched.
+
+The registered ladder completed on a Vast.ai RTX 4090 without H100 use. Exact parameter identity
+was `2,817,024`, `10,110,080` and `29,316,224`; all three broad-language and post-joint retention
+gates passed. Independent conversation nevertheless remained semantic `0/7` and failed memory and
+correction in every arm. Surface structure improved to `7/7` in all three arms, but the actual
+responses were grammatical-looking nonsense unrelated to the questions. Diagnostic human review
+therefore also found meaningful `0/7`.
+
+The capacity trajectory separated memorization from generalization. Training teacher-forced top-1
+rose `0.82570 → 0.90712 → 0.96692`, while held-out assistant CE worsened
+`2.25676 → 3.02574 → 3.55896`; independent semantics never moved from zero. Thus, under the fixed
+3,500-document and 120k-row budget, more capacity increasingly fits the training support without
+forming a meaningful conversational mapping. This bounded result does not prove a universal
+capacity limit because the larger shapes may be increasingly undertrained at fixed exposure.
+
+Python QA passed locally (`10/10` plus the 3M serializer smoke) and on Vast.ai (`58` tests plus
+`3` subtests; CUDA decode `3/3`). Raw checkpoints, exact-resume states, responses, logs and evidence
+are held only in private HF revision
+`dancinlab/anima-303m-r4-capacity-ladder-2026-08-13@3c9bc8cad1ac50c7610f1f6ab57bf09c82aa51ac`.
+An independent snapshot verified all 40 manifest entries (`1,358,809,614` bytes) with zero
+size/SHA-256 mismatches. Both protocol-owned Vast.ai instances were destroyed; the estimated total
+cost was `$0.4538`. An unrelated RTX 5090 instance was preserved.
+
+The next allowed result-bearing axis must address data/compute scaling and worsening held-out
+generalization in a new preregistration. 303M training, IIT-mouth coupling, participant mounting
+and production remain blocked.
