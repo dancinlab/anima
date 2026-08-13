@@ -832,6 +832,23 @@ def scheduled_lr(step: int, base_lr: float, schedule: str, warmup_steps: int,
                              (1.0 - float(min_lr_ratio)) * cosine)
 
 
+def configure_deterministic_training(enabled: bool, device: str) -> None:
+    """Enable PyTorch's native fail-closed deterministic execution contract.
+
+    A seed fixes initialization and sampler streams but does not make parallel device
+    reductions deterministic.  Experiments that compare exact trajectories must opt in
+    explicitly; unsupported nondeterministic operators then raise instead of silently
+    producing a different checkpoint under the same registered recipe.
+    """
+    if not enabled:
+        return
+    if str(device).startswith("cuda"):
+        os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.deterministic = True
+    torch.use_deterministic_algorithms(True, warn_only=False)
+
+
 # ── frozen lever hyperparams (pre-registered in PREREG.md — tune-to-green 금지) ──
 TLORA_RANK = 8            # default tensor-product rank R (a_r⊗b_r⊗k_r factors)
 TLORA_BASE = True         # keep a small dense base weight alongside the low-rank TP
@@ -3896,6 +3913,9 @@ def main():
                          "a geometry yields REAL-UNDERPOWERED with the realized n, never a "
                          "stretched null.")
     ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--deterministic", action="store_true",
+                    help="enable PyTorch's native fail-closed deterministic algorithms; a seed "
+                         "alone does not make MPS/CUDA parallel reductions reproducible")
     # a `<corpus>.meta.json` written by `anima-py corpus` carries the budget floor that corpus
     # earned; _budget_preflight refuses to start below it (H_9324) — see cli/corpus.py BUDGET_FLOORS.
     ap.add_argument("--corpus", nargs="*", default=[])
@@ -4481,6 +4501,7 @@ def main():
         if device == "mps" and not (hasattr(torch.backends, "mps") and
                                     torch.backends.mps.is_available()):
             sys.exit("[device] --device mps requested but Apple MPS is unavailable")
+    configure_deterministic_training(bool(a.deterministic), str(device))
     if str(device).startswith("mps") and os.environ.get("ANIMA_MPS_DROPOUT_SHIM", "1") != "0":
         # Apple-MPS graph-cache leak workaround (per-step SAVANT dropout p) — installed
         # ONLY on MPS so CPU/CUDA numerics stay byte-identical. See _install_mps_dropout_shim.
@@ -4504,7 +4525,8 @@ def main():
         p0(f"  levers: tlora={tlora_on}(rank={a.tlora_rank},base={not a.tlora_no_base}) "
            f"dict_aux={dict_on}(λ={a.dict_lambda}) jamo_aux={jamo_on}(λ={a.jamo_lambda})", flush=True)
     p0(f"  device={device} d={d} L={L} E0={e0} Emax={emax} seq_len={seq_len} "
-       f"steps={steps} bs={a.batch_size} sample={a.sample}", flush=True)
+       f"steps={steps} bs={a.batch_size} sample={a.sample} "
+       f"deterministic={bool(a.deterministic)}", flush=True)
     if str(device).startswith("cuda"):
         cap = torch.cuda.get_device_capability(local_rank)
         p0(f"  cuda: {torch.cuda.get_device_name(local_rank)} cap={cap[0]}.{cap[1]} torch={torch.__version__}", flush=True)
@@ -4889,6 +4911,8 @@ def main():
         "store_val_center": bool(a.store_val_center), "bf16": bool(a.bf16),
         "sample": a.sample,
     }
+    if a.deterministic:
+        run_recipe["deterministic"] = True
     # Preserve byte-identical legacy exact-resume recipes when the new explicit
     # validation path is unused, while binding every external validation file
     # into the recipe when it is used.
@@ -5697,6 +5721,7 @@ def main():
         # ── summary json ──────────────────────────────────────────────────────────
         summary = {"entry": "anima-py train", "arch": a.arch, "arm": a.arm,
                    "objective": a.objective, "seed": a.seed,
+                   "deterministic": bool(a.deterministic),
                    "optimizer": {"name": "AdamW", "beta1": 0.9,
                                  "beta2": a.adam_beta2,
                                  "weight_decay": a.weight_decay,

@@ -1,0 +1,34 @@
+{
+  "schema": "anima-303m-r4-four-document-baseline-forensics/v1",
+  "preserved_checkpoint": {
+    "repository": "dancinlab/anima-303m-r4-mouth-diagnostics-2026-08-13",
+    "revision": "8d67bb6e5eeea9a917892fba39310b7306c84718",
+    "engine_sha256": "e2b924a42215489add3a4091b83a45bbedc201aeb49bb8a7689c298d136ecd03",
+    "torch_sha256": "3d12a46d8cc731fb3d661b3e0f781c988a23943fd84d0567b24c09b8b850d358",
+    "teacher_top1_replayed": 0.6977964323189927,
+    "target_prefix": 2,
+    "structural": 1,
+    "exact": 1
+  },
+  "new_checkpoint": {
+    "engine_sha256": "543111ccc02baec1e68d24fd390ed65d9cc1a786a31c816977e5a3a5f87b9c1b",
+    "torch_sha256": "2d80e981771ae754b272a11b3989fca0655bcb29518ecff8f0a4ec226e231e5b",
+    "teacher_top1": 0.7282266526757608,
+    "target_prefix": 2,
+    "structural": 1,
+    "exact": 1
+  },
+  "comparison": {
+    "recipe_equal_except_paths": true,
+    "data_bytes_equal": true,
+    "step_1_log_equal": true,
+    "step_100_log_equal": true,
+    "first_observed_log_divergence_step": 200,
+    "model_tensor_keys_equal": true,
+    "equal_model_tensors": 0,
+    "model_tensor_count": 53,
+    "maximum_tensor_absolute_difference": 0.020899344235658646,
+    "current_scorer_reproduces_preserved_score": true,
+    "classification": "MPS-SEEDED-BUT-NONDETERMINISTIC-TRAINING"
+  }
+}

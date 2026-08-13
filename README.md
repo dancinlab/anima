@@ -325,6 +325,20 @@ top-1 `>=0.95`, exact/target/structural `4/4`, and causal prompt control `4/4`. 
 invalidates all treatment interpretation. The four-arm bound and result-independent decision table
 are frozen in `protocol.json`; no result directly authorizes 303M, IIT coupling or production.
 
+The run stopped fail-closed as `INVALID-BASELINE-MISMATCH`. The current scorer reproduced the
+preserved checkpoint's top-1 `0.697796` exactly, while a same-seed/same-recipe MPS rerun reached
+`0.728227`; its trajectory first diverged at step 200 and all 53 final tensors differed. Treatment
+outputs are therefore un-interpreted. The common trainer now has an explicit native
+`--deterministic` mode, records it in checkpoint provenance, and raises on unsupported
+nondeterministic operators. A duplicate deterministic baseline must match exactly before another
+four-document treatment comparison; 303M, IIT coupling and production remain blocked.
+
+`state/anima_303m_r4_deterministic_baseline_2026_08_13/` preregisters that duplicate gate. Two
+fresh MPS processes must produce identical engine SHA-256, checkpoint state digest, every model
+tensor, teacher trace and canonical behavior under the same four-document recipe. Approximate
+tolerance is forbidden and unsupported deterministic operators fail closed. The gate itself does
+not authorize a treatment, 303M run, IIT coupling or production.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

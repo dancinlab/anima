@@ -102,6 +102,8 @@ def _train_arm(protocol: dict, arm_name: str, arm: dict, train_path: Path,
         "--gauges-out", str(output.with_suffix(".summary.json")),
         "--skip-inline-rho",
     ]
+    if fixed.get("deterministic", False):
+        command.append("--deterministic")
     if arm["checkpoint_every"]:
         command.extend(["--ckpt-every", str(arm["checkpoint_every"])])
     completed = subprocess.run(
@@ -121,7 +123,14 @@ def _score_arm(checkpoint: Path, exchanges: list[tuple[str, str]], bars: dict,
     score["counts"]["exact"] = sum(
         row["free"]["decoded"].get("text", "").strip() == row["free"]["target"].strip()
         for row in score["rows"])
-    prompt = diagnostics._prompt_intervention(checkpoint, exchanges, bars, device)
+    # The shared D4 helper was frozen for eight probes and advances with modulo 8.
+    # Repeat the registered four-row cycle, then retain exactly one cycle.
+    prompt = diagnostics._prompt_intervention(checkpoint, exchanges * 2, bars, device)
+    prompt["rows"] = prompt["rows"][:4]
+    prompt["counts"] = {
+        "ce_controlled": sum(row["ce_controlled"] for row in prompt["rows"]),
+        "output_controlled": sum(row["output_controlled"] for row in prompt["rows"]),
+    }
     prompt["gate_four"] = (
         prompt["counts"]["ce_controlled"] == 4
         and prompt["counts"]["output_controlled"] == 4)

@@ -305,6 +305,20 @@ exact/target/structural `4/4`, prompt 인과 통제 `4/4`를 모두 통과해야
 모든 treatment 해석을 무효화한다. 4-arm 제한과 결과 독립 decision table은 `protocol.json`에
 고정했으며 어떤 결과도 303M·IIT 결합·프로덕션을 바로 허용하지 않는다.
 
+실행은 `INVALID-BASELINE-MISMATCH`로 fail-closed 중단됐다. 현재 scorer는 보존 checkpoint의
+top-1 `0.697796`을 정확히 재현했지만 같은 seed·recipe의 MPS 재실행은 `0.728227`이었고,
+trajectory는 step 200부터 갈라져 최종 tensor 53개가 모두 달랐다. 따라서 treatment 출력은
+해석하지 않는다. 공용 trainer에 native `--deterministic` 모드를 추가해 checkpoint provenance에
+기록하고 지원되지 않는 비결정 연산은 오류로 중단하도록 수정했다. 중복 deterministic baseline이
+정확히 일치하기 전에는 4문서 treatment를 다시 해석할 수 없으며 303M·IIT 결합·프로덕션은 계속
+차단한다.
+
+`state/anima_303m_r4_deterministic_baseline_2026_08_13/`에 이 중복 관문을 사전등록했다. 같은
+4문서 recipe를 새 MPS 프로세스 두 개에서 실행해 engine SHA-256, checkpoint state digest,
+모든 model tensor, teacher trace와 canonical 행동이 정확히 일치해야 한다. 근사 허용 오차는
+없고 지원되지 않는 deterministic 연산은 fail-closed 중단한다. 이 관문 자체는 treatment·303M·
+IIT 결합·프로덕션을 허용하지 않는다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속
