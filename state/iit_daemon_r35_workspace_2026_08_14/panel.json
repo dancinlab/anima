@@ -1,0 +1,112 @@
+{
+  "schema": "anima-iit-daemon-composition-panel/1",
+  "support_records": [
+    {"entity": "aria", "relation": "observes", "value": "amber"},
+    {"entity": "borin", "relation": "carries", "value": "cedar"},
+    {"entity": "cyra", "relation": "guards", "value": "ivory"},
+    {"entity": "dain", "relation": "observes", "value": "cedar"},
+    {"entity": "elia", "relation": "carries", "value": "ivory"},
+    {"entity": "faro", "relation": "guards", "value": "amber"}
+  ],
+  "trials": [
+    {
+      "index": 0, "active_address": "alpha",
+      "records": {
+        "alpha": {"entity": "aria", "relation": "carries", "value": "ivory"},
+        "beta": {"entity": "borin", "relation": "guards", "value": "amber"},
+        "gamma": {"entity": "cyra", "relation": "observes", "value": "cedar"}
+      },
+      "expected": "aria carries ivory.", "counterfactual_value": "amber",
+      "counterfactual_expected": "aria carries amber.", "irrelevant_address": "beta",
+      "irrelevant_record": {"entity": "dain", "relation": "guards", "value": "cedar"}
+    },
+    {
+      "index": 1, "active_address": "beta",
+      "records": {
+        "alpha": {"entity": "dain", "relation": "carries", "value": "amber"},
+        "beta": {"entity": "elia", "relation": "guards", "value": "cedar"},
+        "gamma": {"entity": "faro", "relation": "observes", "value": "ivory"}
+      },
+      "expected": "elia guards cedar.", "counterfactual_value": "ivory",
+      "counterfactual_expected": "elia guards ivory.", "irrelevant_address": "gamma",
+      "irrelevant_record": {"entity": "aria", "relation": "observes", "value": "cedar"}
+    },
+    {
+      "index": 2, "active_address": "gamma",
+      "records": {
+        "alpha": {"entity": "cyra", "relation": "carries", "value": "amber"},
+        "beta": {"entity": "dain", "relation": "guards", "value": "ivory"},
+        "gamma": {"entity": "faro", "relation": "carries", "value": "cedar"}
+      },
+      "expected": "faro carries cedar.", "counterfactual_value": "amber",
+      "counterfactual_expected": "faro carries amber.", "irrelevant_address": "alpha",
+      "irrelevant_record": {"entity": "borin", "relation": "observes", "value": "ivory"}
+    },
+    {
+      "index": 3, "active_address": "alpha",
+      "records": {
+        "alpha": {"entity": "borin", "relation": "observes", "value": "ivory"},
+        "beta": {"entity": "cyra", "relation": "guards", "value": "amber"},
+        "gamma": {"entity": "dain", "relation": "carries", "value": "cedar"}
+      },
+      "expected": "borin observes ivory.", "counterfactual_value": "cedar",
+      "counterfactual_expected": "borin observes cedar.", "irrelevant_address": "gamma",
+      "irrelevant_record": {"entity": "elia", "relation": "observes", "value": "amber"}
+    },
+    {
+      "index": 4, "active_address": "beta",
+      "records": {
+        "alpha": {"entity": "elia", "relation": "observes", "value": "cedar"},
+        "beta": {"entity": "faro", "relation": "guards", "value": "ivory"},
+        "gamma": {"entity": "aria", "relation": "carries", "value": "amber"}
+      },
+      "expected": "faro guards ivory.", "counterfactual_value": "cedar",
+      "counterfactual_expected": "faro guards cedar.", "irrelevant_address": "alpha",
+      "irrelevant_record": {"entity": "cyra", "relation": "carries", "value": "ivory"}
+    },
+    {
+      "index": 5, "active_address": "gamma",
+      "records": {
+        "alpha": {"entity": "aria", "relation": "guards", "value": "cedar"},
+        "beta": {"entity": "borin", "relation": "carries", "value": "ivory"},
+        "gamma": {"entity": "cyra", "relation": "observes", "value": "amber"}
+      },
+      "expected": "cyra observes amber.", "counterfactual_value": "ivory",
+      "counterfactual_expected": "cyra observes ivory.", "irrelevant_address": "beta",
+      "irrelevant_record": {"entity": "dain", "relation": "observes", "value": "ivory"}
+    },
+    {
+      "index": 6, "active_address": "alpha",
+      "records": {
+        "alpha": {"entity": "dain", "relation": "guards", "value": "amber"},
+        "beta": {"entity": "elia", "relation": "carries", "value": "cedar"},
+        "gamma": {"entity": "faro", "relation": "observes", "value": "ivory"}
+      },
+      "expected": "dain guards amber.", "counterfactual_value": "ivory",
+      "counterfactual_expected": "dain guards ivory.", "irrelevant_address": "beta",
+      "irrelevant_record": {"entity": "aria", "relation": "carries", "value": "cedar"}
+    },
+    {
+      "index": 7, "active_address": "beta",
+      "records": {
+        "alpha": {"entity": "cyra", "relation": "carries", "value": "cedar"},
+        "beta": {"entity": "aria", "relation": "observes", "value": "ivory"},
+        "gamma": {"entity": "borin", "relation": "guards", "value": "amber"}
+      },
+      "expected": "aria observes ivory.", "counterfactual_value": "cedar",
+      "counterfactual_expected": "aria observes cedar.", "irrelevant_address": "gamma",
+      "irrelevant_record": {"entity": "elia", "relation": "guards", "value": "ivory"}
+    },
+    {
+      "index": 8, "active_address": "gamma",
+      "records": {
+        "alpha": {"entity": "faro", "relation": "carries", "value": "amber"},
+        "beta": {"entity": "dain", "relation": "observes", "value": "ivory"},
+        "gamma": {"entity": "elia", "relation": "observes", "value": "amber"}
+      },
+      "expected": "elia observes amber.", "counterfactual_value": "ivory",
+      "counterfactual_expected": "elia observes ivory.", "irrelevant_address": "alpha",
+      "irrelevant_record": {"entity": "borin", "relation": "carries", "value": "amber"}
+    }
+  ]
+}

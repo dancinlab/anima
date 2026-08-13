@@ -1,0 +1,32 @@
+{
+  "schema": "anima-iit-daemon-composition-protocol/1",
+  "date": "2026-08-14",
+  "engines": ["core.iit_daemon.IITDaemonCore", "core.generator.gen_iit_workspace_content"],
+  "transition": "xor-other-two-ring",
+  "r3": {
+    "path": "../iit_daemon_r3_content_2026_08_12/result.json",
+    "sha256": "549cb14d6fd3f0a4dd8d886dfe6cdf5d16c0a1b1e69429667a4f648f18608ae7",
+    "required_verdict": "SUPPORTED-BOUNDED-CONTENT-CAUSALITY"
+  },
+  "panel": {"path": "panel.json", "sha256": "29c0af1f02663be6ae2d1a8083bf4036ef5efdee442d23486464f3f04321cf98"},
+  "task": {
+    "address_to_cue": {"alpha": 1, "beta": 2, "gamma": 4},
+    "delay": 1,
+    "chance": 0.3333333333333333,
+    "iit_address_shuffle": [1, 2, 0],
+    "workspace_address_shuffle": ["beta", "gamma", "alpha"],
+    "lesion_mask": 7
+  },
+  "bars": {
+    "oracle": 0.9,
+    "positive": 0.9,
+    "control_margin": 0.06,
+    "control_ceiling": 0.3933333333333333,
+    "counterfactual_change": 0.9,
+    "irrelevant_stability": 0.9,
+    "novel_composition_coverage": 1.0
+  },
+  "required_verdict": "SUPPORTED-COMPOSITIONAL-WORKSPACE-CAUSALITY",
+  "deployment": "BLOCKED-R35-NOT-A-LEARNED-MOUTH",
+  "non_claims": ["learned semantics", "meaningful open conversation", "phenomenal consciousness", "maximal complex", "production readiness"]
+}

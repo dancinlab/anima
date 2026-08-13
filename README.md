@@ -109,6 +109,26 @@ not a learned conversational mouth, so participant and production remain
 `BLOCKED-R3-NOT-CONVERSATIONAL` pending R4 meaningful-mouth training and independent conversation
 validation.
 
+### Preregistered R3.5 compositional workspace
+
+The complete breakthrough review and the next bounded gate are now preregistered in
+`state/iit_daemon_r35_workspace_2026_08_14/`. The missing shared component is not another Phi scalar,
+larger ByteGPT run or answer scaffold. It is a content-addressed seam in which an explicit semantic
+record remains outside the three-bit intrinsic candidate, final IIT state selects its address, and
+the canonical generator receives only the selected entity/relation/value record. The review records
+all five missing parts—event representation, content-addressed persistence, workspace-to-decoder
+route, later learned byte patches and explicit turn termination—plus the rejected variants and
+falsifiers.
+
+R3.5 fixes a nine-trial novel-composition panel and runs oracle, normal, reset, IIT-address shuffle,
+workspace-address shuffle, node lesion, selected-memory counterfactual, irrelevant-memory mutation
+and atomic recovery in that order. Normal/recovery must be at least `0.90`; causal controls must be
+at or below three-way chance plus `0.06`; counterfactual change and irrelevant-memory stability must
+each be at least `0.90`. The record formatter is a bounded plumbing instrument, not a learned mouth.
+Even a pass leaves participant mounting blocked as `BLOCKED-R35-NOT-A-LEARNED-MOUTH` until an
+independently trained English mouth passes meaning, memory and correction gates and then earns
+state coupling under matched reset/shuffle/lesion/recovery controls.
+
 ## Current experiment — meaningful-conversation R0
 
 The next single-axis R4 study is complete in

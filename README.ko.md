@@ -91,6 +91,24 @@ R3를 두 번, 실제 체크포인트 R2 회귀를 byte 단위로 재현했다. 
 인과성만 지지한다. 두 표면문은 학습된 대화 mouth가 아니므로 R4 의미 mouth 학습과 독립
 대화 검증 전까지 participant와 프로덕션은 `BLOCKED-R3-NOT-CONVERSATIONAL`을 유지한다.
 
+### 사전등록한 R3.5 조합형 workspace
+
+돌파 브레인스토밍 전체와 다음 제한 관문을
+`state/iit_daemon_r35_workspace_2026_08_14/`에 사전등록했다. 빠진 공용 부품은 또 다른 Phi
+스칼라, 더 큰 ByteGPT 실행 또는 답안 스캐폴드가 아니다. 명시적 의미 record는 3비트 intrinsic
+candidate 밖에 유지하고, 최종 IIT 상태가 주소를 선택하며, canonical generator에는 선택된
+entity/relation/value record만 전달하는 content-addressed 연결부다. 검토 기록에는 사건 표현,
+content-addressed 지속성, workspace→decoder 경로, 이후의 learned byte patch, 명시적 turn 종료의
+다섯 부품과 모든 폐기 변형·반증 조건을 포함했다.
+
+R3.5는 9개 novel-composition panel을 고정하고 oracle, 정상, reset, IIT 주소 shuffle,
+workspace 주소 shuffle, node lesion, 선택 기억 반사실 변경, 무관 기억 변경, atomic recovery
+순서로 실행한다. 정상·복구는 `0.90` 이상, 인과 대조군은 3-way 우연 수준 + `0.06` 이하,
+반사실 변화와 무관 기억 안정성은 각각 `0.90` 이상이어야 한다. record formatter는 제한된
+배선 도구이지 학습된 mouth가 아니다. 통과해도 독립 학습한 영어 mouth가 의미·기억·정정
+관문을 통과하고 동일한 reset/shuffle/lesion/recovery 대조에서 state coupling을 얻기 전까지
+participant는 `BLOCKED-R35-NOT-A-LEARNED-MOUTH`로 유지한다.
+
 ## 현재 실험 — 의미 있는 대화 R0
 
 다음 단일축 R4 실험을 `state/anima_303m_r4_support_admission_2026_08_13/`에서 완료했다.
