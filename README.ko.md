@@ -368,6 +368,10 @@ aligned 100문서 실행은 학습 probe top-1 `0.6641`, exact `0/8`, heldout to
 고정했다. 2,400-step arm은 성공한 4문서 실행의 고유 문서당 기대 노출량을 맞추고 모델·aligned
 sampler·자료 규칙·목적함수·optimizer·decoder는 유지한다.
 
+16문서 두 arm은 모두 통과해 그 규모에서는 추가 노출이 필요하지 않았다. 남은 고정 budget
+경계는 16~100 사이이며 `state/anima_303m_r4_aligned_boundary_2026_08_13/`에 같은 600-step
+aligned 32/64문서 arm을 사전등록했다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

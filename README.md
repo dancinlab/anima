@@ -390,6 +390,10 @@ document exposure from model capacity; all larger gates remain blocked.
 The 2,400-step arm matches the successful four-document run's expected presentations per unique
 document; the model, aligned sampler, data rule, objective, optimizer and decoder remain fixed.
 
+Both 16-document arms passed, so the longer exposure was unnecessary at that scale. The remaining
+fixed-budget boundary is between 16 and 100; `state/anima_303m_r4_aligned_boundary_2026_08_13/`
+preregisters aligned 32/64-document arms at the unchanged 600 steps.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current
