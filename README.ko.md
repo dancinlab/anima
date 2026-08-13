@@ -477,6 +477,23 @@ assistant CE는 `1.75553/1.71562/1.69534/1.69976`이었지만 의미 대화는 �
 `dancinlab/anima-303m-r4-exposure-ladder-2026-08-13@c30189456da40a80b23092651367a3eeacd0edf0`에만
 보존하고 SHA 검증했다. 다음 허용 축은 별도 사전등록한 고정 자료·고정 노출 capacity 사다리다.
 
+### 사전등록한 R4 고정 자료 capacity 사다리
+
+다음 단일 축은 실행 전에
+[`state/anima_303m_r4_capacity_ladder_2026_08_13`](state/anima_303m_r4_capacity_ladder_2026_08_13/README.md)에
+고정했다. broad/dialogue revision과 정확한 byte view, 3,500문서, dialogue 120k행, replay
+120k행, 2단계 목적함수, optimizer, seed, batch, canonical generator와 fail-closed panel은
+유지한다. 동결한 0.89M endpoint와 새 `2.817M`, `10.110M`, `29.316M` ByteGPT arm을 비교하며
+등록 형상은 native 64차원 attention head를 보존한다. 형상이 다른 체크포인트는 안전하게
+warm-start할 수 없으므로 각 큰 arm은 동일한 2,000-step broad 언어 단계를 from-scratch로
+재구성한 뒤 공통 30,000-step joint 단계를 실행한다. 모든 arm을 실행하고 29.316M을 1차
+endpoint로 고정한다.
+
+로컬에서는 protocol과 smoke 검증만 수행한다. 결과를 내는 실행은 mini를 보호하기 위해
+비-H100 Vast.ai GPU 하나를 사용할 수 있고 완료 후 반드시 삭제한다. 통과하더라도 수동
+검토가 필요한 의미 mouth 관문일 뿐 의식 주장이나 303M·IIT-mouth 결합·participant 탑재·
+프로덕션의 직접 허가는 아니다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

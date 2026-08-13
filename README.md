@@ -501,6 +501,22 @@ private HF revision
 `dancinlab/anima-303m-r4-exposure-ladder-2026-08-13@c30189456da40a80b23092651367a3eeacd0edf0`.
 The next permitted axis is a separately preregistered fixed-data, fixed-exposure capacity ladder.
 
+### Preregistered R4 fixed-data capacity ladder
+
+[`state/anima_303m_r4_capacity_ladder_2026_08_13`](state/anima_303m_r4_capacity_ladder_2026_08_13/README.md)
+freezes the next single axis before execution. The broad/dialogue revisions and exact byte views,
+3,500 documents, 120k dialogue rows, 120k replay rows, two-phase objective, optimizer, seed, batch,
+canonical generator and fail-closed panel remain fixed. The frozen 0.89M endpoint is compared with
+new exact `2.817M`, `10.110M` and `29.316M` ByteGPT arms; their registered shapes preserve a native
+64-dimensional attention head. Every larger arm rebuilds the same 2,000-step broad-language phase
+from scratch before the common 30,000-step joint phase because differently shaped checkpoints
+cannot be warm-started safely. All arms must run, with 29.316M as the primary endpoint.
+
+Local work is limited to protocol and smoke validation; the result-bearing run may use one
+non-H100 Vast.ai GPU to protect the mini, and that instance must be destroyed afterward. A pass is
+only a meaningful-mouth gate requiring manual review, never a consciousness claim or direct
+authorization for 303M, IIT-mouth coupling, participant mounting or production.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current
