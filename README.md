@@ -398,6 +398,10 @@ The fixed-step boundary is between 32 and 64: A32 passed fully, while A64 had te
 `0.9669` and prompt control `8/8` but exact `0/8`. A separately preregistered 64-document 1,200-step
 arm now matches A32's expected presentations per document without changing capacity.
 
+The 64-document 1,200-step arm passed fully, supporting exposure as the post-alignment boundary.
+`state/anima_303m_r4_aligned_100_exposure_2026_08_13/` freezes the derived 100-document endpoint
+`600/32×100 = 1,875` and reruns the unchanged heldout and meaningful-conversation gates.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

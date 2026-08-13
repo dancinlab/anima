@@ -38,13 +38,15 @@ def main() -> int:
     parser.add_argument("--data", required=True)
     parser.add_argument("--work", required=True)
     parser.add_argument("--result", required=True)
+    parser.add_argument("--protocol", default=str(HERE / "protocol.json"))
     parser.add_argument("--device", choices=["cpu"], default="cpu")
     args = parser.parse_args()
-    protocol_path = HERE / "protocol.json"
+    protocol_path = Path(args.protocol).resolve()
+    protocol_dir = protocol_path.parent
     protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
-    parent_result = (HERE / protocol["parent_result"]).resolve()
+    parent_result = (protocol_dir / protocol["parent_result"]).resolve()
     fixed_data = protocol["fixed_data"]
-    panel_path = (HERE / fixed_data["panel"]).resolve()
+    panel_path = (protocol_dir / fixed_data["panel"]).resolve()
     if _sha256(parent_result) != protocol["parent_result_sha256"]:
         raise RuntimeError("parent result SHA differs from preregistration")
     if _sha256(panel_path) != fixed_data["panel_sha256"]:
