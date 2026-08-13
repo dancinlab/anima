@@ -314,6 +314,17 @@ from private HF revision
 `dancinlab/anima-303m-r4-mouth-diagnostics-2026-08-13@8d67bb6e5eeea9a917892fba39310b7306c84718`.
 Full Python/CHAT QA passed `160 tests + 3 subtests` with one expected CUDA/CuPy skip.
 
+### Preregistered R4 four-document optimization/capacity test
+
+`state/anima_303m_r4_four_doc_2026_08_13/` freezes the next local Python-only experiment at the
+first D2 break point. The same four documents, assistant-turn objective, complete-document sampler,
+seed, optimizer, peak LR, decoder and gates are retained. `B0` reproduces `d=128/L=4/600 steps`;
+`O1` changes only the optimization horizon to 2,400 steps; `C1` changes only canonical width/head
+capacity to `d=256/L=4`; and `C2` changes only depth to `d=128/L=8`. Treatments must reach teacher
+top-1 `>=0.95`, exact/target/structural `4/4`, and causal prompt control `4/4`. A baseline mismatch
+invalidates all treatment interpretation. The four-arm bound and result-independent decision table
+are frozen in `protocol.json`; no result directly authorizes 303M, IIT coupling or production.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

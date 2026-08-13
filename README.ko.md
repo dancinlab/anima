@@ -294,6 +294,17 @@ optimization/capacity 단일축 시험이며, 303M·IIT 결합·participant·프
 다시 내려받아 크기·SHA-256 전부 일치함을 검증했다. 전체 Python/CHAT QA는
 `160 tests + 3 subtests`를 통과했고 CUDA/CuPy 부재 1건만 정상 skip됐다.
 
+### 사전등록한 R4 4문서 optimization/capacity 시험
+
+`state/anima_303m_r4_four_doc_2026_08_13/`에 D2의 첫 붕괴점에서 수행할 로컬 Python 전용
+시험을 동결했다. 같은 4개 문서, assistant-turn 목적함수, 완전 문서 sampler, seed, optimizer,
+peak LR, decoder와 관문을 유지한다. `B0`는 `d=128/L=4/600 step`을 재현하고, `O1`은 학습
+horizon만 2,400 step으로 바꾸며, `C1`은 canonical width/head 용량만 `d=256/L=4`로,
+`C2`는 depth만 `d=128/L=8`로 바꾼다. treatment는 teacher top-1 `>=0.95`,
+exact/target/structural `4/4`, prompt 인과 통제 `4/4`를 모두 통과해야 한다. baseline 불일치는
+모든 treatment 해석을 무효화한다. 4-arm 제한과 결과 독립 decision table은 `protocol.json`에
+고정했으며 어떤 결과도 303M·IIT 결합·프로덕션을 바로 허용하지 않는다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속
