@@ -418,6 +418,14 @@ turn-only phase. The immutable HF revisions, byte ranges and hashes, both endpoi
 optimizer, fixed heldout/panel gates, and stop rules are frozen before execution. The preserved
 response-only result is the control; no result-dependent checkpoint selection is allowed.
 
+The curriculum arm failed independent conversation despite passing both in-view stages. Full-CE
+broad validation reached CE `2.2596` and top-1 `0.3442`; turn-SFT then reached teacher/exact/target/
+structural/prompt `8/8`. After SFT the same broad CE collapsed to `7.1194`, heldout dialogue CE was
+`7.1212`, and independent semantics remained `0/7` with memory/correction failures. The verdict is
+`FAIL-CURRICULUM-MEANINGFUL-CONVERSATION`. This supports catastrophic forgetting in the high-LR
+turn phase, not a failure to form the bounded broad language distribution. The next single axis is
+turn-phase LR only; all larger gates remain blocked.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current

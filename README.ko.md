@@ -395,6 +395,14 @@ response-only 학습은 일반 언어 mouth를 만들지 못하고 암기만 한
 관문과 중단 규칙을 실행 전에 동결했다. 보존된 response-only 결과가 control이며 결과를 본 뒤
 checkpoint를 고르는 것은 금지한다.
 
+curriculum arm은 두 in-view 단계를 통과했지만 독립 대화에는 실패했다. full-CE broad
+validation은 CE `2.2596`, top-1 `0.3442`였고 turn-SFT는 teacher/exact/target/구조/prompt를
+모두 `8/8` 통과했다. 그러나 SFT 뒤 같은 broad CE가 `7.1194`로 붕괴했고 heldout 대화 CE는
+`7.1212`, 독립 의미는 `0/7`이었으며 기억·정정도 실패했다. 판정은
+`FAIL-CURRICULUM-MEANINGFUL-CONVERSATION`이다. 이는 제한된 broad 언어 형성 실패가 아니라
+고학습률 turn 단계의 catastrophic forgetting을 지지한다. 다음 단일 축은 turn 단계 LR만
+변경하며 모든 상위 관문은 계속 차단한다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속
