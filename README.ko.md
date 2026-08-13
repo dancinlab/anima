@@ -358,6 +358,16 @@ canonical byte 예산에 맞는 완전 exchange 첫 100개를 결정론적으로
 deterministic recipe를 유지하며 heldout 32개 전체와 기존 의미 대화 panel을 실행한다. 자동
 통과해도 수동 검토가 필요하며 303M·IIT 결합·프로덕션을 바로 허용하지 않는다.
 
+aligned 100문서 실행은 학습 probe top-1 `0.6641`, exact `0/8`, heldout top-1 `0.1573`, 독립
+의미 `0/7`, 구조 `5/7`로 실패했고 출력도 파편·반복 상태였다. alignment는 4문서 mapping을
+수정하지만 고정 600-step 노출에서는 100문서에 충분하지 않다. 문서당 노출량과 용량을 분리하기
+위해 16문서에서 600 대 2,400 step을 비교하는 별도 사전등록 시험으로 이어가며 모든 상위
+관문은 계속 차단한다.
+
+`state/anima_303m_r4_aligned_exposure_2026_08_13/`에 이 2-arm deterministic CPU 시험을
+고정했다. 2,400-step arm은 성공한 4문서 실행의 고유 문서당 기대 노출량을 맞추고 모델·aligned
+sampler·자료 규칙·목적함수·optimizer·decoder는 유지한다.
+
 ## 미해결 gap 감사 — 303M 의미 대화
 
 아래는 2026-08-12 읽기 전용 `/gap` 감사에서 확인한 8개 렌즈군 31개 항목의 전체 후속

@@ -128,16 +128,20 @@ def _score_arm(checkpoint: Path, exchanges: list[tuple[str, str]], bars: dict,
         row["free"]["decoded"].get("text", "").strip() == row["free"]["target"].strip()
         for row in score["rows"])
     # The shared D4 helper was frozen for eight probes and advances with modulo 8.
-    # Repeat the registered four-row cycle, then retain exactly one cycle.
-    prompt = diagnostics._prompt_intervention(checkpoint, exchanges * 2, bars, device)
-    prompt["rows"] = prompt["rows"][:4]
+    # Repeat shorter registered cycles only enough to satisfy that contract.
+    expected = min(8, len(exchanges))
+    repeats = (8 + len(exchanges) - 1) // len(exchanges)
+    prompt = diagnostics._prompt_intervention(
+        checkpoint, (exchanges * repeats)[:8], bars, device)
+    prompt["rows"] = prompt["rows"][:expected]
     prompt["counts"] = {
         "ce_controlled": sum(row["ce_controlled"] for row in prompt["rows"]),
         "output_controlled": sum(row["output_controlled"] for row in prompt["rows"]),
     }
-    prompt["gate_four"] = (
-        prompt["counts"]["ce_controlled"] == 4
-        and prompt["counts"]["output_controlled"] == 4)
+    prompt["gate_all"] = (
+        prompt["counts"]["ce_controlled"] == expected
+        and prompt["counts"]["output_controlled"] == expected)
+    prompt["gate_four"] = prompt["gate_all"] if expected == 4 else None
     score["prompt_causality"] = prompt
     counts = score["counts"]
     score["gate_reachability"] = _exact_gate_reachability(exchanges)
@@ -145,10 +149,10 @@ def _score_arm(checkpoint: Path, exchanges: list[tuple[str, str]], bars: dict,
         score["gate_reachability"]["exact_completion_reachable"]
         and
         score["teacher"]["top1_accuracy"] >= 0.95
-        and counts["exact"] == 4
-        and counts["target_recovered"] == 4
-        and counts["structural"] == 4)
-    score["gate"] = score["memorization_gate"] and prompt["gate_four"]
+        and counts["exact"] == expected
+        and counts["target_recovered"] == expected
+        and counts["structural"] == expected)
+    score["gate"] = score["memorization_gate"] and prompt["gate_all"]
     return score
 
 

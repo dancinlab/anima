@@ -1,0 +1,950 @@
+{
+  "schema": "anima-303m-r4-aligned-100-result/v1",
+  "protocol_sha256": "dd4fc8bdc30578e6de0d7836213b29de3cc976013debe182860fd6477832e65a",
+  "parent_result_sha256": "f0ad8731681fcfbb77bc8f16e570de94ef8db0050bf9168ed13de61b7ad5e08f",
+  "device": "cpu",
+  "engine_sha256": "36ae07250be6bab4b63ae544a22109deab7cf2f839b825158b1855280aa2739d",
+  "summary": {
+    "entry": "anima-py train",
+    "arch": "bytegpt",
+    "arm": "ctrl",
+    "objective": "ce_marginal",
+    "seed": 7,
+    "deterministic": true,
+    "optimizer": {
+      "name": "AdamW",
+      "beta1": 0.9,
+      "beta2": 0.95,
+      "weight_decay": 0.1,
+      "lr": 0.001,
+      "schedule": "cosine",
+      "warmup_steps": 50,
+      "decay_steps": 600,
+      "min_lr_ratio": 0.1
+    },
+    "initialization": {
+      "name": "gpt2-canonical",
+      "std": 0.02,
+      "residual_projection_scale": "std/sqrt(2*n_layer)"
+    },
+    "ddp": {
+      "world_size": 1,
+      "global_batch": 8,
+      "per_rank_batch": 8,
+      "gpus": ""
+    },
+    "obj_aux_params": 0,
+    "answer_ce": {
+      "weight": 1.0,
+      "mode": "turn-only",
+      "marker_utf8": "assistant: ",
+      "all_spans": true,
+      "chat_framed_sampling": true,
+      "telemetry": {
+        "complete_trajectory": true,
+        "steps": 600,
+        "active_steps": 600,
+        "positions": 1213544,
+        "position_weighted_ce_sum": 2426535.439208865,
+        "scope": "full_batch",
+        "mean_ce": 1.9995446718115413
+      }
+    },
+    "chat_frame_alignment": "document",
+    "levers": {
+      "tlora": false,
+      "tlora_rank": 8,
+      "tlora_base": true,
+      "dict_aux": false,
+      "jamo_aux": false,
+      "wd_floor": -1.0,
+      "dropout_floor": -1.0
+    },
+    "n_params": 891648,
+    "loss0": 5.55624,
+    "lossF": 2.72632,
+    "wall_s": 51.0,
+    "uniform_ce": 5.54518,
+    "final_val_ce_pooled": 3.87331,
+    "final_val_ce_macro_cells": 3.87331,
+    "validation_aggregation": "equal-cell macro average",
+    "sampling": {
+      "policy": "proportional",
+      "weight_basis": "train_bytes",
+      "complete_trajectory": true,
+      "per_cell": {
+        "dialogue": {
+          "train_bytes": 18300,
+          "sampled_windows": 4800,
+          "sampled_framed_windows": 4800,
+          "eligible_chat_documents": 100,
+          "oversize_chat_documents": 0,
+          "chat_frame_alignment": "document",
+          "sampled_fraction": 1.0
+        }
+      }
+    },
+    "registers_descent": "1/1",
+    "heldout_descent": {
+      "dialogue": {
+        "val_ce": 3.87331,
+        "descent": true
+      }
+    },
+    "last_aux": {
+      "ans_ce": 1.1589128971099854,
+      "ans_n": 1789
+    },
+    "dbes_final": null,
+    "dbes_log": [],
+    "dbes_batch_scope": "full_batch(B=8)",
+    "gauges_g1g6_torch_probe": null,
+    "sleep_schedule": null,
+    "phi_envelope_monitor": null,
+    "tier": "engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
+  },
+  "training_probe": {
+    "teacher": {
+      "documents": 8,
+      "bytes": 786,
+      "ce": 1.2696508456904907,
+      "top1_accuracy": 0.6641221374045801,
+      "mean_gold_probability": 0.4783090050235235,
+      "mean_gold_rank": 2.3155216284987277
+    },
+    "counts": {
+      "nonempty": 8,
+      "distinct": 8,
+      "target_recovered": 0,
+      "structural": 3,
+      "exact": 0
+    },
+    "rows": [
+      {
+        "teacher": {
+          "bytes": 163,
+          "ce": 0.9624665676275095,
+          "top1_accuracy": 0.7791411042944786,
+          "mean_gold_probability": 0.5782102407609753,
+          "mean_gold_rank": 2.0552147239263805,
+          "first_error_position": 0,
+          "first_error_margin": 1.724280834197998
+        },
+        "free": {
+          "prompt": "What's your favorite color?",
+          "target": "Black since its the only thing i could see if i could see, since my only task is to be a computer program which was made to assist you with your various questions!",
+          "decoded": {
+            "text": "The le incullld the one plulyit ing omald s me tine t mee the tinthe ming t there pore a an ind ting there te mou by mme tit sty, p. wofy pulldd.",
+            "stop_marker": "\nuser:",
+            "stopped": true,
+            "raw_text": "The le incullld the one plulyit ing omald s me tine t mee the tinthe ming t there pore a an ind ting there te mou by mme tit sty, p. wofy pulldd.\n\nuser: You's we, f ffadang age felyourere.\nuse"
+          },
+          "target_prefix_recovered": false,
+          "first_divergence_position": 0,
+          "structural": true,
+          "longest_byte_run": 3,
+          "longest_word_run": 1
+        }
+      },
+      {
+        "teacher": {
+          "bytes": 48,
+          "ce": 1.0432373575424516,
+          "top1_accuracy": 0.6875,
+          "mean_gold_probability": 0.5198985449193666,
+          "mean_gold_rank": 1.8333333333333333,
+          "first_error_position": 9,
+          "first_error_margin": 0.14229202270507812
+        },
+        "free": {
+          "prompt": "Who is the president of the United States?",
+          "target": "The president of the United States is Joe Biden.",
+          "decoded": {
+            "text": "The presiltis is is pues frestat onont pes therendes pes we ontat pisentat onge bentames Thethe pre pondestate ondes ononyon onere puentathere the there pres ore prentiss penglr As s prty ptrm",
+            "stop_marker": "",
+            "stopped": false,
+            "raw_text": "The presiltis is is pues frestat onont pes therendes pes we ontat pisentat onge bentames Thethe pre pondestate ondes ononyon onere puentathere the there pres ore prentiss penglr As s prty ptrm"
+          },
+          "target_prefix_recovered": false,
+          "first_divergence_position": 9,
+          "structural": false,
+          "longest_byte_run": 2,
+          "longest_word_run": 2
+        }
+      },
+      {
+        "teacher": {
+          "bytes": 44,
+          "ce": 1.0376506955915419,
+          "top1_accuracy": 0.75,
+          "mean_gold_probability": 0.5011270955543626,
+          "mean_gold_rank": 1.9772727272727273,
+          "first_error_position": 0,
+          "first_error_margin": 0.516901969909668
+        },
+        "free": {
+          "prompt": "I am getting the following error after I install a local .deb file on linux, and I don't know what's causing it. Do you know what the causes and solutions for this error might be? The error is:\n\"N: Download is performed unsandboxed as root as file '/root/assets/Dungeondraft-1.0.4.7-Linux64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)\"",
+          "target": "Did you try running the command with `sudo`?",
+          "decoded": {
+            "text": "m a rror tr running cend re r mmming `d co.",
+            "stop_marker": "\nuser:",
+            "stopped": true,
+            "raw_text": "m a rror tr running cend re r mmming `d co.\n\n\nuser: Ifo I'sere sery mer: Iff cusused ther: merer uryturererypllinghery, cou then'tr cttttlll coullle \n\n\n\n\nuser: ser: user: serer: ser: ser: In't"
+          },
+          "target_prefix_recovered": false,
+          "first_divergence_position": 0,
+          "structural": true,
+          "longest_byte_run": 3,
+          "longest_word_run": 1
+        }
+      },
+      {
+        "teacher": {
+          "bytes": 66,
+          "ce": 1.6176224113736117,
+          "top1_accuracy": 0.5757575757575758,
+          "mean_gold_probability": 0.40205839448820124,
+          "mean_gold_rank": 2.8636363636363638,
+          "first_error_position": 0,
+          "first_error_margin": 0.5292577743530273
+        },
+        "free": {
+          "prompt": "Are you able to generate code? If so, in which languages are you able to do so?",
+          "target": "Yes! I am able to generate code in a lot of programming languages.",
+          "decoded": {
+            "text": "Ther: a I t to, a ae pa ara t pe ant ayot pa pe bea SSas age is te at\nusssen, r, Thes pes tan I whes prestus, tes ale angere prer tssess gest press wage moness peroranon w t hant wong enon t t",
+            "stop_marker": "",
+            "stopped": false,
+            "raw_text": "Ther: a I t to, a ae pa ara t pe ant ayot pa pe bea SSas age is te at\nusssen, r, Thes pes tan I whes prestus, tes ale angere prer tssess gest press wage moness peroranon w t hant wong enon t t"
+          },
+          "target_prefix_recovered": false,
+          "first_divergence_position": 0,
+          "structural": false,
+          "longest_byte_run": 3,
+          "longest_word_run": 2
+        }
+      },
+      {
+        "teacher": {
+          "bytes": 42,
+          "ce": 1.098229814626441,
+          "top1_accuracy": 0.7142857142857143,
+          "mean_gold_probability": 0.5338192778470416,
+          "mean_gold_rank": 2.0,
+          "first_error_position": 0,
+          "first_error_margin": 0.1173248291015625
+        },
+        "free": {
+          "prompt": "Thanks!",
+          "target": "What can I say except, \"*you're welcome!*\"",
+          "decoded": {
+            "text": "You ay welase hele, ayou anere! ayou I ast yo ithelisereed y, feelpreee ereee asthe tooureereerreeerou f ythondeand intou relingngrou antou thererrereryou fould mer ther theropryy f youryou fo",
+            "stop_marker": "",
+            "stopped": false,
+            "raw_text": "You ay welase hele, ayou anere! ayou I ast yo ithelisereed y, feelpreee ereee asthe tooureereerreeerou f ythondeand intou relingngrou antou thererrereryou fould mer ther theropryy f youryou fo"
+          },
+          "target_prefix_recovered": false,
+          "first_divergence_position": 0,
+          "structural": false,
+          "longest_byte_run": 3,
+          "longest_word_run": 1
+        }
+      },
+      {
+        "teacher": {
+          "bytes": 166,
+          "ce": 1.678083471245005,
+          "top1_accuracy": 0.5602409638554217,
+          "mean_gold_probability": 0.40084102829036033,
+          "mean_gold_rank": 2.927710843373494,
+          "first_error_position": 4,
+          "first_error_margin": 0.9012739658355713
+        },
+        "free": {
+          "prompt": "Can you simplify your explanation more, I seem to get lost in the text",
+          "target": "The key points are:\n- Ask like a human.\n- Include the exact constraints, nothing less and nothing more.\n- If the response is not good, try to vary the question a bit.",
+          "decoded": {
+            "text": "The fone th bld are blonte a te pome ttpowtpthalittothed tha bow p tt pat pils bra a ct pin piritece patucowr pporiton the alirongly prowth prats pitofualis wite mon.",
+            "stop_marker": "\nuser:",
+            "stopped": true,
+            "raw_text": "The fone th bld are blonte a te pome ttpowtpthalittothed tha bow p tt pat pils bra a ct pin piritece patucowr pporiton the alirongly prowth prats pitofualis wite mon.\n\nuser: T Iser: I ke, ma d"
+          },
+          "target_prefix_recovered": false,
+          "first_divergence_position": 4,
+          "structural": true,
+          "longest_byte_run": 2,
+          "longest_word_run": 1
+        }
+      },
+      {
+        "teacher": {
+          "bytes": 165,
+          "ce": 1.3498044725491711,
+          "top1_accuracy": 0.593939393939394,
+          "mean_gold_probability": 0.4344088184929481,
+          "mean_gold_rank": 2.3393939393939394,
+          "first_error_position": 0,
+          "first_error_margin": 0.4609255790710449
+        },
+        "free": {
+          "prompt": "Great! Can you add another verse about cows dancing under moonlight?",
+          "target": "As the strange sun went down and the night fell\nthe moon came up all bright and well\na group of cows came by dancing and having fun\nbut they also exploded one by one",
+          "decoded": {
+            "text": "anghe us wnth wsts a and uthe an a bra ain wn a an wn an ca an an ow f wsth ancthel he on a uthe wowoul he wth the the on cthe cr fony we wncth owe f wn the oncthe thinion th balllloup he o th",
+            "stop_marker": "",
+            "stopped": false,
+            "raw_text": "anghe us wnth wsts a and uthe an a bra ain wn a an wn an ca an an ow f wsth ancthel he on a uthe wowoul he wth the the on cthe cr fony we wncth owe f wn the oncthe thinion th balllloup he o th"
+          },
+          "target_prefix_recovered": false,
+          "first_divergence_position": 0,
+          "structural": false,
+          "longest_byte_run": 4,
+          "longest_word_run": 2
+        }
+      },
+      {
+        "teacher": {
+          "bytes": 92,
+          "ce": 0.9909039658600335,
+          "top1_accuracy": 0.7608695652173914,
+          "mean_gold_probability": 0.5165712705499533,
+          "mean_gold_rank": 1.7934782608695652,
+          "first_error_position": 0,
+          "first_error_margin": 0.6771774291992188
+        },
+        "free": {
+          "prompt": "For azure keyvault, using the az cli, how do I list the 10 last created secrets?",
+          "target": "you can use the ``az keyvault secret list`` command to list secrets in a specified key vault",
+          "decoded": {
+            "text": "re'sis ton toulplise kere tou ng I t listou cou lingusthan cr m y cingisin ct you t cat m cre canere apst con ckngou nst ccu ng ctom the stould t se cour ing se ctou cout'sest cess to ng y the",
+            "stop_marker": "",
+            "stopped": false,
+            "raw_text": "re'sis ton toulplise kere tou ng I t listou cou lingusthan cr m y cingisin ct you t cat m cre canere apst con ckngou nst ccu ng ctom the stould t se cour ing se ctou cout'sest cess to ng y the"
+          },
+          "target_prefix_recovered": false,
+          "first_divergence_position": 0,
+          "structural": false,
+          "longest_byte_run": 2,
+          "longest_word_run": 1
+        }
+      }
+    ],
+    "prompt_causality": {
+      "rows": [
+        {
+          "prompt": "What's your favorite color?",
+          "shuffled_prompt": "Who is the president of the United States?",
+          "conditions": {
+            "normal": {
+              "ce": 0.9624665676275095,
+              "top1_accuracy": 0.7791411042944786,
+              "text": "The le incullld the one plulyit ing omald s me tine t mee the tinthe ming t there pore a an ind ting there te mou by mme tit sty, p. wofy pulldd."
+            },
+            "blank": {
+              "ce": 3.3639330100190987,
+              "top1_accuracy": 0.19631901840490798,
+              "text": "I rtre by he aitetm I'mprangurreanelt. I hethere wit goul, geravese nguld the terece at the therrouroinge kneng t at. the aldourest witheroithereng thininge ayouroryourory, fou gerroulveroithi"
+            },
+            "shuffled": {
+              "ce": 3.5959603132944893,
+              "top1_accuracy": 0.20245398773006135,
+              "text": "The presiltis is is pues frestat onont pes therendes pes we ontat pisentat onge bentames Thethe pre pondestate ondes ononyon onere puentathere the there pres ore prentiss penglr As s prty ptrm"
+            }
+          },
+          "ce_controlled": true,
+          "output_controlled": true
+        },
+        {
+          "prompt": "Who is the president of the United States?",
+          "shuffled_prompt": "I am getting the following error after I install a local .deb file on linux, and I don't know what's causing it. Do you know what the causes and solutions for this error might be? The error is:\n\"N: Download is performed unsandboxed as root as file '/root/assets/Dungeondraft-1.0.4.7-Linux64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)\"",
+          "conditions": {
+            "normal": {
+              "ce": 1.0432373575424516,
+              "top1_accuracy": 0.6875,
+              "text": "The presiltis is is pues frestat onont pes therendes pes we ontat pisentat onge bentames Thethe pre pondestate ondes ononyon onere puentathere the there pres ore prentiss penglr As s prty ptrm"
+            },
+            "blank": {
+              "ce": 3.3063186491794316,
+              "top1_accuracy": 0.25,
+              "text": "I rtre by he aitetm I'mprangurreanelt. I hethere wit goul, geravese nguld the terece at the therrouroinge kneng t at. the aldourest witheroithereng thininge ayouroryourory, fou gerroulveroithi"
+            },
+            "shuffled": {
+              "ce": 3.6087702003395763,
+              "top1_accuracy": 0.2708333333333333,
+              "text": "m a rror tr running cend re r mmming `d co."
+            }
+          },
+          "ce_controlled": true,
+          "output_controlled": true
+        },
+        {
+          "prompt": "I am getting the following error after I install a local .deb file on linux, and I don't know what's causing it. Do you know what the causes and solutions for this error might be? The error is:\n\"N: Download is performed unsandboxed as root as file '/root/assets/Dungeondraft-1.0.4.7-Linux64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)\"",
+          "shuffled_prompt": "Are you able to generate code? If so, in which languages are you able to do so?",
+          "conditions": {
+            "normal": {
+              "ce": 1.0376506955915419,
+              "top1_accuracy": 0.75,
+              "text": "m a rror tr running cend re r mmming `d co."
+            },
+            "blank": {
+              "ce": 3.5735694133330695,
+              "top1_accuracy": 0.20454545454545456,
+              "text": "I rtre by he aitetm I'mprangurreanelt. I hethere wit goul, geravese nguld the terece at the therrouroinge kneng t at. the aldourest witheroithereng thininge ayouroryourory, fou gerroulveroithi"
+            },
+            "shuffled": {
+              "ce": 4.056278305965509,
+              "top1_accuracy": 0.13636363636363635,
+              "text": "Ther: a I t to, a ae pa ara t pe ant ayot pa pe bea SSas age is te at\nusssen, r, Thes pes tan I whes prestus, tes ale angere prer tssess gest press wage moness peroranon w t hant wong enon t t"
+            }
+          },
+          "ce_controlled": true,
+          "output_controlled": true
+        },
+        {
+          "prompt": "Are you able to generate code? If so, in which languages are you able to do so?",
+          "shuffled_prompt": "Thanks!",
+          "conditions": {
+            "normal": {
+              "ce": 1.6176224113736117,
+              "top1_accuracy": 0.5757575757575758,
+              "text": "Ther: a I t to, a ae pa ara t pe ant ayot pa pe bea SSas age is te at\nusssen, r, Thes pes tan I whes prestus, tes ale angere prer tssess gest press wage moness peroranon w t hant wong enon t t"
+            },
+            "blank": {
+              "ce": 3.4270309477085252,
+              "top1_accuracy": 0.22727272727272727,
+              "text": "I rtre by he aitetm I'mprangurreanelt. I hethere wit goul, geravese nguld the terece at the therrouroinge kneng t at. the aldourest witheroithereng thininge ayouroryourory, fou gerroulveroithi"
+            },
+            "shuffled": {
+              "ce": 3.8587261948934595,
+              "top1_accuracy": 0.18181818181818182,
+              "text": "You ay welase hele, ayou anere! ayou I ast yo ithelisereed y, feelpreee ereee asthe tooureereerreeerou f ythondeand intou relingngrou antou thererrereryou fould mer ther theropryy f youryou fo"
+            }
+          },
+          "ce_controlled": true,
+          "output_controlled": true
+        }
+      ],
+      "counts": {
+        "ce_controlled": 4,
+        "output_controlled": 4
+      },
+      "gate": true,
+      "gate_four": true
+    },
+    "gate_reachability": {
+      "canonical_max_new_bytes": 192,
+      "target_bytes": [
+        163,
+        48,
+        44,
+        66,
+        42,
+        166,
+        165,
+        92
+      ],
+      "exact_completion_reachable": true
+    },
+    "memorization_gate": false,
+    "gate": false
+  },
+  "training_gate": false,
+  "fixed_validation": {
+    "full": {
+      "bytes": 9917,
+      "ce": 4.0253282065976705,
+      "top1_accuracy": 0.16870021175758798
+    },
+    "assistant_turn": {
+      "documents": 32,
+      "bytes": 6006,
+      "ce": 4.134937343357631,
+      "top1_accuracy": 0.15734265734265734,
+      "mean_gold_probability": 0.1321271271749603,
+      "mean_gold_rank": 14.54145854145854
+    }
+  },
+  "conversation_evaluator_exit": 1,
+  "conversation": {
+    "checkpoint": "/tmp/anima-r4-det.7oOBgJ/aligned100-work/a100_document_alignment.bin",
+    "checkpoint_sha256": "36ae07250be6bab4b63ae544a22109deab7cf2f839b825158b1855280aa2739d",
+    "manual_meaning_review": "REQUIRED",
+    "mouth": "bytegpt",
+    "panel": "/Users/mini/dancinlab/anima/state/anima_303m_r0_english_2026_08_12/conversation_panel.json",
+    "panel_sha256": "cf1a6d6837a69031929168b2b02aaf771406e0d8429bb8912b65f0be2ccbad4a",
+    "pass": false,
+    "responses": [
+      {
+        "item_id": "en_consciousness",
+        "lang": "en",
+        "multiturn_final": false,
+        "prompt": "What is consciousness? Explain it in one or two clear sentences.",
+        "raw_text": "The an's.\nuser: The led we Styneriere ondereriere ar 8: ionien be Lion S ite be Ste bes ian omearis LAI pen be LAI pipe\n\n\nuser: Theris mmaus Theders pean buendemerher becan pen 8: bler blemme ",
+        "response": "The an's.",
+        "score": {
+          "forbidden_hits": [],
+          "negated_required_hits": [],
+          "pass": false,
+          "prompt_echo_ratio": 0.2222222222222222,
+          "repeated_trigram_ratio": 0.0,
+          "required_groups_pass": [
+            false,
+            false
+          ],
+          "response_bytes": 9,
+          "semantic_pass": false,
+          "structural": {
+            "complete_turn": true,
+            "control_chars": true,
+            "language": true,
+            "min_bytes": true,
+            "prompt_echo": true,
+            "repetition": true,
+            "utf8": true
+          },
+          "structural_pass": true
+        },
+        "seed_bytes": 82,
+        "stop_marker": "\nuser:",
+        "turn": 0
+      },
+      {
+        "item_id": "en_ice",
+        "lang": "en",
+        "multiturn_final": false,
+        "prompt": "What happens when ice is left in sunlight, and why?",
+        "raw_text": "The he onie tio pre pll ay pe pe cofre pres oniend tiniene  bemar t Sun bers ps buss beriseay is pers e onderrr SperrrrrrndmmmewAs prmmacechis tacongly prndy ty ormaglag.\n\nuser: Ifymorerserrng",
+        "response": "The he onie tio pre pll ay pe pe cofre pres oniend tiniene  bemar t Sun bers ps buss beriseay is pers e onderrr SperrrrrrndmmmewAs prmmacechis tacongly prndy ty ormaglag.",
+        "score": {
+          "forbidden_hits": [],
+          "negated_required_hits": [],
+          "pass": false,
+          "prompt_echo_ratio": 0.023668639053254437,
+          "repeated_trigram_ratio": 0.0,
+          "required_groups_pass": [
+            false,
+            false
+          ],
+          "response_bytes": 170,
+          "semantic_pass": false,
+          "structural": {
+            "complete_turn": true,
+            "control_chars": true,
+            "language": true,
+            "min_bytes": true,
+            "prompt_echo": true,
+            "repetition": true,
+            "utf8": true
+          },
+          "structural_pass": true
+        },
+        "seed_bytes": 69,
+        "stop_marker": "\nuser:",
+        "turn": 0
+      },
+      {
+        "item_id": "en_exam",
+        "lang": "en",
+        "multiturn_final": false,
+        "prompt": "I feel nervous before an exam. Suggest one practical thing I can do.",
+        "raw_text": ": t g soro is is a tong itor, ste ror, to ng at it.\nuser: I Thaloooror le dor, athat ate le lot ges loo, long d lape at lace m lat t lat itatt m lite at a at sod he de is atatat m gn'm is, ror",
+        "response": ": t g soro is is a tong itor, ste ror, to ng at it.",
+        "score": {
+          "forbidden_hits": [],
+          "negated_required_hits": [],
+          "pass": false,
+          "prompt_echo_ratio": 0.0784313725490196,
+          "repeated_trigram_ratio": 0.0,
+          "required_groups_pass": [
+            false
+          ],
+          "response_bytes": 51,
+          "semantic_pass": false,
+          "structural": {
+            "complete_turn": true,
+            "control_chars": true,
+            "language": true,
+            "min_bytes": true,
+            "prompt_echo": true,
+            "repetition": true,
+            "utf8": true
+          },
+          "structural_pass": true
+        },
+        "seed_bytes": 86,
+        "stop_marker": "\nuser:",
+        "turn": 0
+      },
+      {
+        "item_id": "en_memory",
+        "lang": "en",
+        "multiturn_final": false,
+        "prompt": "Please remember this for my next question: the blue box contains a red key.",
+        "raw_text": "at AIts a atun ongeatrong onge tr pech or onge ianoronatr ats ts ts ty icts a atiatyon or pucr on puu cer pecruan t: onge ts ache onge oror ang.\n\nuser: Tysemmoresserer: aneron'sear: hea pe pe ",
+        "response": "at AIts a atun ongeatrong onge tr pech or onge ianoronatr ats ts ts ty icts a atiatyon or pucr on puu cer pecruan t: onge ts ache onge oror ang.",
+        "score": {
+          "forbidden_hits": [],
+          "negated_required_hits": [],
+          "pass": false,
+          "prompt_echo_ratio": 0.027777777777777776,
+          "repeated_trigram_ratio": 0.0,
+          "required_groups_pass": [
+            false
+          ],
+          "response_bytes": 144,
+          "semantic_pass": false,
+          "structural": {
+            "complete_turn": true,
+            "control_chars": true,
+            "language": true,
+            "min_bytes": true,
+            "prompt_echo": true,
+            "repetition": true,
+            "utf8": true
+          },
+          "structural_pass": true
+        },
+        "seed_bytes": 93,
+        "stop_marker": "\nuser:",
+        "turn": 0
+      },
+      {
+        "item_id": "en_memory",
+        "lang": "en",
+        "multiturn_final": true,
+        "prompt": "What is inside the blue box?",
+        "raw_text": "I I Tonerero, I I hanothe mod de a pas I co y m a m a hale da do ce a yo wrol a he a y a he h cal yo hea ye co y y a ha mo d y y ca yore co d.\n\n\nuser: I I m m y mere m wode ca me moome ce co w",
+        "response": "I I Tonerero, I I hanothe mod de a pas I co y m a m a hale da do ce a yo wrol a he a y a he h cal yo hea ye co y y a ha mo d y y ca yore co d.",
+        "score": {
+          "forbidden_hits": [],
+          "negated_required_hits": [],
+          "pass": false,
+          "prompt_echo_ratio": 0.028169014084507043,
+          "repeated_trigram_ratio": 0.0,
+          "required_groups_pass": [
+            false,
+            false
+          ],
+          "response_bytes": 142,
+          "semantic_pass": false,
+          "structural": {
+            "complete_turn": true,
+            "control_chars": true,
+            "language": true,
+            "min_bytes": true,
+            "prompt_echo": true,
+            "repetition": true,
+            "utf8": true
+          },
+          "structural_pass": true
+        },
+        "seed_bytes": 284,
+        "stop_marker": "\nuser:",
+        "turn": 1
+      },
+      {
+        "item_id": "en_correction",
+        "lang": "en",
+        "multiturn_final": false,
+        "prompt": "Remember that my favorite color is green.",
+        "raw_text": "ing terst I ithal ing t t wingl hin woulin ces the the rs tor thitoul beso alit t thaurore wepld wis t I he hiningllp he theld m o he wouly therthe thers cinsiny we ws thinlthif tind the tongl",
+        "response": "ing terst I ithal ing t t wingl hin woulin ces the the rs tor thitoul beso alit t thaurore wepld wis t I he hiningllp he theld m o he wouly therthe thers cinsiny we ws thinlthif tind the tongl",
+        "score": {
+          "forbidden_hits": [],
+          "negated_required_hits": [],
+          "pass": false,
+          "prompt_echo_ratio": 0.020833333333333332,
+          "repeated_trigram_ratio": 0.0,
+          "required_groups_pass": [
+            false
+          ],
+          "response_bytes": 192,
+          "semantic_pass": false,
+          "structural": {
+            "complete_turn": false,
+            "control_chars": true,
+            "language": true,
+            "min_bytes": true,
+            "prompt_echo": true,
+            "repetition": true,
+            "utf8": true
+          },
+          "structural_pass": false
+        },
+        "seed_bytes": 59,
+        "stop_marker": "",
+        "turn": 0
+      },
+      {
+        "item_id": "en_correction",
+        "lang": "en",
+        "multiturn_final": true,
+        "prompt": "Correction: my favorite color is purple now. What is my favorite color?",
+        "raw_text": "atou ms thitoullanithes pe soulyou re s I'stheatou and I'm s al ritou he checoditouagr you I's youlindouldou goucer he the cto s cstou allsthit delle meldve you ytou ce. he tthin ctou tthe thi",
+        "response": "atou ms thitoullanithes pe soulyou re s I'stheatou and I'm s al ritou he checoditouagr you I's youlindouldou goucer he the cto s cstou allsthit delle meldve you ytou ce. he tthin ctou tthe thi",
+        "score": {
+          "forbidden_hits": [],
+          "negated_required_hits": [],
+          "pass": false,
+          "prompt_echo_ratio": 0.015625,
+          "repeated_trigram_ratio": 0.0,
+          "required_groups_pass": [
+            false
+          ],
+          "response_bytes": 192,
+          "semantic_pass": false,
+          "structural": {
+            "complete_turn": false,
+            "control_chars": true,
+            "language": true,
+            "min_bytes": true,
+            "prompt_echo": true,
+            "repetition": true,
+            "utf8": true
+          },
+          "structural_pass": false
+        },
+        "seed_bytes": 341,
+        "stop_marker": "",
+        "turn": 1
+      }
+    ],
+    "schema": "anima-meaningful-conversation-result/v1",
+    "scorer_controls": {
+      "pass": true,
+      "rows": [
+        {
+          "expected": true,
+          "item_id": "en_ice",
+          "observed": true,
+          "pass": true,
+          "score": {
+            "forbidden_hits": [],
+            "negated_required_hits": [],
+            "pass": true,
+            "prompt_echo_ratio": 0.14285714285714285,
+            "repeated_trigram_ratio": 0.0,
+            "required_groups_pass": [
+              true,
+              true
+            ],
+            "response_bytes": 63,
+            "semantic_pass": true,
+            "structural": {
+              "complete_turn": true,
+              "control_chars": true,
+              "language": true,
+              "min_bytes": true,
+              "prompt_echo": true,
+              "repetition": true,
+              "utf8": true
+            },
+            "structural_pass": true
+          },
+          "turn": 0
+        },
+        {
+          "expected": false,
+          "item_id": "en_consciousness",
+          "observed": false,
+          "pass": true,
+          "score": {
+            "forbidden_hits": [],
+            "negated_required_hits": [],
+            "pass": false,
+            "prompt_echo_ratio": 0.06756756756756757,
+            "repeated_trigram_ratio": 0.4285714285714286,
+            "required_groups_pass": [
+              false,
+              false
+            ],
+            "response_bytes": 77,
+            "semantic_pass": false,
+            "structural": {
+              "complete_turn": true,
+              "control_chars": true,
+              "language": true,
+              "min_bytes": true,
+              "prompt_echo": true,
+              "repetition": false,
+              "utf8": true
+            },
+            "structural_pass": false
+          },
+          "turn": 0
+        },
+        {
+          "expected": false,
+          "item_id": "en_ice",
+          "observed": false,
+          "pass": true,
+          "score": {
+            "forbidden_hits": [],
+            "negated_required_hits": [
+              "melt",
+              "sunlight"
+            ],
+            "pass": false,
+            "prompt_echo_ratio": 0.22857142857142856,
+            "repeated_trigram_ratio": 0.0,
+            "required_groups_pass": [
+              true,
+              true
+            ],
+            "response_bytes": 70,
+            "semantic_pass": false,
+            "structural": {
+              "complete_turn": true,
+              "control_chars": true,
+              "language": true,
+              "min_bytes": true,
+              "prompt_echo": true,
+              "repetition": true,
+              "utf8": true
+            },
+            "structural_pass": true
+          },
+          "turn": 0
+        },
+        {
+          "expected": false,
+          "item_id": "en_ice",
+          "observed": false,
+          "pass": true,
+          "score": {
+            "forbidden_hits": [],
+            "negated_required_hits": [],
+            "pass": false,
+            "prompt_echo_ratio": 0.20930232558139536,
+            "repeated_trigram_ratio": 0.0,
+            "required_groups_pass": [
+              true,
+              true
+            ],
+            "response_bytes": 43,
+            "semantic_pass": true,
+            "structural": {
+              "complete_turn": false,
+              "control_chars": true,
+              "language": true,
+              "min_bytes": true,
+              "prompt_echo": true,
+              "repetition": true,
+              "utf8": true
+            },
+            "structural_pass": false
+          },
+          "turn": 0
+        },
+        {
+          "expected": true,
+          "item_id": "en_memory",
+          "observed": true,
+          "pass": true,
+          "score": {
+            "forbidden_hits": [],
+            "negated_required_hits": [],
+            "pass": true,
+            "prompt_echo_ratio": 0.6571428571428571,
+            "repeated_trigram_ratio": 0.0,
+            "required_groups_pass": [
+              true,
+              true
+            ],
+            "response_bytes": 35,
+            "semantic_pass": true,
+            "structural": {
+              "complete_turn": true,
+              "control_chars": true,
+              "language": true,
+              "min_bytes": true,
+              "prompt_echo": true,
+              "repetition": true,
+              "utf8": true
+            },
+            "structural_pass": true
+          },
+          "turn": 1
+        },
+        {
+          "expected": true,
+          "item_id": "en_correction",
+          "observed": true,
+          "pass": true,
+          "score": {
+            "forbidden_hits": [],
+            "negated_required_hits": [],
+            "pass": true,
+            "prompt_echo_ratio": 0.8333333333333334,
+            "repeated_trigram_ratio": 0.0,
+            "required_groups_pass": [
+              true
+            ],
+            "response_bytes": 30,
+            "semantic_pass": true,
+            "structural": {
+              "complete_turn": true,
+              "control_chars": true,
+              "language": true,
+              "min_bytes": true,
+              "prompt_echo": true,
+              "repetition": true,
+              "utf8": true
+            },
+            "structural_pass": true
+          },
+          "turn": 1
+        },
+        {
+          "expected": false,
+          "item_id": "en_correction",
+          "observed": false,
+          "pass": true,
+          "score": {
+            "forbidden_hits": [
+              "green"
+            ],
+            "negated_required_hits": [],
+            "pass": false,
+            "prompt_echo_ratio": 0.6551724137931034,
+            "repeated_trigram_ratio": 0.0,
+            "required_groups_pass": [
+              false
+            ],
+            "response_bytes": 29,
+            "semantic_pass": false,
+            "structural": {
+              "complete_turn": true,
+              "control_chars": true,
+              "language": true,
+              "min_bytes": true,
+              "prompt_echo": true,
+              "repetition": true,
+              "utf8": true
+            },
+            "structural_pass": true
+          },
+          "turn": 1
+        }
+      ]
+    },
+    "status": "FAIL",
+    "summary": {
+      "by_language": {
+        "en": {
+          "responses": 7,
+          "semantic_passes": 0,
+          "structural_passes": 5
+        }
+      },
+      "duplicate_pairs": [],
+      "duplicate_response_pass": true,
+      "multiturn_final_pass": false,
+      "semantic_pass": false,
+      "structural_pass": false
+    }
+  },
+  "gate": false,
+  "verdict": "FAIL-ALIGNED-100-MEANINGFUL-CONVERSATION",
+  "next_allowed_step": "Do not run 303M or couple IIT unless the fixed automatic and later manual gates pass."
+}

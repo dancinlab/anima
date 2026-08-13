@@ -380,6 +380,16 @@ the aligned deterministic recipe, reports all 32 heldout documents, and runs the
 meaningful-conversation panel. Even an automatic pass still requires manual review and cannot
 directly authorize 303M, IIT coupling or production.
 
+The aligned 100-document run failed: training-probe top-1 `0.6641`, exact `0/8`, heldout top-1
+`0.1573`, independent semantic `0/7`, and structural `5/7`. Outputs remained fragmented and
+repetitive. Alignment fixes the four-document mapping but is insufficient at the fixed 600-step
+exposure. A separately preregistered 16-document 600-vs-2,400-step comparison now isolates per-
+document exposure from model capacity; all larger gates remain blocked.
+
+`state/anima_303m_r4_aligned_exposure_2026_08_13/` freezes that two-arm deterministic CPU test.
+The 2,400-step arm matches the successful four-document run's expected presentations per unique
+document; the model, aligned sampler, data rule, objective, optimizer and decoder remain fixed.
+
 ## Open gap audit — 303M meaningful conversation
 
 The 2026-08-12 read-only `/gap` audit below is the complete follow-up register for the current
