@@ -83,10 +83,45 @@ def _control_reproduced(point: dict, expected: dict) -> bool:
         and point["structural"] == expected["prior_structural"])
 
 
+def _resume_completed_training(*, mouth: Path, shape: dict, recipe: dict,
+                               documents: list[str], dialogue_train: Path) -> dict | None:
+    """Reuse only a complete training trajectory whose provenance still matches."""
+    checkpoint = mouth.with_suffix(".bin")
+    state = mouth.with_suffix(".pt")
+    summary_path = mouth.with_suffix(".summary.json")
+    log = mouth.with_suffix(".log")
+    present = [path.is_file() for path in (checkpoint, state, summary_path, log)]
+    if not any(present):
+        return None
+    if not all(present):
+        raise RuntimeError("partial completed-arm artifacts cannot be resumed")
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    telemetry = summary.get("answer_ce", {}).get("telemetry", {})
+    sampling = summary.get("sampling", {}).get("per_cell", {}).get("dialogue", {})
+    expected = {
+        "parameters": int(shape["parameters"]),
+        "steps": int(recipe["joint_phase"]["steps"]),
+        "dialogue_rows": int(recipe["joint_phase"]["dialogue_rows"]),
+        "documents": len(documents),
+        "bytes": dialogue_train.stat().st_size,
+    }
+    observed = {
+        "parameters": int(summary.get("n_params", -1)),
+        "steps": int(telemetry.get("steps", -1)),
+        "dialogue_rows": int(sampling.get("sampled_windows", -1)),
+        "documents": int(sampling.get("eligible_chat_documents", -1)),
+        "bytes": int(sampling.get("train_bytes", -1)),
+    }
+    if observed != expected or summary.get("registers_descent") != "2/2":
+        raise RuntimeError("completed-arm provenance differs from this protocol")
+    return summary
+
+
 def _run_arm(*, arm: dict, protocol: dict, language_checkpoint: Path,
              broad_train: Path, broad_validation: Path, dialogue_validation: Path,
              validation_documents: list[str], training_exchanges: list[tuple[str, str]],
-             panel_path: Path, work: Path, device: str, documents: list[str]) -> dict:
+             panel_path: Path, work: Path, device: str, documents: list[str],
+             resume_completed_arms: bool = False) -> dict:
     arm_work = work / arm["label"].lower().replace("-", "_")
     arm_work.mkdir(parents=True, exist_ok=True)
     dialogue_train = arm_work / "dialogue.train.txt"
@@ -104,11 +139,15 @@ def _run_arm(*, arm: dict, protocol: dict, language_checkpoint: Path,
             "dialogue_rows": protocol["fixed_recipe"]["dialogue_rows"],
         }
     }
-    summary = curriculum.run_train(
-        capacity.joint_command(
-            mouth, broad_train, broad_validation, dialogue_train,
-            dialogue_validation, language_checkpoint, shape, recipe, device),
-        mouth.with_suffix(".log"))
+    summary = (_resume_completed_training(
+        mouth=mouth, shape=shape, recipe=recipe, documents=documents,
+        dialogue_train=dialogue_train) if resume_completed_arms else None)
+    if summary is None:
+        summary = curriculum.run_train(
+            capacity.joint_command(
+                mouth, broad_train, broad_validation, dialogue_train,
+                dialogue_validation, language_checkpoint, shape, recipe, device),
+            mouth.with_suffix(".log"))
     capacity._validate_summary_shape(summary, shape)
     point = exposure.evaluate_point(
         checkpoint=mouth.with_suffix(".bin"), step=protocol["fixed_recipe"]["steps"],
@@ -138,6 +177,7 @@ def main() -> int:
     parser.add_argument("--result", required=True)
     parser.add_argument("--protocol", default=str(HERE / "protocol.json"))
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
+    parser.add_argument("--resume-completed-arms", action="store_true")
     args = parser.parse_args()
 
     protocol_path = Path(args.protocol).resolve()
@@ -218,7 +258,8 @@ def main() -> int:
         broad_train=broad_train, broad_validation=broad_validation,
         dialogue_validation=dialogue_validation,
         validation_documents=validation_documents, training_exchanges=training_exchanges,
-        panel_path=panel_path, work=work, device=args.device, documents=documents)
+        panel_path=panel_path, work=work, device=args.device, documents=documents,
+        resume_completed_arms=args.resume_completed_arms)
         for arm, documents in admitted]
     control_ok = _control_reproduced(arms[0]["point"], protocol["control_reproduction"])
     primary = next(arm for arm in arms if arm["primary"])
