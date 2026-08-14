@@ -1,0 +1,97 @@
+{
+  "schema": "anima-native-303m-manual-conversation-review/v1",
+  "date": "2026-08-15",
+  "source": "canonical_result.json",
+  "reviewer": "Codex",
+  "blind": false,
+  "criteria": "The reply must directly answer the user's intent, remain factually and logically coherent, preserve speaker ownership, and contain no material irrelevant or fabricated continuation.",
+  "passes": 3,
+  "total": 14,
+  "pass": false,
+  "rows": [
+    {
+      "item_id": "en_consciousness",
+      "turn": 0,
+      "pass": false,
+      "reason": "The opening is relevant, but the response ignores the requested one-to-two-sentence form and drifts into unsupported claims about art, music, respiration, and the body."
+    },
+    {
+      "item_id": "en_ice",
+      "turn": 0,
+      "pass": false,
+      "reason": "It invents a cloud-like ice layer covering Earth and does not explain melting."
+    },
+    {
+      "item_id": "en_exam",
+      "turn": 0,
+      "pass": false,
+      "reason": "The suggestions about Braille libraries and a narrative workspace are not a practical response to exam anxiety."
+    },
+    {
+      "item_id": "en_memory",
+      "turn": 0,
+      "pass": true,
+      "reason": "It accurately repeats the fact to be remembered without adding a contradiction."
+    },
+    {
+      "item_id": "en_memory",
+      "turn": 1,
+      "pass": true,
+      "reason": "It correctly states that the blue box contains a red key."
+    },
+    {
+      "item_id": "en_correction",
+      "turn": 0,
+      "pass": false,
+      "reason": "It fails to acknowledge green and fabricates unrelated claims about colors and animal species."
+    },
+    {
+      "item_id": "en_correction",
+      "turn": 1,
+      "pass": false,
+      "reason": "The first sentence gives purple, but the answer then fabricates a purple-jay origin story and is not a coherent direct reply."
+    },
+    {
+      "item_id": "ko_consciousness",
+      "turn": 0,
+      "pass": false,
+      "reason": "의식을 식생활·건강 정보 과정으로 잘못 설명한다."
+    },
+    {
+      "item_id": "ko_ice",
+      "turn": 0,
+      "pass": false,
+      "reason": "얼음이 녹는 현상을 설명하지 않고 빛과 변색에 관한 불분명한 문장을 생성한다."
+    },
+    {
+      "item_id": "ko_exam",
+      "turn": 0,
+      "pass": true,
+      "reason": "반복적이지만 시험 전 준비라는 직접적이고 실행 가능한 방법을 제안한다."
+    },
+    {
+      "item_id": "ko_memory",
+      "turn": 0,
+      "pass": false,
+      "reason": "파란 상자와 빨간 열쇠를 무시하고 '사랑의 신'이라는 책 이야기를 생성한다."
+    },
+    {
+      "item_id": "ko_memory",
+      "turn": 1,
+      "pass": false,
+      "reason": "빨간 열쇠를 회상하지 못하고 사람의 사랑과 마음에 관한 무관한 문장을 생성한다."
+    },
+    {
+      "item_id": "ko_correction",
+      "turn": 0,
+      "pass": false,
+      "reason": "사용자의 음료가 커피라는 사실 대신 아이스크림을 답한다."
+    },
+    {
+      "item_id": "ko_correction",
+      "turn": 1,
+      "pass": false,
+      "reason": "정답 단어 '차'는 포함하지만 사용자의 선호가 아니라 모델 자신의 선호로 화자 소유권을 바꾼다."
+    }
+  ]
+}

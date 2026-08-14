@@ -57,6 +57,7 @@
     "general_loss": "full next-token CE",
     "general_source": "root manifest train_general",
     "dialogue_source": "data-conversation-target manifest train_dialogue",
+    "preprocessing_workers": 2,
     "device": "Vast.ai CUDA, non-H100 preferred",
     "maximum_training_arms": 1
   },
@@ -105,6 +106,7 @@
   },
   "gates": {
     "source_preflight": "all pinned revisions, files, hashes, tokenizer, source controls and mixed response masks pass",
+    "broad_retention_ce_max": 3.4644074976444245,
     "broad_retention": "fixed broad validation CE <= 3.4644074976444245 (base + 0.15)",
     "conversation": "canonical scorer controls pass; semantic >=6/7 per language; structural 7/7 per language; all memory/correction final turns pass",
     "manual": "all fourteen raw replies require item-level meaningfulness review before any coupling or mount",

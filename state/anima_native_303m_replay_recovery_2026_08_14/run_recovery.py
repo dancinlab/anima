@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import copy
 import hashlib
+import importlib
 import json
 from pathlib import Path
 import subprocess
@@ -138,6 +139,47 @@ def training_command(protocol: dict, model_root: Path, data_root: Path,
     return command
 
 
+def resource_safe_training_command(protocol: dict, command: list[str]) -> list[str]:
+    """Bound preprocessing parallelism without changing pinned training code."""
+    if len(command) < 2:
+        raise ValueError("native training command is incomplete")
+    workers = int(protocol["fixed_recipe"]["preprocessing_workers"])
+    if workers <= 0:
+        raise ValueError("preprocessing workers must be positive")
+    return [
+        command[0], str(HERE / "run_pinned_trainer.py"),
+        "--workers", str(workers), "--", *command[1:],
+    ]
+
+
+def manifest_output_checks(manifest_path: Path, data_root: Path,
+                           splits: tuple[str, ...], prefix: str = "") -> dict:
+    """Verify every consumed generated corpus file against its pinned manifest."""
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    outputs = manifest.get("outputs", {})
+    checks = {}
+    declared = []
+    for split in splits:
+        declared.extend(manifest.get("splits", {}).get(split, []))
+    if len(declared) != len(set(declared)):
+        raise ValueError(f"duplicate corpus path in {manifest_path}")
+    for relative in declared:
+        expected = outputs.get(relative)
+        if not isinstance(expected, dict) or "size" not in expected or "sha256" not in expected:
+            raise ValueError(f"missing output custody for {relative} in {manifest_path}")
+        path = data_root / relative
+        actual_size = path.stat().st_size
+        actual_sha = sha256(path)
+        checks[f"data/{prefix}{relative}"] = {
+            "expected_size": int(expected["size"]),
+            "actual_size": actual_size,
+            "expected_sha256": str(expected["sha256"]),
+            "actual_sha256": actual_sha,
+            "pass": actual_size == int(expected["size"]) and actual_sha == str(expected["sha256"]),
+        }
+    return checks
+
+
 def preflight(protocol: dict, model_root: Path, data_root: Path) -> dict:
     checks = {}
     for relative, expected in protocol["source_hashes"].items():
@@ -151,6 +193,15 @@ def preflight(protocol: dict, model_root: Path, data_root: Path) -> dict:
     ):
         actual = sha256(model_root / relative)
         checks[label] = {"expected": expected, "actual": actual, "pass": actual == expected}
+    checks.update(manifest_output_checks(
+        data_root / "manifest.json", data_root,
+        ("train_general", "validation_general"),
+    ))
+    target_root = data_root / "data-conversation-target"
+    checks.update(manifest_output_checks(
+        target_root / "manifest.json", target_root,
+        ("train_dialogue", "validation_dialogue"), "data-conversation-target/",
+    ))
     controls = conversation_scorer_controls_result(protocol)
     passed = all(value["pass"] for value in checks.values()) and controls["pass"]
     return {"pass": passed, "checks": checks, "scorer_controls": controls}
@@ -161,6 +212,62 @@ def conversation_scorer_controls_result(protocol: dict) -> dict:
     return conversation_scorer_controls(apply_instrument(protocol))
 
 
+def measure_broad_retention(protocol: dict, model_root: Path, data_root: Path,
+                            checkpoint: Path, device: str) -> dict:
+    """Replay the preregistered general-validation measurement on one checkpoint."""
+    if not (checkpoint / "final.pt").is_file() or not (checkpoint / "tokenizer.json").is_file():
+        raise FileNotFoundError(f"native checkpoint is incomplete under {checkpoint}")
+    tokenizer_hash = sha256(checkpoint / "tokenizer.json")
+    expected_tokenizer_hash = protocol["parent"]["tokenizer_sha256"]
+    if tokenizer_hash != expected_tokenizer_hash:
+        raise ValueError("retention checkpoint tokenizer differs from preregistration")
+
+    code_root = (model_root / "code").resolve()
+    sys.path.insert(0, str(code_root))
+    native = importlib.import_module("native_dialogue_lm")
+    trainer = importlib.import_module("train_native_dialogue_lm")
+    registry = importlib.import_module("measurement.native_dialogue_registry")
+    for loaded in (native, trainer, registry):
+        loaded_path = Path(loaded.__file__).resolve()
+        if not loaded_path.is_relative_to(code_root):
+            raise ValueError(f"retention module resolved outside pinned model code: {loaded_path}")
+    measurement = protocol["audit"]["broad_measurement"]
+    manifest = json.loads((data_root / "manifest.json").read_text(encoding="utf-8"))
+    validation_paths = [
+        data_root / name for name in manifest["splits"]["validation_general"]
+    ]
+    if len(validation_paths) != int(measurement["validation_files"]):
+        raise ValueError("general validation file count differs from preregistration")
+    workers = int(protocol["fixed_recipe"]["preprocessing_workers"])
+    validation_general = trainer.load_corpus_files(
+        validation_paths, checkpoint / "tokenizer.json", trainer.load_general_tokens, workers
+    )
+    model, _tokenizer, payload = native.load_native_model(checkpoint, device=device)
+    source = trainer.BatchSource(
+        validation_general, [], int(payload["config"]["block_size"]),
+        int(measurement["seed"]), 0.0,
+    )
+    value = float(trainer.validation_loss(
+        model, source, int(measurement["batches"]), int(measurement["batch_size"]),
+        next(model.parameters()).device, source_mode="mixed", response_only=False,
+    ))
+    threshold = float(protocol["gates"]["broad_retention_ce_max"])
+    return {
+        "schema": "anima-native-303m-broad-retention/v1",
+        "checkpoint": str(checkpoint),
+        "checkpoint_sha256": sha256(checkpoint / "final.pt"),
+        "tokenizer_sha256": tokenizer_hash,
+        "device": str(next(model.parameters()).device),
+        "seed": int(measurement["seed"]),
+        "batches": int(measurement["batches"]),
+        "batch_size": int(measurement["batch_size"]),
+        "validation_files": len(validation_paths),
+        "ce": value,
+        "threshold": threshold,
+        "pass": value <= threshold,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--model-root", type=Path)
@@ -168,9 +275,27 @@ def main() -> int:
     parser.add_argument("--output", type=Path)
     parser.add_argument("--native-result", type=Path)
     parser.add_argument("--rescore-out", type=Path)
+    parser.add_argument("--retention-checkpoint", type=Path)
+    parser.add_argument("--retention-out", type=Path)
+    parser.add_argument("--device", default="cuda")
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args()
     protocol = load_protocol()
+    if args.retention_checkpoint:
+        if not args.model_root or not args.data_root:
+            parser.error("model-root and data-root are required for retention measurement")
+        source_check = preflight(protocol, args.model_root, args.data_root)
+        if not source_check["pass"]:
+            print(json.dumps(source_check, ensure_ascii=False, indent=2), flush=True)
+            return 3
+        result = measure_broad_retention(
+            protocol, args.model_root, args.data_root, args.retention_checkpoint, args.device)
+        payload = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
+        if args.retention_out:
+            args.retention_out.write_text(payload, encoding="utf-8")
+        else:
+            print(payload, end="")
+        return 0
     if args.native_result:
         result = rescore_native(
             json.loads(args.native_result.read_text(encoding="utf-8")), protocol)
@@ -187,10 +312,12 @@ def main() -> int:
     if not result["pass"]:
         return 3
     command = training_command(protocol, args.model_root, args.data_root, args.output)
-    print(json.dumps({"command": command}, ensure_ascii=False), flush=True)
+    launch_command = resource_safe_training_command(protocol, command)
+    print(json.dumps({"command": command, "launch_command": launch_command},
+                     ensure_ascii=False), flush=True)
     if not args.execute:
         return 0
-    completed = subprocess.run(command, cwd=args.model_root / "code", check=False)
+    completed = subprocess.run(launch_command, cwd=args.model_root / "code", check=False)
     return int(completed.returncode)
 
 

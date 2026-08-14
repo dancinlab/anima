@@ -1,0 +1,119 @@
+{
+  "schema": "anima-native-303m-replay-recovery-result/v1",
+  "date": "2026-08-15",
+  "status": "COMPLETE",
+  "verdict": "FAIL-MEANINGFUL-CONVERSATION",
+  "claim": "The fixed mixed-source continuation retained broad language better than the failed dialogue-only continuation, but it did not produce an independently meaningful bilingual mouth.",
+  "execution": {
+    "instance_id": 47710174,
+    "provider": "Vast.ai",
+    "gpu": "RTX 6000 Ada",
+    "hourly_usd": 0.6488888888888888,
+    "training_exit": 0,
+    "training_wall_seconds": 11542.843528985977,
+    "parameters": 303628504,
+    "base_step": 35000,
+    "endpoint_step": 40000,
+    "new_optimizer_steps": 5000,
+    "source_mode": "mixed",
+    "general_fraction": 0.65,
+    "dialogue_fraction": 0.35,
+    "response_only_all_steps": true,
+    "preprocessing_workers": 2,
+    "peak_vram_mib": 28544,
+    "peak_power_w": 301.88,
+    "measured_gpu_energy_kwh": 0.9621832611111105,
+    "training_compute_estimate_usd": 2.0805619200394476,
+    "instance_destroyed": true,
+    "active_vast_instances_after_cleanup": 0
+  },
+  "source_preflight": {
+    "pass": true,
+    "checks": 52,
+    "source_code_and_manifest_sha256": true,
+    "checkpoint_and_tokenizer_sha256": true,
+    "all_consumed_corpus_size_and_sha256": true,
+    "scorer_controls": true
+  },
+  "training": {
+    "initial_validation_ce": 3.1846703588962555,
+    "final_validation_ce": 3.1142803132534027,
+    "validation_descended": true,
+    "final_checkpoint_sha256": "97d3fd467b21adaf9bd522f720ed0076cab7ae60ae761975d5115415ff89e723",
+    "resume_checkpoint_sha256": "10b86111d92fbe53a72624a262a5f5384c873ce17af9f86b09f8130ce10f9031",
+    "tokenizer_sha256": "cd9bba441ee9f187454244dc3a863f394b0bdf80086108fac050aef937f1e47b",
+    "train_summary_sha256": "6f5d3b493ba5565133be0cd6931b0cb6849cefce9b869843f7d90e0cfdd5480b"
+  },
+  "broad_retention": {
+    "base_step_35000_ce": 3.3144074976444244,
+    "failed_step_45000_dialogue_only_ce": 5.774738907814026,
+    "recovery_step_40000_ce": 3.285789728164673,
+    "threshold": 3.4644074976444245,
+    "pass": true
+  },
+  "conversation": {
+    "canonical_scorer_controls": true,
+    "automatic_pass": false,
+    "english": {
+      "structural_passes": 6,
+      "semantic_passes": 3,
+      "total": 7
+    },
+    "korean": {
+      "structural_passes": 7,
+      "semantic_passes": 2,
+      "total": 7
+    },
+    "cross_response_duplicates": 0,
+    "memory_and_correction_final_all": false,
+    "manual_review": {
+      "passes": 3,
+      "total": 14,
+      "pass": false,
+      "blind": false,
+      "artifact": "manual_review.json"
+    }
+  },
+  "decision": {
+    "retention": "PASS",
+    "conversation": "FAIL",
+    "iit_candidate_selection": "BLOCKED",
+    "participant_mount": "BLOCKED",
+    "production": "BLOCKED",
+    "runtime_changed": false
+  },
+  "runtime_verification": {
+    "broker_launchagent_running": true,
+    "public_http_status": 200,
+    "local_http_status": 200,
+    "public_websocket": "hello",
+    "local_websocket": "hello",
+    "anima_alive": true,
+    "participant_source": "pre-existing separate anima-lab-3-2 step-45000 participant",
+    "recovery_checkpoint_mounted": false,
+    "participant_certified": false
+  },
+  "qa": {
+    "local_focused": "95 passed",
+    "post_restart_focused": "44 passed",
+    "vast_focused": "33 passed",
+    "vast_unrelated_sparse_state_attempt": "79 passed, 15 failed because historical IIT state fixtures were absent from the remote sparse checkout",
+    "compileall": true,
+    "json_validation": true
+  },
+  "custody": {
+    "repository": "dancinlab/anima-native-303m-replay-recovery-2026-08-14",
+    "private": true,
+    "status": "VERIFIED",
+    "artifact_revision": "7ae92653415244a6e39946c17b67c8ad797f97d0",
+    "metadata_revision": "270ce1a91ff81c5a671a69be6f27e04d5ff5144a",
+    "verified_files": 18,
+    "verified_bytes": 4380491845,
+    "sha256_mismatches": 0
+  },
+  "preserved": [
+    "ING.jsonl",
+    "stream_mi.json"
+  ],
+  "remaining_issue": "Mixed replay fixed the measured broad-language collapse but did not solve independent meaning: the model still hallucinates, ignores user intent, and fails Korean memory/correction."
+}

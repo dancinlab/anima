@@ -122,7 +122,7 @@ participant 승격 정책은 `BLOCKED-R35-NOT-A-LEARNED-MOUTH`로 유지한다. 
 확인했다. R3.5가 이를 탑재·재시작·인증한 것은 아니며, 공개 history에는 여전히 질문과
 무관한 일반론 답변이 남아 있다. 다른 실행을 보호하기 위해 기존 참가자는 중단하지 않았다.
 
-### 사전등록된 native-303M replay 복구
+### 완료한 native-303M replay 복구
 
 `state/anima_native_303m_replay_recovery_2026_08_14/`에 별도 탑재된 mouth의 실제 HF
 자료→sampler→loss→checkpoint→evaluator 흐름을 기록했다. target dialogue window는 빠진
@@ -137,12 +137,22 @@ keyword scorer는 따뜻한 햇빛이 얼음을 얼린다는 모순 답도 통�
 출력을 다시 판정해 덮지 않고, 기존 canonical 부정·한국어 경계 scorer와 사전등록한 모순
 control을 재사용한다.
 
-다음에 허용된 arm은 하나뿐이다. 불변 step-35k 가중치에서 source composition만 바꾸어
-general full CE replay 65%와 dialogue assistant/EOS CE 35%를 비-H100 Vast.ai GPU에서 정확히
-5,000 새 step 실행한다. retention 관문은 broad CE `<=3.4644075`, 대화 관문은 언어별 구조
-`7/7`·의미 `>=6/7`·최종 기억/정정이며 이후 14개 응답 전부 항목별 수동 검토가 필요하다.
-실패하면 즉시 중단한다. 모델·증거는 HF `dancinlab` 비공개 저장소에만 보존하고 protocol
-임대는 종료한다. IIT 결합·participant 탑재·프로덕션은 계속 차단한다.
+허용된 단일 arm은 불변 step-35k 가중치에서 Vast.ai RTX 6000 Ada 한 대로 완료했다. General
+full CE replay 65%와 dialogue assistant/EOS CE 35%를 정확히 5,000 새 step 실행했다. 도중에
+Wilson이 재시작됐지만 GPU 프로세스는 정상이라 중복 실행하지 않고 기존 작업을 추적해
+완주했다. 학습은 exit `0`이며 pinned 코드·manifest·체크포인트·tokenizer·scorer와 실제 사용한
+모든 corpus 파일의 크기/SHA 등 52개 검사가 모두 통과했다. Broad CE는 `3.2857897`로 고정
+`<=3.4644075` retention 관문을 통과해 dialogue-only 붕괴는 막았다.
+
+독립 대화는 여전히 실패했다. Canonical 영어 구조/의미는 `6/7`, `3/7`, 한국어는 `7/7`,
+`2/7`이며 최종 기억·정정도 모두 통과하지 못했다. 14개 항목의 비맹검 수동 검토는 사실
+환각, 무관한 조언, 한국어 기억 실패와 화자 소유권 오류 때문에 `3/14`만 통과했다. 최종
+판정은 `FAIL-MEANINGFUL-CONVERSATION`이다. Mixed replay는 retention을 복구했지만 의미를
+만들지는 못했다. 최종 모델 SHA-256은 `97d3fd46…f89e723`이며 모델·resume 상태·tokenizer·
+원시 증거는 HF `dancinlab` 비공개 저장소에 보존했다. 독립 다운로드로 등록 파일 18개·
+4.38GB의 SHA 불일치가 없음을 검증했고, 프로토콜 Vast.ai 인스턴스를 삭제해 활성 임대는
+0개다. Participant는 변경하거나 인증하지 않았으므로 IIT 결합·탑재·프로덕션은 계속
+차단한다.
 
 ## 현재 실험 — 의미 있는 대화 R0
 

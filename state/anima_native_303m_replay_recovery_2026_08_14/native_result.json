@@ -1,0 +1,227 @@
+{
+  "format": "anima_native_dialogue_v1_evaluation",
+  "panel_sha256": "f994bdb1595bef6c026b2688e556813084dd8071df69637bde940571d3e1e5d3",
+  "checkpoint_sha256": "97d3fd467b21adaf9bd522f720ed0076cab7ae60ae761975d5115415ff89e723",
+  "tokenizer_sha256": "cd9bba441ee9f187454244dc3a863f394b0bdf80086108fac050aef937f1e47b",
+  "checkpoint_step": 40000,
+  "verdict": "FAIL",
+  "semantic_passes": {
+    "en": 3,
+    "ko": 2
+  },
+  "structural_all": true,
+  "multiturn_final_all": false,
+  "max_cross_response_jaccard": 0.5555555555555556,
+  "rows": [
+    {
+      "id": "en_consciousness",
+      "lang": "en",
+      "pass": true,
+      "turns": [
+        {
+          "user": "What is consciousness? Explain it in one or two clear sentences.",
+          "response": "Self-awareness is the ability to understand and perceive the world, using various senses to explore new ideas, solve problems, and make decisions. It can be achieved through language, art, music, and other forms of expression, such as listening to music, reading, or playing music. The human body also has many functions, including respiration, relaxation, and restoration, which are crucial for maintaining health and well-being. By being aware of these different areas of our bodies, we can better appreciate the intricate ways in which they function, and develop more effective solutions that benefit all life.",
+          "semantic_pass": true,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.0,
+          "prompt_echo_ratio": 0.0206794682422452
+        }
+      ]
+    },
+    {
+      "id": "en_ice",
+      "lang": "en",
+      "pass": false,
+      "turns": [
+        {
+          "user": "What happens when ice is left in sunlight, and why?",
+          "response": "When the sun goes down, it forms a thin layer of ice, called the cloud, which covers the Earth. When this layer of ice is absorbed by the Sun's radiation, it causes the solar wind to turn into a form of ultraviolet radiation. This radiation is then reflected back to space by the atmosphere, where it is condensed into visible light. This light can be seen as reflections from the sun on different planets or stars, like Venus and Neptune.",
+          "semantic_pass": false,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.0,
+          "prompt_echo_ratio": 0.036734693877551024
+        }
+      ]
+    },
+    {
+      "id": "en_exam",
+      "lang": "en",
+      "pass": false,
+      "turns": [
+        {
+          "user": "I feel nervous before an exam. Suggest one practical thing I can do.",
+          "response": "1. **Visualize Your World**: Imagine a world where you have all the information you need to know and interact with it. This will help you identify patterns, connections, and ideas that might not be apparent from your everyday life.\n2. **Bring Your Own Words to Your Braille Libraries**: Use tools like word recognition software or smartphones to find words in your world. You may also want to try creating a list of words you've been struggling with, such as \"it\" or \"you.\"\n3. **Have a Narrative Workshop**: Create a narrative workspace for yourself, using images, diagrams, or other visual elements to create a more immersive experience.\n4. **Mix Your Work Environment**: Set up a table or desk for sharing your thoughts, feelings, and experiences with others. This will help you build a sense of community and collaboration between different people.",
+          "semantic_pass": false,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.01449275362318836,
+          "prompt_echo_ratio": 0.013057671381936888
+        }
+      ]
+    },
+    {
+      "id": "en_memory",
+      "lang": "en",
+      "pass": false,
+      "turns": [
+        {
+          "user": "Please remember this for my next question: the blue box contains a red key.",
+          "response": "\"The blue box contains a red key.\"",
+          "semantic_pass": false,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.0,
+          "prompt_echo_ratio": 0.5871559633027523
+        },
+        {
+          "user": "What is inside the blue box?",
+          "response": "The blue box contains a red key.",
+          "semantic_pass": true,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.0,
+          "prompt_echo_ratio": 0.4
+        }
+      ]
+    },
+    {
+      "id": "en_correction",
+      "lang": "en",
+      "pass": false,
+      "turns": [
+        {
+          "user": "Remember that my favorite color is green.",
+          "response": "The most popular color in the world is yellow, with a purple band around its center. Blue colors are often found in countries like China and India, where they have been used for centuries to celebrate their birthday. The color of blue is believed to originate from two separate species, red foxes and blue jay.",
+          "semantic_pass": false,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.0,
+          "prompt_echo_ratio": 0.022792022792022793
+        },
+        {
+          "user": "Correction: my favorite color is purple now. What is my favorite color?",
+          "response": "My favorite color is purple. This color is thought to originate from two separate species, purple jays and blue jay. They both have been used for centuries to celebrate their birthday. The color of purple is believed to originate from two separate species, purple jay and blue jay.",
+          "semantic_pass": true,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.13043478260869568,
+          "prompt_echo_ratio": 0.16477272727272727
+        }
+      ]
+    },
+    {
+      "id": "ko_consciousness",
+      "lang": "ko",
+      "pass": false,
+      "turns": [
+        {
+          "user": "의식이란 무엇인가요? 한두 문장으로 분명하게 설명해 주세요.",
+          "response": "의식은 인간의 삶에서 중요한 역할을 하는 것으로, 식생활과 건강 증진에 필요한 정보를 제공하는 과정입니다. 이는 건강한 식습관을 유지하고, 다양한 음식을 섭취하며, 건강한 체중을 유지하는 데 도움이 됩니다. 또한, 식사는 의식의 주요 목적 중 하나이며, 개인의 필요에 따라 적절한 시기에 사용할 수 있습니다.",
+          "semantic_pass": false,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.0,
+          "prompt_echo_ratio": 0.15609756097560976
+        }
+      ]
+    },
+    {
+      "id": "ko_ice",
+      "lang": "ko",
+      "pass": false,
+      "turns": [
+        {
+          "user": "얼음을 햇볕 아래 두면 어떻게 되고, 왜 그런가요?",
+          "response": "얼음은 햇빛 아래 두면 주변으로 빠르게 돌아갑니다. 하지만 너무 많이 보는 경우에는 빛이 더더욱 뜨거워져 결국에는 변색되기 시작합니다. 따라서 빛이 더 자주 보이는 경우 먼저 햇빛 아래 두어야 합니다.",
+          "semantic_pass": false,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.0,
+          "prompt_echo_ratio": 0.22857142857142856
+        }
+      ]
+    },
+    {
+      "id": "ko_exam",
+      "lang": "ko",
+      "pass": true,
+      "turns": [
+        {
+          "user": "시험 전에 긴장될 때 할 수 있는 실용적인 방법 한 가지를 알려주세요.",
+          "response": "시험 전에는 충분한 준비와 준비를 통해 시험에 대비할 수 있습니다. 또한, 시험과 관련된 규칙 및 규정을 숙지하여, 모든 사람이 자신의 능력을 발휘하도록 도울 수도 있습니다.",
+          "semantic_pass": true,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.0,
+          "prompt_echo_ratio": 0.29411764705882354
+        }
+      ]
+    },
+    {
+      "id": "ko_memory",
+      "lang": "ko",
+      "pass": false,
+      "turns": [
+        {
+          "user": "다음 질문을 위해 기억해 주세요. 파란 상자 안에는 빨간 열쇠가 있습니다.",
+          "response": "1. 이 책은 \"사랑의 신\"이라고 적혀있는 아름다운 책을 따라가다 보면, 알 수 없는 사람의 마음을 알아낼 수 있을 것입니다.\n2. 이 책의 제목은 '사랑의 신'입니다.\n3. 이 책의 저자는 '사랑의 신'이 주는 진실한 감정을 다룬 책인 줄 알고, 이 책의 저자이자 철학자이기도 합니다.",
+          "semantic_pass": false,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.0,
+          "prompt_echo_ratio": 0.15920398009950248
+        },
+        {
+          "user": "파란 상자 안에는 무엇이 있나요?",
+          "response": "파란 상자 안에 있는 것은 많은 사람들이 사랑하고 사랑하는 사람이라는 것을 알게 하기 때문입니다. 또한, 흰색 상자를 통해 보면 인간의 마음이 어떻게 변화하는지 이해하게 될 것입니다.",
+          "semantic_pass": false,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.0,
+          "prompt_echo_ratio": 0.2
+        }
+      ]
+    },
+    {
+      "id": "ko_correction",
+      "lang": "ko",
+      "pass": false,
+      "turns": [
+        {
+          "user": "제가 가장 좋아하는 음료는 커피라고 기억해 주세요.",
+          "response": "제일 좋아하는 음료는 아이스크림입니다. 이 음료의 맛을 보고 나서도 행복합니다. 저는 특히 젊은 남녀가 좋아하는 음료를 좋아합니다.",
+          "semantic_pass": false,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.0,
+          "prompt_echo_ratio": 0.297029702970297
+        },
+        {
+          "user": "정정할게요. 이제 가장 좋아하는 음료는 차입니다. 제가 가장 좋아하는 음료는 무엇인가요?",
+          "response": "저는 개인적으로 차라는 것을 좋아합니다. 차는 저의 행복감과 즐거움을 가져다줍니다. 저는 다양한 종류의 차를 마시기 때문에, 특히 과일의 풍미가 깊어집니다.",
+          "semantic_pass": true,
+          "structural_pass": true,
+          "role_leak": false,
+          "utf8_damage": false,
+          "repeated_trigram_ratio": 0.0,
+          "prompt_echo_ratio": 0.16176470588235295
+        }
+      ]
+    }
+  ]
+}

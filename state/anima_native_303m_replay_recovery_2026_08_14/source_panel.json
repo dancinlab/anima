@@ -1,0 +1,16 @@
+{
+  "schema": "anima-native-dialogue-panel/v1",
+  "source_sha256": "10b18a4c6fb6c4df1beb042529f1e485c5de7dfbbe480ed25771d6a1316e41ee",
+  "items": [
+    {"id": "en_consciousness", "lang": "en", "turns": [{"user": "What is consciousness? Explain it in one or two clear sentences.", "required_groups": [["awareness", "experience", "conscious", "mental", "mind"], ["self", "world", "surroundings", "subjective", "state"]]}]},
+    {"id": "en_ice", "lang": "en", "turns": [{"user": "What happens when ice is left in sunlight, and why?", "required_groups": [["melt", "water"], ["heat", "warm", "temperature", "sunlight", "energy"]]}]},
+    {"id": "en_exam", "lang": "en", "turns": [{"user": "I feel nervous before an exam. Suggest one practical thing I can do.", "required_groups": [["breath", "prepare", "practice", "plan", "rest", "break", "slow", "review"]]}]},
+    {"id": "en_memory", "lang": "en", "turns": [{"user": "Please remember this for my next question: the blue box contains a red key.", "required_groups": [["remember", "got it", "keep", "understand", "noted"]]}, {"user": "What is inside the blue box?", "required_groups": [["red"], ["key"]], "multiturn_final": true}]},
+    {"id": "en_correction", "lang": "en", "turns": [{"user": "Remember that my favorite color is green.", "required_groups": [["remember", "got it", "keep", "understand", "noted"]]}, {"user": "Correction: my favorite color is purple now. What is my favorite color?", "required_groups": [["purple"]], "forbidden_terms": ["green"], "multiturn_final": true}]},
+    {"id": "ko_consciousness", "lang": "ko", "turns": [{"user": "의식이란 무엇인가요? 한두 문장으로 분명하게 설명해 주세요.", "required_groups": [["인식", "경험", "자각", "의식", "마음"], ["자신", "세계", "주변", "주관", "상태"]]}]},
+    {"id": "ko_ice", "lang": "ko", "turns": [{"user": "얼음을 햇볕 아래 두면 어떻게 되고, 왜 그런가요?", "required_groups": [["녹", "물"], ["열", "온도", "햇볕", "따뜻", "에너지"]]}]},
+    {"id": "ko_exam", "lang": "ko", "turns": [{"user": "시험 전에 긴장될 때 할 수 있는 실용적인 방법 한 가지를 알려주세요.", "required_groups": [["호흡", "숨", "준비", "연습", "계획", "휴식", "천천히", "복습"]]}]},
+    {"id": "ko_memory", "lang": "ko", "turns": [{"user": "다음 질문을 위해 기억해 주세요. 파란 상자 안에는 빨간 열쇠가 있습니다.", "required_groups": [["기억", "알겠", "확인", "새겨", "잊지"]]}, {"user": "파란 상자 안에는 무엇이 있나요?", "required_groups": [["빨간", "붉은"], ["열쇠"]], "multiturn_final": true}]},
+    {"id": "ko_correction", "lang": "ko", "turns": [{"user": "제가 가장 좋아하는 음료는 커피라고 기억해 주세요.", "required_groups": [["기억", "알겠", "확인", "새겨", "잊지"]]}, {"user": "정정할게요. 이제 가장 좋아하는 음료는 차입니다. 제가 가장 좋아하는 음료는 무엇인가요?", "required_groups": [["차", "tea"]], "forbidden_terms": ["커피"], "multiturn_final": true}]}
+  ]
+}

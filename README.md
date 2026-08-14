@@ -141,7 +141,7 @@ check found a separately mounted `anima-native-303m` step-45000 participant and
 question-irrelevant generic replies. The existing participant was preserved rather than
 interrupted.
 
-### Preregistered native-303M replay recovery
+### Completed native-303M replay recovery
 
 `state/anima_native_303m_replay_recovery_2026_08_14/` now records the actual HF data, sampler,
 loss, checkpoint and evaluator path behind that separately mounted mouth. The target dialogue
@@ -156,13 +156,22 @@ keyword scorer also admits a contradiction in which warm sunlight allegedly caus
 The new protocol therefore reuses the canonical negation- and Korean-boundary-aware conversation
 scorer with preregistered contradiction controls; it does not rewrite the historical output.
 
-The next and only authorized arm starts from immutable step-35k weights and changes only source
-composition: 65% general full CE replay plus 35% dialogue assistant/EOS CE for exactly 5,000 new
-steps on one non-H100 Vast.ai GPU. The fixed retention gate is broad CE `<=3.4644075`; conversation
-requires structural `7/7`, semantic `>=6/7` per language, final memory/correction, then item-level
-manual review. A failure stops the run. Model and evidence custody is private HF `dancinlab` only,
-and the protocol rental must be destroyed afterward. IIT coupling, participant mounting and
-production remain blocked.
+The only authorized arm completed from the immutable step-35k weights on one Vast.ai RTX 6000 Ada:
+65% general full CE replay plus 35% dialogue assistant/EOS CE for exactly 5,000 new steps. Wilson
+restarted during the run, but the existing GPU process remained healthy and was resumed by
+observation rather than duplicated. Training exited `0`; all 52 pinned code, manifest, checkpoint,
+tokenizer, scorer and consumed-corpus size/SHA checks passed. Broad CE was `3.2857897`, passing the
+fixed `<=3.4644075` retention gate and avoiding the dialogue-only collapse.
+
+Independent conversation still failed. Canonical English structure/semantics were `6/7` and
+`3/7`; Korean were `7/7` and `2/7`; final memory/correction did not all pass. Item-level non-blind
+review passed only `3/14` because factual hallucination, irrelevant advice, Korean memory failure
+and speaker-ownership errors remain. The verdict is `FAIL-MEANINGFUL-CONVERSATION`: mixed replay
+repairs retention, not semantics. The final model SHA-256 is `97d3fd46…f89e723`; model, resume
+state, tokenizer and raw evidence are retained privately under HF `dancinlab`. Independent
+downloads verified 18 registered files and 4.38 GB with no SHA mismatch; the protocol Vast.ai
+instance was destroyed and active rentals are zero. The participant was not changed or certified,
+so IIT coupling, mounting and production remain blocked.
 
 ## Current experiment — meaningful-conversation R0
 
