@@ -114,3 +114,11 @@ Focused IIT/Python/CHAT regression passed `100/100`. A second source-tree run an
 `f8ca31ed…70a41`; model persistence retained mode `0600`. Python compile, JSON validation and the
 R3.6 frozen-failure regression also pass. HF authentication was supplied only through the secret
 CLI and no token was logged or stored in an artifact.
+
+Implementation/result commit `c64ef266b` was pushed to `origin/main`. The same wheel was installed
+into the local canonical `/opt/homebrew/bin/anima-py`; installed `core/iit_daemon.py` and
+`cli/evaluate.py` hashes match the source, and help exposes the R3.7 flag. CHAT code and participant
+wiring did not change, so the healthy broker was not restarted. Read-only post-deployment checks
+passed local/public HTTP `200` and local/public WebSocket `hello`. The reported
+`anima_alive=true` still belongs to the pre-existing uncertified step-45000 participant and is not
+an R3.7 success claim.

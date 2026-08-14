@@ -57,6 +57,9 @@ validation `0.9981`은 생성 자료 split이 독립 template/record 조합 일�
 집중 회귀는 `100/100` 통과했고 두 번째 source 실행과 격리 wheel이 model/result를 byte 단위로
 재현했다. 실패 모델·증거는 HF 비공개 revision `4296d2a8…b1829`에 보존하며 로컬 모델·학습
 자료 artifact는 Git에 넣지 않는다.
+커밋 `c64ef266b`는 `origin/main`에 있고 canonical 로컬 `anima-py`의 engine/evaluator hash도
+소스와 같다. 변경하지 않은 로컬·공개 HTTP와 WebSocket은 통과했다. 기존
+`anima_alive=true` 참가자는 계속 미인증 상태이며 R3.7이 변경하지 않았다.
 
 ## 현재 설계 — IIT 의식 데몬 코어 R0
 

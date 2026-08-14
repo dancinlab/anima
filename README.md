@@ -64,6 +64,9 @@ evidence and the data-support diagnosis are in
 Focused regression passed `100/100`; a second source run and an isolated wheel reproduced the
 model and result byte-for-byte. The failed model/evidence are preserved in private HF revision
 `4296d2a8…b1829`; no local model or training-data artifact is part of Git.
+Commit `c64ef266b` is on `origin/main`, the canonical local `anima-py` package contains matching
+engine/evaluator hashes, and unchanged local/public HTTP plus WebSocket checks pass. The existing
+`anima_alive=true` participant remains uncertified and was not modified by R3.7.
 
 ## Current work — mobile chat input stability
 

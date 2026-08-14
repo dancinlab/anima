@@ -92,4 +92,4 @@ English mouth
 - [x] bridge 선행 관문 실행 — 실패(`0.8298/1.0000/0.4722`), 후속 arm 중단
 - [x] 통과 시 R3.5 인과 battery 재실행 — 선행 실패로 실행하지 않음
 - [x] Python/격리 wheel/설치본 QA
-- [ ] 결과 기록·Git push·런타임 읽기 검증
+- [x] 결과 기록·Git push·런타임 읽기 검증
