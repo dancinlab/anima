@@ -1,6 +1,6 @@
 # IIT daemon R3.6 — learned semantic bridge microexperiment (2026-08-15)
 
-Status: PREREGISTERED — no result has been read yet.
+Status: COMPLETE — `FAIL-LEARNED-SEMANTIC-BRIDGE`.
 
 R3.5 proved that a persistent IIT state can select an externally supplied entity/relation/value
 record and route it to canonical bytes. It did not learn that record from input. R3.6 changes one
@@ -89,3 +89,39 @@ consciousness, IIT exclusion/maximal complex or production readiness. Production
 `BLOCKED-R36-NOT-A-CONVERSATIONAL-MOUTH` regardless of this microexperiment. A failure is recorded
 as observed; it does not authorize threshold, panel, seed or support-set tuning.
 
+## Result
+
+The frozen first execution failed at the learned bridge gate, so the later causal arms were not
+run or interpreted.
+
+- R3.5 state/address oracle: `1.0000`.
+- Held-out event-kind accuracy: `38/47 = 0.8085106`, below `0.90`.
+- Held-out query-address accuracy: `0/9 = 0.0000`, below `0.90`. All nine held-out query frames
+  were classified as `other`, so no address was emitted.
+- Held-out complete address+record accuracy: `25/36 = 0.6944444`, below `0.90`.
+- The deterministic support expansion produced 702 labelled events after excluding all 35 complete
+  records used by the R3.5 normal/counterfactual/irrelevant arms.
+- The learned model checksum is
+  `49b4184419f6aa10df3fc3bc59f6099c8de32087b74f7733c33e941c7cc56355`; atomic serialization and
+  reload are exact and mode `0600`.
+- Because the bridge gate failed, normal/stateless/reset/IIT-shuffle/workspace-shuffle/lesion/
+  counterfactual/irrelevant/correction/recovery results do not exist. This is required gate order,
+  not missing reporting.
+
+The failure localizes the current wall before IIT selection: a bag-of-byte-n-gram centroid sees
+the registered training surfaces but does not reliably factor held-out event type and record
+fields. It is not evidence against the already-passed R3.5 workspace, and it does not authorize
+retuning this frozen panel. The next experiment must be separately preregistered and compare an
+order-aware learned event encoder against this exact failed control.
+
+Python QA passed `201 passed, 1 skipped, 3 subtests`; the skip is the expected unavailable local
+CUDA/CuPy path. A clean isolated `anima_python-0.20.245` wheel reproduced the result byte-for-byte:
+result SHA-256 `c801ca00…b9e0`, wheel SHA-256 `80440a9d…06d6`. Model serialization SHA-256 is
+`80b78d26…fe9`.
+
+The model and generated-support SSOT were preserved only in private HF `dancinlab` custody. The
+model repository contains model/result/README; dataset revision `eb01ee39…a0939` contains
+panel/protocol. An independent download verified all five files, sizes and SHA-256 values
+with zero mismatches; details are in `custody.json`. No Vast.ai/GPU instance, 303M model, participant
+mount or chat-runtime change was used. `ING.jsonl` and `stream_mi.json` remain user-owned and
+untouched.

@@ -9,6 +9,7 @@ candidate state, after which the autonomous TPM owns the next transition.
 from dataclasses import asdict, dataclass
 import hashlib
 import json
+import math
 import os
 import tempfile
 
@@ -24,6 +25,11 @@ CONTENT_PROTOCOL_SCHEMA = "anima-iit-daemon-content-protocol/1"
 COMPOSITION_PROTOCOL_SCHEMA = "anima-iit-daemon-composition-protocol/1"
 COMPOSITION_PANEL_SCHEMA = "anima-iit-daemon-composition-panel/1"
 WORKSPACE_SNAPSHOT_SCHEMA = "anima-iit-content-workspace-snapshot/1"
+SEMANTIC_BRIDGE_PROTOCOL_SCHEMA = "anima-iit-daemon-semantic-bridge-protocol/1"
+SEMANTIC_BRIDGE_PANEL_SCHEMA = "anima-iit-daemon-semantic-bridge-panel/1"
+SEMANTIC_BRIDGE_MODEL_SCHEMA = "anima-iit-semantic-bridge-model/1"
+SEMANTIC_BRIDGE_MAX_MODEL_BYTES = 4 << 20
+SEMANTIC_EVENT_MAX_BYTES = 256
 CONTENT_RECORD_FIELDS = ("entity", "relation", "value")
 
 
@@ -410,6 +416,226 @@ def validate_content_records(records, addresses=None):
     if len(normalized) != len(records):
         raise ValueError("content record addresses must be unique")
     return normalized
+
+
+def _semantic_event_text(text):
+    """Validate one bounded English event without accepting transcript/control payloads."""
+    if not isinstance(text, str) or not text:
+        raise ValueError("semantic bridge event must be a non-empty string")
+    raw = text.encode("utf-8")
+    if len(raw) > SEMANTIC_EVENT_MAX_BYTES:
+        raise ValueError("semantic bridge event exceeds the bounded byte budget")
+    if not text.isascii() or any(ord(char) < 32 or ord(char) == 127 for char in text):
+        raise ValueError("semantic bridge event must be single-line printable ASCII")
+    return text
+
+
+def _semantic_bridge_example(example):
+    if not isinstance(example, dict) or set(example) != {"text", "labels"}:
+        raise ValueError("semantic bridge example fields must be text and labels")
+    text = _semantic_event_text(example["text"])
+    labels = example["labels"]
+    if not isinstance(labels, dict) or "kind" not in labels:
+        raise ValueError("semantic bridge example labels are incomplete")
+    kind = labels["kind"]
+    expected = {
+        "memory": {"kind", "address", "entity", "relation", "value"},
+        "query": {"kind", "address"},
+        "other": {"kind"},
+    }
+    if kind not in expected or set(labels) != expected[kind]:
+        raise ValueError("semantic bridge labels do not match the event kind")
+    checked = {"kind": kind}
+    for field, value in labels.items():
+        if field != "kind":
+            checked[field] = _content_atom(value, "semantic bridge " + field)
+    return {"text": text, "labels": checked}
+
+
+def _semantic_bridge_model(model):
+    """Fail-closed validation for a detached learned bridge model document."""
+    if not isinstance(model, dict) or set(model) != {"schema", "payload", "sha256"} or \
+            model.get("schema") != SEMANTIC_BRIDGE_MODEL_SCHEMA:
+        raise ValueError("unsupported semantic bridge model schema")
+    payload = model["payload"]
+    if not isinstance(payload, dict) or model["sha256"] != _sha256(payload):
+        raise ValueError("semantic bridge model checksum mismatch")
+    if set(payload) != {"feature", "training_sha256", "classifiers"}:
+        raise ValueError("semantic bridge model payload fields mismatch")
+    feature = payload["feature"]
+    if not isinstance(feature, dict) or feature != {
+            "name": "core.mi_compress.hashed_ngram_features",
+            "dim": feature.get("dim"), "ngram_sizes": [1, 2, 3], "log_weight": True}:
+        raise ValueError("semantic bridge feature contract mismatch")
+    dim = feature["dim"]
+    if isinstance(dim, bool) or not isinstance(dim, int) or dim < 64 or dim > 8192:
+        raise ValueError("semantic bridge feature dimension is invalid")
+    training_sha = payload["training_sha256"]
+    if not isinstance(training_sha, str) or len(training_sha) != 64 or any(
+            char not in "0123456789abcdef" for char in training_sha):
+        raise ValueError("semantic bridge training checksum is invalid")
+    classifiers = payload["classifiers"]
+    required = {"kind", "address", "entity", "relation", "value"}
+    if not isinstance(classifiers, dict) or set(classifiers) != required:
+        raise ValueError("semantic bridge classifiers are incomplete")
+    detached = {}
+    for field in sorted(required):
+        classifier = classifiers[field]
+        if not isinstance(classifier, dict) or set(classifier) != {
+                "classes", "centroids", "examples"}:
+            raise ValueError("semantic bridge classifier fields mismatch")
+        classes = classifier["classes"]
+        if not isinstance(classes, list) or len(classes) < 2 or classes != sorted(set(classes)):
+            raise ValueError("semantic bridge classifier classes are invalid")
+        examples = classifier["examples"]
+        if isinstance(examples, bool) or not isinstance(examples, int) or examples < len(classes):
+            raise ValueError("semantic bridge classifier example count is invalid")
+        centroids = classifier["centroids"]
+        if not isinstance(centroids, dict) or set(centroids) != set(classes):
+            raise ValueError("semantic bridge classifier centroid classes mismatch")
+        checked_centroids = {}
+        for label in classes:
+            _content_atom(label, "semantic bridge class")
+            vector = centroids[label]
+            if not isinstance(vector, list) or len(vector) != dim or any(
+                    isinstance(value, bool) or not isinstance(value, (int, float)) or
+                    not math.isfinite(value) for value in vector):
+                raise ValueError("semantic bridge centroid is invalid")
+            norm = math.sqrt(math.fsum(float(value) ** 2 for value in vector))
+            if abs(norm - 1.0) > 1.0e-9:
+                raise ValueError("semantic bridge centroid must be unit-normalized")
+            checked_centroids[label] = [float(value) for value in vector]
+        detached[field] = {"classes": list(classes), "centroids": checked_centroids,
+                           "examples": examples}
+    clean_payload = {"feature": dict(feature), "training_sha256": training_sha,
+                     "classifiers": detached}
+    return {"schema": SEMANTIC_BRIDGE_MODEL_SCHEMA, "payload": clean_payload,
+            "sha256": _sha256(clean_payload)}
+
+
+def train_semantic_bridge(examples, feature_dim=2048):
+    """Fit deterministic factorised centroids over the canonical byte n-gram features."""
+    import mi_compress as MI
+
+    if isinstance(feature_dim, bool) or not isinstance(feature_dim, int) or \
+            feature_dim < 64 or feature_dim > 8192:
+        raise ValueError("semantic bridge feature dimension is invalid")
+    if not isinstance(examples, list) or not examples:
+        raise ValueError("semantic bridge needs a non-empty example list")
+    checked = [_semantic_bridge_example(example) for example in examples]
+    texts = [example["text"] for example in checked]
+    if len(texts) != len(set(texts)):
+        raise ValueError("semantic bridge training texts must be unique")
+    features = [MI.hashed_ngram_features(text.encode("utf-8"), dim=feature_dim)
+                for text in texts]
+    classifiers = {}
+    for field in ("kind", "address", "entity", "relation", "value"):
+        rows = [(vector, example["labels"][field])
+                for vector, example in zip(features, checked)
+                if field in example["labels"]]
+        classes = sorted({label for _, label in rows})
+        if len(classes) < 2:
+            raise ValueError("semantic bridge field lacks multiple classes: " + field)
+        centroids = {}
+        for label in classes:
+            selected = [vector for vector, actual in rows if actual == label]
+            mean = [math.fsum(vector[index] for vector in selected) / len(selected)
+                    for index in range(feature_dim)]
+            norm = math.sqrt(math.fsum(value * value for value in mean))
+            if norm <= 0.0:
+                raise ValueError("semantic bridge learned an empty centroid")
+            centroids[label] = [value / norm for value in mean]
+        classifiers[field] = {"classes": classes, "centroids": centroids,
+                              "examples": len(rows)}
+    payload = {
+        "feature": {"name": "core.mi_compress.hashed_ngram_features",
+                    "dim": feature_dim, "ngram_sizes": [1, 2, 3], "log_weight": True},
+        "training_sha256": _sha256(checked),
+        "classifiers": classifiers,
+    }
+    return _semantic_bridge_model({"schema": SEMANTIC_BRIDGE_MODEL_SCHEMA,
+                                   "payload": payload, "sha256": _sha256(payload)})
+
+
+def semantic_bridge_encode(model, text):
+    """Map one bounded byte event to a learned event kind, address and optional record."""
+    import mi_compress as MI
+
+    checked = _semantic_bridge_model(model)
+    text = _semantic_event_text(text)
+    payload = checked["payload"]
+    vector = MI.hashed_ngram_features(text.encode("utf-8"),
+                                      dim=payload["feature"]["dim"])
+
+    def predict(field):
+        classifier = payload["classifiers"][field]
+        scored = [(math.fsum(a * b for a, b in zip(
+            vector, classifier["centroids"][label])), label)
+                  for label in classifier["classes"]]
+        scored.sort(key=lambda row: (-row[0], row[1]))
+        margin = scored[0][0] - scored[1][0]
+        return scored[0][1], margin
+
+    kind, kind_margin = predict("kind")
+    result = {"kind": kind, "address": None, "record": None,
+              "margins": {"kind": kind_margin}, "model_sha256": checked["sha256"]}
+    if kind in ("memory", "query"):
+        address, margin = predict("address")
+        result["address"] = address
+        result["margins"]["address"] = margin
+    if kind == "memory":
+        record = {}
+        for field in CONTENT_RECORD_FIELDS:
+            record[field], result["margins"][field] = predict(field)
+        result["record"] = validate_content_records({"event": record})["event"]
+    return result
+
+
+def save_semantic_bridge_model(path, model):
+    """Atomically persist a checksum-validated learned bridge with mode 0600."""
+    checked = _semantic_bridge_model(model)
+    target = os.path.abspath(os.fspath(path))
+    parent = os.path.dirname(target)
+    if not os.path.isdir(parent):
+        raise FileNotFoundError("semantic bridge model parent directory does not exist")
+    body = _canonical_json(checked) + b"\n"
+    if len(body) > SEMANTIC_BRIDGE_MAX_MODEL_BYTES:
+        raise ValueError("semantic bridge model exceeds the bounded size")
+    fd, temporary = tempfile.mkstemp(prefix=".iit-semantic-bridge-", suffix=".json", dir=parent)
+    try:
+        os.fchmod(fd, 0o600)
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(body)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, target)
+        directory_fd = os.open(parent, os.O_RDONLY)
+        try:
+            os.fsync(directory_fd)
+        finally:
+            os.close(directory_fd)
+    except BaseException:
+        try:
+            os.unlink(temporary)
+        except FileNotFoundError:
+            pass
+        raise
+    return target
+
+
+def load_semantic_bridge_model(path):
+    """Load a bounded learned bridge and fail closed on schema or checksum drift."""
+    target = os.path.abspath(os.fspath(path))
+    size = os.path.getsize(target)
+    if size <= 0 or size > SEMANTIC_BRIDGE_MAX_MODEL_BYTES:
+        raise ValueError("semantic bridge model size is invalid")
+    with open(target, "rb") as handle:
+        raw = handle.read(SEMANTIC_BRIDGE_MAX_MODEL_BYTES + 1)
+    try:
+        document = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("semantic bridge model is not valid canonical JSON") from exc
+    return _semantic_bridge_model(document)
 
 
 def content_workspace_codebook(address_to_cue):

@@ -1695,6 +1695,8 @@ def evaluate_usage():
     print("      R3 pair-oracle → bounded content → reset/IIT+CLMS shuffle → recovery gate.")
     print("  --iit-daemon-composition <protocol.json> [--out <result.json>]: run the protocol-pinned")
     print("      R3.5 IIT-selected entity/relation/value reset/shuffle/lesion/recovery gate.")
+    print("  --iit-daemon-semantic-bridge <protocol.json> [--out <result.json>]")
+    print("      [--semantic-bridge-model-out <model.json>]: run the R3.6 learned byte-event bridge gate.")
     print("  --store-component-swap <groups> --store-swap-from <donor.clm>: EVAL-ONLY causal")
     print("      surgery (H_9724) — graft CLMS bridge components from a donor ckpt into the host")
     print("      before scoring, to localize the seed-fragility source (ORACLE 0.99 vs 0.50).")
@@ -5340,6 +5342,588 @@ def iit_daemon_composition_run(argv):
     print("  verdict: %s (bounded plumbing only; not a learned mouth)" % verdict)
     if out_path:
         _store_causality_write(out_path, result)
+        print("  wrote %s" % out_path)
+    return 0 if verdict == protocol["required_verdict"] else 1
+
+
+def iit_daemon_semantic_bridge_run(argv):
+    """Run the preregistered R3.6 learned byte-event to content-workspace battery."""
+    import hashlib as _hashlib
+    import tempfile as _tempfile
+    import iit_daemon as ID
+
+    protocol_path = evaluate_strval(argv, "--iit-daemon-semantic-bridge", "")
+    out_path = evaluate_strval(argv, "--out", "")
+    model_out = evaluate_strval(argv, "--semantic-bridge-model-out", "")
+    if not protocol_path:
+        print("ERROR: R3.6 needs --iit-daemon-semantic-bridge <protocol.json>", file=sys.stderr)
+        return 2
+
+    def _digest(path):
+        sha = _hashlib.sha256()
+        with open(path, "rb") as handle:
+            for block in iter(lambda: handle.read(1 << 20), b""):
+                sha.update(block)
+        return sha.hexdigest()
+
+    def _read_json(path, limit, name):
+        size = os.path.getsize(path)
+        if size <= 0 or size > limit:
+            raise ValueError(name + " size is invalid")
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+
+    protocol = _read_json(protocol_path, 65536, "semantic bridge protocol")
+    if not isinstance(protocol, dict) or protocol.get("schema") != \
+            ID.SEMANTIC_BRIDGE_PROTOCOL_SCHEMA:
+        raise ValueError("unsupported semantic bridge protocol schema")
+    if set(protocol) != {"schema", "date", "engines", "r35", "panel", "task", "bars",
+                        "required_verdict", "deployment", "non_claims"}:
+        raise ValueError("semantic bridge protocol fields mismatch")
+    if protocol["engines"] != [
+            "core.iit_daemon.IITDaemonCore",
+            "core.iit_daemon.train_semantic_bridge",
+            "core.iit_daemon.semantic_bridge_encode",
+            "core.generator.gen_iit_workspace_content"]:
+        raise ValueError("semantic bridge engines mismatch")
+    if protocol["required_verdict"] != "SUPPORTED-LEARNED-SEMANTIC-BRIDGE-CAUSALITY" or \
+            protocol["deployment"] != "BLOCKED-R36-NOT-A-CONVERSATIONAL-MOUTH":
+        raise ValueError("semantic bridge verdict/deployment contract mismatch")
+    if not isinstance(protocol["non_claims"], list) or not protocol["non_claims"]:
+        raise ValueError("semantic bridge non-claims are missing")
+
+    protocol_dir = os.path.dirname(os.path.abspath(protocol_path))
+
+    def _pinned(path_value, sha_value, name):
+        path = os.path.normpath(os.path.join(protocol_dir, path_value))
+        if not os.path.isfile(path) or _digest(path) != sha_value:
+            raise ValueError(name + " artifact mismatch")
+        return path
+
+    r35_spec = protocol["r35"]
+    if not isinstance(r35_spec, dict) or set(r35_spec) != {
+            "result_path", "result_sha256", "panel_path", "panel_sha256",
+            "required_verdict"}:
+        raise ValueError("semantic bridge R3.5 fields mismatch")
+    r35_result_path = _pinned(r35_spec["result_path"], r35_spec["result_sha256"],
+                              "semantic bridge R3.5 result")
+    r35_panel_path = _pinned(r35_spec["panel_path"], r35_spec["panel_sha256"],
+                             "semantic bridge R3.5 panel")
+    r35_result = _read_json(r35_result_path, 4 << 20, "semantic bridge R3.5 result")
+    if r35_spec["required_verdict"] != "SUPPORTED-COMPOSITIONAL-WORKSPACE-CAUSALITY" or \
+            r35_result.get("verdict") != r35_spec["required_verdict"]:
+        raise ValueError("semantic bridge R3.5 gate mismatch")
+    r35_panel = _read_json(r35_panel_path, 65536, "semantic bridge R3.5 panel")
+    if r35_panel.get("schema") != ID.COMPOSITION_PANEL_SCHEMA:
+        raise ValueError("semantic bridge R3.5 panel schema mismatch")
+
+    panel_spec = protocol["panel"]
+    if not isinstance(panel_spec, dict) or set(panel_spec) != {"path", "sha256"}:
+        raise ValueError("semantic bridge panel fields mismatch")
+    panel_path = _pinned(panel_spec["path"], panel_spec["sha256"], "semantic bridge panel")
+    panel = _read_json(panel_path, 65536, "semantic bridge panel")
+    if not isinstance(panel, dict) or set(panel) != {"schema", "atoms", "support", "evaluation"} \
+            or panel.get("schema") != ID.SEMANTIC_BRIDGE_PANEL_SCHEMA:
+        raise ValueError("semantic bridge panel schema mismatch")
+
+    task = protocol["task"]
+    if not isinstance(task, dict) or set(task) != {
+            "feature_dim", "feature_ngram_sizes", "address_to_cue", "delay", "chance",
+            "iit_address_shuffle", "workspace_address_shuffle", "lesion_mask",
+            "stateless_empty_record"}:
+        raise ValueError("semantic bridge task fields mismatch")
+    if task["feature_ngram_sizes"] != [1, 2, 3]:
+        raise ValueError("semantic bridge feature n-gram contract mismatch")
+    feature_dim = task["feature_dim"]
+    address_to_cue = task["address_to_cue"]
+    state_to_address = ID.content_workspace_codebook(address_to_cue)
+    addresses = sorted(address_to_cue)
+    delay = task["delay"]
+    if isinstance(delay, bool) or not isinstance(delay, int) or delay < 1:
+        raise ValueError("semantic bridge delay must be positive")
+    chance = float(task["chance"])
+    if not math.isfinite(chance) or abs(chance - 1.0 / len(addresses)) > 1.0e-12:
+        raise ValueError("semantic bridge chance mismatch")
+    iit_shuffle = tuple(task["iit_address_shuffle"])
+    workspace_shuffle = task["workspace_address_shuffle"]
+    lesion_mask = task["lesion_mask"]
+    if lesion_mask != (1 << ID.RL.N_CELL) - 1:
+        raise ValueError("semantic bridge lesion must cover every intrinsic node")
+    empty_record = ID.validate_content_records({"empty": task["stateless_empty_record"]})["empty"]
+    ID.permute_content_records({address: empty_record for address in addresses}, workspace_shuffle)
+
+    bars = protocol["bars"]
+    if not isinstance(bars, dict) or set(bars) != {
+            "state_oracle", "bridge_kind", "bridge_query_address",
+            "bridge_complete_record", "positive", "control_margin", "control_ceiling",
+            "counterfactual_change", "irrelevant_stability"}:
+        raise ValueError("semantic bridge bars mismatch")
+    numeric_bars = {key: float(value) for key, value in bars.items()}
+    if any(not math.isfinite(value) or value < 0.0 or value > 1.0
+           for value in numeric_bars.values()):
+        raise ValueError("semantic bridge bars must be finite in [0,1]")
+    ceiling = chance + numeric_bars["control_margin"]
+    if abs(ceiling - numeric_bars["control_ceiling"]) > 1.0e-12:
+        raise ValueError("semantic bridge control ceiling mismatch")
+
+    atoms = panel["atoms"]
+    if not isinstance(atoms, dict) or set(atoms) != {
+            "addresses", "entities", "relations", "values"}:
+        raise ValueError("semantic bridge atom fields mismatch")
+    if atoms["addresses"] != addresses:
+        raise ValueError("semantic bridge address SSOT mismatch")
+    entities = [ID._content_atom(value, "semantic bridge entity")
+                for value in atoms["entities"]]
+    values = [ID._content_atom(value, "semantic bridge value") for value in atoms["values"]]
+    relations = atoms["relations"]
+    if len(entities) != len(set(entities)) or len(values) != len(set(values)) or \
+            not isinstance(relations, dict) or len(relations) < 2:
+        raise ValueError("semantic bridge atoms must be unique and non-empty")
+    relation_surfaces = {}
+    all_surfaces = []
+    for relation, surfaces in relations.items():
+        relation = ID._content_atom(relation, "semantic bridge relation")
+        if not isinstance(surfaces, list) or len(surfaces) < 2:
+            raise ValueError("semantic bridge relation needs multiple surfaces")
+        checked_surfaces = [ID._semantic_event_text(surface) for surface in surfaces]
+        if len(checked_surfaces) != len(set(checked_surfaces)):
+            raise ValueError("semantic bridge relation surfaces must be unique")
+        relation_surfaces[relation] = checked_surfaces
+        all_surfaces.extend(checked_surfaces)
+    if len(all_surfaces) != len(set(all_surfaces)):
+        raise ValueError("semantic bridge surfaces cannot label multiple relations")
+
+    support = panel["support"]
+    evaluation = panel["evaluation"]
+    if not isinstance(support, dict) or set(support) != {
+            "memory_templates", "query_templates", "other_events",
+            "exclude_all_r35_arm_records"} or not support["exclude_all_r35_arm_records"]:
+        raise ValueError("semantic bridge support contract mismatch")
+    if not isinstance(evaluation, dict) or set(evaluation) != {
+            "memory_templates", "correction_template", "query_template", "other_events",
+            "trial_indices"}:
+        raise ValueError("semantic bridge evaluation contract mismatch")
+
+    def _template(value, required, name):
+        value = ID._semantic_event_text(value)
+        fields = set(re.findall(r"{([a-z]+)}", value))
+        if fields != set(required) or value.count("{") != len(fields) or \
+                value.count("}") != len(fields):
+            raise ValueError(name + " placeholders mismatch")
+        probe = {field: "probe" for field in required}
+        ID._semantic_event_text(value.format(**probe))
+        return value
+
+    memory_templates = [_template(value, {"address", "entity", "surface", "value"},
+                                  "semantic bridge support memory template")
+                        for value in support["memory_templates"]]
+    query_templates = [_template(value, {"address"}, "semantic bridge support query template")
+                       for value in support["query_templates"]]
+    other_support = [ID._semantic_event_text(value) for value in support["other_events"]]
+    eval_memory_templates = [_template(
+        value, {"address", "entity", "surface", "value"},
+        "semantic bridge evaluation memory template")
+        for value in evaluation["memory_templates"]]
+    correction_template = _template(
+        evaluation["correction_template"], {"address", "entity", "surface", "value"},
+        "semantic bridge correction template")
+    query_template = _template(evaluation["query_template"], {"address"},
+                               "semantic bridge evaluation query template")
+    other_evaluation = [ID._semantic_event_text(value) for value in evaluation["other_events"]]
+    if set(memory_templates) & set(eval_memory_templates) or \
+            set(query_templates) & {query_template} or set(other_support) & set(other_evaluation):
+        raise ValueError("semantic bridge support/evaluation surfaces must be disjoint")
+
+    trials = r35_panel["trials"]
+    indices = evaluation["trial_indices"]
+    if indices != list(range(len(trials))):
+        raise ValueError("semantic bridge must retain the complete ordered R3.5 panel")
+    heldout_records = set()
+    normalized_trials = []
+    for index, raw_row in enumerate(trials):
+        records = ID.validate_content_records(raw_row["records"], addresses)
+        active = raw_row["active_address"]
+        selected = records[active]
+        counterfactual = ID.validate_content_records({active: dict(
+            selected, value=raw_row["counterfactual_value"])})[active]
+        irrelevant = ID.validate_content_records(
+            {raw_row["irrelevant_address"]: raw_row["irrelevant_record"]})[
+                raw_row["irrelevant_address"]]
+        for record in list(records.values()) + [counterfactual, irrelevant]:
+            heldout_records.add(tuple(record[field] for field in ID.CONTENT_RECORD_FIELDS))
+        normalized_trials.append({
+            "index": index, "active_address": active, "records": records,
+            "expected": raw_row["expected"], "counterfactual_record": counterfactual,
+            "counterfactual_expected": raw_row["counterfactual_expected"],
+            "irrelevant_address": raw_row["irrelevant_address"],
+            "irrelevant_record": irrelevant,
+        })
+
+    training_examples = []
+    supported_atoms = {"entity": set(), "relation": set(), "value": set()}
+    for address in addresses:
+        for entity in entities:
+            for relation in sorted(relation_surfaces):
+                for value in values:
+                    record_key = (entity, relation, value)
+                    if record_key in heldout_records:
+                        continue
+                    for surface in relation_surfaces[relation]:
+                        for template in memory_templates:
+                            text = template.format(address=address, entity=entity,
+                                                   surface=surface, value=value)
+                            training_examples.append({"text": text, "labels": {
+                                "kind": "memory", "address": address, "entity": entity,
+                                "relation": relation, "value": value}})
+                    supported_atoms["entity"].add(entity)
+                    supported_atoms["relation"].add(relation)
+                    supported_atoms["value"].add(value)
+        for template in query_templates:
+            training_examples.append({"text": template.format(address=address),
+                                      "labels": {"kind": "query", "address": address}})
+    for text in other_support:
+        training_examples.append({"text": text, "labels": {"kind": "other"}})
+    if supported_atoms != {"entity": set(entities), "relation": set(relation_surfaces),
+                           "value": set(values)}:
+        raise ValueError("semantic bridge exclusion removed atom support")
+
+    model = ID.train_semantic_bridge(training_examples, feature_dim=feature_dim)
+    model_roundtrip = False
+    model_path_record = None
+    if model_out:
+        ID.save_semantic_bridge_model(model_out, model)
+        loaded_model = ID.load_semantic_bridge_model(model_out)
+        model_roundtrip = loaded_model == model
+        if not model_roundtrip:
+            raise ValueError("semantic bridge model roundtrip mismatch")
+        model = loaded_model
+        model_path_record = os.path.basename(model_out)
+
+    def _surface(record, offset):
+        options = relation_surfaces[record["relation"]]
+        return options[offset % len(options)]
+
+    def _memory_text(record, address, index, offset=0, correction=False):
+        template = correction_template if correction else \
+            eval_memory_templates[(index + offset) % len(eval_memory_templates)]
+        return template.format(address=address, entity=record["entity"],
+                               surface=_surface(record, index + offset), value=record["value"])
+
+    bridge_rows = []
+    query_rows = []
+    other_rows = []
+    correction_rows = []
+    for row in normalized_trials:
+        for offset, address in enumerate(addresses):
+            record = row["records"][address]
+            text = _memory_text(record, address, row["index"], offset)
+            prediction = ID.semantic_bridge_encode(model, text)
+            bridge_rows.append({
+                "index": row["index"], "address": address, "text": text,
+                "prediction": prediction, "expected_record": record,
+                "kind_correct": prediction["kind"] == "memory",
+                "address_correct": prediction["address"] == address,
+                "record_correct": prediction["record"] == record,
+            })
+        corrected = row["records"][row["active_address"]]
+        correction_text = _memory_text(corrected, row["active_address"], row["index"],
+                                       offset=1, correction=True)
+        correction_prediction = ID.semantic_bridge_encode(model, correction_text)
+        correction_rows.append({
+            "index": row["index"], "text": correction_text,
+            "prediction": correction_prediction, "expected_record": corrected,
+            "kind_correct": correction_prediction["kind"] == "memory",
+            "address_correct": correction_prediction["address"] == row["active_address"],
+            "record_correct": correction_prediction["record"] == corrected,
+        })
+        query_text = query_template.format(address=row["active_address"])
+        query_prediction = ID.semantic_bridge_encode(model, query_text)
+        query_rows.append({
+            "index": row["index"], "text": query_text, "prediction": query_prediction,
+            "expected_address": row["active_address"],
+            "kind_correct": query_prediction["kind"] == "query",
+            "address_correct": query_prediction["address"] == row["active_address"],
+        })
+    for text in other_evaluation:
+        prediction = ID.semantic_bridge_encode(model, text)
+        other_rows.append({"text": text, "prediction": prediction,
+                           "kind_correct": prediction["kind"] == "other"})
+
+    kind_flags = ([row["kind_correct"] for row in bridge_rows] +
+                  [row["kind_correct"] for row in correction_rows] +
+                  [row["kind_correct"] for row in query_rows] +
+                  [row["kind_correct"] for row in other_rows])
+    record_flags = [row["record_correct"] and row["address_correct"]
+                    for row in bridge_rows + correction_rows]
+    query_flags = [row["kind_correct"] and row["address_correct"] for row in query_rows]
+    bridge_metrics = {
+        "kind_accuracy": sum(kind_flags) / float(len(kind_flags)),
+        "query_address_accuracy": sum(query_flags) / float(len(query_flags)),
+        "complete_record_accuracy": sum(record_flags) / float(len(record_flags)),
+        "memory_events": len(bridge_rows) + len(correction_rows),
+        "query_events": len(query_rows), "other_events": len(other_rows),
+    }
+
+    state_by_address = {address: state for state, address in state_to_address.items()}
+    oracle_rows = []
+    for row in normalized_trials:
+        utterance = gen_runtime.gen_iit_workspace_content(
+            state_by_address[row["active_address"]], state_to_address, row["records"])
+        oracle_rows.append({"index": row["index"], "utterance": utterance["text"],
+                            "expected": row["expected"],
+                            "correct": utterance["text"] == row["expected"]})
+    state_oracle = sum(row["correct"] for row in oracle_rows) / float(len(oracle_rows))
+
+    base_result = {
+        "schema": "anima-iit-daemon-semantic-bridge-result/1", "date": protocol["date"],
+        "protocol": os.path.basename(protocol_path), "protocol_sha256": _digest(protocol_path),
+        "panel_sha256": panel_spec["sha256"], "r35_result_sha256": r35_spec["result_sha256"],
+        "r35_panel_sha256": r35_spec["panel_sha256"],
+        "claim_scope": "bounded learned byte-event to IIT-selected compositional record causality",
+        "non_claims": list(protocol["non_claims"]), "bars": dict(bars),
+        "model": {"schema": model["schema"], "sha256": model["sha256"],
+                  "training_sha256": model["payload"]["training_sha256"],
+                  "feature": model["payload"]["feature"],
+                  "classifier_examples": {field: spec["examples"] for field, spec in
+                                            model["payload"]["classifiers"].items()},
+                  "artifact": model_path_record, "roundtrip_exact": model_roundtrip},
+        "panel_audit": {"training_examples": len(training_examples),
+                        "heldout_complete_records": len(heldout_records),
+                        "trials": len(normalized_trials),
+                        "support_atoms_complete": True,
+                        "support_evaluation_text_disjoint": True},
+        "bridge": {"metrics": bridge_metrics, "memory_trials": bridge_rows,
+                   "correction_trials": correction_rows, "query_trials": query_rows,
+                   "other_trials": other_rows},
+        "state_oracle": {"accuracy": state_oracle, "trials": oracle_rows},
+        "deployment": protocol["deployment"],
+    }
+
+    print("[iit-daemon R3.6 · learned semantic bridge microexperiment]")
+    print("  training=%d heldout-records=%d model=%s" %
+          (len(training_examples), len(heldout_records), model["sha256"][:12]))
+    print("  state-oracle=%.4f kind=%.4f query-address=%.4f complete-record=%.4f" %
+          (state_oracle, bridge_metrics["kind_accuracy"],
+           bridge_metrics["query_address_accuracy"],
+           bridge_metrics["complete_record_accuracy"]))
+    if state_oracle < numeric_bars["state_oracle"]:
+        base_result.update({"verdict": "INVALID-INSTRUMENT", "next_gate": "R36-BLOCKED"})
+        if out_path:
+            _store_causality_write(out_path, base_result)
+        print("  verdict: INVALID-INSTRUMENT — state oracle below registered bar")
+        return 1
+    bridge_ok = (
+        bridge_metrics["kind_accuracy"] >= numeric_bars["bridge_kind"] and
+        bridge_metrics["query_address_accuracy"] >= numeric_bars["bridge_query_address"] and
+        bridge_metrics["complete_record_accuracy"] >= numeric_bars["bridge_complete_record"])
+    if not bridge_ok:
+        base_result.update({"verdict": "FAIL-LEARNED-SEMANTIC-BRIDGE",
+                            "next_gate": "R36-BLOCKED"})
+        if out_path:
+            _store_causality_write(out_path, base_result)
+        print("  verdict: FAIL-LEARNED-SEMANTIC-BRIDGE — later arms not interpreted")
+        return 1
+
+    def _episode_inputs(row, mode):
+        records = {address: dict(record) for address, record in row["records"].items()}
+        correction = None
+        if mode in ("counterfactual", "correction"):
+            records[row["active_address"]] = dict(row["counterfactual_record"])
+        if mode == "irrelevant":
+            records[row["irrelevant_address"]] = dict(row["irrelevant_record"])
+        if mode == "correction":
+            correction = dict(row["records"][row["active_address"]])
+        stateless = mode == "stateless"
+        store = {address: dict(empty_record) for address in addresses}
+        events = []
+        for offset, address in enumerate(addresses):
+            if stateless:
+                store = {name: dict(empty_record) for name in addresses}
+            text = _memory_text(records[address], address, row["index"], offset)
+            prediction = ID.semantic_bridge_encode(model, text)
+            events.append({"text": text, "prediction": prediction})
+            if prediction["kind"] == "memory" and prediction["address"] in store and \
+                    prediction["record"] is not None:
+                store[prediction["address"]] = dict(prediction["record"])
+        if correction is not None:
+            text = _memory_text(correction, row["active_address"], row["index"],
+                                offset=1, correction=True)
+            prediction = ID.semantic_bridge_encode(model, text)
+            events.append({"text": text, "prediction": prediction, "correction": True})
+            if prediction["kind"] == "memory" and prediction["address"] in store and \
+                    prediction["record"] is not None:
+                store[prediction["address"]] = dict(prediction["record"])
+        for text in other_evaluation:
+            prediction = ID.semantic_bridge_encode(model, text)
+            events.append({"text": text, "prediction": prediction, "irrelevant_event": True})
+            if prediction["kind"] == "memory" and prediction["address"] in store and \
+                    prediction["record"] is not None:
+                store[prediction["address"]] = dict(prediction["record"])
+        query_text = query_template.format(address=row["active_address"])
+        query = ID.semantic_bridge_encode(model, query_text)
+        return store, query, events, query_text
+
+    def _score_episode(row, mode="normal", expected=None, *, reset_before_delay=False,
+                       permutation=(0, 1, 2), workspace_permuted=False, lesion=0):
+        store, query, events, query_text_value = _episode_inputs(row, mode)
+        if workspace_permuted:
+            store = ID.permute_content_records(store, workspace_shuffle)
+        if query["kind"] != "query" or query["address"] not in address_to_cue:
+            return {"index": row["index"], "mode": mode, "events": events,
+                    "query_text": query_text_value, "query": query, "utterance": "",
+                    "expected": expected, "correct": False, "selected_address": None,
+                    "selected_record": None, "final_state": None}
+        trial = ID.content_workspace_trial(
+            query["address"], store, address_to_cue, delay=delay,
+            reset_before_delay=reset_before_delay, permutation=permutation,
+            lesion_mask=lesion)
+        trial.pop("core")
+        utterance = gen_runtime.gen_iit_workspace_content(
+            trial["final_state"], state_to_address, store)
+        return {"index": row["index"], "mode": mode, "events": events,
+                "query_text": query_text_value, "query": query,
+                "utterance": utterance["text"], "expected": expected,
+                "correct": utterance["text"] == expected,
+                "selected_address": utterance["address"],
+                "selected_record": utterance["record"],
+                "final_state": trial["final_state"], "tick": trial["tick"],
+                "audit_head": trial["audit_head"]}
+
+    def _arm(rows):
+        return {"accuracy": sum(row["correct"] for row in rows) / float(len(rows)),
+                "trials": rows}
+
+    normal_rows = [_score_episode(row, expected=row["expected"])
+                   for row in normalized_trials]
+    normal = _arm(normal_rows)
+    stateless = _arm([_score_episode(row, "stateless", row["expected"])
+                      for row in normalized_trials])
+    reset = _arm([_score_episode(row, expected=row["expected"], reset_before_delay=True)
+                  for row in normalized_trials])
+    iit_shuffled = _arm([_score_episode(row, expected=row["expected"],
+                                        permutation=iit_shuffle)
+                         for row in normalized_trials])
+    workspace_shuffled = _arm([_score_episode(row, expected=row["expected"],
+                                              workspace_permuted=True)
+                               for row in normalized_trials])
+    lesion = _arm([_score_episode(row, expected=row["expected"], lesion=lesion_mask)
+                   for row in normalized_trials])
+    counterfactual_rows = [_score_episode(
+        row, "counterfactual", row["counterfactual_expected"]) for row in normalized_trials]
+    for changed, reference in zip(counterfactual_rows, normal_rows):
+        changed["differs_from_normal"] = changed["utterance"] != reference["utterance"]
+        changed["same_question"] = changed["query_text"] == reference["query_text"]
+    counterfactual = _arm(counterfactual_rows)
+    counterfactual["change_rate"] = sum(
+        row["differs_from_normal"] and row["same_question"]
+        for row in counterfactual_rows) / float(len(counterfactual_rows))
+    irrelevant_rows = [_score_episode(row, "irrelevant", row["expected"])
+                       for row in normalized_trials]
+    for changed, reference in zip(irrelevant_rows, normal_rows):
+        changed["matches_normal"] = changed["utterance"] == reference["utterance"]
+    irrelevant = _arm(irrelevant_rows)
+    irrelevant["stability"] = sum(row["matches_normal"] for row in irrelevant_rows) / \
+        float(len(irrelevant_rows))
+    correction = _arm([_score_episode(row, "correction", row["expected"])
+                       for row in normalized_trials])
+
+    recovery_rows = []
+    recovery_exact = []
+    disturbance_changed = []
+    snapshot_modes = []
+    normal_by_index = {row["index"]: row for row in normal_rows}
+    with _tempfile.TemporaryDirectory(prefix="anima-iit-semantic-r36-") as directory:
+        for row in normalized_trials:
+            store, query, events, query_text_value = _episode_inputs(row, "normal")
+            core = ID.IITDaemonCore(0)
+            core.step(address_to_cue[query["address"]])
+            path = os.path.join(directory, "trial-%04d.json" % row["index"])
+            ID.save_content_workspace_snapshot(path, core, store, address_to_cue)
+            snapshot_modes.append(os.stat(path).st_mode & 0o777)
+            pristine = ID.content_workspace_snapshot(core, store, address_to_cue)
+            core.step(7, permutation=(2, 0, 1), lesion_mask=7)
+            disturbed_store = ID.replace_content_record(
+                store, row["active_address"], row["counterfactual_record"])
+            disturbance_changed.append(
+                ID.content_workspace_snapshot(core, disturbed_store, address_to_cue) != pristine)
+            restored, restored_store, restored_cues = ID.load_content_workspace_snapshot(path)
+            for _ in range(delay):
+                restored.step(0)
+            utterance = gen_runtime.gen_iit_workspace_content(
+                restored.state, ID.content_workspace_codebook(restored_cues), restored_store)
+            reference = normal_by_index[row["index"]]
+            exact = (restored.state == reference["final_state"] and
+                     utterance["address"] == reference["selected_address"] and
+                     utterance["record"] == reference["selected_record"] and
+                     utterance["text"] == reference["utterance"] and
+                     restored_store == store and restored_cues == address_to_cue)
+            recovery_exact.append(exact)
+            recovery_rows.append({
+                "index": row["index"], "events": events, "query_text": query_text_value,
+                "query": query, "utterance": utterance["text"], "expected": row["expected"],
+                "correct": utterance["text"] == row["expected"],
+                "selected_address": utterance["address"],
+                "selected_record": utterance["record"], "final_state": restored.state,
+                "matches_normal": exact, "tick": restored.tick,
+                "audit_head": restored.audit_head})
+    recovery = _arm(recovery_rows)
+
+    arms = {"normal": normal, "stateless": stateless, "state_reset": reset,
+            "iit_address_shuffled": iit_shuffled,
+            "workspace_address_shuffled": workspace_shuffled, "node_lesion": lesion,
+            "selected_memory_counterfactual": counterfactual,
+            "irrelevant_memory_mutation": irrelevant, "memory_correction": correction,
+            "recovery": recovery}
+    accuracies = {name: arm["accuracy"] for name, arm in arms.items()}
+    checks = {
+        "artifact_integrity": True,
+        "r35_gate_passed": r35_result["verdict"] == r35_spec["required_verdict"],
+        "support_atoms_complete": True,
+        "heldout_complete_records_excluded": True,
+        "model_roundtrip_exact": model_roundtrip if model_out else True,
+        "state_oracle_positive": state_oracle >= numeric_bars["state_oracle"],
+        "bridge_kind_positive": bridge_metrics["kind_accuracy"] >= numeric_bars["bridge_kind"],
+        "bridge_query_positive": bridge_metrics["query_address_accuracy"] >=
+                                  numeric_bars["bridge_query_address"],
+        "bridge_record_positive": bridge_metrics["complete_record_accuracy"] >=
+                                   numeric_bars["bridge_complete_record"],
+        "normal_positive": accuracies["normal"] >= numeric_bars["positive"],
+        "stateless_collapses": accuracies["stateless"] <= ceiling,
+        "state_reset_collapses": accuracies["state_reset"] <= ceiling,
+        "iit_address_shuffle_collapses": accuracies["iit_address_shuffled"] <= ceiling,
+        "workspace_address_shuffle_collapses": accuracies["workspace_address_shuffled"] <= ceiling,
+        "node_lesion_collapses": accuracies["node_lesion"] <= ceiling,
+        "counterfactual_correct": accuracies["selected_memory_counterfactual"] >=
+                                  numeric_bars["positive"],
+        "counterfactual_changes_same_question_output": counterfactual["change_rate"] >=
+                                                        numeric_bars["counterfactual_change"],
+        "irrelevant_memory_correct": accuracies["irrelevant_memory_mutation"] >=
+                                     numeric_bars["positive"],
+        "irrelevant_memory_stable": irrelevant["stability"] >=
+                                    numeric_bars["irrelevant_stability"],
+        "correction_positive": accuracies["memory_correction"] >= numeric_bars["positive"],
+        "recovery_positive": accuracies["recovery"] >= numeric_bars["positive"],
+        "recovery_exact": all(recovery_exact),
+        "disturbance_changes_snapshot": all(disturbance_changed),
+        "snapshot_mode_0600": all(mode == 0o600 for mode in snapshot_modes),
+    }
+    verdict = protocol["required_verdict"] if all(checks.values()) else "FALSIFIED"
+    base_result.update({"task": dict(task, state_to_address={
+                            str(state): address for state, address in state_to_address.items()}),
+                        "accuracies": accuracies, "arms": arms, "checks": checks,
+                        "verdict": verdict,
+                        "next_gate": "R37-CANDIDATE-SELECTION-MOUTH"
+                                     if all(checks.values()) else "R36-BLOCKED"})
+    print("  normal=%.4f stateless=%.4f reset=%.4f iit-shuffle=%.4f workspace-shuffle=%.4f "
+          "lesion=%.4f counterfactual=%.4f irrelevant=%.4f correction=%.4f recovery=%.4f" %
+          (accuracies["normal"], accuracies["stateless"], accuracies["state_reset"],
+           accuracies["iit_address_shuffled"], accuracies["workspace_address_shuffled"],
+           accuracies["node_lesion"], accuracies["selected_memory_counterfactual"],
+           accuracies["irrelevant_memory_mutation"], accuracies["memory_correction"],
+           accuracies["recovery"]))
+    print("  verdict: %s (bounded learned bridge only; not conversational)" % verdict)
+    if out_path:
+        _store_causality_write(out_path, base_result)
         print("  wrote %s" % out_path)
     return 0 if verdict == protocol["required_verdict"] else 1
 
@@ -14026,6 +14610,7 @@ _KNOWN_FLAGS = frozenset((
     "--iit-daemon-clms",
     "--iit-daemon-content",
     "--iit-daemon-composition",
+    "--iit-daemon-semantic-bridge", "--semantic-bridge-model-out",
     # H_1520 conversational-salience emit gate re-read with the PLANTED FNV-trigram key
     # geometry swapped for the REAL 303M penultimate. ONE flag, no tuning argument.
     "--salience-toggle-read",
@@ -20938,6 +21523,10 @@ def main(argv):
     # entity/relation/value record under reset/shuffle/lesion/recovery controls.
     if "--iit-daemon-composition" in argv:
         return iit_daemon_composition_run(argv)
+    # IIT-daemon R3.6: replace evaluator-authored records with a learned,
+    # factorised byte-event bridge before the unchanged R3.5 causal seam.
+    if "--iit-daemon-semantic-bridge" in argv:
+        return iit_daemon_semantic_bridge_run(argv)
     # H_9838 --hippo-transitive-selftest: core/hippo_lane.py's CA3 multi-step completion on a
     # planted premise world. Ckpt-FREE by construction (the store + completion are pure numpy
     # arithmetic), so it dispatches on flag PRESENCE like --closure-ladder. ADDITIVE and

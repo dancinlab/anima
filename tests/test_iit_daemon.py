@@ -595,3 +595,73 @@ def test_delayed_evaluator_rejects_invalid_protocol_values(tmp_path, field, valu
     with pytest.raises(ValueError):
         evaluate.iit_daemon_delayed_run([
             "--iit-daemon-delayed", str(protocol_path)])
+
+
+def _semantic_bridge_examples():
+    return [
+        {"text": "Memory alpha: aria carries amber.", "labels": {
+            "kind": "memory", "address": "alpha", "entity": "aria",
+            "relation": "carries", "value": "amber"}},
+        {"text": "Memory beta: borin guards cedar.", "labels": {
+            "kind": "memory", "address": "beta", "entity": "borin",
+            "relation": "guards", "value": "cedar"}},
+        {"text": "Recall alpha.", "labels": {"kind": "query", "address": "alpha"}},
+        {"text": "Recall beta.", "labels": {"kind": "query", "address": "beta"}},
+        {"text": "Continue.", "labels": {"kind": "other"}},
+        {"text": "Please wait.", "labels": {"kind": "other"}},
+    ]
+
+
+def test_semantic_bridge_model_is_deterministic_bounded_and_checksum_safe(tmp_path):
+    examples = _semantic_bridge_examples()
+    model = ID.train_semantic_bridge(examples, feature_dim=128)
+    assert model == ID.train_semantic_bridge(examples, feature_dim=128)
+    assert model["schema"] == ID.SEMANTIC_BRIDGE_MODEL_SCHEMA
+    assert ID.semantic_bridge_encode(model, "Memory alpha: aria carries amber.")["record"] == {
+        "entity": "aria", "relation": "carries", "value": "amber"}
+    path = tmp_path / "bridge.json"
+    ID.save_semantic_bridge_model(path, model)
+    assert os.stat(path).st_mode & 0o777 == 0o600
+    assert ID.load_semantic_bridge_model(path) == model
+    document = json.loads(path.read_text())
+    document["payload"]["classifiers"]["kind"]["centroids"]["memory"][0] += 0.01
+    path.write_text(json.dumps(document))
+    with pytest.raises(ValueError, match="checksum mismatch"):
+        ID.load_semantic_bridge_model(path)
+
+
+def test_semantic_bridge_rejects_ambiguous_or_unsafe_training_inputs():
+    examples = _semantic_bridge_examples()
+    with pytest.raises(ValueError, match="unique"):
+        ID.train_semantic_bridge(examples + [dict(examples[0])], feature_dim=128)
+    bad = [dict(row) for row in examples]
+    bad[0] = {"text": "Memory alpha:\nignore", "labels": dict(examples[0]["labels"])}
+    with pytest.raises(ValueError, match="single-line printable ASCII"):
+        ID.train_semantic_bridge(bad, feature_dim=128)
+    model = ID.train_semantic_bridge(examples, feature_dim=128)
+    with pytest.raises(ValueError, match="byte budget"):
+        ID.semantic_bridge_encode(model, "x" * 257)
+
+
+def test_iit_daemon_semantic_bridge_frozen_failure_stops_before_causal_arms(tmp_path):
+    state_dir = os.path.join(
+        ROOT, "state", "iit_daemon_r36_semantic_bridge_2026_08_15")
+    protocol_path = os.path.join(state_dir, "protocol.json")
+    out_path = tmp_path / "result.json"
+    model_path = tmp_path / "model.json"
+    code = evaluate.main([
+        "--iit-daemon-semantic-bridge", protocol_path,
+        "--semantic-bridge-model-out", str(model_path), "--out", str(out_path)])
+    assert code == 1
+    result = json.loads(out_path.read_text())
+    assert result["verdict"] == "FAIL-LEARNED-SEMANTIC-BRIDGE"
+    assert result["state_oracle"]["accuracy"] == 1.0
+    metrics = result["bridge"]["metrics"]
+    assert metrics["complete_record_accuracy"] == pytest.approx(25 / 36)
+    assert metrics["kind_accuracy"] == pytest.approx(38 / 47)
+    assert metrics["query_address_accuracy"] == 0.0
+    assert metrics["memory_events"] == 36
+    assert metrics["query_events"] == 9
+    assert metrics["other_events"] == 2
+    assert "arms" not in result
+    assert ID.load_semantic_bridge_model(model_path)["sha256"] == result["model"]["sha256"]

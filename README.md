@@ -141,7 +141,7 @@ check found a separately mounted `anima-native-303m` step-45000 participant and
 question-irrelevant generic replies. The existing participant was preserved rather than
 interrupted.
 
-### Active R3.6 learned semantic bridge microexperiment
+### Completed R3.6 learned semantic bridge microexperiment
 
 R3.6 is preregistered in `state/iit_daemon_r36_semantic_bridge_2026_08_15/`. It changes only the
 R3.5 oracle-record input: bounded English event bytes are fitted to factorised address/entity/
@@ -149,8 +149,13 @@ relation/value centroids using the existing Python hashed byte n-gram feature pa
 transition, three-address workspace, delayed selection, canonical renderer, nine novel combinations
 and causal thresholds remain fixed. Held-out frames, corrections, same-question/different-memory,
 irrelevant mutation, stateless/reset/shuffle/lesion and exact recovery are all registered before
-execution. A pass is only bounded learned semantic-bridge causality; production remains
-`BLOCKED-R36-NOT-A-CONVERSATIONAL-MOUTH` and no 303M/GPU run is authorized by it.
+execution. The frozen bridge gate failed before causal-arm interpretation: state oracle was
+`1.0000`, but held-out event kind was `38/47 = 0.8085`, query address was `0/9`, and complete
+address+record was `25/36 = 0.6944`. All nine held-out query frames became `other`. The verdict is
+`FAIL-LEARNED-SEMANTIC-BRIDGE`; no threshold or panel was changed and later arms were not run.
+Production remains `BLOCKED-R36-NOT-A-CONVERSATIONAL-MOUTH`, and no 303M/GPU run is authorized by
+this result. The next single axis is a separately preregistered order-aware event encoder against
+this exact frozen centroid control.
 
 ### Completed native-303M replay recovery
 

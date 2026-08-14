@@ -122,15 +122,19 @@ participant 승격 정책은 `BLOCKED-R35-NOT-A-LEARNED-MOUTH`로 유지한다. 
 확인했다. R3.5가 이를 탑재·재시작·인증한 것은 아니며, 공개 history에는 여전히 질문과
 무관한 일반론 답변이 남아 있다. 다른 실행을 보호하기 위해 기존 참가자는 중단하지 않았다.
 
-### 진행 중인 R3.6 learned semantic bridge 마이크로 실험
+### 완료한 R3.6 learned semantic bridge 마이크로 실험
 
 R3.6은 `state/iit_daemon_r36_semantic_bridge_2026_08_15/`에 사전등록했다. R3.5의 oracle
 record 입력만 바꿔, 제한된 영어 사건 bytes를 기존 Python hashed byte n-gram 특징으로
 주소/entity/relation/value 중심점에 학습한다. R3.5 IIT 전이, 세 주소 workspace, 지연 선택,
 canonical renderer, 9개 novel 조합과 인과 문턱은 고정한다. held-out 문장틀, 정정,
 같은 질문·다른 기억, 무관 기억 변경, stateless/reset/shuffle/lesion, exact recovery를 모두
-실행 전에 등록했다. 통과해도 제한된 learned semantic bridge 인과성만 뜻하며 프로덕션은
-`BLOCKED-R36-NOT-A-CONVERSATIONAL-MOUTH`이고 303M/GPU 실행 근거가 되지 않는다.
+실행 전에 등록했다. 동결 bridge 관문은 인과 arm 해석 전에 실패했다. state oracle은
+`1.0000`이지만 held-out event kind는 `38/47 = 0.8085`, query address는 `0/9`, 완전한
+address+record는 `25/36 = 0.6944`였다. held-out query 9개가 모두 `other`가 됐다. 판정은
+`FAIL-LEARNED-SEMANTIC-BRIDGE`이며 문턱·panel을 바꾸지 않았고 후속 arm은 실행하지 않았다.
+프로덕션은 `BLOCKED-R36-NOT-A-CONVERSATIONAL-MOUTH`이고 303M/GPU 실행 근거가 되지 않는다.
+다음 단일축은 이 동결 centroid 대조군에 대한 order-aware 사건 encoder로 별도 사전등록한다.
 
 ### 완료한 native-303M replay 복구
 
