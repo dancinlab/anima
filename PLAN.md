@@ -87,10 +87,9 @@ English mouth
 - [x] R3.6 centroid bridge 실패와 shallow family 고갈
 - [x] lexical support gap 식별
 - [x] 영어 전용 `R3.7 → 1B → 3B → 7B` 방향 등록
-- [ ] R3.7 protocol·HF dataset revision 고정
+- [x] R3.7 protocol·HF dataset revision 고정
 - [ ] order-aware sequence encoder 구현
 - [ ] bridge 선행 관문 실행
 - [ ] 통과 시 R3.5 인과 battery 재실행
 - [ ] Python/격리 wheel/설치본 QA
 - [ ] 결과 기록·Git push·런타임 읽기 검증
-

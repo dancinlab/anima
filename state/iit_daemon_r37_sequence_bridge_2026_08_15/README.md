@@ -1,6 +1,6 @@
 # IIT daemon R3.7 — English sequence-semantic bridge
 
-Status: PREREGISTERED — no result yet.
+Status: PROTOCOL-FROZEN — no model result yet.
 
 R3.6 established a support-identifiability failure: the exhausted shallow family had only 54
 support tokens, ignored unseen decisive words and could not distinguish order or negation. R3.7
@@ -41,8 +41,10 @@ classes. The builder must fail unless:
 - output files and the manifest are deterministic.
 
 Generated JSONL is uploaded only to private
-`dancinlab/anima-iit-daemon-r37-sequence-data-2026-08-15`; it is not committed to Git. The final
-protocol will pin the immutable HF revision, file sizes and SHA-256 before model training begins.
+`dancinlab/anima-iit-daemon-r37-sequence-data-2026-08-15`; it is not committed to Git. Protocol
+`protocol.json` pins immutable revision `4301fd00…f4de7`, dataset SHA
+`39358a8a…42e17`, 5,018 train rows, 531 validation rows and every file size/SHA before model
+training begins.
 
 ## Fixed model and optimization
 
@@ -75,4 +77,3 @@ Any failed bridge gate stops later arm execution and interpretation. Results, in
 must be recorded without changing data, seed, steps, panels or bars. A pass supports only bounded
 English event-to-workspace causality and opens a later mouth experiment; it does not authorize
 participant mounting or production.
-

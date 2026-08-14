@@ -1,0 +1,98 @@
+{
+  "schema": "anima-iit-daemon-sequence-semantic-protocol/1",
+  "date": "2026-08-15",
+  "engines": [
+    "core.iit_daemon.IITDaemonCore",
+    "core.iit_daemon.train_sequence_semantic_bridge",
+    "core.iit_daemon.sequence_semantic_bridge_encode",
+    "core.generator.gen_iit_workspace_content",
+    "cli.evaluate.iit_daemon_semantic_bridge_run"
+  ],
+  "frozen": {
+    "r36_protocol": {"path": "../iit_daemon_r36_semantic_bridge_2026_08_15/protocol.json", "sha256": "153f314cebe8dd9928f49e0ad96bddbf369458d3dff9287309ce5c8b0635a3be"},
+    "r36_panel": {"path": "../iit_daemon_r36_semantic_bridge_2026_08_15/panel.json", "sha256": "730501e87f36ef7a975f87bccd052414a188d0309c324a1c82c258ca66a9b866"},
+    "r36_result": {"path": "../iit_daemon_r36_semantic_bridge_2026_08_15/result.json", "sha256": "c801ca00b0580bae7e9d1ed21d5fea50d56755840901c7af7ad55a6220cfb9e0", "required_verdict": "FAIL-LEARNED-SEMANTIC-BRIDGE"},
+    "r36_exhaustion_protocol": {"path": "../iit_daemon_r36_encoder_exhaustion_2026_08_15/protocol.json", "sha256": "61de84aa9dde84175044b3c9ea3170871181708a67621721ea84b7b0d82e825f"},
+    "r36_exhaustion_result": {"path": "../iit_daemon_r36_encoder_exhaustion_2026_08_15/result.json", "sha256": "a8115c3701991ece66fb4bb6eec4c203fe3e99d878ba4df7cdbbf7d46792b42d", "required_verdict": "DIAGNOSED-SHALLOW-LEXICAL-SHORTCUT"},
+    "r36_contrastive_protocol": {"path": "../iit_daemon_r36_contrastive_support_2026_08_15/protocol.json", "sha256": "3ff4b1ca9ea18bce00130fb620bf446be004b1e354ae56f8aa728a99478570a8"},
+    "r36_contrastive_result": {"path": "../iit_daemon_r36_contrastive_support_2026_08_15/result.json", "sha256": "a27bd54d457aca2de0f4777ab1e6efb39782d24487926b85ecf6827598a6b571", "required_verdict": "DIAGNOSED-MISSING-CONTRASTIVE-SUPPORT"},
+    "r35_panel": {"path": "../iit_daemon_r35_workspace_2026_08_14/panel.json", "sha256": "29c0af1f02663be6ae2d1a8083bf4036ef5efdee442d23486464f3f04321cf98"},
+    "r35_result": {"path": "../iit_daemon_r35_workspace_2026_08_14/result.json", "sha256": "74f917de8718a2de43c4db3d57f900922315a6cd019b71381eb0c7917313f56e", "required_verdict": "SUPPORTED-COMPOSITIONAL-WORKSPACE-CAUSALITY"}
+  },
+  "dataset": {
+    "repository": "dancinlab/anima-iit-daemon-r37-sequence-data-2026-08-15",
+    "revision": "4301fd00dd9e4ba72435dbbf85e00cdaaf7f4de7",
+    "private": true,
+    "license": "CC0-1.0",
+    "dataset_sha256": "39358a8aaed3e691b7fd029a456cb5ab85b25a6608dba48c60f6486d31f42e17",
+    "files": {
+      "train.jsonl": {"bytes": 664411, "sha256": "b8f0ddb99f47c790fab7b4ad415066abd32727208b14d70ed7bc1f018826f208"},
+      "validation.jsonl": {"bytes": 69959, "sha256": "dca01d68c88651539c8e99cb16973b34022ff996982cd9511bd170c466ba7b41"},
+      "manifest.json": {"bytes": 1463, "sha256": "8c316f7fe3054ef4bc74de85fa34b9a06996865f7b928f6aed18f3db0947ec76"},
+      "README.md": {"bytes": 358, "sha256": "3b150fa4d0d94f9e4af0bb28b4e1a10c9ca36683455734922080152946a15056"}
+    },
+    "train_rows": 5018,
+    "validation_rows": 531
+  },
+  "sequence_panel": {"path": "sequence_panel.json", "sha256": "a384de8be2daaa95370ec07bcbdb3cc60e31c6f91c0a56ef52c96c0325018d5b"},
+  "model": {
+    "repository": "dancinlab/anima-iit-daemon-r37-sequence-model-2026-08-15",
+    "private": true,
+    "format": "checksum-validated-json",
+    "embedding_dim": 32,
+    "hidden_dim": 64,
+    "layers": 1,
+    "bidirectional": true,
+    "dropout": 0.0,
+    "max_bytes": 256
+  },
+  "training": {
+    "seed": 7,
+    "device": "cpu",
+    "torch_threads": 2,
+    "deterministic_algorithms": true,
+    "steps": 2500,
+    "batch_size": 48,
+    "kind_batch_counts": {"memory": 16, "query": 16, "other": 16},
+    "optimizer": "AdamW",
+    "learning_rate": 0.002,
+    "betas": [0.9, 0.95],
+    "weight_decay": 0.01,
+    "gradient_clip": 1.0,
+    "checkpoint_selection": "final-step-only"
+  },
+  "task": {
+    "address_to_cue": {"alpha": 1, "beta": 2, "gamma": 4},
+    "delay": 1,
+    "chance": 0.3333333333333333,
+    "iit_address_shuffle": [1, 2, 0],
+    "workspace_address_shuffle": ["beta", "gamma", "alpha"],
+    "lesion_mask": 7,
+    "stateless_empty_record": {"entity": "null", "relation": "remembers", "value": "none"}
+  },
+  "bars": {
+    "state_oracle": 0.9,
+    "bridge_kind": 0.9,
+    "bridge_query_address": 0.9,
+    "bridge_complete_record": 0.9,
+    "stress_exact": 1.0,
+    "confirmation_exact": 1.0,
+    "sequence_exact": 0.9,
+    "positive": 0.9,
+    "control_margin": 0.06,
+    "control_ceiling": 0.3933333333333333,
+    "counterfactual_change": 0.9,
+    "irrelevant_stability": 0.9
+  },
+  "required_verdict": "SUPPORTED-SEQUENCE-SEMANTIC-BRIDGE-CAUSALITY",
+  "deployment": "BLOCKED-R37-NOT-A-CONVERSATIONAL-MOUTH",
+  "non_claims": [
+    "open-domain semantics",
+    "meaningful open conversation",
+    "Korean or multilingual capability",
+    "phenomenal consciousness",
+    "IIT maximal complex",
+    "303M, 1B, 3B or 7B readiness",
+    "participant or production readiness"
+  ]
+}
