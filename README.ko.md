@@ -122,6 +122,28 @@ participant 승격 정책은 `BLOCKED-R35-NOT-A-LEARNED-MOUTH`로 유지한다. 
 확인했다. R3.5가 이를 탑재·재시작·인증한 것은 아니며, 공개 history에는 여전히 질문과
 무관한 일반론 답변이 남아 있다. 다른 실행을 보호하기 위해 기존 참가자는 중단하지 않았다.
 
+### 사전등록된 native-303M replay 복구
+
+`state/anima_native_303m_replay_recovery_2026_08_14/`에 별도 탑재된 mouth의 실제 HF
+자료→sampler→loss→checkpoint→evaluator 흐름을 기록했다. target dialogue window는 빠진
+부품이 아니다. 고정 `2,375/2,375`행이 1,024 token 안에서 전체 prompt와 EOS를 모두 보존한다.
+공용 실패 원인은 35k→45k continuation 정책이다. fresh 고LR schedule에서
+dialogue-only response CE를 선택해 trainer에 이미 있던 mixed-source branch를 우회하고 일반문
+replay를 완전히 제거했다.
+
+같은 12개 broad validation 파일의 고정 재생에서 CE는 step 35k `3.3144075`에서 step 45k
+`5.7747389`로 `+2.4603314` 붕괴했고, 의미·최종 기억·정정도 여전히 실패한다. 과거 native
+keyword scorer는 따뜻한 햇빛이 얼음을 얼린다는 모순 답도 통과시켰다. 새 protocol은 과거
+출력을 다시 판정해 덮지 않고, 기존 canonical 부정·한국어 경계 scorer와 사전등록한 모순
+control을 재사용한다.
+
+다음에 허용된 arm은 하나뿐이다. 불변 step-35k 가중치에서 source composition만 바꾸어
+general full CE replay 65%와 dialogue assistant/EOS CE 35%를 비-H100 Vast.ai GPU에서 정확히
+5,000 새 step 실행한다. retention 관문은 broad CE `<=3.4644075`, 대화 관문은 언어별 구조
+`7/7`·의미 `>=6/7`·최종 기억/정정이며 이후 14개 응답 전부 항목별 수동 검토가 필요하다.
+실패하면 즉시 중단한다. 모델·증거는 HF `dancinlab` 비공개 저장소에만 보존하고 protocol
+임대는 종료한다. IIT 결합·participant 탑재·프로덕션은 계속 차단한다.
+
 ## 현재 실험 — 의미 있는 대화 R0
 
 다음 단일축 R4 실험을 `state/anima_303m_r4_support_admission_2026_08_13/`에서 완료했다.

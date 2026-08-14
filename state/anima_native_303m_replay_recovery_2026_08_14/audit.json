@@ -1,0 +1,57 @@
+{
+  "schema": "anima-native-303m-root-audit/v1",
+  "date": "2026-08-14",
+  "status": "ROOT-CAUSE-CONFIRMED",
+  "checkpoint_audit": {
+    "step_35000": {
+      "sha256": "e282cfca153ec0d12a11e33d780aa4b17d692ee79bc41ed94ee389fb7d900ce1",
+      "local_mps_native_semantic": {"en": 2, "ko": 1},
+      "canonical_rescore_semantic": {"en": 1, "ko": 1},
+      "canonical_rescore_structural": {"en": 5, "ko": 3},
+      "local_mps_structural_all": false,
+      "local_mps_multiturn_final_all": false,
+      "local_raw_result_sha256": "ce29523076e322bcaa58613c236addf06a416050b01937e767329b7afdd613e7",
+      "broad_validation_ce": 3.3144074976444244
+    },
+    "step_45000": {
+      "sha256": "4b66245e57186a367b6ef4961558d239d0c077cce261259aa5e4692ffb4d01b1",
+      "local_mps_native_semantic": {"en": 3, "ko": 2},
+      "canonical_rescore_semantic": {"en": 3, "ko": 2},
+      "canonical_rescore_structural": {"en": 6, "ko": 7},
+      "local_mps_structural_all": true,
+      "local_mps_multiturn_final_all": false,
+      "local_raw_result_sha256": "e7d7cc3eb77a8cd36211acce92c73650199b5cd9d3cb12944d5787cc8bfb46a6",
+      "broad_validation_ce": 5.774738907814026
+    }
+  },
+  "broad_retention": {
+    "artifact_sha256": "9a07828a980add7d8a2bf713d4598f7792ce67913fc2e42fdcefe6ae5dce217b",
+    "seed": 20260814,
+    "batches": 8,
+    "batch_size": 16,
+    "delta_step_45000_minus_step_35000": 2.4603314101696014,
+    "interpretation": "response-only dialogue-only continuation catastrophically forgot the general-language distribution"
+  },
+  "context_census": {
+    "rows": 2375,
+    "full_context": 2375,
+    "all_user_markers_retained": 2375,
+    "eos_retained": 2375,
+    "oversize": 0,
+    "interpretation": "the target continuation data fit inside block 1024; prompt truncation is rejected as the shared cause"
+  },
+  "instrument_findings": {
+    "native_scorer_false_positive": "The published English ice response said warm sunlight would cause freeze, yet passed through naive required-keyword matching.",
+    "canonical_scorer_reused": "cli.evaluate.score_conversation_response already rejects local negation and Korean substring matches; the new protocol adds frozen contradiction controls before new outputs.",
+    "hardware_sampling_note": "Native temperature/top-p generation is not byte-identical between CUDA and MPS; local outputs are diagnostic and do not replace the published CUDA custody artifact."
+  },
+  "custody_findings": {
+    "step_45000_manifest_stale": true,
+    "stale_manifest_checkpoint_step": 35000,
+    "actual_checkpoint_step": 45000,
+    "panel_missing_from_model_repository": true,
+    "canonical_anima_source_missing": true,
+    "live_participant_source": "separate anima-lab-3-2 checkout; inspected read-only and not modified"
+  },
+  "root_cause": "The 35k -> 45k phase selected dialogue-only response CE with a fresh high-LR schedule and no general replay, bypassing the trainer's existing mixed-source branch. The result improved some surface dialogue rows while increasing broad CE by 2.4603 and still failing memory/correction and independent meaning."
+}

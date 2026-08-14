@@ -141,6 +141,29 @@ check found a separately mounted `anima-native-303m` step-45000 participant and
 question-irrelevant generic replies. The existing participant was preserved rather than
 interrupted.
 
+### Preregistered native-303M replay recovery
+
+`state/anima_native_303m_replay_recovery_2026_08_14/` now records the actual HF data, sampler,
+loss, checkpoint and evaluator path behind that separately mounted mouth. The target dialogue
+window is not the missing part: all `2,375/2,375` fixed rows retain the complete prompt and EOS
+inside 1,024 tokens. The shared failure is the 35k -> 45k continuation policy. It selected
+dialogue-only response CE with a fresh high-LR schedule and no general replay, bypassing the
+trainer's existing mixed-source branch.
+
+A fixed 12-file broad replay measured CE `3.3144075` at step 35k and `5.7747389` at step 45k, a
+catastrophic `+2.4603314`, while meaning and final memory/correction still fail. The old native
+keyword scorer also admits a contradiction in which warm sunlight allegedly causes ice to freeze.
+The new protocol therefore reuses the canonical negation- and Korean-boundary-aware conversation
+scorer with preregistered contradiction controls; it does not rewrite the historical output.
+
+The next and only authorized arm starts from immutable step-35k weights and changes only source
+composition: 65% general full CE replay plus 35% dialogue assistant/EOS CE for exactly 5,000 new
+steps on one non-H100 Vast.ai GPU. The fixed retention gate is broad CE `<=3.4644075`; conversation
+requires structural `7/7`, semantic `>=6/7` per language, final memory/correction, then item-level
+manual review. A failure stops the run. Model and evidence custody is private HF `dancinlab` only,
+and the protocol rental must be destroyed afterward. IIT coupling, participant mounting and
+production remain blocked.
+
 ## Current experiment — meaningful-conversation R0
 
 The next single-axis R4 study is complete in

@@ -1,0 +1,129 @@
+{
+  "schema": "anima-native-303m-replay-recovery/v1",
+  "date": "2026-08-14",
+  "status": "PREREGISTERED",
+  "claim": "Test whether the existing mixed-source response-only path prevents the measured language collapse while improving an independently scored conversation panel.",
+  "parent": {
+    "workspace_result": "../iit_daemon_r35_workspace_2026_08_14/result.json",
+    "model_repository": "dancinlab/anima-native-dialogue-303m-2026-08-13",
+    "model_revision": "80df0d86249ef445093d245da71de7fedf0f35eb",
+    "data_repository": "dancinlab/anima-native-dialogue-303m-data-2026-08-13",
+    "data_revision": "a50ed5e3d7e884f9263ed004263a16511def573a",
+    "base_checkpoint": "checkpoints/step-035000/final.pt",
+    "base_checkpoint_sha256": "e282cfca153ec0d12a11e33d780aa4b17d692ee79bc41ed94ee389fb7d900ce1",
+    "failed_checkpoint": "checkpoints/step-045000/final.pt",
+    "failed_checkpoint_sha256": "4b66245e57186a367b6ef4961558d239d0c077cce261259aa5e4692ffb4d01b1",
+    "tokenizer_sha256": "cd9bba441ee9f187454244dc3a863f394b0bdf80086108fac050aef937f1e47b",
+    "source_panel_sha256": "f994bdb1595bef6c026b2688e556813084dd8071df69637bde940571d3e1e5d3"
+  },
+  "source_hashes": {
+    "code/train_native_dialogue_lm.py": "e1c8b76bd61b24f76215521c580a86fd2f57bc353499bcfefad604958459af5f",
+    "code/conscious_lm.py": "02b4d3f5e1d2646359e3784633d605513320aff3ef0ff5647da7063a6bd62dbf",
+    "code/native_dialogue_lm.py": "1f2ad2c51bafe6efa5db9e0cd9170dfe4df2edeecda16e11b8f8877168fbca60",
+    "code/measurement/native_dialogue_registry.py": "eec3c51ec468dc7ccacc1154d0baf6d2f54185f1f86578bfb84c842200d5ecab",
+    "manifest.json": "7e1468aca2d72eb96c01f01a508964e0c230306ed7fc854b706a53086f190d46",
+    "data-conversation-target/manifest.json": "3154dd8bbaace7a5e8a8ee522a712cbc0ae3d8a20513d7a4332377cab844fb42"
+  },
+  "audit": {
+    "context_rows": 2375,
+    "full_context_rows": 2375,
+    "oversize_rows": 0,
+    "base_broad_validation_ce": 3.3144074976444244,
+    "failed_broad_validation_ce": 5.774738907814026,
+    "failed_minus_base_ce": 2.4603314101696014,
+    "broad_measurement": {
+      "seed": 20260814,
+      "batches": 8,
+      "batch_size": 16,
+      "validation_files": 12
+    }
+  },
+  "fixed_recipe": {
+    "preset": "target",
+    "base_step": 35000,
+    "endpoint_step": 40000,
+    "new_optimizer_steps": 5000,
+    "batch_size": 16,
+    "gradient_accumulation": 4,
+    "global_batch": 64,
+    "seed": 20260813,
+    "learning_rate": 0.0003,
+    "optimizer": "AdamW beta=(0.9,0.95), weight_decay=0.1",
+    "schedule": "fresh 5% warmup then cosine to 0.1 peak ratio",
+    "source_mode": "mixed",
+    "dialogue_fraction": 0.35,
+    "general_fraction": 0.65,
+    "dialogue_loss": "assistant response and eos only",
+    "general_loss": "full next-token CE",
+    "general_source": "root manifest train_general",
+    "dialogue_source": "data-conversation-target manifest train_dialogue",
+    "device": "Vast.ai CUDA, non-H100 preferred",
+    "maximum_training_arms": 1
+  },
+  "conversation_instrument": {
+    "base_panel": "../anima_303m_r0_conversation_2026_08_12/conversation_panel.json",
+    "base_panel_sha256": "10b18a4c6fb6c4df1beb042529f1e485c5de7dfbbe480ed25771d6a1316e41ee",
+    "generation": "frozen native tokenizer, prompt formatter and sampling recipe",
+    "turn_constraints": [
+      {
+        "item_id": "en_ice",
+        "turn": 0,
+        "forbidden_terms": ["freeze", "freezes", "freezing", "frozen"]
+      },
+      {
+        "item_id": "ko_ice",
+        "turn": 0,
+        "forbidden_terms": ["얼어", "언다", "얼게"]
+      }
+    ],
+    "additional_controls": [
+      {
+        "item_id": "en_ice",
+        "turn": 0,
+        "response": "Ice freezes because warm sunlight transfers heat and makes water molecules move.",
+        "expect_pass": false
+      },
+      {
+        "item_id": "en_ice",
+        "turn": 0,
+        "response": "Ice does not melt into water even when sunlight adds heat.",
+        "expect_pass": false
+      },
+      {
+        "item_id": "ko_correction",
+        "turn": 1,
+        "response": "제가 좋아하는 것은 자동차입니다.",
+        "expect_pass": false
+      },
+      {
+        "item_id": "ko_ice",
+        "turn": 0,
+        "response": "얼음은 햇볕의 열을 받아 온도가 올라가므로 녹아서 물이 됩니다.",
+        "expect_pass": true
+      }
+    ]
+  },
+  "gates": {
+    "source_preflight": "all pinned revisions, files, hashes, tokenizer, source controls and mixed response masks pass",
+    "broad_retention": "fixed broad validation CE <= 3.4644074976444245 (base + 0.15)",
+    "conversation": "canonical scorer controls pass; semantic >=6/7 per language; structural 7/7 per language; all memory/correction final turns pass",
+    "manual": "all fourteen raw replies require item-level meaningfulness review before any coupling or mount",
+    "custody": "model and raw artifacts upload to a private dancinlab HF repository with independent SHA verification"
+  },
+  "decision": {
+    "preflight_failure": "INVALID-PREFLIGHT",
+    "retention_failure": "FAIL-BROAD-RETENTION",
+    "conversation_failure": "FAIL-MEANINGFUL-CONVERSATION",
+    "automatic_pass": "AUTOMATIC-PASS-MANUAL-REVIEW-REQUIRED",
+    "manual_pass": "SUPPORTED-INDEPENDENT-MOUTH"
+  },
+  "bounded_work": {
+    "result_dependent_extension": false,
+    "second_seed": "blocked until automatic and manual pass",
+    "iit_coupling": "blocked until independent mouth pass",
+    "participant_mount": "blocked until independent mouth pass and separate staging protocol",
+    "production": "blocked",
+    "preserve": ["ING.jsonl", "stream_mi.json"],
+    "destroy_protocol_instance_after_custody": true
+  }
+}
