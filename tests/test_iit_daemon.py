@@ -643,6 +643,98 @@ def test_semantic_bridge_rejects_ambiguous_or_unsafe_training_inputs():
         ID.semantic_bridge_encode(model, "x" * 257)
 
 
+def _sequence_semantic_test_config(steps=12):
+    model = {
+        "repository": "dancinlab/anima-test-sequence-bridge",
+        "private": True, "format": "checksum-validated-json",
+        "embedding_dim": 8, "hidden_dim": 8, "layers": 1,
+        "bidirectional": True, "dropout": 0.0, "max_bytes": 256,
+    }
+    training = {
+        "seed": 7, "device": "cpu", "torch_threads": 2,
+        "deterministic_algorithms": True, "steps": steps, "batch_size": 6,
+        "kind_batch_counts": {"memory": 2, "query": 2, "other": 2},
+        "optimizer": "AdamW", "learning_rate": 0.002, "betas": [0.9, 0.95],
+        "weight_decay": 0.01, "gradient_clip": 1.0,
+        "checkpoint_selection": "final-step-only",
+    }
+    return model, training
+
+
+def _sequence_semantic_test_examples():
+    return [
+        {"text": "Store alpha: aria carries amber.", "labels": {
+            "kind": "memory", "address": "alpha", "entity": "aria",
+            "relation": "carries", "value": "amber"}},
+        {"text": "Guard alpha: aria guards amber.", "labels": {
+            "kind": "memory", "address": "alpha", "entity": "aria",
+            "relation": "guards", "value": "amber"}},
+        {"text": "Observe beta: borin observes cedar.", "labels": {
+            "kind": "memory", "address": "beta", "entity": "borin",
+            "relation": "observes", "value": "cedar"}},
+        {"text": "Store beta: borin carries cedar.", "labels": {
+            "kind": "memory", "address": "beta", "entity": "borin",
+            "relation": "carries", "value": "cedar"}},
+        {"text": "Read alpha.", "labels": {"kind": "query", "address": "alpha"}},
+        {"text": "Read beta.", "labels": {"kind": "query", "address": "beta"}},
+        {"text": "Continue.", "labels": {"kind": "other"}},
+        {"text": "Wait.", "labels": {"kind": "other"}},
+    ]
+
+
+def test_sequence_semantic_bridge_is_deterministic_portable_and_checksum_safe(tmp_path):
+    pytest.importorskip("torch")
+    examples = _sequence_semantic_test_examples()
+    model_config, training_config = _sequence_semantic_test_config()
+    first = ID.train_sequence_semantic_bridge(examples, model_config, training_config)
+    second = ID.train_sequence_semantic_bridge(examples, model_config, training_config)
+    assert first == second
+    assert first["schema"] == ID.SEQUENCE_SEMANTIC_MODEL_SCHEMA
+    assert first["payload"]["telemetry"]["train_examples"] == len(examples)
+    runtime = ID.SequenceSemanticBridge(first)
+    assert runtime.encode_many(["Read alpha.", "Continue."]) == [
+        runtime.encode("Read alpha."), runtime.encode("Continue.")]
+    scored = ID.evaluate_sequence_semantic_bridge(runtime, examples)
+    assert scored["examples"] == len(examples)
+    assert set(scored["metrics"]) == {
+        "kind_accuracy", "query_address_accuracy", "complete_record_accuracy",
+        "exact_accuracy"}
+
+    path = tmp_path / "sequence.json"
+    ID.save_sequence_semantic_bridge_model(path, first)
+    assert path.stat().st_mode & 0o777 == 0o600
+    assert ID.load_sequence_semantic_bridge_model(path) == first
+    assert ID.sequence_semantic_bridge_encode(first, "Read alpha.") == \
+        runtime.encode("Read alpha.")
+
+    broken = json.loads(path.read_text())
+    broken["payload"]["tensors"]["embedding.weight"]["data"] = "AAAA"
+    path.write_text(json.dumps(broken))
+    with pytest.raises(ValueError, match="model checksum|tensor checksum"):
+        ID.load_sequence_semantic_bridge_model(path)
+
+
+def test_sequence_semantic_bridge_rejects_unbalanced_or_unsafe_contracts():
+    pytest.importorskip("torch")
+    examples = _sequence_semantic_test_examples()
+    model_config, training_config = _sequence_semantic_test_config(steps=1)
+    bad = dict(training_config, kind_batch_counts={"memory": 2, "query": 2, "other": 1})
+    with pytest.raises(ValueError, match="balanced batch"):
+        ID.train_sequence_semantic_bridge(examples, model_config, bad)
+    with pytest.raises(ValueError, match="unique"):
+        ID.train_sequence_semantic_bridge(examples + [examples[0]], model_config,
+                                          training_config)
+    model = ID.train_sequence_semantic_bridge(examples, model_config, training_config)
+    with pytest.raises(ValueError, match="byte budget"):
+        ID.sequence_semantic_bridge_encode(model, "x" * 257)
+
+
+def test_sequence_semantic_bridge_cli_flag_is_registered_and_fail_closed_without_model():
+    protocol = os.path.join(
+        ROOT, "state", "iit_daemon_r37_sequence_bridge_2026_08_15", "protocol.json")
+    assert evaluate.main(["--iit-daemon-sequence-semantic-bridge", protocol]) == 2
+
+
 def test_iit_daemon_semantic_bridge_frozen_failure_stops_before_causal_arms(tmp_path):
     state_dir = os.path.join(
         ROOT, "state", "iit_daemon_r36_semantic_bridge_2026_08_15")

@@ -7,10 +7,12 @@ candidate state, after which the autonomous TPM owns the next transition.
 """
 
 from dataclasses import asdict, dataclass
+import base64
 import hashlib
 import json
 import math
 import os
+import random
 import re
 import tempfile
 
@@ -35,7 +37,12 @@ SEMANTIC_BRIDGE_CONTRASTIVE_PROTOCOL_SCHEMA = \
     "anima-iit-daemon-semantic-bridge-contrastive-protocol/1"
 SEMANTIC_BRIDGE_SUPPORT_AUDIT_PROTOCOL_SCHEMA = \
     "anima-iit-daemon-semantic-bridge-support-audit-protocol/1"
+SEQUENCE_SEMANTIC_PROTOCOL_SCHEMA = "anima-iit-daemon-sequence-semantic-protocol/1"
+SEQUENCE_SEMANTIC_PANEL_SCHEMA = "anima-iit-daemon-sequence-semantic-panel/1"
+SEQUENCE_SEMANTIC_MODEL_SCHEMA = "anima-iit-sequence-semantic-model/1"
 SEMANTIC_BRIDGE_MAX_MODEL_BYTES = 4 << 20
+SEQUENCE_SEMANTIC_MAX_MODEL_BYTES = 8 << 20
+SEQUENCE_SEMANTIC_MARGIN_DECIMALS = 7
 SEMANTIC_EVENT_MAX_BYTES = 256
 CONTENT_RECORD_FIELDS = ("entity", "relation", "value")
 
@@ -596,6 +603,466 @@ def semantic_bridge_encode(model, text):
             record[field], result["margins"][field] = predict(field)
         result["record"] = validate_content_records({"event": record})["event"]
     return result
+
+
+def _sequence_semantic_configs(model_config, training_config=None):
+    """Validate the fixed standard-GRU bridge configuration without hidden defaults."""
+    if not isinstance(model_config, dict) or set(model_config) != {
+            "repository", "private", "format", "embedding_dim", "hidden_dim", "layers",
+            "bidirectional", "dropout", "max_bytes"}:
+        raise ValueError("sequence semantic model config fields mismatch")
+    if model_config["format"] != "checksum-validated-json" or \
+            model_config["private"] is not True:
+        raise ValueError("sequence semantic model custody contract mismatch")
+    repository = model_config["repository"]
+    if not isinstance(repository, str) or not repository.startswith("dancinlab/"):
+        raise ValueError("sequence semantic model repository must be in dancinlab")
+    numeric = {
+        "embedding_dim": (8, 256), "hidden_dim": (8, 512), "layers": (1, 4),
+        "max_bytes": (1, SEMANTIC_EVENT_MAX_BYTES),
+    }
+    for field, (lower, upper) in numeric.items():
+        value = model_config[field]
+        if isinstance(value, bool) or not isinstance(value, int) or not lower <= value <= upper:
+            raise ValueError("sequence semantic model dimension is invalid: " + field)
+    if model_config["bidirectional"] is not True or float(model_config["dropout"]) != 0.0:
+        raise ValueError("sequence semantic bridge requires fixed bidirectional zero-dropout GRU")
+    clean_model = dict(model_config)
+    clean_model["dropout"] = 0.0
+    if training_config is None:
+        return clean_model
+    if not isinstance(training_config, dict) or set(training_config) != {
+            "seed", "device", "torch_threads", "deterministic_algorithms", "steps",
+            "batch_size", "kind_batch_counts", "optimizer", "learning_rate", "betas",
+            "weight_decay", "gradient_clip", "checkpoint_selection"}:
+        raise ValueError("sequence semantic training config fields mismatch")
+    if training_config["device"] != "cpu" or \
+            training_config["deterministic_algorithms"] is not True or \
+            training_config["optimizer"] != "AdamW" or \
+            training_config["checkpoint_selection"] != "final-step-only":
+        raise ValueError("sequence semantic training contract mismatch")
+    integer_ranges = {
+        "seed": (0, (1 << 31) - 1), "torch_threads": (1, 8),
+        "steps": (1, 100000), "batch_size": (3, 4096),
+    }
+    for field, (lower, upper) in integer_ranges.items():
+        value = training_config[field]
+        if isinstance(value, bool) or not isinstance(value, int) or not lower <= value <= upper:
+            raise ValueError("sequence semantic training integer is invalid: " + field)
+    counts = training_config["kind_batch_counts"]
+    if not isinstance(counts, dict) or set(counts) != {"memory", "query", "other"} or \
+            any(isinstance(value, bool) or not isinstance(value, int) or value <= 0
+                for value in counts.values()) or sum(counts.values()) != training_config["batch_size"]:
+        raise ValueError("sequence semantic balanced batch contract mismatch")
+    betas = training_config["betas"]
+    if not isinstance(betas, list) or len(betas) != 2 or not 0.0 < float(betas[0]) < 1.0 or \
+            not 0.0 < float(betas[1]) < 1.0:
+        raise ValueError("sequence semantic AdamW betas are invalid")
+    clean_training = dict(training_config)
+    clean_training["kind_batch_counts"] = dict(counts)
+    clean_training["betas"] = [float(value) for value in betas]
+    for field in ("learning_rate", "weight_decay", "gradient_clip"):
+        value = float(training_config[field])
+        if not math.isfinite(value) or value <= 0.0:
+            raise ValueError("sequence semantic training scalar is invalid: " + field)
+        clean_training[field] = value
+    return clean_model, clean_training
+
+
+def _sequence_semantic_labels(examples):
+    labels = {}
+    for field in ("kind", "address", "entity", "relation", "value"):
+        values = sorted({example["labels"][field] for example in examples
+                         if field in example["labels"]})
+        if len(values) < 2:
+            raise ValueError("sequence semantic field lacks multiple classes: " + field)
+        labels[field] = values
+    if labels["kind"] != ["memory", "other", "query"]:
+        raise ValueError("sequence semantic event kinds mismatch")
+    return labels
+
+
+def _sequence_semantic_network(config, labels):
+    import torch
+
+    class Network(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.embedding = torch.nn.Embedding(257, config["embedding_dim"], padding_idx=256)
+            self.encoder = torch.nn.GRU(
+                config["embedding_dim"], config["hidden_dim"],
+                num_layers=config["layers"], batch_first=True, dropout=0.0,
+                bidirectional=True)
+            width = config["hidden_dim"] * 2
+            self.heads = torch.nn.ModuleDict({
+                field: torch.nn.Linear(width, len(values))
+                for field, values in labels.items()
+            })
+
+        def forward(self, byte_ids, lengths):
+            embedded = self.embedding(byte_ids)
+            packed = torch.nn.utils.rnn.pack_padded_sequence(
+                embedded, lengths.cpu(), batch_first=True, enforce_sorted=False)
+            _, hidden = self.encoder(packed)
+            representation = torch.cat((hidden[-2], hidden[-1]), dim=1)
+            return {field: head(representation) for field, head in self.heads.items()}
+
+    return Network()
+
+
+def _sequence_semantic_batch(examples, labels, max_bytes):
+    import torch
+
+    if not examples:
+        raise ValueError("sequence semantic batch is empty")
+    raw = [example["text"].encode("utf-8") for example in examples]
+    if any(not value or len(value) > max_bytes for value in raw):
+        raise ValueError("sequence semantic batch exceeds the registered byte budget")
+    width = max(len(value) for value in raw)
+    byte_ids = torch.full((len(raw), width), 256, dtype=torch.long)
+    for index, value in enumerate(raw):
+        byte_ids[index, :len(value)] = torch.tensor(list(value), dtype=torch.long)
+    lengths = torch.tensor([len(value) for value in raw], dtype=torch.long)
+    targets = {}
+    masks = {}
+    for field, classes in labels.items():
+        index_by_label = {label: index for index, label in enumerate(classes)}
+        mask = torch.tensor([field in example["labels"] for example in examples],
+                            dtype=torch.bool)
+        target = torch.zeros(len(examples), dtype=torch.long)
+        for index, example in enumerate(examples):
+            if mask[index]:
+                target[index] = index_by_label[example["labels"][field]]
+        targets[field] = target
+        masks[field] = mask
+    return byte_ids, lengths, targets, masks
+
+
+def _sequence_tensor_document(tensor):
+    import numpy as np
+
+    array = tensor.detach().cpu().contiguous().numpy().astype("<f4", copy=False)
+    raw = array.tobytes(order="C")
+    return {"dtype": "float32-le", "shape": list(array.shape),
+            "data": base64.b64encode(raw).decode("ascii"),
+            "sha256": hashlib.sha256(raw).hexdigest()}
+
+
+def _sequence_tensor_from_document(document, expected_shape, name):
+    import numpy as np
+    import torch
+
+    if not isinstance(document, dict) or set(document) != {"dtype", "shape", "data", "sha256"} \
+            or document["dtype"] != "float32-le" or document["shape"] != list(expected_shape):
+        raise ValueError("sequence semantic tensor metadata mismatch: " + name)
+    try:
+        raw = base64.b64decode(document["data"].encode("ascii"), validate=True)
+    except Exception as error:
+        raise ValueError("sequence semantic tensor encoding is invalid: " + name) from error
+    expected_bytes = math.prod(expected_shape) * 4
+    if len(raw) != expected_bytes or hashlib.sha256(raw).hexdigest() != document["sha256"]:
+        raise ValueError("sequence semantic tensor checksum mismatch: " + name)
+    array = np.frombuffer(raw, dtype="<f4").copy().reshape(expected_shape)
+    if not np.isfinite(array).all():
+        raise ValueError("sequence semantic tensor is not finite: " + name)
+    return torch.from_numpy(array)
+
+
+def _sequence_semantic_model(model):
+    """Fail-closed validation for the portable, non-pickle GRU bridge document."""
+    if not isinstance(model, dict) or set(model) != {"schema", "payload", "sha256"} or \
+            model.get("schema") != SEQUENCE_SEMANTIC_MODEL_SCHEMA:
+        raise ValueError("unsupported sequence semantic model schema")
+    payload = model["payload"]
+    if not isinstance(payload, dict) or model["sha256"] != _sha256(payload) or set(payload) != {
+            "model_config", "training_config", "training_sha256", "labels", "tensors",
+            "telemetry"}:
+        raise ValueError("sequence semantic model checksum or fields mismatch")
+    model_config, training_config = _sequence_semantic_configs(
+        payload["model_config"], payload["training_config"])
+    training_sha = payload["training_sha256"]
+    if not isinstance(training_sha, str) or len(training_sha) != 64 or any(
+            char not in "0123456789abcdef" for char in training_sha):
+        raise ValueError("sequence semantic training checksum is invalid")
+    labels = payload["labels"]
+    if not isinstance(labels, dict) or set(labels) != {
+            "kind", "address", "entity", "relation", "value"}:
+        raise ValueError("sequence semantic label fields mismatch")
+    checked_labels = {}
+    for field, values in labels.items():
+        if not isinstance(values, list) or len(values) < 2 or values != sorted(set(values)):
+            raise ValueError("sequence semantic labels are invalid: " + field)
+        checked_labels[field] = [_content_atom(value, "sequence semantic label")
+                                 for value in values]
+    if checked_labels["kind"] != ["memory", "other", "query"]:
+        raise ValueError("sequence semantic event kinds mismatch")
+    network = _sequence_semantic_network(model_config, checked_labels)
+    expected = network.state_dict()
+    tensors = payload["tensors"]
+    if not isinstance(tensors, dict) or set(tensors) != set(expected):
+        raise ValueError("sequence semantic tensor set mismatch")
+    checked_tensors = {}
+    for name in sorted(expected):
+        checked_tensors[name] = dict(tensors[name])
+        _sequence_tensor_from_document(tensors[name], tuple(expected[name].shape), name)
+    telemetry = payload["telemetry"]
+    if not isinstance(telemetry, dict) or set(telemetry) != {
+            "final_loss", "parameter_count", "train_examples"}:
+        raise ValueError("sequence semantic telemetry fields mismatch")
+    if not math.isfinite(float(telemetry["final_loss"])) or float(telemetry["final_loss"]) < 0.0:
+        raise ValueError("sequence semantic final loss is invalid")
+    for field in ("parameter_count", "train_examples"):
+        if isinstance(telemetry[field], bool) or not isinstance(telemetry[field], int) or \
+                telemetry[field] <= 0:
+            raise ValueError("sequence semantic telemetry integer is invalid")
+    clean_payload = {
+        "model_config": model_config, "training_config": training_config,
+        "training_sha256": training_sha, "labels": checked_labels,
+        "tensors": checked_tensors,
+        "telemetry": {"final_loss": float(telemetry["final_loss"]),
+                      "parameter_count": telemetry["parameter_count"],
+                      "train_examples": telemetry["train_examples"]},
+    }
+    return {"schema": SEQUENCE_SEMANTIC_MODEL_SCHEMA, "payload": clean_payload,
+            "sha256": _sha256(clean_payload)}
+
+
+def train_sequence_semantic_bridge(examples, model_config, training_config):
+    """Train the preregistered deterministic ordered-byte GRU inside the shared bridge API."""
+    import torch
+
+    model_config, training_config = _sequence_semantic_configs(model_config, training_config)
+    if not isinstance(examples, list) or not examples:
+        raise ValueError("sequence semantic training set is empty")
+    checked = [_semantic_bridge_example(example) for example in examples]
+    texts = [example["text"] for example in checked]
+    if len(texts) != len(set(texts)):
+        raise ValueError("sequence semantic training texts must be unique")
+    labels = _sequence_semantic_labels(checked)
+    groups = {kind: [example for example in checked if example["labels"]["kind"] == kind]
+              for kind in ("memory", "query", "other")}
+    if any(not rows for rows in groups.values()):
+        raise ValueError("sequence semantic training kinds are incomplete")
+
+    prior_threads = torch.get_num_threads()
+    prior_deterministic = torch.are_deterministic_algorithms_enabled()
+    try:
+        torch.set_num_threads(training_config["torch_threads"])
+        torch.use_deterministic_algorithms(True)
+        torch.manual_seed(training_config["seed"])
+        network = _sequence_semantic_network(model_config, labels)
+        optimizer = torch.optim.AdamW(
+            network.parameters(), lr=training_config["learning_rate"],
+            betas=tuple(training_config["betas"]),
+            weight_decay=training_config["weight_decay"])
+        rng = random.Random(training_config["seed"])
+        queues = {}
+        cursors = {}
+
+        def take(kind, count):
+            output = []
+            while len(output) < count:
+                if kind not in queues or cursors[kind] >= len(queues[kind]):
+                    queues[kind] = list(groups[kind])
+                    rng.shuffle(queues[kind])
+                    cursors[kind] = 0
+                size = min(count - len(output), len(queues[kind]) - cursors[kind])
+                output.extend(queues[kind][cursors[kind]:cursors[kind] + size])
+                cursors[kind] += size
+            return output
+
+        final_loss = None
+        for _ in range(training_config["steps"]):
+            batch = []
+            for kind in ("memory", "query", "other"):
+                batch.extend(take(kind, training_config["kind_batch_counts"][kind]))
+            rng.shuffle(batch)
+            byte_ids, lengths, targets, masks = _sequence_semantic_batch(
+                batch, labels, model_config["max_bytes"])
+            logits = network(byte_ids, lengths)
+            losses = []
+            for field in ("kind", "address", "entity", "relation", "value"):
+                mask = masks[field]
+                losses.append(torch.nn.functional.cross_entropy(
+                    logits[field][mask], targets[field][mask]))
+            loss = torch.stack(losses).mean()
+            optimizer.zero_grad(set_to_none=True)
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(network.parameters(), training_config["gradient_clip"])
+            optimizer.step()
+            final_loss = float(loss.detach())
+        tensors = {name: _sequence_tensor_document(tensor)
+                   for name, tensor in sorted(network.state_dict().items())}
+        payload = {
+            "model_config": model_config, "training_config": training_config,
+            "training_sha256": _sha256(checked), "labels": labels, "tensors": tensors,
+            "telemetry": {"final_loss": final_loss,
+                          "parameter_count": sum(value.numel() for value in network.parameters()),
+                          "train_examples": len(checked)},
+        }
+        return _sequence_semantic_model({"schema": SEQUENCE_SEMANTIC_MODEL_SCHEMA,
+                                         "payload": payload, "sha256": _sha256(payload)})
+    finally:
+        torch.use_deterministic_algorithms(prior_deterministic)
+        torch.set_num_threads(prior_threads)
+
+
+class SequenceSemanticBridge:
+    """Immutable in-process runtime for repeated predictions from one validated model."""
+    def __init__(self, model):
+        checked = _sequence_semantic_model(model)
+        self.model = checked
+        self.labels = checked["payload"]["labels"]
+        self.network = _sequence_semantic_network(
+            checked["payload"]["model_config"], self.labels)
+        expected = self.network.state_dict()
+        state = {name: _sequence_tensor_from_document(
+                    checked["payload"]["tensors"][name], tuple(expected[name].shape), name)
+                 for name in expected}
+        self.network.load_state_dict(state, strict=True)
+        self.network.eval()
+
+    def encode_many(self, texts):
+        import torch
+
+        if not isinstance(texts, list) or not texts:
+            raise ValueError("sequence semantic inference texts must be a non-empty list")
+        examples = [{"text": _semantic_event_text(text), "labels": {"kind": "other"}}
+                    for text in texts]
+        byte_ids, lengths, _, _ = _sequence_semantic_batch(
+            examples, self.labels, self.model["payload"]["model_config"]["max_bytes"])
+        with torch.inference_mode():
+            logits = self.network(byte_ids, lengths)
+        outputs = []
+        for row_index in range(len(texts)):
+            predicted = {}
+            margins = {}
+            for field, classes in self.labels.items():
+                scores = logits[field][row_index]
+                order = torch.argsort(scores, descending=True, stable=True)
+                predicted[field] = classes[int(order[0])]
+                # CPU GRU kernels can accumulate the same batch at a few final-bit variants.
+                # Predictions are identical; canonicalize diagnostic margins so single/batched
+                # callers serialize the same event document.
+                margins[field] = round(float(scores[order[0]] - scores[order[1]]),
+                                       SEQUENCE_SEMANTIC_MARGIN_DECIMALS)
+            kind = predicted["kind"]
+            output = {"kind": kind, "address": None, "record": None,
+                      "margins": {"kind": margins["kind"]},
+                      "model_sha256": self.model["sha256"]}
+            if kind in ("memory", "query"):
+                output["address"] = predicted["address"]
+                output["margins"]["address"] = margins["address"]
+            if kind == "memory":
+                output["record"] = {field: predicted[field]
+                                    for field in CONTENT_RECORD_FIELDS}
+                for field in CONTENT_RECORD_FIELDS:
+                    output["margins"][field] = margins[field]
+            outputs.append(output)
+        return outputs
+
+    def encode(self, text):
+        return self.encode_many([text])[0]
+
+
+def sequence_semantic_bridge_encode(model, text):
+    """Canonical one-event compatibility API for the ordered sequence bridge."""
+    return SequenceSemanticBridge(model).encode(text)
+
+
+def evaluate_sequence_semantic_bridge(runtime, examples, *, include_rows=True):
+    """Score validated event rows through one loaded sequence runtime."""
+    if not isinstance(runtime, SequenceSemanticBridge):
+        raise TypeError("sequence semantic evaluation needs a loaded runtime")
+    if not isinstance(examples, list) or not examples:
+        raise ValueError("sequence semantic evaluation set is empty")
+    checked = [_semantic_bridge_example(example) for example in examples]
+    predictions = runtime.encode_many([example["text"] for example in checked])
+    rows = []
+    for example, prediction in zip(checked, predictions):
+        gold = example["labels"]
+        kind_correct = prediction["kind"] == gold["kind"]
+        query_correct = gold["kind"] == "query" and kind_correct and \
+            prediction["address"] == gold["address"]
+        record_correct = gold["kind"] == "memory" and kind_correct and \
+            prediction["address"] == gold["address"] and \
+            prediction["record"] == {
+                field: gold[field] for field in CONTENT_RECORD_FIELDS}
+        exact = kind_correct
+        if gold["kind"] == "query":
+            exact = query_correct
+        elif gold["kind"] == "memory":
+            exact = record_correct
+        rows.append({"text": example["text"], "labels": gold, "prediction": prediction,
+                     "kind_correct": kind_correct, "query_correct": query_correct,
+                     "record_correct": record_correct, "exact": exact})
+    queries = [row for row in rows if row["labels"]["kind"] == "query"]
+    memories = [row for row in rows if row["labels"]["kind"] == "memory"]
+    result = {
+        "examples": len(rows),
+        "metrics": {
+            "kind_accuracy": sum(row["kind_correct"] for row in rows) / len(rows),
+            "query_address_accuracy": (sum(row["query_correct"] for row in queries) /
+                                       len(queries)) if queries else None,
+            "complete_record_accuracy": (sum(row["record_correct"] for row in memories) /
+                                         len(memories)) if memories else None,
+            "exact_accuracy": sum(row["exact"] for row in rows) / len(rows),
+        },
+        "prediction_sha256": _sha256([row["prediction"] for row in rows]),
+        "errors": [row for row in rows if not row["exact"]],
+    }
+    if include_rows:
+        result["rows"] = rows
+    return result
+
+
+def save_sequence_semantic_bridge_model(path, model):
+    """Atomically persist the portable sequence bridge with mode 0600."""
+    checked = _sequence_semantic_model(model)
+    target = os.path.abspath(os.fspath(path))
+    parent = os.path.dirname(target)
+    if not os.path.isdir(parent):
+        raise FileNotFoundError("sequence semantic model parent directory does not exist")
+    body = _canonical_json(checked) + b"\n"
+    if len(body) > SEQUENCE_SEMANTIC_MAX_MODEL_BYTES:
+        raise ValueError("sequence semantic model exceeds the bounded size")
+    fd, temporary = tempfile.mkstemp(prefix=".iit-sequence-semantic-", suffix=".json", dir=parent)
+    try:
+        os.fchmod(fd, 0o600)
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(body)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, target)
+        directory_fd = os.open(parent, os.O_RDONLY)
+        try:
+            os.fsync(directory_fd)
+        finally:
+            os.close(directory_fd)
+    except BaseException:
+        try:
+            os.close(fd)
+        except OSError:
+            pass
+        try:
+            os.unlink(temporary)
+        except FileNotFoundError:
+            pass
+        raise
+
+
+def load_sequence_semantic_bridge_model(path):
+    target = os.path.abspath(os.fspath(path))
+    size = os.path.getsize(target)
+    if size <= 0 or size > SEQUENCE_SEMANTIC_MAX_MODEL_BYTES:
+        raise ValueError("sequence semantic model size is invalid")
+    with open(target, "rb") as handle:
+        raw = handle.read(SEQUENCE_SEMANTIC_MAX_MODEL_BYTES + 1)
+    try:
+        document = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError("sequence semantic model JSON is invalid") from error
+    return _sequence_semantic_model(document)
 
 
 _SEMANTIC_MICRO_REPRESENTATIONS = (

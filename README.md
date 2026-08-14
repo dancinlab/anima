@@ -54,6 +54,17 @@ R3.7 passes may the English mouth advance through `1B → 3B → 7B`; 7B is an E
 to the small IIT/CLMS/KOSMOS state core, not a claim that all 7B parameters form an IIT complex.
 No GPU or Vast.ai run is authorized by this plan alone.
 
+The preregistered R3.7 CPU run is now complete and failed before causal-arm interpretation. State
+oracle/query address passed at `1.0000`, but frozen kind/complete-record were `0.8298/0.4722`, old
+stress/confirmation were `0.7500/0.8750`, and only the newly authored sequence panel passed at
+`0.9583`. Random-split validation was `0.9981`, exposing that the generated split did not measure
+held-out template/record composition. No causal arms, mouth scaling or deployment followed. Full
+evidence and the data-support diagnosis are in
+`state/iit_daemon_r37_sequence_bridge_2026_08_15/`.
+Focused regression passed `100/100`; a second source run and an isolated wheel reproduced the
+model and result byte-for-byte. The failed model/evidence are preserved in private HF revision
+`4296d2a8…b1829`; no local model or training-data artifact is part of Git.
+
 ## Current work — mobile chat input stability
 
 Status on 2026-08-14:

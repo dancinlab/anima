@@ -1696,6 +1696,8 @@ def evaluate_usage():
     print("  --iit-daemon-composition <protocol.json> [--out <result.json>]: run the protocol-pinned")
     print("      R3.5 IIT-selected entity/relation/value reset/shuffle/lesion/recovery gate.")
     print("  --iit-daemon-semantic-bridge <protocol.json> [--out <result.json>]")
+    print("  --iit-daemon-sequence-semantic-bridge <protocol.json>")
+    print("      --sequence-semantic-model-out <model.json> [--out <result.json>]")
     print("  --iit-daemon-semantic-bridge-sweep <protocol.json> [--out <result.json>]")
     print("  --iit-daemon-semantic-bridge-contrastive <protocol.json> [--out <result.json>]")
     print("  --iit-daemon-semantic-bridge-support-audit <protocol.json> [--out <result.json>]")
@@ -5349,10 +5351,192 @@ def iit_daemon_composition_run(argv):
     return 0 if verdict == protocol["required_verdict"] else 1
 
 
+def _iit_semantic_bridge_causal_battery(*, ID, normalized_trials, addresses,
+                                        address_to_cue, delay, iit_shuffle,
+                                        workspace_shuffle, lesion_mask, empty_record,
+                                        other_events, query_template, encode, memory_text,
+                                        numeric_bars, ceiling, temporary_prefix):
+    """Run the one shared R3.5 causal arm order for any validated semantic bridge."""
+    import tempfile as _tempfile
+
+    state_to_address = ID.content_workspace_codebook(address_to_cue)
+
+    def episode_inputs(row, mode):
+        records = {address: dict(record) for address, record in row["records"].items()}
+        correction = None
+        if mode in ("counterfactual", "correction"):
+            records[row["active_address"]] = dict(row["counterfactual_record"])
+        if mode == "irrelevant":
+            records[row["irrelevant_address"]] = dict(row["irrelevant_record"])
+        if mode == "correction":
+            correction = dict(row["records"][row["active_address"]])
+        stateless = mode == "stateless"
+        store = {address: dict(empty_record) for address in addresses}
+        events = []
+        for offset, address in enumerate(addresses):
+            if stateless:
+                store = {name: dict(empty_record) for name in addresses}
+            text = memory_text(records[address], address, row["index"], offset)
+            prediction = encode(text)
+            events.append({"text": text, "prediction": prediction})
+            if prediction["kind"] == "memory" and prediction["address"] in store and \
+                    prediction["record"] is not None:
+                store[prediction["address"]] = dict(prediction["record"])
+        if correction is not None:
+            text = memory_text(correction, row["active_address"], row["index"],
+                               offset=1, correction=True)
+            prediction = encode(text)
+            events.append({"text": text, "prediction": prediction, "correction": True})
+            if prediction["kind"] == "memory" and prediction["address"] in store and \
+                    prediction["record"] is not None:
+                store[prediction["address"]] = dict(prediction["record"])
+        for text in other_events:
+            prediction = encode(text)
+            events.append({"text": text, "prediction": prediction, "irrelevant_event": True})
+            if prediction["kind"] == "memory" and prediction["address"] in store and \
+                    prediction["record"] is not None:
+                store[prediction["address"]] = dict(prediction["record"])
+        query_text = query_template.format(address=row["active_address"])
+        query = encode(query_text)
+        return store, query, events, query_text
+
+    def score_episode(row, mode="normal", expected=None, *, reset_before_delay=False,
+                      permutation=(0, 1, 2), workspace_permuted=False, lesion=0):
+        store, query, events, query_text_value = episode_inputs(row, mode)
+        if workspace_permuted:
+            store = ID.permute_content_records(store, workspace_shuffle)
+        if query["kind"] != "query" or query["address"] not in address_to_cue:
+            return {"index": row["index"], "mode": mode, "events": events,
+                    "query_text": query_text_value, "query": query, "utterance": "",
+                    "expected": expected, "correct": False, "selected_address": None,
+                    "selected_record": None, "final_state": None}
+        trial = ID.content_workspace_trial(
+            query["address"], store, address_to_cue, delay=delay,
+            reset_before_delay=reset_before_delay, permutation=permutation,
+            lesion_mask=lesion)
+        trial.pop("core")
+        utterance = gen_runtime.gen_iit_workspace_content(
+            trial["final_state"], state_to_address, store)
+        return {"index": row["index"], "mode": mode, "events": events,
+                "query_text": query_text_value, "query": query,
+                "utterance": utterance["text"], "expected": expected,
+                "correct": utterance["text"] == expected,
+                "selected_address": utterance["address"],
+                "selected_record": utterance["record"],
+                "final_state": trial["final_state"], "tick": trial["tick"],
+                "audit_head": trial["audit_head"]}
+
+    def arm(rows):
+        return {"accuracy": sum(row["correct"] for row in rows) / float(len(rows)),
+                "trials": rows}
+
+    normal_rows = [score_episode(row, expected=row["expected"])
+                   for row in normalized_trials]
+    normal = arm(normal_rows)
+    stateless = arm([score_episode(row, "stateless", row["expected"])
+                     for row in normalized_trials])
+    reset = arm([score_episode(row, expected=row["expected"], reset_before_delay=True)
+                 for row in normalized_trials])
+    iit_shuffled = arm([score_episode(row, expected=row["expected"], permutation=iit_shuffle)
+                        for row in normalized_trials])
+    workspace_shuffled = arm([score_episode(
+        row, expected=row["expected"], workspace_permuted=True) for row in normalized_trials])
+    lesion = arm([score_episode(row, expected=row["expected"], lesion=lesion_mask)
+                  for row in normalized_trials])
+    counterfactual_rows = [score_episode(
+        row, "counterfactual", row["counterfactual_expected"]) for row in normalized_trials]
+    for changed, reference in zip(counterfactual_rows, normal_rows):
+        changed["differs_from_normal"] = changed["utterance"] != reference["utterance"]
+        changed["same_question"] = changed["query_text"] == reference["query_text"]
+    counterfactual = arm(counterfactual_rows)
+    counterfactual["change_rate"] = sum(
+        row["differs_from_normal"] and row["same_question"]
+        for row in counterfactual_rows) / float(len(counterfactual_rows))
+    irrelevant_rows = [score_episode(row, "irrelevant", row["expected"])
+                       for row in normalized_trials]
+    for changed, reference in zip(irrelevant_rows, normal_rows):
+        changed["matches_normal"] = changed["utterance"] == reference["utterance"]
+    irrelevant = arm(irrelevant_rows)
+    irrelevant["stability"] = sum(row["matches_normal"] for row in irrelevant_rows) / \
+        float(len(irrelevant_rows))
+    correction = arm([score_episode(row, "correction", row["expected"])
+                      for row in normalized_trials])
+
+    recovery_rows = []
+    recovery_exact = []
+    disturbance_changed = []
+    snapshot_modes = []
+    normal_by_index = {row["index"]: row for row in normal_rows}
+    with _tempfile.TemporaryDirectory(prefix=temporary_prefix) as directory:
+        for row in normalized_trials:
+            store, query, events, query_text_value = episode_inputs(row, "normal")
+            core = ID.IITDaemonCore(0)
+            core.step(address_to_cue[query["address"]])
+            path = os.path.join(directory, "trial-%04d.json" % row["index"])
+            ID.save_content_workspace_snapshot(path, core, store, address_to_cue)
+            snapshot_modes.append(os.stat(path).st_mode & 0o777)
+            pristine = ID.content_workspace_snapshot(core, store, address_to_cue)
+            core.step(7, permutation=(2, 0, 1), lesion_mask=7)
+            disturbed_store = ID.replace_content_record(
+                store, row["active_address"], row["counterfactual_record"])
+            disturbance_changed.append(
+                ID.content_workspace_snapshot(core, disturbed_store, address_to_cue) != pristine)
+            restored, restored_store, restored_cues = ID.load_content_workspace_snapshot(path)
+            for _ in range(delay):
+                restored.step(0)
+            utterance = gen_runtime.gen_iit_workspace_content(
+                restored.state, ID.content_workspace_codebook(restored_cues), restored_store)
+            reference = normal_by_index[row["index"]]
+            exact = (restored.state == reference["final_state"] and
+                     utterance["address"] == reference["selected_address"] and
+                     utterance["record"] == reference["selected_record"] and
+                     utterance["text"] == reference["utterance"] and
+                     restored_store == store and restored_cues == address_to_cue)
+            recovery_exact.append(exact)
+            recovery_rows.append({
+                "index": row["index"], "events": events, "query_text": query_text_value,
+                "query": query, "utterance": utterance["text"], "expected": row["expected"],
+                "correct": utterance["text"] == row["expected"],
+                "selected_address": utterance["address"],
+                "selected_record": utterance["record"], "final_state": restored.state,
+                "matches_normal": exact, "tick": restored.tick,
+                "audit_head": restored.audit_head})
+    recovery = arm(recovery_rows)
+    arms = {"normal": normal, "stateless": stateless, "state_reset": reset,
+            "iit_address_shuffled": iit_shuffled,
+            "workspace_address_shuffled": workspace_shuffled, "node_lesion": lesion,
+            "selected_memory_counterfactual": counterfactual,
+            "irrelevant_memory_mutation": irrelevant, "memory_correction": correction,
+            "recovery": recovery}
+    accuracies = {name: value["accuracy"] for name, value in arms.items()}
+    checks = {
+        "normal_positive": accuracies["normal"] >= numeric_bars["positive"],
+        "stateless_collapses": accuracies["stateless"] <= ceiling,
+        "state_reset_collapses": accuracies["state_reset"] <= ceiling,
+        "iit_address_shuffle_collapses": accuracies["iit_address_shuffled"] <= ceiling,
+        "workspace_address_shuffle_collapses":
+            accuracies["workspace_address_shuffled"] <= ceiling,
+        "node_lesion_collapses": accuracies["node_lesion"] <= ceiling,
+        "counterfactual_correct": accuracies["selected_memory_counterfactual"] >=
+                                  numeric_bars["positive"],
+        "counterfactual_changes_same_question_output": counterfactual["change_rate"] >=
+                                                        numeric_bars["counterfactual_change"],
+        "irrelevant_memory_correct": accuracies["irrelevant_memory_mutation"] >=
+                                     numeric_bars["positive"],
+        "irrelevant_memory_stable": irrelevant["stability"] >=
+                                    numeric_bars["irrelevant_stability"],
+        "correction_positive": accuracies["memory_correction"] >= numeric_bars["positive"],
+        "recovery_positive": accuracies["recovery"] >= numeric_bars["positive"],
+        "recovery_exact": all(recovery_exact),
+        "disturbance_changes_snapshot": all(disturbance_changed),
+        "snapshot_mode_0600": all(mode == 0o600 for mode in snapshot_modes),
+    }
+    return {"arms": arms, "accuracies": accuracies, "checks": checks}
+
+
 def iit_daemon_semantic_bridge_run(argv):
     """Run the preregistered R3.6 learned byte-event to content-workspace battery."""
     import hashlib as _hashlib
-    import tempfile as _tempfile
     import iit_daemon as ID
 
     protocol_path = evaluate_strval(argv, "--iit-daemon-semantic-bridge", "")
@@ -5727,157 +5911,16 @@ def iit_daemon_semantic_bridge_run(argv):
         print("  verdict: FAIL-LEARNED-SEMANTIC-BRIDGE — later arms not interpreted")
         return 1
 
-    def _episode_inputs(row, mode):
-        records = {address: dict(record) for address, record in row["records"].items()}
-        correction = None
-        if mode in ("counterfactual", "correction"):
-            records[row["active_address"]] = dict(row["counterfactual_record"])
-        if mode == "irrelevant":
-            records[row["irrelevant_address"]] = dict(row["irrelevant_record"])
-        if mode == "correction":
-            correction = dict(row["records"][row["active_address"]])
-        stateless = mode == "stateless"
-        store = {address: dict(empty_record) for address in addresses}
-        events = []
-        for offset, address in enumerate(addresses):
-            if stateless:
-                store = {name: dict(empty_record) for name in addresses}
-            text = _memory_text(records[address], address, row["index"], offset)
-            prediction = ID.semantic_bridge_encode(model, text)
-            events.append({"text": text, "prediction": prediction})
-            if prediction["kind"] == "memory" and prediction["address"] in store and \
-                    prediction["record"] is not None:
-                store[prediction["address"]] = dict(prediction["record"])
-        if correction is not None:
-            text = _memory_text(correction, row["active_address"], row["index"],
-                                offset=1, correction=True)
-            prediction = ID.semantic_bridge_encode(model, text)
-            events.append({"text": text, "prediction": prediction, "correction": True})
-            if prediction["kind"] == "memory" and prediction["address"] in store and \
-                    prediction["record"] is not None:
-                store[prediction["address"]] = dict(prediction["record"])
-        for text in other_evaluation:
-            prediction = ID.semantic_bridge_encode(model, text)
-            events.append({"text": text, "prediction": prediction, "irrelevant_event": True})
-            if prediction["kind"] == "memory" and prediction["address"] in store and \
-                    prediction["record"] is not None:
-                store[prediction["address"]] = dict(prediction["record"])
-        query_text = query_template.format(address=row["active_address"])
-        query = ID.semantic_bridge_encode(model, query_text)
-        return store, query, events, query_text
-
-    def _score_episode(row, mode="normal", expected=None, *, reset_before_delay=False,
-                       permutation=(0, 1, 2), workspace_permuted=False, lesion=0):
-        store, query, events, query_text_value = _episode_inputs(row, mode)
-        if workspace_permuted:
-            store = ID.permute_content_records(store, workspace_shuffle)
-        if query["kind"] != "query" or query["address"] not in address_to_cue:
-            return {"index": row["index"], "mode": mode, "events": events,
-                    "query_text": query_text_value, "query": query, "utterance": "",
-                    "expected": expected, "correct": False, "selected_address": None,
-                    "selected_record": None, "final_state": None}
-        trial = ID.content_workspace_trial(
-            query["address"], store, address_to_cue, delay=delay,
-            reset_before_delay=reset_before_delay, permutation=permutation,
-            lesion_mask=lesion)
-        trial.pop("core")
-        utterance = gen_runtime.gen_iit_workspace_content(
-            trial["final_state"], state_to_address, store)
-        return {"index": row["index"], "mode": mode, "events": events,
-                "query_text": query_text_value, "query": query,
-                "utterance": utterance["text"], "expected": expected,
-                "correct": utterance["text"] == expected,
-                "selected_address": utterance["address"],
-                "selected_record": utterance["record"],
-                "final_state": trial["final_state"], "tick": trial["tick"],
-                "audit_head": trial["audit_head"]}
-
-    def _arm(rows):
-        return {"accuracy": sum(row["correct"] for row in rows) / float(len(rows)),
-                "trials": rows}
-
-    normal_rows = [_score_episode(row, expected=row["expected"])
-                   for row in normalized_trials]
-    normal = _arm(normal_rows)
-    stateless = _arm([_score_episode(row, "stateless", row["expected"])
-                      for row in normalized_trials])
-    reset = _arm([_score_episode(row, expected=row["expected"], reset_before_delay=True)
-                  for row in normalized_trials])
-    iit_shuffled = _arm([_score_episode(row, expected=row["expected"],
-                                        permutation=iit_shuffle)
-                         for row in normalized_trials])
-    workspace_shuffled = _arm([_score_episode(row, expected=row["expected"],
-                                              workspace_permuted=True)
-                               for row in normalized_trials])
-    lesion = _arm([_score_episode(row, expected=row["expected"], lesion=lesion_mask)
-                   for row in normalized_trials])
-    counterfactual_rows = [_score_episode(
-        row, "counterfactual", row["counterfactual_expected"]) for row in normalized_trials]
-    for changed, reference in zip(counterfactual_rows, normal_rows):
-        changed["differs_from_normal"] = changed["utterance"] != reference["utterance"]
-        changed["same_question"] = changed["query_text"] == reference["query_text"]
-    counterfactual = _arm(counterfactual_rows)
-    counterfactual["change_rate"] = sum(
-        row["differs_from_normal"] and row["same_question"]
-        for row in counterfactual_rows) / float(len(counterfactual_rows))
-    irrelevant_rows = [_score_episode(row, "irrelevant", row["expected"])
-                       for row in normalized_trials]
-    for changed, reference in zip(irrelevant_rows, normal_rows):
-        changed["matches_normal"] = changed["utterance"] == reference["utterance"]
-    irrelevant = _arm(irrelevant_rows)
-    irrelevant["stability"] = sum(row["matches_normal"] for row in irrelevant_rows) / \
-        float(len(irrelevant_rows))
-    correction = _arm([_score_episode(row, "correction", row["expected"])
-                       for row in normalized_trials])
-
-    recovery_rows = []
-    recovery_exact = []
-    disturbance_changed = []
-    snapshot_modes = []
-    normal_by_index = {row["index"]: row for row in normal_rows}
-    with _tempfile.TemporaryDirectory(prefix="anima-iit-semantic-r36-") as directory:
-        for row in normalized_trials:
-            store, query, events, query_text_value = _episode_inputs(row, "normal")
-            core = ID.IITDaemonCore(0)
-            core.step(address_to_cue[query["address"]])
-            path = os.path.join(directory, "trial-%04d.json" % row["index"])
-            ID.save_content_workspace_snapshot(path, core, store, address_to_cue)
-            snapshot_modes.append(os.stat(path).st_mode & 0o777)
-            pristine = ID.content_workspace_snapshot(core, store, address_to_cue)
-            core.step(7, permutation=(2, 0, 1), lesion_mask=7)
-            disturbed_store = ID.replace_content_record(
-                store, row["active_address"], row["counterfactual_record"])
-            disturbance_changed.append(
-                ID.content_workspace_snapshot(core, disturbed_store, address_to_cue) != pristine)
-            restored, restored_store, restored_cues = ID.load_content_workspace_snapshot(path)
-            for _ in range(delay):
-                restored.step(0)
-            utterance = gen_runtime.gen_iit_workspace_content(
-                restored.state, ID.content_workspace_codebook(restored_cues), restored_store)
-            reference = normal_by_index[row["index"]]
-            exact = (restored.state == reference["final_state"] and
-                     utterance["address"] == reference["selected_address"] and
-                     utterance["record"] == reference["selected_record"] and
-                     utterance["text"] == reference["utterance"] and
-                     restored_store == store and restored_cues == address_to_cue)
-            recovery_exact.append(exact)
-            recovery_rows.append({
-                "index": row["index"], "events": events, "query_text": query_text_value,
-                "query": query, "utterance": utterance["text"], "expected": row["expected"],
-                "correct": utterance["text"] == row["expected"],
-                "selected_address": utterance["address"],
-                "selected_record": utterance["record"], "final_state": restored.state,
-                "matches_normal": exact, "tick": restored.tick,
-                "audit_head": restored.audit_head})
-    recovery = _arm(recovery_rows)
-
-    arms = {"normal": normal, "stateless": stateless, "state_reset": reset,
-            "iit_address_shuffled": iit_shuffled,
-            "workspace_address_shuffled": workspace_shuffled, "node_lesion": lesion,
-            "selected_memory_counterfactual": counterfactual,
-            "irrelevant_memory_mutation": irrelevant, "memory_correction": correction,
-            "recovery": recovery}
-    accuracies = {name: arm["accuracy"] for name, arm in arms.items()}
+    causal = _iit_semantic_bridge_causal_battery(
+        ID=ID, normalized_trials=normalized_trials, addresses=addresses,
+        address_to_cue=address_to_cue, delay=delay, iit_shuffle=iit_shuffle,
+        workspace_shuffle=workspace_shuffle, lesion_mask=lesion_mask,
+        empty_record=empty_record, other_events=other_evaluation,
+        query_template=query_template,
+        encode=lambda text: ID.semantic_bridge_encode(model, text),
+        memory_text=_memory_text, numeric_bars=numeric_bars, ceiling=ceiling,
+        temporary_prefix="anima-iit-semantic-r36-")
+    accuracies = causal["accuracies"]
     checks = {
         "artifact_integrity": True,
         "r35_gate_passed": r35_result["verdict"] == r35_spec["required_verdict"],
@@ -5890,30 +5933,12 @@ def iit_daemon_semantic_bridge_run(argv):
                                   numeric_bars["bridge_query_address"],
         "bridge_record_positive": bridge_metrics["complete_record_accuracy"] >=
                                    numeric_bars["bridge_complete_record"],
-        "normal_positive": accuracies["normal"] >= numeric_bars["positive"],
-        "stateless_collapses": accuracies["stateless"] <= ceiling,
-        "state_reset_collapses": accuracies["state_reset"] <= ceiling,
-        "iit_address_shuffle_collapses": accuracies["iit_address_shuffled"] <= ceiling,
-        "workspace_address_shuffle_collapses": accuracies["workspace_address_shuffled"] <= ceiling,
-        "node_lesion_collapses": accuracies["node_lesion"] <= ceiling,
-        "counterfactual_correct": accuracies["selected_memory_counterfactual"] >=
-                                  numeric_bars["positive"],
-        "counterfactual_changes_same_question_output": counterfactual["change_rate"] >=
-                                                        numeric_bars["counterfactual_change"],
-        "irrelevant_memory_correct": accuracies["irrelevant_memory_mutation"] >=
-                                     numeric_bars["positive"],
-        "irrelevant_memory_stable": irrelevant["stability"] >=
-                                    numeric_bars["irrelevant_stability"],
-        "correction_positive": accuracies["memory_correction"] >= numeric_bars["positive"],
-        "recovery_positive": accuracies["recovery"] >= numeric_bars["positive"],
-        "recovery_exact": all(recovery_exact),
-        "disturbance_changes_snapshot": all(disturbance_changed),
-        "snapshot_mode_0600": all(mode == 0o600 for mode in snapshot_modes),
     }
+    checks.update(causal["checks"])
     verdict = protocol["required_verdict"] if all(checks.values()) else "FALSIFIED"
     base_result.update({"task": dict(task, state_to_address={
                             str(state): address for state, address in state_to_address.items()}),
-                        "accuracies": accuracies, "arms": arms, "checks": checks,
+                        "accuracies": accuracies, "arms": causal["arms"], "checks": checks,
                         "verdict": verdict,
                         "next_gate": "R37-CANDIDATE-SELECTION-MOUTH"
                                      if all(checks.values()) else "R36-BLOCKED"})
@@ -5925,6 +5950,349 @@ def iit_daemon_semantic_bridge_run(argv):
            accuracies["irrelevant_memory_mutation"], accuracies["memory_correction"],
            accuracies["recovery"]))
     print("  verdict: %s (bounded learned bridge only; not conversational)" % verdict)
+    if out_path:
+        _store_causality_write(out_path, base_result)
+        print("  wrote %s" % out_path)
+    return 0 if verdict == protocol["required_verdict"] else 1
+
+
+def iit_daemon_sequence_semantic_bridge_run(argv):
+    """Run R3.7 through the existing semantic bridge and R3.5 causal battery."""
+    import hashlib as _hashlib
+    import tempfile as _tempfile
+    from huggingface_hub import hf_hub_download
+    import iit_daemon as ID
+
+    protocol_path = evaluate_strval(argv, "--iit-daemon-sequence-semantic-bridge", "")
+    out_path = evaluate_strval(argv, "--out", "")
+    model_out = evaluate_strval(argv, "--sequence-semantic-model-out", "")
+    if not protocol_path or not model_out:
+        print("ERROR: R3.7 needs a protocol and --sequence-semantic-model-out", file=sys.stderr)
+        return 2
+
+    def digest(path):
+        sha = _hashlib.sha256()
+        with open(path, "rb") as handle:
+            for block in iter(lambda: handle.read(1 << 20), b""):
+                sha.update(block)
+        return sha.hexdigest()
+
+    def read_json(path, limit, name):
+        size = os.path.getsize(path)
+        if size <= 0 or size > limit:
+            raise ValueError(name + " size is invalid")
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+
+    def read_jsonl(path, limit, expected_rows, name):
+        size = os.path.getsize(path)
+        if size <= 0 or size > limit:
+            raise ValueError(name + " size is invalid")
+        rows = []
+        with open(path, "r", encoding="utf-8") as handle:
+            for line in handle:
+                if not line.endswith("\n") or not line.strip():
+                    raise ValueError(name + " contains malformed JSONL")
+                rows.append(ID._semantic_bridge_example(json.loads(line)))
+        if len(rows) != expected_rows or len({row["text"] for row in rows}) != len(rows):
+            raise ValueError(name + " row count or uniqueness mismatch")
+        return rows
+
+    protocol = read_json(protocol_path, 1 << 20, "R3.7 protocol")
+    if not isinstance(protocol, dict) or protocol.get("schema") != \
+            ID.SEQUENCE_SEMANTIC_PROTOCOL_SCHEMA or set(protocol) != {
+            "schema", "date", "engines", "frozen", "dataset", "sequence_panel", "model",
+            "training", "task", "bars", "required_verdict", "deployment", "non_claims"}:
+        raise ValueError("unsupported R3.7 protocol schema or fields")
+    if protocol["engines"] != [
+            "core.iit_daemon.IITDaemonCore",
+            "core.iit_daemon.train_sequence_semantic_bridge",
+            "core.iit_daemon.sequence_semantic_bridge_encode",
+            "core.generator.gen_iit_workspace_content",
+            "cli.evaluate.iit_daemon_semantic_bridge_run"]:
+        raise ValueError("R3.7 engines mismatch")
+    if protocol["required_verdict"] != "SUPPORTED-SEQUENCE-SEMANTIC-BRIDGE-CAUSALITY" or \
+            protocol["deployment"] != "BLOCKED-R37-NOT-A-CONVERSATIONAL-MOUTH":
+        raise ValueError("R3.7 verdict/deployment contract mismatch")
+    if not isinstance(protocol["non_claims"], list) or not protocol["non_claims"]:
+        raise ValueError("R3.7 non-claims are missing")
+    model_config, training_config = ID._sequence_semantic_configs(
+        protocol["model"], protocol["training"])
+
+    protocol_dir = os.path.dirname(os.path.abspath(protocol_path))
+
+    def pinned(spec, name, required_verdict=None):
+        if not isinstance(spec, dict) or set(spec) != ({"path", "sha256"} |
+                ({"required_verdict"} if required_verdict is not None else set())):
+            raise ValueError(name + " pinned fields mismatch")
+        path = os.path.normpath(os.path.join(protocol_dir, spec["path"]))
+        if not os.path.isfile(path) or digest(path) != spec["sha256"]:
+            raise ValueError(name + " artifact mismatch")
+        document = read_json(path, 8 << 20, name)
+        if required_verdict is not None and (spec["required_verdict"] != required_verdict or
+                                              document.get("verdict") != required_verdict):
+            raise ValueError(name + " verdict mismatch")
+        return path, document
+
+    frozen = protocol["frozen"]
+    if not isinstance(frozen, dict) or set(frozen) != {
+            "r36_protocol", "r36_panel", "r36_result", "r36_exhaustion_protocol",
+            "r36_exhaustion_result", "r36_contrastive_protocol", "r36_contrastive_result",
+            "r35_panel", "r35_result"}:
+        raise ValueError("R3.7 frozen artifact set mismatch")
+    _, r36_protocol = pinned(frozen["r36_protocol"], "R3.6 protocol")
+    _, r36_panel = pinned(frozen["r36_panel"], "R3.6 panel")
+    pinned(frozen["r36_result"], "R3.6 result", "FAIL-LEARNED-SEMANTIC-BRIDGE")
+    _, exhaustion_protocol = pinned(
+        frozen["r36_exhaustion_protocol"], "R3.6 exhaustion protocol")
+    pinned(frozen["r36_exhaustion_result"], "R3.6 exhaustion result",
+           "DIAGNOSED-SHALLOW-LEXICAL-SHORTCUT")
+    _, contrastive_protocol = pinned(
+        frozen["r36_contrastive_protocol"], "R3.6 contrastive protocol")
+    pinned(frozen["r36_contrastive_result"], "R3.6 contrastive result",
+           "DIAGNOSED-MISSING-CONTRASTIVE-SUPPORT")
+    _, r35_panel = pinned(frozen["r35_panel"], "R3.5 panel")
+    pinned(frozen["r35_result"], "R3.5 result",
+           "SUPPORTED-COMPOSITIONAL-WORKSPACE-CAUSALITY")
+    if r36_protocol.get("schema") != ID.SEMANTIC_BRIDGE_PROTOCOL_SCHEMA or \
+            r36_panel.get("schema") != ID.SEMANTIC_BRIDGE_PANEL_SCHEMA or \
+            r35_panel.get("schema") != ID.COMPOSITION_PANEL_SCHEMA:
+        raise ValueError("R3.7 frozen schemas mismatch")
+
+    panel_spec = protocol["sequence_panel"]
+    if not isinstance(panel_spec, dict) or set(panel_spec) != {"path", "sha256"}:
+        raise ValueError("R3.7 sequence panel fields mismatch")
+    panel_path = os.path.normpath(os.path.join(protocol_dir, panel_spec["path"]))
+    if not os.path.isfile(panel_path) or digest(panel_path) != panel_spec["sha256"]:
+        raise ValueError("R3.7 sequence panel artifact mismatch")
+    sequence_panel = read_json(panel_path, 1 << 20, "R3.7 sequence panel")
+    if not isinstance(sequence_panel, dict) or sequence_panel.get("schema") != \
+            ID.SEQUENCE_SEMANTIC_PANEL_SCHEMA or set(sequence_panel) != {"schema", "rows"}:
+        raise ValueError("R3.7 sequence panel schema mismatch")
+    sequence_rows = [ID._semantic_bridge_example(row) for row in sequence_panel["rows"]]
+    if len(sequence_rows) != 24 or len({row["text"] for row in sequence_rows}) != 24:
+        raise ValueError("R3.7 sequence panel count mismatch")
+
+    fixture = ID.semantic_bridge_micro_fixture(r36_panel, r35_panel)
+    stress = [ID._semantic_bridge_example(row) for row in exhaustion_protocol["stress"]]
+    confirmation = [ID._semantic_bridge_example(row)
+                    for row in contrastive_protocol["confirmation"]]
+    if len(stress) != 8 or len(confirmation) != 8:
+        raise ValueError("R3.7 inherited robustness panel count mismatch")
+
+    dataset = protocol["dataset"]
+    if not isinstance(dataset, dict) or set(dataset) != {
+            "repository", "revision", "private", "license", "dataset_sha256", "files",
+            "train_rows", "validation_rows"} or not dataset["repository"].startswith(
+                "dancinlab/") or dataset["private"] is not True or \
+            dataset["license"] != "CC0-1.0":
+        raise ValueError("R3.7 dataset contract mismatch")
+    if not isinstance(dataset["files"], dict) or set(dataset["files"]) != {
+            "train.jsonl", "validation.jsonl", "manifest.json", "README.md"}:
+        raise ValueError("R3.7 dataset file set mismatch")
+    token = os.environ.get("HF_TOKEN")
+    with _tempfile.TemporaryDirectory(prefix="anima-r37-hf-") as download_dir:
+        paths = {}
+        for filename, spec in dataset["files"].items():
+            if not isinstance(spec, dict) or set(spec) != {"bytes", "sha256"}:
+                raise ValueError("R3.7 dataset file fields mismatch")
+            path = hf_hub_download(
+                dataset["repository"], filename, repo_type="dataset",
+                revision=dataset["revision"], token=token, local_dir=download_dir)
+            if os.path.getsize(path) != spec["bytes"] or digest(path) != spec["sha256"]:
+                raise ValueError("R3.7 downloaded dataset file mismatch: " + filename)
+            paths[filename] = path
+        train_rows = read_jsonl(paths["train.jsonl"], 4 << 20, dataset["train_rows"],
+                                "R3.7 train")
+        validation_rows = read_jsonl(
+            paths["validation.jsonl"], 1 << 20, dataset["validation_rows"],
+            "R3.7 validation")
+        manifest = read_json(paths["manifest.json"], 1 << 20, "R3.7 dataset manifest")
+        if manifest.get("dataset_sha256") != dataset["dataset_sha256"] or \
+                ID._sha256({"train": train_rows, "validation": validation_rows}) != \
+                dataset["dataset_sha256"]:
+            raise ValueError("R3.7 dataset aggregate checksum mismatch")
+        evaluation_texts = {row["text"] for row in fixture["frozen"] + stress +
+                            confirmation + sequence_rows}
+        source_texts = {row["text"] for row in train_rows + validation_rows}
+        if evaluation_texts & source_texts or \
+                {row["text"] for row in train_rows} & {row["text"] for row in validation_rows}:
+            raise ValueError("R3.7 dataset split/evaluation leakage")
+        model = ID.train_sequence_semantic_bridge(
+            train_rows, model_config, training_config)
+
+    ID.save_sequence_semantic_bridge_model(model_out, model)
+    loaded_model = ID.load_sequence_semantic_bridge_model(model_out)
+    if loaded_model != model:
+        raise ValueError("R3.7 model roundtrip mismatch")
+    runtime = ID.SequenceSemanticBridge(loaded_model)
+    validation_eval = ID.evaluate_sequence_semantic_bridge(
+        runtime, validation_rows, include_rows=False)
+    frozen_eval = ID.evaluate_sequence_semantic_bridge(runtime, fixture["frozen"])
+    stress_eval = ID.evaluate_sequence_semantic_bridge(runtime, stress)
+    confirmation_eval = ID.evaluate_sequence_semantic_bridge(runtime, confirmation)
+    sequence_eval = ID.evaluate_sequence_semantic_bridge(runtime, sequence_rows)
+
+    task = protocol["task"]
+    if not isinstance(task, dict) or set(task) != {
+            "address_to_cue", "delay", "chance", "iit_address_shuffle",
+            "workspace_address_shuffle", "lesion_mask", "stateless_empty_record"}:
+        raise ValueError("R3.7 task fields mismatch")
+    address_to_cue = task["address_to_cue"]
+    state_to_address = ID.content_workspace_codebook(address_to_cue)
+    addresses = sorted(address_to_cue)
+    if addresses != fixture["addresses"]:
+        raise ValueError("R3.7 address SSOT mismatch")
+    chance = float(task["chance"])
+    if abs(chance - 1.0 / len(addresses)) > 1.0e-12 or task["delay"] < 1 or \
+            task["lesion_mask"] != (1 << ID.RL.N_CELL) - 1:
+        raise ValueError("R3.7 task chance/delay/lesion mismatch")
+    empty_record = ID.validate_content_records(
+        {"empty": task["stateless_empty_record"]})["empty"]
+    ID.permute_content_records({address: empty_record for address in addresses},
+                               task["workspace_address_shuffle"])
+
+    bars = protocol["bars"]
+    if not isinstance(bars, dict) or set(bars) != {
+            "state_oracle", "bridge_kind", "bridge_query_address",
+            "bridge_complete_record", "stress_exact", "confirmation_exact",
+            "sequence_exact", "positive", "control_margin", "control_ceiling",
+            "counterfactual_change", "irrelevant_stability"}:
+        raise ValueError("R3.7 bars mismatch")
+    numeric_bars = {key: float(value) for key, value in bars.items()}
+    if any(not math.isfinite(value) or not 0.0 <= value <= 1.0
+           for value in numeric_bars.values()):
+        raise ValueError("R3.7 bars must be finite in [0,1]")
+    ceiling = chance + numeric_bars["control_margin"]
+    if abs(ceiling - numeric_bars["control_ceiling"]) > 1.0e-12:
+        raise ValueError("R3.7 control ceiling mismatch")
+
+    normalized_trials = []
+    for index, raw_row in enumerate(r35_panel["trials"]):
+        records = ID.validate_content_records(raw_row["records"], addresses)
+        active = raw_row["active_address"]
+        selected = records[active]
+        counterfactual = ID.validate_content_records({active: dict(
+            selected, value=raw_row["counterfactual_value"])})[active]
+        irrelevant = ID.validate_content_records(
+            {raw_row["irrelevant_address"]: raw_row["irrelevant_record"]})[
+                raw_row["irrelevant_address"]]
+        normalized_trials.append({
+            "index": index, "active_address": active, "records": records,
+            "expected": raw_row["expected"], "counterfactual_record": counterfactual,
+            "counterfactual_expected": raw_row["counterfactual_expected"],
+            "irrelevant_address": raw_row["irrelevant_address"],
+            "irrelevant_record": irrelevant})
+
+    oracle_rows = []
+    state_by_address = {address: state for state, address in state_to_address.items()}
+    for row in normalized_trials:
+        utterance = gen_runtime.gen_iit_workspace_content(
+            state_by_address[row["active_address"]], state_to_address, row["records"])
+        oracle_rows.append({"index": row["index"], "utterance": utterance["text"],
+                            "expected": row["expected"],
+                            "correct": utterance["text"] == row["expected"]})
+    state_oracle = sum(row["correct"] for row in oracle_rows) / len(oracle_rows)
+
+    base_result = {
+        "schema": "anima-iit-daemon-sequence-semantic-result/1",
+        "date": protocol["date"], "protocol": os.path.basename(protocol_path),
+        "protocol_sha256": digest(protocol_path), "sequence_panel_sha256": panel_spec["sha256"],
+        "claim_scope": "bounded learned ordered-English-event to IIT-selected record causality",
+        "non_claims": list(protocol["non_claims"]), "bars": dict(bars),
+        "dataset": {"repository": dataset["repository"], "revision": dataset["revision"],
+                    "dataset_sha256": dataset["dataset_sha256"],
+                    "train_rows": len(train_rows), "validation_rows": len(validation_rows),
+                    "artifact_integrity": True, "evaluation_text_disjoint": True},
+        "model": {"schema": loaded_model["schema"], "sha256": loaded_model["sha256"],
+                  "training_sha256": loaded_model["payload"]["training_sha256"],
+                  "telemetry": loaded_model["payload"]["telemetry"],
+                  "artifact": os.path.basename(model_out), "roundtrip_exact": True},
+        "state_oracle": {"accuracy": state_oracle, "trials": oracle_rows},
+        "validation": validation_eval, "frozen_bridge": frozen_eval,
+        "shortcut_stress": stress_eval, "independent_confirmation": confirmation_eval,
+        "sequence_panel": sequence_eval, "deployment": protocol["deployment"],
+    }
+    frozen_metrics = frozen_eval["metrics"]
+    bridge_checks = {
+        "state_oracle_positive": state_oracle >= numeric_bars["state_oracle"],
+        "bridge_kind_positive": frozen_metrics["kind_accuracy"] >=
+                                numeric_bars["bridge_kind"],
+        "bridge_query_positive": frozen_metrics["query_address_accuracy"] >=
+                                 numeric_bars["bridge_query_address"],
+        "bridge_record_positive": frozen_metrics["complete_record_accuracy"] >=
+                                  numeric_bars["bridge_complete_record"],
+        "shortcut_stress_exact": stress_eval["metrics"]["exact_accuracy"] >=
+                                 numeric_bars["stress_exact"],
+        "independent_confirmation_exact": confirmation_eval["metrics"]["exact_accuracy"] >=
+                                          numeric_bars["confirmation_exact"],
+        "sequence_panel_positive": sequence_eval["metrics"]["exact_accuracy"] >=
+                                   numeric_bars["sequence_exact"],
+    }
+    print("[iit-daemon R3.7 · English sequence-semantic bridge]")
+    print("  train=%d validation=%d params=%d final-loss=%.6f" %
+          (len(train_rows), len(validation_rows),
+           loaded_model["payload"]["telemetry"]["parameter_count"],
+           loaded_model["payload"]["telemetry"]["final_loss"]))
+    print("  oracle=%.4f kind=%.4f query=%.4f record=%.4f stress=%.4f confirm=%.4f "
+          "sequence=%.4f" %
+          (state_oracle, frozen_metrics["kind_accuracy"],
+           frozen_metrics["query_address_accuracy"],
+           frozen_metrics["complete_record_accuracy"],
+           stress_eval["metrics"]["exact_accuracy"],
+           confirmation_eval["metrics"]["exact_accuracy"],
+           sequence_eval["metrics"]["exact_accuracy"]))
+    if not all(bridge_checks.values()):
+        base_result.update({"checks": bridge_checks,
+                            "verdict": "FAIL-SEQUENCE-SEMANTIC-BRIDGE",
+                            "next_gate": "R37-BLOCKED"})
+        if out_path:
+            _store_causality_write(out_path, base_result)
+        print("  verdict: FAIL-SEQUENCE-SEMANTIC-BRIDGE — causal arms not run")
+        return 1
+
+    evaluation = r36_panel["evaluation"]
+    relations = fixture["relations"]
+    memory_templates = evaluation["memory_templates"]
+    correction_template = evaluation["correction_template"]
+    query_template = evaluation["query_template"]
+
+    def memory_text(record, address, index, offset=0, correction=False):
+        template = correction_template if correction else \
+            memory_templates[(index + offset) % len(memory_templates)]
+        surfaces = relations[record["relation"]]
+        return template.format(address=address, entity=record["entity"],
+                               surface=surfaces[(index + offset) % len(surfaces)],
+                               value=record["value"])
+
+    causal = _iit_semantic_bridge_causal_battery(
+        ID=ID, normalized_trials=normalized_trials, addresses=addresses,
+        address_to_cue=address_to_cue, delay=task["delay"],
+        iit_shuffle=tuple(task["iit_address_shuffle"]),
+        workspace_shuffle=task["workspace_address_shuffle"],
+        lesion_mask=task["lesion_mask"], empty_record=empty_record,
+        other_events=evaluation["other_events"], query_template=query_template,
+        encode=runtime.encode, memory_text=memory_text, numeric_bars=numeric_bars,
+        ceiling=ceiling, temporary_prefix="anima-iit-semantic-r37-")
+    checks = dict(bridge_checks)
+    checks.update({"artifact_integrity": True, "model_roundtrip_exact": True})
+    checks.update(causal["checks"])
+    verdict = protocol["required_verdict"] if all(checks.values()) else "FALSIFIED"
+    base_result.update({"task": dict(task, state_to_address={
+                            str(state): address for state, address in state_to_address.items()}),
+                        "accuracies": causal["accuracies"], "arms": causal["arms"],
+                        "checks": checks, "verdict": verdict,
+                        "next_gate": "R4-ENGLISH-MOUTH" if all(checks.values()) else
+                                     "R37-BLOCKED"})
+    print("  normal=%.4f stateless=%.4f reset=%.4f iit-shuffle=%.4f workspace-shuffle=%.4f "
+          "lesion=%.4f correction=%.4f recovery=%.4f" %
+          (causal["accuracies"]["normal"], causal["accuracies"]["stateless"],
+           causal["accuracies"]["state_reset"],
+           causal["accuracies"]["iit_address_shuffled"],
+           causal["accuracies"]["workspace_address_shuffled"],
+           causal["accuracies"]["node_lesion"],
+           causal["accuracies"]["memory_correction"], causal["accuracies"]["recovery"]))
+    print("  verdict: %s (bounded bridge only; not conversational)" % verdict)
     if out_path:
         _store_causality_write(out_path, base_result)
         print("  wrote %s" % out_path)
@@ -15334,6 +15702,7 @@ _KNOWN_FLAGS = frozenset((
     "--iit-daemon-content",
     "--iit-daemon-composition",
     "--iit-daemon-semantic-bridge", "--semantic-bridge-model-out",
+    "--iit-daemon-sequence-semantic-bridge", "--sequence-semantic-model-out",
     "--iit-daemon-semantic-bridge-sweep",
     "--iit-daemon-semantic-bridge-contrastive",
     "--iit-daemon-semantic-bridge-support-audit",
@@ -22253,6 +22622,10 @@ def main(argv):
     # factorised byte-event bridge before the unchanged R3.5 causal seam.
     if "--iit-daemon-semantic-bridge" in argv:
         return iit_daemon_semantic_bridge_run(argv)
+    # IIT-daemon R3.7: the same bridge and R3.5 causal battery with an ordered-byte
+    # sequence encoder and checksum-pinned HF English event data.
+    if "--iit-daemon-sequence-semantic-bridge" in argv:
+        return iit_daemon_sequence_semantic_bridge_run(argv)
     # R3.6 follow-up: exhaustive CPU-small representation/classifier diagnostics.
     # It reuses the frozen R3.6/R3.5 artifacts and mounts no model or participant.
     if "--iit-daemon-semantic-bridge-sweep" in argv:

@@ -48,6 +48,16 @@ confirmation panel exact `1.00`을 먼저 통과해야 한다. 이후 정상·�
 `1B → 3B → 7B`로 승격한다. 7B는 영어 mouth와 작은 IIT/CLMS/KOSMOS 상태 코어의 결합이며,
 7B 전체가 IIT complex라는 주장이 아니다. 이 계획만으로 GPU·Vast.ai 실행은 허용하지 않는다.
 
+사전등록한 R3.7 CPU 실행은 인과 arm 해석 전에 실패했다. State oracle/query address는
+`1.0000`이지만 동결 kind/complete-record는 `0.8298/0.4722`, 기존 stress/confirmation은
+`0.7500/0.8750`이고 새로 작성한 sequence panel만 `0.9583`으로 통과했다. 무작위 split
+validation `0.9981`은 생성 자료 split이 독립 template/record 조합 일반화를 측정하지 못했음을
+드러낸다. 후속 인과 arm·mouth scaling·배포는 실행하지 않았다. 전체 증거와 자료 support
+진단은 `state/iit_daemon_r37_sequence_bridge_2026_08_15/`에 기록한다.
+집중 회귀는 `100/100` 통과했고 두 번째 source 실행과 격리 wheel이 model/result를 byte 단위로
+재현했다. 실패 모델·증거는 HF 비공개 revision `4296d2a8…b1829`에 보존하며 로컬 모델·학습
+자료 artifact는 Git에 넣지 않는다.
+
 ## 현재 설계 — IIT 의식 데몬 코어 R0
 
 `state/iit_daemon_core_2026_08_12/`에 통합정보이론 기반 데몬의 전체 설계 변형, 폐기 이유,

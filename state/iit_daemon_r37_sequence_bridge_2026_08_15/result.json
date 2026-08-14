@@ -1,0 +1,3035 @@
+{
+  "bars": {
+    "bridge_complete_record": 0.9,
+    "bridge_kind": 0.9,
+    "bridge_query_address": 0.9,
+    "confirmation_exact": 1.0,
+    "control_ceiling": 0.3933333333333333,
+    "control_margin": 0.06,
+    "counterfactual_change": 0.9,
+    "irrelevant_stability": 0.9,
+    "positive": 0.9,
+    "sequence_exact": 0.9,
+    "state_oracle": 0.9,
+    "stress_exact": 1.0
+  },
+  "checks": {
+    "bridge_kind_positive": false,
+    "bridge_query_positive": true,
+    "bridge_record_positive": false,
+    "independent_confirmation_exact": false,
+    "sequence_panel_positive": true,
+    "shortcut_stress_exact": false,
+    "state_oracle_positive": true
+  },
+  "claim_scope": "bounded learned ordered-English-event to IIT-selected record causality",
+  "dataset": {
+    "artifact_integrity": true,
+    "dataset_sha256": "39358a8aaed3e691b7fd029a456cb5ab85b25a6608dba48c60f6486d31f42e17",
+    "evaluation_text_disjoint": true,
+    "repository": "dancinlab/anima-iit-daemon-r37-sequence-data-2026-08-15",
+    "revision": "4301fd00dd9e4ba72435dbbf85e00cdaaf7f4de7",
+    "train_rows": 5018,
+    "validation_rows": 531
+  },
+  "date": "2026-08-15",
+  "deployment": "BLOCKED-R37-NOT-A-CONVERSATIONAL-MOUTH",
+  "frozen_bridge": {
+    "errors": [
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "aria",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 17.364275,
+            "entity": 0.2767696,
+            "kind": 12.8000555,
+            "relation": 15.5404119,
+            "value": 17.326334
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "faro",
+            "relation": "carries",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Please remember this in alpha: aria carries ivory."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "borin",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 13.9104004,
+            "entity": 2.956028,
+            "kind": 1.101436,
+            "relation": 8.7016344,
+            "value": 21.59659
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "garen",
+            "relation": "guards",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under beta is that borin is guarding amber."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "aria",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 15.1034393,
+            "entity": 10.3563309,
+            "kind": 17.7542267,
+            "relation": 18.0612831,
+            "value": 20.6454773
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "faro",
+            "relation": "carries",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Update the fact in alpha: aria now is carrying ivory."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "alpha",
+          "entity": "dain",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 1.4606986
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under alpha is that dain is carrying amber."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "gamma",
+          "entity": "faro",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 0.1390972
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under gamma is that faro observes ivory."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "cyra",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 14.0535088,
+            "entity": 0.8050489,
+            "kind": 13.4042492,
+            "relation": 16.3540001,
+            "value": 16.6521053
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "hali",
+            "relation": "carries",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Please remember this in alpha: cyra holds amber."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "beta",
+          "entity": "dain",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 1.6931069
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under beta is that dain guards ivory."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "faro",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 16.6341,
+            "entity": 8.2518654,
+            "kind": 15.3445473,
+            "relation": 17.5101318,
+            "value": 17.0796337
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "jora",
+            "relation": "carries",
+            "value": "cedar"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Update the fact in gamma: faro now carries cedar."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "alpha",
+          "entity": "borin",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 1.3864777
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under alpha is that borin observes ivory."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "gamma",
+          "entity": "dain",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 7.5897517
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under gamma is that dain holds cedar."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "elia",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 15.3585472,
+            "entity": 14.811676,
+            "kind": 13.0979548,
+            "relation": 18.5937004,
+            "value": 16.5577717
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "dain",
+            "relation": "observes",
+            "value": "cedar"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Please remember this in alpha: elia is observing cedar."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "faro",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 11.3531771,
+            "entity": 7.777791,
+            "kind": 18.8598232,
+            "relation": 19.8421917,
+            "value": 20.9205818
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "jora",
+            "relation": "guards",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Update the fact in beta: faro now protects ivory."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "alpha",
+          "entity": "aria",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 3.210093
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under alpha is that aria protects cedar."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "beta",
+          "entity": "elia",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 7.5758562
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under beta is that elia is carrying cedar."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "dain",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 17.4634781,
+            "entity": 12.8182688,
+            "kind": 12.2292995,
+            "relation": 20.8010654,
+            "value": 18.5619125
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "iona",
+            "relation": "guards",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Update the fact in alpha: dain now is guarding amber."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "borin",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 10.30548,
+            "entity": 5.6752362,
+            "kind": 2.7102592,
+            "relation": 6.5130901,
+            "value": 17.4416103
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "garen",
+            "relation": "guards",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under gamma is that borin guards amber."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "aria",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 10.2992554,
+            "entity": 5.1516657,
+            "kind": 11.0103121,
+            "relation": 12.7369013,
+            "value": 18.652401
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "faro",
+            "relation": "observes",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Update the fact in beta: aria now watches ivory."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "faro",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 15.7299585,
+            "entity": 0.4949055,
+            "kind": 19.989233,
+            "relation": 14.8434143,
+            "value": 17.2096786
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "jora",
+            "relation": "carries",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Please remember this in alpha: faro holds amber."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "beta",
+          "entity": "dain",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 8.5836353
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under beta is that dain observes ivory."
+      }
+    ],
+    "examples": 47,
+    "metrics": {
+      "complete_record_accuracy": 0.4722222222222222,
+      "exact_accuracy": 0.5957446808510638,
+      "kind_accuracy": 0.8297872340425532,
+      "query_address_accuracy": 1.0
+    },
+    "prediction_sha256": "7ef79ae306d6ed9dd9f70152c7e1e76c23bc1af6b18c5a19af690cfe86ef341a",
+    "rows": [
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "aria",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 17.364275,
+            "entity": 0.2767696,
+            "kind": 12.8000555,
+            "relation": 15.5404119,
+            "value": 17.326334
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "faro",
+            "relation": "carries",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Please remember this in alpha: aria carries ivory."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "borin",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 13.9104004,
+            "entity": 2.956028,
+            "kind": 1.101436,
+            "relation": 8.7016344,
+            "value": 21.59659
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "garen",
+            "relation": "guards",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under beta is that borin is guarding amber."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "cyra",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 15.9279823,
+            "entity": 7.3270245,
+            "kind": 13.9540644,
+            "relation": 11.1070995,
+            "value": 5.8366771
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "cyra",
+            "relation": "observes",
+            "value": "cedar"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Please remember this in gamma: cyra watches cedar."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "aria",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 15.1034393,
+            "entity": 10.3563309,
+            "kind": 17.7542267,
+            "relation": 18.0612831,
+            "value": 20.6454773
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "faro",
+            "relation": "carries",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Update the fact in alpha: aria now is carrying ivory."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "query",
+          "margins": {
+            "address": 20.6482487,
+            "kind": 7.827559
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Please retrieve the content stored in alpha."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "alpha",
+          "entity": "dain",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 1.4606986
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under alpha is that dain is carrying amber."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "elia",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 11.3025236,
+            "entity": 7.9937744,
+            "kind": 8.6862869,
+            "relation": 18.1442432,
+            "value": 17.7224369
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "elia",
+            "relation": "guards",
+            "value": "cedar"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Please remember this in beta: elia protects cedar."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "gamma",
+          "entity": "faro",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 0.1390972
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under gamma is that faro observes ivory."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "elia",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 7.9926038,
+            "entity": 9.2083101,
+            "kind": 11.8267193,
+            "relation": 18.8039742,
+            "value": 18.5376434
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "elia",
+            "relation": "guards",
+            "value": "cedar"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Update the fact in beta: elia now protects cedar."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "query",
+          "margins": {
+            "address": 19.335247,
+            "kind": 7.7515044
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Please retrieve the content stored in beta."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "cyra",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 14.0535088,
+            "entity": 0.8050489,
+            "kind": 13.4042492,
+            "relation": 16.3540001,
+            "value": 16.6521053
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "hali",
+            "relation": "carries",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Please remember this in alpha: cyra holds amber."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "beta",
+          "entity": "dain",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 1.6931069
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under beta is that dain guards ivory."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "faro",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 13.4448624,
+            "entity": 11.9361763,
+            "kind": 14.5222683,
+            "relation": 16.1948872,
+            "value": 15.7639313
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "faro",
+            "relation": "carries",
+            "value": "cedar"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Please remember this in gamma: faro is carrying cedar."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "faro",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 16.6341,
+            "entity": 8.2518654,
+            "kind": 15.3445473,
+            "relation": 17.5101318,
+            "value": 17.0796337
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "jora",
+            "relation": "carries",
+            "value": "cedar"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Update the fact in gamma: faro now carries cedar."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "query",
+          "margins": {
+            "address": 15.6413288,
+            "kind": 3.2135813
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Please retrieve the content stored in gamma."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "alpha",
+          "entity": "borin",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 1.3864777
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under alpha is that borin observes ivory."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "cyra",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 12.6508989,
+            "entity": 2.4783878,
+            "kind": 11.187396,
+            "relation": 17.918663,
+            "value": 17.4011097
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "cyra",
+            "relation": "guards",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Please remember this in beta: cyra is guarding amber."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "gamma",
+          "entity": "dain",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 7.5897517
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under gamma is that dain holds cedar."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "borin",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 14.0939779,
+            "entity": 13.5263767,
+            "kind": 17.074192,
+            "relation": 12.3734341,
+            "value": 16.4210472
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "borin",
+            "relation": "observes",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Update the fact in alpha: borin now is observing ivory."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "query",
+          "margins": {
+            "address": 20.6482487,
+            "kind": 7.827559
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Please retrieve the content stored in alpha."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "elia",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 15.3585472,
+            "entity": 14.811676,
+            "kind": 13.0979548,
+            "relation": 18.5937004,
+            "value": 16.5577717
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "dain",
+            "relation": "observes",
+            "value": "cedar"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Please remember this in alpha: elia is observing cedar."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "faro",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 13.7241125,
+            "entity": 9.8413324,
+            "kind": 8.0855808,
+            "relation": 16.8563328,
+            "value": 18.2490902
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "faro",
+            "relation": "guards",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "The fact filed under beta is that faro protects ivory."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "aria",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 12.6817837,
+            "entity": 11.2228336,
+            "kind": 15.7260971,
+            "relation": 19.1871872,
+            "value": 15.4049311
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "aria",
+            "relation": "carries",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Please remember this in gamma: aria carries amber."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "faro",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 11.3531771,
+            "entity": 7.777791,
+            "kind": 18.8598232,
+            "relation": 19.8421917,
+            "value": 20.9205818
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "jora",
+            "relation": "guards",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Update the fact in beta: faro now protects ivory."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "query",
+          "margins": {
+            "address": 19.335247,
+            "kind": 7.7515044
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Please retrieve the content stored in beta."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "alpha",
+          "entity": "aria",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 3.210093
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under alpha is that aria protects cedar."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "borin",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 13.2299576,
+            "entity": 11.9678822,
+            "kind": 13.3013334,
+            "relation": 16.2223091,
+            "value": 16.0448647
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "borin",
+            "relation": "carries",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Please remember this in beta: borin carries ivory."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "cyra",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 6.6477437,
+            "entity": 3.9215364,
+            "kind": 8.9610367,
+            "relation": 17.5535812,
+            "value": 15.7446365
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "cyra",
+            "relation": "observes",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "The fact filed under gamma is that cyra is observing amber."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "cyra",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 16.9215813,
+            "entity": 3.6057243,
+            "kind": 28.3423977,
+            "relation": 19.2696362,
+            "value": 15.2041149
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "cyra",
+            "relation": "observes",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Update the fact in gamma: cyra now observes amber."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "query",
+          "margins": {
+            "address": 15.6413288,
+            "kind": 3.2135813
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Please retrieve the content stored in gamma."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "dain",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 19.2356987,
+            "entity": 7.9546251,
+            "kind": 17.880394,
+            "relation": 21.2519608,
+            "value": 13.6083078
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "dain",
+            "relation": "guards",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Please remember this in alpha: dain guards amber."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "beta",
+          "entity": "elia",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 7.5758562
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under beta is that elia is carrying cedar."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "faro",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 13.4223833,
+            "entity": 11.3157959,
+            "kind": 12.0395336,
+            "relation": 15.577507,
+            "value": 17.536438
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "faro",
+            "relation": "observes",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Please remember this in gamma: faro watches ivory."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "dain",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 17.4634781,
+            "entity": 12.8182688,
+            "kind": 12.2292995,
+            "relation": 20.8010654,
+            "value": 18.5619125
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "iona",
+            "relation": "guards",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Update the fact in alpha: dain now is guarding amber."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "query",
+          "margins": {
+            "address": 20.6482487,
+            "kind": 7.827559
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Please retrieve the content stored in alpha."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "cyra",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 9.4912891,
+            "entity": 10.8953629,
+            "kind": 5.5751672,
+            "relation": 14.9122782,
+            "value": 10.6281376
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "cyra",
+            "relation": "carries",
+            "value": "cedar"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "The fact filed under alpha is that cyra is carrying cedar."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "aria",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 9.7812653,
+            "entity": 16.906765,
+            "kind": 9.894166,
+            "relation": 8.5624342,
+            "value": 17.3887501
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "aria",
+            "relation": "observes",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Please remember this in beta: aria watches ivory."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "borin",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 10.30548,
+            "entity": 5.6752362,
+            "kind": 2.7102592,
+            "relation": 6.5130901,
+            "value": 17.4416103
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "garen",
+            "relation": "guards",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under gamma is that borin guards amber."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "aria",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 10.2992554,
+            "entity": 5.1516657,
+            "kind": 11.0103121,
+            "relation": 12.7369013,
+            "value": 18.652401
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "faro",
+            "relation": "observes",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Update the fact in beta: aria now watches ivory."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "query",
+          "margins": {
+            "address": 19.335247,
+            "kind": 7.7515044
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Please retrieve the content stored in beta."
+      },
+      {
+        "exact": false,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "faro",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 15.7299585,
+            "entity": 0.4949055,
+            "kind": 19.989233,
+            "relation": 14.8434143,
+            "value": 17.2096786
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "jora",
+            "relation": "carries",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Please remember this in alpha: faro holds amber."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "beta",
+          "entity": "dain",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 8.5836353
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The fact filed under beta is that dain observes ivory."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "elia",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 13.2641039,
+            "entity": 13.6737719,
+            "kind": 15.5253162,
+            "relation": 18.8026314,
+            "value": 17.351366
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "elia",
+            "relation": "observes",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Please remember this in gamma: elia is observing amber."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "elia",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 16.7138577,
+            "entity": 9.9134035,
+            "kind": 18.5918217,
+            "relation": 18.7266197,
+            "value": 18.1355133
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "elia",
+            "relation": "observes",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Update the fact in gamma: elia now observes amber."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "query",
+          "margins": {
+            "address": 15.6413288,
+            "kind": 3.2135813
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Please retrieve the content stored in gamma."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 9.2810669
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Please continue the session."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 16.1091118
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Nothing should change now."
+      }
+    ]
+  },
+  "independent_confirmation": {
+    "errors": [
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "beta",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 19.3198586,
+            "entity": 2.1435623,
+            "kind": 14.6932535,
+            "relation": 17.8495903,
+            "value": 0.9558234
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "dain",
+            "relation": "observes",
+            "value": "quartz"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Kindly fetch beta's stored content."
+      }
+    ],
+    "examples": 8,
+    "metrics": {
+      "complete_record_accuracy": 1.0,
+      "exact_accuracy": 0.875,
+      "kind_accuracy": 0.875,
+      "query_address_accuracy": 0.5
+    },
+    "prediction_sha256": "c992f9b688623f688c55945e600fbde8d448ea48334fbee400f870991e8e51af",
+    "rows": [
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "beta",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 19.3198586,
+            "entity": 2.1435623,
+            "kind": 14.6932535,
+            "relation": 17.8495903,
+            "value": 0.9558234
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "dain",
+            "relation": "observes",
+            "value": "quartz"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Kindly fetch beta's stored content."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 13.5237808
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Never read alpha."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 21.6314774
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The term memory is discussed, but no fact is stored."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "dain",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 14.779501,
+            "entity": 15.6436844,
+            "kind": 4.5618997,
+            "relation": 18.8031025,
+            "value": 17.7574348
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "dain",
+            "relation": "observes",
+            "value": "cedar"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "File this under gamma: dain watches cedar."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 3.8165085
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Cedar watches dain under gamma."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 31.0606575
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Leave every stored fact untouched."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "query",
+          "margins": {
+            "address": 18.0381699,
+            "kind": 14.0380707
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Tell me the record at alpha."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "faro",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 16.8297329,
+            "entity": 12.5722466,
+            "kind": 3.9900413,
+            "relation": 20.8920937,
+            "value": 17.9223709
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "faro",
+            "relation": "carries",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "At beta remember that faro holds ivory."
+      }
+    ]
+  },
+  "model": {
+    "artifact": "model.json",
+    "roundtrip_exact": true,
+    "schema": "anima-iit-sequence-semantic-model/1",
+    "sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+    "telemetry": {
+      "final_loss": 1.5050167689878435e-07,
+      "parameter_count": 49081,
+      "train_examples": 5018
+    },
+    "training_sha256": "f86a7d1140de46dc3c46070de7052edc4cf8db735327b4b8e9caa3a2de79eabc"
+  },
+  "next_gate": "R37-BLOCKED",
+  "non_claims": [
+    "open-domain semantics",
+    "meaningful open conversation",
+    "Korean or multilingual capability",
+    "phenomenal consciousness",
+    "IIT maximal complex",
+    "303M, 1B, 3B or 7B readiness",
+    "participant or production readiness"
+  ],
+  "protocol": "protocol.json",
+  "protocol_sha256": "109d930f4fdc328139d575dca24930db7f57a8d7fee8877b2f313af7868b1fa1",
+  "schema": "anima-iit-daemon-sequence-semantic-result/1",
+  "sequence_panel": {
+    "errors": [
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "beta",
+          "entity": "elia",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 27.6653347
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Let beta retain this observation: elia defends cedar."
+      }
+    ],
+    "examples": 24,
+    "metrics": {
+      "complete_record_accuracy": 0.8333333333333334,
+      "exact_accuracy": 0.9583333333333334,
+      "kind_accuracy": 0.9583333333333334,
+      "query_address_accuracy": 1.0
+    },
+    "prediction_sha256": "168f3c7da37510fa49f07daafdffe3c9cce323ee87be3b144841a1b0d9df6f82",
+    "rows": [
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "aria",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 14.3577423,
+            "entity": 14.2454367,
+            "kind": 16.5023556,
+            "relation": 16.0268116,
+            "value": 15.05268
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "aria",
+            "relation": "carries",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Preserve in alpha the fact that aria bears ivory."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "address": "beta",
+          "entity": "elia",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "cedar"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 27.6653347
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Let beta retain this observation: elia defends cedar."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "cyra",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 17.2075157,
+            "entity": 13.4983463,
+            "kind": 26.9530087,
+            "relation": 17.8282776,
+            "value": 16.3548431
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "cyra",
+            "relation": "observes",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Archive for gamma the statement that cyra monitors amber."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "dain",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 11.3797674,
+            "entity": 9.2383986,
+            "kind": 21.8513641,
+            "relation": 18.6592541,
+            "value": 17.4156437
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "dain",
+            "relation": "carries",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Commit this entry to alpha: dain transports amber."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "faro",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 16.1641579,
+            "entity": 8.6069698,
+            "kind": 21.7266293,
+            "relation": 18.0182915,
+            "value": 16.6490612
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "faro",
+            "relation": "guards",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Keep under beta the record that faro watches over ivory."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "entity": "elia",
+          "kind": "memory",
+          "relation": "observes",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "memory",
+          "margins": {
+            "address": 15.5462017,
+            "entity": 14.1385212,
+            "kind": 20.2961769,
+            "relation": 3.004818,
+            "value": 21.5235672
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "elia",
+            "relation": "observes",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Place in gamma this observation: elia sees amber."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "query",
+          "margins": {
+            "address": 21.4210758,
+            "kind": 15.1477108
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Report the content currently assigned to alpha."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "query",
+          "margins": {
+            "address": 14.3802032,
+            "kind": 14.1061296
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "What fact does beta retain?"
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "query",
+          "margins": {
+            "address": 12.0125456,
+            "kind": 11.0604458
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Recover the entry associated with gamma."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "query",
+          "margins": {
+            "address": 14.4413996,
+            "kind": 22.5558109
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Give me the saved observation for alpha."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "query",
+          "margins": {
+            "address": 16.2242432,
+            "kind": 9.7815275
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Bring back beta's current record."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "gamma",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "gamma",
+          "kind": "query",
+          "margins": {
+            "address": 17.1061249,
+            "kind": 13.0169334
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Access gamma and return its fact."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 17.6152573
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Do not report the content currently assigned to alpha."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 18.7039871
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Never recover the entry associated with beta."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 26.119772
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Leave gamma untouched instead of bringing back its record."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 13.3929634
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The words fetch alpha are quoted, not requested."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 11.2307568
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Only discuss the phrase tell me beta; do not read memory."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 28.6687431
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Do not preserve in gamma the fact that aria bears cedar."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 21.4514084
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Never archive for alpha the statement that elia defends amber."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 22.3928738
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Ivory bears aria beside alpha, but no memory action occurs."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 13.3906536
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Cedar defends faro near beta without storing a fact."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 6.2114353
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Amber monitors cyra around gamma; this is only a sentence."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 12.4886971
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "The record at alpha should remain exactly as it is."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 28.7554817
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Nothing in beta should be fetched, stored, or changed."
+      }
+    ]
+  },
+  "sequence_panel_sha256": "a384de8be2daaa95370ec07bcbdb3cc60e31c6f91c0a56ef52c96c0325018d5b",
+  "shortcut_stress": {
+    "errors": [
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 9.9020615,
+            "entity": 13.5151272,
+            "kind": 3.3616762,
+            "relation": 17.8818836,
+            "value": 1.0679541
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "dain",
+            "relation": "observes",
+            "value": "linen"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Retrieve is only a word in this sentence."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 13.0793381,
+            "entity": 8.6965122,
+            "kind": 1.1832707,
+            "relation": 15.601244,
+            "value": 15.744421
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "borin",
+            "relation": "carries",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Amber carries aria in alpha memory."
+      }
+    ],
+    "examples": 8,
+    "metrics": {
+      "complete_record_accuracy": 1.0,
+      "exact_accuracy": 0.75,
+      "kind_accuracy": 0.75,
+      "query_address_accuracy": 1.0
+    },
+    "prediction_sha256": "c76e4e5d5b7caa2e245d5673b98e284f049b5720e9d41940acd87ac7221fc932",
+    "rows": [
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "query",
+          "margins": {
+            "address": 20.6482487,
+            "kind": 7.827559
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Please retrieve the content stored in alpha."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "kind": "query"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "query",
+          "margins": {
+            "address": 21.5937099,
+            "kind": 16.9687271
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": true,
+        "record_correct": false,
+        "text": "Show the fact stored in beta."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 15.0943594
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Do not retrieve gamma."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 9.9020615,
+            "entity": 13.5151272,
+            "kind": 3.3616762,
+            "relation": 17.8818836,
+            "value": 1.0679541
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "dain",
+            "relation": "observes",
+            "value": "linen"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Retrieve is only a word in this sentence."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "alpha",
+          "entity": "aria",
+          "kind": "memory",
+          "relation": "carries",
+          "value": "amber"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 15.2374191,
+            "entity": 3.992054,
+            "kind": 15.3389969,
+            "relation": 15.5147114,
+            "value": 15.7756786
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "aria",
+            "relation": "carries",
+            "value": "amber"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "Please remember this in alpha: aria carries amber."
+      },
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": "alpha",
+          "kind": "memory",
+          "margins": {
+            "address": 13.0793381,
+            "entity": 8.6965122,
+            "kind": 1.1832707,
+            "relation": 15.601244,
+            "value": 15.744421
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "borin",
+            "relation": "carries",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Amber carries aria in alpha memory."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": null,
+          "kind": "other",
+          "margins": {
+            "kind": 16.1091137
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "Nothing should change now."
+      },
+      {
+        "exact": true,
+        "kind_correct": true,
+        "labels": {
+          "address": "beta",
+          "entity": "cyra",
+          "kind": "memory",
+          "relation": "guards",
+          "value": "ivory"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "memory",
+          "margins": {
+            "address": 12.6546307,
+            "entity": 9.3809004,
+            "kind": 5.1572266,
+            "relation": 15.322834,
+            "value": 16.9501534
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": {
+            "entity": "cyra",
+            "relation": "guards",
+            "value": "ivory"
+          }
+        },
+        "query_correct": false,
+        "record_correct": true,
+        "text": "The fact filed under beta is that cyra protects ivory."
+      }
+    ]
+  },
+  "state_oracle": {
+    "accuracy": 1.0,
+    "trials": [
+      {
+        "correct": true,
+        "expected": "aria carries ivory.",
+        "index": 0,
+        "utterance": "aria carries ivory."
+      },
+      {
+        "correct": true,
+        "expected": "elia guards cedar.",
+        "index": 1,
+        "utterance": "elia guards cedar."
+      },
+      {
+        "correct": true,
+        "expected": "faro carries cedar.",
+        "index": 2,
+        "utterance": "faro carries cedar."
+      },
+      {
+        "correct": true,
+        "expected": "borin observes ivory.",
+        "index": 3,
+        "utterance": "borin observes ivory."
+      },
+      {
+        "correct": true,
+        "expected": "faro guards ivory.",
+        "index": 4,
+        "utterance": "faro guards ivory."
+      },
+      {
+        "correct": true,
+        "expected": "cyra observes amber.",
+        "index": 5,
+        "utterance": "cyra observes amber."
+      },
+      {
+        "correct": true,
+        "expected": "dain guards amber.",
+        "index": 6,
+        "utterance": "dain guards amber."
+      },
+      {
+        "correct": true,
+        "expected": "aria observes ivory.",
+        "index": 7,
+        "utterance": "aria observes ivory."
+      },
+      {
+        "correct": true,
+        "expected": "elia observes amber.",
+        "index": 8,
+        "utterance": "elia observes amber."
+      }
+    ]
+  },
+  "validation": {
+    "errors": [
+      {
+        "exact": false,
+        "kind_correct": false,
+        "labels": {
+          "kind": "other"
+        },
+        "prediction": {
+          "address": "beta",
+          "kind": "query",
+          "margins": {
+            "address": 0.0973606,
+            "kind": 14.5774498
+          },
+          "model_sha256": "6cd38faee6b1430345c41e19c2411251cd6c38db5f0a442fd12eac03c130d625",
+          "record": null
+        },
+        "query_correct": false,
+        "record_correct": false,
+        "text": "What time is it?"
+      }
+    ],
+    "examples": 531,
+    "metrics": {
+      "complete_record_accuracy": 1.0,
+      "exact_accuracy": 0.9981167608286252,
+      "kind_accuracy": 0.9981167608286252,
+      "query_address_accuracy": 1.0
+    },
+    "prediction_sha256": "d084188ec7f5fd2ef88d0a07a029472e7e45f06aad78278a9d0ee9f9a71fb95f"
+  },
+  "verdict": "FAIL-SEQUENCE-SEMANTIC-BRIDGE"
+}

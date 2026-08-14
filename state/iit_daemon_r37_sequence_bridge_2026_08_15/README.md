@@ -1,6 +1,6 @@
 # IIT daemon R3.7 — English sequence-semantic bridge
 
-Status: PROTOCOL-FROZEN — no model result yet.
+Status: COMPLETE — `FAIL-SEQUENCE-SEMANTIC-BRIDGE`.
 
 R3.6 established a support-identifiability failure: the exhausted shallow family had only 54
 support tokens, ignored unseen decisive words and could not distinguish order or negation. R3.7
@@ -77,3 +77,40 @@ Any failed bridge gate stops later arm execution and interpretation. Results, in
 must be recorded without changing data, seed, steps, panels or bars. A pass supports only bounded
 English event-to-workspace causality and opens a later mouth experiment; it does not authorize
 participant mounting or production.
+
+## Result
+
+The one preregistered CPU run completed all 2,500 updates with 49,081 parameters and final balanced
+training loss `1.5050e-7`. State oracle and frozen query-address were both `1.0000`, but the frozen
+event-kind and complete-record bars failed at `0.8298` and `0.4722`. Shortcut stress was `0.7500`,
+independent confirmation `0.8750`, and the newly authored sequence panel `0.9583`. The unchanged
+gate therefore stopped before every R3.5 causal arm. `result.json` contains no `arms` member.
+
+The failure localizes a data/support problem rather than an IIT workspace failure. Random text-hash
+validation was `0.9981` exact while the record-combination-excluded frozen set was only `0.5957`
+exact. The split lets near-identical generated templates and atom combinations occur on both sides,
+so it is not an independent compositional validation. The extra training atoms also became
+competing output classes: frozen names such as `aria`, `borin`, `faro` and `dain` were repeatedly
+decoded as `faro`, `garen`, `jora` or `iona`. The model still accepted the quoted keyword sentence
+and reversed `Amber carries aria...` control as memory, and classified the unseen
+`Kindly fetch beta's stored content` query as memory. The new panel's `23/24` score is therefore
+not sufficient evidence; it is close to the newly authored training grammar.
+
+No data, seed, step count, panel or threshold was changed after seeing this result. A future
+protocol must fix the dataset split at the template/record group level and separate output-class
+expansion from sequence-order learning as independently matched axes. It must not reinterpret this
+run or resume the failed model. R3.5 remains valid, but R3.7, mouth scaling, IIT-mouth coupling,
+participant mounting and production remain blocked.
+
+The failed model and exact evidence are preserved in private HF model revision
+`dancinlab/anima-iit-daemon-r37-sequence-model-2026-08-15@4296d2a8b861a7990c4995d5a6cd1ce1f36b1829`.
+`custody.json` records five independently verified file sizes and SHA-256 values. The local model
+copy is removed after final reproducibility QA; Git retains protocol, result and custody evidence,
+not model weights or training JSONL.
+
+Focused IIT/Python/CHAT regression passed `100/100`. A second source-tree run and an isolated
+`anima_python-0.20.245` wheel run reproduced both model SHA
+`560fcae7…206f5` and result SHA `5f33dba9…56c7f` byte-for-byte. The isolated wheel SHA is
+`f8ca31ed…70a41`; model persistence retained mode `0600`. Python compile, JSON validation and the
+R3.6 frozen-failure regression also pass. HF authentication was supplied only through the secret
+CLI and no token was logged or stored in an artifact.
