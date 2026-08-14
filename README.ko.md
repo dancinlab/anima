@@ -136,6 +136,35 @@ address+record는 `25/36 = 0.6944`였다. held-out query 9개가 모두 `other`�
 프로덕션은 `BLOCKED-R36-NOT-A-CONVERSATIONAL-MOUTH`이고 303M/GPU 실행 근거가 되지 않는다.
 다음 단일축은 이 동결 centroid 대조군에 대한 order-aware 사건 encoder로 별도 사전등록한다.
 
+### 완료한 R3.6 로컬 마이크로 실험 고갈
+
+체크섬으로 고정한 CPU 전용 후속 세 묶음을
+`state/iit_daemon_r36_encoder_exhaustion_2026_08_15/`,
+`state/iit_daemon_r36_contrastive_support_2026_08_15/`,
+`state/iit_daemon_r36_support_identifiability_2026_08_15/`에 기록했다. 모두 기존 702개 support,
+47개 동결 사건, 제외 record 35개와 `0.90` 문턱을 그대로 재사용했다. 303M 모델, GPU,
+Vast.ai, participant, 프로덕션 경로는 사용하지 않았다.
+
+첫 battery는 표현×분류기 24개 arm을 모두 소진했다. Ridge 중 token unigram
+(`0.9787/1.0/1.0`), token unigram+bigram(`0.9787/1.0/1.0`), token positional
+(`1.0/1.0/1.0`)이 kind/query/complete-record 동결 관문을 통과했다. 그러나 shortcut stress는
+각각 `3/8`, `4/8`, `5/8`이고 세 arm 모두 역순 token 사건 `47개 중 46개`를 실제 사건으로
+받아들였다. 판정은 학습 의미가 아니라 `DIAGNOSED-SHALLOW-LEXICAL-SHORTCUT`이다.
+
+두 번째 battery는 contrastive-support 18개 arm을 모두 소진했다. 9개가 고정 stress 한 항목
+이상 개선했지만 robust pass는 0개다. 최고 token bigram arm도 stress `7/8`, 독립 confirmation
+`6/8`이고, 모든 negative를 positional arm에 넣으면 동결 query 정확도가 `1.0→0.0`으로
+회귀했다. 판정은 `DIAGNOSED-MISSING-CONTRASTIVE-SUPPORT`다.
+
+마지막 support-identifiability 감사는 이전 prediction hash를 모두 재현했다. Support token은
+54종뿐이며 stress coverage `75.81%`, confirmation coverage `60.00%`다. 실패 query/negation 중
+사전등록 OOV 의미 probe가 있는 사례 16개에서 probe를 다른 미지 token으로 바꿔도 예측이
+변하지 않았다. 판정은 `SUPPORT-GAP-IDENTIFIED`다. 소진한 shallow 계열은 등록 vocabulary를
+보간할 뿐 자료에 없는 의미 동등성을 학습할 수 없다. 결과 이후 template 추가, n-gram 폭,
+centroid/ridge 상수, 로컬 shallow arm은 종료한다. 다음 작업은 별도 사전등록한 provenance
+언어 자료와 learned sequence-semantic encoder가 필요하다. R3.7, 303M, IIT-mouth 결합,
+프로덕션은 계속 차단한다. 집중 Python/IIT/CHAT QA는 `91/91` 통과했다.
+
 ### 완료한 native-303M replay 복구
 
 `state/anima_native_303m_replay_recovery_2026_08_14/`에 별도 탑재된 mouth의 실제 HF

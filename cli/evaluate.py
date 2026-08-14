@@ -1696,6 +1696,9 @@ def evaluate_usage():
     print("  --iit-daemon-composition <protocol.json> [--out <result.json>]: run the protocol-pinned")
     print("      R3.5 IIT-selected entity/relation/value reset/shuffle/lesion/recovery gate.")
     print("  --iit-daemon-semantic-bridge <protocol.json> [--out <result.json>]")
+    print("  --iit-daemon-semantic-bridge-sweep <protocol.json> [--out <result.json>]")
+    print("  --iit-daemon-semantic-bridge-contrastive <protocol.json> [--out <result.json>]")
+    print("  --iit-daemon-semantic-bridge-support-audit <protocol.json> [--out <result.json>]")
     print("      [--semantic-bridge-model-out <model.json>]: run the R3.6 learned byte-event bridge gate.")
     print("  --store-component-swap <groups> --store-swap-from <donor.clm>: EVAL-ONLY causal")
     print("      surgery (H_9724) — graft CLMS bridge components from a donor ckpt into the host")
@@ -5924,6 +5927,726 @@ def iit_daemon_semantic_bridge_run(argv):
     print("  verdict: %s (bounded learned bridge only; not conversational)" % verdict)
     if out_path:
         _store_causality_write(out_path, base_result)
+        print("  wrote %s" % out_path)
+    return 0 if verdict == protocol["required_verdict"] else 1
+
+
+def iit_daemon_semantic_bridge_sweep_run(argv):
+    """Exhaust the preregistered local R3.6 representation/classifier micro arms."""
+    import hashlib as _hashlib
+    import iit_daemon as ID
+
+    protocol_path = evaluate_strval(argv, "--iit-daemon-semantic-bridge-sweep", "")
+    out_path = evaluate_strval(argv, "--out", "")
+    if not protocol_path:
+        print("ERROR: semantic bridge sweep needs a protocol", file=sys.stderr)
+        return 2
+
+    def _digest(path):
+        sha = _hashlib.sha256()
+        with open(path, "rb") as handle:
+            for block in iter(lambda: handle.read(1 << 20), b""):
+                sha.update(block)
+        return sha.hexdigest()
+
+    def _read(path, limit, name):
+        size = os.path.getsize(path)
+        if size <= 0 or size > limit:
+            raise ValueError(name + " size is invalid")
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+
+    requested_path = os.path.abspath(protocol_path)
+    requested_dir = os.path.dirname(requested_path)
+    protocol = _read(requested_path, 65536, "semantic bridge sweep protocol")
+    if not isinstance(protocol, dict) or protocol.get("schema") != \
+            ID.SEMANTIC_BRIDGE_EXHAUSTION_PROTOCOL_SCHEMA or set(protocol) != {
+                "schema", "date", "base", "representations", "classifiers", "constants",
+                "bars", "stress", "ablations", "required_verdicts", "deployment",
+                "non_claims"}:
+        raise ValueError("semantic bridge sweep protocol fields mismatch")
+    if protocol["representations"] != list(ID._SEMANTIC_MICRO_REPRESENTATIONS) or \
+            protocol["classifiers"] != list(ID._SEMANTIC_MICRO_CLASSIFIERS):
+        raise ValueError("semantic bridge sweep arm order mismatch")
+    constants = protocol["constants"]
+    if constants != {"hashed_dim": 2048, "ridge_lambda": 1.0,
+                     "bernoulli_alpha": 1.0, "idf_smoothing": 1.0}:
+        raise ValueError("semantic bridge sweep constants mismatch")
+    bars = protocol["bars"]
+    if bars != {"kind": 0.9, "query_address": 0.9, "complete_record": 0.9,
+                "stress_exact": 1.0, "leave_template_out": 0.9}:
+        raise ValueError("semantic bridge sweep bars mismatch")
+    if protocol["ablations"] != ["token-order-shuffle", "frame-remove", "atom-remove"]:
+        raise ValueError("semantic bridge sweep ablations mismatch")
+    allowed_verdicts = ["SUPPORTED-ROBUST-ORDER-AWARE-BRIDGE-MICRO",
+                        "DIAGNOSED-SHALLOW-LEXICAL-SHORTCUT",
+                        "FAIL-NO-FROZEN-BRIDGE-PASS"]
+    if protocol["required_verdicts"] != allowed_verdicts or \
+            protocol["deployment"] != "BLOCKED-R36-MICRO-ONLY" or \
+            not isinstance(protocol["non_claims"], list) or not protocol["non_claims"]:
+        raise ValueError("semantic bridge sweep verdict contract mismatch")
+
+    base = protocol["base"]
+    if not isinstance(base, dict) or set(base) != {
+            "protocol_path", "protocol_sha256", "panel_path", "panel_sha256",
+            "result_path", "result_sha256"}:
+        raise ValueError("semantic bridge sweep base fields mismatch")
+
+    def _pinned(spec_path, spec_sha, name):
+        path = os.path.normpath(os.path.join(requested_dir, spec_path))
+        if not os.path.isfile(path) or _digest(path) != spec_sha:
+            raise ValueError(name + " artifact mismatch")
+        return path
+
+    base_protocol_path = _pinned(base["protocol_path"], base["protocol_sha256"],
+                                 "semantic bridge base protocol")
+    panel_path = _pinned(base["panel_path"], base["panel_sha256"],
+                         "semantic bridge base panel")
+    base_result_path = _pinned(base["result_path"], base["result_sha256"],
+                               "semantic bridge base result")
+    base_protocol = _read(base_protocol_path, 65536, "semantic bridge base protocol")
+    panel = _read(panel_path, 65536, "semantic bridge base panel")
+    base_result = _read(base_result_path, 4 << 20, "semantic bridge base result")
+    if base_protocol.get("schema") != ID.SEMANTIC_BRIDGE_PROTOCOL_SCHEMA or \
+            panel.get("schema") != ID.SEMANTIC_BRIDGE_PANEL_SCHEMA or \
+            base_result.get("verdict") != "FAIL-LEARNED-SEMANTIC-BRIDGE":
+        raise ValueError("semantic bridge frozen control mismatch")
+    if bars["kind"] != base_protocol["bars"]["bridge_kind"] or \
+            bars["query_address"] != base_protocol["bars"]["bridge_query_address"] or \
+            bars["complete_record"] != base_protocol["bars"]["bridge_complete_record"]:
+        raise ValueError("semantic bridge sweep moved a frozen bar")
+
+    base_dir = os.path.dirname(base_protocol_path)
+    r35_spec = base_protocol["r35"]
+    r35_panel_path = os.path.normpath(os.path.join(base_dir, r35_spec["panel_path"]))
+    r35_result_path = os.path.normpath(os.path.join(base_dir, r35_spec["result_path"]))
+    if _digest(r35_panel_path) != r35_spec["panel_sha256"] or \
+            _digest(r35_result_path) != r35_spec["result_sha256"]:
+        raise ValueError("semantic bridge sweep R3.5 artifact mismatch")
+    r35_panel = _read(r35_panel_path, 65536, "semantic bridge sweep R3.5 panel")
+    r35_result = _read(r35_result_path, 4 << 20, "semantic bridge sweep R3.5 result")
+    if r35_panel.get("schema") != ID.COMPOSITION_PANEL_SCHEMA or \
+            r35_result.get("verdict") != r35_spec["required_verdict"]:
+        raise ValueError("semantic bridge sweep R3.5 gate mismatch")
+
+    atoms = panel["atoms"]
+    addresses = atoms["addresses"]
+    relations = atoms["relations"]
+    heldout_records = set()
+    normalized_trials = []
+    for raw_row in r35_panel["trials"]:
+        records = ID.validate_content_records(raw_row["records"], addresses)
+        selected = records[raw_row["active_address"]]
+        counterfactual = dict(selected, value=raw_row["counterfactual_value"])
+        for record in list(records.values()) + [counterfactual, raw_row["irrelevant_record"]]:
+            heldout_records.add(tuple(record[field] for field in ID.CONTENT_RECORD_FIELDS))
+        normalized_trials.append({"records": records, "active_address": raw_row["active_address"]})
+
+    training = []
+    groups = {}
+    memory_templates = panel["support"]["memory_templates"]
+    query_templates = panel["support"]["query_templates"]
+    for address in addresses:
+        for entity in atoms["entities"]:
+            for relation in sorted(relations):
+                for value in atoms["values"]:
+                    if (entity, relation, value) in heldout_records:
+                        continue
+                    for surface in relations[relation]:
+                        for template_index, template in enumerate(memory_templates):
+                            example = {"text": template.format(
+                                address=address, entity=entity, surface=surface, value=value),
+                                "labels": {"kind": "memory", "address": address,
+                                           "entity": entity, "relation": relation,
+                                           "value": value}}
+                            training.append(example)
+                            groups.setdefault("memory-%d" % template_index, []).append(example)
+        for template_index, template in enumerate(query_templates):
+            example = {"text": template.format(address=address),
+                       "labels": {"kind": "query", "address": address}}
+            training.append(example)
+            groups.setdefault("query-%d" % template_index, []).append(example)
+    for text_value in panel["support"]["other_events"]:
+        training.append({"text": text_value, "labels": {"kind": "other"}})
+
+    frozen = []
+    eval_memory_templates = panel["evaluation"]["memory_templates"]
+    correction_template = panel["evaluation"]["correction_template"]
+    query_template = panel["evaluation"]["query_template"]
+    for row_index, row in enumerate(normalized_trials):
+        for offset, address in enumerate(addresses):
+            record = row["records"][address]
+            surface_options = relations[record["relation"]]
+            text_value = eval_memory_templates[(row_index + offset) % len(eval_memory_templates)].format(
+                address=address, entity=record["entity"],
+                surface=surface_options[(row_index + offset) % len(surface_options)],
+                value=record["value"])
+            frozen.append({"text": text_value, "labels": dict(
+                kind="memory", address=address, **record)})
+        selected = row["records"][row["active_address"]]
+        selected_surfaces = relations[selected["relation"]]
+        frozen.append({"text": correction_template.format(
+            address=row["active_address"], entity=selected["entity"],
+            surface=selected_surfaces[(row_index + 1) % len(selected_surfaces)],
+            value=selected["value"]), "labels": dict(
+                kind="memory", address=row["active_address"], **selected)})
+        frozen.append({"text": query_template.format(address=row["active_address"]),
+                       "labels": {"kind": "query", "address": row["active_address"]}})
+    frozen.extend({"text": text_value, "labels": {"kind": "other"}}
+                  for text_value in panel["evaluation"]["other_events"])
+    stress = [ID._semantic_bridge_example(row) for row in protocol["stress"]]
+    if len(training) != 702 or len(frozen) != 47 or len(heldout_records) != 35:
+        raise ValueError("semantic bridge sweep fixture count mismatch")
+
+    frozen_labels = [row["labels"] for row in frozen]
+    known_atom_tokens = set(addresses + atoms["entities"] + atoms["values"])
+    for relation, surfaces in relations.items():
+        known_atom_tokens.add(relation)
+        for surface in surfaces:
+            known_atom_tokens.update(ID._semantic_micro_tokens(surface))
+
+    def _ablation_examples(mode):
+        rows = []
+        for row in frozen:
+            tokens = ID._semantic_micro_tokens(row["text"])
+            if mode == "token-order-shuffle":
+                text_value = " ".join(reversed(tokens))
+                labels = {"kind": "other"}
+            elif mode == "frame-remove":
+                kept = [token for token in tokens if token in known_atom_tokens]
+                text_value = " ".join(kept) or "empty"
+                labels = row["labels"]
+            else:
+                kept = [token for token in tokens if token not in known_atom_tokens]
+                text_value = " ".join(kept) or "empty"
+                labels = row["labels"]
+            rows.append({"text": text_value, "labels": labels})
+        return rows
+
+    def _summary(value):
+        return {key: item for key, item in value.items() if key != "errors"}
+
+    arms = []
+    frozen_passers = []
+    for representation in protocol["representations"]:
+        for classifier in protocol["classifiers"]:
+            frozen_result = ID.semantic_bridge_micro_evaluate(
+                training, frozen, representation, classifier, constants)
+            metrics = frozen_result["metrics"]
+            frozen_pass = metrics["kind_accuracy"] >= bars["kind"] and \
+                metrics["query_address_accuracy"] >= bars["query_address"] and \
+                metrics["complete_record_accuracy"] >= bars["complete_record"]
+            stress_result = ID.semantic_bridge_micro_evaluate(
+                training, stress, representation, classifier, constants)
+            arm = {"representation": representation, "classifier": classifier,
+                   "frozen": frozen_result, "frozen_pass": frozen_pass,
+                   "stress": stress_result, "stress_exact":
+                       stress_result["metrics"]["exact_accuracy"],
+                   "leave_template_out": None, "ablations": None,
+                   "robust_pass": False}
+            if frozen_pass:
+                fold_rows = []
+                correct_weighted = 0.0
+                example_count = 0
+                for group_name in sorted(groups):
+                    heldout = groups[group_name]
+                    heldout_texts = {row["text"] for row in heldout}
+                    support_rows = [row for row in training if row["text"] not in heldout_texts]
+                    fold_result = ID.semantic_bridge_micro_evaluate(
+                        support_rows, heldout, representation, classifier, constants)
+                    fold_rows.append({"group": group_name, **_summary(fold_result)})
+                    correct_weighted += fold_result["metrics"]["exact_accuracy"] * len(heldout)
+                    example_count += len(heldout)
+                leave_accuracy = correct_weighted / example_count
+                arm["leave_template_out"] = {"accuracy": leave_accuracy,
+                                               "examples": example_count, "folds": fold_rows}
+                ablations = {}
+                for mode in protocol["ablations"]:
+                    ablation_result = ID.semantic_bridge_micro_evaluate(
+                        training, _ablation_examples(mode), representation, classifier, constants)
+                    ablations[mode] = _summary(ablation_result)
+                arm["ablations"] = ablations
+                arm["robust_pass"] = stress_result["metrics"]["exact_accuracy"] >= \
+                    bars["stress_exact"] and leave_accuracy >= bars["leave_template_out"]
+                frozen_passers.append(arm)
+            arms.append(arm)
+
+    control = arms[0]
+    expected_control = base_result["bridge"]["metrics"]
+    control_reproduced = (
+        control["frozen"]["metrics"]["kind_accuracy"] == expected_control["kind_accuracy"] and
+        control["frozen"]["metrics"]["query_address_accuracy"] ==
+        expected_control["query_address_accuracy"] and
+        control["frozen"]["metrics"]["complete_record_accuracy"] ==
+        expected_control["complete_record_accuracy"])
+    robust = [arm for arm in frozen_passers if arm["robust_pass"]]
+    if not control_reproduced:
+        verdict = "INVALID-MICRO-INSTRUMENT"
+    elif robust:
+        verdict = allowed_verdicts[0]
+    elif frozen_passers:
+        verdict = allowed_verdicts[1]
+    else:
+        verdict = allowed_verdicts[2]
+    selected = robust[0] if robust else None
+    result = {
+        "schema": "anima-iit-daemon-semantic-bridge-exhaustion-result/1",
+        "date": protocol["date"], "protocol": os.path.basename(requested_path),
+        "protocol_sha256": _digest(requested_path),
+        "base": {key: value for key, value in base.items() if key.endswith("sha256")},
+        "claim_scope": "diagnostic shallow event-encoder exhaustion only",
+        "non_claims": list(protocol["non_claims"]), "bars": dict(bars),
+        "fixture": {"training_examples": len(training), "frozen_examples": len(frozen),
+                    "stress_examples": len(stress), "heldout_complete_records":
+                        len(heldout_records), "template_folds": len(groups)},
+        "control_reproduced": control_reproduced,
+        "arms": arms, "frozen_pass_count": len(frozen_passers),
+        "robust_pass_count": len(robust),
+        "selected_candidate": ({"representation": selected["representation"],
+                                "classifier": selected["classifier"]}
+                               if selected is not None else None),
+        "verdict": verdict, "deployment": protocol["deployment"],
+        "next_gate": "R36-SEQUENCE-SEMANTICS-MICRO" if not robust else
+                     "R36-INDEPENDENT-CONFIRMATION-MICRO",
+    }
+    print("[iit-daemon R3.6 · semantic bridge encoder exhaustion]")
+    print("  arms=%d frozen-pass=%d robust-pass=%d control=%s" %
+          (len(arms), len(frozen_passers), len(robust), control_reproduced))
+    print("  verdict: %s" % verdict)
+    if out_path:
+        _store_causality_write(out_path, result)
+        print("  wrote %s" % out_path)
+    return 2 if verdict == "INVALID-MICRO-INSTRUMENT" else 0
+
+
+def iit_daemon_semantic_bridge_contrastive_run(argv):
+    """Run the preregistered contrastive-support follow-up over frozen shallow passers."""
+    import hashlib as _hashlib
+    import iit_daemon as ID
+
+    protocol_path = evaluate_strval(argv, "--iit-daemon-semantic-bridge-contrastive", "")
+    out_path = evaluate_strval(argv, "--out", "")
+    if not protocol_path:
+        print("ERROR: contrastive bridge microexperiment needs a protocol", file=sys.stderr)
+        return 2
+
+    def _digest(path):
+        sha = _hashlib.sha256()
+        with open(path, "rb") as handle:
+            for block in iter(lambda: handle.read(1 << 20), b""):
+                sha.update(block)
+        return sha.hexdigest()
+
+    def _read(path, limit, name):
+        size = os.path.getsize(path)
+        if size <= 0 or size > limit:
+            raise ValueError(name + " size is invalid")
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+
+    requested_path = os.path.abspath(protocol_path)
+    requested_dir = os.path.dirname(requested_path)
+    protocol = _read(requested_path, 65536, "contrastive bridge protocol")
+    if not isinstance(protocol, dict) or protocol.get("schema") != \
+            ID.SEMANTIC_BRIDGE_CONTRASTIVE_PROTOCOL_SCHEMA or set(protocol) != {
+                "schema", "date", "base_exhaustion", "representations", "classifier",
+                "support_arms", "constants", "bars", "confirmation", "required_verdicts",
+                "deployment", "non_claims"}:
+        raise ValueError("contrastive bridge protocol fields mismatch")
+    if protocol["representations"] != ["token-unigram", "token-unigram-bigram",
+                                        "token-positional"] or \
+            protocol["classifier"] != "ridge-ovr" or \
+            protocol["support_arms"] != ["original", "negation", "keyword-lure",
+                                         "word-salad", "no-op", "all"]:
+        raise ValueError("contrastive bridge arm order mismatch")
+    constants = protocol["constants"]
+    if constants != {"hashed_dim": 2048, "ridge_lambda": 1.0,
+                     "bernoulli_alpha": 1.0, "idf_smoothing": 1.0}:
+        raise ValueError("contrastive bridge constants mismatch")
+    bars = protocol["bars"]
+    if bars != {"kind": 0.9, "query_address": 0.9, "complete_record": 0.9,
+                "stress_exact": 1.0, "confirmation_exact": 1.0,
+                "leave_template_out": 0.9, "material_stress_gain": 0.125}:
+        raise ValueError("contrastive bridge bars mismatch")
+    verdicts = ["SUPPORTED-CONTRASTIVE-BOUNDARY-MICRO",
+                "DIAGNOSED-MISSING-CONTRASTIVE-SUPPORT",
+                "FAIL-SHALLOW-SEQUENCE-SUPPORT"]
+    if protocol["required_verdicts"] != verdicts or \
+            protocol["deployment"] != "BLOCKED-R36-MICRO-ONLY" or \
+            not protocol["non_claims"]:
+        raise ValueError("contrastive bridge verdict contract mismatch")
+
+    base = protocol["base_exhaustion"]
+    if not isinstance(base, dict) or set(base) != {
+            "protocol_path", "protocol_sha256", "result_path", "result_sha256"}:
+        raise ValueError("contrastive bridge base fields mismatch")
+    exhaustion_protocol_path = os.path.normpath(os.path.join(
+        requested_dir, base["protocol_path"]))
+    exhaustion_result_path = os.path.normpath(os.path.join(
+        requested_dir, base["result_path"]))
+    if _digest(exhaustion_protocol_path) != base["protocol_sha256"] or \
+            _digest(exhaustion_result_path) != base["result_sha256"]:
+        raise ValueError("contrastive bridge base artifact mismatch")
+    exhaustion_protocol = _read(exhaustion_protocol_path, 65536,
+                                "contrastive bridge exhaustion protocol")
+    exhaustion_result = _read(exhaustion_result_path, 1 << 20,
+                              "contrastive bridge exhaustion result")
+    if exhaustion_result.get("verdict") != "DIAGNOSED-SHALLOW-LEXICAL-SHORTCUT" or \
+            exhaustion_result.get("frozen_pass_count") != 3:
+        raise ValueError("contrastive bridge base verdict mismatch")
+
+    exhaustion_dir = os.path.dirname(exhaustion_protocol_path)
+    original = exhaustion_protocol["base"]
+    base_protocol_path = os.path.normpath(os.path.join(exhaustion_dir,
+                                                       original["protocol_path"]))
+    panel_path = os.path.normpath(os.path.join(exhaustion_dir, original["panel_path"]))
+    if _digest(base_protocol_path) != original["protocol_sha256"] or \
+            _digest(panel_path) != original["panel_sha256"]:
+        raise ValueError("contrastive bridge original artifact mismatch")
+    base_protocol = _read(base_protocol_path, 65536, "contrastive bridge base protocol")
+    panel = _read(panel_path, 65536, "contrastive bridge panel")
+    base_protocol_dir = os.path.dirname(base_protocol_path)
+    r35_path = os.path.normpath(os.path.join(
+        base_protocol_dir, base_protocol["r35"]["panel_path"]))
+    if _digest(r35_path) != base_protocol["r35"]["panel_sha256"]:
+        raise ValueError("contrastive bridge R3.5 panel mismatch")
+    r35_panel = _read(r35_path, 65536, "contrastive bridge R3.5 panel")
+    fixture = ID.semantic_bridge_micro_fixture(panel, r35_panel)
+    training = fixture["training"]
+    frozen = fixture["frozen"]
+    groups = fixture["groups"]
+    stress = [ID._semantic_bridge_example(row) for row in exhaustion_protocol["stress"]]
+    confirmation = [ID._semantic_bridge_example(row) for row in protocol["confirmation"]]
+
+    addresses = fixture["addresses"]
+    entities = fixture["entities"]
+    values = fixture["values"]
+    relations = fixture["relations"]
+    additions = {
+        "negation": ([{"text": template.format(address=address),
+                       "labels": {"kind": "other"}}
+                      for address in addresses for template in (
+                          "Do not recall {address}.", "Never retrieve {address}.",
+                          "Please do not read memory {address}.")]),
+        "keyword-lure": ([{"text": "The word %s appears here." % address,
+                           "labels": {"kind": "other"}} for address in addresses] + [
+                          {"text": "Retrieve is a vocabulary word.",
+                           "labels": {"kind": "other"}},
+                          {"text": "A sentence may mention memory without storing a fact.",
+                           "labels": {"kind": "other"}}]),
+        "word-salad": [],
+        "no-op": [{"text": text_value, "labels": {"kind": "other"}} for text_value in (
+            "Nothing needs to be stored.", "No memory update is requested.",
+            "Keep the session unchanged.", "Leave memory as it is.")],
+    }
+    for address_index, address in enumerate(addresses):
+        for entity_index, entity in enumerate(entities):
+            relation = sorted(relations)[(address_index + entity_index) % len(relations)]
+            surface = relations[relation][(address_index + entity_index) % len(relations[relation])]
+            value = values[(2 * address_index + entity_index) % len(values)]
+            additions["word-salad"].append({
+                "text": "Words only: %s, %s, %s, %s." %
+                        (value, surface, entity, address),
+                "labels": {"kind": "other"}})
+    additions["all"] = [row for name in ("negation", "keyword-lure", "word-salad", "no-op")
+                         for row in additions[name]]
+    additions["original"] = []
+    for name, rows in additions.items():
+        checked = [ID._semantic_bridge_example(row) for row in rows]
+        if len({row["text"] for row in checked}) != len(checked) or \
+                {row["text"] for row in checked} & {row["text"] for row in training}:
+            raise ValueError("contrastive bridge support rows are not unique: " + name)
+        additions[name] = checked
+
+    def _summary(value):
+        return {key: item for key, item in value.items() if key != "errors"}
+
+    original_stress = {}
+    arms = []
+    robust = []
+    material = []
+    for representation in protocol["representations"]:
+        for support_arm in protocol["support_arms"]:
+            support_rows = training + additions[support_arm]
+            frozen_result = ID.semantic_bridge_micro_evaluate(
+                support_rows, frozen, representation, protocol["classifier"], constants)
+            frozen_metrics = frozen_result["metrics"]
+            frozen_pass = frozen_metrics["kind_accuracy"] >= bars["kind"] and \
+                frozen_metrics["query_address_accuracy"] >= bars["query_address"] and \
+                frozen_metrics["complete_record_accuracy"] >= bars["complete_record"]
+            stress_result = ID.semantic_bridge_micro_evaluate(
+                support_rows, stress, representation, protocol["classifier"], constants)
+            confirmation_result = ID.semantic_bridge_micro_evaluate(
+                support_rows, confirmation, representation, protocol["classifier"], constants)
+            if support_arm == "original":
+                original_stress[representation] = stress_result["metrics"]["exact_accuracy"]
+            leave = None
+            if frozen_pass:
+                correct = 0.0
+                count = 0
+                folds = []
+                for group_name in sorted(groups):
+                    heldout = groups[group_name]
+                    heldout_text = {row["text"] for row in heldout}
+                    fold_support = [row for row in training if row["text"] not in heldout_text] + \
+                        additions[support_arm]
+                    fold = ID.semantic_bridge_micro_evaluate(
+                        fold_support, heldout, representation, protocol["classifier"], constants)
+                    folds.append({"group": group_name, **_summary(fold)})
+                    correct += fold["metrics"]["exact_accuracy"] * len(heldout)
+                    count += len(heldout)
+                leave = {"accuracy": correct / count, "examples": count, "folds": folds}
+            arm = {"representation": representation, "support_arm": support_arm,
+                   "support_examples": len(support_rows),
+                   "support_addition_sha256": ID._sha256(additions[support_arm]),
+                   "frozen": frozen_result, "frozen_pass": frozen_pass,
+                   "stress": stress_result, "confirmation": confirmation_result,
+                   "leave_template_out": leave, "robust_pass": False,
+                   "material_stress_gain": False}
+            if support_arm != "original":
+                arm["material_stress_gain"] = frozen_pass and \
+                    stress_result["metrics"]["exact_accuracy"] - \
+                    original_stress[representation] >= bars["material_stress_gain"]
+            if arm["material_stress_gain"]:
+                material.append(arm)
+            arm["robust_pass"] = frozen_pass and \
+                stress_result["metrics"]["exact_accuracy"] >= bars["stress_exact"] and \
+                confirmation_result["metrics"]["exact_accuracy"] >= \
+                    bars["confirmation_exact"] and leave is not None and \
+                leave["accuracy"] >= bars["leave_template_out"]
+            if arm["robust_pass"]:
+                robust.append(arm)
+            arms.append(arm)
+
+    base_reproduced = all(
+        next(arm for arm in arms if arm["representation"] == representation and
+             arm["support_arm"] == "original")["frozen"]["prediction_sha256"] ==
+        next(arm for arm in exhaustion_result["arms"] if
+             arm["representation"] == representation and
+             arm["classifier"] == "ridge-ovr")["frozen"]["prediction_sha256"]
+        for representation in protocol["representations"])
+    if not base_reproduced or len(arms) != 18:
+        verdict = "INVALID-CONTRASTIVE-INSTRUMENT"
+    elif robust:
+        verdict = verdicts[0]
+    elif material:
+        verdict = verdicts[1]
+    else:
+        verdict = verdicts[2]
+    selected = robust[0] if robust else None
+    result = {
+        "schema": "anima-iit-daemon-semantic-bridge-contrastive-result/1",
+        "date": protocol["date"], "protocol": os.path.basename(requested_path),
+        "protocol_sha256": _digest(requested_path),
+        "base_protocol_sha256": base["protocol_sha256"],
+        "base_result_sha256": base["result_sha256"],
+        "claim_scope": "contrastive shallow event-boundary microdiagnosis only",
+        "non_claims": list(protocol["non_claims"]), "bars": dict(bars),
+        "fixture": {"sha256": fixture["sha256"], "training_examples": len(training),
+                    "stress_examples": len(stress), "confirmation_examples": len(confirmation),
+                    "template_folds": len(groups), "addition_counts":
+                        {name: len(rows) for name, rows in additions.items()}},
+        "base_reproduced": base_reproduced, "arms": arms,
+        "material_improvement_count": len(material), "robust_pass_count": len(robust),
+        "selected_candidate": ({"representation": selected["representation"],
+                                "support_arm": selected["support_arm"]}
+                               if selected is not None else None),
+        "verdict": verdict, "deployment": protocol["deployment"],
+        "next_gate": "R36-LEARNED-SEQUENCE-SEMANTICS" if not robust else
+                     "R36-INDEPENDENT-CONFIRMATION-MICRO",
+    }
+    print("[iit-daemon R3.6 · contrastive support microexperiment]")
+    print("  arms=%d material=%d robust=%d base=%s" %
+          (len(arms), len(material), len(robust), base_reproduced))
+    print("  verdict: %s" % verdict)
+    if out_path:
+        _store_causality_write(out_path, result)
+        print("  wrote %s" % out_path)
+    return 2 if verdict == "INVALID-CONTRASTIVE-INSTRUMENT" else 0
+
+
+def iit_daemon_semantic_bridge_support_audit_run(argv):
+    """Audit whether failed shallow distinctions are identifiable from frozen support."""
+    import hashlib as _hashlib
+    import iit_daemon as ID
+
+    protocol_path = evaluate_strval(argv, "--iit-daemon-semantic-bridge-support-audit", "")
+    out_path = evaluate_strval(argv, "--out", "")
+    if not protocol_path:
+        print("ERROR: semantic bridge support audit needs a protocol", file=sys.stderr)
+        return 2
+
+    def _digest(path):
+        sha = _hashlib.sha256()
+        with open(path, "rb") as handle:
+            for block in iter(lambda: handle.read(1 << 20), b""):
+                sha.update(block)
+        return sha.hexdigest()
+
+    def _read(path, limit, name):
+        size = os.path.getsize(path)
+        if size <= 0 or size > limit:
+            raise ValueError(name + " size is invalid")
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+
+    requested_path = os.path.abspath(protocol_path)
+    requested_dir = os.path.dirname(requested_path)
+    protocol = _read(requested_path, 65536, "semantic bridge support audit protocol")
+    if not isinstance(protocol, dict) or protocol.get("schema") != \
+            ID.SEMANTIC_BRIDGE_SUPPORT_AUDIT_PROTOCOL_SCHEMA or set(protocol) != {
+                "schema", "date", "encoder_exhaustion", "contrastive", "representations",
+                "classifier", "sentinel_prefix", "probe_tokens", "required_verdict",
+                "deployment", "non_claims"}:
+        raise ValueError("semantic bridge support audit fields mismatch")
+    if protocol["representations"] != ["token-unigram", "token-unigram-bigram",
+                                        "token-positional"] or \
+            protocol["classifier"] != "ridge-ovr" or \
+            protocol["sentinel_prefix"] != "unseenprobe" or \
+            protocol["probe_tokens"] != ["fetch", "tell", "never", "not", "untouched", "only"]:
+        raise ValueError("semantic bridge support audit contract mismatch")
+    if protocol["required_verdict"] != "SUPPORT-GAP-IDENTIFIED" or \
+            protocol["deployment"] != "BLOCKED-R36-MICRO-EXHAUSTED" or \
+            not protocol["non_claims"]:
+        raise ValueError("semantic bridge support audit verdict contract mismatch")
+
+    loaded = {}
+    for name in ("encoder_exhaustion", "contrastive"):
+        spec = protocol[name]
+        if not isinstance(spec, dict) or set(spec) != {
+                "protocol_path", "protocol_sha256", "result_path", "result_sha256"}:
+            raise ValueError("semantic bridge support audit pinned fields mismatch")
+        protocol_file = os.path.normpath(os.path.join(requested_dir, spec["protocol_path"]))
+        result_file = os.path.normpath(os.path.join(requested_dir, spec["result_path"]))
+        if _digest(protocol_file) != spec["protocol_sha256"] or \
+                _digest(result_file) != spec["result_sha256"]:
+            raise ValueError("semantic bridge support audit pinned artifact mismatch")
+        loaded[name] = (_read(protocol_file, 65536, name + " protocol"),
+                        _read(result_file, 1 << 20, name + " result"), protocol_file)
+    exhaustion_protocol, exhaustion_result, exhaustion_protocol_path = \
+        loaded["encoder_exhaustion"]
+    contrast_protocol, contrast_result, _ = loaded["contrastive"]
+    if exhaustion_result.get("verdict") != "DIAGNOSED-SHALLOW-LEXICAL-SHORTCUT" or \
+            contrast_result.get("verdict") != "DIAGNOSED-MISSING-CONTRASTIVE-SUPPORT":
+        raise ValueError("semantic bridge support audit prior verdict mismatch")
+
+    exhaustion_dir = os.path.dirname(exhaustion_protocol_path)
+    base = exhaustion_protocol["base"]
+    base_protocol_path = os.path.normpath(os.path.join(exhaustion_dir, base["protocol_path"]))
+    panel_path = os.path.normpath(os.path.join(exhaustion_dir, base["panel_path"]))
+    if _digest(base_protocol_path) != base["protocol_sha256"] or \
+            _digest(panel_path) != base["panel_sha256"]:
+        raise ValueError("semantic bridge support audit original artifact mismatch")
+    base_protocol = _read(base_protocol_path, 65536, "support audit base protocol")
+    panel = _read(panel_path, 65536, "support audit base panel")
+    r35_path = os.path.normpath(os.path.join(
+        os.path.dirname(base_protocol_path), base_protocol["r35"]["panel_path"]))
+    if _digest(r35_path) != base_protocol["r35"]["panel_sha256"]:
+        raise ValueError("semantic bridge support audit R3.5 mismatch")
+    fixture = ID.semantic_bridge_micro_fixture(
+        panel, _read(r35_path, 65536, "support audit R3.5 panel"))
+    training = fixture["training"]
+    constants = exhaustion_protocol["constants"]
+    panels = {
+        "stress": [ID._semantic_bridge_example(row) for row in exhaustion_protocol["stress"]],
+        "confirmation": [ID._semantic_bridge_example(row)
+                         for row in contrast_protocol["confirmation"]],
+    }
+    support_token_vocabulary = sorted({token for row in training
+                                       for token in ID._semantic_micro_tokens(row["text"])})
+    support_tokens = set(support_token_vocabulary)
+    probe_tokens = set(protocol["probe_tokens"])
+    audits = []
+    identified_cases = []
+    reproduction = []
+    for representation in protocol["representations"]:
+        original_arm = next(arm for arm in exhaustion_result["arms"] if
+                            arm["representation"] == representation and
+                            arm["classifier"] == protocol["classifier"])
+        frozen_now = ID.semantic_bridge_micro_evaluate(
+            training, fixture["frozen"], representation, protocol["classifier"], constants)
+        reproduction.append(frozen_now["prediction_sha256"] ==
+                            original_arm["frozen"]["prediction_sha256"])
+        for panel_name, examples in panels.items():
+            original = ID.semantic_bridge_micro_evaluate(
+                training, examples, representation, protocol["classifier"], constants,
+                include_rows=True)
+            replacement_examples = []
+            row_oov = []
+            for row_index, row in enumerate(examples):
+                tokens = ID._semantic_micro_tokens(row["text"])
+                oov = sorted({token for token in tokens if token not in support_tokens and
+                              re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", token)})
+                row_oov.append(oov)
+                replaced = [((protocol["sentinel_prefix"] + str(row_index))
+                             if token in oov else token) for token in tokens]
+                replacement_examples.append({"text": " ".join(replaced),
+                                             "labels": row["labels"]})
+            replaced = ID.semantic_bridge_micro_evaluate(
+                training, replacement_examples, representation, protocol["classifier"],
+                constants, include_rows=True)
+            cases = []
+            for row_index, (source, changed) in enumerate(zip(
+                    original["rows"], replaced["rows"])):
+                invariant = source["prediction"] == changed["prediction"]
+                failed = not source["exact"]
+                decisive_oov = sorted(probe_tokens & set(row_oov[row_index]))
+                case = {"index": row_index, "text": source["text"],
+                        "kind": source["labels"]["kind"], "oov_tokens": row_oov[row_index],
+                        "probe_oov_tokens": decisive_oov, "failed": failed,
+                        "prediction_invariant": invariant,
+                        "prediction": source["prediction"]}
+                cases.append(case)
+                if failed and decisive_oov and invariant:
+                    identified_cases.append({"representation": representation,
+                                             "panel": panel_name, **case})
+            token_total = sum(len(ID._semantic_micro_tokens(row["text"])) for row in examples)
+            token_known = sum(sum(token in support_tokens for token in
+                                  ID._semantic_micro_tokens(row["text"])) for row in examples)
+            audits.append({
+                "representation": representation, "panel": panel_name,
+                "token_coverage": token_known / token_total,
+                "original_prediction_sha256": original["prediction_sha256"],
+                "replacement_prediction_sha256": replaced["prediction_sha256"],
+                "all_predictions_invariant": all(case["prediction_invariant"] for case in cases),
+                "failed_probe_invariant_cases": sum(
+                    case["failed"] and bool(case["probe_oov_tokens"]) and
+                    case["prediction_invariant"] for case in cases),
+                "cases": cases,
+            })
+
+    valid = all(reproduction) and len(audits) == 6 and \
+        len(training) == 702 and len(fixture["frozen"]) == 47
+    if not valid:
+        verdict = "INVALID-SUPPORT-AUDIT"
+    elif identified_cases:
+        verdict = protocol["required_verdict"]
+    else:
+        verdict = "SUPPORT-GAP-NOT-IDENTIFIED"
+    result = {
+        "schema": "anima-iit-daemon-semantic-bridge-support-audit-result/1",
+        "date": protocol["date"], "protocol": os.path.basename(requested_path),
+        "protocol_sha256": _digest(requested_path),
+        "encoder_result_sha256": protocol["encoder_exhaustion"]["result_sha256"],
+        "contrastive_result_sha256": protocol["contrastive"]["result_sha256"],
+        "claim_scope": "support identifiability of exhausted shallow token bridges only",
+        "non_claims": list(protocol["non_claims"]),
+        "fixture": {"sha256": fixture["sha256"], "training_examples": len(training),
+                    "frozen_examples": len(fixture["frozen"]),
+                    "support_token_vocabulary": len(support_token_vocabulary),
+                    "support_token_vocabulary_sha256": ID._sha256(support_token_vocabulary)},
+        "prior_predictions_reproduced": all(reproduction), "audits": audits,
+        "identified_case_count": len(identified_cases),
+        "identified_cases": identified_cases, "verdict": verdict,
+        "deployment": protocol["deployment"],
+        "next_gate": "SEPARATE-DATA-AND-LEARNED-SEQUENCE-SEMANTICS",
+    }
+    print("[iit-daemon R3.6 · support identifiability microaudit]")
+    print("  panels=%d identified=%d reproduced=%s" %
+          (len(audits), len(identified_cases), all(reproduction)))
+    print("  verdict: %s" % verdict)
+    if out_path:
+        _store_causality_write(out_path, result)
         print("  wrote %s" % out_path)
     return 0 if verdict == protocol["required_verdict"] else 1
 
@@ -14611,6 +15334,9 @@ _KNOWN_FLAGS = frozenset((
     "--iit-daemon-content",
     "--iit-daemon-composition",
     "--iit-daemon-semantic-bridge", "--semantic-bridge-model-out",
+    "--iit-daemon-semantic-bridge-sweep",
+    "--iit-daemon-semantic-bridge-contrastive",
+    "--iit-daemon-semantic-bridge-support-audit",
     # H_1520 conversational-salience emit gate re-read with the PLANTED FNV-trigram key
     # geometry swapped for the REAL 303M penultimate. ONE flag, no tuning argument.
     "--salience-toggle-read",
@@ -21527,6 +22253,14 @@ def main(argv):
     # factorised byte-event bridge before the unchanged R3.5 causal seam.
     if "--iit-daemon-semantic-bridge" in argv:
         return iit_daemon_semantic_bridge_run(argv)
+    # R3.6 follow-up: exhaustive CPU-small representation/classifier diagnostics.
+    # It reuses the frozen R3.6/R3.5 artifacts and mounts no model or participant.
+    if "--iit-daemon-semantic-bridge-sweep" in argv:
+        return iit_daemon_semantic_bridge_sweep_run(argv)
+    if "--iit-daemon-semantic-bridge-contrastive" in argv:
+        return iit_daemon_semantic_bridge_contrastive_run(argv)
+    if "--iit-daemon-semantic-bridge-support-audit" in argv:
+        return iit_daemon_semantic_bridge_support_audit_run(argv)
     # H_9838 --hippo-transitive-selftest: core/hippo_lane.py's CA3 multi-step completion on a
     # planted premise world. Ckpt-FREE by construction (the store + completion are pure numpy
     # arithmetic), so it dispatches on flag PRESENCE like --closure-ladder. ADDITIVE and

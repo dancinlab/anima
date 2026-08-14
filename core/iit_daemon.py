@@ -11,6 +11,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import tempfile
 
 import recurrent_lane as RL
@@ -28,6 +29,12 @@ WORKSPACE_SNAPSHOT_SCHEMA = "anima-iit-content-workspace-snapshot/1"
 SEMANTIC_BRIDGE_PROTOCOL_SCHEMA = "anima-iit-daemon-semantic-bridge-protocol/1"
 SEMANTIC_BRIDGE_PANEL_SCHEMA = "anima-iit-daemon-semantic-bridge-panel/1"
 SEMANTIC_BRIDGE_MODEL_SCHEMA = "anima-iit-semantic-bridge-model/1"
+SEMANTIC_BRIDGE_EXHAUSTION_PROTOCOL_SCHEMA = \
+    "anima-iit-daemon-semantic-bridge-exhaustion-protocol/1"
+SEMANTIC_BRIDGE_CONTRASTIVE_PROTOCOL_SCHEMA = \
+    "anima-iit-daemon-semantic-bridge-contrastive-protocol/1"
+SEMANTIC_BRIDGE_SUPPORT_AUDIT_PROTOCOL_SCHEMA = \
+    "anima-iit-daemon-semantic-bridge-support-audit-protocol/1"
 SEMANTIC_BRIDGE_MAX_MODEL_BYTES = 4 << 20
 SEMANTIC_EVENT_MAX_BYTES = 256
 CONTENT_RECORD_FIELDS = ("entity", "relation", "value")
@@ -589,6 +596,362 @@ def semantic_bridge_encode(model, text):
             record[field], result["margins"][field] = predict(field)
         result["record"] = validate_content_records({"event": record})["event"]
     return result
+
+
+_SEMANTIC_MICRO_REPRESENTATIONS = (
+    "byte-hashed-1-3",
+    "byte-explicit-pos-1-3",
+    "token-unigram",
+    "token-unigram-bigram",
+    "token-positional",
+    "token-byte-hybrid",
+)
+_SEMANTIC_MICRO_CLASSIFIERS = (
+    "normalized-centroid",
+    "centered-centroid",
+    "ridge-ovr",
+    "bernoulli-nb",
+)
+
+
+def _semantic_micro_tokens(text):
+    """Return canonical ASCII word/punctuation tokens for bridge diagnostics."""
+    return re.findall(r"[a-z0-9]+(?:-[a-z0-9]+)*|[^\w\s]", text.lower())
+
+
+def _semantic_micro_sparse_features(text, representation):
+    """Build learned-vocabulary features without an atom or answer dictionary."""
+    checked = _semantic_event_text(text)
+    tokens = _semantic_micro_tokens(checked)
+    features = []
+    if representation in ("token-unigram", "token-unigram-bigram",
+                          "token-positional", "token-byte-hybrid"):
+        features.extend("u=" + token for token in tokens)
+    if representation in ("token-unigram-bigram", "token-positional",
+                          "token-byte-hybrid"):
+        features.extend("b=" + tokens[index] + "\x1f" + tokens[index + 1]
+                        for index in range(len(tokens) - 1))
+    if representation == "token-positional":
+        count = max(1, len(tokens))
+        for index, token in enumerate(tokens):
+            features.extend((
+                "s%d=%s" % (index, token),
+                "e%d=%s" % (len(tokens) - 1 - index, token),
+                "r%d=%s" % (min(2, (3 * index) // count), token),
+            ))
+    raw = checked.lower().encode("ascii")
+    if representation in ("byte-explicit-pos-1-3", "token-byte-hybrid"):
+        for size in (1, 2, 3):
+            for index in range(len(raw) - size + 1):
+                gram = raw[index:index + size].hex()
+                features.append("c%d=%s" % (size, gram))
+                if representation == "byte-explicit-pos-1-3":
+                    region = min(2, (3 * index) // max(1, len(raw)))
+                    features.append("p%d-c%d=%s" % (region, size, gram))
+    return features
+
+
+def _semantic_micro_matrices(training, evaluation, representation, constants):
+    """Fit support-only feature geometry and return deterministic NumPy matrices."""
+    import numpy as np
+
+    if representation not in _SEMANTIC_MICRO_REPRESENTATIONS:
+        raise ValueError("unsupported semantic bridge micro representation")
+    if representation == "byte-hashed-1-3":
+        import mi_compress as MI
+
+        dim = constants["hashed_dim"]
+        train = np.asarray([MI.hashed_ngram_features(
+            row["text"].encode("utf-8"), dim=dim) for row in training], dtype=np.float64)
+        test = np.asarray([MI.hashed_ngram_features(
+            row["text"].encode("utf-8"), dim=dim) for row in evaluation], dtype=np.float64)
+        return train, test, {"dimension": dim, "vocabulary": None}
+
+    support_features = [_semantic_micro_sparse_features(row["text"], representation)
+                        for row in training]
+    vocabulary = sorted({feature for row in support_features for feature in row})
+    feature_index = {feature: index for index, feature in enumerate(vocabulary)}
+
+    def matrix(rows, cached=None):
+        output = np.zeros((len(rows), len(vocabulary)), dtype=np.float64)
+        feature_rows = cached if cached is not None else [
+            _semantic_micro_sparse_features(row["text"], representation) for row in rows]
+        for row_index, row_features in enumerate(feature_rows):
+            for feature in row_features:
+                index = feature_index.get(feature)
+                if index is not None:
+                    output[row_index, index] += 1.0
+        return output
+
+    train = matrix(training, support_features)
+    test = matrix(evaluation)
+    smoothing = constants["idf_smoothing"]
+    document_frequency = (train > 0.0).sum(axis=0)
+    idf = np.log((len(train) + smoothing) /
+                 (document_frequency + smoothing)) + 1.0
+    return train * idf, test * idf, {
+        "dimension": len(vocabulary),
+        "vocabulary_sha256": _sha256(vocabulary),
+    }
+
+
+def _semantic_micro_field_predictions(training, train_matrix, test_matrix, field,
+                                      classifier, constants):
+    import numpy as np
+
+    if classifier not in _SEMANTIC_MICRO_CLASSIFIERS:
+        raise ValueError("unsupported semantic bridge micro classifier")
+    indexes = [index for index, row in enumerate(training) if field in row["labels"]]
+    labels = sorted({training[index]["labels"][field] for index in indexes})
+    if len(labels) < 2:
+        raise ValueError("semantic bridge micro field needs multiple classes")
+    label_index = {label: index for index, label in enumerate(labels)}
+    targets = np.asarray([label_index[training[index]["labels"][field]]
+                          for index in indexes], dtype=np.int64)
+    support = train_matrix[indexes]
+    query = test_matrix
+
+    if classifier in ("normalized-centroid", "centered-centroid"):
+        if classifier == "centered-centroid":
+            center = support.mean(axis=0)
+            support = support - center
+            query = query - center
+        centroids = np.asarray([
+            support[targets == index].mean(axis=0) for index in range(len(labels))])
+        centroid_norm = np.maximum(np.linalg.norm(centroids, axis=1, keepdims=True), 1.0e-15)
+        query_norm = np.maximum(np.linalg.norm(query, axis=1, keepdims=True), 1.0e-15)
+        scores = (query / query_norm) @ (centroids / centroid_norm).T
+    elif classifier == "ridge-ovr":
+        support = np.concatenate((support, np.ones((len(support), 1))), axis=1)
+        query = np.concatenate((query, np.ones((len(query), 1))), axis=1)
+        one_hot = np.eye(len(labels), dtype=np.float64)[targets]
+        ridge = float(constants["ridge_lambda"])
+        if support.shape[1] <= support.shape[0]:
+            gram = support.T @ support + ridge * np.eye(support.shape[1])
+            weights = np.linalg.solve(gram, support.T @ one_hot)
+        else:
+            gram = support @ support.T + ridge * np.eye(support.shape[0])
+            weights = support.T @ np.linalg.solve(gram, one_hot)
+        scores = query @ weights
+    else:
+        alpha = float(constants["bernoulli_alpha"])
+        support_binary = (support > 0.0).astype(np.float64)
+        query_binary = (query > 0.0).astype(np.float64)
+        score_columns = []
+        for index in range(len(labels)):
+            selected = support_binary[targets == index]
+            probability = (selected.sum(axis=0) + alpha) / \
+                (len(selected) + 2.0 * alpha)
+            prior = (len(selected) + alpha) / (len(support_binary) + alpha * len(labels))
+            score_columns.append(
+                query_binary @ np.log(probability) +
+                (1.0 - query_binary) @ np.log(1.0 - probability) + math.log(prior))
+        scores = np.stack(score_columns, axis=1)
+
+    order = np.argsort(-scores, axis=1, kind="stable")
+    predictions = [labels[int(row[0])] for row in order]
+    margins = [float(scores[index, row[0]] - scores[index, row[1]])
+               for index, row in enumerate(order)]
+    return predictions, margins
+
+
+def semantic_bridge_micro_evaluate(training_examples, evaluation_examples,
+                                   representation, classifier, constants, *, include_rows=False):
+    """Evaluate one deterministic shallow bridge arm without mounting it as a runtime mouth."""
+    if not isinstance(training_examples, list) or not training_examples:
+        raise ValueError("semantic bridge micro training set is empty")
+    if not isinstance(evaluation_examples, list) or not evaluation_examples:
+        raise ValueError("semantic bridge micro evaluation set is empty")
+    training = [_semantic_bridge_example(row) for row in training_examples]
+    evaluation = [_semantic_bridge_example(row) for row in evaluation_examples]
+    if len({row["text"] for row in training}) != len(training):
+        raise ValueError("semantic bridge micro training texts must be unique")
+    if not isinstance(constants, dict) or set(constants) != {
+            "hashed_dim", "ridge_lambda", "bernoulli_alpha", "idf_smoothing"}:
+        raise ValueError("semantic bridge micro constants mismatch")
+    hashed_dim = constants["hashed_dim"]
+    if isinstance(hashed_dim, bool) or not isinstance(hashed_dim, int) or \
+            hashed_dim < 64 or hashed_dim > 8192:
+        raise ValueError("semantic bridge micro hashed dimension is invalid")
+    for name in ("ridge_lambda", "bernoulli_alpha", "idf_smoothing"):
+        value = float(constants[name])
+        if not math.isfinite(value) or value <= 0.0:
+            raise ValueError("semantic bridge micro constant must be positive: " + name)
+
+    train_matrix, test_matrix, feature_audit = _semantic_micro_matrices(
+        training, evaluation, representation, constants)
+    field_outputs = {}
+    for field in ("kind", "address", "entity", "relation", "value"):
+        predictions, margins = _semantic_micro_field_predictions(
+            training, train_matrix, test_matrix, field, classifier, constants)
+        field_outputs[field] = {"predictions": predictions, "margins": margins}
+
+    rows = []
+    for index, example in enumerate(evaluation):
+        kind = field_outputs["kind"]["predictions"][index]
+        prediction = {"kind": kind, "address": None, "record": None,
+                      "margins": {"kind": field_outputs["kind"]["margins"][index]}}
+        if kind in ("memory", "query"):
+            prediction["address"] = field_outputs["address"]["predictions"][index]
+            prediction["margins"]["address"] = \
+                field_outputs["address"]["margins"][index]
+        if kind == "memory":
+            prediction["record"] = {}
+            for field in CONTENT_RECORD_FIELDS:
+                prediction["record"][field] = field_outputs[field]["predictions"][index]
+                prediction["margins"][field] = field_outputs[field]["margins"][index]
+        gold = example["labels"]
+        kind_correct = kind == gold["kind"]
+        query_correct = gold["kind"] == "query" and kind_correct and \
+            prediction["address"] == gold["address"]
+        record_correct = gold["kind"] == "memory" and kind_correct and \
+            prediction["address"] == gold["address"] and \
+            prediction["record"] == {field: gold[field] for field in CONTENT_RECORD_FIELDS}
+        exact = kind_correct
+        if gold["kind"] == "query":
+            exact = query_correct
+        elif gold["kind"] == "memory":
+            exact = record_correct
+        rows.append({"text": example["text"], "labels": gold, "prediction": prediction,
+                     "kind_correct": kind_correct, "query_correct": query_correct,
+                     "record_correct": record_correct, "exact": exact})
+
+    kind_rows = rows
+    query_rows = [row for row in rows if row["labels"]["kind"] == "query"]
+    memory_rows = [row for row in rows if row["labels"]["kind"] == "memory"]
+    result = {
+        "representation": representation,
+        "classifier": classifier,
+        "feature": feature_audit,
+        "training_examples": len(training),
+        "evaluation_examples": len(evaluation),
+        "metrics": {
+            "kind_accuracy": sum(row["kind_correct"] for row in kind_rows) / len(kind_rows),
+            "query_address_accuracy": (sum(row["query_correct"] for row in query_rows) /
+                                       len(query_rows)) if query_rows else None,
+            "complete_record_accuracy": (sum(row["record_correct"] for row in memory_rows) /
+                                         len(memory_rows)) if memory_rows else None,
+            "exact_accuracy": sum(row["exact"] for row in rows) / len(rows),
+        },
+        "errors": [row for row in rows if not row["exact"]],
+        "prediction_sha256": _sha256([row["prediction"] for row in rows]),
+    }
+    if include_rows:
+        result["rows"] = rows
+    return result
+
+
+def semantic_bridge_micro_fixture(panel, r35_panel):
+    """Build the canonical R3.6 support, frozen evaluation and template groups once."""
+    if not isinstance(panel, dict) or panel.get("schema") != SEMANTIC_BRIDGE_PANEL_SCHEMA:
+        raise ValueError("semantic bridge micro panel schema mismatch")
+    if not isinstance(r35_panel, dict) or r35_panel.get("schema") != COMPOSITION_PANEL_SCHEMA:
+        raise ValueError("semantic bridge micro R3.5 panel schema mismatch")
+    atoms = panel["atoms"]
+    if not isinstance(atoms, dict) or set(atoms) != {
+            "addresses", "entities", "relations", "values"}:
+        raise ValueError("semantic bridge micro atom fields mismatch")
+    addresses = [_content_atom(value, "semantic bridge micro address")
+                 for value in atoms["addresses"]]
+    entities = [_content_atom(value, "semantic bridge micro entity")
+                for value in atoms["entities"]]
+    values = [_content_atom(value, "semantic bridge micro value")
+              for value in atoms["values"]]
+    relations = atoms["relations"]
+    if not isinstance(relations, dict) or not relations:
+        raise ValueError("semantic bridge micro relation map is empty")
+    normalized_relations = {}
+    for relation, surfaces in relations.items():
+        relation = _content_atom(relation, "semantic bridge micro relation")
+        if not isinstance(surfaces, list) or len(surfaces) < 2:
+            raise ValueError("semantic bridge micro relation surfaces are incomplete")
+        normalized_relations[relation] = [_semantic_event_text(surface) for surface in surfaces]
+
+    heldout_records = set()
+    normalized_trials = []
+    for raw_row in r35_panel["trials"]:
+        records = validate_content_records(raw_row["records"], addresses)
+        active = _content_atom(raw_row["active_address"], "semantic bridge active address")
+        selected = records[active]
+        counterfactual = dict(selected, value=_content_atom(
+            raw_row["counterfactual_value"], "semantic bridge counterfactual value"))
+        irrelevant = validate_content_records(
+            {raw_row["irrelevant_address"]: raw_row["irrelevant_record"]})[
+                raw_row["irrelevant_address"]]
+        for record in list(records.values()) + [counterfactual, irrelevant]:
+            heldout_records.add(tuple(record[field] for field in CONTENT_RECORD_FIELDS))
+        normalized_trials.append({"records": records, "active_address": active})
+
+    support = panel["support"]
+    evaluation = panel["evaluation"]
+    memory_templates = support["memory_templates"]
+    query_templates = support["query_templates"]
+    training = []
+    groups = {}
+    for address in addresses:
+        for entity in entities:
+            for relation in sorted(normalized_relations):
+                for value in values:
+                    if (entity, relation, value) in heldout_records:
+                        continue
+                    for surface in normalized_relations[relation]:
+                        for template_index, template in enumerate(memory_templates):
+                            example = _semantic_bridge_example({"text": template.format(
+                                address=address, entity=entity, surface=surface, value=value),
+                                "labels": {"kind": "memory", "address": address,
+                                           "entity": entity, "relation": relation,
+                                           "value": value}})
+                            training.append(example)
+                            groups.setdefault("memory-%d" % template_index, []).append(example)
+        for template_index, template in enumerate(query_templates):
+            example = _semantic_bridge_example({
+                "text": template.format(address=address),
+                "labels": {"kind": "query", "address": address}})
+            training.append(example)
+            groups.setdefault("query-%d" % template_index, []).append(example)
+    for text in support["other_events"]:
+        training.append(_semantic_bridge_example({"text": text, "labels": {"kind": "other"}}))
+
+    frozen = []
+    eval_memory_templates = evaluation["memory_templates"]
+    correction_template = evaluation["correction_template"]
+    query_template = evaluation["query_template"]
+    for row_index, row in enumerate(normalized_trials):
+        for offset, address in enumerate(addresses):
+            record = row["records"][address]
+            surfaces = normalized_relations[record["relation"]]
+            frozen.append(_semantic_bridge_example({
+                "text": eval_memory_templates[(row_index + offset) %
+                                               len(eval_memory_templates)].format(
+                    address=address, entity=record["entity"],
+                    surface=surfaces[(row_index + offset) % len(surfaces)],
+                    value=record["value"]),
+                "labels": dict(kind="memory", address=address, **record)}))
+        selected = row["records"][row["active_address"]]
+        surfaces = normalized_relations[selected["relation"]]
+        frozen.append(_semantic_bridge_example({
+            "text": correction_template.format(
+                address=row["active_address"], entity=selected["entity"],
+                surface=surfaces[(row_index + 1) % len(surfaces)], value=selected["value"]),
+            "labels": dict(kind="memory", address=row["active_address"], **selected)}))
+        frozen.append(_semantic_bridge_example({
+            "text": query_template.format(address=row["active_address"]),
+            "labels": {"kind": "query", "address": row["active_address"]}}))
+    frozen.extend(_semantic_bridge_example({"text": text, "labels": {"kind": "other"}})
+                  for text in evaluation["other_events"])
+    if len(training) != 702 or len(frozen) != 47 or len(heldout_records) != 35 or len(groups) != 8:
+        raise ValueError("semantic bridge micro fixture count mismatch")
+    return {
+        "training": training,
+        "groups": groups,
+        "frozen": frozen,
+        "heldout_complete_records": len(heldout_records),
+        "addresses": addresses,
+        "entities": entities,
+        "values": values,
+        "relations": normalized_relations,
+        "sha256": _sha256({"training": training, "groups": groups, "frozen": frozen}),
+    }
 
 
 def save_semantic_bridge_model(path, model):

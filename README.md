@@ -157,6 +157,36 @@ Production remains `BLOCKED-R36-NOT-A-CONVERSATIONAL-MOUTH`, and no 303M/GPU run
 this result. The next single axis is a separately preregistered order-aware event encoder against
 this exact frozen centroid control.
 
+### Completed R3.6 local microexperiment exhaustion
+
+Three checksum-pinned, CPU-only follow-ups are recorded in
+`state/iit_daemon_r36_encoder_exhaustion_2026_08_15/`,
+`state/iit_daemon_r36_contrastive_support_2026_08_15/` and
+`state/iit_daemon_r36_support_identifiability_2026_08_15/`. They reuse the exact 702 support rows,
+47 frozen events, 35 excluded records and unchanged `0.90` bars. No 303M model, GPU, Vast.ai
+instance, participant or production route is involved.
+
+The first battery exhausted 24 representation×classifier arms. Three ridge arms passed the frozen
+bridge: token unigram (`0.9787/1.0/1.0`), token unigram+bigram (`0.9787/1.0/1.0`) and token
+positional (`1.0/1.0/1.0`) for kind/query/complete-record. None passed the fixed shortcut screen;
+stress was only `3/8`, `4/8` and `5/8`. All three accepted `46/47` reversed-token events as real
+events, so the result is `DIAGNOSED-SHALLOW-LEXICAL-SHORTCUT`, not learned semantics.
+
+The second battery exhausted 18 contrastive-support arms. Nine improved at least one fixed stress
+case, but robust pass count remained zero. The best token bigram arm reached stress `7/8` and
+independent confirmation `6/8`; adding all negatives to the positional arm regressed frozen query
+accuracy from `1.0` to `0.0`. The result is `DIAGNOSED-MISSING-CONTRASTIVE-SUPPORT`.
+
+The final support-identifiability audit reproduced every prior prediction hash. Support has only 54
+token types; coverage is `75.81%` on stress and `60.00%` on confirmation. Sixteen failed
+query/negation cases contain preregistered OOV semantic probes, and replacing each probe with a
+different unseen token leaves predictions unchanged. This is `SUPPORT-GAP-IDENTIFIED`: the exhausted
+shallow family interpolates registered vocabulary and cannot learn absent semantic equivalences.
+Further post-result templates, n-gram widths, centroid/ridge constants and local shallow arms are
+closed. The next work requires separately preregistered provenance-bearing language data plus a
+learned sequence-semantic encoder. R3.7, 303M, IIT-mouth coupling and production remain blocked.
+Focused Python/IIT/CHAT QA passed `91/91`.
+
 ### Completed native-303M replay recovery
 
 `state/anima_native_303m_replay_recovery_2026_08_14/` now records the actual HF data, sampler,

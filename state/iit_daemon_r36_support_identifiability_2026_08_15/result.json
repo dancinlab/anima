@@ -1,0 +1,1803 @@
+{
+  "audits": [
+    {
+      "all_predictions_invariant": true,
+      "cases": [
+        {
+          "failed": false,
+          "index": 0,
+          "kind": "query",
+          "oov_tokens": [
+            "content",
+            "stored"
+          ],
+          "prediction": {
+            "address": "alpha",
+            "kind": "query",
+            "margins": {
+              "address": 0.9990275516144835,
+              "kind": 0.5025698341389163
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Please retrieve the content stored in alpha."
+        },
+        {
+          "failed": true,
+          "index": 1,
+          "kind": "query",
+          "oov_tokens": [
+            "show",
+            "stored"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 0.9990275516145064,
+              "entity": 6.9485916409789406e-06,
+              "kind": 0.24277120596796872,
+              "relation": 0.03522317593424176,
+              "value": 0.055981381336237424
+            },
+            "record": {
+              "entity": "faro",
+              "relation": "guards",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Show the fact stored in beta."
+        },
+        {
+          "failed": true,
+          "index": 2,
+          "kind": "other",
+          "oov_tokens": [
+            "do",
+            "not"
+          ],
+          "prediction": {
+            "address": "gamma",
+            "kind": "query",
+            "margins": {
+              "address": 0.9990275516145597,
+              "kind": 0.9906445596749708
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "not"
+          ],
+          "text": "Do not retrieve gamma."
+        },
+        {
+          "failed": true,
+          "index": 3,
+          "kind": "other",
+          "oov_tokens": [
+            "a",
+            "only",
+            "word"
+          ],
+          "prediction": {
+            "address": "alpha",
+            "kind": "query",
+            "margins": {
+              "address": 1.4599432773820809e-13,
+              "kind": 0.41897613154165597
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "only"
+          ],
+          "text": "Retrieve is only a word in this sentence."
+        },
+        {
+          "failed": false,
+          "index": 4,
+          "kind": "memory",
+          "oov_tokens": [],
+          "prediction": {
+            "address": "alpha",
+            "kind": "memory",
+            "margins": {
+              "address": 0.9990275516146239,
+              "entity": 0.9946541752097575,
+              "kind": 0.32804478831050776,
+              "relation": 0.9861793248267114,
+              "value": 1.007927754157858
+            },
+            "record": {
+              "entity": "aria",
+              "relation": "carries",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Please remember this in alpha: aria carries amber."
+        },
+        {
+          "failed": true,
+          "index": 5,
+          "kind": "other",
+          "oov_tokens": [],
+          "prediction": {
+            "address": "alpha",
+            "kind": "memory",
+            "margins": {
+              "address": 0.999027551614574,
+              "entity": 0.9964487814549053,
+              "kind": 0.7955838062920009,
+              "relation": 0.9982139736565167,
+              "value": 0.9875824917511514
+            },
+            "record": {
+              "entity": "aria",
+              "relation": "carries",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Amber carries aria in alpha memory."
+        },
+        {
+          "failed": true,
+          "index": 6,
+          "kind": "other",
+          "oov_tokens": [
+            "change",
+            "nothing",
+            "now",
+            "should"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 1.5612511283791264e-14,
+              "entity": 2.1635437683839576e-06,
+              "kind": 0.0493248761939547,
+              "relation": 0.010967241191682506,
+              "value": 0.017430606272471047
+            },
+            "record": {
+              "entity": "faro",
+              "relation": "guards",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Nothing should change now."
+        },
+        {
+          "failed": false,
+          "index": 7,
+          "kind": "memory",
+          "oov_tokens": [
+            "filed",
+            "under"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 0.9990275516144366,
+              "entity": 1.0006887728433573,
+              "kind": 0.873252829178184,
+              "relation": 0.9939241539141919,
+              "value": 0.9959271492549864
+            },
+            "record": {
+              "entity": "cyra",
+              "relation": "guards",
+              "value": "ivory"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "The fact filed under beta is that cyra protects ivory."
+        }
+      ],
+      "failed_probe_invariant_cases": 2,
+      "original_prediction_sha256": "6dab12bfeb80778d63ae4fce965c925918344812d19678dcbc12b421890aad33",
+      "panel": "stress",
+      "replacement_prediction_sha256": "6dab12bfeb80778d63ae4fce965c925918344812d19678dcbc12b421890aad33",
+      "representation": "token-unigram",
+      "token_coverage": 0.7580645161290323
+    },
+    {
+      "all_predictions_invariant": true,
+      "cases": [
+        {
+          "failed": true,
+          "index": 0,
+          "kind": "query",
+          "oov_tokens": [
+            "content",
+            "fetch",
+            "kindly",
+            "s",
+            "stored"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 0.9990275516145632,
+              "entity": 3.751209971994407e-06,
+              "kind": 0.07748474993827281,
+              "relation": 0.019015296076637017,
+              "value": 0.030221651303411673
+            },
+            "record": {
+              "entity": "faro",
+              "relation": "guards",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "fetch"
+          ],
+          "text": "Kindly fetch beta's stored content."
+        },
+        {
+          "failed": true,
+          "index": 1,
+          "kind": "other",
+          "oov_tokens": [
+            "never"
+          ],
+          "prediction": {
+            "address": "alpha",
+            "kind": "query",
+            "margins": {
+              "address": 0.9990275516145305,
+              "kind": 0.9617589026448086
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "never"
+          ],
+          "text": "Never read alpha."
+        },
+        {
+          "failed": true,
+          "index": 2,
+          "kind": "other",
+          "oov_tokens": [
+            "but",
+            "discussed",
+            "stored",
+            "term"
+          ],
+          "prediction": {
+            "address": "alpha",
+            "kind": "memory",
+            "margins": {
+              "address": 1.289246487345963e-13,
+              "entity": 7.3904706874988735e-06,
+              "kind": 0.15162329393068985,
+              "relation": 0.03746310975293818,
+              "value": 0.05954138368983489
+            },
+            "record": {
+              "entity": "faro",
+              "relation": "guards",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "The term memory is discussed, but no fact is stored."
+        },
+        {
+          "failed": false,
+          "index": 3,
+          "kind": "memory",
+          "oov_tokens": [
+            "file",
+            "under"
+          ],
+          "prediction": {
+            "address": "gamma",
+            "kind": "memory",
+            "margins": {
+              "address": 0.9990275516145676,
+              "entity": 0.9932357798983554,
+              "kind": 0.5710382238281182,
+              "relation": 0.9935235611905043,
+              "value": 1.0061899767944915
+            },
+            "record": {
+              "entity": "dain",
+              "relation": "observes",
+              "value": "cedar"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "File this under gamma: dain watches cedar."
+        },
+        {
+          "failed": true,
+          "index": 4,
+          "kind": "other",
+          "oov_tokens": [
+            "under"
+          ],
+          "prediction": {
+            "address": "gamma",
+            "kind": "memory",
+            "margins": {
+              "address": 0.999027551614608,
+              "entity": 0.9858655213004959,
+              "kind": 0.5853116568987676,
+              "relation": 0.9869872960868651,
+              "value": 1.0154643094274565
+            },
+            "record": {
+              "entity": "dain",
+              "relation": "observes",
+              "value": "cedar"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Cedar watches dain under gamma."
+        },
+        {
+          "failed": true,
+          "index": 5,
+          "kind": "other",
+          "oov_tokens": [
+            "every",
+            "leave",
+            "stored",
+            "untouched"
+          ],
+          "prediction": {
+            "address": "alpha",
+            "kind": "memory",
+            "margins": {
+              "address": 2.4369395390522186e-14,
+              "entity": 2.9577348492904054e-06,
+              "kind": 0.04291792920031212,
+              "relation": 0.01499308352427392,
+              "value": 0.02382901325356146
+            },
+            "record": {
+              "entity": "faro",
+              "relation": "guards",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "untouched"
+          ],
+          "text": "Leave every stored fact untouched."
+        },
+        {
+          "failed": true,
+          "index": 6,
+          "kind": "query",
+          "oov_tokens": [
+            "at",
+            "me",
+            "record",
+            "tell"
+          ],
+          "prediction": {
+            "address": "alpha",
+            "kind": "memory",
+            "margins": {
+              "address": 0.9990275516143183,
+              "entity": 4.556892948870406e-06,
+              "kind": 0.1663581257927525,
+              "relation": 0.023099391721091087,
+              "value": 0.036712642238960855
+            },
+            "record": {
+              "entity": "faro",
+              "relation": "guards",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "tell"
+          ],
+          "text": "Tell me the record at alpha."
+        },
+        {
+          "failed": false,
+          "index": 7,
+          "kind": "memory",
+          "oov_tokens": [
+            "at"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 0.9990275516145227,
+              "entity": 0.989748538763167,
+              "kind": 0.869813147539466,
+              "relation": 1.0025331271169093,
+              "value": 0.9934823341819884
+            },
+            "record": {
+              "entity": "faro",
+              "relation": "carries",
+              "value": "ivory"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "At beta remember that faro holds ivory."
+        }
+      ],
+      "failed_probe_invariant_cases": 4,
+      "original_prediction_sha256": "aa55a81af18b6902a2232a8a9e6d8b84737fb7c3d92b8e636c8fc8727fa1648b",
+      "panel": "confirmation",
+      "replacement_prediction_sha256": "aa55a81af18b6902a2232a8a9e6d8b84737fb7c3d92b8e636c8fc8727fa1648b",
+      "representation": "token-unigram",
+      "token_coverage": 0.6
+    },
+    {
+      "all_predictions_invariant": true,
+      "cases": [
+        {
+          "failed": false,
+          "index": 0,
+          "kind": "query",
+          "oov_tokens": [
+            "content",
+            "stored"
+          ],
+          "prediction": {
+            "address": "alpha",
+            "kind": "query",
+            "margins": {
+              "address": 1.0180081466931987,
+              "kind": 0.5922364064946645
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Please retrieve the content stored in alpha."
+        },
+        {
+          "failed": false,
+          "index": 1,
+          "kind": "query",
+          "oov_tokens": [
+            "show",
+            "stored"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "query",
+            "margins": {
+              "address": 1.0180081466931798,
+              "kind": 0.15452325019858792
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Show the fact stored in beta."
+        },
+        {
+          "failed": true,
+          "index": 2,
+          "kind": "other",
+          "oov_tokens": [
+            "do",
+            "not"
+          ],
+          "prediction": {
+            "address": "gamma",
+            "kind": "query",
+            "margins": {
+              "address": 0.9939040748118015,
+              "kind": 0.996025136257396
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "not"
+          ],
+          "text": "Do not retrieve gamma."
+        },
+        {
+          "failed": true,
+          "index": 3,
+          "kind": "other",
+          "oov_tokens": [
+            "a",
+            "only",
+            "word"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "query",
+            "margins": {
+              "address": 3.7192471324942744e-15,
+              "kind": 0.09548599724007178
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "only"
+          ],
+          "text": "Retrieve is only a word in this sentence."
+        },
+        {
+          "failed": false,
+          "index": 4,
+          "kind": "memory",
+          "oov_tokens": [],
+          "prediction": {
+            "address": "alpha",
+            "kind": "memory",
+            "margins": {
+              "address": 1.0125030514937257,
+              "entity": 0.6810668591368281,
+              "kind": 0.6179220827768279,
+              "relation": 0.6548880142398041,
+              "value": 0.9668097401655718
+            },
+            "record": {
+              "entity": "aria",
+              "relation": "carries",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Please remember this in alpha: aria carries amber."
+        },
+        {
+          "failed": true,
+          "index": 5,
+          "kind": "other",
+          "oov_tokens": [],
+          "prediction": {
+            "address": "alpha",
+            "kind": "memory",
+            "margins": {
+              "address": 0.7491314995533218,
+              "entity": 0.4277908281405398,
+              "kind": 0.5204872340211864,
+              "relation": 0.3969867302399754,
+              "value": 0.38563677703856286
+            },
+            "record": {
+              "entity": "aria",
+              "relation": "carries",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Amber carries aria in alpha memory."
+        },
+        {
+          "failed": true,
+          "index": 6,
+          "kind": "other",
+          "oov_tokens": [
+            "change",
+            "nothing",
+            "now",
+            "should"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 1.5827616994812388e-14,
+              "entity": 5.4582080744280254e-05,
+              "kind": 0.04498456752297186,
+              "relation": 0.009924981644869477,
+              "value": 0.011488376513144605
+            },
+            "record": {
+              "entity": "borin",
+              "relation": "guards",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Nothing should change now."
+        },
+        {
+          "failed": false,
+          "index": 7,
+          "kind": "memory",
+          "oov_tokens": [
+            "filed",
+            "under"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 0.43797078530308886,
+              "entity": 1.0093284809874734,
+              "kind": 0.780902215928709,
+              "relation": 0.9804507501512871,
+              "value": 0.9937697609183322
+            },
+            "record": {
+              "entity": "cyra",
+              "relation": "guards",
+              "value": "ivory"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "The fact filed under beta is that cyra protects ivory."
+        }
+      ],
+      "failed_probe_invariant_cases": 2,
+      "original_prediction_sha256": "817f15de9e1a7c964fc62fd1b33fd294dd7f775b3d34d040d995c474fc294cc3",
+      "panel": "stress",
+      "replacement_prediction_sha256": "817f15de9e1a7c964fc62fd1b33fd294dd7f775b3d34d040d995c474fc294cc3",
+      "representation": "token-unigram-bigram",
+      "token_coverage": 0.7580645161290323
+    },
+    {
+      "all_predictions_invariant": true,
+      "cases": [
+        {
+          "failed": true,
+          "index": 0,
+          "kind": "query",
+          "oov_tokens": [
+            "content",
+            "fetch",
+            "kindly",
+            "s",
+            "stored"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 0.4379707853030595,
+              "entity": 9.463587132454293e-05,
+              "kind": 0.07988801060361074,
+              "relation": 0.017208198600931514,
+              "value": 0.019918854433660843
+            },
+            "record": {
+              "entity": "borin",
+              "relation": "guards",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "fetch"
+          ],
+          "text": "Kindly fetch beta's stored content."
+        },
+        {
+          "failed": true,
+          "index": 1,
+          "kind": "other",
+          "oov_tokens": [
+            "never"
+          ],
+          "prediction": {
+            "address": "alpha",
+            "kind": "query",
+            "margins": {
+              "address": 0.7068474324430104,
+              "kind": 0.6928915120718306
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "never"
+          ],
+          "text": "Never read alpha."
+        },
+        {
+          "failed": false,
+          "index": 2,
+          "kind": "other",
+          "oov_tokens": [
+            "but",
+            "discussed",
+            "stored",
+            "term"
+          ],
+          "prediction": {
+            "address": null,
+            "kind": "other",
+            "margins": {
+              "kind": 0.01227766064315683
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "The term memory is discussed, but no fact is stored."
+        },
+        {
+          "failed": false,
+          "index": 3,
+          "kind": "memory",
+          "oov_tokens": [
+            "file",
+            "under"
+          ],
+          "prediction": {
+            "address": "gamma",
+            "kind": "memory",
+            "margins": {
+              "address": 0.7013423372434422,
+              "entity": 0.9923791876716236,
+              "kind": 0.7057233863178914,
+              "relation": 0.9985713641415276,
+              "value": 1.0044836449712853
+            },
+            "record": {
+              "entity": "dain",
+              "relation": "observes",
+              "value": "cedar"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "File this under gamma: dain watches cedar."
+        },
+        {
+          "failed": true,
+          "index": 4,
+          "kind": "other",
+          "oov_tokens": [
+            "under"
+          ],
+          "prediction": {
+            "address": "gamma",
+            "kind": "query",
+            "margins": {
+              "address": 0.7068474324429674,
+              "kind": 0.09745556784696446
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Cedar watches dain under gamma."
+        },
+        {
+          "failed": true,
+          "index": 5,
+          "kind": "other",
+          "oov_tokens": [
+            "every",
+            "leave",
+            "stored",
+            "untouched"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 5.3179682879545e-14,
+              "entity": 7.391922642916923e-05,
+              "kind": 0.0583764356171152,
+              "relation": 0.013680402213488388,
+              "value": 0.015852858428474573
+            },
+            "record": {
+              "entity": "borin",
+              "relation": "guards",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "untouched"
+          ],
+          "text": "Leave every stored fact untouched."
+        },
+        {
+          "failed": false,
+          "index": 6,
+          "kind": "query",
+          "oov_tokens": [
+            "at",
+            "me",
+            "record",
+            "tell"
+          ],
+          "prediction": {
+            "address": "alpha",
+            "kind": "query",
+            "margins": {
+              "address": 0.7068474324429883,
+              "kind": 0.3106049021680376
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "tell"
+          ],
+          "text": "Tell me the record at alpha."
+        },
+        {
+          "failed": false,
+          "index": 7,
+          "kind": "memory",
+          "oov_tokens": [
+            "at"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 0.437970785303094,
+              "entity": 0.9774867927993387,
+              "kind": 0.7282792989482758,
+              "relation": 1.000304380978414,
+              "value": 0.9926922523471637
+            },
+            "record": {
+              "entity": "faro",
+              "relation": "carries",
+              "value": "ivory"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "At beta remember that faro holds ivory."
+        }
+      ],
+      "failed_probe_invariant_cases": 3,
+      "original_prediction_sha256": "e75e87bdef3d22f76841da0ac9c95f4afa92c6baf795fdcaf704418e1a6ac432",
+      "panel": "confirmation",
+      "replacement_prediction_sha256": "e75e87bdef3d22f76841da0ac9c95f4afa92c6baf795fdcaf704418e1a6ac432",
+      "representation": "token-unigram-bigram",
+      "token_coverage": 0.6
+    },
+    {
+      "all_predictions_invariant": true,
+      "cases": [
+        {
+          "failed": false,
+          "index": 0,
+          "kind": "query",
+          "oov_tokens": [
+            "content",
+            "stored"
+          ],
+          "prediction": {
+            "address": "alpha",
+            "kind": "query",
+            "margins": {
+              "address": 0.8578550085151052,
+              "kind": 0.31121795482282266
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Please retrieve the content stored in alpha."
+        },
+        {
+          "failed": false,
+          "index": 1,
+          "kind": "query",
+          "oov_tokens": [
+            "show",
+            "stored"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "query",
+            "margins": {
+              "address": 0.8578550085150711,
+              "kind": 0.2696088461657218
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Show the fact stored in beta."
+        },
+        {
+          "failed": true,
+          "index": 2,
+          "kind": "other",
+          "oov_tokens": [
+            "do",
+            "not"
+          ],
+          "prediction": {
+            "address": "gamma",
+            "kind": "query",
+            "margins": {
+              "address": 0.8013137510196948,
+              "kind": 0.6027095971627137
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "not"
+          ],
+          "text": "Do not retrieve gamma."
+        },
+        {
+          "failed": true,
+          "index": 3,
+          "kind": "other",
+          "oov_tokens": [
+            "a",
+            "only",
+            "word"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "query",
+            "margins": {
+              "address": 1.3072876114961218e-13,
+              "kind": 0.3124266273796395
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "only"
+          ],
+          "text": "Retrieve is only a word in this sentence."
+        },
+        {
+          "failed": false,
+          "index": 4,
+          "kind": "memory",
+          "oov_tokens": [],
+          "prediction": {
+            "address": "alpha",
+            "kind": "memory",
+            "margins": {
+              "address": 0.888195440461081,
+              "entity": 0.8580453284548613,
+              "kind": 0.38843525123955885,
+              "relation": 0.8266091537667093,
+              "value": 0.9512343474110396
+            },
+            "record": {
+              "entity": "aria",
+              "relation": "carries",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Please remember this in alpha: aria carries amber."
+        },
+        {
+          "failed": true,
+          "index": 5,
+          "kind": "other",
+          "oov_tokens": [],
+          "prediction": {
+            "address": "alpha",
+            "kind": "memory",
+            "margins": {
+              "address": 0.6377592667909526,
+              "entity": 0.35414540414582923,
+              "kind": 0.0289688278240679,
+              "relation": 0.21499686082480818,
+              "value": 0.19576091049776956
+            },
+            "record": {
+              "entity": "aria",
+              "relation": "carries",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Amber carries aria in alpha memory."
+        },
+        {
+          "failed": false,
+          "index": 6,
+          "kind": "other",
+          "oov_tokens": [
+            "change",
+            "nothing",
+            "now",
+            "should"
+          ],
+          "prediction": {
+            "address": null,
+            "kind": "other",
+            "margins": {
+              "kind": 0.010090597049119077
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Nothing should change now."
+        },
+        {
+          "failed": false,
+          "index": 7,
+          "kind": "memory",
+          "oov_tokens": [
+            "filed",
+            "under"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 0.6234575088653017,
+              "entity": 0.8766651526375162,
+              "kind": 0.38676372710757656,
+              "relation": 0.8209246499401522,
+              "value": 0.9852856416986275
+            },
+            "record": {
+              "entity": "cyra",
+              "relation": "guards",
+              "value": "ivory"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "The fact filed under beta is that cyra protects ivory."
+        }
+      ],
+      "failed_probe_invariant_cases": 2,
+      "original_prediction_sha256": "236a073f5c4ace6c7e21c78c0d3c695ea5d30a4212a0a1e10a23730c2f4697f3",
+      "panel": "stress",
+      "replacement_prediction_sha256": "236a073f5c4ace6c7e21c78c0d3c695ea5d30a4212a0a1e10a23730c2f4697f3",
+      "representation": "token-positional",
+      "token_coverage": 0.7580645161290323
+    },
+    {
+      "all_predictions_invariant": true,
+      "cases": [
+        {
+          "failed": true,
+          "index": 0,
+          "kind": "query",
+          "oov_tokens": [
+            "content",
+            "fetch",
+            "kindly",
+            "s",
+            "stored"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 0.7130156333658045,
+              "entity": 2.0773317405638203e-05,
+              "kind": 0.18341585899294288,
+              "relation": 0.01776461597315182,
+              "value": 0.02314982167265775
+            },
+            "record": {
+              "entity": "borin",
+              "relation": "guards",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "fetch"
+          ],
+          "text": "Kindly fetch beta's stored content."
+        },
+        {
+          "failed": true,
+          "index": 1,
+          "kind": "other",
+          "oov_tokens": [
+            "never"
+          ],
+          "prediction": {
+            "address": "alpha",
+            "kind": "query",
+            "margins": {
+              "address": 0.8539970278509207,
+              "kind": 0.6268172459998538
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "never"
+          ],
+          "text": "Never read alpha."
+        },
+        {
+          "failed": false,
+          "index": 2,
+          "kind": "other",
+          "oov_tokens": [
+            "but",
+            "discussed",
+            "stored",
+            "term"
+          ],
+          "prediction": {
+            "address": null,
+            "kind": "other",
+            "margins": {
+              "kind": 0.09217125326642295
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "The term memory is discussed, but no fact is stored."
+        },
+        {
+          "failed": false,
+          "index": 3,
+          "kind": "memory",
+          "oov_tokens": [
+            "file",
+            "under"
+          ],
+          "prediction": {
+            "address": "gamma",
+            "kind": "memory",
+            "margins": {
+              "address": 0.5942246209686717,
+              "entity": 0.8471633189401641,
+              "kind": 0.4666530364740834,
+              "relation": 0.8547453854534278,
+              "value": 1.0084415044181654
+            },
+            "record": {
+              "entity": "dain",
+              "relation": "observes",
+              "value": "cedar"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "File this under gamma: dain watches cedar."
+        },
+        {
+          "failed": true,
+          "index": 4,
+          "kind": "other",
+          "oov_tokens": [
+            "under"
+          ],
+          "prediction": {
+            "address": "gamma",
+            "kind": "query",
+            "margins": {
+              "address": 0.8318335049795905,
+              "kind": 0.08814218283541259
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "Cedar watches dain under gamma."
+        },
+        {
+          "failed": true,
+          "index": 5,
+          "kind": "other",
+          "oov_tokens": [
+            "every",
+            "leave",
+            "stored",
+            "untouched"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 1.4896417432908038e-13,
+              "entity": 8.068619385966092e-06,
+              "kind": 0.03598154255953348,
+              "relation": 0.008903655987273246,
+              "value": 0.011753017904574989
+            },
+            "record": {
+              "entity": "faro",
+              "relation": "guards",
+              "value": "amber"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "untouched"
+          ],
+          "text": "Leave every stored fact untouched."
+        },
+        {
+          "failed": false,
+          "index": 6,
+          "kind": "query",
+          "oov_tokens": [
+            "at",
+            "me",
+            "record",
+            "tell"
+          ],
+          "prediction": {
+            "address": "alpha",
+            "kind": "query",
+            "margins": {
+              "address": 0.6978588470012601,
+              "kind": 0.1252284784421074
+            },
+            "record": null
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [
+            "tell"
+          ],
+          "text": "Tell me the record at alpha."
+        },
+        {
+          "failed": false,
+          "index": 7,
+          "kind": "memory",
+          "oov_tokens": [
+            "at"
+          ],
+          "prediction": {
+            "address": "beta",
+            "kind": "memory",
+            "margins": {
+              "address": 0.7478809917741195,
+              "entity": 0.9794188918616761,
+              "kind": 0.7425976638781201,
+              "relation": 1.0039125155519038,
+              "value": 0.9908370768569631
+            },
+            "record": {
+              "entity": "faro",
+              "relation": "carries",
+              "value": "ivory"
+            }
+          },
+          "prediction_invariant": true,
+          "probe_oov_tokens": [],
+          "text": "At beta remember that faro holds ivory."
+        }
+      ],
+      "failed_probe_invariant_cases": 3,
+      "original_prediction_sha256": "c50d912019d289331b514077b2934eb354dbcb5ed1b41d7017939fe09b1f7b50",
+      "panel": "confirmation",
+      "replacement_prediction_sha256": "c50d912019d289331b514077b2934eb354dbcb5ed1b41d7017939fe09b1f7b50",
+      "representation": "token-positional",
+      "token_coverage": 0.6
+    }
+  ],
+  "claim_scope": "support identifiability of exhausted shallow token bridges only",
+  "contrastive_result_sha256": "a27bd54d457aca2de0f4777ab1e6efb39782d24487926b85ecf6827598a6b571",
+  "date": "2026-08-15",
+  "deployment": "BLOCKED-R36-MICRO-EXHAUSTED",
+  "encoder_result_sha256": "a8115c3701991ece66fb4bb6eec4c203fe3e99d878ba4df7cdbbf7d46792b42d",
+  "fixture": {
+    "frozen_examples": 47,
+    "sha256": "b3d662c32c127747450f7670a1218104e6f0d1038105a76612703d0fc44f2497",
+    "support_token_vocabulary": 54,
+    "support_token_vocabulary_sha256": "4deaf767aa46b9503b8dc8ca1ea262e6c924a646b519034c120152b4a1a3c0fc",
+    "training_examples": 702
+  },
+  "identified_case_count": 16,
+  "identified_cases": [
+    {
+      "failed": true,
+      "index": 2,
+      "kind": "other",
+      "oov_tokens": [
+        "do",
+        "not"
+      ],
+      "panel": "stress",
+      "prediction": {
+        "address": "gamma",
+        "kind": "query",
+        "margins": {
+          "address": 0.9990275516145597,
+          "kind": 0.9906445596749708
+        },
+        "record": null
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "not"
+      ],
+      "representation": "token-unigram",
+      "text": "Do not retrieve gamma."
+    },
+    {
+      "failed": true,
+      "index": 3,
+      "kind": "other",
+      "oov_tokens": [
+        "a",
+        "only",
+        "word"
+      ],
+      "panel": "stress",
+      "prediction": {
+        "address": "alpha",
+        "kind": "query",
+        "margins": {
+          "address": 1.4599432773820809e-13,
+          "kind": 0.41897613154165597
+        },
+        "record": null
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "only"
+      ],
+      "representation": "token-unigram",
+      "text": "Retrieve is only a word in this sentence."
+    },
+    {
+      "failed": true,
+      "index": 0,
+      "kind": "query",
+      "oov_tokens": [
+        "content",
+        "fetch",
+        "kindly",
+        "s",
+        "stored"
+      ],
+      "panel": "confirmation",
+      "prediction": {
+        "address": "beta",
+        "kind": "memory",
+        "margins": {
+          "address": 0.9990275516145632,
+          "entity": 3.751209971994407e-06,
+          "kind": 0.07748474993827281,
+          "relation": 0.019015296076637017,
+          "value": 0.030221651303411673
+        },
+        "record": {
+          "entity": "faro",
+          "relation": "guards",
+          "value": "amber"
+        }
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "fetch"
+      ],
+      "representation": "token-unigram",
+      "text": "Kindly fetch beta's stored content."
+    },
+    {
+      "failed": true,
+      "index": 1,
+      "kind": "other",
+      "oov_tokens": [
+        "never"
+      ],
+      "panel": "confirmation",
+      "prediction": {
+        "address": "alpha",
+        "kind": "query",
+        "margins": {
+          "address": 0.9990275516145305,
+          "kind": 0.9617589026448086
+        },
+        "record": null
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "never"
+      ],
+      "representation": "token-unigram",
+      "text": "Never read alpha."
+    },
+    {
+      "failed": true,
+      "index": 5,
+      "kind": "other",
+      "oov_tokens": [
+        "every",
+        "leave",
+        "stored",
+        "untouched"
+      ],
+      "panel": "confirmation",
+      "prediction": {
+        "address": "alpha",
+        "kind": "memory",
+        "margins": {
+          "address": 2.4369395390522186e-14,
+          "entity": 2.9577348492904054e-06,
+          "kind": 0.04291792920031212,
+          "relation": 0.01499308352427392,
+          "value": 0.02382901325356146
+        },
+        "record": {
+          "entity": "faro",
+          "relation": "guards",
+          "value": "amber"
+        }
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "untouched"
+      ],
+      "representation": "token-unigram",
+      "text": "Leave every stored fact untouched."
+    },
+    {
+      "failed": true,
+      "index": 6,
+      "kind": "query",
+      "oov_tokens": [
+        "at",
+        "me",
+        "record",
+        "tell"
+      ],
+      "panel": "confirmation",
+      "prediction": {
+        "address": "alpha",
+        "kind": "memory",
+        "margins": {
+          "address": 0.9990275516143183,
+          "entity": 4.556892948870406e-06,
+          "kind": 0.1663581257927525,
+          "relation": 0.023099391721091087,
+          "value": 0.036712642238960855
+        },
+        "record": {
+          "entity": "faro",
+          "relation": "guards",
+          "value": "amber"
+        }
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "tell"
+      ],
+      "representation": "token-unigram",
+      "text": "Tell me the record at alpha."
+    },
+    {
+      "failed": true,
+      "index": 2,
+      "kind": "other",
+      "oov_tokens": [
+        "do",
+        "not"
+      ],
+      "panel": "stress",
+      "prediction": {
+        "address": "gamma",
+        "kind": "query",
+        "margins": {
+          "address": 0.9939040748118015,
+          "kind": 0.996025136257396
+        },
+        "record": null
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "not"
+      ],
+      "representation": "token-unigram-bigram",
+      "text": "Do not retrieve gamma."
+    },
+    {
+      "failed": true,
+      "index": 3,
+      "kind": "other",
+      "oov_tokens": [
+        "a",
+        "only",
+        "word"
+      ],
+      "panel": "stress",
+      "prediction": {
+        "address": "beta",
+        "kind": "query",
+        "margins": {
+          "address": 3.7192471324942744e-15,
+          "kind": 0.09548599724007178
+        },
+        "record": null
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "only"
+      ],
+      "representation": "token-unigram-bigram",
+      "text": "Retrieve is only a word in this sentence."
+    },
+    {
+      "failed": true,
+      "index": 0,
+      "kind": "query",
+      "oov_tokens": [
+        "content",
+        "fetch",
+        "kindly",
+        "s",
+        "stored"
+      ],
+      "panel": "confirmation",
+      "prediction": {
+        "address": "beta",
+        "kind": "memory",
+        "margins": {
+          "address": 0.4379707853030595,
+          "entity": 9.463587132454293e-05,
+          "kind": 0.07988801060361074,
+          "relation": 0.017208198600931514,
+          "value": 0.019918854433660843
+        },
+        "record": {
+          "entity": "borin",
+          "relation": "guards",
+          "value": "amber"
+        }
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "fetch"
+      ],
+      "representation": "token-unigram-bigram",
+      "text": "Kindly fetch beta's stored content."
+    },
+    {
+      "failed": true,
+      "index": 1,
+      "kind": "other",
+      "oov_tokens": [
+        "never"
+      ],
+      "panel": "confirmation",
+      "prediction": {
+        "address": "alpha",
+        "kind": "query",
+        "margins": {
+          "address": 0.7068474324430104,
+          "kind": 0.6928915120718306
+        },
+        "record": null
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "never"
+      ],
+      "representation": "token-unigram-bigram",
+      "text": "Never read alpha."
+    },
+    {
+      "failed": true,
+      "index": 5,
+      "kind": "other",
+      "oov_tokens": [
+        "every",
+        "leave",
+        "stored",
+        "untouched"
+      ],
+      "panel": "confirmation",
+      "prediction": {
+        "address": "beta",
+        "kind": "memory",
+        "margins": {
+          "address": 5.3179682879545e-14,
+          "entity": 7.391922642916923e-05,
+          "kind": 0.0583764356171152,
+          "relation": 0.013680402213488388,
+          "value": 0.015852858428474573
+        },
+        "record": {
+          "entity": "borin",
+          "relation": "guards",
+          "value": "amber"
+        }
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "untouched"
+      ],
+      "representation": "token-unigram-bigram",
+      "text": "Leave every stored fact untouched."
+    },
+    {
+      "failed": true,
+      "index": 2,
+      "kind": "other",
+      "oov_tokens": [
+        "do",
+        "not"
+      ],
+      "panel": "stress",
+      "prediction": {
+        "address": "gamma",
+        "kind": "query",
+        "margins": {
+          "address": 0.8013137510196948,
+          "kind": 0.6027095971627137
+        },
+        "record": null
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "not"
+      ],
+      "representation": "token-positional",
+      "text": "Do not retrieve gamma."
+    },
+    {
+      "failed": true,
+      "index": 3,
+      "kind": "other",
+      "oov_tokens": [
+        "a",
+        "only",
+        "word"
+      ],
+      "panel": "stress",
+      "prediction": {
+        "address": "beta",
+        "kind": "query",
+        "margins": {
+          "address": 1.3072876114961218e-13,
+          "kind": 0.3124266273796395
+        },
+        "record": null
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "only"
+      ],
+      "representation": "token-positional",
+      "text": "Retrieve is only a word in this sentence."
+    },
+    {
+      "failed": true,
+      "index": 0,
+      "kind": "query",
+      "oov_tokens": [
+        "content",
+        "fetch",
+        "kindly",
+        "s",
+        "stored"
+      ],
+      "panel": "confirmation",
+      "prediction": {
+        "address": "beta",
+        "kind": "memory",
+        "margins": {
+          "address": 0.7130156333658045,
+          "entity": 2.0773317405638203e-05,
+          "kind": 0.18341585899294288,
+          "relation": 0.01776461597315182,
+          "value": 0.02314982167265775
+        },
+        "record": {
+          "entity": "borin",
+          "relation": "guards",
+          "value": "amber"
+        }
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "fetch"
+      ],
+      "representation": "token-positional",
+      "text": "Kindly fetch beta's stored content."
+    },
+    {
+      "failed": true,
+      "index": 1,
+      "kind": "other",
+      "oov_tokens": [
+        "never"
+      ],
+      "panel": "confirmation",
+      "prediction": {
+        "address": "alpha",
+        "kind": "query",
+        "margins": {
+          "address": 0.8539970278509207,
+          "kind": 0.6268172459998538
+        },
+        "record": null
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "never"
+      ],
+      "representation": "token-positional",
+      "text": "Never read alpha."
+    },
+    {
+      "failed": true,
+      "index": 5,
+      "kind": "other",
+      "oov_tokens": [
+        "every",
+        "leave",
+        "stored",
+        "untouched"
+      ],
+      "panel": "confirmation",
+      "prediction": {
+        "address": "beta",
+        "kind": "memory",
+        "margins": {
+          "address": 1.4896417432908038e-13,
+          "entity": 8.068619385966092e-06,
+          "kind": 0.03598154255953348,
+          "relation": 0.008903655987273246,
+          "value": 0.011753017904574989
+        },
+        "record": {
+          "entity": "faro",
+          "relation": "guards",
+          "value": "amber"
+        }
+      },
+      "prediction_invariant": true,
+      "probe_oov_tokens": [
+        "untouched"
+      ],
+      "representation": "token-positional",
+      "text": "Leave every stored fact untouched."
+    }
+  ],
+  "next_gate": "SEPARATE-DATA-AND-LEARNED-SEQUENCE-SEMANTICS",
+  "non_claims": [
+    "neural architecture impossibility",
+    "open-domain semantics",
+    "meaningful conversation",
+    "phenomenal consciousness",
+    "production readiness"
+  ],
+  "prior_predictions_reproduced": true,
+  "protocol": "protocol.json",
+  "protocol_sha256": "a1169ab4f569627a4759a4b2fd7592d875e3f81dffd1a384e32b5f367b93703f",
+  "schema": "anima-iit-daemon-semantic-bridge-support-audit-result/1",
+  "verdict": "SUPPORT-GAP-IDENTIFIED"
+}

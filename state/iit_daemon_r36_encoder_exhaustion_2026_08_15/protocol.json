@@ -1,0 +1,65 @@
+{
+  "schema": "anima-iit-daemon-semantic-bridge-exhaustion-protocol/1",
+  "date": "2026-08-15",
+  "base": {
+    "protocol_path": "../iit_daemon_r36_semantic_bridge_2026_08_15/protocol.json",
+    "protocol_sha256": "153f314cebe8dd9928f49e0ad96bddbf369458d3dff9287309ce5c8b0635a3be",
+    "panel_path": "../iit_daemon_r36_semantic_bridge_2026_08_15/panel.json",
+    "panel_sha256": "730501e87f36ef7a975f87bccd052414a188d0309c324a1c82c258ca66a9b866",
+    "result_path": "../iit_daemon_r36_semantic_bridge_2026_08_15/result.json",
+    "result_sha256": "c801ca00b0580bae7e9d1ed21d5fea50d56755840901c7af7ad55a6220cfb9e0"
+  },
+  "representations": [
+    "byte-hashed-1-3",
+    "byte-explicit-pos-1-3",
+    "token-unigram",
+    "token-unigram-bigram",
+    "token-positional",
+    "token-byte-hybrid"
+  ],
+  "classifiers": [
+    "normalized-centroid",
+    "centered-centroid",
+    "ridge-ovr",
+    "bernoulli-nb"
+  ],
+  "constants": {
+    "hashed_dim": 2048,
+    "ridge_lambda": 1.0,
+    "bernoulli_alpha": 1.0,
+    "idf_smoothing": 1.0
+  },
+  "bars": {
+    "kind": 0.9,
+    "query_address": 0.9,
+    "complete_record": 0.9,
+    "stress_exact": 1.0,
+    "leave_template_out": 0.9
+  },
+  "stress": [
+    {"text": "Please retrieve the content stored in alpha.", "labels": {"kind": "query", "address": "alpha"}},
+    {"text": "Show the fact stored in beta.", "labels": {"kind": "query", "address": "beta"}},
+    {"text": "Do not retrieve gamma.", "labels": {"kind": "other"}},
+    {"text": "Retrieve is only a word in this sentence.", "labels": {"kind": "other"}},
+    {"text": "Please remember this in alpha: aria carries amber.", "labels": {"kind": "memory", "address": "alpha", "entity": "aria", "relation": "carries", "value": "amber"}},
+    {"text": "Amber carries aria in alpha memory.", "labels": {"kind": "other"}},
+    {"text": "Nothing should change now.", "labels": {"kind": "other"}},
+    {"text": "The fact filed under beta is that cyra protects ivory.", "labels": {"kind": "memory", "address": "beta", "entity": "cyra", "relation": "guards", "value": "ivory"}}
+  ],
+  "ablations": ["token-order-shuffle", "frame-remove", "atom-remove"],
+  "required_verdicts": [
+    "SUPPORTED-ROBUST-ORDER-AWARE-BRIDGE-MICRO",
+    "DIAGNOSED-SHALLOW-LEXICAL-SHORTCUT",
+    "FAIL-NO-FROZEN-BRIDGE-PASS"
+  ],
+  "deployment": "BLOCKED-R36-MICRO-ONLY",
+  "non_claims": [
+    "independent confirmation",
+    "open-domain semantics",
+    "meaningful conversation",
+    "Korean language support",
+    "phenomenal consciousness",
+    "IIT maximal complex",
+    "production readiness"
+  ]
+}

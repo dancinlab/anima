@@ -665,3 +665,39 @@ def test_iit_daemon_semantic_bridge_frozen_failure_stops_before_causal_arms(tmp_
     assert metrics["other_events"] == 2
     assert "arms" not in result
     assert ID.load_semantic_bridge_model(model_path)["sha256"] == result["model"]["sha256"]
+
+
+def test_semantic_bridge_micro_arm_is_deterministic_and_fail_closed():
+    examples = _semantic_bridge_examples()
+    constants = {"hashed_dim": 128, "ridge_lambda": 1.0,
+                 "bernoulli_alpha": 1.0, "idf_smoothing": 1.0}
+    first = ID.semantic_bridge_micro_evaluate(
+        examples, examples, "token-unigram-bigram", "ridge-ovr", constants)
+    second = ID.semantic_bridge_micro_evaluate(
+        examples, examples, "token-unigram-bigram", "ridge-ovr", constants)
+    assert first == second
+    assert first["metrics"]["exact_accuracy"] == 1.0
+    with pytest.raises(ValueError, match="unsupported semantic bridge micro representation"):
+        ID.semantic_bridge_micro_evaluate(
+            examples, examples, "answer-lookup", "ridge-ovr", constants)
+    with pytest.raises(ValueError, match="constants mismatch"):
+        ID.semantic_bridge_micro_evaluate(
+            examples, examples, "token-unigram", "ridge-ovr", {"ridge_lambda": 1.0})
+
+
+@pytest.mark.parametrize("directory,flag", [
+    ("iit_daemon_r36_encoder_exhaustion_2026_08_15",
+     "--iit-daemon-semantic-bridge-sweep"),
+    ("iit_daemon_r36_contrastive_support_2026_08_15",
+     "--iit-daemon-semantic-bridge-contrastive"),
+    ("iit_daemon_r36_support_identifiability_2026_08_15",
+     "--iit-daemon-semantic-bridge-support-audit"),
+])
+def test_semantic_bridge_micro_artifacts_reproduce_byte_exact(tmp_path, directory, flag):
+    state_dir = os.path.join(ROOT, "state", directory)
+    protocol_path = os.path.join(state_dir, "protocol.json")
+    expected_path = os.path.join(state_dir, "result.json")
+    out_path = tmp_path / "result.json"
+    assert evaluate.main([flag, protocol_path, "--out", str(out_path)]) == 0
+    with open(expected_path, "rb") as handle:
+        assert out_path.read_bytes() == handle.read()

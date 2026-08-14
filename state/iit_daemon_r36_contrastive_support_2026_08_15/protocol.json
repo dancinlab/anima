@@ -1,0 +1,28 @@
+{
+  "schema": "anima-iit-daemon-semantic-bridge-contrastive-protocol/1",
+  "date": "2026-08-15",
+  "base_exhaustion": {
+    "protocol_path": "../iit_daemon_r36_encoder_exhaustion_2026_08_15/protocol.json",
+    "protocol_sha256": "61de84aa9dde84175044b3c9ea3170871181708a67621721ea84b7b0d82e825f",
+    "result_path": "../iit_daemon_r36_encoder_exhaustion_2026_08_15/result.json",
+    "result_sha256": "a8115c3701991ece66fb4bb6eec4c203fe3e99d878ba4df7cdbbf7d46792b42d"
+  },
+  "representations": ["token-unigram", "token-unigram-bigram", "token-positional"],
+  "classifier": "ridge-ovr",
+  "support_arms": ["original", "negation", "keyword-lure", "word-salad", "no-op", "all"],
+  "constants": {"hashed_dim": 2048, "ridge_lambda": 1.0, "bernoulli_alpha": 1.0, "idf_smoothing": 1.0},
+  "bars": {"kind": 0.9, "query_address": 0.9, "complete_record": 0.9, "stress_exact": 1.0, "confirmation_exact": 1.0, "leave_template_out": 0.9, "material_stress_gain": 0.125},
+  "confirmation": [
+    {"text": "Kindly fetch beta's stored content.", "labels": {"kind": "query", "address": "beta"}},
+    {"text": "Never read alpha.", "labels": {"kind": "other"}},
+    {"text": "The term memory is discussed, but no fact is stored.", "labels": {"kind": "other"}},
+    {"text": "File this under gamma: dain watches cedar.", "labels": {"kind": "memory", "address": "gamma", "entity": "dain", "relation": "observes", "value": "cedar"}},
+    {"text": "Cedar watches dain under gamma.", "labels": {"kind": "other"}},
+    {"text": "Leave every stored fact untouched.", "labels": {"kind": "other"}},
+    {"text": "Tell me the record at alpha.", "labels": {"kind": "query", "address": "alpha"}},
+    {"text": "At beta remember that faro holds ivory.", "labels": {"kind": "memory", "address": "beta", "entity": "faro", "relation": "carries", "value": "ivory"}}
+  ],
+  "required_verdicts": ["SUPPORTED-CONTRASTIVE-BOUNDARY-MICRO", "DIAGNOSED-MISSING-CONTRASTIVE-SUPPORT", "FAIL-SHALLOW-SEQUENCE-SUPPORT"],
+  "deployment": "BLOCKED-R36-MICRO-ONLY",
+  "non_claims": ["open-domain semantics", "meaningful conversation", "phenomenal consciousness", "production readiness"]
+}
