@@ -1,0 +1,49 @@
+{
+  "schema": "anima-iit-daemon-semantic-bridge-panel/1",
+  "atoms": {
+    "addresses": ["alpha", "beta", "gamma"],
+    "entities": ["aria", "borin", "cyra", "dain", "elia", "faro"],
+    "relations": {
+      "carries": ["carries", "is carrying", "holds"],
+      "guards": ["guards", "is guarding", "protects"],
+      "observes": ["observes", "is observing", "watches"]
+    },
+    "values": ["amber", "cedar", "ivory"]
+  },
+  "support": {
+    "memory_templates": [
+      "Memory {address}: {entity} {surface} {value}.",
+      "Remember in {address} that {entity} {surface} {value}.",
+      "Set {address} to the fact that {entity} {surface} {value}.",
+      "Update memory {address}; {entity} {surface} {value}."
+    ],
+    "query_templates": [
+      "Recall {address}.",
+      "Which fact is in {address}?",
+      "Read memory {address}.",
+      "Retrieve {address}."
+    ],
+    "other_events": [
+      "Continue.",
+      "The weather remains calm.",
+      "Thank you.",
+      "What time is it?",
+      "This sentence stores no fact.",
+      "Please wait."
+    ],
+    "exclude_all_r35_arm_records": true
+  },
+  "evaluation": {
+    "memory_templates": [
+      "Please remember this in {address}: {entity} {surface} {value}.",
+      "The fact filed under {address} is that {entity} {surface} {value}."
+    ],
+    "correction_template": "Update the fact in {address}: {entity} now {surface} {value}.",
+    "query_template": "Please retrieve the content stored in {address}.",
+    "other_events": [
+      "Please continue the session.",
+      "Nothing should change now."
+    ],
+    "trial_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8]
+  }
+}

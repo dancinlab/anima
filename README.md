@@ -141,6 +141,17 @@ check found a separately mounted `anima-native-303m` step-45000 participant and
 question-irrelevant generic replies. The existing participant was preserved rather than
 interrupted.
 
+### Active R3.6 learned semantic bridge microexperiment
+
+R3.6 is preregistered in `state/iit_daemon_r36_semantic_bridge_2026_08_15/`. It changes only the
+R3.5 oracle-record input: bounded English event bytes are fitted to factorised address/entity/
+relation/value centroids using the existing Python hashed byte n-gram feature path. The R3.5 IIT
+transition, three-address workspace, delayed selection, canonical renderer, nine novel combinations
+and causal thresholds remain fixed. Held-out frames, corrections, same-question/different-memory,
+irrelevant mutation, stateless/reset/shuffle/lesion and exact recovery are all registered before
+execution. A pass is only bounded learned semantic-bridge causality; production remains
+`BLOCKED-R36-NOT-A-CONVERSATIONAL-MOUTH` and no 303M/GPU run is authorized by it.
+
 ### Completed native-303M replay recovery
 
 `state/anima_native_303m_replay_recovery_2026_08_14/` now records the actual HF data, sampler,

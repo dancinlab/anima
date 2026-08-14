@@ -1,0 +1,53 @@
+{
+  "schema": "anima-iit-daemon-semantic-bridge-protocol/1",
+  "date": "2026-08-15",
+  "engines": [
+    "core.iit_daemon.IITDaemonCore",
+    "core.iit_daemon.train_semantic_bridge",
+    "core.iit_daemon.semantic_bridge_encode",
+    "core.generator.gen_iit_workspace_content"
+  ],
+  "r35": {
+    "result_path": "../iit_daemon_r35_workspace_2026_08_14/result.json",
+    "result_sha256": "74f917de8718a2de43c4db3d57f900922315a6cd019b71381eb0c7917313f56e",
+    "panel_path": "../iit_daemon_r35_workspace_2026_08_14/panel.json",
+    "panel_sha256": "29c0af1f02663be6ae2d1a8083bf4036ef5efdee442d23486464f3f04321cf98",
+    "required_verdict": "SUPPORTED-COMPOSITIONAL-WORKSPACE-CAUSALITY"
+  },
+  "panel": {
+    "path": "panel.json",
+    "sha256": "730501e87f36ef7a975f87bccd052414a188d0309c324a1c82c258ca66a9b866"
+  },
+  "task": {
+    "feature_dim": 2048,
+    "feature_ngram_sizes": [1, 2, 3],
+    "address_to_cue": {"alpha": 1, "beta": 2, "gamma": 4},
+    "delay": 1,
+    "chance": 0.3333333333333333,
+    "iit_address_shuffle": [1, 2, 0],
+    "workspace_address_shuffle": ["beta", "gamma", "alpha"],
+    "lesion_mask": 7,
+    "stateless_empty_record": {"entity": "null", "relation": "remembers", "value": "none"}
+  },
+  "bars": {
+    "state_oracle": 0.9,
+    "bridge_kind": 0.9,
+    "bridge_query_address": 0.9,
+    "bridge_complete_record": 0.9,
+    "positive": 0.9,
+    "control_margin": 0.06,
+    "control_ceiling": 0.3933333333333333,
+    "counterfactual_change": 0.9,
+    "irrelevant_stability": 0.9
+  },
+  "required_verdict": "SUPPORTED-LEARNED-SEMANTIC-BRIDGE-CAUSALITY",
+  "deployment": "BLOCKED-R36-NOT-A-CONVERSATIONAL-MOUTH",
+  "non_claims": [
+    "open-domain semantics",
+    "meaningful open conversation",
+    "Korean language support",
+    "phenomenal consciousness",
+    "IIT maximal complex",
+    "production readiness"
+  ]
+}
