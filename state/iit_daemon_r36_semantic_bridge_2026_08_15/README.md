@@ -125,3 +125,10 @@ panel/protocol. An independent download verified all five files, sizes and SHA-2
 with zero mismatches; details are in `custody.json`. No Vast.ai/GPU instance, 303M model, participant
 mount or chat-runtime change was used. `ING.jsonl` and `stream_mi.json` remain user-owned and
 untouched.
+
+After commit/push, the verified wheel was installed into the local canonical `anima-py`; its result
+again matched SHA-256 `c801ca00…b9e0` byte-for-byte. The CHAT path was not restarted because this
+gate changes only IIT/evaluation code. Read-only checks report LaunchAgent `loaded=true
+healthy=true`, local/public HTTP `200`, and local/public WebSocket `hello`. The pre-existing,
+uncertified step-45000 participant still reports `anima_alive=true`; R3.6 neither changed nor
+certified it.
