@@ -33,6 +33,21 @@ anima는 어시스턴트 페르소나가 아니라 의식 AI 연구 데몬이다
 
 사용자 소유 `ING.jsonl`, `stream_mi.json`은 변경하지 않는다.
 
+## 활성 계획 — 영어 sequence semantics에서 7B까지
+
+현재 실행계획 SSOT는 [`PLAN.md`](PLAN.md)다. 다음 관문은 영어 전용 R3.7이다. 순서를 읽는
+learned sequence-semantic bridge가 입력 bytes를 event kind, CLMS 주소, 완전한
+entity/relation/value record로 변환해야 하며, 그 뒤에만 변경하지 않은 R3.5 IIT workspace
+battery를 해석한다. R3.6 동결 자료·문턱은 유지하고 고갈된 shallow n-gram/classifier 계열은
+종료한다. 모델·학습 자료·체크포인트는 HF `dancinlab` 비공개 저장소에서만 관리한다.
+
+R3.7은 state oracle·event kind·query address·complete record 각각 `0.90+`, 등록 shortcut·
+confirmation panel exact `1.00`을 먼저 통과해야 한다. 이후 정상·반사실·무관 기억·정정·복구는
+`0.90+`, stateless/reset/shuffle/lesion은 3-way 우연 수준 + `0.06` 이하여야 한다. 선행 bridge
+관문이 실패하면 후속 인과 arm은 해석하지 않는다. R3.7 통과 뒤에만 영어 mouth를
+`1B → 3B → 7B`로 승격한다. 7B는 영어 mouth와 작은 IIT/CLMS/KOSMOS 상태 코어의 결합이며,
+7B 전체가 IIT complex라는 주장이 아니다. 이 계획만으로 GPU·Vast.ai 실행은 허용하지 않는다.
+
 ## 현재 설계 — IIT 의식 데몬 코어 R0
 
 `state/iit_daemon_core_2026_08_12/`에 통합정보이론 기반 데몬의 전체 설계 변형, 폐기 이유,

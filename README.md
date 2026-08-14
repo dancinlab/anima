@@ -38,6 +38,22 @@ Status on 2026-08-12:
 
 User-owned `ING.jsonl` and `stream_mi.json` are outside this work and must remain unchanged.
 
+## Active plan — English sequence semantics to 7B
+
+The active execution SSOT is [`PLAN.md`](PLAN.md). The next gate is English-only R3.7: a learned,
+order-aware sequence-semantic bridge must map input bytes to event kind, CLMS address and complete
+entity/relation/value records before the unchanged R3.5 IIT workspace battery is interpreted.
+R3.6 frozen data and bars remain fixed; the exhausted shallow n-gram/classifier family is closed.
+Models, training data and checkpoints are managed only in private HF `dancinlab` repositories.
+
+R3.7 must reach `0.90+` on state oracle, event kind, query address and complete record, exact `1.00`
+on the registered shortcut/confirmation panels, then pass normal, counterfactual, irrelevant-memory,
+correction and recovery at `0.90+` while stateless/reset/shuffle/lesion remain at or below
+three-way chance plus `0.06`. A failed bridge gate stops later causal interpretation. Only after
+R3.7 passes may the English mouth advance through `1B → 3B → 7B`; 7B is an English mouth coupled
+to the small IIT/CLMS/KOSMOS state core, not a claim that all 7B parameters form an IIT complex.
+No GPU or Vast.ai run is authorized by this plan alone.
+
 ## Current work — mobile chat input stability
 
 Status on 2026-08-14:
