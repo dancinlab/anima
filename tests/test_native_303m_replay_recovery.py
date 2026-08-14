@@ -50,3 +50,36 @@ def test_training_command_reuses_mixed_response_path(tmp_path: Path):
     assert command[command.index("--steps") + 1] == "40000"
     assert command.count("--train-general") == 1
     assert command.count("--train-dialogue") == 1
+
+
+def test_execute_uses_requested_model_code_directory(tmp_path: Path, monkeypatch):
+    model = tmp_path / "model"
+    data = tmp_path / "data"
+    target = data / "data-conversation-target"
+    (model / "code").mkdir(parents=True)
+    (model / "checkpoints/step-035000").mkdir(parents=True)
+    target.mkdir(parents=True)
+    protocol = module.load_protocol()
+    for relative in protocol["source_hashes"]:
+        base = data if relative in {"manifest.json", "data-conversation-target/manifest.json"} else model
+        path = base / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("{}", encoding="utf-8")
+    for relative in ("checkpoints/step-035000/final.pt", "checkpoints/step-035000/tokenizer.json"):
+        (model / relative).write_bytes(b"x")
+    monkeypatch.setattr(module, "preflight", lambda *_args: {"pass": True})
+    monkeypatch.setattr(module, "training_command", lambda *_args: ["python", "train.py"])
+    observed = {}
+    class Completed:
+        returncode = 0
+    def fake_run(command, cwd, check):
+        observed.update(command=command, cwd=cwd, check=check)
+        return Completed()
+    monkeypatch.setattr(module.subprocess, "run", fake_run)
+    monkeypatch.setattr(module.sys, "argv", [
+        "run_recovery.py", "--model-root", str(model), "--data-root", str(data),
+        "--output", str(tmp_path / "out"), "--execute",
+    ])
+    assert module.main() == 0
+    assert observed == {"command": ["python", "train.py"],
+                        "cwd": model / "code", "check": False}

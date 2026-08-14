@@ -190,7 +190,7 @@ def main() -> int:
     print(json.dumps({"command": command}, ensure_ascii=False), flush=True)
     if not args.execute:
         return 0
-    completed = subprocess.run(command, cwd=model_root / "code", check=False)
+    completed = subprocess.run(command, cwd=args.model_root / "code", check=False)
     return int(completed.returncode)
 
 
